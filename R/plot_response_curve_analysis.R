@@ -15,15 +15,6 @@
 
 source('response_curve_analysis.R')
 
-# Decide whether to view data frames along with the plots (can be useful for
-# inspection to make sure the results look reasonable)
-VIEW_DATA_FRAMES <- FALSE
-
-if (VIEW_DATA_FRAMES) {
-    View(all_samples)
-    View(all_stats)
-}
-
 ###                            ###
 ### PLOT RESPONSE CURVES TO CI ###
 ###                            ###

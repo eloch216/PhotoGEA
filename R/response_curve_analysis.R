@@ -33,13 +33,15 @@
 # The script also relies on functions and settings from several external files:
 # - read_licor.R
 # - licor_data_operations.R
+# - gm_table.R
 # It is unlikely that anything in these files will require modifications when
 # using this script.
 #
 # Typically, it should only be necessary to specify the names of input files.
-# This information is specified in the FILES_TO_PROCESS vector. If
-# CHOOSE_FILES_INTERACTIVELY is set to true, these file names can be chosen
-# interactively via a dialog box (only available on MS Windows).
+# This information is specified in the LICOR_FILES_TO_PROCESS vector and
+# GM_TABLE_FILE_TO_PROCESS string. If CHOOSE_FILES_INTERACTIVELY is set to true,
+# these file names can be chosen interactively via a dialog box (only available
+# on MS Windows).
 #
 # The filenames can be specified as relative or absolute paths. In the case of
 # relative paths, they should be specified relative to the directory that
@@ -53,7 +55,7 @@
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
-# source('extract_licor_data_for_gm.R')
+# source('response_curve_analysis.R')
 #
 # ------------------------------------------------------------------------------
 #
@@ -61,6 +63,7 @@
 
 source('read_licor.R')
 source('licor_data_operations.R')
+source('gm_table.R')
 
 library(lattice)
 library(RColorBrewer)
@@ -72,29 +75,38 @@ library(RColorBrewer)
 # Decide whether to load new data and calculate stats. If the data has already
 # been loaded and the script is being run to tweak the plotting parameters, then
 # set PERFORM_CALCULATIONS to FALSE to save a little time. If this is the first
-# time running the script in a particular R session or for a particular data set,
-# the data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS to
-# TRUE.
+# time running the script in a particular R session or for a particular data
+# set, the data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS
+# to TRUE.
 PERFORM_CALCULATIONS <- TRUE
 
-# Specify the Licor data files to process. There are two options for doing this:
-# either the filenames can be defined directly as a vector of strings, or they
-# can be defined interactively via a dialog box (only available on MS Windows).
+# Decide whether to view data frames along with the plots (can be useful for
+# inspection to make sure the results look reasonable)
+VIEW_DATA_FRAMES <- TRUE
+
+# Specify the Licor data files and the gm table file. There are two options for
+# doing this: either the filenames can be defined directly as a vector of
+# strings, or they can be defined interactively via a dialog box (only available
+# on MS Windows).
 CHOOSE_FILES_INTERACTIVELY <- TRUE
 
-FILES_TO_PROCESS <- c() # Initialize the input file list
+ # Initialize the input files
+LICOR_FILES_TO_PROCESS <- c()
+GM_TABLE_FILE_TO_PROCESS <- c()
 
 # Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
 # boolean
 if (PERFORM_CALCULATIONS) {
     if (CHOOSE_FILES_INTERACTIVELY) {
-        FILES_TO_PROCESS <- choose_input_licor_files()
+        LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
+        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
     }
     else {
-        FILES_TO_PROCESS <- c(
+        LICOR_FILES_TO_PROCESS <- c(
             "2021-04-07-site 11 vulcan cs 36627-1-17.xlsx",
             "20210407-pluto-site13-36627-WT-3.xlsx"
         )
+        GM_TABLE_FILE_TO_PROCESS <- "gm_table.csv"
     }
 }
 
@@ -116,6 +128,7 @@ POINT_FOR_BOX_PLOTS <- 1
 GENOTYPE_COLUMN_NAME <- "genotype"
 REP_COLUMN_NAME <- "rep"
 MEASUREMENT_NUMBER_NAME <- "obs"
+GM_COLUMN_NAME <- "gmc"
 
 # Specify variables to analyze, i.e., variables where the average, standard
 # deviation, and standard error will be determined for each genotype across the
@@ -360,13 +373,12 @@ all_aci_stats <- function(big_aci_data, variables_to_analyze)
 
 ###                                                                    ###
 ### COMMANDS THAT ACTUALLY CALLS THE FUNCTIONS WITH APPROPRIATE INPUTS ###
-### (PLOTTING COMMANDS AND SPECIFICATIONS MAY REQUIRE MODIFICATIONS)   ###
 ###                                                                    ###
 
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- batch_read_licor_file(
-        FILES_TO_PROCESS,
+        LICOR_FILES_TO_PROCESS,
         UNICODE_REPLACEMENTS,
         PREAMBLE_DATA_ROWS,
         VARIABLE_TYPE_ROW,
@@ -381,6 +393,19 @@ if (PERFORM_CALCULATIONS) {
     )
 
     combined_info <- combine_licor_files(extracted_multi_file_info)
+
+    gm_table_info <- read_gm_table(
+        GM_TABLE_FILE_TO_PROCESS,
+        GENOTYPE_COLUMN_NAME,
+        GM_COLUMN_NAME
+    )
+
+    combined_info <- add_gm_to_licor_data(
+        combined_info,
+        gm_table_info,
+        GENOTYPE_COLUMN_NAME,
+        GM_COLUMN_NAME
+    )
 
     all_samples <- combined_info[['main_data']]
 
@@ -424,3 +449,9 @@ all_samples_one_point[[GENOTYPE_COLUMN_NAME]] <- factor(
         decreasing = TRUE
     )
 )
+
+# View the resulting data frames, if desired
+if (VIEW_DATA_FRAMES) {
+    View(all_samples)
+    View(all_stats)
+}
