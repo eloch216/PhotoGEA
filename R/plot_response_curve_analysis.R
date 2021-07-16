@@ -49,9 +49,8 @@ line_width <- 1
 
 # Plot the average A-Ci curves
 aci_curves <- xyplot(
-    A_avg ~ Ci_avg,
-    group = genotype,
-    data = all_stats_subset,
+    all_stats_subset[['A_avg']] ~ all_stats_subset[['Ci_avg']],
+    group = all_stats_subset[[GENOTYPE_COLUMN_NAME]],
     type = 'b',
     pch = 16,
     lwd = line_width,
@@ -81,9 +80,8 @@ print(aci_curves)
 
 # Plot the average ETR-Ci curves
 eci_curves <- xyplot(
-    ETR_avg ~ Ci_avg,
-    group = genotype,
-    data = all_stats_subset,
+    all_stats_subset[['ETR_avg']] ~ all_stats_subset[['Ci_avg']],
+    group = all_stats_subset[[GENOTYPE_COLUMN_NAME]],
     type = 'b',
     pch = 16,
     lwd = line_width,
@@ -133,9 +131,8 @@ ind_cols <- c(
 # Plot each individual A-Ci curve, where each genotype will have multiple traces
 # corresponding to different plants
 multi_aci_curves <- xyplot(
-    A ~ Ci | genotype,
-    group = rep,
-    data = all_samples_subset,
+    all_samples_subset[['A']] ~ all_samples_subset[['Ci']] | all_samples_subset[[GENOTYPE_COLUMN_NAME]],
+    group = all_samples_subset[[REP_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -157,9 +154,8 @@ print(multi_aci_curves)
 # Plot each individual gsw-Ci curve, where each genotype will have multiple
 # traces corresponding to different plants
 multi_gsci_curves <- xyplot(
-    gsw ~ Ci | genotype,
-    group = rep,
-    data = all_samples_subset,
+    all_samples_subset[['gsw']] ~ all_samples_subset[['Ci']] | all_samples_subset[[GENOTYPE_COLUMN_NAME]],
+    group = all_samples_subset[[REP_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -191,8 +187,7 @@ boxplot_caption <- paste0(
 )
 
 a_boxplot <- bwplot(
-    A ~ genotype,
-    data = all_samples_one_point,
+    all_samples_one_point[['A']] ~ all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     ylim = c(0, 35),
     main = boxplot_caption,
@@ -203,8 +198,7 @@ x11(width = 6, height = 6)
 print(a_boxplot)
 
 phips2_boxplot <- bwplot(
-    PhiPS2 ~ genotype,
-    data = all_samples_one_point,
+    all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
     ylab = "Photosystem II operating efficiency (dimensionless)",
     ylim = c(0, 0.4),
     main = boxplot_caption,
@@ -216,8 +210,7 @@ print(phips2_boxplot)
 
 
 etr_boxplot <- bwplot(
-    ETR ~ genotype,
-    data = all_samples_one_point,
+    all_samples_one_point[['ETR']] ~ all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
     ylab = "Electron transport rate (micromol / m^2 / s)",
     ylim = c(0, 275),
     main = boxplot_caption,
