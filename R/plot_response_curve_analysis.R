@@ -210,3 +210,23 @@ etr_boxplot <- bwplot(
 
 x11(width = 6, height = 6)
 print(etr_boxplot)
+
+###                                            ###
+### MAKE BOX-WHISKER PLOTS FOR VCMAX ESTIMATES ###
+###                                            ###
+
+vcmax_boxplot_caption <- paste(
+    "Vcmax values obtained by fitting A vs. f'\nusing a Ci cutoff of",
+    CI_THRESHOLD,
+    "micromol / mol"
+)
+
+vcmax_boxplot <- bwplot(
+    vcmax_fits[['Vcmax']] ~ vcmax_fits[[GENOTYPE_COLUMN_NAME]],
+    ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
+    xlab = "Genotype",
+    main = vcmax_boxplot_caption
+)
+
+x11(width = 6, height = 6)
+print(vcmax_boxplot)

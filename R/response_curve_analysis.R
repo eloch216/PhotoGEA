@@ -129,7 +129,14 @@ GENOTYPE_COLUMN_NAME <- "genotype"
 REP_COLUMN_NAME <- "rep"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
+CI_COLUMN_NAME <- "Ci"
 CC_COLUMN_NAME <- "Cc"
+A_COLUMN_NAME <- "A"
+O2_COLUMN_NAME <- "O2"
+F_PRIME_COLUMN_NAME <- "f_prime"
+GAMMA_STAR_COLUMN_NAME <- "gamma_star"
+KC_COLUMN_NAME <- "Kc"
+KO_COLUMN_NAME <- "Ko"
 
 # Specify variables to analyze, i.e., variables where the average, standard
 # deviation, and standard error will be determined for each genotype across the
@@ -138,9 +145,9 @@ CC_COLUMN_NAME <- "Cc"
 # character Δ will be become `Delta`. The conversion rules are defined in the
 # `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
 VARIABLES_TO_ANALYZE <- c(
-    "A",
-    "Ci",
-    "Cc",
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    CC_COLUMN_NAME,
     "gsw",
     "PhiPS2",
     "ETR",
@@ -164,8 +171,19 @@ VARIABLES_TO_EXTRACT <- c(
     "gbw",
     "Qin",
     "Qabs",
-    "CO2_r"
+    "CO2_r",
+    "Tleaf",
+    "Tleaf2"
 )
+
+# Specify oxygen concentration as a percentage
+O2_PERCENT <- 21
+
+# Choose a Ci cutoff value for Vcmax fitting
+CI_THRESHOLD <- 210
+
+# Decide whether to plot individual Vcmax fits
+PLOT_VCMAX_FITS <- FALSE
 
 ###                                                               ###
 ### FUNCTIONS THAT WILL BE CALLED WHEN THIS SCRIPT RUNS           ###
@@ -390,17 +408,258 @@ calculate_cc <- function(licor_data) {
     # Add a column for Cc
     variables_to_add <- data.frame(
         type = "calculated",
-        name = "Cc",
+        name = CC_COLUMN_NAME,
         units = "micromol mol^(-1)"
     )
     licor_data <- add_licor_variables(licor_data, variables_to_add)
 
     licor_data[['main_data']][[CC_COLUMN_NAME]] <-
-        licor_data[['main_data']][['Ci']] -
-        licor_data[['main_data']][['A']] /
+        licor_data[['main_data']][[CI_COLUMN_NAME]] -
+        licor_data[['main_data']][[A_COLUMN_NAME]] /
         licor_data[['main_data']][[GM_COLUMN_NAME]]
 
     return(licor_data)
+}
+
+# Adds a new column to the Licor data representing f' (f_prime; dimensionless),
+# a quantity used for determining Vcmax from A-Ci curves. This variable is
+# defined in Long & Bernacchi. "Gas exchange measurements, what can they tell us
+# about the underlying limitations to photosynthesis? Procedures and sources of
+# error" Journal of Experimental Botany 54, 2393–2401 (2003)
+# (https://doi.org/10.1093/jxb/erg262). However, it is more typical to use
+# the CO2 concentration of the chloroplast (Cc) in place of the intercellular
+# CO2 concetration (CI) as in Long & Bernacchi, since the result calculated with
+# Cc can be used to determine chloroplast values of Vcmax.
+#
+# As in Long & Bernacchi, we calculate the temperature-dependent values of the
+# Michaelis-Menten constants for CO2 and O2 (Kc and Ko) using the equations from
+# Bernacchi et al. "Improved temperature response functions for models of
+# Rubisco-limited photosynthesis" Plant, Cell & Environment 24, 253–259 (2001)
+# (https://doi.org/10.1111/j.1365-3040.2001.00668.x).
+#
+# Here we assume the following units:
+# - Leaf temperature: degrees C
+# - CO2 concentration in the chloroplast (Cc): micromol / mol
+# - O2 concetration in the chloroplast (O2): percent
+
+calculate_fprime <- function(licor_data, O2_percent) {
+    # Add a column for f_prime
+    variables_to_add <- data.frame(
+        type = c("calculated", "calculated", "calculated", "in", "calculated"),
+        name = c(GAMMA_STAR_COLUMN_NAME, KC_COLUMN_NAME, KO_COLUMN_NAME, O2_COLUMN_NAME, F_PRIME_COLUMN_NAME),
+        units = c("micromol mol^(-1)", "micromol mol^(-1)", "mmol mol^(-1)", "mmol mol^(-1)", "dimensionless")
+    )
+    licor_data <- add_licor_variables(licor_data, variables_to_add)
+
+    # Get leaf temperature in Kelvin. Sometimes the data will be in the `Tleaf`
+    # column; other times it will be in the `Tleaf2` column. We can find the
+    # correct value by taking the smaller one, since the other will be 999.9.
+    leaf_temp <- rep(0, nrow(licor_data[['main_data']]))
+    for (i in seq_along(leaf_temp)) {
+        leaf_temp[i] <- min(
+            licor_data[['main_data']][['Tleaf']][i],
+            licor_data[['main_data']][['Tleaf2']][i]
+        ) + 273.15
+    }
+
+    # Define parameter values for calculating gamma_star, Kc, and Ko
+    gamma_star_c <- 19.02    # dimensionless
+    Kc_c <- 38.05            # dimensionless
+    Ko_c <- 20.30            # dimensionless
+    gamma_star_dha <- 37.83  # kJ / mol
+    Kc_dha <- 79.43          # kJ / mol
+    Ko_dha <- 36.38          # kJ / mol
+
+    # Get temperature-dependent values for gamma_star, Kc, and Ko
+    arrhenius <- function(
+        scaling,     # dimensionless
+        enthalpy,    # kJ / mol
+        temperature  # Kelvin
+    )
+    {
+        ideal_gas_constant <- 8.3145e-3  # kJ / mol / k
+        return(exp(scaling - enthalpy / (ideal_gas_constant * temperature)))
+    }
+    gamma_star <- arrhenius(gamma_star_c, gamma_star_dha, leaf_temp)  # micromol / mol
+    Kc <- arrhenius(Kc_c, Kc_dha, leaf_temp)                          # micromol / mol
+    Ko <- arrhenius(Ko_c, Ko_dha, leaf_temp)                          # mmol / mol
+
+    # Convert O2 from percent to mmol / mol
+    O2 <- O2_percent * 10
+
+    # Store gamma_star, Kc, Ko, and O2 in the Licor data
+    licor_data[['main_data']][[GAMMA_STAR_COLUMN_NAME]] <- gamma_star
+    licor_data[['main_data']][[KC_COLUMN_NAME]] <- Kc
+    licor_data[['main_data']][[KO_COLUMN_NAME]] <- Ko
+    licor_data[['main_data']][[O2_COLUMN_NAME]] <- O2
+
+    # Calculate f_prime and store it in the Licor data frame
+    licor_data[['main_data']][[F_PRIME_COLUMN_NAME]] <-
+        (licor_data[['main_data']][[CC_COLUMN_NAME]] - gamma_star) /
+        (licor_data[['main_data']][[CC_COLUMN_NAME]] + Kc * (1 + O2 / Ko))
+
+    return(licor_data)
+}
+
+# Determine Vcmax and Rd by making a linear fit to A vs. f_prime. The slope is
+# Vcmax and the intercept is -Rd. Return the fitted values along with the fitted
+# parameters.
+one_rep_vcmax_fit <- function(rep_data) {
+    # Do the fitting
+    linear_fit <- lm(rep_data[[A_COLUMN_NAME]] ~ rep_data[[F_PRIME_COLUMN_NAME]])
+    fit_summary <- summary(linear_fit)
+    fit_coeff <- fit_summary[['coefficients']]
+
+    # Make a data frame with the fit information
+    fit_info <- data.frame(
+        Vcmax = fit_coeff[[2]],
+        Vcmax_stderr = fit_coeff[[4]],
+        Rd = -fit_coeff[[1]],
+        Rd_stderr = fit_coeff[[3]],
+        R2 = fit_summary[['r.squared']]
+    )
+
+    # Add columns to the input data frame for the fitted values and residuals
+    rep_data[['A_fit']] <-
+        fit_info[['Vcmax']] * rep_data[[F_PRIME_COLUMN_NAME]] - fit_info[['Rd']]
+
+    rep_data[['A_fit_residuals']] <-
+        rep_data[[A_COLUMN_NAME]] - rep_data[['A_fit']]
+
+    return(
+        list(
+            fit_info = fit_info,
+            rep_data = rep_data
+        )
+    )
+}
+
+one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
+    genotype_data <- big_aci_data[big_aci_data[[GENOTYPE_COLUMN_NAME]] == genotype_val,]
+
+    all_reps <- unique(genotype_data[[REP_COLUMN_NAME]])
+
+    # This function will not work properly if there are less than two reps,
+    # so give a warning message and stop processing the data if this is the case
+    num_reps <- length(all_reps)
+    if (num_reps < 2) {
+        stop(
+            paste0(
+                "Only ", num_reps, " rep(s) were specified for analysis, ",
+                "but at least 2 reps are required"
+            )
+        )
+    }
+
+    # Define a plotting function
+    plot_rep <- function(fit_result, rep_val) {
+        rep_data <- fit_result[['rep_data']]
+
+        caption <- paste0(
+            "Vcmax fitting for rep ", rep_val,
+            " of genotype ", genotype_val, ":\n",
+            "Vcmax = ", fit_result[['fit_info']][['Vcmax']],
+            " micromol / m^2 / s\n",
+            "Rd = ", fit_result[['fit_info']][['Rd']],
+            " micromol / m^2 / s\n",
+            "maximum Ci: ", max(rep_data[[CI_COLUMN_NAME]]), " ppm"
+        )
+
+        rep_fitting_plot <- xyplot(
+            rep_data[[A_COLUMN_NAME]] + rep_data[['A_fit']] ~ rep_data[['f_prime']],
+            xlab = "f_prime (dimensionless)",
+            ylab = "A (micromol / m^2 / s)",
+            auto = TRUE,
+            grid = TRUE,
+            type = 'b',
+            main = caption
+        )
+
+        x11()
+
+        print(rep_fitting_plot)
+    }
+
+    # Get the info from the first rep and plot if necessary
+    rep_result <-
+        one_rep_vcmax_fit(genotype_data[genotype_data[[REP_COLUMN_NAME]] == all_reps[1],])
+
+    result <- rep_result[['fit_info']]
+
+    if (make_plots) {
+        plot_rep(rep_result, all_reps[1])
+    }
+
+    # Process the remaining reps
+    for (i in 2:length(all_reps)) {
+        rep_result <-
+            one_rep_vcmax_fit(genotype_data[genotype_data[[REP_COLUMN_NAME]] == all_reps[i],])
+
+        result <- rbind(result, rep_result[['fit_info']])
+
+        if (make_plots) {
+            plot_rep(rep_result, all_reps[i])
+        }
+    }
+
+    result[[REP_COLUMN_NAME]] <- all_reps
+    result[[GENOTYPE_COLUMN_NAME]] <- genotype_val
+
+    return(result)
+}
+
+fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
+    # Get just the data from the desired points along the measurement sequence
+    big_aci_data_subset <- big_aci_data[which(
+        (big_aci_data[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
+            %in% MEASUREMENT_NUMBERS),]
+
+    # Get just the data below the threshold
+    big_aci_data_subset <-
+        big_aci_data_subset[big_aci_data_subset[[CI_COLUMN_NAME]] <= Ci_threshold,]
+
+    cat(
+        paste(
+            "\n\nMaximum Ci used for Vcmax fitting:",
+            max(big_aci_data_subset[[CI_COLUMN_NAME]]),
+            " ppm\n\n"
+        )
+    )
+
+    all_genotypes <- unique(all_samples[[GENOTYPE_COLUMN_NAME]])
+
+    # This function will not work properly if there are less than two genotypes,
+    # so give a warning message and stop processing the data if this is the case
+    num_gens <- length(all_genotypes)
+    if (num_gens < 2) {
+        stop(
+            paste0(
+                "Only ", num_gens, " genotype(s) was specified for analysis, ",
+                "but at least 2 genotypes are required"
+            )
+        )
+    }
+
+    # Get the info from the first genotype
+    result <- one_genotype_vcmax_fit(
+        big_aci_data_subset,
+        all_genotypes[1],
+        make_plots
+    )
+
+    # Add the results from the others
+    for (i in 2:num_gens) {
+        result <- rbind(
+            result,
+            one_genotype_vcmax_fit(
+                big_aci_data_subset,
+                all_genotypes[i],
+                make_plots
+            )
+        )
+    }
+
+    return(result)
 }
 
 ###                                                                    ###
@@ -441,9 +700,13 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- calculate_cc(combined_info)
 
+    combined_info <- calculate_fprime(combined_info, O2_PERCENT)
+
     all_samples <- combined_info[['main_data']]
 
     all_stats <- all_aci_stats(all_samples, VARIABLES_TO_ANALYZE)
+
+    vcmax_fits <- fit_for_vcmax(all_samples, CI_THRESHOLD, PLOT_VCMAX_FITS)
 }
 
 # Make a subset of the full result that only includes the desired measurement
@@ -453,7 +716,7 @@ all_samples_subset <- all_samples[which(
         %in% MEASUREMENT_NUMBERS),]
 
 all_samples_subset <- all_samples_subset[order(
-    all_samples_subset[['Ci']]),]
+    all_samples_subset[[CI_COLUMN_NAME]]),]
 
 all_samples_subset <- all_samples_subset[order(
     all_samples_subset[[GENOTYPE_COLUMN_NAME]]),]
@@ -464,7 +727,7 @@ all_stats_subset <- all_stats[which(
     all_stats[[MEASUREMENT_NUMBER_NAME]] %in% MEASUREMENT_NUMBERS),]
 
 all_stats_subset <- all_stats_subset[order(
-    all_stats_subset[['Ci_avg']]),]
+    all_stats_subset[[paste0(CI_COLUMN_NAME, "_avg")]]),]
 
 all_stats_subset <- all_stats_subset[order(
     all_stats_subset[[GENOTYPE_COLUMN_NAME]]),]
@@ -484,8 +747,19 @@ all_samples_one_point[[GENOTYPE_COLUMN_NAME]] <- factor(
     )
 )
 
+# Convert the genotype column of the vcmax fitting results to a factor so we
+# can control the order of boxes in a box plot
+vcmax_fits[[GENOTYPE_COLUMN_NAME]] <- factor(
+    vcmax_fits[[GENOTYPE_COLUMN_NAME]],
+    levels = sort(
+        unique(vcmax_fits[[GENOTYPE_COLUMN_NAME]]),
+        decreasing = TRUE
+    )
+)
+
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats)
+    View(vcmax_fits)
 }
