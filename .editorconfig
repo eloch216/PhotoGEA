@@ -1,0 +1,18 @@
+# Official website for reference: https://EditorConfig.org
+
+# Stop searching for more EditorConfig files
+root = true
+
+# Define base settings that will apply to any file unless overridden by other
+# settings below
+[*]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
+
+# Use smaller indentation for some file types that tend to have many layers of
+# indentation
+[*.{yml,yaml,Rd,Rnw,md}]
+indent_size = 2
