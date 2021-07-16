@@ -125,8 +125,8 @@ POINT_FOR_BOX_PLOTS <- 1
 ###                                                                        ###
 
 # Specify the names of a few important columns
-GENOTYPE_COLUMN_NAME <- "genotype"
-REP_COLUMN_NAME <- "rep"
+GENOTYPE_COLUMN_NAME <- "event"
+REP_COLUMN_NAME <- "replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
 CI_COLUMN_NAME <- "Ci"
@@ -180,7 +180,7 @@ VARIABLES_TO_EXTRACT <- c(
 O2_PERCENT <- 21
 
 # Choose a Ci cutoff value for Vcmax fitting
-CI_THRESHOLD <- 210
+CI_THRESHOLD <- 225
 
 # Decide whether to plot individual Vcmax fits
 PLOT_VCMAX_FITS <- FALSE
