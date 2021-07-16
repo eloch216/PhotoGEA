@@ -118,6 +118,10 @@ extract_licor_variables <- function(
     variables_to_extract
 )
 {
+    # Only attempt to extract variables that are included in the Licor file
+    variables_to_extract <-
+        variables_to_extract[variables_to_extract %in% colnames(licor_file[['main_data']])]
+
     licor_file[['types']] <-
         licor_file[['types']][,variables_to_extract]
 
