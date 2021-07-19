@@ -584,7 +584,8 @@ one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
     rep_result <-
         one_rep_vcmax_fit(genotype_data[genotype_data[[REP_COLUMN_NAME]] == all_reps[1],])
 
-    result <- rep_result[['fit_info']]
+    fit_info_result <- rep_result[['fit_info']]
+    rep_data_result <- rep_result[['rep_data']]
 
     if (make_plots) {
         plot_rep(rep_result, all_reps[1])
@@ -595,17 +596,23 @@ one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
         rep_result <-
             one_rep_vcmax_fit(genotype_data[genotype_data[[REP_COLUMN_NAME]] == all_reps[i],])
 
-        result <- rbind(result, rep_result[['fit_info']])
+        fit_info_result <- rbind(fit_info_result, rep_result[['fit_info']])
+        rep_data_result <- rbind(rep_data_result, rep_result[['rep_data']])
 
         if (make_plots) {
             plot_rep(rep_result, all_reps[i])
         }
     }
 
-    result[[REP_COLUMN_NAME]] <- all_reps
-    result[[GENOTYPE_COLUMN_NAME]] <- genotype_val
+    fit_info_result[[REP_COLUMN_NAME]] <- all_reps
+    fit_info_result[[GENOTYPE_COLUMN_NAME]] <- genotype_val
 
-    return(result)
+    return(
+        list(
+            fit_info = fit_info_result,
+            rep_data = rep_data_result
+        )
+    )
 }
 
 fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
@@ -649,14 +656,17 @@ fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
 
     # Add the results from the others
     for (i in 2:num_gens) {
-        result <- rbind(
-            result,
-            one_genotype_vcmax_fit(
-                big_aci_data_subset,
-                all_genotypes[i],
-                make_plots
-            )
+        temp_result <- one_genotype_vcmax_fit(
+            big_aci_data_subset,
+            all_genotypes[i],
+            make_plots
         )
+
+        result[['fit_info']] <-
+            rbind(result[['fit_info']], temp_result[['fit_info']])
+
+        result[['rep_data']] <-
+            rbind(result[['rep_data']], temp_result[['rep_data']])
     }
 
     return(result)
@@ -706,7 +716,11 @@ if (PERFORM_CALCULATIONS) {
 
     all_stats <- all_aci_stats(all_samples, VARIABLES_TO_ANALYZE)
 
-    vcmax_fits <- fit_for_vcmax(all_samples, CI_THRESHOLD, PLOT_VCMAX_FITS)
+    vcmax_results <- fit_for_vcmax(all_samples, CI_THRESHOLD, PLOT_VCMAX_FITS)
+
+    vcmax_fits <- vcmax_results[['fit_info']]
+
+    vcmax_fit_details <- vcmax_results[['rep_data']]
 }
 
 # Make a subset of the full result that only includes the desired measurement
