@@ -225,6 +225,7 @@ vcmax_boxplot <- bwplot(
     vcmax_fits[['Vcmax']] ~ vcmax_fits[[GENOTYPE_COLUMN_NAME]],
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     xlab = "Genotype",
+    ylim = c(0, 200),
     main = vcmax_boxplot_caption
 )
 
