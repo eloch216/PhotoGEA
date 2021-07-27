@@ -84,6 +84,11 @@ PERFORM_CALCULATIONS <- TRUE
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
 
+# Decide whether to specify one gm value for all genotypes or to use a table to
+# specify (possibly) different values for each genotype
+USE_GM_TABLE <- FALSE
+GM_VALUE <- 0.6  # mol / m^2 / s
+
 # Specify the Licor data files and the gm table file. There are two options for
 # doing this: either the filenames can be defined directly as a vector of
 # strings, or they can be defined interactively via a dialog box (only available
@@ -95,18 +100,22 @@ LICOR_FILES_TO_PROCESS <- c()
 GM_TABLE_FILE_TO_PROCESS <- c()
 
 # Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
-# boolean
+# and USE_GM_TABLE booleans
 if (PERFORM_CALCULATIONS) {
     if (CHOOSE_FILES_INTERACTIVELY) {
         LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
+        if (USE_GM_TABLE) {
+            GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
+        }
     }
     else {
         LICOR_FILES_TO_PROCESS <- c(
             "2021-04-07-site 11 vulcan cs 36627-1-17.xlsx",
             "20210407-pluto-site13-36627-WT-3.xlsx"
         )
-        GM_TABLE_FILE_TO_PROCESS <- "gm_table.csv"
+        if (USE_GM_TABLE) {
+            GM_TABLE_FILE_TO_PROCESS <- "gm_table.csv"
+        }
     }
 }
 
@@ -747,6 +756,20 @@ fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
     return(result)
 }
 
+add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
+    # Add a column for gm
+    variables_to_add <- data.frame(
+        type = "gm input",
+        name = GM_COLUMN_NAME,
+        units = "mol m^(-2) s^(-1)"
+    )
+    licor_data <- add_licor_variables(licor_data, variables_to_add)
+
+    licor_data[['main_data']][[GM_COLUMN_NAME]] <- gm_value
+
+    return(licor_data)
+}
+
 ###                                                                    ###
 ### COMMANDS THAT ACTUALLY CALLS THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                    ###
@@ -770,18 +793,23 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- combine_licor_files(extracted_multi_file_info)
 
-    gm_table_info <- read_gm_table(
-        GM_TABLE_FILE_TO_PROCESS,
-        GENOTYPE_COLUMN_NAME,
-        GM_COLUMN_NAME
-    )
+    if (USE_GM_TABLE) {
+        gm_table_info <- read_gm_table(
+            GM_TABLE_FILE_TO_PROCESS,
+            GENOTYPE_COLUMN_NAME,
+            GM_COLUMN_NAME
+        )
 
-    combined_info <- add_gm_to_licor_data(
-        combined_info,
-        gm_table_info,
-        GENOTYPE_COLUMN_NAME,
-        GM_COLUMN_NAME
-    )
+        combined_info <- add_gm_to_licor_data_from_table(
+            combined_info,
+            gm_table_info,
+            GENOTYPE_COLUMN_NAME,
+            GM_COLUMN_NAME
+        )
+    } else {
+        combined_info <-
+            add_gm_to_licor_data_from_value(combined_info, GM_VALUE)
+    }
 
     combined_info <- calculate_cc(combined_info)
 

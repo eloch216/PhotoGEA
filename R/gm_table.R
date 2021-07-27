@@ -81,7 +81,7 @@ read_gm_table <- function(
 # Adds gm values to a list representing Licor data (as created by
 # 'read_licor_file' or a similar function). The gm values should be specified
 # in a list as produced by the 'read_gm_table' function.
-add_gm_to_licor_data <- function(
+add_gm_to_licor_data_from_table <- function(
     licor_data,
     gm_table,
     genotype_column_name,
