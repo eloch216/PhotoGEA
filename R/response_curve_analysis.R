@@ -190,6 +190,67 @@ PLOT_VCMAX_FITS <- FALSE
 ### (THEY SHOULD NOT REQUIRE ANY MODIFICATIONS TO USE THE SCRIPT) ###
 ###                                                               ###
 
+# Checks a set of Licor data to make sure it's suitable for running the
+# analysis, throwing an error if there is a problem
+check_aci_data <- function(big_aci_data) {
+
+    # Make sure there is at least one genotype defined
+    all_genotypes <- unique(all_samples[[GENOTYPE_COLUMN_NAME]])
+
+    if (length(all_genotypes) < 1) {
+        msg <- paste0(
+            "At least one value of the ", GENOTYPE_COLUMN_NAME,
+            " column must be defined"
+        )
+        stop(msg)
+    }
+
+    # Check to make sure each (genotype, rep) pair has the same number of
+    # measurement points
+    measurement_points <- data.frame(matrix(ncol=3, nrow=0))
+    colnames(measurement_points) <-
+        c(GENOTYPE_COLUMN_NAME, REP_COLUMN_NAME, 'num_pts')
+
+    for (genotype_val in all_genotypes) {
+        genotype_subset <- big_aci_data[which(big_aci_data[[GENOTYPE_COLUMN_NAME]] == genotype_val),]
+
+        # Make sure there is at least one rep defined for this genotype
+        all_rep_vals <- unique(genotype_subset[[REP_COLUMN_NAME]])
+
+        if (length(all_rep_vals) < 1) {
+            msg <- paste0(
+                "At least one value of the ", REP_COLUMN_NAME,
+                " column must be defined for ", GENOTYPE_COLUMN_NAME,
+                " = ", genotype_val
+            )
+            stop(msg)
+        }
+
+        # Get the number of measurements for each rep
+        for (rep_val in all_rep_vals) {
+            tmp <- data.frame(matrix(ncol=3, nrow=1))
+            colnames(tmp) <-
+                c(GENOTYPE_COLUMN_NAME, REP_COLUMN_NAME, 'num_pts')
+            tmp[[GENOTYPE_COLUMN_NAME]] <- genotype_val
+            tmp[[REP_COLUMN_NAME]] <- rep_val
+            tmp[['num_pts']] <-
+                nrow(genotype_subset[which(
+                    genotype_subset[[REP_COLUMN_NAME]] == rep_val),])
+            measurement_points <- rbind(measurement_points, tmp)
+        }
+    }
+
+    if (length(unique(measurement_points[['num_pts']])) != 2) {
+        print(measurement_points)
+        msg <- paste0(
+            "Each unique (", GENOTYPE_COLUMN_NAME, ", ",
+            REP_COLUMN_NAME, ") combination must have the same number of ",
+            "associated measurements"
+        )
+        stop(msg)
+    }
+}
+
 # Extracts the values of one variable from a measurement sequence corresponding
 # to one rep of one genotype, returning them as a vector
 one_variable_from_one_rep <- function(
@@ -713,6 +774,8 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- calculate_fprime(combined_info, O2_PERCENT)
 
     all_samples <- combined_info[['main_data']]
+
+    check_aci_data(all_samples)
 
     all_stats <- all_aci_stats(all_samples, VARIABLES_TO_ANALYZE)
 
