@@ -240,7 +240,7 @@ check_aci_data <- function(big_aci_data) {
         }
     }
 
-    if (length(unique(measurement_points[['num_pts']])) != 2) {
+    if (length(unique(measurement_points[['num_pts']])) != 1) {
         print(measurement_points)
         msg <- paste0(
             "Each unique (", GENOTYPE_COLUMN_NAME, ", ",
@@ -248,6 +248,20 @@ check_aci_data <- function(big_aci_data) {
             "associated measurements"
         )
         stop(msg)
+    }
+
+    # Check to see if any columns have NA or infinite values
+    na_indx <- apply(
+        big_aci_data,
+        2,
+        function(x) any(is.na(x) | is.infinite(x))
+    )
+    na_cols <- colnames(big_aci_data)[na_indx]
+
+    if (length(na_cols) != 0) {
+        print("The following columns have NA or infinite values:")
+        print(na_cols)
+        stop("The A-Ci data cannot contain any NA or infinite values")
     }
 }
 
