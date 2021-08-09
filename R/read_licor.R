@@ -57,8 +57,8 @@ colnames(UNICODE_REPLACEMENTS) <- c("pattern", "replacement")
 #
 # INPUTS:
 #
-# - licor_file_name: a relative or absolute path to an Excel file containing
-#                    Licor data
+# - file_name: a relative or absolute path to an Excel file containing Licor
+#              data
 #
 # - unicode_replacements: a data frame of search strings and replacements used
 #                         to replace problematic Unicode characters in the Licor
@@ -80,12 +80,17 @@ colnames(UNICODE_REPLACEMENTS) <- c("pattern", "replacement")
 # - data_start_row: the first row number of the table containing the measured
 #                   data in the Licor Excel file
 #
+# - timestamp_colname: the name of the column that contains the timestamp of
+#                      each measurement
+#
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
 # a list with the following named elements that together fully include all the
 # data from the Licor Excel file:
+#
+# - file_name: a copy of the input argument with the same name
 #
 # - preamble: a list of data frames representing each line in the preamble,
 #             where each data frame has one row and named columns. No Unicode
@@ -113,14 +118,17 @@ colnames(UNICODE_REPLACEMENTS) <- c("pattern", "replacement")
 #
 # - data_start_row: a copy of the input argument with the same name
 #
+# - timestamp_colname: a copy of the input argument with the same name
+#
 read_licor_file <- function(
-    licor_file_name,
+    file_name,
     unicode_replacements,
     preamble_data_rows,
     variable_type_row,
     variable_name_row,
     variable_unit_row,
-    data_start_row
+    data_start_row,
+    timestamp_colname = 'time'
 )
 {
     # Define a helping function for reading one row (with column names) from an
@@ -129,7 +137,7 @@ read_licor_file <- function(
     read_row_wc <- function(row_num)
     {
         row_data <- readWorkbook(
-            licor_file_name,
+            file_name,
             colNames = TRUE,
             skipEmptyCols = FALSE,
             rows = c(row_num - 1, row_num)
@@ -144,7 +152,7 @@ read_licor_file <- function(
     read_row_nc <- function(row_num)
     {
         row_data <- readWorkbook(
-            licor_file_name,
+            file_name,
             colNames = FALSE,
             skipEmptyCols = FALSE,
             rows = row_num
@@ -204,7 +212,7 @@ read_licor_file <- function(
 
     # Get the main data
     licor_data <- readWorkbook(
-        licor_file_name,
+        file_name,
         startRow = data_start_row,
         colNames = FALSE,
         skipEmptyCols = FALSE
@@ -215,8 +223,13 @@ read_licor_file <- function(
     colnames(licor_variable_types) <- licor_variable_names[1,]
     colnames(licor_variable_units) <- licor_variable_names[1,]
 
+    # Make sure the timestamp column is properly interpreted
+    licor_data[[timestamp_colname]] <-
+        as.POSIXlt(licor_data[[timestamp_colname]], origin = "1970-01-01")
+
     return(
         list(
+            file_name = file_name,
             preamble = licor_preamble,
             types = licor_variable_types,
             units = licor_variable_units,
@@ -230,15 +243,15 @@ read_licor_file <- function(
     )
 }
 
-# batch_load_licor_file: a function for reading the data from multiple Licor
+# batch_read_licor_file: a function for reading the data from multiple Licor
 # Excel files into an R list.
 #
 # ------------------------------------------------------------------------------
 #
 # INPUTS:
 #
-# - licor_file_names: a vector of relative or absolute paths to an Excel files
-#                     containing Licor data
+# - file_names: a vector of relative or absolute paths to Excel files containing
+#               Licor data
 #
 # All other inputs are identical to those in the `read_licor_file` function.
 #
@@ -250,7 +263,7 @@ read_licor_file <- function(
 # of a Licor file that was created using the the `read_licor_file` function.
 #
 batch_read_licor_file <- function(
-    licor_file_names,
+    file_names,
     unicode_replacements,
     preamble_data_rows,
     variable_type_row,
@@ -260,7 +273,7 @@ batch_read_licor_file <- function(
 )
 {
     lapply(
-        licor_file_names,
+        file_names,
         function(filename) {
             read_licor_file(
                     filename,
