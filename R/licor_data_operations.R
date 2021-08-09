@@ -172,7 +172,9 @@ batch_extract_licor_variables <- function(
 }
 
 # combine_licor_files: a function for combining the information from multiple
-# Licor files into a single list.
+# Licor files into a single list. Here, only the filenames, types, units, and
+# data are retained (i.e., any parameters specified when reading the files will
+# be lost).
 #
 # ------------------------------------------------------------------------------
 #
@@ -193,14 +195,83 @@ combine_licor_files <- function(
     licor_files
 )
 {
-    # Get the info from the first file
-    combo_info <- licor_files[[1]]
+    # Make sure at least one file is defined
+    if (length(licor_files) < 1) {
+        stop("The input list is required to contain at least one Licor file")
+    }
+
+    # Get the info from the first file to use as a reference
+    first_file <- licor_files[[1]]
+
+    # Set up the combo list
+    initial_data_frame <- data.frame(
+        matrix(
+            ncol = ncol(first_file[['main_data']]),
+            nrow = 0
+        )
+    )
+
+    colnames(initial_data_frame) <- colnames(first_file[['main_data']])
+
+    combo_info <- list(
+        file_name = character(0),
+        types = first_file[['types']],
+        units = first_file[['units']],
+        main_data = initial_data_frame
+    )
 
     # Get the remaining info
-    for (i in 2:length(licor_files)) {
+    for (i in seq_along(licor_files)) {
+        # Get the current file
+        current_file <- licor_files[[i]]
+
+        # Check for possible errors
+        if (!identical(
+            colnames(first_file[['main_data']]),
+            colnames(current_file[['main_data']])
+        ))
+        {
+            msg <- paste0(
+                "The column names specified in Licor file '",
+                current_file[['file_name']],
+                "' do not agree with the column names specified in '",
+                first_file[['file_name']],
+                "', so the two files cannot be combined"
+            )
+            stop(msg)
+        }
+
+        if (!identical(first_file[['types']], current_file[['types']])) {
+            msg <- paste0(
+                "The types specified in Licor file '",
+                current_file[['file_name']],
+                "' do not agree with the types specified in '",
+                first_file[['file_name']],
+                "', so the two files cannot be combined"
+            )
+            stop(msg)
+        }
+
+        if (!identical(first_file[['units']], current_file[['units']])) {
+            msg <- paste0(
+                "The units specified in Licor file '",
+                current_file[['file_name']],
+                "' do not agree with the units specified in '",
+                first_file[['file_name']],
+                "', so the two files cannot be combined"
+            )
+            stop(msg)
+        }
+
+        # Add this file to the combined info
         combo_info[['main_data']] <- rbind(
             combo_info[['main_data']],
-            licor_files[[i]][['main_data']]
+            current_file[['main_data']]
+        )
+
+        combo_info[['file_name']] <- c(
+            combo_info[['file_name']],
+            current_file[['file_name']]
         )
     }
 
