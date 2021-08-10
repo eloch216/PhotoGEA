@@ -1,8 +1,54 @@
 source("read_tdl.R")
 source("tdl_data_operations.R")
 source("tdl_calculations.R")
+source("read_licor.R")
+source("pairing_tdl_and_licor_data.R")
+
+# Define constants that will determine the behavior of some functions in this
+# script
 
 MAKE_TDL_PLOTS <- TRUE
+
+# Specify the variables to extract. Note that when the file is loaded, any
+# Unicode characters such as Greek letters will be converted into `ASCII`
+# versions, e.g. the character Δ will be become `Delta`. The conversion rules
+# are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
+VARIABLES_TO_EXTRACT <- c(
+    "obs",
+    "time",
+    "E",
+    "A",
+    "Ca",
+    "Ci",
+    "Pci",
+    "Pca",
+    "gsw",
+    "gbw",
+    "gtw",
+    "gtc",
+    "TleafCnd",
+    "SVPleaf",
+    "RHcham",
+    "VPcham",
+    "SVPcham",
+    "VPDleaf",
+    "Qin",
+    "S",
+    "K",
+    "CO2_s",
+    "CO2_r",
+    "H2O_s",
+    "H2O_r",
+    "Flow",
+    "Pa",
+    "DeltaPcham",   # the name of this column is modified from ΔPcham
+    "Tair",
+    "Tleaf",
+    "Flow_s",
+    "Flow_r"
+)
+
+# Get all the TDL information and process it
 
 tdl_files <- batch_read_tdl_file(choose_input_tdl_files())
 
@@ -22,6 +68,29 @@ tdl_files <- identify_tdl_cycles(tdl_files)
 
 processed_tdl_data <- process_tdl_cycles(tdl_files[['main_data']])
 
+# Get all the Licor information
+
+licor_files <- batch_read_licor_file(
+    choose_input_licor_files(),
+    UNICODE_REPLACEMENTS,
+    PREAMBLE_DATA_ROWS,
+    VARIABLE_TYPE_ROW,
+    VARIABLE_NAME_ROW,
+    VARIABLE_UNIT_ROW,
+    DATA_START_ROW
+)
+
+licor_files <- batch_extract_licor_variables(
+    licor_files,
+    VARIABLES_TO_EXTRACT
+)
+
+licor_files <- batch_pair_licor_and_tdl(
+    licor_files,
+    processed_tdl_data[['tdl_data']]
+)
+
+# Make plots, if desired
 if (MAKE_TDL_PLOTS) {
     # Make a plot of all the fits from the processing
     tdl_fitting <- xyplot(
