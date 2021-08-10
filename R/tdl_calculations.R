@@ -28,6 +28,13 @@ process_tdl_cycle <- function(
     tdl_cycle[['zero_corrected_13c']] <-
         tdl_cycle[[raw_13c_colname]] - zero_carbon_reference[[raw_13c_colname]]
 
+    # Make a data frame to store the zero information
+    calibration_zero <- data.frame(
+        cycle_num = tdl_cycle[['cycle_num']][1],
+        offset_12c = zero_carbon_reference[[raw_12c_colname]],
+        offset_13c = zero_carbon_reference[[raw_13c_colname]]
+    )
+
     # Make adjustments for 12C calibration using a standard cylinder from NOAA.
     # Here we determine a multiplicative factor for converting the measured
     # zero-corrected 12C concentrations to true concentrations.
@@ -124,6 +131,7 @@ process_tdl_cycle <- function(
 
     return(list(
         tdl_cycle = tdl_cycle,
+        calibration_zero = calibration_zero,
         calibration_12CO2 = calibration_12CO2,
         calibration_13CO2_data = calibration_13CO2_data,
         calibration_13CO2_fit = calibration_13CO2_fit
@@ -186,6 +194,15 @@ process_tdl_cycles <- function(
     )
     colnames(new_tdl_data) <- colnames(temp_cycle[['tdl_cycle']])
 
+    calibration_zero <- data.frame(
+        matrix(
+            ncol = ncol(temp_cycle[['calibration_zero']]),
+            nrow = 0
+        ),
+        stringsAsFactors = FALSE
+    )
+    colnames(calibration_zero) <- colnames(temp_cycle[['calibration_zero']])
+
     calibration_12CO2 <- data.frame(
         matrix(
             ncol = ncol(temp_cycle[['calibration_12CO2']]),
@@ -233,6 +250,7 @@ process_tdl_cycles <- function(
         )
 
         new_tdl_data <- rbind(new_tdl_data, temp_cycle[['tdl_cycle']])
+        calibration_zero <- rbind(calibration_zero, temp_cycle[['calibration_zero']])
         calibration_12CO2 <- rbind(calibration_12CO2, temp_cycle[['calibration_12CO2']])
         calibration_13CO2_data <- rbind(calibration_13CO2_data, temp_cycle[['calibration_13CO2_data']])
         calibration_13CO2_fit <- rbind(calibration_13CO2_fit, temp_cycle[['calibration_13CO2_fit']])
@@ -240,6 +258,7 @@ process_tdl_cycles <- function(
 
     return(list(
         tdl_data = new_tdl_data,
+        calibration_zero = calibration_zero,
         calibration_12CO2 = calibration_12CO2,
         calibration_13CO2_data = calibration_13CO2_data,
         calibration_13CO2_fit = calibration_13CO2_fit

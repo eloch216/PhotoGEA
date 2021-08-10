@@ -36,6 +36,27 @@ if (MAKE_TDL_PLOTS) {
     x11(width = 12, height = 6)
     print(tdl_fitting)
 
+    # Make a plot showing how the zeroes drift with time
+    tdl_12CO2_zero_drift <- xyplot(
+        offset_12c ~ cycle_num,
+        data = processed_tdl_data[['calibration_zero']],
+        type = 'l',
+        xlab = "TDL cycle number",
+        ylab = "12CO2 zero offset"
+    )
+    x11()
+    print(tdl_12CO2_zero_drift)
+
+    tdl_13CO2_zero_drift <- xyplot(
+        offset_13c ~ cycle_num,
+        data = processed_tdl_data[['calibration_zero']],
+        type = 'l',
+        xlab = "TDL cycle number",
+        ylab = "13CO2 zero offset"
+    )
+    x11()
+    print(tdl_13CO2_zero_drift)
+
     # Make a plot showing how the 12CO2 calibration factor drifts with time
     tdl_12CO2_calibration_drift <- xyplot(
         gain_12CO2 ~ cycle_num,
