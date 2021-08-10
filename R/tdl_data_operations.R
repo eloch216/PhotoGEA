@@ -203,7 +203,7 @@ identify_tdl_cycles <- function(
         ),
         stringsAsFactors = FALSE
     )
-    colnames(new_main_data) <- c(colnames(main_data), 'cycle_num')
+    colnames(new_main_data) <- c('cycle_num', colnames(main_data))
 
     # Fill in the new data frame with only valid TDL cycles
     n_cycles <- 1
@@ -216,7 +216,7 @@ identify_tdl_cycles <- function(
         }
 
         if (check_cycle(possible_cycle)) {
-            possible_cycle[['cycle']] <- n_cycles
+            possible_cycle[['cycle_num']] <- n_cycles
             new_main_data <- rbind(new_main_data, possible_cycle)
             n_cycles <- n_cycles + 1
         }
