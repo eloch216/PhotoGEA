@@ -1,6 +1,7 @@
 # combine_tdl_files: a function for combining the information from multiple
-# TDL files into a single list. Here, only the filenames, units, and data are
-# retained (i.e., any parameters specified when reading the files will be lost).
+# TDL files into a single list. Here, only the filenames, types, units, and data
+# are retained (i.e., any parameters specified when reading the files will be
+# lost).
 #
 # ------------------------------------------------------------------------------
 #
@@ -42,6 +43,7 @@ combine_tdl_files <- function(
 
     combo_info <- list(
         file_name = character(0),
+        type = first_file[['type']],
         units = first_file[['units']],
         main_data = initial_data_frame,
         timestamp_colname = first_file[['timestamp_colname']]
@@ -62,6 +64,17 @@ combine_tdl_files <- function(
                 "The column names specified in TDL file '",
                 current_file[['file_name']],
                 "' do not agree with the column names specified in '",
+                first_file[['file_name']],
+                "', so the two files cannot be combined"
+            )
+            stop(msg)
+        }
+
+        if (!identical(first_file[['types']], current_file[['types']])) {
+            msg <- paste0(
+                "The types specified in TDL file '",
+                current_file[['file_name']],
+                "' do not agree with the types specified in '",
                 first_file[['file_name']],
                 "', so the two files cannot be combined"
             )

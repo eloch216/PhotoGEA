@@ -33,6 +33,10 @@
 #
 # - file_name: a copy of the input argument with the same name
 #
+# - type: a data frame with one row and named columns, where the column names
+#       are the variable names and the row indicates that all these values are
+#       "raw", i.e., direct from the TDL without any analysis
+#
 # - units: a data frame with one row and named columns, where the column names
 #       are the variable names and the row describes the units of each variable
 #
@@ -69,6 +73,32 @@ read_tdl_file <- function(
     tdl_variable_units <- raw_tdl[variable_unit_row - rows_to_skip,]
     tdl_data <- raw_tdl[seq(data_start_row - rows_to_skip, nrow(raw_tdl)),]
 
+    # Convert the data to numeric values whenever possible
+    tdl_data <- as.data.frame(
+        lapply(
+            tdl_data,
+            function(x) {
+                # Try to apply as.numeric, but if any warnings or errors occur,
+                # just use the original column values
+                tryCatch(
+                    {
+                        # Code to be executed initially
+                        as.numeric(x)
+                    },
+                    error=function(cond) {
+                        # Code for handling errors
+                        x
+                    },
+                    warning=function(cond) {
+                        # Code for handling warnings
+                        x
+                    }
+                )
+            }
+        ),
+        stringsAsFactors = FALSE
+    )
+
     # Set the column names
     colnames(tdl_data) <- tdl_variable_names
     colnames(tdl_variable_units) <- tdl_variable_names
@@ -81,9 +111,14 @@ read_tdl_file <- function(
     tdl_data[[timestamp_colname]] <-
         as.POSIXlt(tdl_data[[timestamp_colname]], origin = "1970-01-01")
 
+    # Make a "type" data frame
+    tdl_type <- tdl_variable_units
+    tdl_type[1,] <- "Raw TDL"
+
     return(
         list(
             file_name = file_name,
+            type = tdl_type,
             units = tdl_variable_units,
             main_data = tdl_data,
             rows_to_skip = rows_to_skip,
