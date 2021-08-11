@@ -4,11 +4,14 @@ source("tdl_calculations.R")
 source("read_licor.R")
 source("pairing_tdl_and_licor_data.R")
 source("gm_calculations.R")
+source("save_file.R")
 
 # Define constants that will determine the behavior of some functions in this
 # script
 
 PERFORM_CALCULATIONS <- TRUE
+
+SAVE_RESULTS <- TRUE
 
 RESPIRATION <- -0.710568448235977
 
@@ -103,4 +106,8 @@ if (PERFORM_CALCULATIONS) {
     licor_files <- combine_licor_files(licor_files)
 
     licor_files <- calculate_gm(licor_files)
+}
+
+if (SAVE_RESULTS) {
+    save_licor_file(licor_files, "gm_calculations.csv")
 }
