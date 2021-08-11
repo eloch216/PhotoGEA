@@ -1,3 +1,34 @@
+# Specify the respiration rate (in units of micromol / m^2 / s) to store in the
+# Licor file. (The rate can be supplied as a positive or negative number, and
+# its absolute value will be stored.)
+specify_respiration <- function(licor_file, respiration) {
+    # Add some new columns to the Licor file in preparation for adding the
+    # respiration information
+    variables_to_add <- data.frame(
+        rbind(
+            c("in", "respiration", "micromol m^(-2) s^(-1)")
+        ),
+        stringsAsFactors = FALSE
+    )
+    colnames(variables_to_add) <- c("type", "name", "units")
+
+    licor_file <- add_licor_variables(licor_file, variables_to_add)
+
+    # Store it in the Licor file and return the updated file
+    licor_file[['main_data']][['respiration']] <- abs(respiration)
+
+    return(licor_file)
+}
+
+batch_specify_respiration <- function(licor_files, respiration) {
+    lapply(
+        licor_files,
+        function(licor_file) {
+            specify_respiration(licor_file, respiration)
+        }
+    )
+}
+
 # Specify the oxygen level (as a percentage, typically either 2 or 21) to store
 # in the Licor file
 specify_oxygen <- function(licor_file, oxygen) {
@@ -5,11 +36,13 @@ specify_oxygen <- function(licor_file, oxygen) {
     # oxygen information
     variables_to_add <- data.frame(
         rbind(
-            c("in",          "Oxygen",    "%")
+            c("in", "Oxygen", "%")
         ),
         stringsAsFactors = FALSE
     )
     colnames(variables_to_add) <- c("type", "name", "units")
+
+    licor_file <- add_licor_variables(licor_file, variables_to_add)
 
     # Store it in the Licor file and return the updated file
     licor_file[['main_data']][['Oxygen']] <- oxygen
@@ -31,11 +64,13 @@ get_oxygen_info_from_preamble <- function(licor_file) {
     # oxygen information
     variables_to_add <- data.frame(
         rbind(
-            c("in",          "Oxygen",    "%")
+            c("in", "Oxygen", "%")
         ),
         stringsAsFactors = FALSE
     )
     colnames(variables_to_add) <- c("type", "name", "units")
+
+    licor_file <- add_licor_variables(licor_file, variables_to_add)
 
     # Try to get the oxygen information from the Licor file's preamble
     oxygen <- c()

@@ -3,11 +3,12 @@ source("tdl_data_operations.R")
 source("tdl_calculations.R")
 source("read_licor.R")
 source("pairing_tdl_and_licor_data.R")
+source("gm_calculations.R")
 
 # Define constants that will determine the behavior of some functions in this
 # script
 
-MAKE_TDL_PLOTS <- TRUE
+MAKE_TDL_PLOTS <- FALSE
 
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
@@ -89,12 +90,16 @@ licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
 
 licor_files <- batch_get_oxygen_info_from_preamble(licor_files)
 
+licor_files <- batch_specify_respiration(licor_files, -0.710568448235977)
+
 licor_files <- batch_pair_licor_and_tdl(
     licor_files,
     processed_tdl_data[['tdl_data']]
 )
 
 licor_files <- combine_licor_files(licor_files)
+
+licor_files <- calculate_gm(licor_files)
 
 # Make plots, if desired
 if (MAKE_TDL_PLOTS) {
