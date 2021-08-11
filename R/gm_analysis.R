@@ -15,7 +15,7 @@ SAVE_RESULTS <- TRUE
 
 RESPIRATION <- -0.710568448235977
 
-MIN_GM <- 0.0
+MIN_GM <- 0.1
 MAX_GM <- 3.0
 
 # Specify the variables to extract. Note that when the file is loaded, any

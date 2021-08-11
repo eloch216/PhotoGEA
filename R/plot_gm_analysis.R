@@ -95,7 +95,7 @@ if (MAKE_GM_PLOTS) {
     gmc_event_boxplot <- bwplot(
         gmc ~ event | genotype,
         data = licor_files_no_outliers[['main_data']],
-        ylim = c(MIN_GM, MAX_GM)
+        ylim = c(0, MAX_GM)
     )
     x11()
     print(gmc_event_boxplot)
@@ -104,7 +104,7 @@ if (MAKE_GM_PLOTS) {
     gmc_rep_boxplot <- bwplot(
         gmc ~ event_rep | genotype,
         data = licor_files_no_outliers[['main_data']],
-        ylim = c(MIN_GM, MAX_GM)
+        ylim = c(0, MAX_GM)
     )
     x11()
     print(gmc_rep_boxplot)
