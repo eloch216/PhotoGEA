@@ -119,6 +119,10 @@ if (PERFORM_CALCULATIONS) {
 }
 
 if (SAVE_RESULTS) {
-    save_licor_file(licor_files, "gm_calculations_outliers_included.csv")
-    save_licor_file(licor_files_no_outliers, "gm_calculations_outliers_excluded.csv")
+    base_dir <- getwd()
+    if (interactive() & .Platform$OS.type == "windows") {
+        base_dir <- choose.dir(caption="Select folder for output files")
+    }
+    save_licor_file(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"))
+    save_licor_file(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"))
 }
