@@ -10,6 +10,8 @@ source("gm_calculations.R")
 
 MAKE_TDL_PLOTS <- FALSE
 
+MAKE_GM_PLOTS <- TRUE
+
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
 # versions, e.g. the character Δ will be become `Delta`. The conversion rules
@@ -185,4 +187,24 @@ if (MAKE_TDL_PLOTS) {
     )
     x11()
     print(tdl_13CO2_calibration_drift_a2)
+}
+
+if (MAKE_GM_PLOTS) {
+    # Make gmc boxplots for each event
+    gmc_event_boxplot <- bwplot(
+        gmc ~ event | genotype,
+        data = licor_files[['main_data']],
+        ylim = c(-0.5, 2.5)
+    )
+    x11()
+    print(gmc_event_boxplot)
+
+    # Make gmc boxplots for each rep
+    gmc_rep_boxplot <- bwplot(
+        gmc ~ event_rep | genotype,
+        data = licor_files[['main_data']],
+        ylim = c(-4.5, 2.5)
+    )
+    x11()
+    print(gmc_rep_boxplot)
 }

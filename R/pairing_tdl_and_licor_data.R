@@ -115,6 +115,7 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
             c("plant specification",  "genotype",       ""),
             c("plant specification",  "event",          ""),
             c("plant specification",  "replicate",      ""),
+            c("plant specification",  "event_rep",      ""),
             c("plant specification",  "original_file",  "")
         ),
         stringsAsFactors = FALSE
@@ -163,6 +164,7 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     licor_file[['main_data']][['genotype']] <- g
     licor_file[['main_data']][['event']] <- e
     licor_file[['main_data']][['replicate']] <- r
+    licor_file[['main_data']][['event_rep']] <- paste0(e, "-", r)
     licor_file[['main_data']][['original_file']] <- licor_file[['file_name']]
     return(licor_file)
 }
