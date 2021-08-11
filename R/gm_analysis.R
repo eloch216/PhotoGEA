@@ -4,6 +4,7 @@ source("tdl_calculations.R")
 source("read_licor.R")
 source("pairing_tdl_and_licor_data.R")
 source("gm_calculations.R")
+source("calculate_cc.R")
 source("save_file.R")
 
 # Define constants that will determine the behavior of some functions in this
@@ -11,12 +12,19 @@ source("save_file.R")
 
 PERFORM_CALCULATIONS <- TRUE
 
-SAVE_RESULTS <- TRUE
+SAVE_RESULTS <- FALSE
 
 RESPIRATION <- -0.710568448235977
 
 MIN_GM <- 0.1
 MAX_GM <- 3.0
+
+MIN_CC <- 0.0
+
+GM_COLUMN_NAME <- "gmc"
+CI_COLUMN_NAME <- "Ci"
+CC_COLUMN_NAME <- "Cc"
+A_COLUMN_NAME <- "A"
 
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
@@ -110,12 +118,21 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- calculate_gm(licor_files)
 
-    # Make a copy of the data where we have removed extreme gm values
+    licor_files <- calculate_cc(
+        licor_files,
+        CC_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        A_COLUMN_NAME,
+        GM_COLUMN_NAME
+    )
+
+    # Make a copy of the data where we have removed extreme gm and Cc values
     licor_files_no_outliers <- licor_files
     licor_files_no_outliers[['main_data']] <-
         licor_files_no_outliers[['main_data']][which(
             licor_files_no_outliers[['main_data']][['gmc']] > MIN_GM &
-            licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM),]
+            licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
+            licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC),]
 }
 
 if (SAVE_RESULTS) {

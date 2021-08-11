@@ -64,6 +64,7 @@
 source('read_licor.R')
 source('licor_data_operations.R')
 source('gm_table.R')
+source("calculate_cc.R")
 
 library(lattice)
 library(RColorBrewer)
@@ -475,36 +476,6 @@ all_aci_stats <- function(big_aci_data, variables_to_analyze)
     return(result)
 }
 
-# Adds a new column to the Licor data representing the CO2 concentration in the
-# chloroplast (Cc; in micromol / mol). Here we use a standard 1D
-# flux-conductance equation, assuming the CO2 flow is in equilibrium (i.e., that
-# the CO2 flux from the intercellular spaces to the chloroplast is the net
-# assimilation rate). This equation can be found in many places, e.g. as
-# Equation 4 in Sharkey et al. "Fitting photosynthetic carbon dioxide response
-# curves for C3 leaves" Plant, Cell & Environment 30, 1035–1040 (2007)
-# (https://doi.org/10.1111/j.1365-3040.2007.01710.x).
-#
-# Here we assume the following units:
-# - Intercellular CO2 concentration (Ci): micromol / mol
-# - Net assimilation (A): micromol / m^2 / s
-# - Mesophyll conductance to CO2 (gmc): mol / m^2 / s
-calculate_cc <- function(licor_data) {
-    # Add a column for Cc
-    variables_to_add <- data.frame(
-        type = "calculated",
-        name = CC_COLUMN_NAME,
-        units = "micromol mol^(-1)"
-    )
-    licor_data <- add_licor_variables(licor_data, variables_to_add)
-
-    licor_data[['main_data']][[CC_COLUMN_NAME]] <-
-        licor_data[['main_data']][[CI_COLUMN_NAME]] -
-        licor_data[['main_data']][[A_COLUMN_NAME]] /
-        licor_data[['main_data']][[GM_COLUMN_NAME]]
-
-    return(licor_data)
-}
-
 # Adds a new column to the Licor data representing f' (f_prime; dimensionless),
 # a quantity used for determining Vcmax from A-Ci curves. This variable is
 # defined in Long & Bernacchi. "Gas exchange measurements, what can they tell us
@@ -525,7 +496,6 @@ calculate_cc <- function(licor_data) {
 # - Leaf temperature: degrees C
 # - CO2 concentration in the chloroplast (Cc): micromol / mol
 # - O2 concetration in the chloroplast (O2): percent
-
 calculate_fprime <- function(licor_data, O2_percent) {
     # Add a column for f_prime
     variables_to_add <- data.frame(
@@ -811,7 +781,13 @@ if (PERFORM_CALCULATIONS) {
             add_gm_to_licor_data_from_value(combined_info, GM_VALUE)
     }
 
-    combined_info <- calculate_cc(combined_info)
+    combined_info <- calculate_cc(
+        combined_info,
+        CC_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        A_COLUMN_NAME,
+        GM_COLUMN_NAME
+    )
 
     combined_info <- calculate_fprime(combined_info, O2_PERCENT)
 

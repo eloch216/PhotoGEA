@@ -95,7 +95,8 @@ if (MAKE_GM_PLOTS) {
     gmc_event_boxplot <- bwplot(
         gmc ~ event | genotype,
         data = licor_files_no_outliers[['main_data']],
-        ylim = c(0, MAX_GM)
+        ylim = c(0, MAX_GM),
+        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)",
     )
     x11()
     print(gmc_event_boxplot)
@@ -104,8 +105,69 @@ if (MAKE_GM_PLOTS) {
     gmc_rep_boxplot <- bwplot(
         gmc ~ event_rep | genotype,
         data = licor_files_no_outliers[['main_data']],
-        ylim = c(0, MAX_GM)
+        ylim = c(0, MAX_GM),
+        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
     )
     x11()
     print(gmc_rep_boxplot)
+
+    # Make Cc boxplots for each event
+    cc_event_boxplot <- bwplot(
+        Cc ~ event | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        #ylim = c(0, MAX_GM),
+        ylab = "CO2 concentration in chloroplast (micromol / mol)"
+    )
+    x11()
+    print(cc_event_boxplot)
+
+    # Make Cc boxplots for each rep
+    cc_rep_boxplot <- bwplot(
+        Cc ~ event_rep | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        #ylim = c(0, MAX_GM),
+        ylab = "CO2 concentration in chloroplast (micromol / mol)"
+    )
+    x11()
+    print(cc_rep_boxplot)
+
+    # Make Cc boxplots for each event
+    cc_event_boxplot <- bwplot(
+        Cc ~ event | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        ylim = c(0, 275),
+        ylab = "CO2 concentration in chloroplast (micromol / mol)"
+    )
+    x11()
+    print(cc_event_boxplot)
+
+    # Make Cc boxplots for each rep
+    cc_rep_boxplot <- bwplot(
+        Cc ~ event_rep | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        ylim = c(0, 275),
+        ylab = "CO2 concentration in chloroplast (micromol / mol)"
+    )
+    x11()
+    print(cc_rep_boxplot)
+
+    # Make drawdown boxplots for each event
+    drawdown_event_boxplot <- bwplot(
+        Ci-Cc ~ event | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        ylim = c(0, 150),
+        ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
+    )
+    x11()
+    print(drawdown_event_boxplot)
+
+    # Make drawdown boxplots for each rep
+    drawdown_boxplot <- bwplot(
+        Ci-Cc ~ event_rep | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        ylim = c(0, 150),
+        ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
+    )
+    x11()
+    print(drawdown_boxplot)
 }
