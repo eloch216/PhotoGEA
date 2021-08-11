@@ -1,3 +1,77 @@
+# Specify the oxygen level (as a percentage, typically either 2 or 21) to store
+# in the Licor file
+specify_oxygen <- function(licor_file, oxygen) {
+    # Add some new columns to the Licor file in preparation for adding the
+    # oxygen information
+    variables_to_add <- data.frame(
+        rbind(
+            c("in",          "Oxygen",    "%")
+        ),
+        stringsAsFactors = FALSE
+    )
+    colnames(variables_to_add) <- c("type", "name", "units")
+
+    # Store it in the Licor file and return the updated file
+    licor_file[['main_data']][['Oxygen']] <- oxygen
+
+    return(licor_file)
+}
+
+batch_specify_oxygen <- function(licor_files, oxygen) {
+    lapply(
+        licor_files,
+        function(licor_file) {
+            specify_oxygen(licor_file, oxygen)
+        }
+    )
+}
+
+get_oxygen_info_from_preamble <- function(licor_file) {
+    # Add some new columns to the Licor file in preparation for adding the
+    # oxygen information
+    variables_to_add <- data.frame(
+        rbind(
+            c("in",          "Oxygen",    "%")
+        ),
+        stringsAsFactors = FALSE
+    )
+    colnames(variables_to_add) <- c("type", "name", "units")
+
+    # Try to get the oxygen information from the Licor file's preamble
+    oxygen <- c()
+    preamble <- licor_file[['preamble']]
+    for (pe in preamble) {
+        if ("Oxygen" %in% colnames(pe)) {
+            oxygen <- pe[['Oxygen']]
+        }
+    }
+
+    # Make sure we actually got the info
+    if (length(oxygen) == 0) {
+        msg <- paste0(
+            "Could not automatically get oxygen information from Licor file:\n'",
+            licor_file[['file_name']],
+            "'\nConsider adding it with the `specify_oxygen` function rather ",
+            "than using `get_oxygen_info_from_preamble`"
+        )
+        stop(msg)
+    }
+
+    # Store it in the Licor file and return the updated file
+    licor_file[['main_data']][['Oxygen']] <- oxygen
+
+    return(licor_file)
+}
+
+batch_get_oxygen_info_from_preamble <- function(licor_files) {
+    lapply(
+        licor_files,
+        function(licor_file) {
+            get_oxygen_info_from_preamble(licor_file)
+        }
+    )
+}
+
 get_genotype_info_from_licor_filename <- function(licor_file) {
     # Add some new columns to the Licor file in preparation for adding the plant
     # information
