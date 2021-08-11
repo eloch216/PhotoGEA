@@ -85,10 +85,14 @@ licor_files <- batch_extract_licor_variables(
     VARIABLES_TO_EXTRACT
 )
 
+licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
+
 licor_files <- batch_pair_licor_and_tdl(
     licor_files,
     processed_tdl_data[['tdl_data']]
 )
+
+licor_files <- combine_licor_files(licor_files)
 
 # Make plots, if desired
 if (MAKE_TDL_PLOTS) {

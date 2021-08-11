@@ -1,3 +1,72 @@
+get_genotype_info_from_licor_filename <- function(licor_file) {
+    # Add some new columns to the Licor file in preparation for adding the plant
+    # information
+    variables_to_add <- data.frame(
+        rbind(
+            c("plant specification",  "genotype",       ""),
+            c("plant specification",  "event",          ""),
+            c("plant specification",  "replicate",      ""),
+            c("plant specification",  "original_file",  "")
+        ),
+        stringsAsFactors = FALSE
+    )
+    colnames(variables_to_add) <- c("type", "name", "units")
+
+    licor_file <- add_licor_variables(licor_file, variables_to_add)
+
+    # Get the filename without the path
+    name <- basename(licor_file[['file_name']])
+
+    # Search for the following pattern: one or more spaces, followed by one or
+    # more alphanumeric characters, followed by a dash, followed by one or more
+    # alphanumeric characters, followed by a dash, followed by one or more
+    # alphanumeric characters, followed by a period. Essentially, we expect the
+    # filename to end with ' XXX-YYY-ZZZ.xlsx', where `XXX` is the genotype,
+    # `YYY` is the event, and `ZZZ` is the replicate.
+    plant_specification <-
+        regmatches(name, regexpr(" +[[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+\\.", name))
+
+    # Make sure we found something
+    if (length(plant_specification) == 0) {
+        msg <- paste0(
+            "Could not extract plant specification information from Licor file:\n'",
+            licor_file[['file_name']],
+            "'\nThe filename must end with `GGG-EEE-RRR`, where `GGG`, `EEE`, ",
+            "and `RRR` are alphanumeric specifiers for the genotype, event, ",
+            "and replicate represented by the file"
+
+        )
+        stop(msg)
+    }
+
+    # Remove the whitespace and the period
+    plant_specification <- sub(" ", "", plant_specification)
+    plant_specification <- sub("\\.", "", plant_specification)
+
+    # Split the specification by the dashes
+    plant_specification <- strsplit(plant_specification, "-")[[1]]
+
+    g <- plant_specification[1]
+    e <- plant_specification[2]
+    r <- plant_specification[3]
+
+    # Store the info in the file and return it
+    licor_file[['main_data']][['genotype']] <- g
+    licor_file[['main_data']][['event']] <- e
+    licor_file[['main_data']][['replicate']] <- r
+    licor_file[['main_data']][['original_file']] <- licor_file[['file_name']]
+    return(licor_file)
+}
+
+batch_get_genotype_info_from_licor_filename <- function(licor_files) {
+    lapply(
+        licor_files,
+        function(licor_file) {
+            get_genotype_info_from_licor_filename(licor_file)
+        }
+    )
+}
+
 pair_licor_and_tdl <- function(
     licor_file,
     tdl_data
@@ -46,12 +115,23 @@ pair_licor_and_tdl <- function(
     site_phrase <-
         regmatches(trimmed_name, regexpr(" +site[0-9]+ +", trimmed_name))
 
-    # Now just extract the numbers
-    site_number <-
-        regmatches(site_phrase, regexpr("[0-9]+", site_phrase))
+    # Make sure we found something
+    if (length(site_phrase) == 0) {
+        msg <- paste0(
+            "Could not extract TDL site number from Licor file:\n'",
+            licor_file[['file_name']],
+            "'\nThe filename must include the phrase ` siteNN `, where `NN` ",
+            "is the TDL valve number that should be used for the sample data"
+        )
+        stop(msg)
+    }
+
+    # Remove the whitespace and the word "site"
+    site_phrase <- sub(" ", "", site_phrase)
+    site_phrase <- sub("site", "", site_phrase)
 
     # Make sure the result is treated as a numeric value
-    sample_valve <- as.numeric(site_number)
+    sample_valve <- as.numeric(site_phrase)
 
     # The reference valve is one less than the sample valve
     reference_valve <- sample_valve - 1
