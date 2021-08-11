@@ -15,6 +15,9 @@ SAVE_RESULTS <- TRUE
 
 RESPIRATION <- -0.710568448235977
 
+MIN_GM <- 0.0
+MAX_GM <- 3.0
+
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
 # versions, e.g. the character Δ will be become `Delta`. The conversion rules
@@ -106,8 +109,16 @@ if (PERFORM_CALCULATIONS) {
     licor_files <- combine_licor_files(licor_files)
 
     licor_files <- calculate_gm(licor_files)
+
+    # Make a copy of the data where we have removed extreme gm values
+    licor_files_no_outliers <- licor_files
+    licor_files_no_outliers[['main_data']] <-
+        licor_files_no_outliers[['main_data']][which(
+            licor_files_no_outliers[['main_data']][['gmc']] > MIN_GM &
+            licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM),]
 }
 
 if (SAVE_RESULTS) {
-    save_licor_file(licor_files, "gm_calculations.csv")
+    save_licor_file(licor_files, "gm_calculations_outliers_included.csv")
+    save_licor_file(licor_files_no_outliers, "gm_calculations_outliers_excluded.csv")
 }
