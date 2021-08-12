@@ -77,7 +77,28 @@ get_oxygen_info_from_preamble <- function(licor_file) {
     preamble <- licor_file[['preamble']]
     for (pe in preamble) {
         if ("Oxygen" %in% colnames(pe)) {
-            oxygen <- pe[['Oxygen']]
+            # Try to apply as.numeric, but if any warnings or errors occur,
+            # warn the user
+            msg <- paste0(
+                "The 'Oxygen' value specified in the preamble of Licor file\n",
+                licor_file[['file_name']],
+                "\ncould not be converted to a numeric value. Value was: ",
+                pe[['Oxygen']]
+            )
+            tryCatch(
+                {
+                    # Code to be executed initially
+                    oxygen <- as.numeric(pe[['Oxygen']])
+                },
+                error=function(cond) {
+                    # Code for handling errors
+                    stop(msg)
+                },
+                warning=function(cond) {
+                    # Code for handling warnings
+                    stop(msg)
+                }
+            )
         }
     }
 
