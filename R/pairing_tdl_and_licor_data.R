@@ -112,11 +112,13 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     # information
     variables_to_add <- data.frame(
         rbind(
-            c("plant specification",  "genotype",       ""),
-            c("plant specification",  "event",          ""),
-            c("plant specification",  "replicate",      ""),
-            c("plant specification",  "event_rep",      ""),
-            c("plant specification",  "original_file",  "")
+            c("plant specification", "genotype",                 ""),
+            c("plant specification", "event",                    ""),
+            c("plant specification", "replicate",                ""),
+            c("plant specification", "genotype_event",           ""),
+            c("plant specification", "event_replicate",          ""),
+            c("plant specification", "genotype_event_replicate", ""),
+            c("plant specification", "original_file",            "")
         ),
         stringsAsFactors = FALSE
     )
@@ -164,7 +166,9 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     licor_file[['main_data']][['genotype']] <- g
     licor_file[['main_data']][['event']] <- e
     licor_file[['main_data']][['replicate']] <- r
-    licor_file[['main_data']][['event_rep']] <- paste0(e, "-", r)
+    licor_file[['main_data']][['genotype_event']] <- paste0(g, "-", e)
+    licor_file[['main_data']][['event_replicate']] <- paste0(e, "-", r)
+    licor_file[['main_data']][['genotype_event_replicate']] <- paste0(g, "-", e, "-", r)
     licor_file[['main_data']][['original_file']] <- licor_file[['file_name']]
     return(licor_file)
 }
