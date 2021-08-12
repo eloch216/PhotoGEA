@@ -77,7 +77,8 @@ VARIABLES_TO_ANALYZE <- c(
     CI_COLUMN_NAME,
     CC_COLUMN_NAME,
     GM_COLUMN_NAME,
-    "gsw"
+    "gsw",
+    "Ci-Cc"
 )
 
 if (PERFORM_CALCULATIONS) {
