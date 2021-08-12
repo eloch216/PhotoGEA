@@ -168,8 +168,8 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     r <- character(0)
     if (length(plant_specification1) > 0) {
         # Remove the period, the extension, and the whitespace
-        plant_specification1 <- sub(" ", "", plant_specification)
-        plant_specification1 <- sub("\\.xlsx", "", plant_specification)
+        plant_specification1 <- sub(" ", "", plant_specification1)
+        plant_specification1 <- sub("\\.xlsx", "", plant_specification1)
 
         # Split the specification by the dashes
         plant_specification1 <- strsplit(plant_specification1, "-")[[1]]
