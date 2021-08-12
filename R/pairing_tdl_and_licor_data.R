@@ -129,38 +129,65 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     # Get the filename without the path
     name <- basename(licor_file[['file_name']])
 
-    # Search for the following pattern: one or more spaces, followed by one or
+    # There are two naming conventions we need to check
+
+    # Search for the following pattern: one space, followed by one or
     # more alphanumeric characters, followed by a dash, followed by one or more
     # alphanumeric characters, followed by a dash, followed by one or more
     # alphanumeric characters, followed by a period. Essentially, we expect the
     # filename to end with ' XXX-YYY-ZZZ.xlsx', where `XXX` is the genotype,
     # `YYY` is the event, and `ZZZ` is the replicate.
-    plant_specification <-
-        regmatches(name, regexpr(" +[[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+\\.", name))
+    plant_specification1 <-
+        regmatches(name, regexpr(" [[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+\\.", name))
+
+    # Search for the following pattern: one space, followed by one or
+    # more alphanumeric characters, followed by a space, followed by one or more
+    # alphanumeric characters, followed by a space, followed by one or more
+    # alphanumeric characters, followed by a period. Essentially, we expect the
+    # filename to end with ' XXX YYY ZZZ.xlsx', where `XXX` is the genotype,
+    # `YYY` is the event, and `ZZZ` is the replicate.
+    plant_specification2 <-
+        regmatches(name, regexpr(" [[:alnum:]]+ [[:alnum:]]+ [[:alnum:]]+\\.xlsx", name))
 
     # Make sure we found something
-    if (length(plant_specification) == 0) {
+    if (length(plant_specification1) == 0 & length(plant_specification2) == 0) {
         msg <- paste0(
             "Could not extract plant specification information from Licor file:\n'",
             licor_file[['file_name']],
-            "'\nThe filename must end with `GGG-EEE-RRR`, where `GGG`, `EEE`, ",
-            "and `RRR` are alphanumeric specifiers for the genotype, event, ",
-            "and replicate represented by the file"
+            "'\nThe filename must end with ` GGG-EEE-RRR.xlsx` or ` GGG EEE RRR.xlsx`, ",
+            "where `GGG`, `EEE`, and `RRR` are alphanumeric specifiers for ",
+            "the genotype, event, and replicate represented by the file"
 
         )
         stop(msg)
     }
 
-    # Remove the whitespace and the period
-    plant_specification <- sub(" ", "", plant_specification)
-    plant_specification <- sub("\\.", "", plant_specification)
+    # Extract the info
+    g <- character(0)
+    e <- character(0)
+    r <- character(0)
+    if (length(plant_specification1) > 0) {
+        # Remove the period, the extension, and the whitespace
+        plant_specification1 <- sub(" ", "", plant_specification)
+        plant_specification1 <- sub("\\.xlsx", "", plant_specification)
 
-    # Split the specification by the dashes
-    plant_specification <- strsplit(plant_specification, "-")[[1]]
+        # Split the specification by the dashes
+        plant_specification1 <- strsplit(plant_specification1, "-")[[1]]
 
-    g <- plant_specification[1]
-    e <- plant_specification[2]
-    r <- plant_specification[3]
+        g <- plant_specification1[1]
+        e <- plant_specification1[2]
+        r <- plant_specification1[3]
+    } else {
+        # Remove the period and the extension
+        plant_specification2 <- sub("\\.xlsx", "", plant_specification2)
+
+        # Split the specification by the spaces
+        plant_specification2 <- strsplit(plant_specification2, " ")[[1]]
+
+        g <- plant_specification2[2]
+        e <- plant_specification2[3]
+        r <- plant_specification2[4]
+    }
 
     # Store the info in the file and return it
     licor_file[['main_data']][['genotype']] <- g
@@ -226,9 +253,10 @@ pair_licor_and_tdl <- function(
         tools::file_path_sans_ext(basename(licor_file[['file_name']]))
 
     # Search for the following pattern: one or more spaces, followed by 'site',
-    # followed by one or more digits, followed by one or more spaces.
+    # possibly followed by one or more space, followed by one or more digits,
+    # followed by one or more spaces.
     site_phrase <-
-        regmatches(trimmed_name, regexpr(" +site[0-9]+ +", trimmed_name))
+        regmatches(trimmed_name, regexpr(" +site *[0-9]+ +", trimmed_name))
 
     # Make sure we found something
     if (length(site_phrase) == 0) {
