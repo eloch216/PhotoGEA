@@ -74,6 +74,7 @@ one_variable_rc_stats <- function(
     # Prepare the output data frame
     num_rows <- nrow(variable_data)
 
+    npts_name <- paste0(variable, "_npts")
     avg_name <- paste0(variable, "_avg")
     stdev_name <- paste0(variable, "_stdev")
     stderr_name <- paste0(variable, "_stderr")
@@ -82,13 +83,14 @@ one_variable_rc_stats <- function(
 
     result <- data.frame(
         matrix(
-            ncol = 5,
+            ncol = 6,
             nrow = num_rows
         ),
         stringsAsFactors = FALSE
     )
 
     colnames(result) <- c(
+        npts_name,
         avg_name,
         stdev_name,
         stderr_name,
@@ -97,11 +99,12 @@ one_variable_rc_stats <- function(
     )
 
     # Fill in the values
-    n_pts <- ncol(variable_data)
+    npts <- ncol(variable_data)
     for (i in seq_len(num_rows)) {
+        result[[npts_name]][i] <- npts
         result[[avg_name]][i] <- mean(as.numeric(variable_data[i,]))
         result[[stdev_name]][i] <- sd(as.numeric(variable_data[i,]))
-        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(n_pts)
+        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(npts)
         result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
         result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
     }
@@ -127,6 +130,7 @@ one_variable_sa_stats <- function(
     # Prepare the output data frame
     num_rows <- length(variable_data_list)
 
+    npts_name <- paste0(variable, "_npts")
     avg_name <- paste0(variable, "_avg")
     stdev_name <- paste0(variable, "_stdev")
     stderr_name <- paste0(variable, "_stderr")
@@ -135,13 +139,14 @@ one_variable_sa_stats <- function(
 
     result <- data.frame(
         matrix(
-            ncol = 5,
+            ncol = 6,
             nrow = num_rows
         ),
         stringsAsFactors = FALSE
     )
 
     colnames(result) <- c(
+        npts_name,
         avg_name,
         stdev_name,
         stderr_name,
@@ -153,11 +158,12 @@ one_variable_sa_stats <- function(
 
     # Fill in the values
     for (i in seq_len(num_rows)) {
-        n_pts <- length(variable_data_list[[i]])
+        npts <- length(variable_data_list[[i]])
 
+        result[[npts_name]][i] <- npts
         result[[avg_name]][i] <- mean(variable_data_list[[i]])
         result[[stdev_name]][i] <- sd(variable_data_list[[i]])
-        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(n_pts)
+        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(npts)
         result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
         result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
     }
