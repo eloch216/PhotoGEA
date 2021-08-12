@@ -1,3 +1,5 @@
+library(lattice)
+
 source("gm_analysis.R")
 
 MAKE_TDL_PLOTS <- TRUE
