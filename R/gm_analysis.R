@@ -5,6 +5,7 @@ source("read_licor.R")
 source("pairing_tdl_and_licor_data.R")
 source("gm_calculations.R")
 source("calculate_cc.R")
+source("basic_stats.R")
 source("save_file.R")
 
 # Define constants that will determine the behavior of some functions in this
@@ -12,7 +13,7 @@ source("save_file.R")
 
 PERFORM_CALCULATIONS <- TRUE
 
-SAVE_RESULTS <- FALSE
+SAVE_RESULTS <- TRUE
 
 RESPIRATION <- -0.710568448235977
 
@@ -63,6 +64,20 @@ VARIABLES_TO_EXTRACT <- c(
     "Tleaf",
     "Flow_s",
     "Flow_r"
+)
+
+# Specify variables to analyze, i.e., variables where the average, standard
+# deviation, and standard error will be determined for each event across the
+# different reps. Note that when the file is loaded, any Unicode characters
+# such as Greek letters will be converted into `ASCII` versions, e.g. the
+# character Δ will be become `Delta`. The conversion rules are defined in the
+# `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
+VARIABLES_TO_ANALYZE <- c(
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    CC_COLUMN_NAME,
+    GM_COLUMN_NAME,
+    "gsw"
 )
 
 if (PERFORM_CALCULATIONS) {
@@ -133,6 +148,24 @@ if (PERFORM_CALCULATIONS) {
             licor_files_no_outliers[['main_data']][['gmc']] > MIN_GM &
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
             licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC),]
+
+    # Get stats for each event by averaging over all corresponding reps
+    event_stats <- basic_stats(
+        licor_files_no_outliers[['main_data']],
+        'genotype',
+        'event',
+        VARIABLES_TO_ANALYZE,
+        'sa'
+    )
+
+    # Get stats for each rep by averaging over all corresponding observations
+    rep_stats <- basic_stats(
+        licor_files_no_outliers[['main_data']],
+        'genotype',
+        'event_replicate',
+        VARIABLES_TO_ANALYZE,
+        'sa'
+    )
 }
 
 if (SAVE_RESULTS) {
@@ -140,6 +173,15 @@ if (SAVE_RESULTS) {
     if (interactive() & .Platform$OS.type == "windows") {
         base_dir <- choose.dir(caption="Select folder for output files")
     }
+
+    write.csv(processed_tdl_data[['tdl_data']], file.path(base_dir, "tdl_data_processed.csv"), row.names=FALSE)
+    write.csv(processed_tdl_data[['calibration_zero']], file.path(base_dir, "tdl_calibration_zero.csv"), row.names=FALSE)
+    write.csv(processed_tdl_data[['calibration_12CO2']], file.path(base_dir, "tdl_calibration_12CO2.csv"), row.names=FALSE)
+    write.csv(processed_tdl_data[['calibration_13CO2_data']], file.path(base_dir, "tdl_calibration_13CO2_data.csv"), row.names=FALSE)
+    write.csv(processed_tdl_data[['calibration_13CO2_fit']], file.path(base_dir, "tdl_calibration_13CO2_fit.csv"), row.names=FALSE)
+
     save_licor_file(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"))
     save_licor_file(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"))
+    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }

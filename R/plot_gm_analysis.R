@@ -1,6 +1,6 @@
 source("gm_analysis.R")
 
-MAKE_TDL_PLOTS <- FALSE
+MAKE_TDL_PLOTS <- TRUE
 
 MAKE_GM_PLOTS <- TRUE
 
@@ -103,7 +103,7 @@ if (MAKE_GM_PLOTS) {
 
     # Make gmc boxplots for each rep
     gmc_rep_boxplot <- bwplot(
-        gmc ~ event_rep | genotype,
+        gmc ~ event_replicate | genotype,
         data = licor_files_no_outliers[['main_data']],
         ylim = c(0, MAX_GM),
         ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
@@ -123,7 +123,7 @@ if (MAKE_GM_PLOTS) {
 
     # Make Cc boxplots for each rep
     cc_rep_boxplot <- bwplot(
-        Cc ~ event_rep | genotype,
+        Cc ~ event_replicate | genotype,
         data = licor_files_no_outliers[['main_data']],
         #ylim = c(0, MAX_GM),
         ylab = "CO2 concentration in chloroplast (micromol / mol)"
@@ -143,7 +143,7 @@ if (MAKE_GM_PLOTS) {
 
     # Make Cc boxplots for each rep
     cc_rep_boxplot <- bwplot(
-        Cc ~ event_rep | genotype,
+        Cc ~ event_replicate | genotype,
         data = licor_files_no_outliers[['main_data']],
         ylim = c(0, 275),
         ylab = "CO2 concentration in chloroplast (micromol / mol)"
@@ -163,7 +163,7 @@ if (MAKE_GM_PLOTS) {
 
     # Make drawdown boxplots for each rep
     drawdown_boxplot <- bwplot(
-        Ci-Cc ~ event_rep | genotype,
+        Ci-Cc ~ event_replicate | genotype,
         data = licor_files_no_outliers[['main_data']],
         ylim = c(0, 150),
         ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
