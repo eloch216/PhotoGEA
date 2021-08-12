@@ -17,8 +17,8 @@ one_variable_from_one_rep <- function(
 }
 
 # Extracts the values of one variable from several measurement sequences
-# corresponding to all reps of one event, returning the result as a data
-# frame where each column corresponds to one rep
+# corresponding to all reps of one event, returning the result as a list where
+# each named element is a vector that corresponds to one rep
 one_variable_from_all_reps <- function(
     full_data_set,
     event_column_name,
@@ -32,60 +32,48 @@ one_variable_from_all_reps <- function(
 
     all_rep_vals <- unique(event_subset[[rep_column_name]])
 
-    # This function will not work properly if there are less than two reps, so
-    # give a warning message and stop processing the data if this is the case
-    num_reps <- length(all_rep_vals)
-    if (num_reps < 2) {
-        stop(
-            paste0(
-                "The `", event_val, "` ", event_column_name, " only has ",
-                num_reps, " ", rep_column_name,
-                "(s), but at least 2 reps are required"
-            )
+    result <- list()
+
+    for (i in seq_along(all_rep_vals)) {
+        result[[all_rep_vals[i]]] <- one_variable_from_one_rep(
+            event_subset,
+            event_column_name,
+            rep_column_name,
+            event_val,
+            all_rep_vals[i],
+            variable
         )
     }
-
-    # Get the info from the first rep
-    result <- one_variable_from_one_rep(
-        event_subset,
-        event_column_name,
-        rep_column_name,
-        event_val,
-        all_rep_vals[1],
-        variable
-    )
-
-    # Add info from the other reps
-    for (i in 2:num_reps) {
-        result <- cbind(
-            result,
-            one_variable_from_one_rep(
-                event_subset,
-                event_column_name,
-                rep_column_name,
-                event_val,
-                all_rep_vals[i],
-                variable
-            )
-        )
-    }
-
-    colnames(result) <- all_rep_vals
 
     return(result)
 }
 
 # Computes the average, standard deviation, and standard error of the mean for
-# one variable across all reps of a event using the output from a call to
+# one variable across all reps of an event using the output from a call to
 # `one_variable_from_all_reps`, returning the result as a data frame with three
 # columns corresponding to the average, standard deviation, and standard error.
-one_variable_stats <- function(
-    variable_data,
+#
+# Here we assume we are analyzing response curve data, where the same sequence
+# of measurements was made for each rep. In this case, each rep should have the
+# same number of measurements, and we wish to compute stats across the first
+# measurement point, the second measurement point, etc. The end result can be
+# used to plot an average CO2 response curve or an average light response curve
+# with error bars.
+one_variable_rc_stats <- function(
+    variable_data_list,  # should have been produced by `one_variable_from_all_reps`
     variable
 )
 {
+    # Since this is response curve data, we should be able to successfully
+    # coerce the `variable_data_list` to a data frame
+    variable_data <- data.frame(
+        variable_data_list,
+        stringsAsFactors = FALSE
+    )
+
+    # Prepare the output data frame
     num_rows <- nrow(variable_data)
-    num_cols <- ncol(variable_data)
+
     avg_name <- paste0(variable, "_avg")
     stdev_name <- paste0(variable, "_stdev")
     stderr_name <- paste0(variable, "_stderr")
@@ -96,20 +84,24 @@ one_variable_stats <- function(
         matrix(
             ncol = 5,
             nrow = num_rows
-        )
-    )
-    colnames(result) <- c(
-        paste0(variable, "_avg"),
-        paste0(variable, "_stdev"),
-        paste0(variable, "_stderr"),
-        paste0(variable, "_lower"),
-        paste0(variable, "_upper")
+        ),
+        stringsAsFactors = FALSE
     )
 
-    for (i in 1:num_rows) {
-        result[[avg_name]][i] <- mean(variable_data[i,])
-        result[[stdev_name]][i] <- sd(variable_data[i,])
-        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(num_cols)
+    colnames(result) <- c(
+        avg_name,
+        stdev_name,
+        stderr_name,
+        lower_name,
+        upper_name
+    )
+
+    # Fill in the values
+    n_pts <- ncol(variable_data)
+    for (i in seq_len(num_rows)) {
+        result[[avg_name]][i] <- mean(as.numeric(variable_data[i,]))
+        result[[stdev_name]][i] <- sd(as.numeric(variable_data[i,]))
+        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(n_pts)
         result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
         result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
     }
@@ -117,7 +109,63 @@ one_variable_stats <- function(
     return(result)
 }
 
-# Computes stats from one event by applying the `one_variable_stats`
+# Computes the average, standard deviation, and standard error of the mean for
+# one variable across all reps of an event using the output from a call to
+# `one_variable_from_all_reps`, returning the result as a data frame with three
+# columns corresponding to the average, standard deviation, and standard error.
+#
+# Here were assume we are analyzing "signal averaging" data, where the same
+# measurement is repeated multiple times for each rep. In this case, each rep
+# may have a different number of corresponding measurements, and we wish to
+# compute stats for each rep. The end result can be used to compare properties
+# of different reps.
+one_variable_sa_stats <- function(
+    variable_data_list,  # should have been produced by `one_variable_from_all_reps`
+    variable
+)
+{
+    # Prepare the output data frame
+    num_rows <- length(variable_data_list)
+
+    avg_name <- paste0(variable, "_avg")
+    stdev_name <- paste0(variable, "_stdev")
+    stderr_name <- paste0(variable, "_stderr")
+    lower_name <- paste0(variable, "_lower")
+    upper_name <- paste0(variable, "_upper")
+
+    result <- data.frame(
+        matrix(
+            ncol = 5,
+            nrow = num_rows
+        ),
+        stringsAsFactors = FALSE
+    )
+
+    colnames(result) <- c(
+        avg_name,
+        stdev_name,
+        stderr_name,
+        lower_name,
+        upper_name
+    )
+
+    rownames(result) <- names(variable_data_list)
+
+    # Fill in the values
+    for (i in seq_len(num_rows)) {
+        n_pts <- length(variable_data_list[[i]])
+
+        result[[avg_name]][i] <- mean(variable_data_list[[i]])
+        result[[stdev_name]][i] <- sd(variable_data_list[[i]])
+        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(n_pts)
+        result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
+        result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
+    }
+
+    return(result)
+}
+
+# Computes stats from one event by applying the `one_variable_rc_stats`
 # function to multiple variables, combining the data frames into one larger data
 # frame representing all variables from the event.
 one_event_stats <- function(
@@ -125,7 +173,8 @@ one_event_stats <- function(
     event_column_name,
     rep_column_name,
     event_val,
-    variables_to_analyze
+    variables_to_analyze,
+    type
 )
 {
     # This function will not work properly if there are less than two variables
@@ -141,36 +190,59 @@ one_event_stats <- function(
         )
     }
 
-    # Analyze the first variable
-    result <- one_variable_stats(
-        one_variable_from_all_reps(
-            full_data_set,
-            event_column_name,
-            rep_column_name,
-            event_val,
-            variables_to_analyze[1]
-        ),
-        variables_to_analyze[1]
-    )
-
-    # Analyze the remaining variables
-    for (i in 2:num_vars) {
-        result <- cbind(
-            result,
-            one_variable_stats(
+    # Define the function to use for analyzing each variable
+    variable_stats <- c()
+    if (type == "rc") {
+        # This is a response curve analysis
+        variable_stats <- function(var_name) {
+            one_variable_rc_stats(
                 one_variable_from_all_reps(
                     full_data_set,
                     event_column_name,
                     rep_column_name,
                     event_val,
-                    variables_to_analyze[i]
+                    var_name
                 ),
-                variables_to_analyze[i]
+                var_name
             )
+        }
+    } else if (type == "sa") {
+        # This is a signal averaging analysis
+        variable_stats <- function(var_name) {
+            one_variable_sa_stats(
+                one_variable_from_all_reps(
+                    full_data_set,
+                    event_column_name,
+                    rep_column_name,
+                    event_val,
+                    var_name
+                ),
+                var_name
+            )
+        }
+    } else {
+        stop("The stats analysis type must be either `rc` (for response curves) or `sa` (for signal averaging)")
+    }
+
+    # Analyze the first variable
+    result <- variable_stats(variables_to_analyze[1])
+
+    # Analyze the remaining variables
+    for (i in 2:num_vars) {
+        result <- cbind(
+            result,
+            variable_stats(variables_to_analyze[i])
         )
     }
 
+    # Append additional information depending on the analysis type
     result[[event_column_name]] <- event_val
+
+    if (type == "sa") {
+        result[[rep_column_name]] <- rownames(result)
+    }
+
+    rownames(result) <- NULL
 
     return(result)
 }
@@ -178,11 +250,15 @@ one_event_stats <- function(
 # Computes stats for multiple variables from each event in the big data set
 # by calling `one_event_stats` for each event and combining the
 # results into one big data frame.
+#
+# The type can be `rc` for response curve analysis or `sa` for signal averaging
+# analysis.
 basic_stats <- function(
     full_data_set,
     event_column_name,
     rep_column_name,
-    variables_to_analyze
+    variables_to_analyze,
+    type
 )
 {
     all_events <- unique(full_data_set[[event_column_name]])
@@ -206,7 +282,8 @@ basic_stats <- function(
         event_column_name,
         rep_column_name,
         all_events[1],
-        variables_to_analyze
+        variables_to_analyze,
+        type
     )
 
     # Add the results from the others
@@ -218,7 +295,8 @@ basic_stats <- function(
                 event_column_name,
                 rep_column_name,
                 all_events[i],
-                variables_to_analyze
+                variables_to_analyze,
+                type
             )
         )
     }
