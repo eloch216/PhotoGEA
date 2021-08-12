@@ -1,6 +1,6 @@
 source("gm_analysis.R")
 
-MAKE_TDL_PLOTS <- FALSE
+MAKE_TDL_PLOTS <- TRUE
 
 MAKE_GM_PLOTS <- TRUE
 
