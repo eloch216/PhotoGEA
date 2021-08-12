@@ -1,5 +1,5 @@
 # This script loads Licor data from multiple Excel files, combines it into one
-# data structure, and computes averages across multiple reps for each genotype
+# data structure, and computes averages across multiple reps for each event
 # in the data.
 #
 # ------------------------------------------------------------------------------
@@ -65,6 +65,7 @@ source('read_licor.R')
 source('licor_data_operations.R')
 source('gm_table.R')
 source("calculate_cc.R")
+source("basic_stats.R")
 
 library(lattice)
 library(RColorBrewer)
@@ -85,8 +86,8 @@ PERFORM_CALCULATIONS <- TRUE
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
 
-# Decide whether to specify one gm value for all genotypes or to use a table to
-# specify (possibly) different values for each genotype
+# Decide whether to specify one gm value for all events or to use a table to
+# specify (possibly) different values for each event
 USE_GM_TABLE <- FALSE
 GM_VALUE <- 0.6  # mol / m^2 / s
 
@@ -135,7 +136,7 @@ POINT_FOR_BOX_PLOTS <- 1
 ###                                                                        ###
 
 # Specify the names of a few important columns
-GENOTYPE_COLUMN_NAME <- "event"
+EVENT_COLUMN_NAME <- "event"
 REP_COLUMN_NAME <- "replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
@@ -149,7 +150,7 @@ KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
 
 # Specify variables to analyze, i.e., variables where the average, standard
-# deviation, and standard error will be determined for each genotype across the
+# deviation, and standard error will be determined for each event across the
 # different reps. Note that when the file is loaded, any Unicode characters
 # such as Greek letters will be converted into `ASCII` versions, e.g. the
 # character Δ will be become `Delta`. The conversion rules are defined in the
@@ -174,7 +175,7 @@ VARIABLES_TO_EXTRACT <- c(
     "elapsed",
     "date",
     "hhmmss",
-    GENOTYPE_COLUMN_NAME,
+    EVENT_COLUMN_NAME,
     REP_COLUMN_NAME,
     VARIABLES_TO_ANALYZE,
     "Ca",
@@ -199,282 +200,6 @@ PLOT_VCMAX_FITS <- FALSE
 ### FUNCTIONS THAT WILL BE CALLED WHEN THIS SCRIPT RUNS           ###
 ### (THEY SHOULD NOT REQUIRE ANY MODIFICATIONS TO USE THE SCRIPT) ###
 ###                                                               ###
-
-# Checks a set of Licor data to make sure it's suitable for running the
-# analysis, throwing an error if there is a problem
-check_aci_data <- function(big_aci_data) {
-
-    # Make sure there is at least one genotype defined
-    all_genotypes <- unique(all_samples[[GENOTYPE_COLUMN_NAME]])
-
-    if (length(all_genotypes) < 1) {
-        msg <- paste0(
-            "At least one value of the ", GENOTYPE_COLUMN_NAME,
-            " column must be defined"
-        )
-        stop(msg)
-    }
-
-    # Check to make sure each (genotype, rep) pair has the same number of
-    # measurement points
-    measurement_points <- data.frame(matrix(ncol=3, nrow=0))
-    colnames(measurement_points) <-
-        c(GENOTYPE_COLUMN_NAME, REP_COLUMN_NAME, 'num_pts')
-
-    for (genotype_val in all_genotypes) {
-        genotype_subset <- big_aci_data[which(big_aci_data[[GENOTYPE_COLUMN_NAME]] == genotype_val),]
-
-        # Make sure there is at least one rep defined for this genotype
-        all_rep_vals <- unique(genotype_subset[[REP_COLUMN_NAME]])
-
-        if (length(all_rep_vals) < 1) {
-            msg <- paste0(
-                "At least one value of the ", REP_COLUMN_NAME,
-                " column must be defined for ", GENOTYPE_COLUMN_NAME,
-                " = ", genotype_val
-            )
-            stop(msg)
-        }
-
-        # Get the number of measurements for each rep
-        for (rep_val in all_rep_vals) {
-            tmp <- data.frame(matrix(ncol=3, nrow=1))
-            colnames(tmp) <-
-                c(GENOTYPE_COLUMN_NAME, REP_COLUMN_NAME, 'num_pts')
-            tmp[[GENOTYPE_COLUMN_NAME]] <- genotype_val
-            tmp[[REP_COLUMN_NAME]] <- rep_val
-            tmp[['num_pts']] <-
-                nrow(genotype_subset[which(
-                    genotype_subset[[REP_COLUMN_NAME]] == rep_val),])
-            measurement_points <- rbind(measurement_points, tmp)
-        }
-    }
-
-    if (length(unique(measurement_points[['num_pts']])) != 1) {
-        print(measurement_points)
-        msg <- paste0(
-            "Each unique (", GENOTYPE_COLUMN_NAME, ", ",
-            REP_COLUMN_NAME, ") combination must have the same number of ",
-            "associated measurements"
-        )
-        stop(msg)
-    }
-
-    # Check to see if any columns have NA or infinite values
-    na_indx <- apply(
-        big_aci_data,
-        2,
-        function(x) any(is.na(x) | is.infinite(x))
-    )
-    na_cols <- colnames(big_aci_data)[na_indx]
-
-    if (length(na_cols) != 0) {
-        print("The following columns have NA or infinite values:")
-        print(na_cols)
-        stop("The A-Ci data cannot contain any NA or infinite values")
-    }
-}
-
-# Extracts the values of one variable from a measurement sequence corresponding
-# to one rep of one genotype, returning them as a vector
-one_variable_from_one_rep <- function(
-    big_aci_data,
-    genotype_val,
-    rep_val,
-    variable
-)
-{
-    plant_subset <- big_aci_data[which(
-        big_aci_data[[GENOTYPE_COLUMN_NAME]] == genotype_val &
-            big_aci_data[[REP_COLUMN_NAME]] == rep_val),]
-
-    return(plant_subset[[variable]])
-}
-
-# Extracts the values of one variable from several measurement sequences
-# corresponding to all reps of one genotype, returning the result as a data
-# frame where each column corresponds to one rep
-one_variable_from_all_reps <- function(
-    big_aci_data,
-    genotype_val,
-    variable
-)
-{
-    genotype_subset <- big_aci_data[which(
-        big_aci_data[[GENOTYPE_COLUMN_NAME]] == genotype_val),]
-
-    all_rep_vals <- unique(genotype_subset[[REP_COLUMN_NAME]])
-
-    # This function will not work properly if there are less than two reps, so
-    # give a warning message and stop processing the data if this is the case
-    num_reps <- length(all_rep_vals)
-    if (num_reps < 2) {
-        stop(
-            paste0(
-                "The `", genotype_val, "` genotype only has ", num_reps,
-                " rep(s), but at least 2 reps are required"
-            )
-        )
-    }
-
-    # Get the info from the first rep
-    result <- one_variable_from_one_rep(
-        genotype_subset,
-        genotype_val,
-        all_rep_vals[1],
-        variable
-    )
-
-    # Add info from the other reps
-    for (i in 2:num_reps) {
-        result <- cbind(
-            result,
-            one_variable_from_one_rep(
-                genotype_subset,
-                genotype_val,
-                all_rep_vals[i],
-                variable
-            )
-        )
-    }
-
-    colnames(result) <- all_rep_vals
-
-    return(result)
-}
-
-# Computes the average, standard deviation, and standard error of the mean for
-# one variable across all reps of a genotype using the output from a call to
-# `one_variable_from_all_reps`, returning the result as a data frame with three
-# columns corresponding to the average, standard deviation, and standard error.
-one_variable_stats <- function(
-    variable_data,
-    variable
-)
-{
-    num_rows <- length(variable_data[,1])
-    num_cols <- length(variable_data[1,])
-    avg_name <- paste0(variable, "_avg")
-    stdev_name <- paste0(variable, "_stdev")
-    stderr_name <- paste0(variable, "_stderr")
-    lower_name <- paste0(variable, "_lower")
-    upper_name <- paste0(variable, "_upper")
-
-    result <- data.frame(
-        matrix(
-            ncol = 2,
-            nrow = num_rows
-        )
-    )
-    colnames(result) <- c(
-        paste0(variable, "_avg"),
-        paste0(variable, "_stdev")
-    )
-
-    for (i in 1:num_rows) {
-        result[[avg_name]][i] <- mean(variable_data[i,])
-        result[[stdev_name]][i] <- sd(variable_data[i,])
-        result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(num_cols)
-        result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
-        result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
-    }
-
-    return(result)
-}
-
-# Computes stats from one genotype by applying the `one_variable_stats`
-# function to multiple variables, combining the data frames into one larger data
-# frame representing all variables from the genotype.
-one_genotype_aci_stats <- function(
-    big_aci_data,
-    genotype_val,
-    variables_to_analyze
-)
-{
-    # This function will not work properly if there are less than two variables
-    # to analyze, so give a warning message and stop processing the data if this
-    # is the case
-    num_vars <- length(variables_to_analyze)
-    if (num_vars < 2) {
-        stop(
-            paste0(
-                "Only ", num_vars, " variable(s) were specified for analysis, ",
-                "but at least 2 variables are required"
-            )
-        )
-    }
-
-    # Analyze the first variable
-    result <- one_variable_stats(
-        one_variable_from_all_reps(
-            big_aci_data,
-            genotype_val,
-            variables_to_analyze[1]
-        ),
-        variables_to_analyze[1]
-    )
-
-    # Analyze the remaining variables
-    for (i in 2:num_vars) {
-        result <- cbind(
-            result,
-            one_variable_stats(
-                one_variable_from_all_reps(
-                    big_aci_data,
-                    genotype_val,
-                    variables_to_analyze[i]
-                ),
-                variables_to_analyze[i]
-            )
-        )
-    }
-
-    result[[GENOTYPE_COLUMN_NAME]] <- genotype_val
-    result[[MEASUREMENT_NUMBER_NAME]] <- 1:length(result[,1])
-
-    return(result)
-}
-
-# Computes stats for multiple variables from each genotype in the big data set
-# by calling `one_genotype_aci_stats` for each genotype and combining the
-# results into one big data frame.
-all_aci_stats <- function(big_aci_data, variables_to_analyze)
-{
-    all_genotypes <- unique(all_samples[[GENOTYPE_COLUMN_NAME]])
-
-    # This function will not work properly if there are less than two genotypes,
-    # so give a warning message and stop processing the data if this is the case
-    num_gens <- length(all_genotypes)
-    if (num_gens < 2) {
-        stop(
-            paste0(
-                "Only ", num_gens, " genotype(s) was specified for analysis, ",
-                "but at least 2 genotypes are required"
-            )
-        )
-    }
-
-    # Get the info from the first genotype
-    result <- one_genotype_aci_stats(
-        big_aci_data,
-        all_genotypes[1],
-        variables_to_analyze
-    )
-
-    # Add the results from the others
-    for (i in 2:num_gens) {
-        result <- rbind(
-            result,
-            one_genotype_aci_stats(
-                big_aci_data,
-                all_genotypes[i],
-                variables_to_analyze
-            )
-        )
-    }
-
-    return(result)
-}
 
 # Adds a new column to the Licor data representing f' (f_prime; dimensionless),
 # a quantity used for determining Vcmax from A-Ci curves. This variable is
@@ -588,10 +313,10 @@ one_rep_vcmax_fit <- function(rep_data) {
     )
 }
 
-one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
-    genotype_data <- big_aci_data[big_aci_data[[GENOTYPE_COLUMN_NAME]] == genotype_val,]
+one_event_vcmax_fit <- function(big_aci_data, event_val, make_plots) {
+    event_data <- big_aci_data[big_aci_data[[EVENT_COLUMN_NAME]] == event_val,]
 
-    all_reps <- unique(genotype_data[[REP_COLUMN_NAME]])
+    all_reps <- unique(event_data[[REP_COLUMN_NAME]])
 
     # This function will not work properly if there are less than two reps,
     # so give a warning message and stop processing the data if this is the case
@@ -611,7 +336,7 @@ one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
 
         caption <- paste0(
             "Vcmax fitting for rep ", rep_val,
-            " of genotype ", genotype_val, ":\n",
+            " of event ", event_val, ":\n",
             "Vcmax = ", fit_result[['fit_info']][['Vcmax']],
             " micromol / m^2 / s\n",
             "Rd = ", fit_result[['fit_info']][['Rd']],
@@ -636,7 +361,7 @@ one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
 
     # Get the info from the first rep and plot if necessary
     rep_result <-
-        one_rep_vcmax_fit(genotype_data[genotype_data[[REP_COLUMN_NAME]] == all_reps[1],])
+        one_rep_vcmax_fit(event_data[event_data[[REP_COLUMN_NAME]] == all_reps[1],])
 
     fit_info_result <- rep_result[['fit_info']]
     rep_data_result <- rep_result[['rep_data']]
@@ -648,7 +373,7 @@ one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
     # Process the remaining reps
     for (i in 2:length(all_reps)) {
         rep_result <-
-            one_rep_vcmax_fit(genotype_data[genotype_data[[REP_COLUMN_NAME]] == all_reps[i],])
+            one_rep_vcmax_fit(event_data[event_data[[REP_COLUMN_NAME]] == all_reps[i],])
 
         fit_info_result <- rbind(fit_info_result, rep_result[['fit_info']])
         rep_data_result <- rbind(rep_data_result, rep_result[['rep_data']])
@@ -659,7 +384,7 @@ one_genotype_vcmax_fit <- function(big_aci_data, genotype_val, make_plots) {
     }
 
     fit_info_result[[REP_COLUMN_NAME]] <- all_reps
-    fit_info_result[[GENOTYPE_COLUMN_NAME]] <- genotype_val
+    fit_info_result[[EVENT_COLUMN_NAME]] <- event_val
 
     return(
         list(
@@ -687,32 +412,32 @@ fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
         )
     )
 
-    all_genotypes <- unique(all_samples[[GENOTYPE_COLUMN_NAME]])
+    all_events <- unique(all_samples[[EVENT_COLUMN_NAME]])
 
-    # This function will not work properly if there are less than two genotypes,
+    # This function will not work properly if there are less than two events,
     # so give a warning message and stop processing the data if this is the case
-    num_gens <- length(all_genotypes)
+    num_gens <- length(all_events)
     if (num_gens < 2) {
         stop(
             paste0(
-                "Only ", num_gens, " genotype(s) was specified for analysis, ",
-                "but at least 2 genotypes are required"
+                "Only ", num_gens, " event(s) was specified for analysis, ",
+                "but at least 2 events are required"
             )
         )
     }
 
-    # Get the info from the first genotype
-    result <- one_genotype_vcmax_fit(
+    # Get the info from the first event
+    result <- one_event_vcmax_fit(
         big_aci_data_subset,
-        all_genotypes[1],
+        all_events[1],
         make_plots
     )
 
     # Add the results from the others
     for (i in 2:num_gens) {
-        temp_result <- one_genotype_vcmax_fit(
+        temp_result <- one_event_vcmax_fit(
             big_aci_data_subset,
-            all_genotypes[i],
+            all_events[i],
             make_plots
         )
 
@@ -766,14 +491,14 @@ if (PERFORM_CALCULATIONS) {
     if (USE_GM_TABLE) {
         gm_table_info <- read_gm_table(
             GM_TABLE_FILE_TO_PROCESS,
-            GENOTYPE_COLUMN_NAME,
+            EVENT_COLUMN_NAME,
             GM_COLUMN_NAME
         )
 
         combined_info <- add_gm_to_licor_data_from_table(
             combined_info,
             gm_table_info,
-            GENOTYPE_COLUMN_NAME,
+            EVENT_COLUMN_NAME,
             GM_COLUMN_NAME
         )
     } else {
@@ -793,9 +518,20 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 
-    check_aci_data(all_samples)
+    check_basic_stats(
+        all_samples,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME
+    )
 
-    all_stats <- all_aci_stats(all_samples, VARIABLES_TO_ANALYZE)
+    all_stats <- basic_stats(
+        all_samples,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        VARIABLES_TO_ANALYZE
+    )
+
+    all_stats[[MEASUREMENT_NUMBER_NAME]] <- seq_len(nrow(all_stats))
 
     vcmax_results <- fit_for_vcmax(all_samples, CI_THRESHOLD, PLOT_VCMAX_FITS)
 
@@ -814,40 +550,41 @@ all_samples_subset <- all_samples_subset[order(
     all_samples_subset[[CI_COLUMN_NAME]]),]
 
 all_samples_subset <- all_samples_subset[order(
-    all_samples_subset[[GENOTYPE_COLUMN_NAME]]),]
+    all_samples_subset[[EVENT_COLUMN_NAME]]),]
 
 # Make a subset of the stats result that only includes the desired measurement
 # points, and make sure it is ordered properly for plotting.
 all_stats_subset <- all_stats[which(
-    all_stats[[MEASUREMENT_NUMBER_NAME]] %in% MEASUREMENT_NUMBERS),]
+    (all_stats[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
+        %in% MEASUREMENT_NUMBERS),]
 
 all_stats_subset <- all_stats_subset[order(
     all_stats_subset[[paste0(CI_COLUMN_NAME, "_avg")]]),]
 
 all_stats_subset <- all_stats_subset[order(
-    all_stats_subset[[GENOTYPE_COLUMN_NAME]]),]
+    all_stats_subset[[EVENT_COLUMN_NAME]]),]
 
 # Make a subset of the full result for just the one measurement point and
-# convert its genotype column to a factor so we can control the order of the
+# convert its event column to a factor so we can control the order of the
 # boxes
 all_samples_one_point <- all_samples[which(
     (all_samples[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
         == POINT_FOR_BOX_PLOTS),]
 
-all_samples_one_point[[GENOTYPE_COLUMN_NAME]] <- factor(
-    all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
+all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
+    all_samples_one_point[[EVENT_COLUMN_NAME]],
     levels = sort(
-        unique(all_samples_one_point[[GENOTYPE_COLUMN_NAME]]),
+        unique(all_samples_one_point[[EVENT_COLUMN_NAME]]),
         decreasing = TRUE
     )
 )
 
-# Convert the genotype column of the vcmax fitting results to a factor so we
+# Convert the event column of the vcmax fitting results to a factor so we
 # can control the order of boxes in a box plot
-vcmax_fits[[GENOTYPE_COLUMN_NAME]] <- factor(
-    vcmax_fits[[GENOTYPE_COLUMN_NAME]],
+vcmax_fits[[EVENT_COLUMN_NAME]] <- factor(
+    vcmax_fits[[EVENT_COLUMN_NAME]],
     levels = sort(
-        unique(vcmax_fits[[GENOTYPE_COLUMN_NAME]]),
+        unique(vcmax_fits[[EVENT_COLUMN_NAME]]),
         decreasing = TRUE
     )
 )

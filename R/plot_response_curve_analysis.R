@@ -19,15 +19,15 @@ source('response_curve_analysis.R')
 ### PLOT RESPONSE CURVES TO CI ###
 ###                            ###
 
-rc_caption <- "Average response curves for each genotype"
+rc_caption <- "Average response curves for each event"
 
-# Choose colors for the different genotypes to use when plotting average A-Ci
+# Choose colors for the different events to use when plotting average A-Ci
 # curves. To see other available palettes, use one of the following commands:
 #  display.brewer.all(colorblindFriendly = TRUE)
 #  display.brewer.all(colorblindFriendly = FALSE)
 rc_cols <- brewer.pal(9, "Set1")
 rc_cols <- c("#000000", rc_cols[c(1:5,7:9)])
-rc_cols <- rc_cols[1:length(unique(all_stats_subset[[GENOTYPE_COLUMN_NAME]]))]
+rc_cols <- rc_cols[1:length(unique(all_stats_subset[[EVENT_COLUMN_NAME]]))]
 rc_cols <- rev(rc_cols)
 
 # Make a slightly different version of the color specification to use for the
@@ -41,7 +41,7 @@ line_width <- 1
 # Plot the average A-Ci curves
 aci_curves <- xyplot(
     all_stats_subset[['A_avg']] ~ all_stats_subset[['Ci_avg']],
-    group = all_stats_subset[[GENOTYPE_COLUMN_NAME]],
+    group = all_stats_subset[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 16,
     lwd = line_width,
@@ -72,7 +72,7 @@ print(aci_curves)
 # Plot the average ETR-Ci curves
 eci_curves <- xyplot(
     all_stats_subset[['ETR_avg']] ~ all_stats_subset[['Ci_avg']],
-    group = all_stats_subset[[GENOTYPE_COLUMN_NAME]],
+    group = all_stats_subset[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 16,
     lwd = line_width,
@@ -104,7 +104,7 @@ print(eci_curves)
 ### PLOT ALL INDIVIDUAL RESPONSE CURVES ###
 ###                                     ###
 
-ind_caption <- "Individual response curves for each genotype and rep"
+ind_caption <- "Individual response curves for each event and rep"
 
 num_reps <- length(unique(all_samples_subset[[REP_COLUMN_NAME]]))
 
@@ -119,10 +119,10 @@ ind_cols <- c(
     brewer.pal(8, "Dark2")
 )
 
-# Plot each individual A-Ci curve, where each genotype will have multiple traces
+# Plot each individual A-Ci curve, where each event will have multiple traces
 # corresponding to different plants
 multi_aci_curves <- xyplot(
-    all_samples_subset[['A']] ~ all_samples_subset[['Ci']] | all_samples_subset[[GENOTYPE_COLUMN_NAME]],
+    all_samples_subset[['A']] ~ all_samples_subset[['Ci']] | all_samples_subset[[EVENT_COLUMN_NAME]],
     group = all_samples_subset[[REP_COLUMN_NAME]],
     type = 'b',
     pch = 20,
@@ -142,10 +142,10 @@ multi_aci_curves <- xyplot(
 x11(width = 8, height = 6)
 print(multi_aci_curves)
 
-# Plot each individual gsw-Ci curve, where each genotype will have multiple
+# Plot each individual gsw-Ci curve, where each event will have multiple
 # traces corresponding to different plants
 multi_gsci_curves <- xyplot(
-    all_samples_subset[['gsw']] ~ all_samples_subset[['Ci']] | all_samples_subset[[GENOTYPE_COLUMN_NAME]],
+    all_samples_subset[['gsw']] ~ all_samples_subset[['Ci']] | all_samples_subset[[EVENT_COLUMN_NAME]],
     group = all_samples_subset[[REP_COLUMN_NAME]],
     type = 'b',
     pch = 20,
@@ -178,7 +178,7 @@ boxplot_caption <- paste0(
 )
 
 a_boxplot <- bwplot(
-    all_samples_one_point[['A']] ~ all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
+    all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     ylim = c(0, 35),
     main = boxplot_caption,
@@ -189,7 +189,7 @@ x11(width = 6, height = 6)
 print(a_boxplot)
 
 phips2_boxplot <- bwplot(
-    all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
+    all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Photosystem II operating efficiency (dimensionless)",
     ylim = c(0, 0.4),
     main = boxplot_caption,
@@ -201,7 +201,7 @@ print(phips2_boxplot)
 
 
 etr_boxplot <- bwplot(
-    all_samples_one_point[['ETR']] ~ all_samples_one_point[[GENOTYPE_COLUMN_NAME]],
+    all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Electron transport rate (micromol / m^2 / s)",
     ylim = c(0, 275),
     main = boxplot_caption,
@@ -222,7 +222,7 @@ vcmax_boxplot_caption <- paste(
 )
 
 vcmax_boxplot <- bwplot(
-    vcmax_fits[['Vcmax']] ~ vcmax_fits[[GENOTYPE_COLUMN_NAME]],
+    vcmax_fits[['Vcmax']] ~ vcmax_fits[[EVENT_COLUMN_NAME]],
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     xlab = "Genotype",
     ylim = c(0, 200),

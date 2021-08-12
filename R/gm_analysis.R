@@ -5,6 +5,7 @@ source("read_licor.R")
 source("pairing_tdl_and_licor_data.R")
 source("gm_calculations.R")
 source("calculate_cc.R")
+source("basic_stats.R")
 source("save_file.R")
 
 # Define constants that will determine the behavior of some functions in this
@@ -63,6 +64,22 @@ VARIABLES_TO_EXTRACT <- c(
     "Tleaf",
     "Flow_s",
     "Flow_r"
+)
+
+# Specify variables to analyze, i.e., variables where the average, standard
+# deviation, and standard error will be determined for each event across the
+# different reps. Note that when the file is loaded, any Unicode characters
+# such as Greek letters will be converted into `ASCII` versions, e.g. the
+# character Δ will be become `Delta`. The conversion rules are defined in the
+# `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
+VARIABLES_TO_ANALYZE <- c(
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    CC_COLUMN_NAME,
+    GM_COLUMN_NAME,
+    "gsw",
+    "PhiPS2",
+    "ETR"
 )
 
 if (PERFORM_CALCULATIONS) {
