@@ -177,15 +177,14 @@ one_event_stats <- function(
     type
 )
 {
-    # This function will not work properly if there are less than two variables
-    # to analyze, so give a warning message and stop processing the data if this
-    # is the case
+    # This function will not work properly if there are no variables to analyze,
+    # so give a warning message and stop processing the data if this is the case
     num_vars <- length(variables_to_analyze)
-    if (num_vars < 2) {
+    if (num_vars < 1) {
         stop(
             paste0(
                 "Only ", num_vars, " variable(s) were specified for analysis, ",
-                "but at least 2 variables are required"
+                "but at least 1 variable is required"
             )
         )
     }
@@ -225,27 +224,148 @@ one_event_stats <- function(
     }
 
     # Analyze the first variable
-    result <- variable_stats(variables_to_analyze[1])
+    first_stats <- variable_stats(variables_to_analyze[1])
 
-    # Analyze the remaining variables
-    for (i in 2:num_vars) {
+    # Set up the result data frame
+    result <- data.frame(
+        matrix(
+            ncol = 0,
+            nrow = nrow(first_stats)
+        ),
+        stringsAsFactors = FALSE
+    )
+
+    # Fill in the results
+    for (v in variables_to_analyze) {
         result <- cbind(
             result,
-            variable_stats(variables_to_analyze[i])
+            variable_stats(v)
         )
     }
 
-    # Append additional information depending on the analysis type
-    result[[event_column_name]] <- event_val
-
+    # Append additional information depending on the analysis type, using
+    # `cbind` to make sure the new columns appear in front
     if (type == "sa") {
-        result[[rep_column_name]] <- rownames(result)
+        result <- cbind(
+            rownames(first_stats),
+            result
+        )
+        colnames(result)[1] <- rep_column_name
     }
 
-    rownames(result) <- NULL
+    result <- cbind(
+        event_val,
+        result
+    )
+    colnames(result)[1] <- event_column_name
 
+    # Remove any row names that may have appeared and return the result
+    rownames(result) <- NULL
     return(result)
 }
+
+
+# Checks a set of Licor data to make sure it's suitable for running the
+# 'basic_stats' function, throwing an error if there is a problem
+check_basic_stats <- function(
+    full_data_set,
+    event_column_name,
+    rep_column_name,
+    variables_to_analyze,
+    type
+)
+{
+
+    # Make sure there is at least one event defined
+    all_events <- unique(full_data_set[[event_column_name]])
+
+    if (length(all_events) < 1) {
+        msg <- paste0(
+            "At least one value of the ", event_column_name,
+            " column must be defined"
+        )
+        stop(msg)
+    }
+
+    # Make sure all the variables are included in the data set
+    var_not_in_set <-
+        variables_to_analyze[!variables_to_analyze %in% colnames(full_data_set)]
+    if (length(var_not_in_set) > 0) {
+        print("The following variables were specified for analysis but are not present in the input data frame:")
+        print(var_not_in_set)
+        stop("The input data must contain all the variables specified for analysis")
+    }
+
+    # If this is a response curve analysis, we should check to make sure each
+    # (event, rep) pair has the same number of measurement points
+    if (type == 'rc') {
+        # Make a data frame to keep track of the number of points for each
+        # (event, rep) pair
+        measurement_points <- data.frame(matrix(ncol=3, nrow=0))
+        colnames(measurement_points) <-
+            c(event_column_name, rep_column_name, 'num_pts')
+
+        # Check through each event and rep
+        for (event_val in all_events) {
+            event_subset <-
+                full_data_set[which(full_data_set[[event_column_name]] == event_val),]
+
+            # Make sure there is at least one rep defined for this event
+            all_rep_vals <- unique(event_subset[[rep_column_name]])
+
+            if (length(all_rep_vals) < 1) {
+                msg <- paste0(
+                    "At least one value of the ", rep_column_name,
+                    " column must be defined for ", event_column_name,
+                    " = ", event_val
+                )
+                stop(msg)
+            }
+
+            # Get the number of measurements for each rep
+            for (rep_val in all_rep_vals) {
+                tmp <- data.frame(matrix(ncol=3, nrow=1))
+
+                colnames(tmp) <-
+                    c(event_column_name, rep_column_name, 'num_pts')
+
+                tmp[[event_column_name]] <- event_val
+                tmp[[rep_column_name]] <- rep_val
+                tmp[['num_pts']] <-
+                    nrow(event_subset[which(
+                        event_subset[[rep_column_name]] == rep_val),])
+
+                measurement_points <- rbind(measurement_points, tmp)
+            }
+        }
+
+        # Make sure the num_pts values are all the same
+        if (length(unique(measurement_points[['num_pts']])) != 1) {
+            print(measurement_points)
+            msg <- paste0(
+                "Each unique (", event_column_name, ", ",
+                rep_column_name, ") combination must have the same number of ",
+                "associated measurements"
+            )
+            stop(msg)
+        }
+    }
+
+    # Check to see if any columns have NA or infinite values
+    na_indx <- apply(
+        full_data_set,
+        2,
+        function(x) any(is.na(x) | is.infinite(x))
+    )
+    na_cols <- colnames(full_data_set)[na_indx]
+
+    if (length(na_cols) != 0) {
+        print("The following columns have NA or infinite values:")
+        print(na_cols)
+        stop("The data for stats analysis cannot contain any NA or infinite values")
+    }
+}
+
 
 # Computes stats for multiple variables from each event in the big data set
 # by calling `one_event_stats` for each event and combining the
@@ -261,23 +381,32 @@ basic_stats <- function(
     type
 )
 {
+    # Check the data set for compatibility with this analysis
+    check_basic_stats(
+        full_data_set,
+        event_column_name,
+        rep_column_name,
+        variables_to_analyze,
+        type
+    )
+
     all_events <- unique(full_data_set[[event_column_name]])
 
-    # This function will not work properly if there are less than two events,
-    # so give a warning message and stop processing the data if this is the case
+    # This function will not work properly if there are no events, so give a
+    # warning message and stop processing the data if this is the case
     num_events <- length(all_events)
-    if (num_events < 2) {
+    if (num_events < 1) {
         stop(
             paste0(
                 "Only ", num_events, " ", event_column_name,
                 "(s) was specified for analysis, ",
-                "but at least 2 are required"
+                "but at least 1 is required"
             )
         )
     }
 
     # Get the info from the first event
-    result <- one_event_stats(
+    first_event <- one_event_stats(
         full_data_set,
         event_column_name,
         rep_column_name,
@@ -286,8 +415,18 @@ basic_stats <- function(
         type
     )
 
+    # Prepare the output data frame
+    result <- data.frame(
+        matrix(
+            nrow = 0,
+            ncol = ncol(first_event)
+        ),
+        stringsAsFactors = FALSE
+    )
+    colnames(result) <- colnames(first_event)
+
     # Add the results from the others
-    for (i in 2:num_events) {
+    for (i in seq_along(all_events)) {
         result <- rbind(
             result,
             one_event_stats(
@@ -302,85 +441,4 @@ basic_stats <- function(
     }
 
     return(result)
-}
-
-# Checks a set of Licor data to make sure it's suitable for running the
-# 'basic_stats' function, throwing an error if there is a problem
-check_basic_stats <- function(
-    full_data_set,
-    event_column_name,
-    rep_column_name
-)
-{
-
-    # Make sure there is at least one event defined
-    all_events <- unique(full_data_set[[event_column_name]])
-
-    if (length(all_events) < 1) {
-        msg <- paste0(
-            "At least one value of the ", event_column_name,
-            " column must be defined"
-        )
-        stop(msg)
-    }
-
-    # Check to make sure each (event, rep) pair has the same number of
-    # measurement points
-    measurement_points <- data.frame(matrix(ncol=3, nrow=0))
-    colnames(measurement_points) <-
-        c(event_column_name, rep_column_name, 'num_pts')
-
-    for (event_val in all_events) {
-        event_subset <-
-            full_data_set[which(full_data_set[[event_column_name]] == event_val),]
-
-        # Make sure there is at least one rep defined for this event
-        all_rep_vals <- unique(event_subset[[rep_column_name]])
-
-        if (length(all_rep_vals) < 1) {
-            msg <- paste0(
-                "At least one value of the ", rep_column_name,
-                " column must be defined for ", event_column_name,
-                " = ", event_val
-            )
-            stop(msg)
-        }
-
-        # Get the number of measurements for each rep
-        for (rep_val in all_rep_vals) {
-            tmp <- data.frame(matrix(ncol=3, nrow=1))
-            colnames(tmp) <-
-                c(event_column_name, rep_column_name, 'num_pts')
-            tmp[[event_column_name]] <- event_val
-            tmp[[rep_column_name]] <- rep_val
-            tmp[['num_pts']] <-
-                nrow(event_subset[which(
-                    event_subset[[rep_column_name]] == rep_val),])
-            measurement_points <- rbind(measurement_points, tmp)
-        }
-    }
-
-    if (length(unique(measurement_points[['num_pts']])) != 1) {
-        print(measurement_points)
-        msg <- paste0(
-            "Each unique (", event_column_name, ", ",
-            rep_column_name, ") combination must have the same number of ",
-            "associated measurements"
-        )
-        stop(msg)
-    }
-
-    # Check to see if any columns have NA or infinite values
-    na_indx <- apply(
-        full_data_set,
-        2,
-        function(x) any(is.na(x) | is.infinite(x))
-    )
-    na_cols <- colnames(full_data_set)[na_indx]
-
-    if (length(na_cols) != 0) {
-        print("The following columns have NA or infinite values:")
-        print(na_cols)
-        stop("The A-Ci data cannot contain any NA or infinite values")
-    }
 }

@@ -77,9 +77,7 @@ VARIABLES_TO_ANALYZE <- c(
     CI_COLUMN_NAME,
     CC_COLUMN_NAME,
     GM_COLUMN_NAME,
-    "gsw",
-    "PhiPS2",
-    "ETR"
+    "gsw"
 )
 
 if (PERFORM_CALCULATIONS) {
@@ -150,6 +148,24 @@ if (PERFORM_CALCULATIONS) {
             licor_files_no_outliers[['main_data']][['gmc']] > MIN_GM &
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
             licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC),]
+
+    # Get stats for each event by averaging over all corresponding reps
+    event_stats <- basic_stats(
+        licor_files_no_outliers[['main_data']],
+        'genotype',
+        'event',
+        VARIABLES_TO_ANALYZE,
+        'sa'
+    )
+
+    # Get stats for each rep by averaging over all corresponding observations
+    rep_stats <- basic_stats(
+        licor_files_no_outliers[['main_data']],
+        'genotype',
+        'event_replicate',
+        VARIABLES_TO_ANALYZE,
+        'sa'
+    )
 }
 
 if (SAVE_RESULTS) {

@@ -518,17 +518,12 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 
-    check_basic_stats(
-        all_samples,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME
-    )
-
     all_stats <- basic_stats(
         all_samples,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
-        VARIABLES_TO_ANALYZE
+        VARIABLES_TO_ANALYZE,
+        "rc"
     )
 
     all_stats[[MEASUREMENT_NUMBER_NAME]] <- seq_len(nrow(all_stats))
