@@ -27,6 +27,11 @@ CI_COLUMN_NAME <- "Ci"
 CC_COLUMN_NAME <- "Cc"
 A_COLUMN_NAME <- "A"
 
+TDL_VALVE_COLUMN_NAME <- 'valve_number'
+TDL_CYCLE_START_VALVE <- 20
+TDL_EXPECTED_CYCLE_LENGTH_MINUTES <- 2.7
+TDL_EXPECTED_CYCLE_NUM_PTS <- 9
+
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
 # versions, e.g. the character Δ will be become `Delta`. The conversion rules
@@ -98,7 +103,13 @@ if (PERFORM_CALCULATIONS) {
 
     tdl_files <- combine_tdl_files(tdl_files)
 
-    tdl_files <- identify_tdl_cycles(tdl_files)
+    tdl_files <- identify_tdl_cycles(
+        tdl_files,
+        TDL_VALVE_COLUMN_NAME,
+        TDL_CYCLE_START_VALVE,
+        TDL_EXPECTED_CYCLE_LENGTH_MINUTES,
+        TDL_EXPECTED_CYCLE_NUM_PTS
+    )
 
     processed_tdl_data <- process_tdl_cycles(tdl_files[['main_data']])
 
