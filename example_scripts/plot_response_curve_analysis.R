@@ -13,6 +13,9 @@
 #
 # For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
+library(lattice)
+library(RColorBrewer)
+
 source('response_curve_analysis.R')
 
 ###                            ###

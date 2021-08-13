@@ -1,12 +1,4 @@
-source("read_tdl.R")
-source("tdl_data_operations.R")
-source("tdl_calculations.R")
-source("read_licor.R")
-source("pairing_tdl_and_licor_data.R")
-source("gm_calculations.R")
-source("calculate_cc.R")
-source("basic_stats.R")
-source("save_file.R")
+library(PhotoGEA)
 
 # Define constants that will determine the behavior of some functions in this
 # script

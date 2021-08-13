@@ -18,8 +18,6 @@
 # and choose `Calculate Now`. (Alternatively, press F9.) Then save the file and
 # close it. See https://github.com/tidyverse/readxl/issues/495 for more details.
 
-library(openxlsx)
-
 # Specify ASCII replacements for specific Unicode characters or sequences of
 # Unicode characters. This list is not intended to be exhaustive, but does
 # include all the Unicode characters present in a few Licor data files on
@@ -123,7 +121,7 @@ read_licor_file <- function(
     # be in the preceding row
     read_row_wc <- function(row_num)
     {
-        row_data <- readWorkbook(
+        row_data <- openxlsx::readWorkbook(
             file_name,
             colNames = TRUE,
             skipEmptyCols = FALSE,
@@ -138,7 +136,7 @@ read_licor_file <- function(
     # an Excel file
     read_row_nc <- function(row_num)
     {
-        row_data <- readWorkbook(
+        row_data <- openxlsx::readWorkbook(
             file_name,
             colNames = FALSE,
             skipEmptyCols = FALSE,
@@ -198,7 +196,7 @@ read_licor_file <- function(
     licor_variable_units <- get_processed_row_data_frame(variable_unit_row)
 
     # Get the main data
-    licor_data <- readWorkbook(
+    licor_data <- openxlsx::readWorkbook(
         file_name,
         startRow = data_start_row,
         colNames = FALSE,

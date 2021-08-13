@@ -61,14 +61,7 @@
 #
 # For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
-source('read_licor.R')
-source('licor_data_operations.R')
-source('gm_table.R')
-source("calculate_cc.R")
-source("basic_stats.R")
-
-library(lattice)
-library(RColorBrewer)
+library(PhotoGEA)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###

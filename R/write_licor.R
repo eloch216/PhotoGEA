@@ -65,7 +65,7 @@ add_licor_sheet <- function(
     truncated_sheetname <- substr(sheetname, 1, 31)
 
     # Add a new sheet to the workbook
-    addWorksheet(
+    openxlsx::addWorksheet(
         wb = wb,
         sheetName = truncated_sheetname
     )
@@ -73,7 +73,7 @@ add_licor_sheet <- function(
     # Make a helping function for writing one row to the sheet
     write_row <- function(data_to_write, start_row)
     {
-        writeData(
+        openxlsx::writeData(
             wb,
             sheet = sheetnum,
             startRow = start_row,
@@ -119,7 +119,7 @@ add_licor_sheet <- function(
 
     # Write the main data to the sheet
     extra_offset <- 1
-    writeData(
+    openxlsx::writeData(
         wb,
         sheet = sheetnum,
         startRow = licor_file[['data_start_row']] +

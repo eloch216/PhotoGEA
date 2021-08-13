@@ -55,9 +55,7 @@
 #
 # For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
-source('read_licor.R')
-source('licor_data_operations.R')
-source('write_licor.R')
+library(PhotoGEA)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -323,7 +321,7 @@ print_all <- function(
     )
 
     # Make a workbook object
-    wb <- createWorkbook()
+    wb <- openxlsx::createWorkbook()
 
     # Add the sheets to the workbook object
     for (i in seq_along(files_to_process)) {
@@ -338,7 +336,7 @@ print_all <- function(
     }
 
     # Create a file based on the workbook object
-    saveWorkbook(wb, output_filename, overwrite = TRUE)
+    openxlsx::saveWorkbook(wb, output_filename, overwrite = TRUE)
 }
 
 ###                                                                   ###
