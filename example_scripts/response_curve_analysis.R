@@ -1,16 +1,7 @@
-# This script loads Licor data from multiple Excel files, combines it into one
-# data structure, and computes averages across multiple reps for each event
-# in the data.
-#
-# ------------------------------------------------------------------------------
-#
-# This script requires the `openxlsx`, `lattice`, and `RColorBrewer` libraries,
-# which can be installed using the following commands if they are not already
-# installed:
-#
-# install.packages('openxlsx')
-# install.packages('lattice')
-# install.packages('RColorBrewer')
+# This script loads Licor data representing C3 A-Ci curves from multiple Excel
+# files, combines it into one data structure, computes averages across multiple
+# reps for each event in the data, and uses a linear fitting procedure to
+# determine Vcmax values.
 #
 # ------------------------------------------------------------------------------
 #
@@ -27,15 +18,7 @@
 # - Components that might need to change each time this script is run
 # - Components that are less likely to change each time this script is run
 # - Functions used to load and process the data (shouldn't need to change)
-# - The commands that actually call the functions and create the plots (the
-#   plotting commands may require modifications)
-#
-# The script also relies on functions and settings from several external files:
-# - read_licor.R
-# - licor_data_operations.R
-# - gm_table.R
-# It is unlikely that anything in these files will require modifications when
-# using this script.
+# - The commands that actually call the functions
 #
 # Typically, it should only be necessary to specify the names of input files.
 # This information is specified in the LICOR_FILES_TO_PROCESS vector and
@@ -48,7 +31,7 @@
 # contains this script.
 #
 # To generate figures based on the analysis performed in this script, see
-# plot_response_curve_analysis.R.
+# `plot_response_curve_analysis.R`.
 #
 # ------------------------------------------------------------------------------
 #
@@ -56,10 +39,6 @@
 # this script and type:
 #
 # source('response_curve_analysis.R')
-#
-# ------------------------------------------------------------------------------
-#
-# For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
 library(PhotoGEA)
 
@@ -458,9 +437,9 @@ add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
     return(licor_data)
 }
 
-###                                                                    ###
-### COMMANDS THAT ACTUALLY CALLS THE FUNCTIONS WITH APPROPRIATE INPUTS ###
-###                                                                    ###
+###                                                                   ###
+### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
+###                                                                   ###
 
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {

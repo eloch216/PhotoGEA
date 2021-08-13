@@ -1,6 +1,14 @@
 # This script generates several plots from the calculations performed in
-# response_curve_analysis.R. In fact, this script calls that one before making
+# `response_curve_analysis.R`. In fact, this script calls that one before making
 # any plots.
+#
+# ------------------------------------------------------------------------------
+#
+# This script requires the `lattice`, and `RColorBrewer` libraries, which can be
+# installed using the following commands if they are not already installed:
+#
+# install.packages('lattice')
+# install.packages('RColorBrewer')
 #
 # ------------------------------------------------------------------------------
 #
@@ -8,10 +16,6 @@
 # this script and type:
 #
 # source('plot_response_curve_analysis.R')
-#
-# ------------------------------------------------------------------------------
-#
-# For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
 library(lattice)
 library(RColorBrewer)
