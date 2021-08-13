@@ -234,7 +234,8 @@ pair_licor_and_tdl <- function(
     licor_file,
     tdl_data,
     licor_timestamp_column_name,
-    tdl_timestamp_column_name
+    tdl_timestamp_column_name,
+    max_allowed_time_difference  # minutes
 )
 {
     # Add some new columns to the Licor file in preparation for adding the TDL
@@ -314,11 +315,24 @@ pair_licor_and_tdl <- function(
         time_differences <- abs(difftime(
             tdl_data[[tdl_timestamp_column_name]],
             licor_time,
-            units = 'sec'
+            units = 'min'
         ))
         min_time_difference <- min(time_differences)
         indx_of_closest_tdl_pnt <- match(min_time_difference, time_differences)
         cycle_of_closest_tdl_pnt <- tdl_data[['cycle_num']][indx_of_closest_tdl_pnt]
+
+        if (min_time_difference > max_allowed_time_difference) {
+            msg <- paste0(
+                "Could not find a time point in the TDL data corresponding to ",
+                format(licor_time),
+                ", a point in the Licor data.\nThe nearest time in the TDL data was ",
+                format(tdl_data[[tdl_timestamp_column_name]][indx_of_closest_tdl_pnt]),
+                ",\nwhich is ", min_time_difference, " minutes away, exceeding ",
+                "the maximum allowed value of ", max_allowed_time_difference,
+                " minutes"
+            )
+            stop(msg)
+        }
 
         # Find the TDL times for the sample and reference measurements
         tdl_time_sample <-
@@ -386,7 +400,8 @@ batch_pair_licor_and_tdl <- function(
     licor_files,
     tdl_data,
     licor_timestamp_column_name,
-    tdl_timestamp_column_name
+    tdl_timestamp_column_name,
+    max_allowed_time_difference
 )
 {
     lapply(
@@ -396,7 +411,8 @@ batch_pair_licor_and_tdl <- function(
                 licor_file,
                 tdl_data,
                 licor_timestamp_column_name,
-                tdl_timestamp_column_name
+                tdl_timestamp_column_name,
+                max_allowed_time_difference
             )
         }
     )

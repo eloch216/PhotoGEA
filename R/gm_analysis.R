@@ -180,7 +180,8 @@ if (PERFORM_CALCULATIONS) {
         licor_files,
         processed_tdl_data[['tdl_data']],
         LICOR_TIMESTAMP_COLUMN_NAME,
-        TDL_TIMESTAMP_COLUMN_NAME
+        TDL_TIMESTAMP_COLUMN_NAME,
+        max_allowed_time_difference = 1
     )
 
     licor_files <- combine_licor_files(licor_files)
