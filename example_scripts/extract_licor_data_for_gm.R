@@ -281,7 +281,8 @@ print_all <- function(
         variable_type_row,
         variable_name_row,
         variable_unit_row,
-        data_start_row
+        data_start_row,
+        'time'
     )
 
     # Add blank columns to each file

@@ -120,6 +120,7 @@ F_PRIME_COLUMN_NAME <- "f_prime"
 GAMMA_STAR_COLUMN_NAME <- "gamma_star"
 KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
+TIME_COLUMN_NAME <- "time"
 
 # Specify variables to analyze, i.e., variables where the average, standard
 # deviation, and standard error will be determined for each event across the
@@ -143,7 +144,7 @@ VARIABLES_TO_ANALYZE <- c(
 # are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
 VARIABLES_TO_EXTRACT <- c(
     "obs",
-    "time",
+    TIME_COLUMN_NAME,
     "elapsed",
     "date",
     "hhmmss",
@@ -449,7 +450,8 @@ if (PERFORM_CALCULATIONS) {
         variable_type_row = 14,
         variable_name_row = 15,
         variable_unit_row = 16,
-        data_start_row = 17
+        data_start_row = 17,
+        timestamp_colname = TIME_COLUMN_NAME
     )
 
     extracted_multi_file_info <- batch_extract_licor_variables(

@@ -191,7 +191,8 @@ if (PERFORM_CALCULATIONS) {
         variable_type_row = 14,
         variable_name_row = 15,
         variable_unit_row = 16,
-        data_start_row = 17
+        data_start_row = 17,
+        timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
     )
 
     licor_files <- batch_extract_licor_variables(

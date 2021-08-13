@@ -1,13 +1,4 @@
-# This script includes functions for reading Licor data files. Since many of the
-# inputs to the `read_licor_file` function below are unlikely to change, default
-# values are also provided here.
-#
-# ------------------------------------------------------------------------------
-#
-# These functions require the `openxlsx` library, which can be installed using
-# the following command if it is not already installed:
-#
-# install.packages('openxlsx')
+# This script includes functions for reading Licor data files.
 #
 # ------------------------------------------------------------------------------
 #
@@ -113,7 +104,7 @@ read_licor_file <- function(
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname = 'time'
+    timestamp_colname
 )
 {
     # Define a helping function for reading one row (with column names) from an
@@ -253,19 +244,21 @@ batch_read_licor_file <- function(
     variable_type_row,
     variable_name_row,
     variable_unit_row,
-    data_start_row
+    data_start_row,
+    timestamp_colname
 )
 {
     lapply(
         file_names,
         function(filename) {
             read_licor_file(
-                    filename,
-                    preamble_data_rows,
-                    variable_type_row,
-                    variable_name_row,
-                    variable_unit_row,
-                    data_start_row
+                filename,
+                preamble_data_rows,
+                variable_type_row,
+                variable_name_row,
+                variable_unit_row,
+                data_start_row,
+                timestamp_colname
             )
         }
     )
