@@ -22,21 +22,36 @@ MAX_GM <- 3.0
 
 MIN_CC <- 0.0
 
-GM_COLUMN_NAME <- "gmc"
-CI_COLUMN_NAME <- "Ci"
-CC_COLUMN_NAME <- "Cc"
-A_COLUMN_NAME <- "A"
-
+# Names of important columns in the TDL data
 TDL_TIMESTAMP_COLUMN_NAME <- 'TIMESTAMP'
 TDL_VALVE_COLUMN_NAME <- 'valve_number'
 TDL_RAW_12C_COLUMN_NAME <- 'Conc12C_Avg'
 TDL_RAW_13C_COLUMN_NAME <- 'Conc13C_Avg'
 
-# Specify the variables to extract. Note that when the file is loaded, any
-# Unicode characters such as Greek letters will be converted into `ASCII`
-# versions, e.g. the character Δ will be become `Delta`. The conversion rules
-# are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_EXTRACT <- c(
+# Specify the variables to extract from the TDL data files. Note that when the
+# files are loaded, any Unicode characters such as Greek letters will be
+# converted into `ASCII` versions, e.g. the character Δ will be become `Delta`.
+# The conversion rules are defined in the `UNICODE_REPLACEMENTS` data frame
+# (see `read_licor.R`).
+TDL_COLUMNS_TO_EXTRACT <- c(
+    TDL_TIMESTAMP_COLUMN_NAME,
+    TDL_VALVE_COLUMN_NAME,
+    TDL_RAW_12C_COLUMN_NAME,
+    TDL_RAW_13C_COLUMN_NAME
+)
+
+# Names of important columns in the Licor data
+GM_COLUMN_NAME <- "gmc"
+CI_COLUMN_NAME <- "Ci"
+CC_COLUMN_NAME <- "Cc"
+A_COLUMN_NAME <- "A"
+
+# Specify the variables to extract from the Licor data files. Note that when the
+# files are loaded, any Unicode characters such as Greek letters will be
+# converted into `ASCII` versions, e.g. the character Δ will be become `Delta`.
+# The conversion rules are defined in the `UNICODE_REPLACEMENTS` data frame
+# (see `read_licor.R`).
+LICOR_VARIABLES_TO_EXTRACT <- c(
     "obs",
     "time",
     "E",
@@ -139,7 +154,6 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_read_licor_file(
         choose_input_licor_files(),
-        UNICODE_REPLACEMENTS,
         PREAMBLE_DATA_ROWS,
         VARIABLE_TYPE_ROW,
         VARIABLE_NAME_ROW,
@@ -149,7 +163,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_extract_licor_variables(
         licor_files,
-        VARIABLES_TO_EXTRACT
+        LICOR_VARIABLES_TO_EXTRACT
     )
 
     licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)

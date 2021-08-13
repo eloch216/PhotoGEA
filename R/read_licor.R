@@ -60,11 +60,6 @@ colnames(UNICODE_REPLACEMENTS) <- c("pattern", "replacement")
 # - file_name: a relative or absolute path to an Excel file containing Licor
 #              data
 #
-# - unicode_replacements: a data frame of search strings and replacements used
-#                         to replace problematic Unicode characters in the Licor
-#                         column names and units. Must have two columns named
-#                         "pattern" and "replacement"
-#
 # - preamble_data_rows: a numeric vector whose entries indicate the rows in the
 #                       Licor excel file that contain the preamble information
 #
@@ -122,7 +117,6 @@ colnames(UNICODE_REPLACEMENTS) <- c("pattern", "replacement")
 #
 read_licor_file <- function(
     file_name,
-    unicode_replacements,
     preamble_data_rows,
     variable_type_row,
     variable_name_row,
@@ -169,11 +163,11 @@ read_licor_file <- function(
             "byte"
         )
 
-        for (i in seq_along(unicode_replacements[['pattern']])) {
+        for (i in seq_along(UNICODE_REPLACEMENTS[['pattern']])) {
             strings <- gsub(
                 x = strings,
-                pattern = unicode_replacements[['pattern']][i],
-                replacement = unicode_replacements[['replacement']][i]
+                pattern = UNICODE_REPLACEMENTS[['pattern']][i],
+                replacement = UNICODE_REPLACEMENTS[['replacement']][i]
             )
         }
 
@@ -264,7 +258,6 @@ read_licor_file <- function(
 #
 batch_read_licor_file <- function(
     file_names,
-    unicode_replacements,
     preamble_data_rows,
     variable_type_row,
     variable_name_row,
@@ -277,7 +270,6 @@ batch_read_licor_file <- function(
         function(filename) {
             read_licor_file(
                     filename,
-                    unicode_replacements,
                     preamble_data_rows,
                     variable_type_row,
                     variable_name_row,

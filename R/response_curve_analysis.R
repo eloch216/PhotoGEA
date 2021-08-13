@@ -473,7 +473,6 @@ add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- batch_read_licor_file(
         LICOR_FILES_TO_PROCESS,
-        UNICODE_REPLACEMENTS,
         PREAMBLE_DATA_ROWS,
         VARIABLE_TYPE_ROW,
         VARIABLE_NAME_ROW,
