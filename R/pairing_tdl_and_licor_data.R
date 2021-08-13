@@ -232,7 +232,9 @@ batch_get_genotype_info_from_licor_filename <- function(licor_files) {
 
 pair_licor_and_tdl <- function(
     licor_file,
-    tdl_data
+    tdl_data,
+    licor_timestamp_column_name,
+    tdl_timestamp_column_name
 )
 {
     # Add some new columns to the Licor file in preparation for adding the TDL
@@ -308,9 +310,9 @@ pair_licor_and_tdl <- function(
     for (i in seq_len(nrow(licor_file[['main_data']]))) {
         # Find the TDL cycle that contains the closest time to the Licor data
         # point time
-        licor_time <- licor_file[['main_data']][['time']][i]
+        licor_time <- licor_file[['main_data']][[licor_timestamp_column_name]][i]
         time_differences <- abs(difftime(
-            tdl_data[['TIMESTAMP']],
+            tdl_data[[tdl_timestamp_column_name]],
             licor_time,
             units = 'sec'
         ))
@@ -321,11 +323,11 @@ pair_licor_and_tdl <- function(
         # Find the TDL times for the sample and reference measurements
         tdl_time_sample <-
             tdl_data[which(tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == sample_valve), 'TIMESTAMP']
+                tdl_data[['valve_number']] == sample_valve), tdl_timestamp_column_name]
 
         tdl_time_reference <-
             tdl_data[which(tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == reference_valve), 'TIMESTAMP']
+                tdl_data[['valve_number']] == reference_valve), tdl_timestamp_column_name]
 
         # Find the sample CO2 data
         calibrated_12c_s <-
@@ -382,7 +384,9 @@ pair_licor_and_tdl <- function(
 
 batch_pair_licor_and_tdl <- function(
     licor_files,
-    tdl_data
+    tdl_data,
+    licor_timestamp_column_name,
+    tdl_timestamp_column_name
 )
 {
     lapply(
@@ -390,7 +394,9 @@ batch_pair_licor_and_tdl <- function(
         function(licor_file) {
             pair_licor_and_tdl(
                 licor_file,
-                tdl_data
+                tdl_data,
+                licor_timestamp_column_name,
+                tdl_timestamp_column_name
             )
         }
     )

@@ -41,10 +41,12 @@ TDL_COLUMNS_TO_EXTRACT <- c(
 )
 
 # Names of important columns in the Licor data
-GM_COLUMN_NAME <- "gmc"
-CI_COLUMN_NAME <- "Ci"
-CC_COLUMN_NAME <- "Cc"
-A_COLUMN_NAME <- "A"
+LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
+LICOR_GM_COLUMN_NAME <- 'gmc'
+LICOR_CI_COLUMN_NAME <- 'Ci'
+LICOR_CC_COLUMN_NAME <- 'Cc'
+LICOR_A_COLUMN_NAME <- 'A'
+LICOR_GSW_COLUMN_NAME <- 'gsw'
 
 # Specify the variables to extract from the Licor data files. Note that when the
 # files are loaded, any Unicode characters such as Greek letters will be
@@ -52,38 +54,38 @@ A_COLUMN_NAME <- "A"
 # The conversion rules are defined in the `UNICODE_REPLACEMENTS` data frame
 # (see `read_licor.R`).
 LICOR_VARIABLES_TO_EXTRACT <- c(
-    "obs",
-    "time",
-    "E",
-    "A",
-    "Ca",
-    "Ci",
-    "Pci",
-    "Pca",
-    "gsw",
-    "gbw",
-    "gtw",
-    "gtc",
-    "TleafCnd",
-    "SVPleaf",
-    "RHcham",
-    "VPcham",
-    "SVPcham",
-    "VPDleaf",
-    "Qin",
-    "S",
-    "K",
-    "CO2_s",
-    "CO2_r",
-    "H2O_s",
-    "H2O_r",
-    "Flow",
-    "Pa",
-    "DeltaPcham",   # the name of this column is modified from ΔPcham
-    "Tair",
-    "Tleaf",
-    "Flow_s",
-    "Flow_r"
+    'obs',
+    LICOR_TIMESTAMP_COLUMN_NAME,
+    'E',
+    LICOR_A_COLUMN_NAME,
+    'Ca',
+    LICOR_CI_COLUMN_NAME,
+    'Pci',
+    'Pca',
+    LICOR_GSW_COLUMN_NAME,
+    'gbw',
+    'gtw',
+    'gtc',
+    'TleafCnd',
+    'SVPleaf',
+    'RHcham',
+    'VPcham',
+    'SVPcham',
+    'VPDleaf',
+    'Qin',
+    'S',
+    'K',
+    'CO2_s',
+    'CO2_r',
+    'H2O_s',
+    'H2O_r',
+    'Flow',
+    'Pa',
+    'DeltaPcham',   # the name of this column is modified from ΔPcham
+    'Tair',
+    'Tleaf',
+    'Flow_s',
+    'Flow_r'
 )
 
 # Specify variables to analyze, i.e., variables where the average, standard
@@ -93,12 +95,12 @@ LICOR_VARIABLES_TO_EXTRACT <- c(
 # character Δ will be become `Delta`. The conversion rules are defined in the
 # `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
 VARIABLES_TO_ANALYZE <- c(
-    A_COLUMN_NAME,
-    CI_COLUMN_NAME,
-    CC_COLUMN_NAME,
-    GM_COLUMN_NAME,
-    "gsw",
-    "Ci-Cc"
+    LICOR_A_COLUMN_NAME,
+    LICOR_CI_COLUMN_NAME,
+    LICOR_CC_COLUMN_NAME,
+    LICOR_GM_COLUMN_NAME,
+    LICOR_GSW_COLUMN_NAME,
+    'Ci-Cc'
 )
 
 if (PERFORM_CALCULATIONS) {
@@ -172,21 +174,27 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_specify_respiration(licor_files, RESPIRATION)
 
+    # Combine the Licor and TDL data
+
     licor_files <- batch_pair_licor_and_tdl(
         licor_files,
-        processed_tdl_data[['tdl_data']]
+        processed_tdl_data[['tdl_data']],
+        LICOR_TIMESTAMP_COLUMN_NAME,
+        TDL_TIMESTAMP_COLUMN_NAME
     )
 
     licor_files <- combine_licor_files(licor_files)
+
+    # Calculate gm and other quantities
 
     licor_files <- calculate_gm(licor_files)
 
     licor_files <- calculate_cc(
         licor_files,
-        CC_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        A_COLUMN_NAME,
-        GM_COLUMN_NAME
+        LICOR_CC_COLUMN_NAME,
+        LICOR_CI_COLUMN_NAME,
+        LICOR_A_COLUMN_NAME,
+        LICOR_GM_COLUMN_NAME
     )
 
     # Make a copy of the data where we have removed extreme gm and Cc values
