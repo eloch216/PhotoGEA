@@ -27,10 +27,8 @@ CI_COLUMN_NAME <- "Ci"
 CC_COLUMN_NAME <- "Cc"
 A_COLUMN_NAME <- "A"
 
+TDL_TIMESTAMP_COLUMN_NAME <- 'TIMESTAMP'
 TDL_VALVE_COLUMN_NAME <- 'valve_number'
-TDL_CYCLE_START_VALVE <- 20
-TDL_EXPECTED_CYCLE_LENGTH_MINUTES <- 2.7
-TDL_EXPECTED_CYCLE_NUM_PTS <- 9
 
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
@@ -89,13 +87,20 @@ VARIABLES_TO_ANALYZE <- c(
 if (PERFORM_CALCULATIONS) {
     # Get all the TDL information and process it
 
-    tdl_files <- batch_read_tdl_file(choose_input_tdl_files())
+    tdl_files <- batch_read_tdl_file(
+        choose_input_tdl_files(),
+        rows_to_skip = 1,
+        variable_name_row = 2,
+        variable_unit_row = 3,
+        data_start_row = 5,
+        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
+    )
 
     tdl_files <- batch_extract_licor_variables(
         tdl_files,
         c(
-            'TIMESTAMP',
-            'valve_number',
+            TDL_TIMESTAMP_COLUMN_NAME,
+            TDL_VALVE_COLUMN_NAME,
             'Conc12C_Avg',
             'Conc13C_Avg'
         )
@@ -105,10 +110,10 @@ if (PERFORM_CALCULATIONS) {
 
     tdl_files <- identify_tdl_cycles(
         tdl_files,
-        TDL_VALVE_COLUMN_NAME,
-        TDL_CYCLE_START_VALVE,
-        TDL_EXPECTED_CYCLE_LENGTH_MINUTES,
-        TDL_EXPECTED_CYCLE_NUM_PTS
+        valve_column_name = TDL_VALVE_COLUMN_NAME,
+        cycle_start_valve = 20,
+        expected_cycle_length_minutes = 2.7,
+        expected_cycle_num_pts = 9
     )
 
     processed_tdl_data <- process_tdl_cycles(tdl_files[['main_data']])
