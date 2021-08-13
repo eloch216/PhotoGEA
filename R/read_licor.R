@@ -20,13 +20,6 @@
 
 library(openxlsx)
 
-# Specify information about how the data in the Licor spreadsheet is arranged
-PREAMBLE_DATA_ROWS <- c(3, 5, 7, 9, 11, 13)  # The rows in a Licor Excel file that contain the preamble data
-VARIABLE_TYPE_ROW <- 14                      # The row in a Licor Excel file that contains the variable types
-VARIABLE_NAME_ROW <- 15                      # The row in a Licor Excel file that contains the variable names
-VARIABLE_UNIT_ROW <- 16                      # The row in a Licor Excel file that contains the variable units
-DATA_START_ROW <- 17                         # The first main data row in a Licor Excel file
-
 # Specify ASCII replacements for specific Unicode characters or sequences of
 # Unicode characters. This list is not intended to be exhaustive, but does
 # include all the Unicode characters present in a few Licor data files on
