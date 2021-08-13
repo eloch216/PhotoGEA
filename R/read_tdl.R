@@ -151,10 +151,10 @@ read_tdl_file <- function(
 #
 batch_read_tdl_file <- function(
     file_names,
-    rows_to_skip = 1,
-    variable_name_row = 2,
-    variable_unit_row = 3,
-    data_start_row = 5,
+    rows_to_skip,
+    variable_name_row,
+    variable_unit_row,
+    data_start_row,
     timestamp_colname = 'TIMESTAMP'
 )
 {

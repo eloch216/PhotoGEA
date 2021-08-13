@@ -117,9 +117,9 @@ combine_tdl_files <- function(
 # - tdl_file: a list representing the data from a TDL file (typically produced
 #       by a a call to the `read_tdl_file` defined in `read_licor.R`)
 #
-# - site_column_name: the name of the data column that represents the site
+# - valve_column_name: the name of the data column that represents the site
 #
-# - cycle_start_site_value: the value of the site column that indicates the
+# - cycle_start_valve: the value of the site column that indicates the
 #       start of a new cycle
 #
 # - expected_cycle_length_minutes: the expected length of a full cycle in
@@ -137,10 +137,10 @@ combine_tdl_files <- function(
 #
 identify_tdl_cycles <- function(
     tdl_file,
-    site_column_name = 'valve_number',
-    cycle_start_site_value = 20,
-    expected_cycle_length_minutes = 2.7,
-    expected_cycle_num_pts = 9
+    valve_column_name,
+    cycle_start_valve,
+    expected_cycle_length_minutes,
+    expected_cycle_num_pts
 )
 {
     main_data <- tdl_file[['main_data']]
@@ -157,15 +157,15 @@ identify_tdl_cycles <- function(
     # Find all the row numbers in the TDL data where the site value is equal to
     # the cycle start site value
     starting_indices <-
-        which(main_data[[site_column_name]] == cycle_start_site_value)
+        which(main_data[[valve_column_name]] == cycle_start_valve)
 
     # Check for problems
     if (length(starting_indices) < 1) {
         msg <- paste0(
             "No TDL cycles could be identified because the ",
-            site_column_name,
+            valve_column_name,
             " column is never equal to the cycle start value of ",
-            cycle_start_site_value
+            cycle_start_valve
         )
         stop(msg)
     }
@@ -174,7 +174,7 @@ identify_tdl_cycles <- function(
     check_cycle <- function(possible_cycle) {
         # Get info about the possible cycle
         n_pts <- nrow(possible_cycle)
-        n_unique_pts <- length(unique(possible_cycle[[site_column_name]]))
+        n_unique_pts <- length(unique(possible_cycle[[valve_column_name]]))
         tdiff <- difftime(
             max(possible_cycle[[timestamp_colname]]),
             min(possible_cycle[[timestamp_colname]]),

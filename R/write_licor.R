@@ -8,9 +8,6 @@
 #
 # install.packages('openxlsx')
 
-VARIABLE_INFO_OFFSET <- 5
-MAIN_DATA_OFFSET <- 1
-
 # add_licor_sheet: a function that adds one sheet (representing one Licor data
 # file) to an Excel workbook object
 #
