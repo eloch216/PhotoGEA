@@ -163,6 +163,15 @@ VARIABLES_TO_EXTRACT <- c(
     "Csurface"      # added as a column defined by a formula
 )
 
+PREAMBLE_DATA_ROWS <- c(3, 5, 7, 9, 11, 13)
+VARIABLE_TYPE_ROW <- 14
+VARIABLE_NAME_ROW <- 15
+VARIABLE_UNIT_ROW <- 16
+DATA_START_ROW <- 17
+
+VARIABLE_INFO_OFFSET <- 5
+MAIN_DATA_OFFSET <- 1
+
 ###                                                         ###
 ### FUNCTIONS THAT WILL BE CALLED WHEN THIS SCRIPT RUNS     ###
 ### (THEY MAY REQUIRE MODIFICATIONS IF ANY FORMULAS CHANGE) ###
@@ -287,7 +296,6 @@ print_all <- function(
     # Load the files
     licor_files <- batch_read_licor_file(
         files_to_process,
-        unicode_replacements,
         preamble_data_rows,
         variable_type_row,
         variable_name_row,
