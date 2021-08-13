@@ -29,6 +29,8 @@ A_COLUMN_NAME <- "A"
 
 TDL_TIMESTAMP_COLUMN_NAME <- 'TIMESTAMP'
 TDL_VALVE_COLUMN_NAME <- 'valve_number'
+TDL_RAW_12C_COLUMN_NAME <- 'Conc12C_Avg'
+TDL_RAW_13C_COLUMN_NAME <- 'Conc13C_Avg'
 
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
@@ -116,7 +118,22 @@ if (PERFORM_CALCULATIONS) {
         expected_cycle_num_pts = 9
     )
 
-    processed_tdl_data <- process_tdl_cycles(tdl_files[['main_data']])
+    processed_tdl_data <- process_tdl_cycles(
+        tdl_files[['main_data']],
+        valve_column_name = TDL_VALVE_COLUMN_NAME,
+        noaa_valve = 2,
+        calibration_0_valve = 20,
+        calibration_1_valve = 21,
+        calibration_2_valve = 23,
+        calibration_3_valve = 26,
+        raw_12c_colname = TDL_RAW_12C_COLUMN_NAME,
+        raw_13c_colname = TDL_RAW_13C_COLUMN_NAME,
+        noaa_cylinder_co2_concentration = 294.996,  # ppm
+        noaa_cylinder_isotope_ratio = -8.40,        # ppt
+        calibration_isotope_ratio = -11.505,        # ppt
+        f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
+        R_VPDB = 0.0111797
+    )
 
     # Get all the Licor information and process it
 

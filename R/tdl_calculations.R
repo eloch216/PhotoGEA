@@ -2,25 +2,25 @@ source("licor_data_operations.R")
 
 process_tdl_cycle <- function(
     tdl_cycle,
-    valve_column_name = 'valve_number',
-    zero_carbon_reference_valve = 20,
-    noaa_reference_valve = 2,
-    ll_reference_valve_1 = 21,
-    ll_reference_valve_2 = 23,
-    ll_reference_valve_3 = 26,
-    raw_12c_colname = 'Conc12C_Avg',
-    raw_13c_colname = 'Conc13C_Avg',
-    noaa_reference_co2_concentration = 294.996,     # ppm
-    noaa_reference_isotope_ratio = -8.40,           # ppt
-    ll_reference_isotope_ratio = -11.505,           # ppt
-    f_other = 0.00474,                              # fraction of CO2 that is not 13C16O16O or 12C16O16O
-    R_VPDB = 0.0111797
+    valve_column_name,
+    noaa_valve,
+    calibration_0_valve,
+    calibration_1_valve,
+    calibration_2_valve,
+    calibration_3_valve,
+    raw_12c_colname,
+    raw_13c_colname,
+    noaa_cylinder_co2_concentration,  # ppm
+    noaa_cylinder_isotope_ratio,      # ppt
+    calibration_isotope_ratio,        # ppt
+    f_other,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
+    R_VPDB
 )
 {
     # Make a correction by subtracting the carbon concentrations measured in a
     # line that should have no carbon
     zero_carbon_reference <-
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == zero_carbon_reference_valve),]
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_0_valve),]
 
     tdl_cycle[['zero_corrected_12c']] <-
         tdl_cycle[[raw_12c_colname]] - zero_carbon_reference[[raw_12c_colname]]
@@ -38,12 +38,12 @@ process_tdl_cycle <- function(
     # Make adjustments for 12C calibration using a standard cylinder from NOAA.
     # Here we determine a multiplicative factor for converting the measured
     # zero-corrected 12C concentrations to true concentrations.
-    total_mixing_ratio_noaa <- noaa_reference_co2_concentration * (1 - f_other)
-    R_noaa <- R_VPDB * (1 + noaa_reference_isotope_ratio / 1000)
+    total_mixing_ratio_noaa <- noaa_cylinder_co2_concentration * (1 - f_other)
+    R_noaa <- R_VPDB * (1 + noaa_cylinder_isotope_ratio / 1000)
     noaa_12C16O16O <- total_mixing_ratio_noaa / (1 + R_noaa)
 
     noaa_reference <-
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == noaa_reference_valve),]
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == noaa_valve),]
 
     gain_12CO2 <- noaa_12C16O16O / noaa_reference[['zero_corrected_12c']]
 
@@ -66,19 +66,19 @@ process_tdl_cycle <- function(
     # 13C concentrations to true concentrations. The expected values are
     # determined from the calibrated 12C values using the reference cylinder's
     # known isotope ratio.
-    conversion_factor <- R_VPDB * (ll_reference_isotope_ratio / 1000 + 1)
+    conversion_factor <- R_VPDB * (calibration_isotope_ratio / 1000 + 1)
     expected_13c_values <- c(
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == zero_carbon_reference_valve), 'calibrated_12c'] * conversion_factor,
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == ll_reference_valve_1), 'calibrated_12c'] * conversion_factor,
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == ll_reference_valve_2), 'calibrated_12c'] * conversion_factor,
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == ll_reference_valve_3), 'calibrated_12c'] * conversion_factor
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_0_valve), 'calibrated_12c'] * conversion_factor,
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_1_valve), 'calibrated_12c'] * conversion_factor,
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_2_valve), 'calibrated_12c'] * conversion_factor,
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_3_valve), 'calibrated_12c'] * conversion_factor
     )
 
     measured_13c_values <- c(
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == zero_carbon_reference_valve), 'zero_corrected_13c'],
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == ll_reference_valve_1), 'zero_corrected_13c'],
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == ll_reference_valve_2), 'zero_corrected_13c'],
-        tdl_cycle[which(tdl_cycle[[valve_column_name]] == ll_reference_valve_3), 'zero_corrected_13c']
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_0_valve), 'zero_corrected_13c'],
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_1_valve), 'zero_corrected_13c'],
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_2_valve), 'zero_corrected_13c'],
+        tdl_cycle[which(tdl_cycle[[valve_column_name]] == calibration_3_valve), 'zero_corrected_13c']
     )
 
     # Fit a quadratic model
@@ -140,19 +140,19 @@ process_tdl_cycle <- function(
 
 process_tdl_cycles <- function(
     tdl_data,
-    valve_column_name = 'valve_number',
-    zero_carbon_reference_valve = 20,
-    noaa_reference_valve = 2,
-    ll_reference_valve_1 = 21,
-    ll_reference_valve_2 = 23,
-    ll_reference_valve_3 = 26,
-    raw_12c_colname = 'Conc12C_Avg',
-    raw_13c_colname = 'Conc13C_Avg',
-    noaa_reference_co2_concentration = 294.996,     # ppm
-    noaa_reference_isotope_ratio = -8.40,           # ppt
-    ll_reference_isotope_ratio = -11.505,           # ppt
-    f_other = 0.00474,                              # fraction of CO2 that is not 13C16O16O or 12C16O16O
-    R_VPDB = 0.0111797
+    valve_column_name,
+    noaa_valve,
+    calibration_0_valve,
+    calibration_1_valve,
+    calibration_2_valve,
+    calibration_3_valve,
+    raw_12c_colname,
+    raw_13c_colname,
+    noaa_cylinder_co2_concentration,  # ppm
+    noaa_cylinder_isotope_ratio,      # ppt
+    calibration_isotope_ratio,        # ppt
+    f_other,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
+    R_VPDB
 )
 {
     # Make sure the cycle column is defined
@@ -170,18 +170,18 @@ process_tdl_cycles <- function(
     temp_cycle <- process_tdl_cycle(
         tdl_data[which(tdl_data[['cycle_num']] == cycles[1]),],
         valve_column_name,
-        zero_carbon_reference_valve,
-        noaa_reference_valve,
-        ll_reference_valve_1,
-        ll_reference_valve_2,
-        ll_reference_valve_3,
+        noaa_valve,
+        calibration_0_valve,
+        calibration_1_valve,
+        calibration_2_valve,
+        calibration_3_valve,
         raw_12c_colname,
         raw_13c_colname,
-        noaa_reference_co2_concentration,
-        noaa_reference_isotope_ratio,
-        ll_reference_isotope_ratio,
-        f_other = 0.00474,
-        R_VPDB = 0.0111797
+        noaa_cylinder_co2_concentration,
+        noaa_cylinder_isotope_ratio,
+        calibration_isotope_ratio,
+        f_other,
+        R_VPDB
     )
 
     # Set up data frames to store the results from all the cycles
@@ -235,18 +235,18 @@ process_tdl_cycles <- function(
         temp_cycle <- process_tdl_cycle(
             tdl_data[which(tdl_data[['cycle_num']] == cycles[i]),],
             valve_column_name,
-            zero_carbon_reference_valve,
-            noaa_reference_valve,
-            ll_reference_valve_1,
-            ll_reference_valve_2,
-            ll_reference_valve_3,
+            noaa_valve,
+            calibration_0_valve,
+            calibration_1_valve,
+            calibration_2_valve,
+            calibration_3_valve,
             raw_12c_colname,
             raw_13c_colname,
-            noaa_reference_co2_concentration,
-            noaa_reference_isotope_ratio,
-            ll_reference_isotope_ratio,
-            f_other = 0.00474,
-            R_VPDB = 0.0111797
+            noaa_cylinder_co2_concentration,
+            noaa_cylinder_isotope_ratio,
+            calibration_isotope_ratio,
+            f_other,
+            R_VPDB
         )
 
         new_tdl_data <- rbind(new_tdl_data, temp_cycle[['tdl_cycle']])
