@@ -89,7 +89,7 @@ add_gm_to_licor_data_from_table <- function(
 )
 {
     variables_to_add <- data.frame(
-        type = gm_table[['types']][[gm_column_name]],
+        type = gm_table[['categories']][[gm_column_name]],
         name = gm_column_name,
         units = gm_table[['units']][[gm_column_name]]
     )

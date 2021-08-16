@@ -447,7 +447,7 @@ if (PERFORM_CALCULATIONS) {
     multi_file_info <- batch_read_licor_file(
         LICOR_FILES_TO_PROCESS,
         preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_type_row = 14,
+        variable_category_row = 14,
         variable_name_row = 15,
         variable_unit_row = 16,
         data_start_row = 17,

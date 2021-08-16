@@ -7,7 +7,7 @@
 # an R list the representing data from a Licor file.
 #
 # In keeping with the other variables present in the original Licor data, each
-# new variable has a type, name, and unit.
+# new variable has a category, name, and unit.
 #
 # ------------------------------------------------------------------------------
 #
@@ -18,7 +18,7 @@
 #               `read_licor.R`)
 #
 # - variables_to_add: a data frame representing a set of new variables to add.
-#                     Must have three columns named "type", "name", and "units".
+#                     Must have three columns named "category", "name", and "units".
 #
 # ------------------------------------------------------------------------------
 #
@@ -36,12 +36,12 @@ add_licor_variables <- function(
     # variable descriptors
     add_blank <- function(variable_info)
     {
-        type <- variable_info[['type']]
+        category <- variable_info[['category']]
         name <- variable_info[['name']]
         units <- variable_info[['units']]
 
         licor_file[['main_data']][[name]] <<- NA
-        licor_file[['types']][[name]] <<- type
+        licor_file[['categories']][[name]] <<- category
         licor_file[['units']][[name]] <<- units
     }
 
@@ -93,7 +93,7 @@ batch_add_licor_variables <- function(
 # from an R list representing a Licor file
 #
 # In keeping with the other variables present in the original Licor data, each
-# new variable has a type, name, and unit.
+# new variable has a category, name, and unit.
 #
 # ------------------------------------------------------------------------------
 #
@@ -122,8 +122,8 @@ extract_licor_variables <- function(
     variables_to_extract <-
         variables_to_extract[variables_to_extract %in% colnames(licor_file[['main_data']])]
 
-    licor_file[['types']] <-
-        licor_file[['types']][,variables_to_extract]
+    licor_file[['categories']] <-
+        licor_file[['categories']][,variables_to_extract]
 
     licor_file[['units']] <-
         licor_file[['units']][,variables_to_extract]
@@ -172,9 +172,9 @@ batch_extract_licor_variables <- function(
 }
 
 # combine_licor_files: a function for combining the information from multiple
-# Licor files into a single list. Here, only the filenames, types, units, and
-# data are retained (i.e., any parameters specified when reading the files will
-# be lost).
+# Licor files into a single list. Here, only the filenames, categories, units,
+# and data are retained (i.e., any parameters specified when reading the files
+# will be lost).
 #
 # ------------------------------------------------------------------------------
 #
@@ -215,7 +215,7 @@ combine_licor_files <- function(
 
     combo_info <- list(
         file_name = character(0),
-        types = first_file[['types']],
+        categories = first_file[['categories']],
         units = first_file[['units']],
         main_data = initial_data_frame
     )
@@ -241,11 +241,11 @@ combine_licor_files <- function(
             stop(msg)
         }
 
-        if (!identical(first_file[['types']], current_file[['types']])) {
+        if (!identical(first_file[['categories']], current_file[['categories']])) {
             msg <- paste0(
-                "The types specified in Licor file '",
+                "The categories specified in Licor file '",
                 current_file[['file_name']],
-                "' do not agree with the types specified in '",
+                "' do not agree with the categories specified in '",
                 first_file[['file_name']],
                 "', so the two files cannot be combined"
             )

@@ -10,7 +10,7 @@ specify_respiration <- function(licor_file, respiration) {
         ),
         stringsAsFactors = FALSE
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
+    colnames(variables_to_add) <- c("category", "name", "units")
 
     licor_file <- add_licor_variables(licor_file, variables_to_add)
 
@@ -40,7 +40,7 @@ specify_oxygen <- function(licor_file, oxygen) {
         ),
         stringsAsFactors = FALSE
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
+    colnames(variables_to_add) <- c("category", "name", "units")
 
     licor_file <- add_licor_variables(licor_file, variables_to_add)
 
@@ -68,7 +68,7 @@ get_oxygen_info_from_preamble <- function(licor_file) {
         ),
         stringsAsFactors = FALSE
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
+    colnames(variables_to_add) <- c("category", "name", "units")
 
     licor_file <- add_licor_variables(licor_file, variables_to_add)
 
@@ -143,7 +143,7 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
         ),
         stringsAsFactors = FALSE
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
+    colnames(variables_to_add) <- c("category", "name", "units")
 
     licor_file <- add_licor_variables(licor_file, variables_to_add)
 
@@ -258,7 +258,7 @@ pair_licor_and_tdl <- function(
         ),
         stringsAsFactors = FALSE
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
+    colnames(variables_to_add) <- c("category", "name", "units")
 
     licor_file <- add_licor_variables(licor_file, variables_to_add)
 

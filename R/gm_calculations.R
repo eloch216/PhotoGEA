@@ -37,7 +37,7 @@ calculate_gm <- function(
         ),
         stringsAsFactors = FALSE
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
+    colnames(variables_to_add) <- c("category", "name", "units")
 
     licor_file <- add_licor_variables(licor_file, variables_to_add)
 

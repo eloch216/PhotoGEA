@@ -9,7 +9,7 @@ save_licor_file <- function(licor_file, output_filename) {
     }
 
     # Combine all the info from the Licor file into one data frame
-    all_info <- licor_file[['types']]
+    all_info <- licor_file[['categories']]
     all_info <- rbind(all_info, colnames(licor_file[['units']]))
     all_info <- rbind(all_info, licor_file[['units']])
     all_info <- rbind(all_info, main_data)

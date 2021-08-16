@@ -91,7 +91,7 @@ VARIABLES_TO_ADD <- data.frame(
     ),
     stringsAsFactors = FALSE
 )
-colnames(VARIABLES_TO_ADD) <- c("type", "name", "units")
+colnames(VARIABLES_TO_ADD) <- c("category", "name", "units")
 
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
@@ -145,7 +145,7 @@ VARIABLES_TO_EXTRACT <- c(
 )
 
 PREAMBLE_DATA_ROWS <- c(3, 5, 7, 9, 11, 13)
-VARIABLE_TYPE_ROW <- 14
+VARIABLE_CATEGORY_ROW <- 14
 VARIABLE_NAME_ROW <- 15
 VARIABLE_UNIT_ROW <- 16
 DATA_START_ROW <- 17
@@ -263,7 +263,7 @@ print_all <- function(
     files_to_process,
     unicode_replacements,
     preamble_data_rows,
-    variable_type_row,
+    variable_category_row,
     variable_name_row,
     variable_unit_row,
     data_start_row,
@@ -278,7 +278,7 @@ print_all <- function(
     licor_files <- batch_read_licor_file(
         files_to_process,
         preamble_data_rows,
-        variable_type_row,
+        variable_category_row,
         variable_name_row,
         variable_unit_row,
         data_start_row,
@@ -332,7 +332,7 @@ print_all(
     FILES_TO_PROCESS,
     UNICODE_REPLACEMENTS,
     PREAMBLE_DATA_ROWS,
-    VARIABLE_TYPE_ROW,
+    VARIABLE_CATEGORY_ROW,
     VARIABLE_NAME_ROW,
     VARIABLE_UNIT_ROW,
     DATA_START_ROW,

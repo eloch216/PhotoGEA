@@ -70,7 +70,7 @@ combine_tdl_files <- function(
             stop(msg)
         }
 
-        if (!identical(first_file[['types']], current_file[['types']])) {
+        if (!identical(first_file[['categories']], current_file[['categories']])) {
             msg <- paste0(
                 "The types specified in TDL file '",
                 current_file[['file_name']],

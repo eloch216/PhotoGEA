@@ -24,7 +24,7 @@ calculate_cc <- function(
 
     # Add a column for Cc
     variables_to_add <- data.frame(
-        type = c("calculated", "calculated"),
+        category = c("calculated", "calculated"),
         name = c(cc_column_name, drawdown_column_name),
         units = c("micromol mol^(-1)", "micromol mol^(-1)")
     )
