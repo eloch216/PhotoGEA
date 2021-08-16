@@ -1,12 +1,36 @@
+# This script generates several plots from the calculations performed in
+# `gm_analysis.R`. In fact, this script calls that one before making any plots.
+#
+# ------------------------------------------------------------------------------
+#
+# This script requires the `lattice` library, which can be installed using the
+# following command if it is not already installed:
+#
+# install.packages('lattice')
+#
+# ------------------------------------------------------------------------------
+#
+# To run the script, set the R working directory to the directory that contains
+# this script and type:
+#
+# source('plot_gm_analysis.R')
+
 library(lattice)
 
 source("gm_analysis.R")
+
+###                            ###
+### DECIDE WHICH PLOTS TO MAKE ###
+###                            ###
 
 MAKE_TDL_PLOTS <- TRUE
 
 MAKE_GM_PLOTS <- TRUE
 
-# Make plots, if desired
+###                            ###
+### MAKE TDL PLOTS, IF DESIRED ###
+###                            ###
+
 if (MAKE_TDL_PLOTS) {
     # Make a plot of all the fits from the processing
     tdl_fitting <- xyplot(
@@ -91,6 +115,10 @@ if (MAKE_TDL_PLOTS) {
     x11()
     print(tdl_13CO2_calibration_drift_a2)
 }
+
+###                           ###
+### MAKE GM PLOTS, IF DESIRED ###
+###                           ###
 
 if (MAKE_GM_PLOTS) {
     # Make gmc boxplots for each event

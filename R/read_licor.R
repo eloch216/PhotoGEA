@@ -1,13 +1,4 @@
-# This script includes functions for reading Licor data files. Since many of the
-# inputs to the `read_licor_file` function below are unlikely to change, default
-# values are also provided here.
-#
-# ------------------------------------------------------------------------------
-#
-# These functions require the `openxlsx` library, which can be installed using
-# the following command if it is not already installed:
-#
-# install.packages('openxlsx')
+# This script includes functions for reading Licor data files.
 #
 # ------------------------------------------------------------------------------
 #
@@ -17,8 +8,6 @@
 # issue for a Licor Excel file, open it in in Excel, go to the `Formulas` menu,
 # and choose `Calculate Now`. (Alternatively, press F9.) Then save the file and
 # close it. See https://github.com/tidyverse/readxl/issues/495 for more details.
-
-library(openxlsx)
 
 # Specify ASCII replacements for specific Unicode characters or sequences of
 # Unicode characters. This list is not intended to be exhaustive, but does
@@ -115,7 +104,7 @@ read_licor_file <- function(
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname = 'time'
+    timestamp_colname
 )
 {
     # Define a helping function for reading one row (with column names) from an
@@ -123,7 +112,7 @@ read_licor_file <- function(
     # be in the preceding row
     read_row_wc <- function(row_num)
     {
-        row_data <- readWorkbook(
+        row_data <- openxlsx::readWorkbook(
             file_name,
             colNames = TRUE,
             skipEmptyCols = FALSE,
@@ -138,7 +127,7 @@ read_licor_file <- function(
     # an Excel file
     read_row_nc <- function(row_num)
     {
-        row_data <- readWorkbook(
+        row_data <- openxlsx::readWorkbook(
             file_name,
             colNames = FALSE,
             skipEmptyCols = FALSE,
@@ -198,7 +187,7 @@ read_licor_file <- function(
     licor_variable_units <- get_processed_row_data_frame(variable_unit_row)
 
     # Get the main data
-    licor_data <- readWorkbook(
+    licor_data <- openxlsx::readWorkbook(
         file_name,
         startRow = data_start_row,
         colNames = FALSE,
@@ -255,19 +244,21 @@ batch_read_licor_file <- function(
     variable_type_row,
     variable_name_row,
     variable_unit_row,
-    data_start_row
+    data_start_row,
+    timestamp_colname
 )
 {
     lapply(
         file_names,
         function(filename) {
             read_licor_file(
-                    filename,
-                    preamble_data_rows,
-                    variable_type_row,
-                    variable_name_row,
-                    variable_unit_row,
-                    data_start_row
+                filename,
+                preamble_data_rows,
+                variable_type_row,
+                variable_name_row,
+                variable_unit_row,
+                data_start_row,
+                timestamp_colname
             )
         }
     )

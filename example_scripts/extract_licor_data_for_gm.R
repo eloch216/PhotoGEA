@@ -1,14 +1,8 @@
-# A script for reading Licor data from multiple files, extracting certain
-# columns, adding some blank columns for later calculations, and writing the
-# information from each file as a separate tab within an output Excel
-# spreadsheet. This script has been tested on Windows and MacOS.
-#
-# ------------------------------------------------------------------------------
-#
-# This script requires the `openxlsx` library, which can be installed using the
-# following command if it is not already installed:
-#
-# install.packages('openxlsx')
+# This script uses the PhotoGEA and openxlsx libraries to read Licor data from
+# multiple files, extract certain columns, add some new columns, fill the new
+# columns with Excel formulas, and finally write the information from each file
+# as a separate tab within an output Excel spreadsheet. This script has been
+# tested on Windows and MacOS.
 #
 # ------------------------------------------------------------------------------
 #
@@ -27,13 +21,6 @@
 # - Functions used to load and process the data (shouldn't need to change)
 # - The command that actually calls the functions (shouldn't need to change)
 #
-# The script also relies on functions and settings from several external files:
-# - read_licor.R'
-# - licor_data_operations.R
-# - write_licor.R
-# It is unlikely that anything in these files will require modifications when
-# using this script.
-#
 # Typically, it should only be necessary to specify the names of input files
 # and the output file. This information is specified in the FILES_TO_PROCESS
 # vector and the OUTPUT_FILENAME string. If CHOOSE_FILES_INTERACTIVELY is set to
@@ -50,14 +37,8 @@
 # this script and type:
 #
 # source('extract_licor_data_for_gm.R')
-#
-# ------------------------------------------------------------------------------
-#
-# For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
-source('read_licor.R')
-source('licor_data_operations.R')
-source('write_licor.R')
+library(PhotoGEA)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -300,7 +281,8 @@ print_all <- function(
         variable_type_row,
         variable_name_row,
         variable_unit_row,
-        data_start_row
+        data_start_row,
+        'time'
     )
 
     # Add blank columns to each file
@@ -323,7 +305,7 @@ print_all <- function(
     )
 
     # Make a workbook object
-    wb <- createWorkbook()
+    wb <- openxlsx::createWorkbook()
 
     # Add the sheets to the workbook object
     for (i in seq_along(files_to_process)) {
@@ -338,7 +320,7 @@ print_all <- function(
     }
 
     # Create a file based on the workbook object
-    saveWorkbook(wb, output_filename, overwrite = TRUE)
+    openxlsx::saveWorkbook(wb, output_filename, overwrite = TRUE)
 }
 
 ###                                                                   ###
