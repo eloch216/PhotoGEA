@@ -150,7 +150,12 @@ VARIABLES_TO_EXTRACT <- c(
     "hhmmss",
     EVENT_COLUMN_NAME,
     REP_COLUMN_NAME,
-    VARIABLES_TO_ANALYZE,
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    "gsw",
+    "PhiPS2",
+    "ETR",
+    "CO2_r_sp",
     "Ca",
     "gbw",
     "Qin",
@@ -454,7 +459,7 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TIME_COLUMN_NAME
     )
 
-    extracted_multi_file_info <- batch_extract_licor_variables(
+    extracted_multi_file_info <- batch_extract_variables(
         multi_file_info,
         VARIABLES_TO_EXTRACT
     )

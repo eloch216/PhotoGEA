@@ -279,7 +279,7 @@ print_all <- function(
     )
 
     # Extract the desired columns from each file
-    licor_files <- batch_extract_licor_variables(
+    licor_files <- batch_extract_variables(
         licor_files,
         variables_to_extract
     )

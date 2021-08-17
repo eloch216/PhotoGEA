@@ -67,94 +67,69 @@ specify_variables <- function(exdf_obj, ...)
 #
 batch_specify_variables <- function(exdf_objs, ...)
 {
-    lapply(
-        exdf_objs,
-        function(exdf_obj) {
-            specify_variables(exdf_obj, ...)
-        }
-    )
+    lapply(exdf_objs, function(x) {specify_variables(x, ...)})
 }
 
-# extract_licor_variables: a function for choosing a subset of Licor variables
-# from an R list representing a Licor file
-#
-# In keeping with the other variables present in the original Licor data, each
-# new variable has a category, name, and unit.
+# extract_variables: a function for choosing a subset of variables from an exdf
+# object
 #
 # ------------------------------------------------------------------------------
 #
 # INPUTS:
 #
-# - licor_file: a list representing the data from a Licor file (typically
-#               produced by a a call to the `read_licor_file` defined in
-#               `read_licor.R`)
+# - exdf_obj: an exdf object
 #
 # - variables_to_extract: a vector of variable names that should be extracted
-#                         from the Licor data
 #
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
-# a list describing Licor data having the same structure as the `licor_file`
-# input
+# an exdf object with a subset of the original columns
 #
-extract_licor_variables <- function(
-    licor_file,
+extract_variables <- function(
+    exdf_obj,
     variables_to_extract
 )
 {
-    # Only attempt to extract variables that are included in the Licor file
-    variables_to_extract <-
-        variables_to_extract[variables_to_extract %in% colnames(licor_file[['main_data']])]
+    # Check for variables that are not included in the Licor file
+    not_in_file <-
+        variables_to_extract[!variables_to_extract %in% colnames(exdf_obj)]
 
-    licor_file[['categories']] <-
-        licor_file[['categories']][,variables_to_extract]
+    if (length(not_in_file) > 0) {
+        msg <- paste0(
+            "the following variables are not included in the exdf object: ",
+            paste(not_in_file, collapse = ", ")
+        )
+        stop(msg)
+    }
 
-    licor_file[['units']] <-
-        licor_file[['units']][,variables_to_extract]
+    exdf_obj[['main_data']] <- exdf_obj[['main_data']][,variables_to_extract]
+    exdf_obj[['units']] <- exdf_obj[['units']][,variables_to_extract]
+    exdf_obj[['categories']] <- exdf_obj[['categories']][,variables_to_extract]
 
-    licor_file[['main_data']] <-
-        licor_file[['main_data']][,variables_to_extract]
-
-    return(licor_file)
+    return(exdf_obj)
 }
 
-# batch_extract_licor_variables: a function for extracting variables from R
-# lists representing multiple Licor files
+# batch_extract_variables: a function for choosing a subset of variables from
+# multiple exdf objects
 #
 # ------------------------------------------------------------------------------
 #
 # INPUTS:
 #
-# - licor_files: a list of unnamed lists, each representing the information from
-#                a single Licor file (typically produced by a call to the
-#                `batch_read_licor_file` function defined in `read_licor.R`)
+# - exdf_objs: a list of exdf objects
 #
-# All other inputs are identical to those in the `extract_licor_variables`
-# function.
+# - variables_to_extract: a vector of variable names that should be extracted
 #
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
-# a list with unnamed elements, each of which is a list describing the contents
-# of a Licor file (as if it had been created by the `read_licor` function)
+# a list of exdf objects, each having a subset of its orignal columns
 #
-batch_extract_licor_variables <- function(
-    licor_files,
-    variables_to_extract
-)
-{
-    lapply(
-        licor_files,
-        function(licor_file) {
-            extract_licor_variables(
-                    licor_file,
-                    variables_to_extract
-            )
-        }
-    )
+batch_extract_variables <- function(exdf_objs, variables_to_extract) {
+    lapply(exdf_objs, function(x) {extract_variables(x, variables_to_extract)})
 }
 
 # combine_licor_files: a function for combining the information from multiple

@@ -146,7 +146,7 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files <- batch_extract_licor_variables(
+    tdl_files <- batch_extract_variables(
         tdl_files,
         c(
             TDL_TIMESTAMP_COLUMN_NAME,
@@ -195,7 +195,7 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
     )
 
-    licor_files <- batch_extract_licor_variables(
+    licor_files <- batch_extract_variables(
         licor_files,
         LICOR_VARIABLES_TO_EXTRACT
     )
