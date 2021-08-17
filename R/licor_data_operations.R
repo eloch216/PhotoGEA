@@ -32,22 +32,13 @@ add_licor_variables <- function(
     variables_to_add
 )
 {
-    # Make a helping function for adding a blank column to the data and the
-    # variable descriptors
-    add_blank <- function(variable_info)
-    {
-        category <- variable_info[['category']]
-        name <- variable_info[['name']]
-        units <- variable_info[['units']]
-
-        licor_file[['main_data']][[name]] <<- NA
-        licor_file[['categories']][[name]] <<- category
-        licor_file[['units']][[name]] <<- units
-    }
-
-    # Add the required blank columns
-    for (i in 1:length(variables_to_add[,1])) {
-        add_blank(variables_to_add[i,])
+    for (i in seq_len(nrow(variables_to_add))) {
+        licor_file <- set_column_info(
+            licor_file,
+            variables_to_add[i, 'name'],
+            variables_to_add[i, 'units'],
+            variables_to_add[i, 'category']
+        )
     }
 
     return(licor_file)
@@ -203,29 +194,11 @@ combine_licor_files <- function(
     # Get the info from the first file to use as a reference
     first_file <- licor_files[[1]]
 
-    # Set up the combo list
-    initial_data_frame <- data.frame(
-        matrix(
-            ncol = ncol(first_file[['main_data']]),
-            nrow = 0
-        )
-    )
-
-    colnames(initial_data_frame) <- colnames(first_file[['main_data']])
-
-    combo_info <- list(
-        file_name = character(0),
-        categories = first_file[['categories']],
-        units = first_file[['units']],
-        main_data = initial_data_frame
-    )
-
-    # Get the remaining info
+    # Check to make sure all the files have the same variables, units, and
+    # categories
     for (i in seq_along(licor_files)) {
-        # Get the current file
         current_file <- licor_files[[i]]
 
-        # Check for possible errors
         if (!identical(
             colnames(first_file[['main_data']]),
             colnames(current_file[['main_data']])
@@ -262,18 +235,7 @@ combine_licor_files <- function(
             )
             stop(msg)
         }
-
-        # Add this file to the combined info
-        combo_info[['main_data']] <- rbind(
-            combo_info[['main_data']],
-            current_file[['main_data']]
-        )
-
-        combo_info[['file_name']] <- c(
-            combo_info[['file_name']],
-            current_file[['file_name']]
-        )
     }
 
-    return(combo_info)
+    return(do.call("rbind.exdf", licor_files))
 }

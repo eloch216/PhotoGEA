@@ -197,7 +197,7 @@ PLOT_VCMAX_FITS <- FALSE
 calculate_fprime <- function(licor_data, O2_percent) {
     # Add a column for f_prime
     variables_to_add <- data.frame(
-        type = c("calculated", "calculated", "calculated", "in", "calculated"),
+        category = c("calculated", "calculated", "calculated", "in", "calculated"),
         name = c(GAMMA_STAR_COLUMN_NAME, KC_COLUMN_NAME, KO_COLUMN_NAME, O2_COLUMN_NAME, F_PRIME_COLUMN_NAME),
         units = c("micromol mol^(-1)", "micromol mol^(-1)", "mmol mol^(-1)", "mmol mol^(-1)", "dimensionless")
     )
@@ -427,7 +427,7 @@ fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
 add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
     # Add a column for gm
     variables_to_add <- data.frame(
-        type = "gm input",
+        category = "gm input",
         name = GM_COLUMN_NAME,
         units = "mol m^(-2) s^(-1)"
     )

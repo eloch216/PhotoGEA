@@ -133,13 +133,13 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     # information
     variables_to_add <- data.frame(
         rbind(
-            c("plant specification", "genotype",                 ""),
-            c("plant specification", "event",                    ""),
-            c("plant specification", "replicate",                ""),
-            c("plant specification", "genotype_event",           ""),
-            c("plant specification", "event_replicate",          ""),
-            c("plant specification", "genotype_event_replicate", ""),
-            c("plant specification", "original_file",            "")
+            c("plant specification", "genotype",                 "NA"),
+            c("plant specification", "event",                    "NA"),
+            c("plant specification", "replicate",                "NA"),
+            c("plant specification", "genotype_event",           "NA"),
+            c("plant specification", "event_replicate",          "NA"),
+            c("plant specification", "genotype_event_replicate", "NA"),
+            c("plant specification", "original_file",            "NA")
         ),
         stringsAsFactors = FALSE
     )

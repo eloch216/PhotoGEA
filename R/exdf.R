@@ -230,18 +230,18 @@ rbind.exdf <- function(
         )
     }
 
-    result <- exdf_list[[1]]
-
-    for (i in seq(2, length(exdf_list))) {
-        result[['main_data']] <- rbind(
-            result[['main_data']],
-            exdf_list[[i]][['main_data']],
-            deparse.level = deparse.level,
-            make.row.names = make.row.names,
-            stringsAsFactors = stringsAsFactors,
-            factor.exclude = factor.exclude
-        )
+    main_data_list <- list()
+    for (i in seq_along(exdf_list)) {
+        main_data_list[[i]] <- exdf_list[[i]][['main_data']]
     }
 
-    return(result)
+    new_main_data <- do.call("rbind", main_data_list)
+
+    return(
+        exdf(
+            new_main_data,
+            exdf_list[[1]][['units']],
+            exdf_list[[1]][['categories']]
+        )
+    )
 }
