@@ -12,7 +12,7 @@ specify_respiration <- function(licor_file, respiration) {
     )
     colnames(variables_to_add) <- c("category", "name", "units")
 
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
+    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Store it in the Licor file and return the updated file
     licor_file[['main_data']][['respiration']] <- abs(respiration)
@@ -42,7 +42,7 @@ specify_oxygen <- function(licor_file, oxygen) {
     )
     colnames(variables_to_add) <- c("category", "name", "units")
 
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
+    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Store it in the Licor file and return the updated file
     licor_file[['main_data']][['Oxygen']] <- oxygen
@@ -70,7 +70,7 @@ get_oxygen_info_from_preamble <- function(licor_file) {
     )
     colnames(variables_to_add) <- c("category", "name", "units")
 
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
+    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Try to get the oxygen information from the Licor file's preamble
     oxygen <- c()
@@ -145,7 +145,7 @@ get_genotype_info_from_licor_filename <- function(licor_file) {
     )
     colnames(variables_to_add) <- c("category", "name", "units")
 
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
+    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Get the filename without the path
     name <- basename(licor_file[['file_name']])
@@ -260,7 +260,7 @@ pair_licor_and_tdl <- function(
     )
     colnames(variables_to_add) <- c("category", "name", "units")
 
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
+    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Make sure the time columns have the correct class, or we won't be able to
     # store timestamps in them properly

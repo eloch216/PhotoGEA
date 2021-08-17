@@ -34,7 +34,7 @@ calculate_gm <- function(
     )
     colnames(variables_to_add) <- c("category", "name", "units")
 
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
+    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Define some constants to avoid magic numbers in the equations
     stomatal_conductance_factor <- 1.6   # ratio of gsw / gsc (i.e., water conductance / CO2 conductance)

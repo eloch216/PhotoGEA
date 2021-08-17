@@ -201,7 +201,7 @@ calculate_fprime <- function(licor_data, O2_percent) {
         name = c(GAMMA_STAR_COLUMN_NAME, KC_COLUMN_NAME, KO_COLUMN_NAME, O2_COLUMN_NAME, F_PRIME_COLUMN_NAME),
         units = c("micromol mol^(-1)", "micromol mol^(-1)", "mmol mol^(-1)", "mmol mol^(-1)", "dimensionless")
     )
-    licor_data <- add_licor_variables(licor_data, variables_to_add)
+    licor_data <- specify_variables(licor_data, variables_to_add)
 
     # Get leaf temperature in Kelvin. Sometimes the data will be in the `Tleaf`
     # column; other times it will be in the `Tleaf2` column. We can find the
@@ -431,7 +431,7 @@ add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
         name = GM_COLUMN_NAME,
         units = "mol m^(-2) s^(-1)"
     )
-    licor_data <- add_licor_variables(licor_data, variables_to_add)
+    licor_data <- specify_variables(licor_data, variables_to_add)
 
     licor_data[['main_data']][[GM_COLUMN_NAME]] <- gm_value
 

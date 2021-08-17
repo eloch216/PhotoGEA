@@ -286,7 +286,7 @@ print_all <- function(
     )
 
     # Add blank columns to each file
-    licor_files <- batch_add_licor_variables(
+    licor_files <- batch_specify_variables(
         licor_files,
         variables_to_add
     )

@@ -3,77 +3,73 @@
 # and combining files. In general, these functions are intended to operate on
 # R lists that have been created using the functions in `read_licor.R`.
 
-# add_licor_variables: a function for adding new variables (as blank columns) to
-# an R list the representing data from a Licor file.
-#
-# In keeping with the other variables present in the original Licor data, each
-# new variable has a category, name, and unit.
+# specify_variables: a function for specifying the units and categories of
+# columns of an exdf object; any new columns will be initialized to NA.
 #
 # ------------------------------------------------------------------------------
 #
 # INPUTS:
 #
-# - licor_file: a list representing the data from a Licor file (typically
-#               produced by a a call to the `read_licor_file` defined in
-#               `read_licor.R`)
+# - exdf_obj: an exdf object
 #
-# - variables_to_add: a data frame representing a set of new variables to add.
-#                     Must have three columns named "category", "name", and "units".
+# - variables_to_add: a data frame representing a set of new variables to add,
+#       which must have three columns named "category", "name", and "units"
 #
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
-# a list describing Licor data having the same structure as the `licor_file`
-# input
+# an exdf object with new and/or updated columns
 #
-add_licor_variables <- function(
-    licor_file,
+specify_variables <- function(
+    exdf_obj,
     variables_to_add
 )
 {
+    if (!is.exdf(exdf_obj)) {
+        stop("exdf_obj must be an exdf object")
+    }
+
     for (i in seq_len(nrow(variables_to_add))) {
-        licor_file <- set_column_info(
-            licor_file,
+        exdf_obj <- set_column_info(
+            exdf_obj,
             variables_to_add[i, 'name'],
             variables_to_add[i, 'units'],
             variables_to_add[i, 'category']
         )
     }
 
-    return(licor_file)
+    return(exdf_obj)
 }
 
-# batch_add_licor_variables: a function for adding new variables to R lists
-# representing multiple Licor files
+# batch_specify_variables: a function for specifying the units and categories of
+# columns of multiple exdf objects; any new columns will be initialized to NA.
 #
 # ------------------------------------------------------------------------------
 #
 # INPUTS:
 #
-# - licor_files: a list of unnamed lists, each representing the information from
-#                a single Licor file (typically produced by a call to the
-#                `batch_read_licor_file` function defined in `read_licor.R`)
+# - exdf_objs: a list of exdf objects
 #
-# All other inputs are identical to those in the `add_licor_variables` function.
+# - variables_to_add: a data frame representing a set of new variables to add,
+#       which must have three columns named "category", "name", and "units"
 #
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
-# a list with unnamed elements, each of which is a list describing the contents
-# of a Licor file (as if it had been created by the `read_licor` function)
+# a list of exdf objects with new and/or updated columns
 #
-batch_add_licor_variables <- function(
-    licor_files,
+batch_specify_variables <- function(
+    exdf_objs,
     variables_to_add
 )
 {
     lapply(
-        licor_files,
-        function(licor_file) {
-            add_licor_variables(
-                    licor_file,
+        exdf_objs,
+        function(exdf_obj) {
+            specify_variables(
+                    exdf_obj,
                     variables_to_add
             )
         }
