@@ -88,13 +88,10 @@ add_gm_to_licor_data_from_table <- function(
     gm_column_name
 )
 {
-    variables_to_add <- data.frame(
-        type = gm_table[['categories']][[gm_column_name]],
-        name = gm_column_name,
-        units = gm_table[['units']][[gm_column_name]]
+    licor_data <- specify_variables(
+        licor_data,
+        c(gm_table[['categories']][[gm_column_name]], gm_column_name, gm_table[['units']][[gm_column_name]])
     )
-
-    licor_data <- specify_variables(licor_data, variables_to_add)
 
     for (i in seq_len(nrow(gm_table[['main_data']]))) {
         genotype <- gm_table[['main_data']][[genotype_column_name]][i]

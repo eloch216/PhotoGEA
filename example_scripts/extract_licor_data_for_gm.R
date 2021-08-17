@@ -73,26 +73,6 @@ OUTPUT_FILENAME <- ""   # Initialize the output file name
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
 
-# Specify additional variables to add as blank columns. In keeping with the
-# other variables present in the original Licor data, each has a type, name, and
-# unit. For example, in the original file, column J represents a variable whose
-# type is `GasEx`, name is `Ci`, and units are `micromol mol^(-1)`.
-VARIABLES_TO_ADD <- data.frame(
-    rbind(
-        c("in",          "Oxygen",    "%"),
-        c("in",          "O2",        "kPa"),
-        c("in",          "[CO2]",     "micromol mol^(-1)"),
-        c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
-        c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
-        c("calculated",  "ppO2",      "bar"),
-        c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "Csurface",  "micromol mol^(-1)")
-    ),
-    stringsAsFactors = FALSE
-)
-colnames(VARIABLES_TO_ADD) <- c("category", "name", "units")
-
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
 # versions, e.g. the character Δ will be become `Delta`. The conversion rules
@@ -267,7 +247,6 @@ print_all <- function(
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    variables_to_add,
     variables_to_extract,
     variable_info_offset,
     main_data_offset,
@@ -288,7 +267,15 @@ print_all <- function(
     # Add blank columns to each file
     licor_files <- batch_specify_variables(
         licor_files,
-        variables_to_add
+        c("in",          "Oxygen",    "%"),
+        c("in",          "O2",        "kPa"),
+        c("in",          "[CO2]",     "micromol mol^(-1)"),
+        c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
+        c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
+        c("calculated",  "ppO2",      "bar"),
+        c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
+        c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
+        c("calculated",  "Csurface",  "micromol mol^(-1)")
     )
 
     # Extract the desired columns from each file
@@ -336,7 +323,6 @@ print_all(
     VARIABLE_NAME_ROW,
     VARIABLE_UNIT_ROW,
     DATA_START_ROW,
-    VARIABLES_TO_ADD,
     VARIABLES_TO_EXTRACT,
     VARIABLE_INFO_OFFSET,
     MAIN_DATA_OFFSET,

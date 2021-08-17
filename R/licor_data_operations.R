@@ -12,8 +12,9 @@
 #
 # - exdf_obj: an exdf object
 #
-# - variables_to_add: a data frame representing a set of new variables to add,
-#       which must have three columns named "category", "name", and "units"
+# any additional inputs should be vectors of strings that describe the variable
+# specifications, where the first element is the category, second is the name,
+# and third is the units
 #
 # ------------------------------------------------------------------------------
 #
@@ -21,21 +22,24 @@
 #
 # an exdf object with new and/or updated columns
 #
-specify_variables <- function(
-    exdf_obj,
-    variables_to_add
-)
+specify_variables <- function(exdf_obj, ...)
 {
     if (!is.exdf(exdf_obj)) {
         stop("exdf_obj must be an exdf object")
     }
 
-    for (i in seq_len(nrow(variables_to_add))) {
+    variable_specs <- list(...)
+
+    for (v in variable_specs) {
+        if (length(v) != 3 & !is.character(v)) {
+            stop("all variable specifications must be provided as vectors of three strings")
+        }
+
         exdf_obj <- set_column_info(
             exdf_obj,
-            variables_to_add[i, 'name'],
-            variables_to_add[i, 'units'],
-            variables_to_add[i, 'category']
+            v[2],
+            v[3],
+            v[1]
         )
     }
 
@@ -51,8 +55,9 @@ specify_variables <- function(
 #
 # - exdf_objs: a list of exdf objects
 #
-# - variables_to_add: a data frame representing a set of new variables to add,
-#       which must have three columns named "category", "name", and "units"
+# any additional inputs should be vectors of strings that describe the variable
+# specifications, where the first element is the category, second is the name,
+# and third is the units
 #
 # ------------------------------------------------------------------------------
 #
@@ -60,18 +65,12 @@ specify_variables <- function(
 #
 # a list of exdf objects with new and/or updated columns
 #
-batch_specify_variables <- function(
-    exdf_objs,
-    variables_to_add
-)
+batch_specify_variables <- function(exdf_objs, ...)
 {
     lapply(
         exdf_objs,
         function(exdf_obj) {
-            specify_variables(
-                    exdf_obj,
-                    variables_to_add
-            )
+            specify_variables(exdf_obj, ...)
         }
     )
 }

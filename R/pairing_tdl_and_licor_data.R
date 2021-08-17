@@ -4,15 +4,10 @@
 specify_respiration <- function(licor_file, respiration) {
     # Add some new columns to the Licor file in preparation for adding the
     # respiration information
-    variables_to_add <- data.frame(
-        rbind(
-            c("in", "respiration", "micromol m^(-2) s^(-1)")
-        ),
-        stringsAsFactors = FALSE
+    licor_file <- specify_variables(
+        licor_file,
+        c("in", "respiration", "micromol m^(-2) s^(-1)")
     )
-    colnames(variables_to_add) <- c("category", "name", "units")
-
-    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Store it in the Licor file and return the updated file
     licor_file[['main_data']][['respiration']] <- abs(respiration)
@@ -34,15 +29,10 @@ batch_specify_respiration <- function(licor_files, respiration) {
 specify_oxygen <- function(licor_file, oxygen) {
     # Add some new columns to the Licor file in preparation for adding the
     # oxygen information
-    variables_to_add <- data.frame(
-        rbind(
-            c("in", "Oxygen", "%")
-        ),
-        stringsAsFactors = FALSE
+    licor_file <- specify_variables(
+        licor_file,
+        c("in", "Oxygen", "%")
     )
-    colnames(variables_to_add) <- c("category", "name", "units")
-
-    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Store it in the Licor file and return the updated file
     licor_file[['main_data']][['Oxygen']] <- oxygen
@@ -62,15 +52,10 @@ batch_specify_oxygen <- function(licor_files, oxygen) {
 get_oxygen_info_from_preamble <- function(licor_file) {
     # Add some new columns to the Licor file in preparation for adding the
     # oxygen information
-    variables_to_add <- data.frame(
-        rbind(
-            c("in", "Oxygen", "%")
-        ),
-        stringsAsFactors = FALSE
+    licor_file <- specify_variables(
+        licor_file,
+        c("in", "Oxygen", "%")
     )
-    colnames(variables_to_add) <- c("category", "name", "units")
-
-    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Try to get the oxygen information from the Licor file's preamble
     oxygen <- c()
@@ -131,21 +116,16 @@ batch_get_oxygen_info_from_preamble <- function(licor_files) {
 get_genotype_info_from_licor_filename <- function(licor_file) {
     # Add some new columns to the Licor file in preparation for adding the plant
     # information
-    variables_to_add <- data.frame(
-        rbind(
-            c("plant specification", "genotype",                 "NA"),
-            c("plant specification", "event",                    "NA"),
-            c("plant specification", "replicate",                "NA"),
-            c("plant specification", "genotype_event",           "NA"),
-            c("plant specification", "event_replicate",          "NA"),
-            c("plant specification", "genotype_event_replicate", "NA"),
-            c("plant specification", "original_file",            "NA")
-        ),
-        stringsAsFactors = FALSE
+    licor_file <- specify_variables(
+        licor_file,
+        c("plant specification", "genotype",                 "NA"),
+        c("plant specification", "event",                    "NA"),
+        c("plant specification", "replicate",                "NA"),
+        c("plant specification", "genotype_event",           "NA"),
+        c("plant specification", "event_replicate",          "NA"),
+        c("plant specification", "genotype_event_replicate", "NA"),
+        c("plant specification", "original_file",            "NA")
     )
-    colnames(variables_to_add) <- c("category", "name", "units")
-
-    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Get the filename without the path
     name <- basename(licor_file[['file_name']])
@@ -240,27 +220,22 @@ pair_licor_and_tdl <- function(
 {
     # Add some new columns to the Licor file in preparation for adding the TDL
     # data
-    variables_to_add <- data.frame(
-        rbind(
-            c("calibrated TDL",              "cycle_num",              ""),
-            c("calibrated TDL (sample)",     "valve_number_s",         ""),
-            c("calibrated TDL (sample)",     "tdl_time_s",             ""),
-            c("calibrated TDL (sample)",     "calibrated_12c_s",       "ppm"),
-            c("calibrated TDL (sample)",     "calibrated_13c_s",       "ppm"),
-            c("calibrated TDL (sample)",     "total_mixing_ratio_s",   "ppm"),
-            c("calibrated TDL (sample)",     "total_isotope_ratio_s",  "ppt"),
-            c("calibrated TDL (reference)",  "valve_number_r",         ""),
-            c("calibrated TDL (reference)",  "tdl_time_r",             ""),
-            c("calibrated TDL (reference)",  "calibrated_12c_r",       "ppm"),
-            c("calibrated TDL (reference)",  "calibrated_13c_r",       "ppm"),
-            c("calibrated TDL (reference)",  "total_mixing_ratio_r",   "ppm"),
-            c("calibrated TDL (reference)",  "total_isotope_ratio_r",  "ppt")
-        ),
-        stringsAsFactors = FALSE
+    licor_file <- specify_variables(
+        licor_file,
+        c("calibrated TDL",              "cycle_num",              ""),
+        c("calibrated TDL (sample)",     "valve_number_s",         ""),
+        c("calibrated TDL (sample)",     "tdl_time_s",             ""),
+        c("calibrated TDL (sample)",     "calibrated_12c_s",       "ppm"),
+        c("calibrated TDL (sample)",     "calibrated_13c_s",       "ppm"),
+        c("calibrated TDL (sample)",     "total_mixing_ratio_s",   "ppm"),
+        c("calibrated TDL (sample)",     "total_isotope_ratio_s",  "ppt"),
+        c("calibrated TDL (reference)",  "valve_number_r",         ""),
+        c("calibrated TDL (reference)",  "tdl_time_r",             ""),
+        c("calibrated TDL (reference)",  "calibrated_12c_r",       "ppm"),
+        c("calibrated TDL (reference)",  "calibrated_13c_r",       "ppm"),
+        c("calibrated TDL (reference)",  "total_mixing_ratio_r",   "ppm"),
+        c("calibrated TDL (reference)",  "total_isotope_ratio_r",  "ppt")
     )
-    colnames(variables_to_add) <- c("category", "name", "units")
-
-    licor_file <- specify_variables(licor_file, variables_to_add)
 
     # Make sure the time columns have the correct class, or we won't be able to
     # store timestamps in them properly

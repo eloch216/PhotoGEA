@@ -82,11 +82,20 @@ is.exdf <- function(x) {
 
 # Convert an exdf to a data.frame (used by `View`, `write.csv`, and others)
 as.data.frame.exdf <- function(x, ...) {
+    # Make sure time columns are properly formatted for displaying
+    main_data <- x[['main_data']]
+    for (col in colnames(main_data)) {
+        if ("POSIXlt" %in% class(main_data[[col]])) {
+            main_data[[col]] <- format(main_data[[col]])
+        }
+    }
+
+    # Store the categories and units as the first rows of the data.frame
     return(
         rbind(
             x[['categories']],
             x[['units']],
-            x[['main_data']]
+            main_data
         )
     )
 }
@@ -173,7 +182,9 @@ set_column_info <- function(x, name, units, category) {
                 paste0(
                     "`",
                     names(should_be_strings)[[i]],
-                    "` must have length 1"
+                    "` must have length 1 (input was '",
+                    should_be_strings[[i]],
+                    "')"
                 )
             )
         }
@@ -183,7 +194,9 @@ set_column_info <- function(x, name, units, category) {
                 paste0(
                     "`",
                     names(should_be_strings)[[i]],
-                    "` must be a string"
+                    "` must be a string (input was '",
+                    should_be_strings[[i]],
+                    "')"
                 )
             )
         }

@@ -28,16 +28,12 @@ calculate_cc <- function(
     licor_data[,drawdown_column_name] <-
         licor_data[,ci_column_name] - licor_data[,cc_column_name]
 
-    # Document the columns we just added
-    variables_to_add <- data.frame(
-        rbind(
-            c("calculated", cc_column_name,       "micromol mol^(-1)"),
-            c("calculated", drawdown_column_name, "micromol mol^(-1)")
-        ),
-        stringsAsFactors = FALSE
+    # Document the columns that were added
+    licor_data <- specify_variables(
+        licor_data,
+        c("calculated", cc_column_name,       "micromol mol^(-1)"),
+        c("calculated", drawdown_column_name, "micromol mol^(-1)")
     )
-    colnames(variables_to_add) <- c("category", "name", "units")
-    licor_data <- specify_variables(licor_data, variables_to_add)
 
     return(licor_data)
 }
