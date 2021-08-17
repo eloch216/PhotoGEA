@@ -21,7 +21,6 @@ export(combine_exdf)
 export(identify_tdl_cycles)
 export(process_tdl_cycles)
 export(read_gm_table)
-export(save_licor_file)
 export(sheet_name_from_file_name)
 export(write_excel_formula)
 
