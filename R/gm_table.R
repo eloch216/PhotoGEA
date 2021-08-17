@@ -6,8 +6,7 @@
 # genotype_column_name (specifying the genotype) and gm_column_name (specifying
 # the mesophyll conductance to CO2). The first row should be the column names,
 # the second row should be the units for each column, and the remaining rows
-# should contain the data. The return value is a list with two elements:
-# 'main_data' and 'units', each of which are data frames with named columns.
+# should contain the data. The return value is an exdf object.
 read_gm_table <- function(
     filename,
     genotype_column_name,
@@ -29,8 +28,8 @@ read_gm_table <- function(
     }
 
     table_units <- raw_data[2,]
-    table_data <- raw_data[3:nrow(raw_data),]
-    table_types <- data.frame(
+    table_data <- raw_data[seq(3, nrow(raw_data)),]
+    table_categories <- data.frame(
         matrix(
             data = "gm input",
             nrow = 1,
@@ -39,43 +38,26 @@ read_gm_table <- function(
         stringsAsFactors = FALSE
     )
 
-    colnames(table_types) <- table_columns
+    colnames(table_categories) <- table_columns
     colnames(table_units) <- table_columns
     colnames(table_data) <- table_columns
 
     rownames(table_units) <- NULL
     rownames(table_data) <- NULL
 
+    # Convert the data to numeric values whenever possible
     table_data <- as.data.frame(
-        lapply(
-            table_data,
-            function(x) {
-                # Try to apply as.numeric, but if any warnings or errors occur,
-                # just use the original column values
-                tryCatch(
-                    {
-                        # Code to be executed initially
-                        as.numeric(x)
-                    },
-                    error=function(cond) {
-                        # Code for handling errors
-                        x
-                    },
-                    warning=function(cond) {
-                        # Code for handling warnings
-                        x
-                    }
-                )
-            }
-        ),
+        lapply(table_data, try_as_numeric),
         stringsAsFactors = FALSE
     )
 
-    return(list(
-        types = table_types,
-        units = table_units,
-        main_data = table_data
-    ))
+    return(
+        exdf(
+            table_data,
+            table_units,
+            table_categories
+        )
+    )
 }
 
 # Adds gm values to a list representing Licor data (as created by
@@ -88,24 +70,30 @@ add_gm_to_licor_data_from_table <- function(
     gm_column_name
 )
 {
+    # Add a new column to the licor data representing gm
     licor_data <- specify_variables(
         licor_data,
-        c(gm_table[['categories']][[gm_column_name]], gm_column_name, gm_table[['units']][[gm_column_name]])
+        c(
+            gm_table[['categories']][[gm_column_name]],
+            gm_column_name,
+            gm_table[['units']][[gm_column_name]]
+        )
     )
 
+    # Fill in the values
     for (i in seq_len(nrow(gm_table[['main_data']]))) {
-        genotype <- gm_table[['main_data']][[genotype_column_name]][i]
-        gm_val <- gm_table[['main_data']][[gm_column_name]][i]
+        genotype <- gm_table[i,genotype_column_name]
+        gm_val <- gm_table[i,gm_column_name]
 
-        licor_data[['main_data']][[gm_column_name]][licor_data[['main_data']][[genotype_column_name]] == genotype] <- gm_val
+        licor_data[,gm_column_name][licor_data[,genotype_column_name] == genotype] <- gm_val
 
     }
 
     return(licor_data)
 }
 
-# choose_input_licor_files: a function for interactively selecting multiple
-# Licor Excel files.
+# choose_input_gm_table_file: a function for interactively selecting a gm table
+# file.
 #
 # Important note: this function is only available on MS Windows.
 #
