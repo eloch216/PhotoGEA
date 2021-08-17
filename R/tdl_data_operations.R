@@ -5,8 +5,7 @@
 #
 # INPUTS:
 #
-# - tdl_file: a list representing the data from a TDL file (typically produced
-#       by a a call to the `read_tdl_file` defined in `read_licor.R`)
+# - tdl_exdf: an exdf object representing data from a TDL file
 #
 # - valve_column_name: the name of the data column that represents the site
 #
@@ -18,16 +17,17 @@
 #
 # - expected_cycle_num_pts: the expected number of points in a full cycle
 #
+# - timestamp_colname: the name of the data column that represents the timestamp
+#
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
-# a list describing TDL data having the same structure as the output of a call
-# to the `read_tdl_file` function, but now only including full cycles, each of
-# which is numbered in a new `cycle` column.
+# an exdf object representing data from a TDL file, but now only including full
+# cycles, each of which is numbered in a new `num_cycles` column.
 #
 identify_tdl_cycles <- function(
-    tdl_file,
+    tdl_exdf,
     valve_column_name,
     cycle_start_valve,
     expected_cycle_length_minutes,
@@ -35,20 +35,23 @@ identify_tdl_cycles <- function(
     timestamp_colname
 )
 {
-    main_data <- tdl_file[['main_data']]
+    # Add a new column to the data for the cycle number
+    tdl_exdf <- specify_variables(
+        tdl_exdf,
+        c("calculated", "cycle_num", "NA")
+    )
 
     # Make sure the data isn't empty
-    if (nrow(main_data) < 1) {
+    if (nrow(tdl_exdf) < 1) {
         stop("TDL cycles cannot be identified because the TDL data is empty")
     }
 
     # Make sure the data is sorted in chronological order
-    main_data <- main_data[order(main_data[[timestamp_colname]]),]
+    tdl_exdf[['main_data']] <- tdl_exdf[order(tdl_exdf[,timestamp_colname]),]
 
     # Find all the row numbers in the TDL data where the site value is equal to
     # the cycle start site value
-    starting_indices <-
-        which(main_data[[valve_column_name]] == cycle_start_valve)
+    starting_indices <- which(tdl_exdf[,valve_column_name] == cycle_start_valve)
 
     # Check for problems
     if (length(starting_indices) < 1) {
@@ -89,21 +92,21 @@ identify_tdl_cycles <- function(
     # Set up a new data frame
     new_main_data <- data.frame(
         matrix(
-            ncol = ncol(main_data) + 1,
+            ncol = ncol(tdl_exdf),
             nrow = 0
         ),
         stringsAsFactors = FALSE
     )
-    colnames(new_main_data) <- c('cycle_num', colnames(main_data))
+    colnames(new_main_data) <- colnames(tdl_exdf)
 
     # Fill in the new data frame with only valid TDL cycles
     n_cycles <- 1
     for (i in seq_along(starting_indices)) {
         possible_cycle <- c()
         if (i < length(starting_indices)) {
-            possible_cycle <- main_data[seq(starting_indices[i], starting_indices[i+1] - 1),]
+            possible_cycle <- tdl_exdf[seq(starting_indices[i], starting_indices[i+1] - 1),]
         } else {
-            possible_cycle <- main_data[seq(starting_indices[i], nrow(main_data)),]
+            possible_cycle <- tdl_exdf[seq(starting_indices[i], nrow(tdl_exdf)),]
         }
 
         if (check_cycle(possible_cycle)) {
@@ -115,6 +118,12 @@ identify_tdl_cycles <- function(
 
     # Clean up and return the result
     row.names(new_main_data) <- NULL
-    tdl_file[['main_data']] <- new_main_data
-    return(tdl_file)
+
+    return(
+        exdf(
+            new_main_data,
+            tdl_exdf[['units']],
+            tdl_exdf[['categories']]
+        )
+    )
 }
