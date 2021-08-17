@@ -223,8 +223,8 @@ rbind.exdf <- function(
 {
     exdf_list <- list(...)
 
-    if (length(exdf_list) < 2) {
-        stop("rbind requires two or more exdf objects")
+    if (length(exdf_list) < 1) {
+        stop("rbind.exdf requires one or more exdf objects")
     }
 
     type_check <- rep(FALSE, times = length(exdf_list))

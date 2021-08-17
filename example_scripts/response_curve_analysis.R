@@ -464,7 +464,7 @@ if (PERFORM_CALCULATIONS) {
         VARIABLES_TO_EXTRACT
     )
 
-    combined_info <- combine_licor_files(extracted_multi_file_info)
+    combined_info <- combine_exdf(extracted_multi_file_info)
 
     if (USE_GM_TABLE) {
         gm_table_info <- read_gm_table(

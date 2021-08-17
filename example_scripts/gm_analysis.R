@@ -156,14 +156,15 @@ if (PERFORM_CALCULATIONS) {
         )
     )
 
-    tdl_files <- combine_tdl_files(tdl_files)
+    tdl_files <- combine_exdf(tdl_files)
 
     tdl_files <- identify_tdl_cycles(
         tdl_files,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
         expected_cycle_length_minutes = 2.7,
-        expected_cycle_num_pts = 9
+        expected_cycle_num_pts = 9,
+        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
     processed_tdl_data <- process_tdl_cycles(
@@ -216,7 +217,7 @@ if (PERFORM_CALCULATIONS) {
         max_allowed_time_difference = 1
     )
 
-    licor_files <- combine_licor_files(licor_files)
+    licor_files <- combine_exdf(licor_files)
 
     # Calculate gm and other quantities
 

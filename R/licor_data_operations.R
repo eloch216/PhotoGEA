@@ -1,8 +1,3 @@
-# This script includes functions for manipulating Licor data files that have
-# already been loaded; for example, adding blank columns, extracting columns,
-# and combining files. In general, these functions are intended to operate on
-# R lists that have been created using the functions in `read_licor.R`.
-
 # specify_variables: a function for specifying the units and categories of
 # columns of an exdf object; any new columns will be initialized to NA.
 #
@@ -65,8 +60,7 @@ specify_variables <- function(exdf_obj, ...)
 #
 # a list of exdf objects with new and/or updated columns
 #
-batch_specify_variables <- function(exdf_objs, ...)
-{
+batch_specify_variables <- function(exdf_objs, ...) {
     lapply(exdf_objs, function(x) {specify_variables(x, ...)})
 }
 
@@ -132,80 +126,78 @@ batch_extract_variables <- function(exdf_objs, variables_to_extract) {
     lapply(exdf_objs, function(x) {extract_variables(x, variables_to_extract)})
 }
 
-# combine_licor_files: a function for combining the information from multiple
-# Licor files into a single list. Here, only the filenames, categories, units,
-# and data are retained (i.e., any parameters specified when reading the files
-# will be lost).
+# combine_exdf: a function for combining the information from multiple exdf
+# objects into a single list. Here, any "extra information" specified when by
+# the objects will be lost (i.e., only the main data, units, and categories will
+# be retained).
 #
 # ------------------------------------------------------------------------------
 #
 # INPUTS:
 #
-# - licor_files: a list of unnamed lists, each representing the information from
-#                a single Licor file (typically produced by a call to the
-#                `batch_read_licor_file` function defined in `read_licor.R`)
+# - exdf_objs: a list of exdf objects
 #
 # ------------------------------------------------------------------------------
 #
 # OUTPUT:
 #
-# a list describing Licor data having the same structure as the output of a call
-# to the `read_licor_file` function.
+# a single exdf object with all the data from the original objects
 #
-combine_licor_files <- function(
-    licor_files
-)
+combine_exdf <- function(exdf_objs)
 {
     # Make sure at least one file is defined
-    if (length(licor_files) < 1) {
-        stop("The input list is required to contain at least one Licor file")
+    if (length(exdf_objs) < 1) {
+        stop("The input list is required to contain at least one exdf object")
     }
 
     # Get the info from the first file to use as a reference
-    first_file <- licor_files[[1]]
+    first_exdf <- exdf_objs[[1]]
 
     # Check to make sure all the files have the same variables, units, and
     # categories
-    for (i in seq_along(licor_files)) {
-        current_file <- licor_files[[i]]
+    for (i in seq_along(exdf_objs)) {
+        current_exdf <- exdf_objs[[i]]
 
         if (!identical(
-            colnames(first_file[['main_data']]),
-            colnames(current_file[['main_data']])
+            colnames(first_exdf[['main_data']]),
+            colnames(current_exdf[['main_data']])
         ))
         {
             msg <- paste0(
-                "The column names specified in Licor file '",
-                current_file[['file_name']],
-                "' do not agree with the column names specified in '",
-                first_file[['file_name']],
+                "The column names specified in exdf object created from '",
+                current_exdf[['file_name']],
+                "' do not agree with the column names specified ",
+                "in the exdf object created from '",
+                first_exdf[['file_name']],
                 "', so the two files cannot be combined"
             )
             stop(msg)
         }
 
-        if (!identical(first_file[['categories']], current_file[['categories']])) {
+        if (!identical(first_exdf[['categories']], current_exdf[['categories']])) {
             msg <- paste0(
-                "The categories specified in Licor file '",
-                current_file[['file_name']],
-                "' do not agree with the categories specified in '",
-                first_file[['file_name']],
+                "The categories specified in exdf object created from '",
+                current_exdf[['file_name']],
+                "' do not agree with the categories specified ",
+                "in the exdf object created from '",
+                first_exdf[['file_name']],
                 "', so the two files cannot be combined"
             )
             stop(msg)
         }
 
-        if (!identical(first_file[['units']], current_file[['units']])) {
+        if (!identical(first_exdf[['units']], current_exdf[['units']])) {
             msg <- paste0(
-                "The units specified in Licor file '",
-                current_file[['file_name']],
-                "' do not agree with the units specified in '",
-                first_file[['file_name']],
+                "The units specified in exdf object created from '",
+                current_exdf[['file_name']],
+                "' do not agree with the units specified ",
+                "in the exdf object created from '",
+                first_exdf[['file_name']],
                 "', so the two files cannot be combined"
             )
             stop(msg)
         }
     }
 
-    return(do.call("rbind.exdf", licor_files))
+    return(do.call("rbind.exdf", exdf_objs))
 }
