@@ -218,11 +218,43 @@ if (PERFORM_CALCULATIONS) {
     # Get stats for each rep by averaging over all corresponding observations
     rep_stats <- basic_stats(
         licor_files_no_outliers[['main_data']],
-        'genotype',
+        'event',
         'event_replicate',
         VARIABLES_TO_ANALYZE,
         'sa'
     )
+    
+    # Convert the "event" column to a group or onewaytests will yell at us
+    rep_stats[['event']] <- as.factor(rep_stats[['event']])
+    
+    #load onewaytests package
+    library(onewaytests)
+    
+    #perform Brown-Forsythe test to check for equal variance
+    bf.test(gmc_avg ~ event, data = rep_stats)
+    
+    #if p >0.05 variances among populations is equal and proceed with anova
+    #if p <0.05 do largest calculated variance/smallest calculated variance, must be <4 to proceed with ANOVA
+    
+    #check normality of data with Shapiro-Wilks test
+    shapiro.test(rep_stats$gmc_avg)
+    
+    #if p>0.05 data has normal distribution and proceed with anova
+    
+    #perform one way analysis of variance
+    A.aov <- aov(gmc_avg ~ event, data = rep_stats)
+    
+    # Summary of the analysis
+    summary(A.aov)
+    
+    #if p<0.05 perform Dunnett's posthoc test
+    #load DescTools library
+    library(DescTools)
+    
+    #perform Dunnett's Test
+    DunnettTest(x=rep_stats$gmc_avg, g=rep_stats$event, control="WT")
+    
+    
 }
 
 if (SAVE_RESULTS) {
