@@ -13,7 +13,7 @@ following set of commands:
 
 ```
 setwd('path_to_unzipped_directory')
-install.packages('PhotoGEA', repos=NULL, type='SOURCE')
+install.packages('licor-processing-and-analysis', repos=NULL, type='SOURCE')
 ```
 
 ### Using example scripts
