@@ -1,5 +1,3 @@
-source("licor_data_operations.R")
-
 process_tdl_cycle <- function(
     tdl_cycle,
     valve_column_name,

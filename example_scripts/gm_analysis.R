@@ -1,15 +1,39 @@
-source("read_tdl.R")
-source("tdl_data_operations.R")
-source("tdl_calculations.R")
-source("read_licor.R")
-source("pairing_tdl_and_licor_data.R")
-source("gm_calculations.R")
-source("calculate_cc.R")
-source("basic_stats.R")
-source("save_file.R")
+# This script uses the PhotoGEA library to load Licor data representing C3 A-Ci
+# curves from multiple Excel files, combine the data into one structure, compute
+# averages across multiple reps for each event in the data, and finally use a
+# linear fitting procedure to determine Vcmax values.
+#
+# ------------------------------------------------------------------------------
+#
+# IMPORTANT NOTE ABOUT LICOR EXCEL FILES: by default, Licor Excel files do not
+# `calculate` formula values. This causes a problem when reading them in R,
+# since any data entry determined from a formula will be read as 0. To fix this
+# issue for a Licor Excel file, open it in in Excel, go to the `Formulas` menu,
+# and choose `Calculate Now`. (Alternatively, press F9.) Then save the file and
+# close it. See https://github.com/tidyverse/readxl/issues/495 for more details.
+#
+# ------------------------------------------------------------------------------
+#
+# This script is broken up into several sections to make it easier to use:
+# - Components that might need to change each time this script is run
+# - Components that are less likely to change each time this script is run
+# - The commands that actually call the functions to perform the analysis.
+#
+# To generate figures based on the analysis performed in this script, see
+# `plot_gm_analysis.R`.
+#
+# ------------------------------------------------------------------------------
+#
+# To run the script, set the R working directory to the directory that contains
+# this script and type:
+#
+# source('gm_analysis.R')
 
-# Define constants that will determine the behavior of some functions in this
-# script
+library(PhotoGEA)
+
+###                                                                   ###
+### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
+###                                                                   ###
 
 PERFORM_CALCULATIONS <- TRUE
 
@@ -19,8 +43,11 @@ RESPIRATION <- -0.710568448235977
 
 MIN_GM <- 0.1
 MAX_GM <- 3.0
-
 MIN_CC <- 0.0
+
+###                                                                        ###
+### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
+###                                                                        ###
 
 # Names of important columns in the TDL data
 TDL_TIMESTAMP_COLUMN_NAME <- 'TIMESTAMP'
@@ -103,6 +130,10 @@ VARIABLES_TO_ANALYZE <- c(
     'Ci-Cc'
 )
 
+###                                                                   ###
+### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
+###                                                                   ###
+
 if (PERFORM_CALCULATIONS) {
     # Get all the TDL information and process it
 
@@ -115,7 +146,7 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files <- batch_extract_licor_variables(
+    tdl_files <- batch_extract_variables(
         tdl_files,
         c(
             TDL_TIMESTAMP_COLUMN_NAME,
@@ -125,14 +156,15 @@ if (PERFORM_CALCULATIONS) {
         )
     )
 
-    tdl_files <- combine_tdl_files(tdl_files)
+    tdl_files <- combine_exdf(tdl_files)
 
     tdl_files <- identify_tdl_cycles(
         tdl_files,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
         expected_cycle_length_minutes = 2.7,
-        expected_cycle_num_pts = 9
+        expected_cycle_num_pts = 9,
+        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
     processed_tdl_data <- process_tdl_cycles(
@@ -157,13 +189,14 @@ if (PERFORM_CALCULATIONS) {
     licor_files <- batch_read_licor_file(
         choose_input_licor_files(),
         preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_type_row = 14,
+        variable_category_row = 14,
         variable_name_row = 15,
         variable_unit_row = 16,
-        data_start_row = 17
+        data_start_row = 17,
+        timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
     )
 
-    licor_files <- batch_extract_licor_variables(
+    licor_files <- batch_extract_variables(
         licor_files,
         LICOR_VARIABLES_TO_EXTRACT
     )
@@ -184,7 +217,7 @@ if (PERFORM_CALCULATIONS) {
         max_allowed_time_difference = 1
     )
 
-    licor_files <- combine_licor_files(licor_files)
+    licor_files <- combine_exdf(licor_files)
 
     # Calculate gm and other quantities
 
@@ -269,8 +302,8 @@ if (SAVE_RESULTS) {
     write.csv(processed_tdl_data[['calibration_13CO2_data']], file.path(base_dir, "tdl_calibration_13CO2_data.csv"), row.names=FALSE)
     write.csv(processed_tdl_data[['calibration_13CO2_fit']], file.path(base_dir, "tdl_calibration_13CO2_fit.csv"), row.names=FALSE)
 
-    save_licor_file(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"))
-    save_licor_file(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"))
+    write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
+    write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
     write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
     write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }

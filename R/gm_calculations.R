@@ -4,42 +4,32 @@ calculate_gm <- function(
 {
     # Add some new columns to the Licor file in preparation for calculating
     # mesophyll conductance
-    variables_to_add <- data.frame(
-        rbind(
-            c("calculated",  "Cs_licor",       "micromol mol^(-1)"),
-            c("calculated",  "Ce_licor",       "micromol mol^(-1)"),
-            c("calculated",  "ppO2",      "bar"),
-            c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
-            c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
-            c("calculated",  "Csurface",  "micromol mol^(-1)"),
-
-            c("calculated",  "ppCO2_s",  "bar"),
-            c("calculated",  "ppCO2_r",  "bar"),
-            c("calculated",  "ppCO2_surface",  "bar"),
-            c("calculated",  "ppCO2_i",  "bar"),
-
-            c("calculated",  "xsi_LICOR",  ""),
-            c("calculated",  "xsi_TDL",  ""),
-
-            c("calculated",  "a_bar",  ""),
-            c("calculated",  "t",  ""),
-
-            c("calculated",  "gamma_star",  "bar"),
-            c("calculated",  "e",  ""),
-
-            c("calculated",  "delta_tdl",  "ppt"),
-            c("calculated",  "delta_i",  "ppt"),
-            c("calculated",  "delta_e",  "ppt"),
-            c("calculated",  "delta_f",  "ppt"),
-            c("calculated",  "equation_top",  ""),
-            c("calculated",  "delta_difference",  "ppt"),
-            c("calculated",  "gmc",       "mol m^(-2) s^(-1) bar^(-1)")
-        ),
-        stringsAsFactors = FALSE
+    licor_file <- specify_variables(
+        licor_file,
+        c("calculated", "Cs_licor",         "micromol mol^(-1)"),
+        c("calculated", "Ce_licor",         "micromol mol^(-1)"),
+        c("calculated", "ppO2",             "bar"),
+        c("calculated", "gsc",              "mol m^(-2) s^(-1)"),
+        c("calculated", "gbc",              "mol m^(-2) s^(-1)"),
+        c("calculated", "Csurface",         "micromol mol^(-1)"),
+        c("calculated", "ppCO2_s",          "bar"),
+        c("calculated", "ppCO2_r",          "bar"),
+        c("calculated", "ppCO2_surface",    "bar"),
+        c("calculated", "ppCO2_i",          "bar"),
+        c("calculated", "xsi_LICOR",        "?"),
+        c("calculated", "xsi_TDL",          "?"),
+        c("calculated", "a_bar",            "?"),
+        c("calculated", "t",                "?"),
+        c("calculated", "gamma_star",       "bar"),
+        c("calculated", "e",                "?"),
+        c("calculated", "delta_tdl",        "ppt"),
+        c("calculated", "delta_i",          "ppt"),
+        c("calculated", "delta_e",          "ppt"),
+        c("calculated", "delta_f",          "ppt"),
+        c("calculated", "equation_top",     "?"),
+        c("calculated", "delta_difference", "ppt"),
+        c("calculated", "gmc",              "mol m^(-2) s^(-1) bar^(-1)")
     )
-    colnames(variables_to_add) <- c("type", "name", "units")
-
-    licor_file <- add_licor_variables(licor_file, variables_to_add)
 
     # Define some constants to avoid magic numbers in the equations
     stomatal_conductance_factor <- 1.6   # ratio of gsw / gsc (i.e., water conductance / CO2 conductance)

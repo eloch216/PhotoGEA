@@ -1,14 +1,8 @@
-# A script for reading Licor data from multiple files, extracting certain
-# columns, adding some blank columns for later calculations, and writing the
-# information from each file as a separate tab within an output Excel
-# spreadsheet. This script has been tested on Windows and MacOS.
-#
-# ------------------------------------------------------------------------------
-#
-# This script requires the `openxlsx` library, which can be installed using the
-# following command if it is not already installed:
-#
-# install.packages('openxlsx')
+# This script uses the PhotoGEA and openxlsx libraries to read Licor data from
+# multiple files, extract certain columns, add some new columns, fill the new
+# columns with Excel formulas, and finally write the information from each file
+# as a separate tab within an output Excel spreadsheet. This script has been
+# tested on Windows and MacOS.
 #
 # ------------------------------------------------------------------------------
 #
@@ -27,13 +21,6 @@
 # - Functions used to load and process the data (shouldn't need to change)
 # - The command that actually calls the functions (shouldn't need to change)
 #
-# The script also relies on functions and settings from several external files:
-# - read_licor.R'
-# - licor_data_operations.R
-# - write_licor.R
-# It is unlikely that anything in these files will require modifications when
-# using this script.
-#
 # Typically, it should only be necessary to specify the names of input files
 # and the output file. This information is specified in the FILES_TO_PROCESS
 # vector and the OUTPUT_FILENAME string. If CHOOSE_FILES_INTERACTIVELY is set to
@@ -50,14 +37,8 @@
 # this script and type:
 #
 # source('extract_licor_data_for_gm.R')
-#
-# ------------------------------------------------------------------------------
-#
-# For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
-source('read_licor.R')
-source('licor_data_operations.R')
-source('write_licor.R')
+library(PhotoGEA)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -91,26 +72,6 @@ OUTPUT_FILENAME <- ""   # Initialize the output file name
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
-
-# Specify additional variables to add as blank columns. In keeping with the
-# other variables present in the original Licor data, each has a type, name, and
-# unit. For example, in the original file, column J represents a variable whose
-# type is `GasEx`, name is `Ci`, and units are `micromol mol^(-1)`.
-VARIABLES_TO_ADD <- data.frame(
-    rbind(
-        c("in",          "Oxygen",    "%"),
-        c("in",          "O2",        "kPa"),
-        c("in",          "[CO2]",     "micromol mol^(-1)"),
-        c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
-        c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
-        c("calculated",  "ppO2",      "bar"),
-        c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "Csurface",  "micromol mol^(-1)")
-    ),
-    stringsAsFactors = FALSE
-)
-colnames(VARIABLES_TO_ADD) <- c("type", "name", "units")
 
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
@@ -164,7 +125,7 @@ VARIABLES_TO_EXTRACT <- c(
 )
 
 PREAMBLE_DATA_ROWS <- c(3, 5, 7, 9, 11, 13)
-VARIABLE_TYPE_ROW <- 14
+VARIABLE_CATEGORY_ROW <- 14
 VARIABLE_NAME_ROW <- 15
 VARIABLE_UNIT_ROW <- 16
 DATA_START_ROW <- 17
@@ -282,11 +243,10 @@ print_all <- function(
     files_to_process,
     unicode_replacements,
     preamble_data_rows,
-    variable_type_row,
+    variable_category_row,
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    variables_to_add,
     variables_to_extract,
     variable_info_offset,
     main_data_offset,
@@ -297,20 +257,29 @@ print_all <- function(
     licor_files <- batch_read_licor_file(
         files_to_process,
         preamble_data_rows,
-        variable_type_row,
+        variable_category_row,
         variable_name_row,
         variable_unit_row,
-        data_start_row
+        data_start_row,
+        'time'
     )
 
     # Add blank columns to each file
-    licor_files <- batch_add_licor_variables(
+    licor_files <- batch_specify_variables(
         licor_files,
-        variables_to_add
+        c("in",          "Oxygen",    "%"),
+        c("in",          "O2",        "kPa"),
+        c("in",          "[CO2]",     "micromol mol^(-1)"),
+        c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
+        c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
+        c("calculated",  "ppO2",      "bar"),
+        c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
+        c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
+        c("calculated",  "Csurface",  "micromol mol^(-1)")
     )
 
     # Extract the desired columns from each file
-    licor_files <- batch_extract_licor_variables(
+    licor_files <- batch_extract_variables(
         licor_files,
         variables_to_extract
     )
@@ -323,7 +292,7 @@ print_all <- function(
     )
 
     # Make a workbook object
-    wb <- createWorkbook()
+    wb <- openxlsx::createWorkbook()
 
     # Add the sheets to the workbook object
     for (i in seq_along(files_to_process)) {
@@ -338,7 +307,7 @@ print_all <- function(
     }
 
     # Create a file based on the workbook object
-    saveWorkbook(wb, output_filename, overwrite = TRUE)
+    openxlsx::saveWorkbook(wb, output_filename, overwrite = TRUE)
 }
 
 ###                                                                   ###
@@ -350,11 +319,10 @@ print_all(
     FILES_TO_PROCESS,
     UNICODE_REPLACEMENTS,
     PREAMBLE_DATA_ROWS,
-    VARIABLE_TYPE_ROW,
+    VARIABLE_CATEGORY_ROW,
     VARIABLE_NAME_ROW,
     VARIABLE_UNIT_ROW,
     DATA_START_ROW,
-    VARIABLES_TO_ADD,
     VARIABLES_TO_EXTRACT,
     VARIABLE_INFO_OFFSET,
     MAIN_DATA_OFFSET,

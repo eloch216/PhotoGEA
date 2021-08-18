@@ -1,16 +1,7 @@
-# This script loads Licor data from multiple Excel files, combines it into one
-# data structure, and computes averages across multiple reps for each event
-# in the data.
-#
-# ------------------------------------------------------------------------------
-#
-# This script requires the `openxlsx`, `lattice`, and `RColorBrewer` libraries,
-# which can be installed using the following commands if they are not already
-# installed:
-#
-# install.packages('openxlsx')
-# install.packages('lattice')
-# install.packages('RColorBrewer')
+# This script loads Licor data representing C3 A-Ci curves from multiple Excel
+# files, combines it into one data structure, computes averages across multiple
+# reps for each event in the data, and uses a linear fitting procedure to
+# determine Vcmax values.
 #
 # ------------------------------------------------------------------------------
 #
@@ -27,15 +18,7 @@
 # - Components that might need to change each time this script is run
 # - Components that are less likely to change each time this script is run
 # - Functions used to load and process the data (shouldn't need to change)
-# - The commands that actually call the functions and create the plots (the
-#   plotting commands may require modifications)
-#
-# The script also relies on functions and settings from several external files:
-# - read_licor.R
-# - licor_data_operations.R
-# - gm_table.R
-# It is unlikely that anything in these files will require modifications when
-# using this script.
+# - The commands that actually call the functions
 #
 # Typically, it should only be necessary to specify the names of input files.
 # This information is specified in the LICOR_FILES_TO_PROCESS vector and
@@ -48,7 +31,7 @@
 # contains this script.
 #
 # To generate figures based on the analysis performed in this script, see
-# plot_response_curve_analysis.R.
+# `plot_response_curve_analysis.R`.
 #
 # ------------------------------------------------------------------------------
 #
@@ -56,19 +39,8 @@
 # this script and type:
 #
 # source('response_curve_analysis.R')
-#
-# ------------------------------------------------------------------------------
-#
-# For questions or comments, please contact Ed Lochocki (eloch@illinois.edu)
 
-source('read_licor.R')
-source('licor_data_operations.R')
-source('gm_table.R')
-source("calculate_cc.R")
-source("basic_stats.R")
-
-library(lattice)
-library(RColorBrewer)
+library(PhotoGEA)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -148,6 +120,7 @@ F_PRIME_COLUMN_NAME <- "f_prime"
 GAMMA_STAR_COLUMN_NAME <- "gamma_star"
 KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
+TIME_COLUMN_NAME <- "time"
 
 # Specify variables to analyze, i.e., variables where the average, standard
 # deviation, and standard error will be determined for each event across the
@@ -171,13 +144,18 @@ VARIABLES_TO_ANALYZE <- c(
 # are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
 VARIABLES_TO_EXTRACT <- c(
     "obs",
-    "time",
+    TIME_COLUMN_NAME,
     "elapsed",
     "date",
     "hhmmss",
     EVENT_COLUMN_NAME,
     REP_COLUMN_NAME,
-    VARIABLES_TO_ANALYZE,
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    "gsw",
+    "PhiPS2",
+    "ETR",
+    "CO2_r_sp",
     "Ca",
     "gbw",
     "Qin",
@@ -222,13 +200,15 @@ PLOT_VCMAX_FITS <- FALSE
 # - CO2 concentration in the chloroplast (Cc): micromol / mol
 # - O2 concetration in the chloroplast (O2): percent
 calculate_fprime <- function(licor_data, O2_percent) {
-    # Add a column for f_prime
-    variables_to_add <- data.frame(
-        type = c("calculated", "calculated", "calculated", "in", "calculated"),
-        name = c(GAMMA_STAR_COLUMN_NAME, KC_COLUMN_NAME, KO_COLUMN_NAME, O2_COLUMN_NAME, F_PRIME_COLUMN_NAME),
-        units = c("micromol mol^(-1)", "micromol mol^(-1)", "mmol mol^(-1)", "mmol mol^(-1)", "dimensionless")
+    # Specify new variables
+    licor_data <- specify_variables(
+        licor_data,
+        c("calculated", GAMMA_STAR_COLUMN_NAME, "micromol mol^(-1)"),
+        c("calculated", KC_COLUMN_NAME,         "micromol mol^(-1)"),
+        c("calculated", KO_COLUMN_NAME,         "mmol mol^(-1)"),
+        c("in",         O2_COLUMN_NAME,         "mmol mol^(-1)"),
+        c("calculated", F_PRIME_COLUMN_NAME,    "dimensionless")
     )
-    licor_data <- add_licor_variables(licor_data, variables_to_add)
 
     # Get leaf temperature in Kelvin. Sometimes the data will be in the `Tleaf`
     # column; other times it will be in the `Tleaf2` column. We can find the
@@ -453,39 +433,38 @@ fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
 
 add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
     # Add a column for gm
-    variables_to_add <- data.frame(
-        type = "gm input",
-        name = GM_COLUMN_NAME,
-        units = "mol m^(-2) s^(-1)"
+    licor_data <- specify_variables(
+        licor_data,
+        c("gm input", GM_COLUMN_NAME, "mol m^(-2) s^(-1)")
     )
-    licor_data <- add_licor_variables(licor_data, variables_to_add)
 
     licor_data[['main_data']][[GM_COLUMN_NAME]] <- gm_value
 
     return(licor_data)
 }
 
-###                                                                    ###
-### COMMANDS THAT ACTUALLY CALLS THE FUNCTIONS WITH APPROPRIATE INPUTS ###
-###                                                                    ###
+###                                                                   ###
+### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
+###                                                                   ###
 
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- batch_read_licor_file(
         LICOR_FILES_TO_PROCESS,
         preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_type_row = 14,
+        variable_category_row = 14,
         variable_name_row = 15,
         variable_unit_row = 16,
-        data_start_row = 17
+        data_start_row = 17,
+        timestamp_colname = TIME_COLUMN_NAME
     )
 
-    extracted_multi_file_info <- batch_extract_licor_variables(
+    extracted_multi_file_info <- batch_extract_variables(
         multi_file_info,
         VARIABLES_TO_EXTRACT
     )
 
-    combined_info <- combine_licor_files(extracted_multi_file_info)
+    combined_info <- combine_exdf(extracted_multi_file_info)
 
     if (USE_GM_TABLE) {
         gm_table_info <- read_gm_table(
