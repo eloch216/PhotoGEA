@@ -22,22 +22,18 @@ calculate_cc <- function(
 ) {
     drawdown_column_name <- paste0(ci_column_name, "-", cc_column_name)
 
-    # Add a column for Cc
-    variables_to_add <- data.frame(
-        type = c("calculated", "calculated"),
-        name = c(cc_column_name, drawdown_column_name),
-        units = c("micromol mol^(-1)", "micromol mol^(-1)")
+    licor_data[,cc_column_name] <-
+        licor_data[,ci_column_name] - licor_data[,a_column_name] / licor_data[,gm_column_name]
+
+    licor_data[,drawdown_column_name] <-
+        licor_data[,ci_column_name] - licor_data[,cc_column_name]
+
+    # Document the columns that were added
+    licor_data <- specify_variables(
+        licor_data,
+        c("calculated", cc_column_name,       "micromol mol^(-1)"),
+        c("calculated", drawdown_column_name, "micromol mol^(-1)")
     )
-    licor_data <- add_licor_variables(licor_data, variables_to_add)
-
-    licor_data[['main_data']][[cc_column_name]] <-
-        licor_data[['main_data']][[ci_column_name]] -
-        licor_data[['main_data']][[a_column_name]] /
-        licor_data[['main_data']][[gm_column_name]]
-
-    licor_data[['main_data']][[drawdown_column_name]] <-
-        licor_data[['main_data']][[ci_column_name]] -
-        licor_data[['main_data']][[cc_column_name]]
 
     return(licor_data)
 }

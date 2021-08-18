@@ -100,13 +100,13 @@ add_licor_sheet <- function(
 
     # Write the variable info to the sheet
     write_row(
-        licor_file[['types']],
-        licor_file[['variable_type_row']] + variable_info_offset
+        licor_file[['categories']],
+        licor_file[['variable_category_row']] + variable_info_offset
     )
 
     write_row(
         data.frame(
-            as.list(colnames(licor_file[['types']])),
+            as.list(colnames(licor_file[['categories']])),
             stringsAsFactors = FALSE
         ),
         licor_file[['variable_name_row']] + variable_info_offset

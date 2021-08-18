@@ -146,7 +146,7 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files <- batch_extract_licor_variables(
+    tdl_files <- batch_extract_variables(
         tdl_files,
         c(
             TDL_TIMESTAMP_COLUMN_NAME,
@@ -156,14 +156,15 @@ if (PERFORM_CALCULATIONS) {
         )
     )
 
-    tdl_files <- combine_tdl_files(tdl_files)
+    tdl_files <- combine_exdf(tdl_files)
 
     tdl_files <- identify_tdl_cycles(
         tdl_files,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
         expected_cycle_length_minutes = 2.7,
-        expected_cycle_num_pts = 9
+        expected_cycle_num_pts = 9,
+        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
     processed_tdl_data <- process_tdl_cycles(
@@ -188,14 +189,14 @@ if (PERFORM_CALCULATIONS) {
     licor_files <- batch_read_licor_file(
         choose_input_licor_files(),
         preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_type_row = 14,
+        variable_category_row = 14,
         variable_name_row = 15,
         variable_unit_row = 16,
         data_start_row = 17,
         timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
     )
 
-    licor_files <- batch_extract_licor_variables(
+    licor_files <- batch_extract_variables(
         licor_files,
         LICOR_VARIABLES_TO_EXTRACT
     )
@@ -216,7 +217,7 @@ if (PERFORM_CALCULATIONS) {
         max_allowed_time_difference = 1
     )
 
-    licor_files <- combine_licor_files(licor_files)
+    licor_files <- combine_exdf(licor_files)
 
     # Calculate gm and other quantities
 
@@ -269,8 +270,8 @@ if (SAVE_RESULTS) {
     write.csv(processed_tdl_data[['calibration_13CO2_data']], file.path(base_dir, "tdl_calibration_13CO2_data.csv"), row.names=FALSE)
     write.csv(processed_tdl_data[['calibration_13CO2_fit']], file.path(base_dir, "tdl_calibration_13CO2_fit.csv"), row.names=FALSE)
 
-    save_licor_file(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"))
-    save_licor_file(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"))
+    write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
+    write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
     write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
     write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }
