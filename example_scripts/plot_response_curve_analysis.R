@@ -271,8 +271,24 @@ print(vcmax_boxplot)
 vcmax_avg <- tapply(vcmax_fits[['Vcmax']], vcmax_fits[['event']], mean)
 vcmax_stderr <- tapply(vcmax_fits[['Vcmax']], vcmax_fits[['event']], function(x) {sd(x)/sqrt(length(x))})
 
+# make a data frame so we can reorder it (there's surely a better way to do this)
+vcmax_barchart_df <- data.frame(
+    event = names(vcmax_avg),
+    vcmax_avg = vcmax_avg,
+    vcmax_stderr = vcmax_stderr
+)
+
+vcmax_barchart_df[['event']] <- factor(
+    vcmax_barchart_df[['event']],
+    levels = sort(
+        unique(vcmax_barchart_df[['event']]),
+        decreasing = TRUE
+    )
+)
+
 vcmax_barchart <- barchart(
-    vcmax_avg ~ names(vcmax_avg),
+    vcmax_avg ~ event,
+    data = vcmax_barchart_df,
     ylim = c(0, 200),
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     main = vcmax_caption,
