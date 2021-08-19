@@ -552,6 +552,21 @@ all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
     )
 )
 
+# Make a subset of the full stats for just the one measurement point and
+# convert its event column to a factor so we can control the order of the
+# boxes
+all_stats_one_point <- all_stats[which(
+    (all_stats[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
+        == POINT_FOR_BOX_PLOTS),]
+
+all_stats_one_point[[EVENT_COLUMN_NAME]] <- factor(
+    all_stats_one_point[[EVENT_COLUMN_NAME]],
+    levels = sort(
+        unique(all_stats_one_point[[EVENT_COLUMN_NAME]]),
+        decreasing = TRUE
+    )
+)
+
 # Convert the event column of the vcmax fitting results to a factor so we
 # can control the order of boxes in a box plot
 vcmax_fits[[EVENT_COLUMN_NAME]] <- factor(

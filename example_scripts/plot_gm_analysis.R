@@ -126,7 +126,7 @@ if (MAKE_GM_PLOTS) {
         gmc ~ event | genotype,
         data = licor_files_no_outliers[['main_data']],
         ylim = c(0, MAX_GM),
-        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)",
+        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
     )
     x11()
     print(gmc_event_boxplot)
@@ -141,25 +141,20 @@ if (MAKE_GM_PLOTS) {
     x11()
     print(gmc_rep_boxplot)
 
-    # Make Cc boxplots for each event
-    cc_event_boxplot <- bwplot(
-        Cc ~ event | genotype,
-        data = licor_files_no_outliers[['main_data']],
-        #ylim = c(0, MAX_GM),
-        ylab = "CO2 concentration in chloroplast (micromol / mol)"
+    # Make gmc bars for each event
+    gmc_barchart <- barchart(
+        gmc_avg ~ event,
+        data = event_stats,
+        ylim = c(0, MAX_GM),
+        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)",
+        panel = function(x, y, ..., subscripts) {
+            panel.barchart(x, y, subscripts = subscripts, ...)
+            panel.arrows(x, y, x, event_stats[['gmc_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+            panel.arrows(x, y, x, event_stats[['gmc_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        }
     )
     x11()
-    print(cc_event_boxplot)
-
-    # Make Cc boxplots for each rep
-    cc_rep_boxplot <- bwplot(
-        Cc ~ event_replicate | genotype,
-        data = licor_files_no_outliers[['main_data']],
-        #ylim = c(0, MAX_GM),
-        ylab = "CO2 concentration in chloroplast (micromol / mol)"
-    )
-    x11()
-    print(cc_rep_boxplot)
+    print(gmc_barchart)
 
     # Make Cc boxplots for each event
     cc_event_boxplot <- bwplot(
@@ -180,10 +175,25 @@ if (MAKE_GM_PLOTS) {
     )
     x11()
     print(cc_rep_boxplot)
+
+    # Make Cc bars for each event
+    cc_barchart <- barchart(
+        Cc_avg ~ event,
+        data = event_stats,
+        ylim = c(0, 275),
+        ylab = "CO2 concentration in chloroplast (micromol / mol)",
+        panel = function(x, y, ..., subscripts) {
+            panel.barchart(x, y, subscripts = subscripts, ...)
+            panel.arrows(x, y, x, event_stats[['Cc_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+            panel.arrows(x, y, x, event_stats[['Cc_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        }
+    )
+    x11()
+    print(cc_barchart)
 
     # Make drawdown boxplots for each event
     drawdown_event_boxplot <- bwplot(
-        Ci-Cc ~ event | genotype,
+        `Ci-Cc` ~ event | genotype,
         data = licor_files_no_outliers[['main_data']],
         ylim = c(0, 150),
         ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
@@ -193,11 +203,62 @@ if (MAKE_GM_PLOTS) {
 
     # Make drawdown boxplots for each rep
     drawdown_boxplot <- bwplot(
-        Ci-Cc ~ event_replicate | genotype,
+        `Ci-Cc` ~ event_replicate | genotype,
         data = licor_files_no_outliers[['main_data']],
         ylim = c(0, 150),
         ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
     )
     x11()
     print(drawdown_boxplot)
+
+    # Make drawdown bars for each event
+    drawdown_barchart <- barchart(
+        `Ci-Cc_avg` ~ event,
+        data = event_stats,
+        ylim = c(0, 150),
+        ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)",
+        panel = function(x, y, ..., subscripts) {
+            panel.barchart(x, y, subscripts = subscripts, ...)
+            panel.arrows(x, y, x, event_stats[['Ci-Cc_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+            panel.arrows(x, y, x, event_stats[['Ci-Cc_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        }
+    )
+    x11()
+    print(drawdown_barchart)
+
+    # Make assimilation boxplots for each event
+    assimilation_event_boxplot <- bwplot(
+        A ~ event | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        ylim = c(0, 50),
+        ylab = "Net CO2 assimilation rate (micromol / m^2 / s)"
+    )
+    x11()
+    print(assimilation_event_boxplot)
+
+    # Make assimilation boxplots for each rep
+    assimilation_boxplot <- bwplot(
+        A ~ event_replicate | genotype,
+        data = licor_files_no_outliers[['main_data']],
+        ylim = c(0, 50),
+        ylab = "Net CO2 assimilation rate (micromol / m^2 / s)"
+    )
+    x11()
+    print(assimilation_boxplot)
+
+    # Make assimilation bars for each event
+    assimilation_barchart <- barchart(
+        A_avg ~ event,
+        data = event_stats,
+        ylim = c(0, 50),
+        ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
+        panel = function(x, y, ..., subscripts) {
+            panel.barchart(x, y, subscripts = subscripts, ...)
+            panel.arrows(x, y, x, event_stats[['A_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+            panel.arrows(x, y, x, event_stats[['A_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        }
+    )
+    x11()
+    print(assimilation_barchart)
+
 }

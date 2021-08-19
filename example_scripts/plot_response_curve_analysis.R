@@ -218,11 +218,39 @@ etr_boxplot <- bwplot(
 x11(width = 6, height = 6)
 print(etr_boxplot)
 
-###                                            ###
-### MAKE BOX-WHISKER PLOTS FOR VCMAX ESTIMATES ###
-###                                            ###
+###                                             ###
+### MAKE BAR CHARTS FOR FIRST MEASUREMENT POINT ###
+###                                             ###
 
-vcmax_boxplot_caption <- paste(
+barchart_caption <- paste0(
+    "Averages for measurement point ",
+    POINT_FOR_BOX_PLOTS,
+    "\n(where CO2_r_sp = ",
+    all_stats_one_point[['CO2_r_sp']][1],
+    ")"
+)
+
+assimilation_barchart <- barchart(
+    all_stats_one_point[['A_avg']] ~ all_stats_one_point[['event']],
+    ylim = c(0, 35),
+    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
+    main = barchart_caption,
+    panel = function(x, y, ..., subscripts) {
+        panel.barchart(x, y, subscripts = subscripts, ...)
+        panel.arrows(x, y, x, all_stats_one_point[['A_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        panel.arrows(x, y, x, all_stats_one_point[['A_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+    }
+)
+
+x11(width = 6, height = 6)
+print(assimilation_barchart)
+
+
+###                                                         ###
+### MAKE BOX-WHISKER PLOT AND BAR CHART FOR VCMAX ESTIMATES ###
+###                                                         ###
+
+vcmax_caption <- paste(
     "Vcmax values obtained by fitting A vs. f'\nusing a Ci cutoff of",
     CI_THRESHOLD,
     "micromol / mol"
@@ -233,8 +261,27 @@ vcmax_boxplot <- bwplot(
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     xlab = "Genotype",
     ylim = c(0, 200),
-    main = vcmax_boxplot_caption
+    main = vcmax_caption
 )
 
 x11(width = 6, height = 6)
 print(vcmax_boxplot)
+
+# quick vcmax stats for bar chart
+vcmax_avg <- tapply(vcmax_fits[['Vcmax']], vcmax_fits[['event']], mean)
+vcmax_stderr <- tapply(vcmax_fits[['Vcmax']], vcmax_fits[['event']], function(x) {sd(x)/sqrt(length(x))})
+
+vcmax_barchart <- barchart(
+    vcmax_avg ~ names(vcmax_avg),
+    ylim = c(0, 200),
+    ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
+    main = vcmax_caption,
+    panel = function(x, y, ..., subscripts) {
+        panel.barchart(x, y, subscripts = subscripts, ...)
+        panel.arrows(x, y, x, vcmax_avg + vcmax_stderr, length = 0.2, angle = 90, col = "black", lwd = 1)
+        panel.arrows(x, y, x, vcmax_avg - vcmax_stderr, length = 0.2, angle = 90, col = "black", lwd = 1)
+    }
+)
+
+x11(width = 6, height = 6)
+print(vcmax_barchart)
