@@ -263,26 +263,28 @@ if (PERFORM_CALCULATIONS) {
     rep_stats[['event']] <- as.factor(rep_stats[['event']])
 
     # Perform Brown-Forsythe test to check for equal variance
-    bf.test(gmc_avg ~ event, data = rep_stats)
+    # This test automatically prints its results to the R terminal
+    bf_test_result <- bf.test(gmc_avg ~ event, data = rep_stats)
 
     # If p > 0.05 variances among populations is equal and proceed with anova
     # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
 
     # Check normality of data with Shapiro-Wilks test
-    shapiro.test(rep_stats[['gmc_avg']])
+    shapiro_test_result <- shapiro.test(rep_stats[['gmc_avg']])
+    print(shapiro_test_result)
 
     # If p > 0.05 data has normal distribution and proceed with anova
 
     # Perform one way analysis of variance
-    A.aov <- aov(gmc_avg ~ event, data = rep_stats)
-
-    # Summary of the analysis
-    summary(A.aov)
+    anova_result <- aov(gmc_avg ~ event, data = rep_stats)
+    cat("    ANOVA result\n\n")
+    print(summary(anova_result))
 
     # If p < 0.05 perform Dunnett's posthoc test
 
     # Perform Dunnett's Test
-    DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
+    dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
+    print(dunnett_test_result)
 
 
 }
