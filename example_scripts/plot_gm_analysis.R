@@ -173,7 +173,7 @@ if (MAKE_GM_PLOTS) {
     gmc_barchart <- barchart(
         gmc_avg ~ event,
         data = event_stats,
-        ylim = c(0, MAX_GM),
+        ylim = c(0,1.5),
         ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)",
         panel = function(x, y, ..., subscripts) {
             panel.barchart(x, y, subscripts = subscripts, ...)
@@ -243,7 +243,7 @@ if (MAKE_GM_PLOTS) {
     drawdown_barchart <- barchart(
         `Ci-Cc_avg` ~ event,
         data = event_stats,
-        ylim = c(0, 150),
+        ylim = c(0, 100),
         ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)",
         panel = function(x, y, ..., subscripts) {
             panel.barchart(x, y, subscripts = subscripts, ...)
