@@ -223,6 +223,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate gm and other quantities
 
+    licor_files <- calculate_gas_properties(licor_files)  # calculates gbc, gsc, Csurface (needed for `calculate_gm`)
+
     licor_files <- calculate_gm(licor_files)
 
     licor_files <- calculate_cc(
