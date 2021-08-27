@@ -99,11 +99,11 @@ one_variable_rc_stats <- function(
     )
 
     # Fill in the values
-    npts <- ncol(variable_data)
     for (i in seq_len(num_rows)) {
+        npts <- sum(!is.na(as.numeric(variable_data[i,])))
         result[[npts_name]][i] <- npts
-        result[[avg_name]][i] <- mean(as.numeric(variable_data[i,]))
-        result[[stdev_name]][i] <- sd(as.numeric(variable_data[i,]))
+        result[[avg_name]][i] <- mean(as.numeric(variable_data[i,]), na.rm = TRUE)
+        result[[stdev_name]][i] <- sd(as.numeric(variable_data[i,]), na.rm = TRUE)
         result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(npts)
         result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
         result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
@@ -158,11 +158,10 @@ one_variable_sa_stats <- function(
 
     # Fill in the values
     for (i in seq_len(num_rows)) {
-        npts <- length(variable_data_list[[i]])
-
+        npts <- sum(!is.na(as.numeric(variable_data[i,])))
         result[[npts_name]][i] <- npts
-        result[[avg_name]][i] <- mean(variable_data_list[[i]])
-        result[[stdev_name]][i] <- sd(variable_data_list[[i]])
+        result[[avg_name]][i] <- mean(variable_data_list[[i]], na.rm = TRUE)
+        result[[stdev_name]][i] <- sd(variable_data_list[[i]], na.rm = TRUE)
         result[[stderr_name]][i] <- result[[stdev_name]][i] / sqrt(npts)
         result[[upper_name]][i] <- result[[avg_name]][i] + result[[stderr_name]][i]
         result[[lower_name]][i] <- result[[avg_name]][i] - result[[stderr_name]][i]
@@ -357,18 +356,18 @@ check_basic_stats <- function(
         }
     }
 
-    # Check to see if any columns have NA or infinite values
-    na_indx <- apply(
+    # Check to see if any columns have infinite values
+    inf_indx <- apply(
         full_data_set,
         2,
-        function(x) any(is.na(x) | is.infinite(x))
+        function(x) any(is.infinite(x))
     )
-    na_cols <- colnames(full_data_set)[na_indx]
+    inf_cols <- colnames(full_data_set)[inf_indx]
 
-    if (length(na_cols) != 0) {
-        print("The following columns have NA or infinite values:")
-        print(na_cols)
-        stop("The data for stats analysis cannot contain any NA or infinite values")
+    if (length(inf_cols) != 0) {
+        print("The following columns have infinite values:")
+        print(inf_cols)
+        stop("The data for stats analysis cannot contain any infinite values")
     }
 }
 

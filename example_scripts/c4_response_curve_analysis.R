@@ -101,7 +101,7 @@ if (PERFORM_CALCULATIONS) {
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 13
 MEASUREMENT_NUMBERS <- c(1:7, 10:13)
-POINT_FOR_BOX_PLOTS <- 13
+POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
