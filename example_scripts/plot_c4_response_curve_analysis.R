@@ -1,6 +1,6 @@
 # This script generates several plots from the calculations performed in
-# `response_curve_analysis.R`. In fact, this script calls that one before making
-# any plots.
+# `c4_response_curve_analysis.R`. In fact, this script calls that one before
+# making any plots.
 #
 # ------------------------------------------------------------------------------
 #
@@ -15,12 +15,12 @@
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
-# source('plot_response_curve_analysis.R')
+# source('plot_c4_response_curve_analysis.R')
 
 library(lattice)
 library(RColorBrewer)
 
-source('response_curve_analysis.R')
+source('c4_response_curve_analysis.R')
 
 ###                            ###
 ### PLOT RESPONSE CURVES TO CI ###
@@ -58,7 +58,7 @@ aci_curves <- xyplot(
     xlab = "Intercellular [CO2] (ppm)",
     #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
-    ylim = c(-10, 45),
+    ylim = c(-10, 60),
     xlim = c(-50, 1300),
     par.settings=list(
         superpose.line=list(col=rc_cols),
@@ -138,7 +138,7 @@ multi_aci_curves <- xyplot(
     main = ind_caption,
     xlab = "Intercellular [CO2] (ppm)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(-10, 50),
+    ylim = c(-10, 60),
     xlim = c(-100, 1600),
     par.settings=list(
         superpose.line=list(col=ind_cols),
@@ -187,7 +187,7 @@ boxplot_caption <- paste0(
 a_boxplot <- bwplot(
     all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(0, 35),
+    ylim = c(0, 60),
     main = boxplot_caption,
     xlab = "Genotype"
 )
@@ -226,13 +226,13 @@ barchart_caption <- paste0(
     "Averages for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where CO2_r_sp = ",
-    all_stats_one_point[['CO2_r_sp']][1],
+    all_stats_one_point[['CO2_r_sp_avg']][1],
     ")"
 )
 
 assimilation_barchart <- barchart(
-    all_stats_one_point[['A_avg']] ~ all_stats_one_point[['event']],
-    ylim = c(0, 35),
+    all_stats_one_point[['A_avg']] ~ all_stats_one_point[[EVENT_COLUMN_NAME]],
+    ylim = c(0, 60),
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     main = barchart_caption,
     panel = function(x, y, ..., subscripts) {
@@ -244,60 +244,3 @@ assimilation_barchart <- barchart(
 
 x11(width = 6, height = 6)
 print(assimilation_barchart)
-
-
-###                                                         ###
-### MAKE BOX-WHISKER PLOT AND BAR CHART FOR VCMAX ESTIMATES ###
-###                                                         ###
-
-vcmax_caption <- paste(
-    "Vcmax values obtained by fitting A vs. f'\nusing a Ci cutoff of",
-    CI_THRESHOLD,
-    "micromol / mol"
-)
-
-vcmax_boxplot <- bwplot(
-    vcmax_fits[['Vcmax']] ~ vcmax_fits[[EVENT_COLUMN_NAME]],
-    ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
-    xlab = "Genotype",
-    ylim = c(0, 200),
-    main = vcmax_caption
-)
-
-x11(width = 6, height = 6)
-print(vcmax_boxplot)
-
-# quick vcmax stats for bar chart
-vcmax_avg <- tapply(vcmax_fits[['Vcmax']], vcmax_fits[['event']], mean)
-vcmax_stderr <- tapply(vcmax_fits[['Vcmax']], vcmax_fits[['event']], function(x) {sd(x)/sqrt(length(x))})
-
-# make a data frame so we can reorder it (there's surely a better way to do this)
-vcmax_barchart_df <- data.frame(
-    event = names(vcmax_avg),
-    vcmax_avg = vcmax_avg,
-    vcmax_stderr = vcmax_stderr
-)
-
-vcmax_barchart_df[['event']] <- factor(
-    vcmax_barchart_df[['event']],
-    levels = sort(
-        unique(vcmax_barchart_df[['event']]),
-        decreasing = TRUE
-    )
-)
-
-vcmax_barchart <- barchart(
-    vcmax_avg ~ event,
-    data = vcmax_barchart_df,
-    ylim = c(0, 200),
-    ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
-    main = vcmax_caption,
-    panel = function(x, y, ..., subscripts) {
-        panel.barchart(x, y, subscripts = subscripts, ...)
-        panel.arrows(x, y, x, vcmax_avg + vcmax_stderr, length = 0.2, angle = 90, col = "black", lwd = 1)
-        panel.arrows(x, y, x, vcmax_avg - vcmax_stderr, length = 0.2, angle = 90, col = "black", lwd = 1)
-    }
-)
-
-x11(width = 6, height = 6)
-print(vcmax_barchart)

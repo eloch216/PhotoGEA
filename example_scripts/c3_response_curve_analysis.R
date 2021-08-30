@@ -31,14 +31,14 @@
 # contains this script.
 #
 # To generate figures based on the analysis performed in this script, see
-# `plot_response_curve_analysis.R`.
+# `plot_c3_response_curve_analysis.R`.
 #
 # ------------------------------------------------------------------------------
 #
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
-# source('response_curve_analysis.R')
+# source('c3_response_curve_analysis.R')
 
 library(PhotoGEA)
 
@@ -541,7 +541,7 @@ all_stats_subset <- all_stats_subset[order(
 # convert its event column to a factor so we can control the order of the
 # boxes
 all_samples_one_point <- all_samples[which(
-    (all_samples[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
+    (((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
         == POINT_FOR_BOX_PLOTS),]
 
 all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
@@ -556,7 +556,7 @@ all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
 # convert its event column to a factor so we can control the order of the
 # boxes
 all_stats_one_point <- all_stats[which(
-    (all_stats[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
+    (((all_stats[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
         == POINT_FOR_BOX_PLOTS),]
 
 all_stats_one_point[[EVENT_COLUMN_NAME]] <- factor(
