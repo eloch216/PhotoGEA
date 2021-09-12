@@ -158,7 +158,7 @@ one_variable_sa_stats <- function(
 
     # Fill in the values
     for (i in seq_len(num_rows)) {
-        npts <- sum(!is.na(as.numeric(variable_data[i,])))
+        npts <- sum(!is.na(as.numeric(variable_data_list[[i]])))
         result[[npts_name]][i] <- npts
         result[[avg_name]][i] <- mean(variable_data_list[[i]], na.rm = TRUE)
         result[[stdev_name]][i] <- sd(variable_data_list[[i]], na.rm = TRUE)

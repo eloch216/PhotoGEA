@@ -41,10 +41,10 @@ PERFORM_CALCULATIONS <- TRUE
 
 SAVE_RESULTS <- TRUE
 
-RESPIRATION <- -0.710568448235977
+RESPIRATION <- -1.2
 
 MIN_GM <- 0.1
-MAX_GM <- 3.0
+MAX_GM <- 2.0
 MIN_CC <- 0.0
 
 ###                                                                        ###
