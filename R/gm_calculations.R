@@ -32,8 +32,6 @@ calculate_gm <- function(
     )
 
     # Define some constants to avoid magic numbers in the equations
-    stomatal_conductance_factor <- 1.6   # ratio of gsw / gsc (i.e., water conductance / CO2 conductance)
-    boundary_conductance_factor <- 1.37  # ratio of gbw / gbc (i.e., water conductance / CO2 conductance)
     ubierna_a_b <- 2.9                   # 13C fractionation during diffusion through the leaf boundary layer (Ubierna, 2017)
     ubierna_a_s <- 4.4                   # 13C fractionation due to diffusion in air (Ubierna, 2017)
     b_prime_3 <- 29                      # where does this value come from? Ubierna (2017) uses 30, as do other sources
@@ -48,9 +46,6 @@ calculate_gm <- function(
         Cs_licor <- 1e6 * CO2_s / (1e6 - H2O_s * 1e3)
         Ce_licor <- 1e6 * CO2_r / (1e6 - H2O_r * 1e3)
         ppO2 <- (Oxygen * 1e-2) * (Pa * 1e-2)
-        gsc <- gsw / stomatal_conductance_factor
-        gbc <- gbw / boundary_conductance_factor
-        Csurface <- ((gbc - E / 2) * CO2_s - A) / (gbc + E / 2)
 
         ppCO2_s <- (CO2_s * 1e-6) * (Pa * 1e-2)
         ppCO2_r <- (CO2_r * 1e-6) * (Pa * 1e-2)
