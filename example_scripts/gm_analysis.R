@@ -44,7 +44,7 @@ SAVE_RESULTS <- TRUE
 RESPIRATION <- -1.2
 
 MIN_GM <- 0.1
-MAX_GM <- 2.0
+MAX_GM <- 1.7
 MIN_CC <- 0.0
 
 ###                                                                        ###
@@ -287,7 +287,17 @@ if (PERFORM_CALCULATIONS) {
     # Perform Dunnett's Test
     dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
     print(dunnett_test_result)
-
+    
+    # Do more stats on drawdown
+    rep_stats[['drawdown_avg']] <- rep_stats[['Ci-Cc_avg']]
+    bf_test_result <- bf.test(drawdown_avg ~ event, data = rep_stats)
+    shapiro_test_result <- shapiro.test(rep_stats[['drawdown_avg']])
+    print(shapiro_test_result)
+    anova_result <- aov(drawdown_avg ~ event, data = rep_stats)
+    cat("    ANOVA result\n\n")
+    print(summary(anova_result))
+    dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_avg']], g = rep_stats[['event']], control = "WT")
+    print(dunnett_test_result)
 
 }
 
