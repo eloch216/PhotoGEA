@@ -39,6 +39,8 @@ library(DescTools)    # for DunnettTest
 
 PERFORM_CALCULATIONS <- TRUE
 
+PERFORM_STATS_TESTS <- FALSE
+
 SAVE_RESULTS <- TRUE
 
 RESPIRATION <- -1.2
@@ -260,45 +262,46 @@ if (PERFORM_CALCULATIONS) {
         VARIABLES_TO_ANALYZE,
         'sa'
     )
-
-    # Convert the "event" column to a group or onewaytests will yell at us
-    rep_stats[['event']] <- as.factor(rep_stats[['event']])
-
-    # Perform Brown-Forsythe test to check for equal variance
-    # This test automatically prints its results to the R terminal
-    bf_test_result <- bf.test(gmc_avg ~ event, data = rep_stats)
-
-    # If p > 0.05 variances among populations is equal and proceed with anova
-    # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
-
-    # Check normality of data with Shapiro-Wilks test
-    shapiro_test_result <- shapiro.test(rep_stats[['gmc_avg']])
-    print(shapiro_test_result)
-
-    # If p > 0.05 data has normal distribution and proceed with anova
-
-    # Perform one way analysis of variance
-    anova_result <- aov(gmc_avg ~ event, data = rep_stats)
-    cat("    ANOVA result\n\n")
-    print(summary(anova_result))
-
-    # If p < 0.05 perform Dunnett's posthoc test
-
-    # Perform Dunnett's Test
-    dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
-    print(dunnett_test_result)
     
-    # Do more stats on drawdown
-    rep_stats[['drawdown_avg']] <- rep_stats[['Ci-Cc_avg']]
-    bf_test_result <- bf.test(drawdown_avg ~ event, data = rep_stats)
-    shapiro_test_result <- shapiro.test(rep_stats[['drawdown_avg']])
-    print(shapiro_test_result)
-    anova_result <- aov(drawdown_avg ~ event, data = rep_stats)
-    cat("    ANOVA result\n\n")
-    print(summary(anova_result))
-    dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_avg']], g = rep_stats[['event']], control = "WT")
-    print(dunnett_test_result)
-
+    if (PERFORM_STATS_TESTS) {
+        # Convert the "event" column to a group or onewaytests will yell at us
+        rep_stats[['event']] <- as.factor(rep_stats[['event']])
+        
+        # Perform Brown-Forsythe test to check for equal variance
+        # This test automatically prints its results to the R terminal
+        bf_test_result <- bf.test(gmc_avg ~ event, data = rep_stats)
+        
+        # If p > 0.05 variances among populations is equal and proceed with anova
+        # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+        
+        # Check normality of data with Shapiro-Wilks test
+        shapiro_test_result <- shapiro.test(rep_stats[['gmc_avg']])
+        print(shapiro_test_result)
+        
+        # If p > 0.05 data has normal distribution and proceed with anova
+        
+        # Perform one way analysis of variance
+        anova_result <- aov(gmc_avg ~ event, data = rep_stats)
+        cat("    ANOVA result\n\n")
+        print(summary(anova_result))
+        
+        # If p < 0.05 perform Dunnett's posthoc test
+        
+        # Perform Dunnett's Test
+        dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
+        print(dunnett_test_result)
+        
+        # Do more stats on drawdown
+        rep_stats[['drawdown_avg']] <- rep_stats[['Ci-Cc_avg']]
+        bf_test_result <- bf.test(drawdown_avg ~ event, data = rep_stats)
+        shapiro_test_result <- shapiro.test(rep_stats[['drawdown_avg']])
+        print(shapiro_test_result)
+        anova_result <- aov(drawdown_avg ~ event, data = rep_stats)
+        cat("    ANOVA result\n\n")
+        print(summary(anova_result))
+        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_avg']], g = rep_stats[['event']], control = "WT")
+        print(dunnett_test_result)
+    }
 }
 
 if (SAVE_RESULTS) {

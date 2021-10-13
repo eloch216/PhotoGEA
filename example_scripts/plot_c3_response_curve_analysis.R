@@ -76,36 +76,38 @@ aci_curves <- xyplot(
 x11(width = 8, height = 6)
 print(aci_curves)
 
-# Plot the average ETR-Ci curves
-eci_curves <- xyplot(
-    all_stats_subset[['ETR_avg']] ~ all_stats_subset[['Ci_avg']],
-    group = all_stats_subset[[EVENT_COLUMN_NAME]],
-    type = 'b',
-    pch = 16,
-    lwd = line_width,
-    auto = TRUE,
-    grid = TRUE,
-    main = rc_caption,
-    xlab = "Intercellular [CO2] (ppm)",
-    #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
-    ylab = "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
-    ylim = c(0, 325),
-    xlim = c(-50, 1300),
-    par.settings=list(
-        superpose.line=list(col=rc_cols),
-        superpose.symbol=list(col=rc_cols)
-    ),
-    panel = function(x, y, ...) {
-        panel.arrows(x, y, x, all_stats_subset[['ETR_upper']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
-        panel.arrows(x, y, x, all_stats_subset[['ETR_lower']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
-        #panel.arrows(x, y, all_stats_subset[['Ci_upper']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
-        #panel.arrows(x, y, all_stats_subset[['Ci_lower']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
-        panel.xyplot(x, y, ...)
-    }
-)
-
-x11(width = 8, height = 6)
-print(eci_curves)
+if (INCLUDE_FLUORESCENCE) {
+    # Plot the average ETR-Ci curves
+    eci_curves <- xyplot(
+        all_stats_subset[['ETR_avg']] ~ all_stats_subset[['Ci_avg']],
+        group = all_stats_subset[[EVENT_COLUMN_NAME]],
+        type = 'b',
+        pch = 16,
+        lwd = line_width,
+        auto = TRUE,
+        grid = TRUE,
+        main = rc_caption,
+        xlab = "Intercellular [CO2] (ppm)",
+        #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
+        ylab = "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
+        ylim = c(0, 325),
+        xlim = c(-50, 1300),
+        par.settings=list(
+            superpose.line=list(col=rc_cols),
+            superpose.symbol=list(col=rc_cols)
+        ),
+        panel = function(x, y, ...) {
+            panel.arrows(x, y, x, all_stats_subset[['ETR_upper']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            panel.arrows(x, y, x, all_stats_subset[['ETR_lower']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            #panel.arrows(x, y, all_stats_subset[['Ci_upper']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            #panel.arrows(x, y, all_stats_subset[['Ci_lower']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            panel.xyplot(x, y, ...)
+        }
+    )
+    
+    x11(width = 8, height = 6)
+    print(eci_curves)
+}
 
 ###                                     ###
 ### PLOT ALL INDIVIDUAL RESPONSE CURVES ###
@@ -195,28 +197,30 @@ a_boxplot <- bwplot(
 x11(width = 6, height = 6)
 print(a_boxplot)
 
-phips2_boxplot <- bwplot(
-    all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Photosystem II operating efficiency (dimensionless)",
-    ylim = c(0, 0.4),
-    main = boxplot_caption,
-    xlab = "Genotype"
-)
-
-x11(width = 6, height = 6)
-print(phips2_boxplot)
-
-
-etr_boxplot <- bwplot(
-    all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Electron transport rate (micromol / m^2 / s)",
-    ylim = c(0, 275),
-    main = boxplot_caption,
-    xlab = "Genotype"
-)
-
-x11(width = 6, height = 6)
-print(etr_boxplot)
+if (INCLUDE_FLUORESCENCE) {
+    phips2_boxplot <- bwplot(
+        all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+        ylab = "Photosystem II operating efficiency (dimensionless)",
+        ylim = c(0, 0.4),
+        main = boxplot_caption,
+        xlab = "Genotype"
+    )
+    
+    x11(width = 6, height = 6)
+    print(phips2_boxplot)
+    
+    
+    etr_boxplot <- bwplot(
+        all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+        ylab = "Electron transport rate (micromol / m^2 / s)",
+        ylim = c(0, 275),
+        main = boxplot_caption,
+        xlab = "Genotype"
+    )
+    
+    x11(width = 6, height = 6)
+    print(etr_boxplot)
+}
 
 ###                                             ###
 ### MAKE BAR CHARTS FOR FIRST MEASUREMENT POINT ###

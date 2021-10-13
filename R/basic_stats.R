@@ -394,7 +394,15 @@ basic_stats <- function(
         variables_to_analyze,
         type
     )
-
+    
+    # Make sure the event and replicate columns have character values
+    full_data_set[[event_column_name]] <-
+        as.character(full_data_set[[event_column_name]])
+    
+    full_data_set[[rep_column_name]] <-
+        as.character(full_data_set[[rep_column_name]])
+    
+    # Get the event names
     all_events <- unique(full_data_set[[event_column_name]])
 
     # This function will not work properly if there are no events, so give a

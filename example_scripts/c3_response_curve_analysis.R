@@ -46,6 +46,8 @@ library(PhotoGEA)
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                   ###
 
+INCLUDE_FLUORESCENCE <- FALSE
+
 # Decide whether to load new data and calculate stats. If the data has already
 # been loaded and the script is being run to tweak the plotting parameters, then
 # set PERFORM_CALCULATIONS to FALSE to save a little time. If this is the first
@@ -133,8 +135,6 @@ VARIABLES_TO_ANALYZE <- c(
     CI_COLUMN_NAME,
     CC_COLUMN_NAME,
     "gsw",
-    "PhiPS2",
-    "ETR",
     "CO2_r_sp"  # included as a sanity check... should have 0 variance
 )
 
@@ -153,8 +153,6 @@ VARIABLES_TO_EXTRACT <- c(
     A_COLUMN_NAME,
     CI_COLUMN_NAME,
     "gsw",
-    "PhiPS2",
-    "ETR",
     "CO2_r_sp",
     "Ca",
     "gbw",
@@ -164,6 +162,11 @@ VARIABLES_TO_EXTRACT <- c(
     "Tleaf",
     "Tleaf2"
 )
+
+if (INCLUDE_FLUORESCENCE) {
+    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, "PhiPs2", "ETR")
+    VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, "PhiPs2", "ETR")
+}
 
 # Specify oxygen concentration as a percentage
 O2_PERCENT <- 21
@@ -186,7 +189,7 @@ PLOT_VCMAX_FITS <- FALSE
 # error" Journal of Experimental Botany 54, 2393–2401 (2003)
 # (https://doi.org/10.1093/jxb/erg262). However, it is more typical to use
 # the CO2 concentration of the chloroplast (Cc) in place of the intercellular
-# CO2 concetration (CI) as in Long & Bernacchi, since the result calculated with
+# CO2 concentration (CI) as in Long & Bernacchi, since the result calculated with
 # Cc can be used to determine chloroplast values of Vcmax.
 #
 # As in Long & Bernacchi, we calculate the temperature-dependent values of the
