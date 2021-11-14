@@ -32,8 +32,12 @@ rc_caption <- "Average response curves for each event"
 # curves. To see other available palettes, use one of the following commands:
 #  display.brewer.all(colorblindFriendly = TRUE)
 #  display.brewer.all(colorblindFriendly = FALSE)
-rc_cols <- brewer.pal(9, "Set1")
-rc_cols <- c("#000000", rc_cols[c(1:5,7:9)])
+rc_cols <- c(
+    "#000000",
+    brewer.pal(12, "Paired")[c(1:10,12)],
+    brewer.pal(8, "Set2"),
+    brewer.pal(8, "Dark2")
+)
 rc_cols <- rc_cols[1:length(unique(all_stats_subset[[EVENT_COLUMN_NAME]]))]
 rc_cols <- rev(rc_cols)
 
