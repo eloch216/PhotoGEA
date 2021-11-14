@@ -104,7 +104,7 @@ if (INCLUDE_FLUORESCENCE) {
             panel.xyplot(x, y, ...)
         }
     )
-    
+
     x11(width = 8, height = 6)
     print(eci_curves)
 }
@@ -197,6 +197,17 @@ a_boxplot <- bwplot(
 x11(width = 6, height = 6)
 print(a_boxplot)
 
+iwue_boxplot <- bwplot(
+    all_samples_one_point[['A']] / all_samples_one_point[['gsw']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+    ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
+    ylim = c(0, 100),
+    main = boxplot_caption,
+    xlab = "Genotype"
+)
+
+x11(width = 6, height = 6)
+print(iwue_boxplot)
+
 if (INCLUDE_FLUORESCENCE) {
     phips2_boxplot <- bwplot(
         all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
@@ -205,11 +216,11 @@ if (INCLUDE_FLUORESCENCE) {
         main = boxplot_caption,
         xlab = "Genotype"
     )
-    
+
     x11(width = 6, height = 6)
     print(phips2_boxplot)
-    
-    
+
+
     etr_boxplot <- bwplot(
         all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
         ylab = "Electron transport rate (micromol / m^2 / s)",
@@ -217,7 +228,7 @@ if (INCLUDE_FLUORESCENCE) {
         main = boxplot_caption,
         xlab = "Genotype"
     )
-    
+
     x11(width = 6, height = 6)
     print(etr_boxplot)
 }
