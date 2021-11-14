@@ -198,7 +198,7 @@ x11(width = 6, height = 6)
 print(a_boxplot)
 
 iwue_boxplot <- bwplot(
-    all_samples_one_point[['A']] / all_samples_one_point[['gsw']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+    all_samples_one_point[['iwue']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
     ylim = c(0, 100),
     main = boxplot_caption,
@@ -260,6 +260,20 @@ assimilation_barchart <- barchart(
 x11(width = 6, height = 6)
 print(assimilation_barchart)
 
+iwue_barchart <- barchart(
+    all_stats_one_point[['iwue_avg']] ~ all_stats_one_point[['event']],
+    ylim = c(0, 100),
+    ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
+    main = barchart_caption,
+    panel = function(x, y, ..., subscripts) {
+        panel.barchart(x, y, subscripts = subscripts, ...)
+        panel.arrows(x, y, x, all_stats_one_point[['iwue_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        panel.arrows(x, y, x, all_stats_one_point[['iwue_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+    }
+)
+
+x11(width = 6, height = 6)
+print(iwue_barchart)
 
 ###                                                         ###
 ### MAKE BOX-WHISKER PLOT AND BAR CHART FOR VCMAX ESTIMATES ###

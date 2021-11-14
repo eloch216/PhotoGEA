@@ -117,6 +117,8 @@ GM_COLUMN_NAME <- "gmc"
 CI_COLUMN_NAME <- "Ci"
 CC_COLUMN_NAME <- "Cc"
 A_COLUMN_NAME <- "A"
+GSW_COLUMN_NAME <- "gsw"
+IWUE_COLUMN_NAME <- "iwue"
 O2_COLUMN_NAME <- "O2"
 F_PRIME_COLUMN_NAME <- "f_prime"
 GAMMA_STAR_COLUMN_NAME <- "gamma_star"
@@ -134,7 +136,8 @@ VARIABLES_TO_ANALYZE <- c(
     A_COLUMN_NAME,
     CI_COLUMN_NAME,
     CC_COLUMN_NAME,
-    "gsw",
+    GSW_COLUMN_NAME,
+    IWUE_COLUMN_NAME,
     "CO2_r_sp"  # included as a sanity check... should have 0 variance
 )
 
@@ -152,7 +155,7 @@ VARIABLES_TO_EXTRACT <- c(
     REP_COLUMN_NAME,
     A_COLUMN_NAME,
     CI_COLUMN_NAME,
-    "gsw",
+    GSW_COLUMN_NAME,
     "CO2_r_sp",
     "Ca",
     "gbw",
@@ -496,6 +499,13 @@ if (PERFORM_CALCULATIONS) {
     )
 
     combined_info <- calculate_fprime(combined_info, O2_PERCENT)
+
+    combined_info <- calculate_iwue(
+        combined_info,
+        A_COLUMN_NAME,
+        GSW_COLUMN_NAME,
+        IWUE_COLUMN_NAME
+    )
 
     all_samples <- combined_info[['main_data']]
 
