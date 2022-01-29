@@ -148,8 +148,8 @@ VARIABLES_TO_EXTRACT <- c(
 )
 
 if (INCLUDE_FLUORESCENCE) {
-    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, "PhiPs2", "ETR")
-    VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, "PhiPs2", "ETR")
+    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, "PhiPS2", "ETR")
+    VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, "PhiPS2", "ETR")
 }
 
 ###                                                               ###

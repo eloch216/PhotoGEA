@@ -43,10 +43,10 @@ PERFORM_STATS_TESTS <- FALSE
 
 SAVE_RESULTS <- TRUE
 
-RESPIRATION <- -1.2
+RESPIRATION <- -2.2
 
-MIN_GM <- 0.1
-MAX_GM <- 1.7
+MIN_GM <- 0
+MAX_GM <- 4
 MIN_CC <- 0.0
 
 ###                                                                        ###
@@ -288,7 +288,7 @@ if (PERFORM_CALCULATIONS) {
         # If p < 0.05 perform Dunnett's posthoc test
         
         # Perform Dunnett's Test
-        dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "wt")
         print(dunnett_test_result)
         
         # Do more stats on drawdown
@@ -299,7 +299,7 @@ if (PERFORM_CALCULATIONS) {
         anova_result <- aov(drawdown_avg ~ event, data = rep_stats)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_avg']], g = rep_stats[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_avg']], g = rep_stats[['event']], control = "wt")
         print(dunnett_test_result)
     }
 }

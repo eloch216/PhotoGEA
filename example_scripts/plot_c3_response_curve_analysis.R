@@ -62,7 +62,7 @@ aci_curves <- xyplot(
     xlab = "Intercellular [CO2] (ppm)",
     #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
-    ylim = c(-10, 45),
+    ylim = c(-10, 50),
     xlim = c(-50, 1300),
     par.settings=list(
         superpose.line=list(col=rc_cols),
@@ -144,7 +144,7 @@ multi_aci_curves <- xyplot(
     main = ind_caption,
     xlab = "Intercellular [CO2] (ppm)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(-10, 50),
+    ylim = c(-10, 60),
     xlim = c(-100, 1600),
     par.settings=list(
         superpose.line=list(col=ind_cols),
@@ -193,7 +193,7 @@ boxplot_caption <- paste0(
 a_boxplot <- bwplot(
     all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(0, 35),
+    ylim = c(0, 50),
     main = boxplot_caption,
     xlab = "Genotype"
 )
@@ -251,7 +251,7 @@ barchart_caption <- paste0(
 
 assimilation_barchart <- barchart(
     all_stats_one_point[['A_avg']] ~ all_stats_one_point[['event']],
-    ylim = c(0, 35),
+    ylim = c(0, 40),
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     main = barchart_caption,
     panel = function(x, y, ..., subscripts) {
@@ -293,7 +293,7 @@ vcmax_boxplot <- bwplot(
     vcmax_fits[['Vcmax']] ~ vcmax_fits[[EVENT_COLUMN_NAME]],
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     xlab = "Genotype",
-    ylim = c(0, 200),
+    ylim = c(0, 250),
     main = vcmax_caption
 )
 
@@ -322,7 +322,7 @@ vcmax_barchart_df[['event']] <- factor(
 vcmax_barchart <- barchart(
     vcmax_avg ~ event,
     data = vcmax_barchart_df,
-    ylim = c(0, 200),
+    ylim = c(0, 250),
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     main = vcmax_caption,
     panel = function(x, y, ..., subscripts) {
