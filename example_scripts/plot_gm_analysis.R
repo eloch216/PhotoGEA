@@ -289,4 +289,57 @@ if (MAKE_GM_PLOTS) {
     x11()
     print(assimilation_barchart)
 
+    # Make iWUE boxplots for each rep
+    iWUE_boxplot <- bwplot(
+        iWUE ~ event_replicate | genotype,
+        data = licor_files_no_outliers_data,
+        ylim = c(0, 120),
+        ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)"
+    )
+    x11()
+    print(iWUE_boxplot)
+
+    # Show iWUE time series
+    #xyplot(licor_files_no_outliers[,'iWUE'] ~ as.numeric(row.names(licor_files_no_outliers[['main_data']])), group = licor_files_no_outliers[,'event'], type = 'p', auto = TRUE)
+
+    # Make iWUE bars for each event
+    iwue_barchart <- barchart(
+        iWUE_avg ~ event,
+        data = event_stats,
+        ylim = c(0, 120),
+        ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
+        panel = function(x, y, ..., subscripts) {
+            panel.barchart(x, y, subscripts = subscripts, ...)
+            panel.arrows(x, y, x, event_stats[['iWUE_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+            panel.arrows(x, y, x, event_stats[['iWUE_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        }
+    )
+    x11()
+    print(iwue_barchart)
+
+    # Make g_ratio boxplots for each rep
+    g_ratio_boxplot <- bwplot(
+        g_ratio ~ event_replicate | genotype,
+        data = licor_files_no_outliers_data,
+        ylim = c(0, 1),
+        ylab = "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
+    )
+    x11()
+    print(g_ratio_boxplot)
+
+    # Make iWUE bars for each event
+    g_ratio_barchart <- barchart(
+        g_ratio_avg ~ event,
+        data = event_stats,
+        ylim = c(0, 0.6),
+        ylab = "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)",
+        panel = function(x, y, ..., subscripts) {
+            panel.barchart(x, y, subscripts = subscripts, ...)
+            panel.arrows(x, y, x, event_stats[['g_ratio_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+            panel.arrows(x, y, x, event_stats[['g_ratio_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        }
+    )
+    x11()
+    print(g_ratio_barchart)
+
 }
