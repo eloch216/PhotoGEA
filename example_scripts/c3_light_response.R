@@ -437,7 +437,7 @@ boxplot_caption <- paste0(
 a_boxplot <- bwplot(
     all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(0, 35),
+    ylim = c(0, 40),
     main = boxplot_caption,
     xlab = "Genotype"
 )
@@ -495,7 +495,7 @@ barchart_caption <- paste0(
 
 assimilation_barchart <- barchart(
     all_stats_one_point[['A_avg']] ~ all_stats_one_point[[EVENT_COLUMN_NAME]],
-    ylim = c(0, 35),
+    ylim = c(0, 40),
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     main = barchart_caption,
     panel = function(x, y, ..., subscripts) {
