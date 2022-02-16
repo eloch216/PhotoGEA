@@ -78,6 +78,8 @@ LICOR_CI_COLUMN_NAME <- 'Ci'
 LICOR_CC_COLUMN_NAME <- 'Cc'
 LICOR_A_COLUMN_NAME <- 'A'
 LICOR_GSW_COLUMN_NAME <- 'gsw'
+LICOR_IWUE_COLUMN_NAME <- 'iWUE'
+LICOR_G_RATIO_COLUMN_NAME <- 'g_ratio'
 
 # Specify the variables to extract from the Licor data files. Note that when the
 # files are loaded, any Unicode characters such as Greek letters will be
@@ -131,6 +133,8 @@ VARIABLES_TO_ANALYZE <- c(
     LICOR_CC_COLUMN_NAME,
     LICOR_GM_COLUMN_NAME,
     LICOR_GSW_COLUMN_NAME,
+    LICOR_IWUE_COLUMN_NAME,
+    LICOR_G_RATIO_COLUMN_NAME,
     'Ci-Cc'
 )
 
@@ -237,6 +241,31 @@ if (PERFORM_CALCULATIONS) {
         LICOR_GM_COLUMN_NAME
     )
 
+    licor_files <- calculate_iwue(
+        licor_files,
+        LICOR_A_COLUMN_NAME,
+        LICOR_GSW_COLUMN_NAME,
+        LICOR_IWUE_COLUMN_NAME
+    )
+
+    licor_files <- calculate_g_ratio(
+        licor_files,
+        'Pa',
+        'DeltaPcham',
+        'gsc',  # from calculate_gas_properties
+        LICOR_GM_COLUMN_NAME,
+        LICOR_G_RATIO_COLUMN_NAME
+    )
+
+    # Exclude some events, if necessary
+    EVENTS_TO_IGNORE <- c(
+        "10",
+        "14"
+    )
+
+    licor_files[['main_data']] <-
+        licor_files[['main_data']][!licor_files[['main_data']][['event']] %in% EVENTS_TO_IGNORE,]
+
     # Make a copy of the data where we have removed extreme gm and Cc values
     licor_files_no_outliers <- licor_files
     licor_files_no_outliers[['main_data']] <-
@@ -262,35 +291,35 @@ if (PERFORM_CALCULATIONS) {
         VARIABLES_TO_ANALYZE,
         'sa'
     )
-    
+
     if (PERFORM_STATS_TESTS) {
         # Convert the "event" column to a group or onewaytests will yell at us
         rep_stats[['event']] <- as.factor(rep_stats[['event']])
-        
+
         # Perform Brown-Forsythe test to check for equal variance
         # This test automatically prints its results to the R terminal
         bf_test_result <- bf.test(gmc_avg ~ event, data = rep_stats)
-        
+
         # If p > 0.05 variances among populations is equal and proceed with anova
         # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
-        
+
         # Check normality of data with Shapiro-Wilks test
         shapiro_test_result <- shapiro.test(rep_stats[['gmc_avg']])
         print(shapiro_test_result)
-        
+
         # If p > 0.05 data has normal distribution and proceed with anova
-        
+
         # Perform one way analysis of variance
         anova_result <- aov(gmc_avg ~ event, data = rep_stats)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        
+
         # If p < 0.05 perform Dunnett's posthoc test
-        
+
         # Perform Dunnett's Test
         dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "wt")
         print(dunnett_test_result)
-        
+
         # Do more stats on drawdown
         rep_stats[['drawdown_avg']] <- rep_stats[['Ci-Cc_avg']]
         bf_test_result <- bf.test(drawdown_avg ~ event, data = rep_stats)

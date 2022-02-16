@@ -293,7 +293,7 @@ vcmax_boxplot <- bwplot(
     vcmax_fits[['Vcmax']] ~ vcmax_fits[[EVENT_COLUMN_NAME]],
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     xlab = "Genotype",
-    ylim = c(0, 250),
+    ylim = c(0, 200),
     main = vcmax_caption
 )
 
@@ -322,7 +322,7 @@ vcmax_barchart_df[['event']] <- factor(
 vcmax_barchart <- barchart(
     vcmax_avg ~ event,
     data = vcmax_barchart_df,
-    ylim = c(0, 250),
+    ylim = c(0, 200),
     ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)",
     main = vcmax_caption,
     panel = function(x, y, ..., subscripts) {

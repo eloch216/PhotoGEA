@@ -58,12 +58,15 @@ PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
-VIEW_DATA_FRAMES <- TRUE
+VIEW_DATA_FRAMES <- FALSE
 
 # Decide whether to specify one gm value for all events or to use a table to
-# specify (possibly) different values for each event
+# specify (possibly) different values for each event. If gm is set to infinity
+# (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
+# which is not solely a property of Rubisco and which may differ between plants
+# that have identical Vcmax but different gm.
 USE_GM_TABLE <- FALSE
-GM_VALUE <- 0.6  # mol / m^2 / s
+GM_VALUE <- Inf  # mol / m^2 / s
 
 # Specify the Licor data files and the gm table file. There are two options for
 # doing this: either the filenames can be defined directly as a vector of
@@ -509,6 +512,24 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 
+    # Rename the prefix "36625-" from any event names that contain it
+    all_samples[[EVENT_COLUMN_NAME]] <- gsub(
+        "36625-",
+        "",
+        all_samples[[EVENT_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    # Exclude some events, if necessary
+    EVENTS_TO_IGNORE <- c(
+        "10",
+        "14"
+    )
+
+    all_samples <-
+        all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
+
+    # Perform basic stats and other operations
     all_stats <- basic_stats(
         all_samples,
         EVENT_COLUMN_NAME,
