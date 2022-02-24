@@ -124,8 +124,25 @@ if (PERFORM_CALCULATIONS) {
     # Extract the data (without units)
     all_samples <- combined_info[['main_data']]
 
+    # Rename the prefix "36625-" from any event names that contain it
+    all_samples[[EVENT_COLUMN_NAME]] <- gsub(
+        "36625-",
+        "",
+        all_samples[[EVENT_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    # Exclude some events, if necessary
+    EVENTS_TO_IGNORE <- c(
+        "10",
+        "14"
+    )
+
+    all_samples <-
+        all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
+
     # Make sure basic requirements are met
-    PhotoGEA:::check_basic_stats(
+    check_basic_stats(
         all_samples,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
@@ -201,16 +218,16 @@ if (PERFORM_CALCULATIONS) {
 ### COMMANDS THAT DISPLAY THE RESULTS ###
 ###                                   ###
 
-# Remove bad replicates
+# Ignore particular replicates
 REPS_TO_IGNORE <- c(
-    "36625-14 11",  # For T1
-    "10 6",
-    "14 2",
-    "8 3",
-    "8 4",
-    "WT 3",
-    "WT 4",
-    "WT 6"
+    #"36625-14 11",  # For T1
+    #"10 6",
+    #"14 2",
+    #"8 3",
+    #"8 4",
+    #"WT 3",
+    #"WT 4",
+    #"WT 6"
 )
 
 fits_for_plotting <- variable_j_fits[!variable_j_fits[[UNIQUE_ID_COLUMN_NAME]] %in% REPS_TO_IGNORE,]
