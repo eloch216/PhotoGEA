@@ -440,18 +440,6 @@ fit_for_vcmax <- function(big_aci_data, Ci_threshold, make_plots) {
     return(result)
 }
 
-add_gm_to_licor_data_from_value <- function(licor_data, gm_value) {
-    # Add a column for gm
-    licor_data <- specify_variables(
-        licor_data,
-        c("gm input", GM_COLUMN_NAME, "mol m^(-2) s^(-1)")
-    )
-
-    licor_data[['main_data']][[GM_COLUMN_NAME]] <- gm_value
-
-    return(licor_data)
-}
-
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -489,8 +477,11 @@ if (PERFORM_CALCULATIONS) {
             GM_COLUMN_NAME
         )
     } else {
-        combined_info <-
-            add_gm_to_licor_data_from_value(combined_info, GM_VALUE)
+        combined_info <- add_gm_to_licor_data_from_value(
+            combined_info,
+            GM_VALUE,
+            GM_COLUMN_NAME
+        )
     }
 
     combined_info <- calculate_cc(

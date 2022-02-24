@@ -1,28 +1,47 @@
-# This script includes functions for reading mesophyll conductance (gm) table
-# files and adding information from these files to Licor data tables.
+# This script includes functions for specifying mesophyll conductance directly
+# (as a single value) or by reading mesophyll conductance (gm) table files and
+# adding information from these files to Licor data tables.
+
+# Specify a value of mesophyll conductance to include as a column in the data
+add_gm_to_licor_data_from_value <- function(
+    licor_data,
+    gm_value,
+    GM_COLUMN_NAME
+)
+{
+    # Add a column for gm
+    licor_data <- specify_variables(
+        licor_data,
+        c("gm input", GM_COLUMN_NAME, "mol m^(-2) s^(-1)")
+    )
+
+    licor_data[['main_data']][[GM_COLUMN_NAME]] <- gm_value
+
+    return(licor_data)
+}
 
 # Read data from a table that contains mesophyll conductance values for each
 # genotype. The table should be stored as a csv file with two columns:
-# genotype_column_name (specifying the genotype) and gm_column_name (specifying
+# GENOTYPE_COLUMN_NAME (specifying the genotype) and GM_COLUMN_NAME (specifying
 # the mesophyll conductance to CO2). The first row should be the column names,
 # the second row should be the units for each column, and the remaining rows
 # should contain the data. The return value is an exdf object.
 read_gm_table <- function(
     filename,
-    genotype_column_name,
-    gm_column_name
+    GENOTYPE_COLUMN_NAME,
+    GM_COLUMN_NAME
 )
 {
     raw_data <- read.csv(filename, header = FALSE)
 
     table_columns <- raw_data[1,]
 
-    if (!(genotype_column_name %in% table_columns) || !(gm_column_name %in% table_columns)) {
+    if (!(GENOTYPE_COLUMN_NAME %in% table_columns) || !(GM_COLUMN_NAME %in% table_columns)) {
         stop(
             paste0(
                 "The mesophyll conductance data table columns must agree with ",
-                "the specified genotype column name (", genotype_column_name,
-                ") and gm column name (", gm_column_name, ")"
+                "the specified genotype column name (", GENOTYPE_COLUMN_NAME,
+                ") and gm column name (", GM_COLUMN_NAME, ")"
             )
         )
     }
@@ -66,26 +85,26 @@ read_gm_table <- function(
 add_gm_to_licor_data_from_table <- function(
     licor_data,
     gm_table,
-    genotype_column_name,
-    gm_column_name
+    GENOTYPE_COLUMN_NAME,
+    GM_COLUMN_NAME
 )
 {
     # Add a new column to the licor data representing gm
     licor_data <- specify_variables(
         licor_data,
         c(
-            gm_table[['categories']][[gm_column_name]],
-            gm_column_name,
-            gm_table[['units']][[gm_column_name]]
+            gm_table[['categories']][[GM_COLUMN_NAME]],
+            GM_COLUMN_NAME,
+            gm_table[['units']][[GM_COLUMN_NAME]]
         )
     )
 
     # Fill in the values
     for (i in seq_len(nrow(gm_table[['main_data']]))) {
-        genotype <- gm_table[i,genotype_column_name]
-        gm_val <- gm_table[i,gm_column_name]
+        genotype <- gm_table[i,GENOTYPE_COLUMN_NAME]
+        gm_val <- gm_table[i,GM_COLUMN_NAME]
 
-        licor_data[,gm_column_name][licor_data[,genotype_column_name] == genotype] <- gm_val
+        licor_data[,GM_COLUMN_NAME][licor_data[,GENOTYPE_COLUMN_NAME] == genotype] <- gm_val
 
     }
 

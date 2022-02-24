@@ -19,6 +19,7 @@
 # - Components that are less likely to change each time this script is run
 # - Functions used to load and process the data (shouldn't need to change)
 # - The commands that actually call the functions
+# - Plotting commands (may need to change)
 #
 # Typically, it should only be necessary to specify the names of input files.
 # This information is specified in the LICOR_FILES_TO_PROCESS vector and
@@ -30,9 +31,6 @@
 # relative paths, they should be specified relative to the directory that
 # contains this script.
 #
-# To generate figures based on the analysis performed in this script, see
-# `plot_c4_response_curve_analysis.R`.
-#
 # ------------------------------------------------------------------------------
 #
 # To run the script, set the R working directory to the directory that contains
@@ -41,6 +39,8 @@
 # source('c4_response_curve_analysis.R')
 
 library(PhotoGEA)
+library(lattice)
+library(RColorBrewer)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -63,13 +63,7 @@ VIEW_DATA_FRAMES <- TRUE
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event
 USE_GM_TABLE <- FALSE
-GM_VALUE <- 0.6  # mol / m^2 / s
-
-# Specify the Licor data files and the gm table file. There are two options for
-# doing this: either the filenames can be defined directly as a vector of
-# strings, or they can be defined interactively via a dialog box (only available
-# on MS Windows).
-CHOOSE_FILES_INTERACTIVELY <- TRUE
+GM_VALUE <- 3.0  # mol / m^2 / s
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
@@ -78,20 +72,9 @@ GM_TABLE_FILE_TO_PROCESS <- c()
 # Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
 # and USE_GM_TABLE booleans
 if (PERFORM_CALCULATIONS) {
-    if (CHOOSE_FILES_INTERACTIVELY) {
-        LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-        if (USE_GM_TABLE) {
-            GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
-        }
-    }
-    else {
-        LICOR_FILES_TO_PROCESS <- c(
-            "2021-04-07-site 11 vulcan cs 36627-1-17.xlsx",
-            "20210407-pluto-site13-36627-WT-3.xlsx"
-        )
-        if (USE_GM_TABLE) {
-            GM_TABLE_FILE_TO_PROCESS <- "gm_table.csv"
-        }
+    LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
+    if (USE_GM_TABLE) {
+        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
     }
 }
 
@@ -110,9 +93,10 @@ POINT_FOR_BOX_PLOTS <- 1
 ###                                                                        ###
 
 # Specify the names of a few important columns
-EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "replicate"
+EVENT_COLUMN_NAME <- "Line"
+REP_COLUMN_NAME <- "Sample"
 MEASUREMENT_NUMBER_NAME <- "obs"
+GM_COLUMN_NAME <- "gmc"
 CI_COLUMN_NAME <- "Ci"
 A_COLUMN_NAME <- "A"
 TIME_COLUMN_NAME <- "time"
@@ -182,6 +166,27 @@ if (PERFORM_CALCULATIONS) {
     )
 
     combined_info <- combine_exdf(extracted_multi_file_info)
+
+    if (USE_GM_TABLE) {
+        gm_table_info <- read_gm_table(
+            GM_TABLE_FILE_TO_PROCESS,
+            EVENT_COLUMN_NAME,
+            GM_COLUMN_NAME
+        )
+
+        combined_info <- add_gm_to_licor_data_from_table(
+            combined_info,
+            gm_table_info,
+            EVENT_COLUMN_NAME,
+            GM_COLUMN_NAME
+        )
+    } else {
+        combined_info <- add_gm_to_licor_data_from_value(
+            combined_info,
+            GM_VALUE,
+            GM_COLUMN_NAME
+        )
+    }
 
     all_samples <- combined_info[['main_data']]
 
@@ -258,3 +263,234 @@ if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats)
 }
+
+###                            ###
+### PLOT RESPONSE CURVES TO CI ###
+###                            ###
+
+rc_caption <- "Average response curves for each event"
+
+# Choose colors for the different events to use when plotting average A-Ci
+# curves. To see other available palettes, use one of the following commands:
+#  display.brewer.all(colorblindFriendly = TRUE)
+#  display.brewer.all(colorblindFriendly = FALSE)
+rc_cols <- c(
+    "#000000",
+    brewer.pal(12, "Paired")[c(1:10,12)],
+    brewer.pal(8, "Set2"),
+    brewer.pal(8, "Dark2")
+)
+rc_cols <- rc_cols[1:length(unique(all_stats_subset[[EVENT_COLUMN_NAME]]))]
+rc_cols <- rev(rc_cols)
+
+# Make a slightly different version of the color specification to use for the
+# error bars
+rc_error_cols <- rep(rc_cols, each=length(MEASUREMENT_NUMBERS))
+
+# Set the line width to use for plotting average response curves. (This will
+# only apply if type is 'l' or 'b' in the calls to xyplot below.)
+line_width <- 1
+
+# Plot the average A-Ci curves
+aci_curves <- xyplot(
+    all_stats_subset[['A_avg']] ~ all_stats_subset[['Ci_avg']],
+    group = all_stats_subset[[EVENT_COLUMN_NAME]],
+    type = 'b',
+    pch = 16,
+    lwd = line_width,
+    auto = TRUE,
+    grid = TRUE,
+    main = rc_caption,
+    xlab = "Intercellular [CO2] (ppm)",
+    #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
+    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
+    ylim = c(-10, 60),
+    xlim = c(-50, 1300),
+    par.settings=list(
+        superpose.line=list(col=rc_cols),
+        superpose.symbol=list(col=rc_cols)
+    ),
+    panel = function(x, y, ...) {
+        panel.arrows(x, y, x, all_stats_subset[['A_upper']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+        panel.arrows(x, y, x, all_stats_subset[['A_lower']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+        #panel.arrows(x, y, all_stats_subset[['Ci_upper']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+        #panel.arrows(x, y, all_stats_subset[['Ci_lower']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+        panel.xyplot(x, y, ...)
+    }
+)
+
+x11(width = 8, height = 6)
+print(aci_curves)
+
+if (INCLUDE_FLUORESCENCE) {
+    # Plot the average ETR-Ci curves
+    eci_curves <- xyplot(
+        all_stats_subset[['ETR_avg']] ~ all_stats_subset[['Ci_avg']],
+        group = all_stats_subset[[EVENT_COLUMN_NAME]],
+        type = 'b',
+        pch = 16,
+        lwd = line_width,
+        auto = TRUE,
+        grid = TRUE,
+        main = rc_caption,
+        xlab = "Intercellular [CO2] (ppm)",
+        #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
+        ylab = "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
+        ylim = c(0, 325),
+        xlim = c(-50, 1300),
+        par.settings=list(
+            superpose.line=list(col=rc_cols),
+            superpose.symbol=list(col=rc_cols)
+        ),
+        panel = function(x, y, ...) {
+            panel.arrows(x, y, x, all_stats_subset[['ETR_upper']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            panel.arrows(x, y, x, all_stats_subset[['ETR_lower']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            #panel.arrows(x, y, all_stats_subset[['Ci_upper']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            #panel.arrows(x, y, all_stats_subset[['Ci_lower']], y, length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
+            panel.xyplot(x, y, ...)
+        }
+    )
+
+    x11(width = 8, height = 6)
+    print(eci_curves)
+}
+
+###                                     ###
+### PLOT ALL INDIVIDUAL RESPONSE CURVES ###
+###                                     ###
+
+ind_caption <- "Individual response curves for each event and rep"
+
+num_reps <- length(unique(all_samples_subset[[REP_COLUMN_NAME]]))
+
+# Choose colors for the different reps to use when plotting individual response
+# curves. To see other available palettes, use one of the following commands:
+#  display.brewer.all(colorblindFriendly = TRUE)
+#  display.brewer.all(colorblindFriendly = FALSE)
+ind_cols <- c(
+    "#000000",
+    brewer.pal(12, "Paired"),
+    brewer.pal(8, "Set2"),
+    brewer.pal(8, "Dark2")
+)
+
+# Plot each individual A-Ci curve, where each event will have multiple traces
+# corresponding to different plants
+multi_aci_curves <- xyplot(
+    all_samples_subset[['A']] ~ all_samples_subset[['Ci']] | all_samples_subset[[EVENT_COLUMN_NAME]],
+    group = all_samples_subset[[REP_COLUMN_NAME]],
+    type = 'b',
+    pch = 20,
+    auto.key = list(space = "right"),
+    grid = TRUE,
+    main = ind_caption,
+    xlab = "Intercellular [CO2] (ppm)",
+    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
+    ylim = c(-10, 60),
+    xlim = c(-100, 1600),
+    par.settings=list(
+        superpose.line=list(col=ind_cols),
+        superpose.symbol=list(col=ind_cols)
+    )
+)
+
+x11(width = 8, height = 6)
+print(multi_aci_curves)
+
+# Plot each individual gsw-Ci curve, where each event will have multiple
+# traces corresponding to different plants
+multi_gsci_curves <- xyplot(
+    all_samples_subset[['gsw']] ~ all_samples_subset[['Ci']] | all_samples_subset[[EVENT_COLUMN_NAME]],
+    group = all_samples_subset[[REP_COLUMN_NAME]],
+    type = 'b',
+    pch = 20,
+    auto.key = list(space = "right"),
+    grid = TRUE,
+    main = ind_caption,
+    xlab = "Intercellular [CO2] (ppm)",
+    ylab = "Stomatal conductance to water (mol / m^2 / s)",
+    ylim = c(0, 0.8),
+    xlim = c(-100, 1600),
+    par.settings=list(
+        superpose.line=list(col=ind_cols),
+        superpose.symbol=list(col=ind_cols)
+    )
+)
+
+x11(width = 8, height = 6)
+print(multi_gsci_curves)
+
+###                                                    ###
+### MAKE BOX-WHISKER PLOTS FOR FIRST MEASUREMENT POINT ###
+###                                                    ###
+
+boxplot_caption <- paste0(
+    "Quartiles for measurement point ",
+    POINT_FOR_BOX_PLOTS,
+    "\n(where CO2_r_sp = ",
+    all_samples_one_point[['CO2_r_sp']][1],
+    ")"
+)
+
+a_boxplot <- bwplot(
+    all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
+    ylim = c(0, 60),
+    main = boxplot_caption,
+    xlab = "Genotype"
+)
+
+x11(width = 6, height = 6)
+print(a_boxplot)
+
+if (INCLUDE_FLUORESCENCE) {
+    phips2_boxplot <- bwplot(
+        all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+        ylab = "Photosystem II operating efficiency (dimensionless)",
+        ylim = c(0, 0.4),
+        main = boxplot_caption,
+        xlab = "Genotype"
+    )
+
+    x11(width = 6, height = 6)
+    print(phips2_boxplot)
+
+
+    etr_boxplot <- bwplot(
+        all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
+        ylab = "Electron transport rate (micromol / m^2 / s)",
+        ylim = c(0, 275),
+        main = boxplot_caption,
+        xlab = "Genotype"
+    )
+
+    x11(width = 6, height = 6)
+    print(etr_boxplot)
+}
+
+###                                             ###
+### MAKE BAR CHARTS FOR FIRST MEASUREMENT POINT ###
+###                                             ###
+
+barchart_caption <- paste0(
+    "Averages for measurement point ",
+    POINT_FOR_BOX_PLOTS,
+    "\n(where CO2_r_sp = ",
+    all_stats_one_point[['CO2_r_sp_avg']][1],
+    ")"
+)
+
+assimilation_barchart <- barchart(
+    all_stats_one_point[['A_avg']] ~ all_stats_one_point[[EVENT_COLUMN_NAME]],
+    ylim = c(0, 60),
+    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
+    main = barchart_caption,
+    panel = function(x, y, ..., subscripts) {
+        panel.barchart(x, y, subscripts = subscripts, ...)
+        panel.arrows(x, y, x, all_stats_one_point[['A_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
+        panel.arrows(x, y, x, all_stats_one_point[['A_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
+    }
+)
+
+x11(width = 6, height = 6)
+print(assimilation_barchart)
