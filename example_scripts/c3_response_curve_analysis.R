@@ -66,7 +66,8 @@ VIEW_DATA_FRAMES <- FALSE
 # which is not solely a property of Rubisco and which may differ between plants
 # that have identical Vcmax but different gm.
 USE_GM_TABLE <- FALSE
-GM_VALUE <- Inf  # mol / m^2 / s
+GM_VALUE <- Inf
+GM_UNITS <- "mol m^(-2) s^(-1)"
 
 # Specify the Licor data files and the gm table file. There are two options for
 # doing this: either the filenames can be defined directly as a vector of
@@ -480,6 +481,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info <- add_gm_to_licor_data_from_value(
             combined_info,
             GM_VALUE,
+            GM_UNITS,
             GM_COLUMN_NAME
         )
     }

@@ -6,13 +6,14 @@
 add_gm_to_licor_data_from_value <- function(
     licor_data,
     gm_value,
+    gm_units,
     GM_COLUMN_NAME
 )
 {
     # Add a column for gm
     licor_data <- specify_variables(
         licor_data,
-        c("gm input", GM_COLUMN_NAME, "mol m^(-2) s^(-1)")
+        c("gm input", GM_COLUMN_NAME, gm_units)
     )
 
     licor_data[['main_data']][[GM_COLUMN_NAME]] <- gm_value
