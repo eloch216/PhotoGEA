@@ -74,14 +74,23 @@ TDL_COLUMNS_TO_EXTRACT <- c(
 )
 
 # Names of important columns in the Licor data
-LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
-LICOR_GM_COLUMN_NAME <- 'gmc'
-LICOR_CI_COLUMN_NAME <- 'Ci'
-LICOR_CC_COLUMN_NAME <- 'Cc'
 LICOR_A_COLUMN_NAME <- 'A'
+LICOR_CA_COLUMN_NAME <- 'Ca'
+LICOR_CC_COLUMN_NAME <- 'Cc'
+LICOR_CI_COLUMN_NAME <- 'Ci'
+LICOR_CSURFACE_COLUMN_NAME <- 'Csurface'
+LICOR_DELTAPCHAM_COLUMN_NAME <- 'DeltaPcham'  # the name of this column is modified from ΔPcham
+LICOR_E_COLUMN_NAME <- 'E'
+LICOR_GBW_COLUMN_NAME <- 'gbw'
+LICOR_GM_COLUMN_NAME <- 'gmc'
 LICOR_GSW_COLUMN_NAME <- 'gsw'
-LICOR_IWUE_COLUMN_NAME <- 'iWUE'
 LICOR_G_RATIO_COLUMN_NAME <- 'g_ratio'
+LICOR_H2O_S_COLUMN_NAME <- 'H2O_s'
+LICOR_IWUE_COLUMN_NAME <- 'iWUE'
+LICOR_PA_COLUMN_NAME <- 'Pa'
+LICOR_RHLEAF_COLUMN_NAME <- 'RHleaf'
+LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
+LICOR_TLEAF_COLUMN_NAME <- 'TleafCnd'
 
 # Specify the variables to extract from the Licor data files. Note that when the
 # files are loaded, any Unicode characters such as Greek letters will be
@@ -91,17 +100,17 @@ LICOR_G_RATIO_COLUMN_NAME <- 'g_ratio'
 LICOR_VARIABLES_TO_EXTRACT <- c(
     'obs',
     LICOR_TIMESTAMP_COLUMN_NAME,
-    'E',
+    LICOR_E_COLUMN_NAME,
     LICOR_A_COLUMN_NAME,
-    'Ca',
+    LICOR_CA_COLUMN_NAME,
     LICOR_CI_COLUMN_NAME,
     'Pci',
     'Pca',
     LICOR_GSW_COLUMN_NAME,
-    'gbw',
+    LICOR_GBW_COLUMN_NAME,
     'gtw',
     'gtc',
-    'TleafCnd',
+    LICOR_TLEAF_COLUMN_NAME,
     'SVPleaf',
     'RHcham',
     'VPcham',
@@ -112,13 +121,12 @@ LICOR_VARIABLES_TO_EXTRACT <- c(
     'K',
     'CO2_s',
     'CO2_r',
-    'H2O_s',
+    LICOR_H2O_S_COLUMN_NAME,
     'H2O_r',
     'Flow',
-    'Pa',
-    'DeltaPcham',   # the name of this column is modified from ΔPcham
+    LICOR_PA_COLUMN_NAME,
+    LICOR_DELTAPCHAM_COLUMN_NAME,
     'Tair',
-    'Tleaf',
     'Flow_s',
     'Flow_r'
 )
@@ -229,9 +237,19 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- combine_exdf(licor_files)
 
-    # Calculate gm and other quantities
-
-    licor_files <- calculate_gas_properties(licor_files)  # calculates gbc, gsc, Csurface (needed for `calculate_gm`)
+    # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
+    licor_files <- calculate_gas_properties(
+        licor_files,
+        LICOR_A_COLUMN_NAME,
+        LICOR_CA_COLUMN_NAME,
+        LICOR_DELTAPCHAM_COLUMN_NAME,
+        LICOR_E_COLUMN_NAME,
+        LICOR_GBW_COLUMN_NAME,
+        LICOR_GSW_COLUMN_NAME,
+        LICOR_H2O_S_COLUMN_NAME,
+        LICOR_PA_COLUMN_NAME,
+        LICOR_TLEAF_COLUMN_NAME
+    )
 
     licor_files <- calculate_gm(licor_files)
 

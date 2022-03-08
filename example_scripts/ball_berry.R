@@ -3,6 +3,20 @@ library(PhotoGEA)
 library(lattice)
 library(RColorBrewer)
 
+# Define some important column names
+A_COLUMN_NAME <- 'A'
+BB_INDEX_COLUMN_NAME <- 'bb_index'
+CA_COLUMN_NAME <- 'Ca'
+CSURFACE_COLUMN_NAME <- 'Csurface'
+DELTAPCHAM_COLUMN_NAME <- 'DeltaPcham'
+E_COLUMN_NAME <- 'E'
+GBW_COLUMN_NAME <- 'gbw'
+GSW_COLUMN_NAME <- 'gsw'
+H2O_S_COLUMN_NAME <- 'H2O_s'
+PA_COLUMN_NAME <- 'Pa'
+RHLEAF_COLUMN_NAME <- 'RHleaf'
+TLEAF_COLUMN_NAME <- 'TleafCnd'
+
 # Read Licor files, extract important columns, and combine the results into one
 # exdf object
 multi_file_info <- batch_read_licor_file(
@@ -26,23 +40,40 @@ extracted_multi_file_info <- batch_extract_variables(
         'species',
         'plot',
         'instrument',
-        'A',
-        'Ca',
-        'DeltaPcham',
-        'E',
-        'gbw',
-        'gsw',
-        'H2O_s',
-        'Pa',
-        'TleafCnd'
+        A_COLUMN_NAME,
+        CA_COLUMN_NAME,
+        DELTAPCHAM_COLUMN_NAME,
+        E_COLUMN_NAME,
+        GBW_COLUMN_NAME,
+        GSW_COLUMN_NAME,
+        H2O_S_COLUMN_NAME,
+        PA_COLUMN_NAME,
+        TLEAF_COLUMN_NAME
     )
 )
 
 combined_info <- combine_exdf(extracted_multi_file_info)
 
 # Calculate gas properties and use the result to determine the Ball-Berry index
-combined_info <- calculate_gas_properties(combined_info)
-combined_info <- calculate_ball_berry_index(combined_info)
+combined_info <- calculate_gas_properties(
+    combined_info,
+    A_COLUMN_NAME,
+    CA_COLUMN_NAME,
+    DELTAPCHAM_COLUMN_NAME,
+    E_COLUMN_NAME,
+    GBW_COLUMN_NAME,
+    GSW_COLUMN_NAME,
+    H2O_S_COLUMN_NAME,
+    PA_COLUMN_NAME,
+    TLEAF_COLUMN_NAME
+)
+
+combined_info <- calculate_ball_berry_index(
+    combined_info,
+    A_COLUMN_NAME,
+    RHLEAF_COLUMN_NAME,
+    CSURFACE_COLUMN_NAME
+)
 
 # Make a new identifier based on the plot and instrument names
 combined_info[,'plot_instrument'] <- paste(
@@ -62,7 +93,13 @@ combined_info[,'species_plot_instrument'] <- paste(
 )
 
 # Do Ball-Berry fitting
-bb_results <- fit_ball_berry(combined_info, 'species_plot_instrument')
+bb_results <- fit_ball_berry(
+    combined_info,
+    'species_plot_instrument',
+    GSW_COLUMN_NAME,
+    BB_INDEX_COLUMN_NAME
+)
+
 bb_parameters <- bb_results[['parameters']]
 bb_fits <- bb_results[['fits']]
 

@@ -27,19 +27,19 @@ calculate_fprime <- function(
     kc_column_name,
     ko_column_name,
     o2_column_name,
-    tl_column_name
+    tleaf_column_name
 )
 {
     # Make sure the required columns are defined
     required_columns <- c(
-        cc_column_name,         # micromol / mol
-        tl_column_name          # degrees c
+        cc_column_name,    # micromol / mol
+        tleaf_column_name  # degrees c
     )
 
     check_required_columns(licor_exdf, required_columns)
 
     # Get leaf temperature in Kelvin
-    leaf_temp <- licor_exdf[,tl_column_name] + 273.15
+    leaf_temp <- licor_exdf[,tleaf_column_name] + 273.15
 
     # Define parameter values for calculating gamma_star, Kc, and Ko
     gamma_star_c <- 19.02    # dimensionless

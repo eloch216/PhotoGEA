@@ -1,17 +1,38 @@
 calculate_gm <- function(
-    licor_file
+    licor_exdf
 )
 {
+    # Make sure the required columns are defined
+    required_columns <- c(
+        'CO2_s',
+        'H2O_s',
+        'CO2_r',
+        'H2O_r',
+        'Oxygen',
+        'Pa',
+        'Csurface',
+        'Ci',
+        'total_mixing_ratio_r',
+        'total_mixing_ratio_s',
+        'E',
+        'gtc',
+        'total_isotope_ratio_r',
+        'total_isotope_ratio_s',
+        'A',
+        'respiration'
+    )
+
+    check_required_columns(licor_exdf, required_columns)
+
     # Add some new columns to the Licor file in preparation for calculating
     # mesophyll conductance
-    licor_file <- specify_variables(
-        licor_file,
+    licor_exdf <- specify_variables(
+        licor_exdf,
         c("calculated", "Cs_licor",         "micromol mol^(-1)"),
         c("calculated", "Ce_licor",         "micromol mol^(-1)"),
         c("calculated", "ppO2",             "bar"),
         c("calculated", "gsc",              "mol m^(-2) s^(-1)"),
         c("calculated", "gbc",              "mol m^(-2) s^(-1)"),
-        c("calculated", "Csurface",         "micromol mol^(-1)"),
         c("calculated", "ppCO2_s",          "bar"),
         c("calculated", "ppCO2_r",          "bar"),
         c("calculated", "ppCO2_surface",    "bar"),
@@ -42,7 +63,7 @@ calculate_gm <- function(
     ai <- 1.8                            # check https://doi.org/10.1111/j.1365-3040.2012.02591.x
 
     # Make the calculations
-    licor_file[['main_data']] <- within(licor_file[['main_data']], {
+    licor_exdf[['main_data']] <- within(licor_exdf[['main_data']], {
         Cs_licor <- 1e6 * CO2_s / (1e6 - H2O_s * 1e3)
         Ce_licor <- 1e6 * CO2_r / (1e6 - H2O_r * 1e3)
         ppO2 <- (Oxygen * 1e-2) * (Pa * 1e-2)
@@ -129,10 +150,10 @@ calculate_gm <- function(
     })
 
     # remove some extra columns that we don't need to keep
-    licor_file[['main_data']][['t_factor_1']] <- NULL
-    licor_file[['main_data']][['t_factor_2']] <- NULL
-    licor_file[['main_data']][['t_factor_3']] <- NULL
-    licor_file[['main_data']][['t_factor_4']] <- NULL
+    licor_exdf[,'t_factor_1'] <- NULL
+    licor_exdf[,'t_factor_2'] <- NULL
+    licor_exdf[,'t_factor_3'] <- NULL
+    licor_exdf[,'t_factor_4'] <- NULL
 
-    return(licor_file)
+    return(licor_exdf)
 }

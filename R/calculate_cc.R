@@ -14,26 +14,38 @@
 # - Net assimilation (A): micromol / m^2 / s
 # - Mesophyll conductance to CO2 (gmc): mol / m^2 / s
 calculate_cc <- function(
-    licor_data,
+    licor_exdf,
     cc_column_name,
     ci_column_name,
     a_column_name,
     gm_column_name
-) {
-    drawdown_column_name <- paste0(ci_column_name, "-", cc_column_name)
-
-    licor_data[,cc_column_name] <-
-        licor_data[,ci_column_name] - licor_data[,a_column_name] / licor_data[,gm_column_name]
-
-    licor_data[,drawdown_column_name] <-
-        licor_data[,ci_column_name] - licor_data[,cc_column_name]
-
-    # Document the columns that were added
-    licor_data <- specify_variables(
-        licor_data,
-        c("calculated", cc_column_name,       "micromol mol^(-1)"),
-        c("calculated", drawdown_column_name, "micromol mol^(-1)")
+)
+{
+    # Make sure the required columns are defined
+    required_columns <- c(
+        a_column_name,   # micromol / m^2 / s
+        ci_column_name,  # micromol / mol
+        gm_column_name   # mol / m^2 / s
     )
 
-    return(licor_data)
+    check_required_columns(licor_exdf, required_columns)
+
+    # Define the drawdown column name
+    drawdown_column_name <- paste0(ci_column_name, "-", cc_column_name)
+
+    # Make calculations
+    licor_exdf[,cc_column_name] <-
+        licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] / licor_exdf[,gm_column_name]
+
+    licor_exdf[,drawdown_column_name] <-
+        licor_exdf[,ci_column_name] - licor_exdf[,cc_column_name]
+
+    # Document the columns that were added
+    licor_exdf <- specify_variables(
+        licor_exdf,
+        c("calculate_cc", cc_column_name,       "micromol mol^(-1)"),
+        c("calculate_cc", drawdown_column_name, "micromol mol^(-1)")
+    )
+
+    return(licor_exdf)
 }

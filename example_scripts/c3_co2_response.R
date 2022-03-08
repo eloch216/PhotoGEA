@@ -116,7 +116,7 @@ F_PRIME_COLUMN_NAME <- "f_prime"
 GAMMA_STAR_COLUMN_NAME <- "gamma_star"
 KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
-TL_COLUMN_NAME <- "TleafCnd"
+TLEAF_COLUMN_NAME <- "TleafCnd"
 TIME_COLUMN_NAME <- "time"
 PHIPS2_COLUMN_NAME <- "PhiPS2"
 ETR_COLUMN_NAME <- "ETR"
@@ -157,7 +157,7 @@ VARIABLES_TO_EXTRACT <- c(
     "Qin",
     "Qabs",
     "CO2_r",
-    TL_COLUMN_NAME
+    TLEAF_COLUMN_NAME
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -415,7 +415,7 @@ if (PERFORM_CALCULATIONS) {
         KC_COLUMN_NAME,
         KO_COLUMN_NAME,
         O2_COLUMN_NAME,
-        TL_COLUMN_NAME
+        TLEAF_COLUMN_NAME
     )
 
     combined_info <- calculate_iwue(
