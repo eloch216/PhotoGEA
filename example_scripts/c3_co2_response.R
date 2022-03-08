@@ -116,6 +116,7 @@ F_PRIME_COLUMN_NAME <- "f_prime"
 GAMMA_STAR_COLUMN_NAME <- "gamma_star"
 KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
+TL_COLUMN_NAME <- "TleafCnd"
 TIME_COLUMN_NAME <- "time"
 PHIPS2_COLUMN_NAME <- "PhiPS2"
 ETR_COLUMN_NAME <- "ETR"
@@ -156,8 +157,7 @@ VARIABLES_TO_EXTRACT <- c(
     "Qin",
     "Qabs",
     "CO2_r",
-    "Tleaf",
-    "Tleaf2"
+    TL_COLUMN_NAME
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -178,87 +178,6 @@ PLOT_VCMAX_FITS <- FALSE
 ### FUNCTIONS THAT WILL BE CALLED WHEN THIS SCRIPT RUNS           ###
 ### (THEY SHOULD NOT REQUIRE ANY MODIFICATIONS TO USE THE SCRIPT) ###
 ###                                                               ###
-
-# Adds a new column to the Licor data representing f' (f_prime; dimensionless),
-# a quantity used for determining Vcmax from A-Ci curves. This variable is
-# defined in Long & Bernacchi. "Gas exchange measurements, what can they tell us
-# about the underlying limitations to photosynthesis? Procedures and sources of
-# error" Journal of Experimental Botany 54, 2393–2401 (2003)
-# (https://doi.org/10.1093/jxb/erg262). However, it is more typical to use
-# the CO2 concentration of the chloroplast (Cc) in place of the intercellular
-# CO2 concentration (CI) as in Long & Bernacchi, since the result calculated with
-# Cc can be used to determine chloroplast values of Vcmax.
-#
-# As in Long & Bernacchi, we calculate the temperature-dependent values of the
-# Michaelis-Menten constants for CO2 and O2 (Kc and Ko) using the equations from
-# Bernacchi et al. "Improved temperature response functions for models of
-# Rubisco-limited photosynthesis" Plant, Cell & Environment 24, 253–259 (2001)
-# (https://doi.org/10.1111/j.1365-3040.2001.00668.x).
-#
-# Here we assume the following units:
-# - Leaf temperature: degrees C
-# - CO2 concentration in the chloroplast (Cc): micromol / mol
-# - O2 concetration in the chloroplast (O2): percent
-calculate_fprime <- function(licor_data, O2_percent) {
-    # Specify new variables
-    licor_data <- specify_variables(
-        licor_data,
-        c("calculated", GAMMA_STAR_COLUMN_NAME, "micromol mol^(-1)"),
-        c("calculated", KC_COLUMN_NAME,         "micromol mol^(-1)"),
-        c("calculated", KO_COLUMN_NAME,         "mmol mol^(-1)"),
-        c("in",         O2_COLUMN_NAME,         "mmol mol^(-1)"),
-        c("calculated", F_PRIME_COLUMN_NAME,    "dimensionless")
-    )
-
-    # Get leaf temperature in Kelvin. Sometimes the data will be in the `Tleaf`
-    # column; other times it will be in the `Tleaf2` column. We can find the
-    # correct value by taking the smaller one, since the other will be 999.9.
-    leaf_temp <- rep(0, nrow(licor_data[['main_data']]))
-    for (i in seq_along(leaf_temp)) {
-        leaf_temp[i] <- min(
-            licor_data[['main_data']][['Tleaf']][i],
-            licor_data[['main_data']][['Tleaf2']][i]
-        ) + 273.15
-    }
-
-    # Define parameter values for calculating gamma_star, Kc, and Ko
-    gamma_star_c <- 19.02    # dimensionless
-    Kc_c <- 38.05            # dimensionless
-    Ko_c <- 20.30            # dimensionless
-    gamma_star_dha <- 37.83  # kJ / mol
-    Kc_dha <- 79.43          # kJ / mol
-    Ko_dha <- 36.38          # kJ / mol
-
-    # Get temperature-dependent values for gamma_star, Kc, and Ko
-    arrhenius <- function(
-        scaling,     # dimensionless
-        enthalpy,    # kJ / mol
-        temperature  # Kelvin
-    )
-    {
-        ideal_gas_constant <- 8.3145e-3  # kJ / mol / k
-        return(exp(scaling - enthalpy / (ideal_gas_constant * temperature)))
-    }
-    gamma_star <- arrhenius(gamma_star_c, gamma_star_dha, leaf_temp)  # micromol / mol
-    Kc <- arrhenius(Kc_c, Kc_dha, leaf_temp)                          # micromol / mol
-    Ko <- arrhenius(Ko_c, Ko_dha, leaf_temp)                          # mmol / mol
-
-    # Convert O2 from percent to mmol / mol
-    O2 <- O2_percent * 10
-
-    # Store gamma_star, Kc, Ko, and O2 in the Licor data
-    licor_data[['main_data']][[GAMMA_STAR_COLUMN_NAME]] <- gamma_star
-    licor_data[['main_data']][[KC_COLUMN_NAME]] <- Kc
-    licor_data[['main_data']][[KO_COLUMN_NAME]] <- Ko
-    licor_data[['main_data']][[O2_COLUMN_NAME]] <- O2
-
-    # Calculate f_prime and store it in the Licor data frame
-    licor_data[['main_data']][[F_PRIME_COLUMN_NAME]] <-
-        (licor_data[['main_data']][[CC_COLUMN_NAME]] - gamma_star) /
-        (licor_data[['main_data']][[CC_COLUMN_NAME]] + Kc * (1 + O2 / Ko))
-
-    return(licor_data)
-}
 
 # Determine Vcmax and Rd by making a linear fit to A vs. f_prime. The slope is
 # Vcmax and the intercept is -Rd. Return the fitted values along with the fitted
@@ -454,6 +373,7 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- combine_exdf(extracted_multi_file_info)
 
+    # Include gm values (required for calculating Cc)
     if (USE_GM_TABLE) {
         gm_table_info <- read_gm_table(
             GM_TABLE_FILE_TO_PROCESS,
@@ -476,6 +396,7 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
+    # Calculate Cc (required for calculating f_prime)
     combined_info <- calculate_cc(
         combined_info,
         CC_COLUMN_NAME,
@@ -484,7 +405,18 @@ if (PERFORM_CALCULATIONS) {
         GM_COLUMN_NAME
     )
 
-    combined_info <- calculate_fprime(combined_info, O2_PERCENT)
+    # Calculate f_prime (required for the Vcmax fitting procedure)
+    combined_info <- calculate_fprime(
+        combined_info,
+        O2_PERCENT,
+        CC_COLUMN_NAME,
+        F_PRIME_COLUMN_NAME,
+        GAMMA_STAR_COLUMN_NAME,
+        KC_COLUMN_NAME,
+        KO_COLUMN_NAME,
+        O2_COLUMN_NAME,
+        TL_COLUMN_NAME
+    )
 
     combined_info <- calculate_iwue(
         combined_info,
