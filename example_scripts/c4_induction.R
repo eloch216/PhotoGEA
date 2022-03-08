@@ -64,12 +64,11 @@ if (PERFORM_CALCULATIONS) {
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
-# points along the sequence of A-Ci measurements.
+# points along the time sequence of measurements.
 #
 #
 NUM_OBS_IN_SEQ <- 390
 MEASUREMENT_NUMBERS <- c(1:390)
-POINT_FOR_BOX_PLOTS <- 1
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 
@@ -195,36 +194,6 @@ all_stats_subset[['elapsed_time']] <-
     (((all_stats[[MEASUREMENT_NUMBER_NAME]]) - 1) %% NUM_OBS_IN_SEQ) *
     TIME_INCREMENT
 
-# Make a subset of the full result for just one measurement point and
-# convert its event column to a factor so we can control the order of the
-# boxes
-all_samples_one_point <- all_samples[which(
-    (((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
-        == POINT_FOR_BOX_PLOTS),]
-
-all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
-    all_samples_one_point[[EVENT_COLUMN_NAME]],
-    levels = sort(
-        unique(all_samples_one_point[[EVENT_COLUMN_NAME]]),
-        decreasing = TRUE
-    )
-)
-
-# Make a subset of the full stats for just the one measurement point and
-# convert its event column to a factor so we can control the order of the
-# boxes
-all_stats_one_point <- all_stats[which(
-    (((all_stats[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
-        == POINT_FOR_BOX_PLOTS),]
-
-all_stats_one_point[[EVENT_COLUMN_NAME]] <- factor(
-    all_stats_one_point[[EVENT_COLUMN_NAME]],
-    levels = sort(
-        unique(all_stats_one_point[[EVENT_COLUMN_NAME]]),
-        decreasing = TRUE
-    )
-)
-
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
@@ -329,78 +298,3 @@ multi_induction_curves <- xyplot(
 
 x11(width = 8, height = 6)
 print(multi_induction_curves)
-
-
-
-###                                                    ###
-### MAKE BOX-WHISKER PLOTS FOR last MEASUREMENT POINT ###
-###                                                    ###
-
-boxplot_caption <- paste0(
-    "Quartiles for measurement point ",
-    POINT_FOR_BOX_PLOTS,
-    "\n(where CO2_r_sp = ",
-    all_samples_one_point[['CO2_r_sp']][1],
-    ")"
-)
-
-a_boxplot <- bwplot(
-    all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(0, 70),
-    main = boxplot_caption,
-    xlab = "Genotype"
-)
-
-x11(width = 6, height = 6)
-print(a_boxplot)
-
-phips2_boxplot <- bwplot(
-    all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Photosystem II operating efficiency (dimensionless)",
-    ylim = c(0, 0.4),
-    main = boxplot_caption,
-    xlab = "Genotype"
-)
-
-x11(width = 6, height = 6)
-print(phips2_boxplot)
-
-
-etr_boxplot <- bwplot(
-    all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Electron transport rate (micromol / m^2 / s)",
-    ylim = c(0, 275),
-    main = boxplot_caption,
-    xlab = "Genotype"
-)
-
-x11(width = 6, height = 6)
-print(etr_boxplot)
-
-###                                             ###
-### MAKE BAR CHARTS FOR FIRST MEASUREMENT POINT ###
-###                                             ###
-
-barchart_caption <- paste0(
-    "Averages for measurement point ",
-    POINT_FOR_BOX_PLOTS,
-    "\n(where CO2_r_sp = ",
-    all_stats_one_point[['CO2_r_sp_avg']][1],
-    ")"
-)
-
-assimilation_barchart <- barchart(
-    all_stats_one_point[['A_avg']] ~ all_stats_one_point[[EVENT_COLUMN_NAME]],
-    ylim = c(0, 60),
-    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    main = barchart_caption,
-    panel = function(x, y, ..., subscripts) {
-        panel.barchart(x, y, subscripts = subscripts, ...)
-        panel.arrows(x, y, x, all_stats_one_point[['A_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        panel.arrows(x, y, x, all_stats_one_point[['A_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-    }
-)
-
-x11(width = 6, height = 6)
-print(assimilation_barchart)

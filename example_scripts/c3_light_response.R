@@ -96,6 +96,8 @@ GSW_COLUMN_NAME <- "gsw"
 IWUE_COLUMN_NAME <- "iwue"
 QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
+PHIPS2_COLUMN_NAME <- "PhiPS2"
+ETR_COLUMN_NAME <- "ETR"
 
 # Specify variables to analyze, i.e., variables where the average, standard
 # deviation, and standard error will be determined for each event across the
@@ -137,8 +139,8 @@ VARIABLES_TO_EXTRACT <- c(
 )
 
 if (INCLUDE_FLUORESCENCE) {
-    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, "PhiPS2", "ETR")
-    VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, "PhiPS2", "ETR")
+    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
+    VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
 }
 
 ###                                                               ###
@@ -411,103 +413,40 @@ multi_gsci_curves <- xyplot(
 x11(width = 8, height = 6)
 print(multi_gsci_curves)
 
-###                                                    ###
-### MAKE BOX-WHISKER PLOTS FOR FIRST MEASUREMENT POINT ###
-###                                                    ###
+###                                        ###
+### MAKE BOX-WHISKER PLOTS AND BAR CHARTS  ###
+###                                        ###
 
+# Define a caption
 boxplot_caption <- paste0(
     "Quartiles for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where Q = ",
-    all_samples_one_point[['Qin']][1],
+    all_samples_one_point[['Qin']][POINT_FOR_BOX_PLOTS],
     ")"
 )
 
-a_boxplot <- bwplot(
-    all_samples_one_point[['A']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(0, 40),
-    main = boxplot_caption,
-    xlab = "Genotype"
+# Define plotting parameters
+x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
+xl <- "Genotype"
+
+plot_param <- list(
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption)
 )
-
-x11(width = 6, height = 6)
-print(a_boxplot)
-
-iwue_boxplot <- bwplot(
-    all_samples_one_point[['iwue']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-    ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
-    ylim = c(0, 100),
-    main = boxplot_caption,
-    xlab = "Genotype"
-)
-
-x11(width = 6, height = 6)
-print(iwue_boxplot)
 
 if (INCLUDE_FLUORESCENCE) {
-    phips2_boxplot <- bwplot(
-        all_samples_one_point[['PhiPS2']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-        ylab = "Photosystem II operating efficiency (dimensionless)",
-        ylim = c(0, 0.4),
-        main = boxplot_caption,
-        xlab = "Genotype"
+    plot_param <- c(
+        plot_param,
+        list(
+            list(Y = all_samples_one_point[[PHIPS2_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.4), main = boxplot_caption),
+            list(Y = all_samples_one_point[[ETR_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 275), main = boxplot_caption)
+        )
     )
-
-    x11(width = 6, height = 6)
-    print(phips2_boxplot)
-
-
-    etr_boxplot <- bwplot(
-        all_samples_one_point[['ETR']] ~ all_samples_one_point[[EVENT_COLUMN_NAME]],
-        ylab = "Electron transport rate (micromol / m^2 / s)",
-        ylim = c(0, 275),
-        main = boxplot_caption,
-        xlab = "Genotype"
-    )
-
-    x11(width = 6, height = 6)
-    print(etr_boxplot)
 }
 
-###                                             ###
-### MAKE BAR CHARTS FOR FIRST MEASUREMENT POINT ###
-###                                             ###
-
-barchart_caption <- paste0(
-    "Averages for measurement point ",
-    POINT_FOR_BOX_PLOTS,
-    "\n(where Q = ",
-    all_stats_one_point[['Qin_avg']][1],
-    ")"
-)
-
-assimilation_barchart <- barchart(
-    all_stats_one_point[['A_avg']] ~ all_stats_one_point[[EVENT_COLUMN_NAME]],
-    ylim = c(0, 40),
-    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    main = barchart_caption,
-    panel = function(x, y, ..., subscripts) {
-        panel.barchart(x, y, subscripts = subscripts, ...)
-        panel.arrows(x, y, x, all_stats_one_point[['A_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        panel.arrows(x, y, x, all_stats_one_point[['A_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-    }
-)
-
-x11(width = 6, height = 6)
-print(assimilation_barchart)
-
-iwue_barchart <- barchart(
-    all_stats_one_point[['iwue_avg']] ~ all_stats_one_point[[EVENT_COLUMN_NAME]],
-    ylim = c(0, 100),
-    ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
-    main = barchart_caption,
-    panel = function(x, y, ..., subscripts) {
-        panel.barchart(x, y, subscripts = subscripts, ...)
-        panel.arrows(x, y, x, all_stats_one_point[['iwue_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        panel.arrows(x, y, x, all_stats_one_point[['iwue_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-    }
-)
-
-x11(width = 6, height = 6)
-print(iwue_barchart)
+# Make all the plots
+invisible(lapply(plot_param, function(x) {
+  do.call(box_wrapper, x)
+  do.call(bar_wrapper, x)
+}))

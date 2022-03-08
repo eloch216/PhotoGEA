@@ -481,7 +481,7 @@ boxplot_caption <- paste0(
     "Data for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where CO2 setpoint = ",
-    all_samples_one_point[['CO2_r_sp']][1],
+    all_samples_one_point[['CO2_r_sp']][POINT_FOR_BOX_PLOTS],
     ")"
 )
 

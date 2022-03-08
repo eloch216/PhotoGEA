@@ -364,7 +364,7 @@ boxplot_caption <- paste0(
     "Quartiles for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where CO2 setpoint = ",
-    fits_one_point_for_plotting[['CO2_r_sp']][1],
+    fits_one_point_for_plotting[['CO2_r_sp']][POINT_FOR_BOX_PLOTS],
     ")"
 )
 
