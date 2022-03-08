@@ -467,205 +467,63 @@ if (MAKE_GM_PLOTS) {
         )
     )
 
-    event_stats[['event']] <- factor(
-        event_stats[['event']],
-        levels = sort(
-            unique(event_stats[['event']]),
-            decreasing = TRUE
-        )
+    # Define plotting parameters
+    x_e <- licor_files_no_outliers_data[['event']]
+    x_g <- licor_files_no_outliers_data[['genotype']]
+    x_er <- licor_files_no_outliers_data[['event_replicate']]
+
+    gmc_lab <- "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
+    cc_lab <- "CO2 concentration in chloroplast (micromol / mol)"
+    drawdown_lab <- "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
+    a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)"
+    iwue_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)"
+    g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
+
+    gmc_lim <- c(0, MAX_GM)
+    cc_lim <- c(0, 275)
+    drawdown_lim <- c(0, 150)
+    a_lim <- c(0, 50)
+    iwue_lim <- c(0, 120)
+    g_ratio_lim <- c(0, 1)
+
+    box_plot_param <- list(
+      list(Y = licor_files_no_outliers_data[['gmc']],     X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = licor_files_no_outliers_data[['Cc']],      X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = licor_files_no_outliers_data[['Ci-Cc']],   X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = licor_files_no_outliers_data[['A']],       X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = licor_files_no_outliers_data[['iWUE']],    X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = licor_files_no_outliers_data[['g_ratio']], X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
     )
 
-    # Make gmc boxplots for each event
-    gmc_event_boxplot <- bwplot(
-        gmc ~ event | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, MAX_GM),
-        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
+    box_bar_plot_param <- list(
+      list(Y = licor_files_no_outliers_data[['gmc']],     X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = licor_files_no_outliers_data[['Cc']],      X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = licor_files_no_outliers_data[['Ci-Cc']],   X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = licor_files_no_outliers_data[['A']],       X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = licor_files_no_outliers_data[['iWUE']],    X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = licor_files_no_outliers_data[['g_ratio']], X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
     )
-    x11()
-    print(gmc_event_boxplot)
 
-    # Make gmc boxplots for each rep
-    gmc_rep_boxplot <- bwplot(
-        gmc ~ event_replicate | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, MAX_GM),
-        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
-    )
-    x11()
-    print(gmc_rep_boxplot)
+    # Make all the box and bar charts
+    invisible(lapply(box_plot_param, function(x) {
+      do.call(box_wrapper, x)
+    }))
 
-    # Make gmc bars for each event
-    gmc_barchart <- barchart(
-        gmc_avg ~ event,
-        data = event_stats,
-        ylim = c(0,1),
-        ylab = "Mesophyll conductance to CO2 (mol / m^2 / s / bar)",
-        panel = function(x, y, ..., subscripts) {
-            panel.barchart(x, y, subscripts = subscripts, ...)
-            panel.arrows(x, y, x, event_stats[['gmc_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-            panel.arrows(x, y, x, event_stats[['gmc_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        }
-    )
-    x11()
-    print(gmc_barchart)
-
-    # Make Cc boxplots for each event
-    cc_event_boxplot <- bwplot(
-        Cc ~ event | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 275),
-        ylab = "CO2 concentration in chloroplast (micromol / mol)"
-    )
-    x11()
-    print(cc_event_boxplot)
-
-    # Make Cc boxplots for each rep
-    cc_rep_boxplot <- bwplot(
-        Cc ~ event_replicate | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 275),
-        ylab = "CO2 concentration in chloroplast (micromol / mol)"
-    )
-    x11()
-    print(cc_rep_boxplot)
-
-    # Make Cc bars for each event
-    cc_barchart <- barchart(
-        Cc_avg ~ event,
-        data = event_stats,
-        ylim = c(0, 275),
-        ylab = "CO2 concentration in chloroplast (micromol / mol)",
-        panel = function(x, y, ..., subscripts) {
-            panel.barchart(x, y, subscripts = subscripts, ...)
-            panel.arrows(x, y, x, event_stats[['Cc_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-            panel.arrows(x, y, x, event_stats[['Cc_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        }
-    )
-    x11()
-    print(cc_barchart)
-
-    # Make drawdown boxplots for each event
-    drawdown_event_boxplot <- bwplot(
-        `Ci-Cc` ~ event | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 150),
-        ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
-    )
-    x11()
-    print(drawdown_event_boxplot)
-
-    # Make drawdown boxplots for each rep
-    drawdown_boxplot <- bwplot(
-        `Ci-Cc` ~ event_replicate | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 150),
-        ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
-    )
-    x11()
-    print(drawdown_boxplot)
-
-    # Make drawdown bars for each event
-    drawdown_barchart <- barchart(
-        `Ci-Cc_avg` ~ event,
-        data = event_stats,
-        ylim = c(0, 80),
-        ylab = "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)",
-        panel = function(x, y, ..., subscripts) {
-            panel.barchart(x, y, subscripts = subscripts, ...)
-            panel.arrows(x, y, x, event_stats[['Ci-Cc_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-            panel.arrows(x, y, x, event_stats[['Ci-Cc_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        }
-    )
-    x11()
-    print(drawdown_barchart)
-
-    # Make assimilation boxplots for each event
-    assimilation_event_boxplot <- bwplot(
-        A ~ event | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 50),
-        ylab = "Net CO2 assimilation rate (micromol / m^2 / s)"
-    )
-    x11()
-    print(assimilation_event_boxplot)
-
-    # Make assimilation boxplots for each rep
-    assimilation_boxplot <- bwplot(
-        A ~ event_replicate | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 50),
-        ylab = "Net CO2 assimilation rate (micromol / m^2 / s)"
-    )
-    x11()
-    print(assimilation_boxplot)
-
-    # Make assimilation bars for each event
-    assimilation_barchart <- barchart(
-        A_avg ~ event,
-        data = event_stats,
-        ylim = c(0, 50),
-        ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-        panel = function(x, y, ..., subscripts) {
-            panel.barchart(x, y, subscripts = subscripts, ...)
-            panel.arrows(x, y, x, event_stats[['A_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-            panel.arrows(x, y, x, event_stats[['A_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        }
-    )
-    x11()
-    print(assimilation_barchart)
-
-    # Make iWUE boxplots for each rep
-    iWUE_boxplot <- bwplot(
-        iWUE ~ event_replicate | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 120),
-        ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)"
-    )
-    x11()
-    print(iWUE_boxplot)
+    invisible(lapply(box_bar_plot_param, function(x) {
+      do.call(box_wrapper, x)
+      do.call(bar_wrapper, x)
+    }))
 
     # Show iWUE time series
-    #xyplot(licor_files_no_outliers[,'iWUE'] ~ as.numeric(row.names(licor_files_no_outliers[['main_data']])), group = licor_files_no_outliers[,'event'], type = 'p', auto = TRUE)
-
-    # Make iWUE bars for each event
-    iwue_barchart <- barchart(
-        iWUE_avg ~ event,
-        data = event_stats,
-        ylim = c(0, 120),
-        ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",
-        panel = function(x, y, ..., subscripts) {
-            panel.barchart(x, y, subscripts = subscripts, ...)
-            panel.arrows(x, y, x, event_stats[['iWUE_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-            panel.arrows(x, y, x, event_stats[['iWUE_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        }
+    iwue_time_plot <- xyplot(
+        licor_files_no_outliers_data[['iWUE']] ~ as.numeric(row.names(licor_files_no_outliers_data)),
+        group = licor_files_no_outliers_data[['event']],
+        type = 'p',
+        auto = TRUE,
+        xlab = "Measurement number (in chronological order)",
+        ylab = iwue_lab
     )
     x11()
-    print(iwue_barchart)
-
-    # Make g_ratio boxplots for each rep
-    g_ratio_boxplot <- bwplot(
-        g_ratio ~ event_replicate | genotype,
-        data = licor_files_no_outliers_data,
-        ylim = c(0, 1),
-        ylab = "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
-    )
-    x11()
-    print(g_ratio_boxplot)
-
-    # Make iWUE bars for each event
-    g_ratio_barchart <- barchart(
-        g_ratio_avg ~ event,
-        data = event_stats,
-        ylim = c(0, 0.6),
-        ylab = "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)",
-        panel = function(x, y, ..., subscripts) {
-            panel.barchart(x, y, subscripts = subscripts, ...)
-            panel.arrows(x, y, x, event_stats[['g_ratio_upper']], length = 0.2, angle = 90, col = "black", lwd = 1)
-            panel.arrows(x, y, x, event_stats[['g_ratio_lower']], length = 0.2, angle = 90, col = "black", lwd = 1)
-        }
-    )
-    x11()
-    print(g_ratio_barchart)
+    print(iwue_time_plot)
 
 }

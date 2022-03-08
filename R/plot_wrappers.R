@@ -1,8 +1,14 @@
 
 # Make a helping function for box plots
-box_wrapper <- function(Y, X, ...) {
+box_wrapper <- function(Y, X, S = NULL, ...) {
+  plot_formula <- if(is.null(S)) {
+    formula(Y ~ X)
+  } else {
+    formula(Y ~ X | S)
+  }
+
   x11()
-  print(bwplot(Y ~ X, ...))
+  print(bwplot(plot_formula, ...))
 }
 
 # Make a helping function for bar charts
