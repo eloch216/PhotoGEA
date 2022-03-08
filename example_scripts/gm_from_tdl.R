@@ -24,7 +24,7 @@
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
-# source('gm_analysis.R')
+# source('gm_from_tdl.R')
 
 library(PhotoGEA)
 library(lattice)

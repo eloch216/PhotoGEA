@@ -1,3 +1,6 @@
+# IMPORTANT NOTE: this script has been superseded by `gm_from_tdl.R` and should
+# not be used, since it continues to use Excel files for making calculations.
+
 # This script uses the PhotoGEA and openxlsx libraries to read Licor data from
 # multiple files, extract certain columns, add some new columns, fill the new
 # columns with Excel formulas, and finally write the information from each file

@@ -35,7 +35,7 @@
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
-# source('c3_response_curve_analysis.R')
+# source('c3_co2_response.R')
 
 library(PhotoGEA)
 library(lattice)
