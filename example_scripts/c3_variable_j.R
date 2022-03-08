@@ -13,13 +13,38 @@
 #
 # ------------------------------------------------------------------------------
 #
+# This script is broken up into several sections to make it easier to use:
+# - Components that might need to change each time this script is run
+# - Components that are less likely to change each time this script is run
+# - Functions used to load and process the data (shouldn't need to change)
+# - The commands that actually call the functions
+#
+# Typically, it should only be necessary to specify the names of input files.
+# This information is specified in the LICOR_FILES_TO_PROCESS vector. By
+# default, these file names are chosen interactively via a dialog box (only
+# available on MS Windows).
+#
+# Alternatively, the filenames can be specified directly as relative or absolute
+# paths. In the case of relative paths, they should be specified relative to the
+# directory that contains this script.
+#
+# ------------------------------------------------------------------------------
+#
+# This script requires the `lattice` and `dfoptim` libraries, which can be
+# installed using the following commands if they are not already installed:
+#
+# install.packages('lattice')
+# install.packages('dfoptim')
+#
+# ------------------------------------------------------------------------------
+#
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
 # source('c3_variable_j.R')
 
 library(PhotoGEA)
-
+library(lattice)
 library(dfoptim)
 
 ###                                                                   ###

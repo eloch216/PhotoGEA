@@ -1,7 +1,6 @@
-# This script loads Licor data representing C4 A-Ci curves from multiple Excel
-# files, combines it into one data structure, computes averages across multiple
-# reps for each event in the data, and uses a linear fitting procedure to
-# determine Vcmax values.
+# This script loads Licor data representing C4 induction curves from multiple
+# Excel files, combines it into one data structure and computes averages across
+# multiple reps for each event in the data.
 #
 # ------------------------------------------------------------------------------
 #
@@ -21,14 +20,13 @@
 # - The commands that actually call the functions
 #
 # Typically, it should only be necessary to specify the names of input files.
-# This information is specified in the LICOR_FILES_TO_PROCESS vector and
-# GM_TABLE_FILE_TO_PROCESS string. If CHOOSE_FILES_INTERACTIVELY is set to true,
-# these file names can be chosen interactively via a dialog box (only available
-# on MS Windows).
+# This information is specified in the LICOR_FILES_TO_PROCESS vector. By
+# default, these file names are chosen interactively via a dialog box (only
+# available on MS Windows).
 #
-# The filenames can be specified as relative or absolute paths. In the case of
-# relative paths, they should be specified relative to the directory that
-# contains this script.
+# Alternatively, the filenames can be specified directly as relative or absolute
+# paths. In the case of relative paths, they should be specified relative to the
+# directory that contains this script.
 #
 # ------------------------------------------------------------------------------
 #
@@ -57,39 +55,12 @@ PERFORM_CALCULATIONS <- TRUE
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
 
-# Decide whether to specify one gm value for all events or to use a table to
-# specify (possibly) different values for each event
-USE_GM_TABLE <- FALSE
-GM_VALUE <- 0.6  # mol / m^2 / s
-
-# Specify the Licor data files and the gm table file. There are two options for
-# doing this: either the filenames can be defined directly as a vector of
-# strings, or they can be defined interactively via a dialog box (only available
-# on MS Windows).
-CHOOSE_FILES_INTERACTIVELY <- TRUE
-
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
-GM_TABLE_FILE_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
-# and USE_GM_TABLE booleans
+# Specify the filenames depending on the value of the USE_GM_TABLE boolean
 if (PERFORM_CALCULATIONS) {
-    if (CHOOSE_FILES_INTERACTIVELY) {
-        LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-        if (USE_GM_TABLE) {
-            GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
-        }
-    }
-    else {
-        LICOR_FILES_TO_PROCESS <- c(
-            "2021-04-07-site 11 vulcan cs 36627-1-17.xlsx",
-            "20210407-pluto-site13-36627-WT-3.xlsx"
-        )
-        if (USE_GM_TABLE) {
-            GM_TABLE_FILE_TO_PROCESS <- "gm_table.csv"
-        }
-    }
+    LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to

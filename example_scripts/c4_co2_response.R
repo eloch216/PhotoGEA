@@ -1,7 +1,7 @@
 # This script loads Licor data representing C4 A-Ci curves from multiple Excel
 # files, combines it into one data structure, computes averages across multiple
-# reps for each event in the data, and uses a linear fitting procedure to
-# determine Vcmax values.
+# reps for each event in the data, and uses a nonlinear fitting procedure to
+# determine Vcmax, Vpmax, and other parameter values.
 #
 # ------------------------------------------------------------------------------
 #
@@ -23,13 +23,20 @@
 #
 # Typically, it should only be necessary to specify the names of input files.
 # This information is specified in the LICOR_FILES_TO_PROCESS vector and
-# GM_TABLE_FILE_TO_PROCESS string. If CHOOSE_FILES_INTERACTIVELY is set to true,
-# these file names can be chosen interactively via a dialog box (only available
-# on MS Windows).
+# GM_TABLE_FILE_TO_PROCESS string. By default, these file names are chosen
+# interactively via a dialog box (only available on MS Windows).
 #
-# The filenames can be specified as relative or absolute paths. In the case of
-# relative paths, they should be specified relative to the directory that
-# contains this script.
+# Alternatively, the filenames can be specified directly as relative or absolute
+# paths. In the case of relative paths, they should be specified relative to the
+# directory that contains this script.
+#
+# ------------------------------------------------------------------------------
+#
+# This script requires the `lattice` and `RColorBrewer` libraries, which can be
+# installed using the following commands if they are not already installed:
+#
+# install.packages('lattice')
+# install.packages('RColorBrewer')
 #
 # ------------------------------------------------------------------------------
 #

@@ -20,14 +20,17 @@
 # - The commands that actually call the functions
 #
 # Typically, it should only be necessary to specify the names of input files.
+# This information is specified in the LICOR_FILES_TO_PROCESS vector. By
+# default, these file names are chosen interactively via a dialog box (only
+# available on MS Windows).
 #
-# The filenames can be specified as relative or absolute paths. In the case of
-# relative paths, they should be specified relative to the directory that
-# contains this script.
+# Alternatively, the filenames can be specified directly as relative or absolute
+# paths. In the case of relative paths, they should be specified relative to the
+# directory that contains this script.
 #
 # ------------------------------------------------------------------------------
 #
-# This script requires the `lattice`, and `RColorBrewer` libraries, which can be
+# This script requires the `lattice` and `RColorBrewer` libraries, which can be
 # installed using the following commands if they are not already installed:
 #
 # install.packages('lattice')
@@ -62,26 +65,12 @@ PERFORM_CALCULATIONS <- TRUE
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
 
-# Specify the Licor data files and the gm table file. There are two options for
-# doing this: either the filenames can be defined directly as a vector of
-# strings, or they can be defined interactively via a dialog box (only available
-# on MS Windows).
-CHOOSE_FILES_INTERACTIVELY <- TRUE
-
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of CHOOSE_FILES_INTERACTIVELY
+# Specify the filenames
 if (PERFORM_CALCULATIONS) {
-    if (CHOOSE_FILES_INTERACTIVELY) {
-        LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-    }
-    else {
-        LICOR_FILES_TO_PROCESS <- c(
-            "file1.xlsx",
-            "file2.xlsx"
-        )
-    }
+    LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
