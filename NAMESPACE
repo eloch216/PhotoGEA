@@ -1,6 +1,7 @@
 export(add_gm_to_licor_data_from_table)
 export(add_gm_to_licor_data_from_value)
 export(add_licor_sheet)
+export(avg_xyplot)
 export(bar_wrapper)
 export(basic_stats)
 export(batch_extract_variables)

@@ -147,6 +147,11 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 
+    # Add a `seq_num` column, where a value of `i` means that this row is the
+    # `ith` point along an A-Ci curve
+    all_samples[['seq_num']] <-
+        ((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1
+
     all_samples[[EVENT_COLUMN_NAME]] <- as.character(all_samples[[EVENT_COLUMN_NAME]])
     all_samples[[REP_COLUMN_NAME]] <- as.character(all_samples[[REP_COLUMN_NAME]])
 
@@ -157,15 +162,12 @@ if (PERFORM_CALCULATIONS) {
         VARIABLES_TO_ANALYZE,
         "rc"
     )
-
-    all_stats[[MEASUREMENT_NUMBER_NAME]] <- seq_len(nrow(all_stats))
 }
 
 # Make a subset of the full result that only includes the desired measurement
 # points, and make sure it is ordered properly for plotting
-all_samples_subset <- all_samples[which(
-    (((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
-        %in% MEASUREMENT_NUMBERS),]
+all_samples_subset <-
+    all_samples[all_samples[['seq_num']] %in% MEASUREMENT_NUMBERS,]
 
 all_samples_subset <- all_samples_subset[order(
     all_samples_subset[[MEASUREMENT_NUMBER_NAME]]),]
@@ -174,25 +176,7 @@ all_samples_subset <- all_samples_subset[order(
     all_samples_subset[[EVENT_COLUMN_NAME]]),]
 
 all_samples_subset[['elapsed_time']] <-
-    (((all_samples_subset[[MEASUREMENT_NUMBER_NAME]]) - 1) %% NUM_OBS_IN_SEQ) *
-    TIME_INCREMENT
-
-# Make a subset of the stats result that only includes the desired measurement
-# points, and make sure it is ordered properly for plotting. Also add a time
-# column.
-all_stats_subset <- all_stats[which(
-    (((all_stats[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
-        %in% MEASUREMENT_NUMBERS),]
-
-all_stats_subset <- all_stats_subset[order(
-    all_stats_subset[[MEASUREMENT_NUMBER_NAME]]),]
-
-all_stats_subset <- all_stats_subset[order(
-    all_stats_subset[[EVENT_COLUMN_NAME]]),]
-
-all_stats_subset[['elapsed_time']] <-
-    (((all_stats[[MEASUREMENT_NUMBER_NAME]]) - 1) %% NUM_OBS_IN_SEQ) *
-    TIME_INCREMENT
+    (all_samples_subset[['seq_num']] - 1) * TIME_INCREMENT
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
@@ -206,56 +190,30 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-# Choose colors for the different events to use when plotting average A-Ci
-# curves. To see other available palettes, use one of the following commands:
-#  display.brewer.all(colorblindFriendly = TRUE)
-#  display.brewer.all(colorblindFriendly = FALSE)
-rc_cols <- c(
-    "#000000",
-    brewer.pal(12, "Paired")[c(1:10,12)],
-    brewer.pal(8, "Set2"),
-    brewer.pal(8, "Dark2")
-)
-rc_cols <- rc_cols[1:length(unique(all_stats_subset[[EVENT_COLUMN_NAME]]))]
-rc_cols <- rev(rc_cols)
+x_t <- all_samples_subset[['elapsed_time']]
+x_s <- all_samples_subset[['seq_num']]
+x_e <- all_samples_subset[[EVENT_COLUMN_NAME]]
 
-# Make a slightly different version of the color specification to use for the
-# error bars
-rc_error_cols <- rep(rc_cols, each=length(MEASUREMENT_NUMBERS))
+a_lim <- c(-10, 50)
 
-# Set the line width to use for plotting average response curves. (This will
-# only apply if type is 'l' or 'b' in the calls to xyplot below.)
-line_width <- 2
+t_lab <- "Elapsed time (minutes)"
+a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
-# Plot the average induction curves
-induction_curves <- xyplot(
-    all_stats_subset[['A_avg']] ~ all_stats_subset[['elapsed_time']],
-    group = all_stats_subset[[EVENT_COLUMN_NAME]],
-    type = 'l',
-    pch = 16,
-    lwd = line_width,
-    auto = TRUE,
-    grid = TRUE,
-    main = rc_caption,
-    xlab = "Elapsed time (minutes)",
-    #xlab = "Intercellular [CO2] (ppm)\n(error bars: standard error of the mean)",
-    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
-    ylim = c(-10, 60),
-    #xlim = c(-50, 1300),
-    par.settings=list(
-        superpose.line=list(col=rc_cols),
-        superpose.symbol=list(col=rc_cols)
-    ),
-    panel = function(x, y, ...) {
-        #panel.arrows(x, y, x, all_stats_subset[['A_upper']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
-        #panel.arrows(x, y, x, all_stats_subset[['A_lower']], length = 0.05, angle = 90, col = rc_error_cols, lwd = line_width)
-        panel.xyplot(x, y, ...)
-    }
+avg_plot_param <- list(
+    list(all_samples_subset[['A']], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim)
 )
 
-x11(width = 8, height = 6)
-print(induction_curves)
-
+invisible(lapply(avg_plot_param, function(x) {
+    plot_obj <- do.call(avg_xyplot, c(x, list(
+        type = 'b',
+        pch = 20,
+        auto = TRUE,
+        grid = TRUE,
+        main = rc_caption
+    )))
+    x11(width = 8, height = 6)
+    print(plot_obj)
+}))
 
 ###                                     ###
 ### PLOT ALL INDIVIDUAL INDUCTION CURVES ###
