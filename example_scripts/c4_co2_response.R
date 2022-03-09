@@ -339,17 +339,6 @@ ind_caption <- "Individual response curves for each event and rep"
 
 num_reps <- length(unique(all_samples_subset[[REP_COLUMN_NAME]]))
 
-# Choose colors for the different reps to use when plotting individual response
-# curves. To see other available palettes, use one of the following commands:
-#  display.brewer.all(colorblindFriendly = TRUE)
-#  display.brewer.all(colorblindFriendly = FALSE)
-ind_cols <- c(
-    "#000000",
-    brewer.pal(12, "Paired"),
-    brewer.pal(8, "Set2"),
-    brewer.pal(8, "Dark2")
-)
-
 # Plot each individual A-Ci curve, where each event will have multiple traces
 # corresponding to different plants
 multi_aci_curves <- xyplot(
@@ -364,9 +353,9 @@ multi_aci_curves <- xyplot(
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     ylim = c(-10, 60),
     xlim = c(-100, 1600),
-    par.settings=list(
-        superpose.line=list(col=ind_cols),
-        superpose.symbol=list(col=ind_cols)
+    par.settings = list(
+        superpose.line = list(col = default_colors),
+        superpose.symbol = list(col = default_colors)
     )
 )
 
@@ -387,9 +376,9 @@ multi_gsci_curves <- xyplot(
     ylab = "Stomatal conductance to water (mol / m^2 / s)",
     ylim = c(0, 0.8),
     xlim = c(-100, 1600),
-    par.settings=list(
-        superpose.line=list(col=ind_cols),
-        superpose.symbol=list(col=ind_cols)
+    par.settings = list(
+        superpose.line = list(col = default_colors),
+        superpose.symbol = list(col = default_colors)
     )
 )
 

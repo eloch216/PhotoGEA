@@ -274,7 +274,7 @@ if (PERFORM_CALCULATIONS) {
     all_samples <-
         all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
 
-    # Add a new column that uniquely identifies each A-Ci curve by its event and
+    # Add a new column that uniquely identifies each curve by its event and
     # replicate names
     all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
         paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
@@ -397,22 +397,11 @@ invisible(lapply(avg_plot_param, function(x) {
 
 ind_caption <- "Individual response curves for each event and rep"
 
-# Choose colors for the different reps to use when plotting individual response
-# curves. To see other available palettes, use one of the following commands:
-#  display.brewer.all(colorblindFriendly = TRUE)
-#  display.brewer.all(colorblindFriendly = FALSE)
-ind_cols <- c(
-    "#000000",
-    brewer.pal(12, "Paired"),
-    brewer.pal(8, "Set2"),
-    brewer.pal(8, "Dark2")
-)
-
 # Plot each individual A-Ci curve, where each event will have multiple traces
 # corresponding to different plants
 multi_aci_curves <- xyplot(
     all_samples_subset[[A_COLUMN_NAME]] ~ all_samples_subset[[CI_COLUMN_NAME]] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[REP_COLUMN_NAME]],
+    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -423,8 +412,8 @@ multi_aci_curves <- xyplot(
     ylim = c(-10, 60),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = ind_cols),
-        superpose.symbol = list(col = ind_cols)
+        superpose.line = list(col = default_colors),
+        superpose.symbol = list(col = default_colors)
     )
 )
 x11(width = 8, height = 6)
@@ -434,7 +423,7 @@ print(multi_aci_curves)
 # traces corresponding to different plants
 multi_gsci_curves <- xyplot(
     all_samples_subset[[GSW_COLUMN_NAME]] ~ all_samples_subset[[CI_COLUMN_NAME]] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[REP_COLUMN_NAME]],
+    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -445,8 +434,8 @@ multi_gsci_curves <- xyplot(
     ylim = c(0, 0.8),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = ind_cols),
-        superpose.symbol=list(col = ind_cols)
+        superpose.line = list(col = default_colors),
+        superpose.symbol=list(col = default_colors)
     )
 )
 x11(width = 8, height = 6)

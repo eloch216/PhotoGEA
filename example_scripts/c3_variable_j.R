@@ -290,9 +290,9 @@ a_ci_fitting_plot <- xyplot(
     pch = 20,
     auto.key = list(text = a_legend, space = 'right'),
     grid = TRUE,
-    par.settings=list(
-        superpose.line=list(col=assimilation_fit_colors),
-        superpose.symbol=list(col=assimilation_fit_colors)
+    par.settings = list(
+        superpose.line = list(col = assimilation_fit_colors),
+        superpose.symbol = list(col = assimilation_fit_colors)
     ),
     xlim = ci_range,
     ylim = a_range,
@@ -311,9 +311,9 @@ a_cc_fitting_plot <- xyplot(
     pch = 20,
     auto.key = list(text = a_legend, space = 'right'),
     grid = TRUE,
-    par.settings=list(
-        superpose.line=list(col=assimilation_fit_colors),
-        superpose.symbol=list(col=assimilation_fit_colors)
+    par.settings = list(
+        superpose.line = list(col = assimilation_fit_colors),
+        superpose.symbol = list(col = assimilation_fit_colors)
     ),
     xlim = cc_range,
     ylim = a_range,

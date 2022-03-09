@@ -43,6 +43,7 @@ export(fit_variable_j_gjrtv)
 export(avg_xyplot)
 export(bar_wrapper)
 export(box_wrapper)
+export(default_colors)
 
 # Basic methods for `exdf` class
 export(as.data.frame.exdf)

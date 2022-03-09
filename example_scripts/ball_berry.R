@@ -127,17 +127,6 @@ bb_parameters_stats <- data.frame(
 bb_parameters_stats[['species']] <- rownames(bb_parameters_stats)
 rownames(bb_parameters_stats) <- NULL
 
-# Choose colors for the different reps to use when plotting individual response
-# curves. To see other available palettes, use one of the following commands:
-#  display.brewer.all(colorblindFriendly = TRUE)
-#  display.brewer.all(colorblindFriendly = FALSE)
-ind_cols <- c(
-    '#000000',
-    brewer.pal(12, 'Paired')[c(1:10,12)],
-    brewer.pal(8, 'Set2')[c(1:5,7,8)],
-    brewer.pal(8, 'Dark2')
-)
-
 # Choose limits
 gsw_range <- c(0, 0.70)
 bb_index_range <- c(0, 0.12)
@@ -156,9 +145,9 @@ multi_bb_curves <- xyplot(
     ylab = 'Stomatal conductance to H2O (mmol / m^2 / s)',
     ylim = gsw_range,
     xlim = bb_index_range,
-    par.settings=list(
-        superpose.line=list(col=ind_cols),
-        superpose.symbol=list(col=ind_cols)
+    par.settings = list(
+        superpose.line = list(col = default_colors),
+        superpose.symbol = list(col = default_colors)
     )
 )
 
