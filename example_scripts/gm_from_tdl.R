@@ -131,23 +131,6 @@ LICOR_VARIABLES_TO_EXTRACT <- c(
     'Flow_r'
 )
 
-# Specify variables to analyze, i.e., variables where the average, standard
-# deviation, and standard error will be determined for each event across the
-# different reps. Note that when the file is loaded, any Unicode characters
-# such as Greek letters will be converted into `ASCII` versions, e.g. the
-# character Δ will be become `Delta`. The conversion rules are defined in the
-# `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_ANALYZE <- c(
-    LICOR_A_COLUMN_NAME,
-    LICOR_CI_COLUMN_NAME,
-    LICOR_CC_COLUMN_NAME,
-    LICOR_GM_COLUMN_NAME,
-    LICOR_GSW_COLUMN_NAME,
-    LICOR_IWUE_COLUMN_NAME,
-    LICOR_G_RATIO_COLUMN_NAME,
-    'Ci-Cc'
-)
-
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -294,22 +277,22 @@ if (PERFORM_CALCULATIONS) {
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
             licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC),]
 
+    # Check the data for any issues before proceeding with additional analysis
+    check_signal_averaging_data(
+        licor_files_no_outliers[['main_data']],
+        'event_replicate'
+    )
+
     # Get stats for each event by averaging over all corresponding reps
     event_stats <- basic_stats(
         licor_files_no_outliers[['main_data']],
-        'genotype',
-        'event',
-        VARIABLES_TO_ANALYZE,
-        'sa'
+        'event'
     )
 
     # Get stats for each rep by averaging over all corresponding observations
     rep_stats <- basic_stats(
         licor_files_no_outliers[['main_data']],
-        'event',
-        'event_replicate',
-        VARIABLES_TO_ANALYZE,
-        'sa'
+        'event_replicate'
     )
 
     if (PERFORM_STATS_TESTS) {

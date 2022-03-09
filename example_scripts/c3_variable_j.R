@@ -166,13 +166,12 @@ if (PERFORM_CALCULATIONS) {
     all_samples <-
         all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
 
-    # Make sure basic requirements are met
-    check_basic_stats(
+    # Check the data for any issues before proceeding with additional analysis
+    check_response_curve_data(
         all_samples,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
-        c(),
-        'rc'
+        NUM_OBS_IN_SEQ
     )
 
     # Add a new column that uniquely identifies each A-Ci curve by its event and

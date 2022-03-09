@@ -116,19 +116,6 @@ TIME_COLUMN_NAME <- "time"
 
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
-# Specify variables to analyze, i.e., variables where the average, standard
-# deviation, and standard error will be determined for each event across the
-# different reps. Note that when the file is loaded, any Unicode characters
-# such as Greek letters will be converted into `ASCII` versions, e.g. the
-# character Δ will be become `Delta`. The conversion rules are defined in the
-# `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_ANALYZE <- c(
-    A_COLUMN_NAME,
-    CI_COLUMN_NAME,
-    "gsw",
-    "CO2_r_sp"  # included as a sanity check... should have 0 variance
-)
-
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
 # versions, e.g. the character Δ will be become `Delta`. The conversion rules
@@ -156,7 +143,6 @@ VARIABLES_TO_EXTRACT <- c(
 )
 
 if (INCLUDE_FLUORESCENCE) {
-    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
     VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
 }
 
@@ -221,6 +207,14 @@ if (PERFORM_CALCULATIONS) {
     all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
         paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
 
+    # Check the data for any issues before proceeding with additional analysis
+    check_response_curve_data(
+        all_samples,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        NUM_OBS_IN_SEQ
+    )
+
     # Make a subset of the full result that only includes the desired measurement
     # points, and make sure it is ordered properly for plotting
     all_samples_subset <-
@@ -232,13 +226,10 @@ if (PERFORM_CALCULATIONS) {
     all_samples_subset <- all_samples_subset[order(
         all_samples_subset[[EVENT_COLUMN_NAME]]),]
 
-    # Get basic stats
+    # Calculate basic stats for each event
     all_stats <- basic_stats(
         all_samples,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        VARIABLES_TO_ANALYZE,
-        "rc"
+        c('seq_num', EVENT_COLUMN_NAME)
     )
 
     # Perform A-Ci fits

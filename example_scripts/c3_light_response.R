@@ -101,20 +101,6 @@ ETR_COLUMN_NAME <- "ETR"
 
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
-# Specify variables to analyze, i.e., variables where the average, standard
-# deviation, and standard error will be determined for each event across the
-# different reps. Note that when the file is loaded, any Unicode characters
-# such as Greek letters will be converted into `ASCII` versions, e.g. the
-# character Δ will be become `Delta`. The conversion rules are defined in the
-# `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_ANALYZE <- c(
-    A_COLUMN_NAME,
-    CI_COLUMN_NAME,
-    GSW_COLUMN_NAME,
-    IWUE_COLUMN_NAME,
-    QIN_COLUMN_NAME
-)
-
 # Specify the variables to extract. Note that when the file is loaded, any
 # Unicode characters such as Greek letters will be converted into `ASCII`
 # versions, e.g. the character Δ will be become `Delta`. The conversion rules
@@ -141,7 +127,6 @@ VARIABLES_TO_EXTRACT <- c(
 )
 
 if (INCLUDE_FLUORESCENCE) {
-    VARIABLES_TO_ANALYZE <- c(VARIABLES_TO_ANALYZE, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
     VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
 }
 
@@ -194,12 +179,18 @@ if (PERFORM_CALCULATIONS) {
     all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
         paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
 
-    all_stats <- basic_stats(
+    # Check the data for any issues before proceeding with additional analysis
+    check_response_curve_data(
         all_samples,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
-        VARIABLES_TO_ANALYZE,
-        "rc"
+        NUM_OBS_IN_SEQ
+    )
+
+    # Calculate basic stats for each event
+    all_stats <- basic_stats(
+        all_samples,
+        c('seq_num', EVENT_COLUMN_NAME)
     )
 }
 
