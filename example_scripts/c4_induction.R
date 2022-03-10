@@ -143,11 +143,6 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 
-    # Add a `seq_num` column, where a value of `i` means that this row is the
-    # `ith` point along an A-Ci curve
-    all_samples[['seq_num']] <-
-        ((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1
-
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
         all_samples,
@@ -156,26 +151,27 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
+    # Organize the data, keeping only the desired measurement points
+    all_samples <- organize_response_curve_data(
+        all_samples,
+        MEASUREMENT_NUMBER_NAME,
+        NUM_OBS_IN_SEQ,
+        MEASUREMENT_NUMBERS,
+        MEASUREMENT_NUMBER_NAME,
+        REP_COLUMN_NAME,
+        EVENT_COLUMN_NAME
+    )
+
+    # Add an "elapsed time" column
+    all_samples[['elapsed_time']] <-
+        (all_samples[['seq_num']] - 1) * TIME_INCREMENT
+
     # Calculate basic stats for each event
     all_stats <- basic_stats(
         all_samples,
         c('seq_num', EVENT_COLUMN_NAME)
     )
 }
-
-# Make a subset of the full result that only includes the desired measurement
-# points, and make sure it is ordered properly for plotting
-all_samples_subset <-
-    all_samples[all_samples[['seq_num']] %in% MEASUREMENT_NUMBERS,]
-
-all_samples_subset <- all_samples_subset[order(
-    all_samples_subset[[MEASUREMENT_NUMBER_NAME]]),]
-
-all_samples_subset <- all_samples_subset[order(
-    all_samples_subset[[EVENT_COLUMN_NAME]]),]
-
-all_samples_subset[['elapsed_time']] <-
-    (all_samples_subset[['seq_num']] - 1) * TIME_INCREMENT
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
@@ -189,9 +185,9 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-x_t <- all_samples_subset[['elapsed_time']]
-x_s <- all_samples_subset[['seq_num']]
-x_e <- all_samples_subset[[EVENT_COLUMN_NAME]]
+x_t <- all_samples[['elapsed_time']]
+x_s <- all_samples[['seq_num']]
+x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 a_lim <- c(-10, 50)
 
@@ -199,7 +195,7 @@ t_lab <- "Elapsed time (minutes)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-    list(all_samples_subset[['A']], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim)
+    list(all_samples[[A_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim)
 )
 
 invisible(lapply(avg_plot_param, function(x) {
@@ -223,8 +219,8 @@ ind_caption <- "Individual induction curves for each event and rep"
 # Plot each individual response curve, where each event will have multiple traces
 # corresponding to different plants
 multi_induction_curves <- xyplot(
-    all_samples_subset[['A']] ~ all_samples_subset[['elapsed_time']] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
+    all_samples[[A_COLUMN_NAME]] ~ all_samples[['elapsed_time']] | all_samples[[EVENT_COLUMN_NAME]],
+    group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),

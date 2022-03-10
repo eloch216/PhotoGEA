@@ -274,11 +274,6 @@ if (PERFORM_CALCULATIONS) {
     all_samples <-
         all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
 
-    # Add a `seq_num` column, where a value of `i` means that this row is the
-    # `ith` point along an A-Ci curve
-    all_samples[['seq_num']] <-
-        ((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1
-
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
         all_samples,
@@ -287,23 +282,24 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
+    # Organize the data, keeping only the desired measurement points
+    all_samples <- organize_response_curve_data(
+        all_samples,
+        MEASUREMENT_NUMBER_NAME,
+        NUM_OBS_IN_SEQ,
+        MEASUREMENT_NUMBERS,
+        CI_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        EVENT_COLUMN_NAME
+    )
+
     # Calculate basic stats for each event
     all_stats <- basic_stats(
         all_samples,
         c('seq_num', EVENT_COLUMN_NAME)
     )
 
-    # Make a subset of the full result that only includes the desired measurement
-    # points, and make sure it is ordered properly for plotting
-    all_samples_subset <-
-        all_samples[all_samples[['seq_num']] %in% MEASUREMENT_NUMBERS,]
-
-    all_samples_subset <- all_samples_subset[order(
-        all_samples_subset[[CI_COLUMN_NAME]]),]
-
-    all_samples_subset <- all_samples_subset[order(
-        all_samples_subset[[EVENT_COLUMN_NAME]]),]
-
+    # Perform Vcmax fitting procedure
     vcmax_results <- fit_c3_vcmax(
         all_samples,
         UNIQUE_ID_COLUMN_NAME,
@@ -354,9 +350,9 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-x_ci <- all_samples_subset[[CI_COLUMN_NAME]]
-x_s <- all_samples_subset[['seq_num']]
-x_e <- all_samples_subset[[EVENT_COLUMN_NAME]]
+x_ci <- all_samples[[CI_COLUMN_NAME]]
+x_s <- all_samples[['seq_num']]
+x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 ci_lim <- c(-50, 1300)
 a_lim <- c(-10, 50)
@@ -367,14 +363,14 @@ a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard 
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-    list(all_samples_subset[[A_COLUMN_NAME]], x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab, xlim = ci_lim, ylim = a_lim)
+    list(all_samples[[A_COLUMN_NAME]], x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab, xlim = ci_lim, ylim = a_lim)
 )
 
 if (INCLUDE_FLUORESCENCE) {
     avg_plot_param <- c(
         avg_plot_param,
         list(
-            list(all_samples_subset[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
+            list(all_samples[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
         )
     )
 }
@@ -400,8 +396,8 @@ ind_caption <- "Individual response curves for each event and rep"
 # Plot each individual A-Ci curve, where each event will have multiple traces
 # corresponding to different plants
 multi_aci_curves <- xyplot(
-    all_samples_subset[[A_COLUMN_NAME]] ~ all_samples_subset[[CI_COLUMN_NAME]] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
+    all_samples[[A_COLUMN_NAME]] ~ all_samples[[CI_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
+    group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -422,8 +418,8 @@ print(multi_aci_curves)
 # Plot each individual gsw-Ci curve, where each event will have multiple
 # traces corresponding to different plants
 multi_gsci_curves <- xyplot(
-    all_samples_subset[[GSW_COLUMN_NAME]] ~ all_samples_subset[[CI_COLUMN_NAME]] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
+    all_samples[[GSW_COLUMN_NAME]] ~ all_samples[[CI_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
+    group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),

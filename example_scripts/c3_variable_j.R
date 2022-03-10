@@ -83,7 +83,6 @@ REP_COLUMN_NAME <- "replicate"
 
 A_COLUMN_NAME <- "A"
 CI_COLUMN_NAME <- "Ci"
-CO2_SETPOINT_COLUMN_NAME <- "CO2_r_sp"
 MEASUREMENT_NUMBER_NAME <- "obs"
 PHIPS2_COLUMN_NAME <- "PhiPS2"
 QIN_COLUMN_NAME <- "Qin"
@@ -106,7 +105,7 @@ VARIABLES_TO_EXTRACT <- c(
     A_COLUMN_NAME,
     CI_COLUMN_NAME,
     "gsw",
-    CO2_SETPOINT_COLUMN_NAME,
+    "CO2_r_sp",
     "Ca",
     "gbw",
     "Qin",
@@ -189,28 +188,25 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
-    # Limit the data to only the desired measurement points
-    all_samples_subset <- all_samples[which(
-        (all_samples[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
-            %in% MEASUREMENT_NUMBERS),]
-
-    # Make sure the data is properly ordered for plotting
-    all_samples_subset <- all_samples_subset[order(
-        all_samples_subset[[CO2_SETPOINT_COLUMN_NAME]]),]
-
-    all_samples_subset <- all_samples_subset[order(
-        all_samples_subset[[UNIQUE_ID_COLUMN_NAME]]),]
-
-    row.names(all_samples_subset) <- NULL
+    # Organize the data, keeping only the desired measurement points
+    all_samples <- organize_response_curve_data(
+        all_samples,
+        MEASUREMENT_NUMBER_NAME,
+        NUM_OBS_IN_SEQ,
+        MEASUREMENT_NUMBERS,
+        CI_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        EVENT_COLUMN_NAME
+    )
 
     # Perform the variable J fitting analysis using the `nmkb` optimizer from the
     # `dfoptim` package. Here we allow Gamma_star, J_high, Rd, tau, TPU, and Vcmax
     # to vary during the fits, keeping Ko, Kc, and O fixed. Before performing the
     # fits, we truncate the data to the specified Ci range.
     variable_j_results <- fit_variable_j_gjrttv(
-        all_samples_subset[
-            all_samples_subset[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
-            all_samples_subset[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
+        all_samples[
+            all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
+            all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
         UNIQUE_ID_COLUMN_NAME,
         function(guess, fun, lower, upper) {
             dfoptim::nmkb(guess, fun, lower, upper, control = list(

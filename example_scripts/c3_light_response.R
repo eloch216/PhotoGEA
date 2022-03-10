@@ -176,17 +176,23 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 
-    # Add a `seq_num` column, where a value of `i` means that this row is the
-    # `ith` point along an A-Ci curve
-    all_samples[['seq_num']] <-
-        ((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1
-
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
         all_samples,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
         NUM_OBS_IN_SEQ
+    )
+
+    # Organize the data, keeping only the desired measurement points
+    all_samples <- organize_response_curve_data(
+        all_samples,
+        MEASUREMENT_NUMBER_NAME,
+        NUM_OBS_IN_SEQ,
+        MEASUREMENT_NUMBERS,
+        QIN_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        EVENT_COLUMN_NAME
     )
 
     # Calculate basic stats for each event
@@ -205,17 +211,6 @@ if (VIEW_DATA_FRAMES) {
 ###                                               ###
 ### PROCESS DATA FRAMES TO GET READY FOR PLOTTING ###
 ###                                               ###
-
-# Make a subset of the full result that only includes the desired measurement
-# points, and make sure it is ordered properly for plotting
-all_samples_subset <-
-    all_samples[all_samples[['seq_num']] %in% MEASUREMENT_NUMBERS,]
-
-all_samples_subset <- all_samples_subset[order(
-    all_samples_subset[[QIN_COLUMN_NAME]]),]
-
-all_samples_subset <- all_samples_subset[order(
-    all_samples_subset[[EVENT_COLUMN_NAME]]),]
 
 # Make a subset of the full result for just the one measurement point and
 # convert its event column to a factor so we can control the order of the
@@ -237,9 +232,9 @@ all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
 
 rc_caption <- "Average response curves for each event"
 
-x_q <- all_samples_subset[['Qin']]
-x_s <- all_samples_subset[['seq_num']]
-x_e <- all_samples_subset[[EVENT_COLUMN_NAME]]
+x_q <- all_samples[[QIN_COLUMN_NAME]]
+x_s <- all_samples[['seq_num']]
+x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 q_lim <- c(-100, 2100)
 a_lim <- c(-10, 50)
@@ -250,14 +245,14 @@ a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard 
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-    list(all_samples_subset[['A']], x_q, x_s, x_e, xlab = q_lab, ylab = a_lab, xlim = q_lim, ylim = a_lim)
+    list(all_samples[[A_COLUMN_NAME]], x_q, x_s, x_e, xlab = q_lab, ylab = a_lab, xlim = q_lim, ylim = a_lim)
 )
 
 if (INCLUDE_FLUORESCENCE) {
     avg_plot_param <- c(
         avg_plot_param,
         list(
-            list(all_samples_subset[['ETR']], x_q, x_s, x_e, xlab = q_lab, ylab = etr_lab, xlim = q_lim, ylim = etr_lim)
+            list(all_samples[[ETR_COLUMN_NAME]], x_q, x_s, x_e, xlab = q_lab, ylab = etr_lab, xlim = q_lim, ylim = etr_lim)
         )
     )
 }
@@ -283,8 +278,8 @@ ind_caption <- "Individual response curves for each event and rep"
 # Plot each individual A-Q curve, where each event will have multiple traces
 # corresponding to different plants
 multi_aq_curves <- xyplot(
-    all_samples_subset[['A']] ~ all_samples_subset[['Qin']] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
+    all_samples[[A_COLUMN_NAME]] ~ all_samples[[QIN_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
+    group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -306,8 +301,8 @@ print(multi_aq_curves)
 # Plot each individual gsw-Q curve, where each event will have multiple
 # traces corresponding to different plants
 multi_gsci_curves <- xyplot(
-    all_samples_subset[['gsw']] ~ all_samples_subset[['Qin']] | all_samples_subset[[EVENT_COLUMN_NAME]],
-    group = all_samples_subset[[UNIQUE_ID_COLUMN_NAME]],
+    all_samples[[GSW_COLUMN_NAME]] ~ all_samples[[QIN_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
+    group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
@@ -335,7 +330,7 @@ boxplot_caption <- paste0(
     "Quartiles for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where Q = ",
-    all_samples_one_point[['Qin']][POINT_FOR_BOX_PLOTS],
+    all_samples_one_point[[QIN_COLUMN_NAME]][POINT_FOR_BOX_PLOTS],
     ")"
 )
 
