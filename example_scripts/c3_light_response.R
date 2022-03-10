@@ -160,6 +160,13 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- combine_exdf(extracted_multi_file_info)
 
+    combined_info <- process_id_columns(
+        combined_info,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        UNIQUE_ID_COLUMN_NAME
+    )
+
     combined_info <- calculate_iwue(
         combined_info,
         A_COLUMN_NAME,
@@ -173,11 +180,6 @@ if (PERFORM_CALCULATIONS) {
     # `ith` point along an A-Ci curve
     all_samples[['seq_num']] <-
         ((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1
-
-    # Add a new column that uniquely identifies each curve by its event and
-    # replicate names
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
-        paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
 
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(

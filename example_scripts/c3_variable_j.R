@@ -146,14 +146,29 @@ if (PERFORM_CALCULATIONS) {
     # Combine the Licor files into one table
     combined_info <- combine_exdf(extracted_multi_file_info)
 
+    combined_info <- process_id_columns(
+        combined_info,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        UNIQUE_ID_COLUMN_NAME
+    )
+
     # Extract the data (without units)
     all_samples <- combined_info[['main_data']]
 
     # Rename the prefix "36625-" from any event names that contain it
+    prefix_to_remove <- "36625-"
     all_samples[[EVENT_COLUMN_NAME]] <- gsub(
-        "36625-",
+        prefix_to_remove,
         "",
         all_samples[[EVENT_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    all_samples[[UNIQUE_ID_COLUMN_NAME]] <- gsub(
+        prefix_to_remove,
+        "",
+        all_samples[[UNIQUE_ID_COLUMN_NAME]],
         fixed = TRUE
     )
 
@@ -173,11 +188,6 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         NUM_OBS_IN_SEQ
     )
-
-    # Add a new column that uniquely identifies each A-Ci curve by its event and
-    # replicate names
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
-        paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
 
     # Limit the data to only the desired measurement points
     all_samples_subset <- all_samples[which(

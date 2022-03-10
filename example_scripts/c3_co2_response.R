@@ -187,6 +187,13 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- combine_exdf(extracted_multi_file_info)
 
+    combined_info <- process_id_columns(
+        combined_info,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        UNIQUE_ID_COLUMN_NAME
+    )
+
     # Include gm values (required for calculating Cc)
     if (USE_GM_TABLE) {
         gm_table_info <- read_gm_table(
@@ -242,10 +249,18 @@ if (PERFORM_CALCULATIONS) {
     all_samples <- combined_info[['main_data']]
 
     # Rename the prefix "36625-" from any event names that contain it
+    prefix_to_remove <- "36625-"
     all_samples[[EVENT_COLUMN_NAME]] <- gsub(
-        "36625-",
+        prefix_to_remove,
         "",
         all_samples[[EVENT_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    all_samples[[UNIQUE_ID_COLUMN_NAME]] <- gsub(
+        prefix_to_remove,
+        "",
+        all_samples[[UNIQUE_ID_COLUMN_NAME]],
         fixed = TRUE
     )
 
@@ -257,11 +272,6 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <-
         all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
-
-    # Add a new column that uniquely identifies each curve by its event and
-    # replicate names
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
-        paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
 
     # Add a `seq_num` column, where a value of `i` means that this row is the
     # `ith` point along an A-Ci curve

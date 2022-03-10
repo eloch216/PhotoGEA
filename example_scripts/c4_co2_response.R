@@ -169,6 +169,13 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- combine_exdf(extracted_multi_file_info)
 
+    combined_info <- process_id_columns(
+        combined_info,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        UNIQUE_ID_COLUMN_NAME
+    )
+
     if (USE_GM_TABLE) {
         gm_table_info <- read_gm_table(
             GM_TABLE_FILE_TO_PROCESS,
@@ -197,15 +204,6 @@ if (PERFORM_CALCULATIONS) {
     # `ith` point along an A-Ci curve
     all_samples[['seq_num']] <-
         ((all_samples[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1
-
-    # Make sure all event and rep names are interpreted as strings
-    all_samples[[EVENT_COLUMN_NAME]] <- as.character(all_samples[[EVENT_COLUMN_NAME]])
-    all_samples[[REP_COLUMN_NAME]] <- as.character(all_samples[[REP_COLUMN_NAME]])
-
-    # Add a new column that uniquely identifies each A-Ci curve by its event and
-    # replicate names
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
-        paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
 
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(

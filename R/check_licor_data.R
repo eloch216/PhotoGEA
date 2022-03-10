@@ -25,10 +25,10 @@ check_event_num <- function(full_data_set, event_column_name) {
 
 # Checks whether any infinite values exist, returning an error message if there
 # is a problem
-check_inf <- function(full_data_set) {
+check_inf <- function(full_data_set, col_to_ignore) {
     inf_columns <- as.logical(
         lapply(
-            full_data_set,
+            full_data_set[,!colnames(full_data_set) %in% col_to_ignore],
             function(x) {
                 if (is.numeric(x)) {
                     any(is.infinite(x))
@@ -60,32 +60,34 @@ check_rep_npts <- function(
     expected_npts
 )
 {
-    measurement_points <- do.call(
-        rbind,
-        by(
-            full_data_set,
-            list(
-                full_data_set[[event_column_name]],
-                full_data_set[[rep_column_name]]
-            ),
-            function(x) {
-                data.frame(
-                    event = unique(x[[event_column_name]]),
-                    replicate = unique(x[[rep_column_name]]),
-                    npts = nrow(x)
-                )
-            }
-        )
+    measurement_point_list <- by(
+        full_data_set,
+        list(
+            full_data_set[[event_column_name]],
+            full_data_set[[rep_column_name]]
+        ),
+        function(x) {
+            data.frame(
+                event = unique(x[[event_column_name]]),
+                replicate = unique(x[[rep_column_name]]),
+                npts = nrow(x)
+            )
+        }
     )
+
+    measurement_point_list <-
+        measurement_point_list[!sapply(measurement_point_list, is.null)]
+
+    measurement_points <- do.call(rbind, measurement_point_list)
 
     colnames(measurement_points) <-
         c(event_column_name, rep_column_name, 'npts')
 
     measurement_points <-
-        measurement_points[sort(measurement_points[[rep_column_name]]),]
+        measurement_points[order(measurement_points[[rep_column_name]]),]
 
     measurement_points <-
-        measurement_points[sort(measurement_points[[event_column_name]]),]
+        measurement_points[order(measurement_points[[event_column_name]]),]
 
     error_condition <- if (expected_npts == 0) {
         length(unique(measurement_points[['npts']])) > 1
@@ -125,14 +127,21 @@ check_response_curve_data <- function(
     full_data_set,
     event_column_name,
     rep_column_name,
-    expected_npts = 0
+    expected_npts = 0,
+    col_to_ignore_for_inf = "gmc"
 )
 {
     # Make sure there is at least one event defined
     error_messages <- check_event_num(full_data_set, event_column_name)
 
     # Make sure there are no infinities
-    error_messages <- append(error_messages, check_inf(full_data_set))
+    error_messages <- append(
+        error_messages,
+        check_inf(
+            full_data_set,
+            col_to_ignore_for_inf
+        )
+    )
 
     # Make sure each (event, replicate) pair (i.e., each response curve) has
     # the correct number of measurement points
