@@ -19,12 +19,12 @@ factorize_id_column <- function(full_data_set, id_column_name) {
     # Order the WT identifiers according to the value with the initial "WT"
     # removed, interpreted as a numeric value when possible
     wt_sorted <-
-        wt_identifiers[order(PhotoGEA:::try_as_numeric(gsub("^WT", "", wt_identifiers)))]
+        wt_identifiers[order(try_as_numeric(gsub("^WT", "", wt_identifiers)))]
 
     # Order the non-WT identifiers according to the word before the first space,
     # interpreted as a numeric value when possible
     non_wt_sorted <-
-        non_wt_identifiers[order(PhotoGEA:::try_as_numeric(gsub(" .+$", "", non_wt_identifiers)))]
+        non_wt_identifiers[order(try_as_numeric(gsub(" .+$", "", non_wt_identifiers)))]
 
     # Get the full set of sorted identifiers
     sorted_identifiers <- c(wt_sorted, non_wt_sorted)

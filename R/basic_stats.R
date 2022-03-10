@@ -20,7 +20,7 @@ basic_stats_column <- function(column, name, npts) {
 
 basic_stats_chunk <- function(chunk) {
     # Find the identifier columns and their names
-    id_columns <- PhotoGEA:::find_identifier_columns(chunk)
+    id_columns <- find_identifier_columns(chunk)
     id_column_names <- names(id_columns)
 
     # Find the names of the non-id columns
