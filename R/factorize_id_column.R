@@ -1,4 +1,7 @@
 factorize_id_column <- function(full_data_set, id_column_name) {
+    # Make sure the required columns are defined
+    check_required_columns(full_data_set, id_column_name)
+
     if (is.factor(full_data_set[[id_column_name]])) {
         # This column is already a factor, so turn it back into a character
         # vector

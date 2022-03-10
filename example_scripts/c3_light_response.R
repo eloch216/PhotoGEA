@@ -101,35 +101,6 @@ ETR_COLUMN_NAME <- "ETR"
 
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
-# Specify the variables to extract. Note that when the file is loaded, any
-# Unicode characters such as Greek letters will be converted into `ASCII`
-# versions, e.g. the character Δ will be become `Delta`. The conversion rules
-# are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_EXTRACT <- c(
-    "obs",
-    TIME_COLUMN_NAME,
-    "elapsed",
-    "date",
-    "hhmmss",
-    EVENT_COLUMN_NAME,
-    REP_COLUMN_NAME,
-    A_COLUMN_NAME,
-    CI_COLUMN_NAME,
-    GSW_COLUMN_NAME,
-    "CO2_r_sp",
-    "Ca",
-    "gbw",
-    QIN_COLUMN_NAME,
-    "Qabs",
-    "CO2_r",
-    "Tleaf",
-    "Tleaf2"
-)
-
-if (INCLUDE_FLUORESCENCE) {
-    VARIABLES_TO_EXTRACT <- c(VARIABLES_TO_EXTRACT, PHIPS2_COLUMN_NAME, ETR_COLUMN_NAME)
-}
-
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -148,7 +119,7 @@ if (PERFORM_CALCULATIONS) {
 
     extracted_multi_file_info <- batch_extract_variables(
         multi_file_info,
-        VARIABLES_TO_EXTRACT
+        identify_common_licor_columns(multi_file_info, verbose = FALSE)
     )
 
     combined_info <- combine_exdf(extracted_multi_file_info)

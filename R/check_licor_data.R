@@ -138,9 +138,7 @@ check_response_curve_data <- function(
     error_messages <- append(
         error_messages,
         check_inf(
-            full_data_set,
-            col_to_ignore_for_inf
-        )
+            full_data_set, col_to_ignore_for_inf)
     )
 
     # Make sure each (event, replicate) pair (i.e., each response curve) has
@@ -161,13 +159,20 @@ check_response_curve_data <- function(
 
 # Checks a set of Licor data representing signal-averaging data to make sure
 # it meets basic requirements for further analysis
-check_signal_averaging_data <- function(full_data_set, event_column_name)
+check_signal_averaging_data <- function(
+    full_data_set,
+    event_column_name,
+    col_to_ignore_for_inf = c()
+)
 {
     # Make sure there is at least one event defined
     error_messages <- check_event_num(full_data_set, event_column_name)
 
     # Make sure there are no infinities
-    error_messages <- append(error_messages, check_inf(full_data_set))
+    error_messages <- append(
+        error_messages,
+        check_inf(full_data_set, col_to_ignore_for_inf)
+    )
 
     # Notify the user about any errors that have occurred
     send_error_messages(error_messages)

@@ -94,32 +94,6 @@ TIME_COLUMN_NAME <- "time"
 
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
-# Specify the variables to extract. Note that when the file is loaded, any
-# Unicode characters such as Greek letters will be converted into `ASCII`
-# versions, e.g. the character Δ will be become `Delta`. The conversion rules
-# are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_EXTRACT <- c(
-    MEASUREMENT_NUMBER_NAME,
-    TIME_COLUMN_NAME,
-    "elapsed",
-    "date",
-    "hhmmss",
-    EVENT_COLUMN_NAME,
-    REP_COLUMN_NAME,
-    A_COLUMN_NAME,
-    CI_COLUMN_NAME,
-    "gsw",
-    "CO2_r_sp",
-    "Ca",
-    "gbw",
-    "Qin",
-    "Qabs",
-    "CO2_r",
-    "TleafCnd",
-    PHIPS2_COLUMN_NAME,
-    "ETR"
-)
-
 # Choose a Ci cutoff value for fitting
 CI_THRESHOLD_UPPER <- 800
 CI_THRESHOLD_LOWER <- 0
@@ -143,7 +117,7 @@ if (PERFORM_CALCULATIONS) {
     # Extract the important variables
     extracted_multi_file_info <- batch_extract_variables(
         multi_file_info,
-        VARIABLES_TO_EXTRACT
+        identify_common_licor_columns(multi_file_info, verbose = FALSE)
     )
 
     # Combine the Licor files into one table

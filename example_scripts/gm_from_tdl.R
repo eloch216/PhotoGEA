@@ -92,45 +92,6 @@ LICOR_RHLEAF_COLUMN_NAME <- 'RHleaf'
 LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
 LICOR_TLEAF_COLUMN_NAME <- 'TleafCnd'
 
-# Specify the variables to extract from the Licor data files. Note that when the
-# files are loaded, any Unicode characters such as Greek letters will be
-# converted into `ASCII` versions, e.g. the character Δ will be become `Delta`.
-# The conversion rules are defined in the `UNICODE_REPLACEMENTS` data frame
-# (see `read_licor.R`).
-LICOR_VARIABLES_TO_EXTRACT <- c(
-    'obs',
-    LICOR_TIMESTAMP_COLUMN_NAME,
-    LICOR_E_COLUMN_NAME,
-    LICOR_A_COLUMN_NAME,
-    LICOR_CA_COLUMN_NAME,
-    LICOR_CI_COLUMN_NAME,
-    'Pci',
-    'Pca',
-    LICOR_GSW_COLUMN_NAME,
-    LICOR_GBW_COLUMN_NAME,
-    'gtw',
-    'gtc',
-    LICOR_TLEAF_COLUMN_NAME,
-    'SVPleaf',
-    'RHcham',
-    'VPcham',
-    'SVPcham',
-    'VPDleaf',
-    'Qin',
-    'S',
-    'K',
-    'CO2_s',
-    'CO2_r',
-    LICOR_H2O_S_COLUMN_NAME,
-    'H2O_r',
-    'Flow',
-    LICOR_PA_COLUMN_NAME,
-    LICOR_DELTAPCHAM_COLUMN_NAME,
-    'Tair',
-    'Flow_s',
-    'Flow_r'
-)
-
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -199,7 +160,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_extract_variables(
         licor_files,
-        LICOR_VARIABLES_TO_EXTRACT
+        identify_common_licor_columns(licor_files, verbose = FALSE)
     )
 
     licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
