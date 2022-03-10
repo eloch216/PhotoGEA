@@ -58,6 +58,10 @@ library(dfoptim)
 # data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS to TRUE.
 PERFORM_CALCULATIONS <- TRUE
 
+# Decide whether to view data frames along with the plots (can be useful for
+# inspection to make sure the results look reasonable)
+VIEW_DATA_FRAMES <- TRUE
+
 # Choose the input files
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
@@ -227,21 +231,20 @@ if (PERFORM_CALCULATIONS) {
 
     # View the fitted parameter values
     View(variable_j_parameters)
+}
 
-    # Make a subset of the fitted values for just the one measurement point and
-    # convert its event column to a factor so we can control the order of the
-    # boxes
-    variable_j_fits_one_point <- variable_j_fits[which(
-        (((variable_j_fits[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
-            == POINT_FOR_BOX_PLOTS),]
+# Make a subset of the full result for just the one measurement point
+variable_j_fits_one_point <-
+    variable_j_fits[variable_j_fits[['seq_num']] == POINT_FOR_BOX_PLOTS,]
 
-    variable_j_fits_one_point[[EVENT_COLUMN_NAME]] <- factor(
-        variable_j_fits_one_point[[EVENT_COLUMN_NAME]],
-        levels = sort(
-            unique(variable_j_fits_one_point[[EVENT_COLUMN_NAME]]),
-            decreasing = TRUE
-        )
-    )
+# Convert event columns to factors to control the order of events in subsequent
+# plots
+variable_j_fits <- factorize_id_column(variable_j_fits, UNIQUE_ID_COLUMN_NAME)
+variable_j_fits_one_point <- factorize_id_column(variable_j_fits_one_point, EVENT_COLUMN_NAME)
+
+# View the resulting data frames, if desired
+if (VIEW_DATA_FRAMES) {
+    View(variable_j_parameters)
 }
 
 ###                                   ###

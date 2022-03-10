@@ -158,13 +158,6 @@ O2_PERCENT <- 21
 # Choose a Ci cutoff value for Vcmax fitting
 CI_THRESHOLD <- 225
 
-###                                                               ###
-### FUNCTIONS THAT WILL BE CALLED WHEN THIS SCRIPT RUNS           ###
-### (THEY SHOULD NOT REQUIRE ANY MODIFICATIONS TO USE THE SCRIPT) ###
-###                                                               ###
-
-# There's nothing here!
-
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -313,29 +306,16 @@ if (PERFORM_CALCULATIONS) {
     vcmax_fits <- vcmax_results[['fits']]
 }
 
-# Make a subset of the full result for just the one measurement point and
-# convert its event column to a factor so we can control the order of the
-# boxes
+# Make a subset of the full result for just the one measurement point
 all_samples_one_point <-
     all_samples[all_samples[['seq_num']] == POINT_FOR_BOX_PLOTS,]
 
-all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
-    all_samples_one_point[[EVENT_COLUMN_NAME]],
-    levels = sort(
-        unique(all_samples_one_point[[EVENT_COLUMN_NAME]]),
-        decreasing = TRUE
-    )
-)
-
-# Convert the event column of the vcmax fitting results to a factor so we
-# can control the order of boxes in a box plot
-vcmax_parameters[[EVENT_COLUMN_NAME]] <- factor(
-    vcmax_parameters[[EVENT_COLUMN_NAME]],
-    levels = sort(
-        unique(vcmax_parameters[[EVENT_COLUMN_NAME]]),
-        decreasing = TRUE
-    )
-)
+# Convert event columns to factors to control the order of events in subsequent
+# plots
+all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
+all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
+vcmax_fits <- factorize_id_column(vcmax_fits, UNIQUE_ID_COLUMN_NAME)
+vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {

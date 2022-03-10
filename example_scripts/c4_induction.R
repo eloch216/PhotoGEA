@@ -173,6 +173,11 @@ if (PERFORM_CALCULATIONS) {
     )
 }
 
+# Convert event columns to factors to control the order of events in subsequent
+# plots
+all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
+all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
+
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)

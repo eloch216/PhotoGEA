@@ -237,33 +237,18 @@ if (PERFORM_CALCULATIONS) {
     )
     all_fit_parameters <- fit_result[['parameters']]
     all_fits <- fit_result[['fits']]
-
-    # Make sure the fit parameters are ordered properly for plotting by
-    # converting its event column to a factor so we can control the order of the
-    # boxes
-    all_fit_parameters[[EVENT_COLUMN_NAME]] <- factor(
-        all_fit_parameters[[EVENT_COLUMN_NAME]],
-        levels = sort(
-            unique(all_fit_parameters[[EVENT_COLUMN_NAME]]),
-            decreasing = TRUE
-        )
-    )
 }
 
-# Make a subset of the full result for just one measurement point and
-# convert its event column to a factor so we can control the order of the
-# boxes
-all_samples_one_point <- all_samples[which(
-    (all_samples[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
-        == POINT_FOR_BOX_PLOTS),]
+# Make a subset of the full result for just the one measurement point
+all_samples_one_point <-
+    all_samples[all_samples[['seq_num']] == POINT_FOR_BOX_PLOTS,]
 
-all_samples_one_point[[EVENT_COLUMN_NAME]] <- factor(
-    all_samples_one_point[[EVENT_COLUMN_NAME]],
-    levels = sort(
-        unique(all_samples_one_point[[EVENT_COLUMN_NAME]]),
-        decreasing = TRUE
-    )
-)
+# Convert event columns to factors to control the order of events in subsequent
+# plots
+all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
+all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
+all_fits <- factorize_id_column(all_fits, UNIQUE_ID_COLUMN_NAME)
+all_fit_parameters <- factorize_id_column(all_fit_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
