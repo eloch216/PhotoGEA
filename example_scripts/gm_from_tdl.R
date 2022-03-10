@@ -238,9 +238,9 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- calculate_cc(
         licor_files,
-        LICOR_CC_COLUMN_NAME,
-        LICOR_CI_COLUMN_NAME,
         LICOR_A_COLUMN_NAME,
+        LICOR_CA_COLUMN_NAME,
+        LICOR_CI_COLUMN_NAME,
         LICOR_GM_COLUMN_NAME
     )
 
@@ -324,14 +324,13 @@ if (PERFORM_CALCULATIONS) {
         print(dunnett_test_result)
 
         # Do more stats on drawdown
-        rep_stats[['drawdown_avg']] <- rep_stats[['Ci-Cc_avg']]
-        bf_test_result <- bf.test(drawdown_avg ~ event, data = rep_stats)
-        shapiro_test_result <- shapiro.test(rep_stats[['drawdown_avg']])
+        bf_test_result <- bf.test(drawdown_m_avg ~ event, data = rep_stats)
+        shapiro_test_result <- shapiro.test(rep_stats[['drawdown_m_avg']])
         print(shapiro_test_result)
-        anova_result <- aov(drawdown_avg ~ event, data = rep_stats)
+        anova_result <- aov(drawdown_m_avg ~ event, data = rep_stats)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_avg']], g = rep_stats[['event']], control = "wt")
+        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_m_avg']], g = rep_stats[['event']], control = "wt")
         print(dunnett_test_result)
     }
 }
@@ -475,7 +474,7 @@ if (MAKE_GM_PLOTS) {
 
     gmc_lab <- "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
     cc_lab <- "CO2 concentration in chloroplast (micromol / mol)"
-    drawdown_lab <- "CO2 drawdown to chloroplast (Ci - Cc) (micromol / mol)"
+    drawdown_lab <- "CO2 drawdown across mesophyll (Ci - Cc) (micromol / mol)"
     a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)"
     iwue_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)"
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
@@ -488,21 +487,21 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lim <- c(0, 1)
 
     box_plot_param <- list(
-      list(Y = licor_files_no_outliers_data[['gmc']],     X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = licor_files_no_outliers_data[['Cc']],      X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = licor_files_no_outliers_data[['Ci-Cc']],   X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = licor_files_no_outliers_data[['A']],       X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = licor_files_no_outliers_data[['iWUE']],    X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = licor_files_no_outliers_data[['g_ratio']], X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
+      list(Y = licor_files_no_outliers_data[['gmc']],        X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = licor_files_no_outliers_data[['Cc']],         X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = licor_files_no_outliers_data[['drawdown_m']], X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = licor_files_no_outliers_data[['A']],          X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = licor_files_no_outliers_data[['iWUE']],       X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = licor_files_no_outliers_data[['g_ratio']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
     )
 
     box_bar_plot_param <- list(
-      list(Y = licor_files_no_outliers_data[['gmc']],     X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = licor_files_no_outliers_data[['Cc']],      X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = licor_files_no_outliers_data[['Ci-Cc']],   X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = licor_files_no_outliers_data[['A']],       X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = licor_files_no_outliers_data[['iWUE']],    X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = licor_files_no_outliers_data[['g_ratio']], X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
+      list(Y = licor_files_no_outliers_data[['gmc']],        X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = licor_files_no_outliers_data[['Cc']],         X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = licor_files_no_outliers_data[['drawdown_m']], X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = licor_files_no_outliers_data[['A']],          X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = licor_files_no_outliers_data[['iWUE']],       X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = licor_files_no_outliers_data[['g_ratio']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
     )
 
     # Make all the box and bar charts

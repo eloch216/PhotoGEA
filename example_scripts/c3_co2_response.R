@@ -106,6 +106,7 @@ EVENT_COLUMN_NAME <- "event"
 REP_COLUMN_NAME <- "replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
+CA_COLUMN_NAME <- "Ca"
 CI_COLUMN_NAME <- "Ci"
 CC_COLUMN_NAME <- "Cc"
 A_COLUMN_NAME <- "A"
@@ -139,7 +140,7 @@ VARIABLES_TO_EXTRACT <- c(
     CI_COLUMN_NAME,
     GSW_COLUMN_NAME,
     "CO2_r_sp",
-    "Ca",
+    CA_COLUMN_NAME,
     "gbw",
     "Qin",
     "Qabs",
@@ -220,9 +221,9 @@ if (PERFORM_CALCULATIONS) {
     # Calculate Cc (required for calculating f_prime)
     combined_info <- calculate_cc(
         combined_info,
-        CC_COLUMN_NAME,
-        CI_COLUMN_NAME,
         A_COLUMN_NAME,
+        CA_COLUMN_NAME,
+        CI_COLUMN_NAME,
         GM_COLUMN_NAME
     )
 
