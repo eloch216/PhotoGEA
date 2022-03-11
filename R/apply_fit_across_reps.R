@@ -42,28 +42,19 @@ apply_fit_function_across_reps <- function(
     )
 
     # Use `lapply` to make a list of just the `fits` element from each entry in
-    # the `full_results` list, and then use `do.call(rbind, args)` to combine
-    # them into one data frame.
-    fits <- do.call(
-        rbind,
-        lapply(
-            full_results,
-            function(x) {x[['fits']]}
-        )
-    )
+    # the `full_results` list, and then use `smart_rbind` to combine them into
+    # one data frame, keeping only the columns that are present in all of the
+    # `fits` elements.
+    fits <- smart_rbind(lapply(
+        full_results,
+        function(x) {x[['fits']]}
+    ))
 
-    # Apply the same procedure to the `parameters` element.
-    parameters <- do.call(
-        rbind,
-        lapply(
-            full_results,
-            function(x) {as.data.frame(x[['parameters']])}
-        )
-    )
-
-    # Remove any row names that appeared while processing
-    rownames(fits) <- NULL
-    rownames(parameters) <- NULL
+    # Apply the same procedure to the `parameters` elements.
+    parameters <- smart_rbind(lapply(
+        full_results,
+        function(x) {as.data.frame(x[['parameters']])}
+    ))
 
     return(list(fits = fits, parameters = parameters))
 }

@@ -2,16 +2,16 @@
 # `calculate_gas_properties` and before a call to `fit_ball_berry`.
 calculate_ball_berry_index <- function(
     licor_exdf,
-    A_COLUMN_NAME = 'A',
-    RHLEAF_COLUMN_NAME = 'RHleaf',
-    CSURFACE_COLUMN_NAME = 'Csurface'
+    a_column_name,
+    rhleaf_column_name,
+    csurface_column_name
 )
 {
     # Make sure the required columns are defined
     required_columns <- c(
-        A_COLUMN_NAME,          # micromol m^(-2) s^(-1)
-        RHLEAF_COLUMN_NAME,     # %
-        CSURFACE_COLUMN_NAME    # micromol mol^(-1)
+        a_column_name,          # micromol m^(-2) s^(-1)
+        rhleaf_column_name,     # %
+        csurface_column_name    # micromol mol^(-1)
     )
 
     check_required_columns(licor_exdf, required_columns)
@@ -32,14 +32,14 @@ calculate_ball_berry_index <- function(
 # function, so don't provide default arguments here.
 fit_ball_berry_replicate <- function(
     replicate_data_frame,
-    GSW_COLUMN_NAME,
-    BB_INDEX_COLUMN_NAME
+    gsw_column_name,
+    bb_index_column_name
 )
 {
     # Make a linear fit of stomatal conductance vs. Ball-Berry index
     linear_fit <-
-        lm(replicate_data_frame[[GSW_COLUMN_NAME]] ~
-            replicate_data_frame[[BB_INDEX_COLUMN_NAME]])
+        lm(replicate_data_frame[[gsw_column_name]] ~
+            replicate_data_frame[[bb_index_column_name]])
 
     # Extract the fit results
     fit_summary <- summary(linear_fit)
@@ -50,8 +50,8 @@ fit_ball_berry_replicate <- function(
     r_squared <- fit_summary[['r.squared']]
 
     # Calculate the fit line and add it to the data frame
-    replicate_data_frame[[paste0(GSW_COLUMN_NAME, '_fit')]] <-
-        bb_intercept + bb_slope * replicate_data_frame[[BB_INDEX_COLUMN_NAME]]
+    replicate_data_frame[[paste0(gsw_column_name, '_fit')]] <-
+        bb_intercept + bb_slope * replicate_data_frame[[bb_index_column_name]]
 
     # Return the results
     return(list(
@@ -73,15 +73,15 @@ fit_ball_berry_replicate <- function(
 fit_ball_berry <- function(
     exdf_obj,
     replicate_column_name,
-    GSW_COLUMN_NAME = 'gsw',
-    BB_INDEX_COLUMN_NAME = 'bb_index'
+    gsw_column_name = 'gsw',
+    bb_index_column_name = 'bb_index'
 )
 {
     apply_fit_function_across_reps(
         exdf_obj[['main_data']],
         replicate_column_name,
-        GSW_COLUMN_NAME,
-        BB_INDEX_COLUMN_NAME,
+        gsw_column_name,
+        bb_index_column_name,
         FUN = fit_ball_berry_replicate
     )
 }

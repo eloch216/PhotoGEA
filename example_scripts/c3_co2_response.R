@@ -1,6 +1,7 @@
-# This script loads Licor data representing C3 A-Q curves from multiple Excel
+# This script loads Licor data representing C3 A-Ci curves from multiple Excel
 # files, combines it into one data structure, computes averages across multiple
-# reps for each event in the data, and generates some plots.
+# reps for each event in the data, and uses a linear fitting procedure to
+# determine Vcmax values.
 #
 # ------------------------------------------------------------------------------
 #
@@ -20,9 +21,9 @@
 # - The commands that actually call the functions
 #
 # Typically, it should only be necessary to specify the names of input files.
-# This information is specified in the LICOR_FILES_TO_PROCESS vector. By
-# default, these file names are chosen interactively via a dialog box (only
-# available on MS Windows).
+# This information is specified in the LICOR_FILES_TO_PROCESS vector and
+# GM_TABLE_FILE_TO_PROCESS string. By default, these file names are chosen
+# interactively via a dialog box (only available on MS Windows).
 #
 # Alternatively, the filenames can be specified directly as relative or absolute
 # paths. In the case of relative paths, they should be specified relative to the
@@ -41,7 +42,7 @@
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
-# source('c3_light_response.R')
+# source('c3_co2_response.R')
 
 library(PhotoGEA)
 library(lattice)
@@ -61,23 +62,37 @@ PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
-VIEW_DATA_FRAMES <- TRUE
+VIEW_DATA_FRAMES <- FALSE
+
+# Decide whether to specify one gm value for all events or to use a table to
+# specify (possibly) different values for each event. If gm is set to infinity
+# (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
+# which is not solely a property of Rubisco and which may differ between plants
+# that have identical Vcmax but different gm.
+USE_GM_TABLE <- FALSE
+GM_VALUE <- Inf
+GM_UNITS <- "mol m^(-2) s^(-1)"
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
+GM_TABLE_FILE_TO_PROCESS <- c()
 
-# Specify the filenames
+# Specify the filenames depending on the value of the USE_GM_TABLE boolean
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
+    if (USE_GM_TABLE) {
+        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
+    }
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
-# points along the sequence of A-Q measurements.
+# points along the sequence of A-Ci measurements.
 #
-# These numbers have been chosen for a sequence with 12 measurements. Here we
-# want to keep all of them.
-NUM_OBS_IN_SEQ <- 12
-MEASUREMENT_NUMBERS <- seq_len(NUM_OBS_IN_SEQ)
+# These numbers have been chosen for a sequence with 17 measurements. Points 1,
+# 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
+# first one, so we exclude points 9 and 10.
+NUM_OBS_IN_SEQ <- 17
+MEASUREMENT_NUMBERS <- c(1:8, 11:17)
 POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
@@ -88,15 +103,29 @@ POINT_FOR_BOX_PLOTS <- 1
 EVENT_COLUMN_NAME <- "event"
 REP_COLUMN_NAME <- "replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
+GM_COLUMN_NAME <- "gmc"
+CA_COLUMN_NAME <- "Ca"
 CI_COLUMN_NAME <- "Ci"
+CC_COLUMN_NAME <- "Cc"
 A_COLUMN_NAME <- "A"
 GSW_COLUMN_NAME <- "gsw"
 IWUE_COLUMN_NAME <- "iwue"
-QIN_COLUMN_NAME <- "Qin"
+O2_COLUMN_NAME <- "O2"
+F_PRIME_COLUMN_NAME <- "f_prime"
+GAMMA_STAR_COLUMN_NAME <- "gamma_star"
+KC_COLUMN_NAME <- "Kc"
+KO_COLUMN_NAME <- "Ko"
+TLEAF_COLUMN_NAME <- "TleafCnd"
 TIME_COLUMN_NAME <- "time"
 ETR_COLUMN_NAME <- "ETR"
 
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
+
+# Specify oxygen concentration as a percentage
+O2_PERCENT <- 21
+
+# Choose a Ci cutoff value for Vcmax fitting
+CI_THRESHOLD <- 225
 
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
@@ -128,6 +157,51 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
+    # Include gm values (required for calculating Cc)
+    if (USE_GM_TABLE) {
+        gm_table_info <- read_gm_table(
+            GM_TABLE_FILE_TO_PROCESS,
+            EVENT_COLUMN_NAME,
+            GM_COLUMN_NAME
+        )
+
+        combined_info <- add_gm_to_licor_data_from_table(
+            combined_info,
+            gm_table_info,
+            EVENT_COLUMN_NAME,
+            GM_COLUMN_NAME
+        )
+    } else {
+        combined_info <- add_gm_to_licor_data_from_value(
+            combined_info,
+            GM_VALUE,
+            GM_UNITS,
+            GM_COLUMN_NAME
+        )
+    }
+
+    # Calculate Cc (required for calculating f_prime)
+    combined_info <- calculate_cc(
+        combined_info,
+        A_COLUMN_NAME,
+        CA_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        GM_COLUMN_NAME
+    )
+
+    # Calculate f_prime (required for the Vcmax fitting procedure)
+    combined_info <- calculate_fprime(
+        combined_info,
+        O2_PERCENT,
+        CC_COLUMN_NAME,
+        F_PRIME_COLUMN_NAME,
+        GAMMA_STAR_COLUMN_NAME,
+        KC_COLUMN_NAME,
+        KO_COLUMN_NAME,
+        O2_COLUMN_NAME,
+        TLEAF_COLUMN_NAME
+    )
+
     combined_info <- calculate_iwue(
         combined_info,
         A_COLUMN_NAME,
@@ -136,6 +210,31 @@ if (PERFORM_CALCULATIONS) {
     )
 
     all_samples <- combined_info[['main_data']]
+
+    # Rename the prefix "36625-" from any event names that contain it
+    prefix_to_remove <- "36625-"
+    all_samples[[EVENT_COLUMN_NAME]] <- gsub(
+        prefix_to_remove,
+        "",
+        all_samples[[EVENT_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    all_samples[[UNIQUE_ID_COLUMN_NAME]] <- gsub(
+        prefix_to_remove,
+        "",
+        all_samples[[UNIQUE_ID_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    # Exclude some events, if necessary
+    EVENTS_TO_IGNORE <- c(
+        "10",
+        "14"
+    )
+
+    all_samples <-
+        all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
 
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
@@ -151,7 +250,7 @@ if (PERFORM_CALCULATIONS) {
         MEASUREMENT_NUMBER_NAME,
         NUM_OBS_IN_SEQ,
         MEASUREMENT_NUMBERS,
-        QIN_COLUMN_NAME,
+        CI_COLUMN_NAME,
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
@@ -161,6 +260,19 @@ if (PERFORM_CALCULATIONS) {
         all_samples,
         c('seq_num', EVENT_COLUMN_NAME)
     )
+
+    # Perform Vcmax fitting procedure
+    vcmax_results <- fit_c3_vcmax(
+        all_samples,
+        UNIQUE_ID_COLUMN_NAME,
+        A_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        F_PRIME_COLUMN_NAME,
+        CI_THRESHOLD
+    )
+
+    vcmax_parameters <- vcmax_results[['parameters']]
+    vcmax_fits <- vcmax_results[['fits']]
 }
 
 # Make a subset of the full result for just the one measurement point
@@ -171,11 +283,14 @@ all_samples_one_point <-
 # plots
 all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
 all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
+vcmax_fits <- factorize_id_column(vcmax_fits, UNIQUE_ID_COLUMN_NAME)
+vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats)
+    View(vcmax_parameters)
 }
 
 # Determine if there is fluorescence data
@@ -193,33 +308,33 @@ INCLUDE_FLUORESCENCE <- if(is.null(PHIPS2_COLUMN_NAME)) {
     TRUE
 }
 
-###                           ###
-### PLOT RESPONSE CURVES TO Q ###
-###                           ###
+###                            ###
+### PLOT RESPONSE CURVES TO CI ###
+###                            ###
 
 rc_caption <- "Average response curves for each event"
 
-x_q <- all_samples[[QIN_COLUMN_NAME]]
+x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-q_lim <- c(-100, 2100)
+ci_lim <- c(-50, 1300)
 a_lim <- c(-10, 50)
 etr_lim <- c(0, 325)
 
-q_lab <- "Incident PPFD (micromol / m^2 / s)"
+ci_lab <- "Intercellular [CO2] (ppm)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-    list(all_samples[[A_COLUMN_NAME]], x_q, x_s, x_e, xlab = q_lab, ylab = a_lab, xlim = q_lim, ylim = a_lim)
+    list(all_samples[[A_COLUMN_NAME]], x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab, xlim = ci_lim, ylim = a_lim)
 )
 
 if (INCLUDE_FLUORESCENCE) {
     avg_plot_param <- c(
         avg_plot_param,
         list(
-            list(all_samples[[ETR_COLUMN_NAME]], x_q, x_s, x_e, xlab = q_lab, ylab = etr_lab, xlim = q_lim, ylim = etr_lim)
+            list(all_samples[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
         )
     )
 }
@@ -242,51 +357,66 @@ invisible(lapply(avg_plot_param, function(x) {
 
 ind_caption <- "Individual response curves for each event and rep"
 
-# Plot each individual A-Q curve, where each event will have multiple traces
+# Plot each individual A-Ci curve, where each event will have multiple traces
 # corresponding to different plants
-multi_aq_curves <- xyplot(
-    all_samples[[A_COLUMN_NAME]] ~ all_samples[[QIN_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
+multi_aci_curves <- xyplot(
+    all_samples[[A_COLUMN_NAME]] ~ all_samples[[CI_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
     group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
     grid = TRUE,
     main = ind_caption,
-    xlab = "Incident PPFD (micromol / m^2 / s)",
+    xlab = "Intercellular [CO2] (ppm)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(-10, 50),
-    xlim = c(-100, 2100),
+    ylim = c(-10, 60),
+    xlim = c(-100, 1600),
     par.settings = list(
         superpose.line = list(col = default_colors),
         superpose.symbol = list(col = default_colors)
     )
 )
-
 x11(width = 8, height = 6)
-print(multi_aq_curves)
+print(multi_aci_curves)
 
-# Plot each individual gsw-Q curve, where each event will have multiple
+# Plot each individual gsw-Ci curve, where each event will have multiple
 # traces corresponding to different plants
 multi_gsci_curves <- xyplot(
-    all_samples[[GSW_COLUMN_NAME]] ~ all_samples[[QIN_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
+    all_samples[[GSW_COLUMN_NAME]] ~ all_samples[[CI_COLUMN_NAME]] | all_samples[[EVENT_COLUMN_NAME]],
     group = all_samples[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto.key = list(space = "right"),
     grid = TRUE,
     main = ind_caption,
-    xlab = "Incident PPFD (micromol / m^2 / s)",
+    xlab = "Intercellular [CO2] (ppm)",
     ylab = "Stomatal conductance to water (mol / m^2 / s)",
     ylim = c(0, 0.8),
-    xlim = c(-100, 2100),
+    xlim = c(-100, 1600),
     par.settings = list(
         superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.symbol=list(col = default_colors)
     )
 )
-
 x11(width = 8, height = 6)
 print(multi_gsci_curves)
+
+###                          ###
+### PLOT ALL INDIVIDUAL FITS ###
+###                          ###
+
+vcmax_fitting_plot <- xyplot(
+    vcmax_fits[[A_COLUMN_NAME]] + vcmax_fits[[paste0(A_COLUMN_NAME, '_fit')]] ~ vcmax_fits[[F_PRIME_COLUMN_NAME]] | vcmax_fits[[UNIQUE_ID_COLUMN_NAME]],
+    type = 'b',
+    pch = 20,
+    auto.key = list(text = c('Measured', 'Fit')),
+    grid = TRUE,
+    xlab = "f_prime (dimensionless)",
+    ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
+    main = "Vcmax fitting"
+)
+x11(width = 8, height = 6)
+print(vcmax_fitting_plot)
 
 ###                                        ###
 ### MAKE BOX-WHISKER PLOTS AND BAR CHARTS  ###
@@ -296,18 +426,26 @@ print(multi_gsci_curves)
 boxplot_caption <- paste0(
     "Quartiles for measurement point ",
     POINT_FOR_BOX_PLOTS,
-    "\n(where Q = ",
-    all_samples_one_point[[QIN_COLUMN_NAME]][POINT_FOR_BOX_PLOTS],
+    "\n(where CO2 setpoint = ",
+    all_samples_one_point[['CO2_r_sp']][POINT_FOR_BOX_PLOTS],
     ")"
+)
+
+vcmax_caption <- paste(
+    "Vcmax values obtained by fitting A vs. f'\nusing a Ci cutoff of",
+    CI_THRESHOLD,
+    "micromol / mol"
 )
 
 # Define plotting parameters
 x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
+x_v <- vcmax_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 
 plot_param <- list(
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption)
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 50),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption),
+  list(Y = vcmax_parameters[['Vcmax']],               X = x_v, xlab = xl, ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)", ylim = c(0, 200), main = vcmax_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {

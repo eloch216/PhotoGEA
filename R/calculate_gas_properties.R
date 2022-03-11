@@ -106,51 +106,42 @@
 # This function uses Equations (3)-(8) and (10) to calculate the desired values.
 calculate_gas_properties <- function(
     licor_exdf,
-    A_COLUMN_NAME = 'A',
-    CA_COLUMN_NAME = 'Ca',
-    DELTAPCHAM_COLUMN_NAME = 'DeltaPcham',
-    E_COLUMN_NAME = 'E',
-    GBW_COLUMN_NAME = 'gbw',
-    GSW_COLUMN_NAME = 'gsw',
-    H2O_S_COLUMN_NAME = 'H2O_s',
-    PA_COLUMN_NAME = 'Pa',
-    TLEAF_COLUMN_NAME = 'TleafCnd'
+    a_column_name,
+    ca_column_name,
+    deltapcham_column_name,
+    e_column_name,
+    gbw_column_name,
+    gsw_column_name,
+    h2o_s_column_name,
+    pa_column_name,
+    tleaf_column_name
 )
 {
     # Make sure the required columns are defined
     required_columns <- c(
-        A_COLUMN_NAME,
-        CA_COLUMN_NAME,
-        DELTAPCHAM_COLUMN_NAME,
-        E_COLUMN_NAME,
-        GBW_COLUMN_NAME,
-        GSW_COLUMN_NAME,
-        H2O_S_COLUMN_NAME,
-        PA_COLUMN_NAME,
-        TLEAF_COLUMN_NAME
+        a_column_name,
+        ca_column_name,
+        deltapcham_column_name,
+        e_column_name,
+        gbw_column_name,
+        gsw_column_name,
+        h2o_s_column_name,
+        pa_column_name,
+        tleaf_column_name
     )
 
-    missing_columns <-
-        required_columns[!required_columns %in% colnames(licor_exdf)]
-
-    if (length(missing_columns) > 0) {
-        msg <- paste(
-            "The following columns are undefined:",
-            paste(missing_columns, collapse = " ")
-        )
-        stop(msg)
-    }
+    check_required_columns(licor_exdf, required_columns)
 
     # Extract some columns to make the calculations cleaner
-    A <- licor_exdf[,A_COLUMN_NAME]                    # micromol m^(-2) s^(-1)
-    Ca <- licor_exdf[,CA_COLUMN_NAME]                  # micromol mol^(-1)
-    deltaPcham <- licor_exdf[,DELTAPCHAM_COLUMN_NAME]  # kPa
-    E <- licor_exdf[,E_COLUMN_NAME]                    # mol m^(-2) s^(-1)
-    gbw <- licor_exdf[,GBW_COLUMN_NAME]                # mol m^(-2) s^(-1)
-    gsw <- licor_exdf[,GSW_COLUMN_NAME]                # mol m^(-2) s^(-1)
-    H2O_s <- licor_exdf[,H2O_S_COLUMN_NAME]            # mmol mol^(-1)
-    Pa <- licor_exdf[,PA_COLUMN_NAME]                  # kPa
-    Tleaf <- licor_exdf[,TLEAF_COLUMN_NAME]            # degrees C
+    A <- licor_exdf[,a_column_name]                    # micromol m^(-2) s^(-1)
+    Ca <- licor_exdf[,ca_column_name]                  # micromol mol^(-1)
+    deltaPcham <- licor_exdf[,deltapcham_column_name]  # kPa
+    E <- licor_exdf[,e_column_name]                    # mol m^(-2) s^(-1)
+    gbw <- licor_exdf[,gbw_column_name]                # mol m^(-2) s^(-1)
+    gsw <- licor_exdf[,gsw_column_name]                # mol m^(-2) s^(-1)
+    H2O_s <- licor_exdf[,h2o_s_column_name]            # mmol mol^(-1)
+    Pa <- licor_exdf[,pa_column_name]                  # kPa
+    Tleaf <- licor_exdf[,tleaf_column_name]            # degrees C
 
     # Calculate new columns
     licor_exdf[,'H2O_surf'] <- (E * (1000 - H2O_s / 2) + gbw * H2O_s) /
@@ -179,6 +170,6 @@ calculate_gas_properties <- function(
         c("calculate_gas_properties", 'RHleaf',   "%"),
         c("calculate_gas_properties", 'gsc',      "mol mol^(-1)"),
         c("calculate_gas_properties", 'gbc',      "mol mol^(-1)"),
-        c("calculate_gas_properties", 'Csurface',   "micromol mol^(-1)")
+        c("calculate_gas_properties", 'Csurface', "micromol mol^(-1)")
     )
 }

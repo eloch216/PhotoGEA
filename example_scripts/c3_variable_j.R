@@ -13,13 +13,38 @@
 #
 # ------------------------------------------------------------------------------
 #
+# This script is broken up into several sections to make it easier to use:
+# - Components that might need to change each time this script is run
+# - Components that are less likely to change each time this script is run
+# - Functions used to load and process the data (shouldn't need to change)
+# - The commands that actually call the functions
+#
+# Typically, it should only be necessary to specify the names of input files.
+# This information is specified in the LICOR_FILES_TO_PROCESS vector. By
+# default, these file names are chosen interactively via a dialog box (only
+# available on MS Windows).
+#
+# Alternatively, the filenames can be specified directly as relative or absolute
+# paths. In the case of relative paths, they should be specified relative to the
+# directory that contains this script.
+#
+# ------------------------------------------------------------------------------
+#
+# This script requires the `lattice` and `dfoptim` libraries, which can be
+# installed using the following commands if they are not already installed:
+#
+# install.packages('lattice')
+# install.packages('dfoptim')
+#
+# ------------------------------------------------------------------------------
+#
 # To run the script, set the R working directory to the directory that contains
 # this script and type:
 #
 # source('c3_variable_j.R')
 
 library(PhotoGEA)
-
+library(lattice)
 library(dfoptim)
 
 ###                                                                   ###
@@ -32,6 +57,10 @@ library(dfoptim)
 # running the script in a particular R session or for a particular data set, the
 # data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS to TRUE.
 PERFORM_CALCULATIONS <- TRUE
+
+# Decide whether to view data frames along with the plots (can be useful for
+# inspection to make sure the results look reasonable)
+VIEW_DATA_FRAMES <- TRUE
 
 # Choose the input files
 if (PERFORM_CALCULATIONS) {
@@ -58,39 +87,12 @@ REP_COLUMN_NAME <- "replicate"
 
 A_COLUMN_NAME <- "A"
 CI_COLUMN_NAME <- "Ci"
-CO2_SETPOINT_COLUMN_NAME <- "CO2_r_sp"
 MEASUREMENT_NUMBER_NAME <- "obs"
 PHIPS2_COLUMN_NAME <- "PhiPS2"
 QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
 
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
-
-# Specify the variables to extract. Note that when the file is loaded, any
-# Unicode characters such as Greek letters will be converted into `ASCII`
-# versions, e.g. the character Δ will be become `Delta`. The conversion rules
-# are defined in the `UNICODE_REPLACEMENTS` data frame (see `read_licor.R`).
-VARIABLES_TO_EXTRACT <- c(
-    MEASUREMENT_NUMBER_NAME,
-    TIME_COLUMN_NAME,
-    "elapsed",
-    "date",
-    "hhmmss",
-    EVENT_COLUMN_NAME,
-    REP_COLUMN_NAME,
-    A_COLUMN_NAME,
-    CI_COLUMN_NAME,
-    "gsw",
-    CO2_SETPOINT_COLUMN_NAME,
-    "Ca",
-    "gbw",
-    "Qin",
-    "Qabs",
-    "CO2_r",
-    "TleafCnd",
-    PHIPS2_COLUMN_NAME,
-    "ETR"
-)
 
 # Choose a Ci cutoff value for fitting
 CI_THRESHOLD_UPPER <- 800
@@ -115,20 +117,35 @@ if (PERFORM_CALCULATIONS) {
     # Extract the important variables
     extracted_multi_file_info <- batch_extract_variables(
         multi_file_info,
-        VARIABLES_TO_EXTRACT
+        identify_common_licor_columns(multi_file_info, verbose = FALSE)
     )
 
     # Combine the Licor files into one table
     combined_info <- combine_exdf(extracted_multi_file_info)
 
+    combined_info <- process_id_columns(
+        combined_info,
+        EVENT_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        UNIQUE_ID_COLUMN_NAME
+    )
+
     # Extract the data (without units)
     all_samples <- combined_info[['main_data']]
 
     # Rename the prefix "36625-" from any event names that contain it
+    prefix_to_remove <- "36625-"
     all_samples[[EVENT_COLUMN_NAME]] <- gsub(
-        "36625-",
+        prefix_to_remove,
         "",
         all_samples[[EVENT_COLUMN_NAME]],
+        fixed = TRUE
+    )
+
+    all_samples[[UNIQUE_ID_COLUMN_NAME]] <- gsub(
+        prefix_to_remove,
+        "",
+        all_samples[[UNIQUE_ID_COLUMN_NAME]],
         fixed = TRUE
     )
 
@@ -141,42 +158,33 @@ if (PERFORM_CALCULATIONS) {
     all_samples <-
         all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
 
-    # Make sure basic requirements are met
-    check_basic_stats(
+    # Check the data for any issues before proceeding with additional analysis
+    check_response_curve_data(
         all_samples,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
-        c(),
-        'rc'
+        NUM_OBS_IN_SEQ
     )
 
-    # Add a new column that uniquely identifies each A-Ci curve by its event and
-    # replicate names
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <-
-        paste(all_samples[[EVENT_COLUMN_NAME]], all_samples[[REP_COLUMN_NAME]])
-
-    # Limit the data to only the desired measurement points
-    all_samples_subset <- all_samples[which(
-        (all_samples[[MEASUREMENT_NUMBER_NAME]] %% NUM_OBS_IN_SEQ)
-            %in% MEASUREMENT_NUMBERS),]
-
-    # Make sure the data is properly ordered for plotting
-    all_samples_subset <- all_samples_subset[order(
-        all_samples_subset[[CO2_SETPOINT_COLUMN_NAME]]),]
-
-    all_samples_subset <- all_samples_subset[order(
-        all_samples_subset[[UNIQUE_ID_COLUMN_NAME]]),]
-
-    row.names(all_samples_subset) <- NULL
+    # Organize the data, keeping only the desired measurement points
+    all_samples <- organize_response_curve_data(
+        all_samples,
+        MEASUREMENT_NUMBER_NAME,
+        NUM_OBS_IN_SEQ,
+        MEASUREMENT_NUMBERS,
+        CI_COLUMN_NAME,
+        REP_COLUMN_NAME,
+        EVENT_COLUMN_NAME
+    )
 
     # Perform the variable J fitting analysis using the `nmkb` optimizer from the
     # `dfoptim` package. Here we allow Gamma_star, J_high, Rd, tau, TPU, and Vcmax
     # to vary during the fits, keeping Ko, Kc, and O fixed. Before performing the
     # fits, we truncate the data to the specified Ci range.
     variable_j_results <- fit_variable_j_gjrttv(
-        all_samples_subset[
-            all_samples_subset[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
-            all_samples_subset[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
+        all_samples[
+            all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
+            all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
         UNIQUE_ID_COLUMN_NAME,
         function(guess, fun, lower, upper) {
             dfoptim::nmkb(guess, fun, lower, upper, control = list(
@@ -197,21 +205,20 @@ if (PERFORM_CALCULATIONS) {
 
     # View the fitted parameter values
     View(variable_j_parameters)
+}
 
-    # Make a subset of the fitted values for just the one measurement point and
-    # convert its event column to a factor so we can control the order of the
-    # boxes
-    variable_j_fits_one_point <- variable_j_fits[which(
-        (((variable_j_fits[[MEASUREMENT_NUMBER_NAME]] - 1) %% NUM_OBS_IN_SEQ) + 1)
-            == POINT_FOR_BOX_PLOTS),]
+# Make a subset of the full result for just the one measurement point
+variable_j_fits_one_point <-
+    variable_j_fits[variable_j_fits[['seq_num']] == POINT_FOR_BOX_PLOTS,]
 
-    variable_j_fits_one_point[[EVENT_COLUMN_NAME]] <- factor(
-        variable_j_fits_one_point[[EVENT_COLUMN_NAME]],
-        levels = sort(
-            unique(variable_j_fits_one_point[[EVENT_COLUMN_NAME]]),
-            decreasing = TRUE
-        )
-    )
+# Convert event columns to factors to control the order of events in subsequent
+# plots
+variable_j_fits <- factorize_id_column(variable_j_fits, UNIQUE_ID_COLUMN_NAME)
+variable_j_fits_one_point <- factorize_id_column(variable_j_fits_one_point, EVENT_COLUMN_NAME)
+
+# View the resulting data frames, if desired
+if (VIEW_DATA_FRAMES) {
+    View(variable_j_parameters)
 }
 
 ###                                   ###
@@ -265,9 +272,9 @@ a_ci_fitting_plot <- xyplot(
     pch = 20,
     auto.key = list(text = a_legend, space = 'right'),
     grid = TRUE,
-    par.settings=list(
-        superpose.line=list(col=assimilation_fit_colors),
-        superpose.symbol=list(col=assimilation_fit_colors)
+    par.settings = list(
+        superpose.line = list(col = assimilation_fit_colors),
+        superpose.symbol = list(col = assimilation_fit_colors)
     ),
     xlim = ci_range,
     ylim = a_range,
@@ -286,9 +293,9 @@ a_cc_fitting_plot <- xyplot(
     pch = 20,
     auto.key = list(text = a_legend, space = 'right'),
     grid = TRUE,
-    par.settings=list(
-        superpose.line=list(col=assimilation_fit_colors),
-        superpose.symbol=list(col=assimilation_fit_colors)
+    par.settings = list(
+        superpose.line = list(col = assimilation_fit_colors),
+        superpose.symbol = list(col = assimilation_fit_colors)
     ),
     xlim = cc_range,
     ylim = a_range,
@@ -339,7 +346,7 @@ boxplot_caption <- paste0(
     "Quartiles for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where CO2 setpoint = ",
-    fits_one_point_for_plotting[['CO2_r_sp']][1],
+    fits_one_point_for_plotting[['CO2_r_sp']][POINT_FOR_BOX_PLOTS],
     ")"
 )
 

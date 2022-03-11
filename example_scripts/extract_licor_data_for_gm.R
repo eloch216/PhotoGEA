@@ -1,3 +1,6 @@
+# IMPORTANT NOTE: this script has been superseded by `gm_from_tdl.R` and should
+# not be used, since it continues to use Excel files for making calculations.
+
 # This script uses the PhotoGEA and openxlsx libraries to read Licor data from
 # multiple files, extract certain columns, add some new columns, fill the new
 # columns with Excel formulas, and finally write the information from each file
@@ -23,13 +26,12 @@
 #
 # Typically, it should only be necessary to specify the names of input files
 # and the output file. This information is specified in the FILES_TO_PROCESS
-# vector and the OUTPUT_FILENAME string. If CHOOSE_FILES_INTERACTIVELY is set to
-# true, these file names can be chosen interactively via a dialog box (only
-# available on MS Windows).
+# vector and the OUTPUT_FILENAME string. By default, these file names are chosen
+# interactively via a dialog box (only available on MS Windows).
 #
-# The filenames (for both the input and output files) can be specified as
-# relative or absolute paths. In the case of relative paths, they should be
-# specified relative to the directory that contains this script.
+# Alternatively, the filenames can be specified directly as relative or absolute
+# paths. In the case of relative paths, they should be specified relative to the
+# directory that contains this script.
 #
 # ------------------------------------------------------------------------------
 #
@@ -44,30 +46,12 @@ library(PhotoGEA)
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                   ###
 
-# Specify the Licor data files to process and the name of the output file. There
-# are two options for doing this: either the filenames can be defined directly
-# as strings and vectors of strings, or they can be defined interactively via
-# dialog boxes (only available on MS Windows).
-CHOOSE_FILES_INTERACTIVELY <- TRUE
-
 FILES_TO_PROCESS <- c() # Initialize the input file list
 OUTPUT_FILENAME <- ""   # Initialize the output file name
 
-# Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
-# boolean
-{
-    if (CHOOSE_FILES_INTERACTIVELY) {
-        FILES_TO_PROCESS <- choose_input_licor_files()
-        OUTPUT_FILENAME <- choose_output_licor_file()
-    }
-    else {
-        FILES_TO_PROCESS <- c(
-            "2021-04-07-site 11 vulcan cs 36627-1-17.xlsx",
-            "20210407-pluto-site13-36627-WT-3.xlsx"
-        )
-        OUTPUT_FILENAME <- "gm_combo_file.xlsx"
-    }
-}
+# Specify the filenames
+FILES_TO_PROCESS <- choose_input_licor_files()
+OUTPUT_FILENAME <- choose_output_licor_file()
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
