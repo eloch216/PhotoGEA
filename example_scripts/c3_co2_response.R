@@ -199,7 +199,8 @@ if (PERFORM_CALCULATIONS) {
         KC_COLUMN_NAME,
         KO_COLUMN_NAME,
         O2_COLUMN_NAME,
-        TLEAF_COLUMN_NAME
+        TLEAF_COLUMN_NAME,
+        c3_photosynthesis_parameters_Bernacchi
     )
 
     combined_info <- calculate_iwue(
