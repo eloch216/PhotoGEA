@@ -224,8 +224,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
-        "10",
-        "14"
+        #"10",
+        #"14"
     )
 
     licor_files[['main_data']] <-
@@ -440,13 +440,15 @@ if (MAKE_GM_PLOTS) {
     a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)"
     iwue_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)"
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
+    dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, MAX_GM)
+    gmc_lim <- c(0, 1.5)
     cc_lim <- c(0, 275)
     drawdown_lim <- c(0, 150)
     a_lim <- c(0, 50)
     iwue_lim <- c(0, 120)
     g_ratio_lim <- c(0, 1)
+    dtdl_lim <- c(0, 25)
 
     box_plot_param <- list(
       list(Y = licor_files_no_outliers_data[['gmc']],        X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
@@ -454,7 +456,8 @@ if (MAKE_GM_PLOTS) {
       list(Y = licor_files_no_outliers_data[['drawdown_m']], X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
       list(Y = licor_files_no_outliers_data[['A']],          X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
       list(Y = licor_files_no_outliers_data[['iWUE']],       X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = licor_files_no_outliers_data[['g_ratio']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
+      list(Y = licor_files_no_outliers_data[['g_ratio']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = licor_files_no_outliers_data[['delta_tdl']],  X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     box_bar_plot_param <- list(
@@ -463,7 +466,8 @@ if (MAKE_GM_PLOTS) {
       list(Y = licor_files_no_outliers_data[['drawdown_m']], X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
       list(Y = licor_files_no_outliers_data[['A']],          X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
       list(Y = licor_files_no_outliers_data[['iWUE']],       X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = licor_files_no_outliers_data[['g_ratio']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim)
+      list(Y = licor_files_no_outliers_data[['g_ratio']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = licor_files_no_outliers_data[['delta_tdl']],  X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     # Make all the box and bar charts
