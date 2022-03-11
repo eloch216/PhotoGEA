@@ -37,7 +37,7 @@ library(DescTools)    # for DunnettTest
 
 PERFORM_CALCULATIONS <- TRUE
 
-PERFORM_STATS_TESTS <- FALSE
+PERFORM_STATS_TESTS <- TRUE
 
 SAVE_RESULTS <- TRUE
 
@@ -131,6 +131,7 @@ if (PERFORM_CALCULATIONS) {
 
     processed_tdl_data <- process_tdl_cycles(
         tdl_files[['main_data']],
+        process_erml_tdl_cycle,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         noaa_valve = 2,
         calibration_0_valve = 20,
@@ -195,7 +196,7 @@ if (PERFORM_CALCULATIONS) {
         LICOR_TLEAF_COLUMN_NAME
     )
 
-    licor_files <- calculate_gm(licor_files)
+    licor_files <- calculate_gm_ubierna(licor_files)
 
     licor_files <- calculate_cc(
         licor_files,
@@ -281,7 +282,7 @@ if (PERFORM_CALCULATIONS) {
         # If p < 0.05 perform Dunnett's posthoc test
 
         # Perform Dunnett's Test
-        dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "wt")
+        dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
         print(dunnett_test_result)
 
         # Do more stats on drawdown
@@ -291,7 +292,7 @@ if (PERFORM_CALCULATIONS) {
         anova_result <- aov(drawdown_m_avg ~ event, data = rep_stats)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_m_avg']], g = rep_stats[['event']], control = "wt")
+        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_m_avg']], g = rep_stats[['event']], control = "WT")
         print(dunnett_test_result)
     }
 }

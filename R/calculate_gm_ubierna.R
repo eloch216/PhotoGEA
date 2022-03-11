@@ -1,6 +1,4 @@
-calculate_gm <- function(
-    licor_exdf
-)
+calculate_gm_ubierna <- function(licor_exdf)
 {
     # Make sure the required columns are defined
     required_columns <- c(
