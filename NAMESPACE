@@ -44,8 +44,10 @@ export(calculate_iwue)
 export(fit_ball_berry)
 export(fit_c3_vcmax)
 export(fit_c4_aci)
-export(fit_variable_j_gjrttv)
-export(fit_variable_j_gjrtv)
+export(fit_variable_j_jrv)
+export(fit_variable_j_jrvtt)
+export(fit_variable_j_jrv_tau)
+export(fit_variable_j_jrv_tpu)
 
 # Convenience functions for plotting
 export(avg_xyplot)

@@ -87,8 +87,9 @@ REP_COLUMN_NAME <- "replicate"
 
 A_COLUMN_NAME <- "A"
 CI_COLUMN_NAME <- "Ci"
+TLEAF_COLUMN_NAME <- "TleafCnd"
+ETR_COLUMN_NAME <- "ETR"
 MEASUREMENT_NUMBER_NAME <- "obs"
-PHIPS2_COLUMN_NAME <- "PhiPS2"
 QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
 
@@ -177,34 +178,93 @@ if (PERFORM_CALCULATIONS) {
         EVENT_COLUMN_NAME
     )
 
-    # Perform the variable J fitting analysis using the `nmkb` optimizer from the
-    # `dfoptim` package. Here we allow Gamma_star, J_high, Rd, tau, TPU, and Vcmax
-    # to vary during the fits, keeping Ko, Kc, and O fixed. Before performing the
-    # fits, we truncate the data to the specified Ci range.
-    variable_j_results <- fit_variable_j_gjrttv(
-        all_samples[
-            all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
-            all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
-        UNIQUE_ID_COLUMN_NAME,
-        function(guess, fun, lower, upper) {
-            dfoptim::nmkb(guess, fun, lower, upper, control = list(
-                tol = 1e-7,
-                maxfeval = 2000,
-                restarts.max = 10
-            ))
-        },
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PHIPS2_COLUMN_NAME,
-        QIN_COLUMN_NAME,
-    )
+    # Determine if there is fluorescence data
+    PHIPS2_COLUMN_NAME <- if ("PhiPs2" %in% colnames(all_samples)) {
+        "PhiPs2"
+    } else if ("PhiPS2" %in% colnames(all_samples)) {
+        "PhiPS2"
+    } else {
+        NULL
+    }
+
+    # If there is fluorescence data, use it to get an estimate for `tau`.
+    # Otherwise, just use a typical value.
+    tau_estimate <- if(is.null(PHIPS2_COLUMN_NAME)) {
+        0.42
+    } else {
+        mean(all_samples[[ETR_COLUMN_NAME]] /
+            (all_samples[[PHIPS2_COLUMN_NAME]] * all_samples[[QIN_COLUMN_NAME]]))
+    }
+
+    KEEP_TAU_FIXED <- FALSE
+    variable_j_results <- if (KEEP_TAU_FIXED) {
+        # Perform the variable J fitting using Ursula's method, which follows
+        # the general strategy of Moualeu-Ngangue et al. (2017) with the
+        # following specifications: (1) we disable TPU limitations by fixing TPU
+        # to a high value, (2) we use the value of `tau` from the Licor files,
+        # and (3) we use the temperature response functions from Sharkey et al.
+        # (2007). This leaves J_high, Rd, and Vcmax as fitting parameters.
+        #
+        # Here, the fitting is performed with the `nmkb` optimizer from the
+        # `dfoptim` package. Before performing the fits, we truncate the data to
+        # the specified Ci range.
+        fit_variable_j_jrv(
+            all_samples[
+                all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
+                all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
+            UNIQUE_ID_COLUMN_NAME,
+            A_COLUMN_NAME,
+            CI_COLUMN_NAME,
+            PHIPS2_COLUMN_NAME,
+            QIN_COLUMN_NAME,
+            TLEAF_COLUMN_NAME,
+            c3_photosynthesis_parameters_Sharkey,
+            function(guess, fun, lower, upper) {
+                dfoptim::nmkb(guess, fun, lower, upper, control = list(
+                    tol = 1e-7,
+                    maxfeval = 2000,
+                    restarts.max = 10
+                ))
+            },
+            TPU = 1000,
+            tau = tau_estimate
+        )
+    } else {
+        # Perform the variable J fitting using a modification of Ursula's
+        # method, which follows the general strategy of Moualeu-Ngangue et al.
+        # (2017) with the following specifications: (1) we disable TPU
+        # limitations by fixing TPU to a high value, (2) we allow `tau` to vary,
+        # and (3) we use the temperature response functions from Sharkey et al.
+        # (2007). This leaves J_high, Rd, Vcmax, and tau as fitting parameters.
+        #
+        # Here, the fitting is performed with the `nmkb` optimizer from the
+        # `dfoptim` package. Before performing the fits, we truncate the data to
+        # the specified Ci range.
+        fit_variable_j_jrv_tau(
+            all_samples[
+                all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
+                all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
+            UNIQUE_ID_COLUMN_NAME,
+            A_COLUMN_NAME,
+            CI_COLUMN_NAME,
+            PHIPS2_COLUMN_NAME,
+            QIN_COLUMN_NAME,
+            TLEAF_COLUMN_NAME,
+            c3_photosynthesis_parameters_Sharkey,
+            function(guess, fun, lower, upper) {
+                dfoptim::nmkb(guess, fun, lower, upper, control = list(
+                    tol = 1e-7,
+                    maxfeval = 2000,
+                    restarts.max = 10
+                ))
+            },
+            TPU = 1000
+        )
+    }
 
     # Separate the parameters and the fitted curves
     variable_j_parameters <- variable_j_results[['parameters']]
     variable_j_fits <- variable_j_results[['fits']]
-
-    # View the fitted parameter values
-    View(variable_j_parameters)
 }
 
 # Make a subset of the full result for just the one measurement point
@@ -219,6 +279,7 @@ variable_j_fits_one_point <- factorize_id_column(variable_j_fits_one_point, EVEN
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(variable_j_parameters)
+    View(variable_j_fits_one_point)
 }
 
 ###                                   ###
