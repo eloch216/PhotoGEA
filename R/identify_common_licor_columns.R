@@ -64,7 +64,7 @@ identify_common_licor_columns <- function(exdf_objs, verbose) {
         columns_from_file[columns_from_file %in% common_column_names]
 
     # Truncate the names (so they are no longer fancy)
-    common_columns <- gsub(" .+$", "", ordered_common_column_names)
+    common_columns <- gsub(" [[].+$", "", ordered_common_column_names)
 
     return(common_columns)
 }
