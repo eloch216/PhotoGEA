@@ -1,3 +1,11 @@
+# Replace any variations of "WT" (e.g. "WT ", "wt", etc) in the event names
+# with a standardized version: "WT"
+fix_wt <- function(event_names) {
+    is_wt <- tolower(trimws(event_names)) == "wt"
+    event_names[is_wt] <- "WT"
+    return(event_names)
+}
+
 process_id_columns <- function(
     licor_exdf,
     event_column_name,
@@ -21,10 +29,8 @@ process_id_columns <- function(
     licor_exdf[,rep_column_name] <-
         trimws(as.character(licor_exdf[,rep_column_name]))
 
-    # Replace any variations of "WT" (e.g. "WT ", "wt", etc) in the event column
-    # with a standardized version: "WT"
-    is_wt <- tolower(trimws(licor_exdf[,event_column_name])) == "wt"
-    licor_exdf[,event_column_name][is_wt] <- "WT"
+    # Standardize the WT event name
+    licor_exdf[,event_column_name] <- fix_wt(licor_exdf[,event_column_name])
 
     # Add a new column that uniquely identifies each measurement by its event
     # and replicate names

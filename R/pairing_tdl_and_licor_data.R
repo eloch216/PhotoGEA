@@ -143,7 +143,7 @@ get_genotype_info_from_licor_filename <- function(licor_exdf) {
         plant_specification1 <- strsplit(plant_specification1, "-")[[1]]
 
         g <- plant_specification1[1]
-        e <- plant_specification1[2]
+        e <- fix_wt(plant_specification1[2])
         r <- plant_specification1[3]
     } else {
         # Remove the period and the extension
