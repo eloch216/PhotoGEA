@@ -153,7 +153,7 @@ get_genotype_info_from_licor_filename <- function(licor_exdf) {
         plant_specification2 <- strsplit(plant_specification2, " ")[[1]]
 
         g <- plant_specification2[2]
-        e <- plant_specification2[3]
+        e <- fix_wt(plant_specification2[3])
         r <- plant_specification2[4]
     }
 
