@@ -248,7 +248,7 @@ pair_licor_and_tdl <- function(
     for (i in seq_len(nrow(licor_file[['main_data']]))) {
         # Find the TDL cycle that contains the closest time to the Licor data
         # point time
-        licor_time <- licor_file[,licor_timestamp_column_name][i]
+        licor_time <- licor_file[['main_data']][[licor_timestamp_column_name]][i]
         time_differences <- abs(difftime(
             tdl_data[[tdl_timestamp_column_name]],
             licor_time,
