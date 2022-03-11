@@ -53,8 +53,6 @@ library(RColorBrewer)
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                   ###
 
-INCLUDE_FLUORESCENCE <- TRUE
-
 # Decide whether to load new data and calculate stats. If the data has already
 # been loaded and the script is being run to tweak the plotting parameters, then
 # set PERFORM_CALCULATIONS to FALSE to save a little time. If this is the first
@@ -110,7 +108,6 @@ CI_COLUMN_NAME <- "Ci"
 A_COLUMN_NAME <- "A"
 PRESSURE_COLUMN_NAME <- "Pa"
 DELTA_PRESSURE_COLUMN_NAME <- "DeltaPcham"  # the name of this column is modified from ΔPcham
-PHIPS2_COLUMN_NAME <- "PhiPS2"
 ETR_COLUMN_NAME <- "ETR"
 TIME_COLUMN_NAME <- "time"
 
@@ -225,6 +222,21 @@ if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats)
     View(all_fit_parameters)
+}
+
+# Determine if there is fluorescence data
+PHIPS2_COLUMN_NAME <- if ("PhiPs2" %in% colnames(all_samples)) {
+    "PhiPs2"
+} else if ("PhiPS2" %in% colnames(all_samples)) {
+    "PhiPS2"
+} else {
+    NULL
+}
+
+INCLUDE_FLUORESCENCE <- if(is.null(PHIPS2_COLUMN_NAME)) {
+    FALSE
+} else {
+    TRUE
 }
 
 ###                                    ###
