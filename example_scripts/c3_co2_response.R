@@ -58,7 +58,7 @@ library(RColorBrewer)
 # time running the script in a particular R session or for a particular data
 # set, the data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS
 # to TRUE.
-PERFORM_CALCULATIONS <- FALSE
+PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
