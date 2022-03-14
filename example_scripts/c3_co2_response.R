@@ -200,7 +200,7 @@ if (PERFORM_CALCULATIONS) {
         KO_COLUMN_NAME,
         O2_COLUMN_NAME,
         TLEAF_COLUMN_NAME,
-        c3_photosynthesis_parameters_Bernacchi
+        photosynthesis_TRF(temperature_response_parameters_Bernacchi)
     )
 
     combined_info <- calculate_iwue(

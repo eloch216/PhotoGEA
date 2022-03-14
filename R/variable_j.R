@@ -88,7 +88,7 @@ dpmn_error <- function(
     PhiPSII_meas,  # dimensionless
     Qin_meas,      # micromol / m^2 / s
     Tleaf_meas,    # degrees C
-    PTR_FUN,       # a function such as `c3_photosynthesis_parameters_Sharkey`
+    PTR_FUN,       # a function such as `photosynthesis_TRF(temperature_response_parameters_Sharkey)`
     O,             # mmol / mol
     J_high,        # micromol / m^2 / s (value at 25 degrees C)
     Rd,            # micromol / m^2 / s (value at 25 degrees C)

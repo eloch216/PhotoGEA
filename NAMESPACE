@@ -32,9 +32,7 @@ export(write_excel_formula)
 
 # Functions for scientific analysis
 export(basic_stats)
-export(c3_photosynthesis_parameters_Bernacchi)
-export(c3_photosynthesis_parameters_Sharkey)
-export(c4_photosynthesis_parameters_von_Caemmerer)
+export(photosynthesis_TRF)
 export(calculate_ball_berry_index)
 export(calculate_cc)
 export(calculate_fprime)

@@ -30,7 +30,7 @@ c4_aci <- function(
     An,      # micromol / m^2 / s   (typically this value comes from Licor measurements)
     Ci,      # microbar             (typically this value comes from Licor measurements)
     Tleaf,   # degrees C            (typically this value comes from Licor measurements)
-    PTR_FUN, # a function such as `c4_photosynthesis_parameters_von_Caemmerer`
+    PTR_FUN, # a function such as `photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)`
     Om,      # microbar             (typically this value is known from the experimental setup)
     gbs,     # mol / m^2 / s / bar  (typically this value is fixed)
     Vpmax,   # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
@@ -182,7 +182,7 @@ fit_c4_aci <- function(
     PRESSURE_COLUMN_NAME,        # kPa
     DELTA_PRESSURE_COLUMN_NAME,  # kPa
     TLEAF_COLUMN_NAME,           # degrees C
-    PTR_FUN = c4_photosynthesis_parameters_von_Caemmerer,
+    PTR_FUN = photosynthesis_TRF(temperature_response_parameters_von_Caemmerer),
     Om = 210000,                 # microbar
     gbs = 0.003,                 # mol / m^2 / s / bar
     initial_guess = list(Vpmax = 150, Vcmax = 30)

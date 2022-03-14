@@ -198,7 +198,7 @@ if (PERFORM_CALCULATIONS) {
         PHIPS2_COLUMN_NAME,
         QIN_COLUMN_NAME,
         TLEAF_COLUMN_NAME,
-        c3_photosynthesis_parameters_Sharkey,
+        photosynthesis_TRF(temperature_response_parameters_Sharkey),
         function(guess, fun, lower, upper) {
             dfoptim::nmkb(guess, fun, lower, upper, control = list(
                 tol = 1e-7,
