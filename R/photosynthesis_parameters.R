@@ -170,8 +170,8 @@ c3_photosynthesis_parameters_Sharkey <- function(
 #
 # Some of these parameters (Vcmax and Vpmax) are normalized to their values
 # at 25 degrees C. Rd is normalized to the value of Vcmax at 25 degrees C.
-# The remaining parameters are not normalized because they are assumed to not
-# vary significantly between species.
+# The remaining parameters (Kc, Ko, Kp, gamma_star, ao, and gm) are not
+# normalized because they are assumed to not vary significantly between species.
 #
 # Here we use Arrhenius functions to calculate the temperature-dependent values,
 # where the scaling factors (c; dimensionless) and enthalpy values
