@@ -94,6 +94,9 @@ NUM_OBS_IN_SEQ <- 13
 MEASUREMENT_NUMBERS <- c(1:7, 10:13)
 POINT_FOR_BOX_PLOTS <- 1
 
+# Specify a Ci upper limit to use for fitting
+CI_UPPER_LIMIT <- Inf # ppm
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -110,6 +113,7 @@ PRESSURE_COLUMN_NAME <- "Pa"
 DELTA_PRESSURE_COLUMN_NAME <- "DeltaPcham"  # the name of this column is modified from ΔPcham
 ETR_COLUMN_NAME <- "ETR"
 TIME_COLUMN_NAME <- "time"
+TLEAF_COLUMN_NAME <- "TleafCnd"
 
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
@@ -194,13 +198,13 @@ if (PERFORM_CALCULATIONS) {
 
     # Perform A-Ci fits
     fit_result <- fit_c4_aci(
-        all_samples,
+        all_samples[all_samples[[CI_COLUMN_NAME]] < CI_UPPER_LIMIT,],
         UNIQUE_ID_COLUMN_NAME,
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
         PRESSURE_COLUMN_NAME,
         DELTA_PRESSURE_COLUMN_NAME,
-        GM_COLUMN_NAME
+        TLEAF_COLUMN_NAME
     )
     all_fit_parameters <- fit_result[['parameters']]
     all_fits <- fit_result[['fits']]
@@ -300,7 +304,7 @@ multi_aci_curves <- xyplot(
     main = ind_caption,
     xlab = "Intercellular [CO2] (ppm)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(-10, 60),
+    ylim = c(-5, 65),
     xlim = c(-100, 1600),
     par.settings = list(
         superpose.line = list(col = default_colors),
@@ -372,10 +376,9 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax']],          X = x_p, xlab = xl, ylab = "Vcmax (micromol / m^2 / s)",                      ylim = c(0, 65),    main = fitting_caption),
-  list(Y = all_fit_parameters[['Vpmax']],          X = x_p, xlab = xl, ylab = "Vpmax (micromol / m^2 / s)",                      ylim = c(0, 135),   main = fitting_caption),
-  list(Y = all_fit_parameters[['gbs']],            X = x_p, xlab = xl, ylab = "Bundle sheath conductance (mol / m^2 / s / bar)", ylim = c(0, 0.003), main = fitting_caption),
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",  ylim = c(0, 60),    main = boxplot_caption)
+  list(Y = all_fit_parameters[['Vcmax']],          X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vpmax']],          X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 60),   main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {

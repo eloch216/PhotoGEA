@@ -19,6 +19,14 @@ basic_stats_column <- function(column, name, npts) {
 }
 
 basic_stats_chunk <- function(chunk) {
+    # Get the number of rows in the chunk
+    npts <- nrow(chunk)
+
+    # If there is only one row, it doesn't make sense to calculate stats
+    if (npts < 2) {
+        return(NULL)
+    }
+
     # Find the identifier columns and their names
     id_columns <- find_identifier_columns(chunk)
     id_column_names <- names(id_columns)
@@ -27,9 +35,6 @@ basic_stats_chunk <- function(chunk) {
     all_column_names <- colnames(chunk)
     other_column_names <-
         all_column_names[!all_column_names %in% id_column_names]
-
-    # Get the number of rows in the chunk
-    npts <- nrow(chunk)
 
     # Calculate basic stats for each non-id column
     stats <- lapply(
@@ -44,7 +49,7 @@ basic_stats_chunk <- function(chunk) {
 basic_stats <- function(
     dataframe,
     factor_column_names,
-    columns_to_exclude = c('obs', 'elapsed')
+    columns_to_exclude = c('time', 'TIME', 'time.1', 'TIME.1', 'obs', 'elapsed')
 )
 {
     factor_columns <- lapply(factor_column_names, function(x) {dataframe[[x]]})
