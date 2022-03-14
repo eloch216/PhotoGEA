@@ -95,7 +95,7 @@ MEASUREMENT_NUMBERS <- c(1:7, 10:13)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
-CI_UPPER_LIMIT <- 800 # ppm
+CI_UPPER_LIMIT <- Inf # ppm
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -378,7 +378,6 @@ xl <- "Genotype"
 plot_param <- list(
   list(Y = all_fit_parameters[['Vcmax']],          X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
   list(Y = all_fit_parameters[['Vpmax']],          X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
-  list(Y = all_fit_parameters[['gbs']],            X = x_p, xlab = xl, ylab = "Bundle sheath conductance at 25 C (mol / m^2 / s / bar)", ylim = c(0, 0.01), main = fitting_caption),
   list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 60),   main = boxplot_caption)
 )
 

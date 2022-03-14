@@ -32,7 +32,7 @@ c4_aci <- function(
     Tleaf,   # degrees C            (typically this value comes from Licor measurements)
     PTR_FUN, # a function such as `c4_photosynthesis_parameters_von_Caemmerer`
     Om,      # microbar             (typically this value is known from the experimental setup)
-    gbs,     # mol / m^2 / s / bar  (typically this value is being fitted)
+    gbs,     # mol / m^2 / s / bar  (typically this value is fixed)
     Vpmax,   # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vcmax    # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
 )
@@ -101,6 +101,7 @@ fit_c4_aci_replicate <- function(
     TLEAF_COLUMN_NAME,           # degrees C
     PTR_FUN,
     Om,                          # microbar
+    gbs,                         # mol / m^2 / s / bar
     initial_guess
 )
 {
@@ -145,9 +146,8 @@ fit_c4_aci_replicate <- function(
     fit_summary <- summary(aci_fit)
     fit_coeff <- fit_summary[['coefficients']]
 
-    gbs <- fit_coeff[1,1]
-    Vpmax <- fit_coeff[2,1]
-    Vcmax <- fit_coeff[3,1]
+    Vpmax <- fit_coeff[1,1]
+    Vcmax <- fit_coeff[2,1]
 
     sum_squared_residuals <- sum((fit_summary[['residuals']])^2)
 
@@ -162,7 +162,6 @@ fit_c4_aci_replicate <- function(
         parameters = c(
             find_identifier_columns(replicate_data_frame),
             list(
-                gbs = gbs,
                 Vpmax = Vpmax,
                 Vcmax = Vcmax,
                 sum_squared_residuals = sum_squared_residuals,
@@ -185,7 +184,8 @@ fit_c4_aci <- function(
     TLEAF_COLUMN_NAME,           # degrees C
     PTR_FUN = c4_photosynthesis_parameters_von_Caemmerer,
     Om = 210000,                 # microbar
-    initial_guess = list(gbs = 0.003, Vpmax = 150, Vcmax = 30)
+    gbs = 0.003,                 # mol / m^2 / s / bar
+    initial_guess = list(Vpmax = 150, Vcmax = 30)
 )
 {
     apply_fit_function_across_reps(
@@ -198,6 +198,7 @@ fit_c4_aci <- function(
         TLEAF_COLUMN_NAME,
         PTR_FUN,
         Om,
+        gbs,
         initial_guess,
         FUN = fit_c4_aci_replicate
     )
