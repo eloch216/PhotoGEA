@@ -7,12 +7,24 @@
 # - Intercellular CO2 concentration (Ci_meas)
 # - Efficiency of photosystem II (PhiPSII_meas)
 # - Incident photosynthetically active photon flux density (Qin_meas)
+# - Leaf temperature (Tleaf_meas)
 #
-# The remaining inputs are not directly measured during gas exchange. While some
-# of them can be considered to have fixed values, at least one should be varied
-# to minimize the square of the error calculated by this function. For example,
-# one could vary Gamma_star, J_high, Rd, tau, and Vcmax while using fixed values
-# for Kc, Ko, O, and TPU. In most cases O will take a fixed value.
+# The value of the oxygen concentration (O) is typically known from the
+# measurement setup and will often be either 210 mmol / mol (= 21%, the typical
+# value for air) or 20 mmol / mol (= 2%, a typical value for low-oxygen
+# measurements).
+#
+# The values of J_high, Rd, and Vcmax should be the values at 25 degrees C and
+# will be rescaled according to the leaf temperature. The temperature response
+# functions are determined by the "photosynthesis temperature response function"
+# (PTR_FUN), which also calculates temperature-dependent values for Kc, Ko, and
+# Gamma_star. In this function, TPU is not considered to depend on temperature.
+#
+# The values of J_high, Rd, Vcmax, tau, and TPU are not directly measured during
+# gas exchange. While some of these can be considered to have fixed values, at
+# least one should be varied to minimize the error calculated by this function.
+# For example, one could vary J_high, Rd, and Vcmax while using fixed values for
+# tau and TPU.
 #
 # To determine an error value, we first estimate J from the fluorescence data
 # (i.e., PhiPSII), which can subsequently be used to estimate mesophyll
@@ -35,7 +47,11 @@
 #
 # 1. Measured values of PhiPSII and Qin are used to estimate the electron
 #    transfer rate J using Equation 5, where the alpha and beta factors have
-#    been combined into one factor (tau) as explained in the text.
+#    been combined into one factor (tau) as explained in the text. Note that a
+#    if fluorescence measurements are made with a Licor, an assumed value for
+#    tau is used to calculate the electron transport rate (ETR; identical to J).
+#    Its value can be determined by calculating ETR / (PhiPs2 * Qin); this can
+#    be a good value to choose if tau is not being fitted.
 #
 # 2. Along with the estimated value of J, the measured values of net
 #    assimilation (An) and intercellular CO2 concentration (Ci) are used to
@@ -71,22 +87,34 @@ dpmn_error <- function(
     Ci_meas,       # micromol / mol
     PhiPSII_meas,  # dimensionless
     Qin_meas,      # micromol / m^2 / s
-    Gamma_star,    # micromol / mol
-    J_high,        # micromol / m^2 / s
-    Kc,            # micromol / mol
-    Ko,            # mmol / mol
+    Tleaf_meas,    # degrees C
+    PTR_FUN,       # a function such as `photosynthesis_TRF(temperature_response_parameters_Sharkey)`
     O,             # mmol / mol
-    Rd,            # micromol / m^2 / s
+    J_high,        # micromol / m^2 / s (value at 25 degrees C)
+    Rd,            # micromol / m^2 / s (value at 25 degrees C)
+    Vcmax,         # micromol / m^2 / s (value at 25 degrees C)
     tau,           # dimensionless
-    TPU,           # micromol / m^2 / s
-    Vcmax          # micromol / m^2 / s
+    TPU            # micromol / m^2 / s
 )
 {
+    # Calculate temperature-dependent parameter values
+    photo_param <- PTR_FUN(Tleaf_meas)
+
+    # Extract Ko, Kc, and Gamma_star
+    Ko = photo_param$Ko                  # mmol / mol
+    Kc = photo_param$Kc                  # micromol / mol
+    Gamma_star = photo_param$Gamma_star  # micromol / mol
+
+    # Apply temperature response to J_high, Rd, and Vcmax
+    J_high_tl <- J_high * photo_param$J    # micromol / m^2 / s
+    Rd_tl <- Rd * photo_param$Rd           # micromol / m^2 / s
+    Vcmax_tl <- Vcmax * photo_param$Vcmax  # micromol / m^2 / s
+
     # Estimate J (micromol / m^2 / s) from fluourescence measurements
     J_fluor <- tau * Qin_meas * PhiPSII_meas
 
     # Estimate gross assimilation Ag (micromol / m^2 / s)
-    Ag <- An_meas + Rd
+    Ag <- An_meas + Rd_tl
 
     # Estimate mesophyll conductance gm (mol / m^2 / s)
     gm <- An_meas * (J_fluor - 4 * Ag) /
@@ -96,13 +124,13 @@ dpmn_error <- function(
     Cc <- Ci_meas - An_meas / gm
 
     # Estimate Rubisco-limited carbon assimilation Ac (micromol / m^2 / s)
-    Ac <- Vcmax * (Cc - Gamma_star) / (Cc + Kc * (1 + O / Ko)) - Rd
+    Ac <- Vcmax_tl * (Cc - Gamma_star) / (Cc + Kc * (1 + O / Ko)) - Rd_tl
 
     # Estimate RuBP-regeneration-limited assimilation Aj (micromol / m^2 / s)
-    Aj <- J_high * (Cc - Gamma_star) / (4 * Cc + 8 * Gamma_star) - Rd
+    Aj <- J_high_tl * (Cc - Gamma_star) / (4 * Cc + 8 * Gamma_star) - Rd_tl
 
     # Estimate triphosphate-utilization-limited assimilation Ap (micromol / m^2 / s)
-    Ap <- 3 * TPU - Rd
+    Ap <- 3 * TPU - Rd_tl
 
     # Estimate the overall carbon assimilation rate An (micromol / m^2 / s)
     An_estimate <- min(Ac, Aj, Ap)
@@ -133,11 +161,12 @@ dpmn_error <- function(
 # function as its `FUN` argument. A user shouldn't be directly calling this
 # function, so don't provide default arguments here.
 #
-# ERROR_FUN should expect five inputs: An, Ci, PhiPSII, Qin, and X, where X is a
-# numeric vector of named elements and the others are single numeric values.
-# ERROR_FUN should be created from `dpmn_error` using partial application, i.e.,
-# by fixing some of the input arguments. The elements of X should represent the
-# remaining (non-fixed) inputs and will be passed to `dpmn_error`.
+# ERROR_FUN should expect seven inputs: An, Ci, PhiPSII, Qin, Tl, PTR_FUN, and
+# X, where X is a numeric vector of named elements, PTR_FUN is a temperature
+# response function, and the others are single numeric values. ERROR_FUN should
+# be created from `dpmn_error` using partial application, i.e., by fixing some
+# of the input arguments. The elements of X should represent the remaining
+# (non-fixed) inputs and will be passed to `dpmn_error`.
 #
 # OPTIM_FUN must be an optimization function that accepts the following input
 # arguments: an initial guess, an error function, lower bounds, and upper
@@ -156,8 +185,10 @@ fit_variable_j_replicate <- function(
     CI_COLUMN_NAME,
     PHIPS2_COLUMN_NAME,
     QIN_COLUMN_NAME,
-    ERROR_FUN,
+    TLEAF_COLUMN_NAME,
+    PTR_FUN,
     OPTIM_FUN,
+    ERROR_FUN,
     initial_guess,
     lower,
     upper
@@ -180,6 +211,8 @@ fit_variable_j_replicate <- function(
             rowdata[[CI_COLUMN_NAME]],
             rowdata[[PHIPS2_COLUMN_NAME]],
             rowdata[[QIN_COLUMN_NAME]],
+            rowdata[[TLEAF_COLUMN_NAME]],
+            PTR_FUN,
             X
         )
     }
@@ -258,16 +291,17 @@ fit_variable_j_replicate <- function(
     ))
 }
 
-#############################################################
-##                                                         ##
-## FUNCTIONS FOR USING PARTIAL APPLICATION WITH dpmn_error ##
-##                                                         ##
-#############################################################
+#########################################################
+##                                                     ##
+## FUNCTIONS USING PARTIAL APPLICATION WITH dpmn_error ##
+##                                                     ##
+#########################################################
 
-# Uses partial application to fix the Kc, Ko, O, and TPU inputs of the
-# `dpmn_error` function, creating a function suitable for passing to the
-# `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
-# function has the following inputs:
+
+# Uses partial application to fix the O input of the `dpmn_error` function,
+# creating a function suitable for passing to the `fit_variable_j_replicate`
+# function as its ERROR_FUN argument. The return function has the following
+# inputs:
 #
 # - An_meas: same as the input to `dpmn_error`
 #
@@ -277,47 +311,37 @@ fit_variable_j_replicate <- function(
 #
 # - Qin_meas: same as the input to `dpmn_error`
 #
+# - Tleaf_meas: same as the input to `dpmn_error`
+#
+# - PTR_FUN: same as the input to `dpmn_error`
+#
 # - X: a vector with 5 elements representing the remaining non-fixed inputs to
-#   `dpmn_error`: Gamma_star, J_high, Rd, tau, Vcmax
+#   `dpmn_error`: J_high, Rd, Vcmax, tau, TPU
 #
 # The acronym at the end of this function's name is derived from the first
 # letters of the non-fixed inputs. This function is not intended to be called
 # directly by a user.
 #
-dpmn_error_gjrtv <- function(
-    Kc,  # micromol / mol
-    Ko,  # mmol / mol
-    O,   # mmol / mol
-    TPU  # micromol / m^2 / s
+dpmn_error_jrvtt <- function(
+    O  # mmol / mol
 )
 {
-    function(
-        An_meas,
-        Ci_meas,
-        PhiPSII_meas,
-        Qin_meas,
-        X
-    )
+    function(An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN, X)
     {
         dpmn_error(
-            An_meas,
-            Ci_meas,
-            PhiPSII_meas,
-            Qin_meas,
-            X[1],  # Gamma_star
-            X[2],  # J_high
-            Kc,
-            Ko,
+            An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN,
             O,
-            X[3],  # Rd
-            X[4],  # tau
-            TPU,
-            X[5]   # Vcmax
+            X[1], # J_high
+            X[2], # Rd
+            X[3], # Vcmax
+            X[4], # tau
+            x[5]  # TPU
         )
     }
 }
 
-# Uses partial application to fix the Kc, Ko, and O inputs of the `dpmn_error`
+
+# Uses partial application to fix the O and TPU inputs of the `dpmn_error`
 # function, creating a function suitable for passing to the
 # `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
 # function has the following inputs:
@@ -330,62 +354,144 @@ dpmn_error_gjrtv <- function(
 #
 # - Qin_meas: same as the input to `dpmn_error`
 #
-# - X: a vector with 5 elements representing the remaining non-fixed inputs to
-#   `dpmn_error`: Gamma_star, J_high, Rd, tau, TPU, Vcmax
+# - Tleaf_meas: same as the input to `dpmn_error`
+#
+# - PTR_FUN: same as the input to `dpmn_error`
+#
+# - X: a vector with 4 elements representing the remaining non-fixed inputs to
+#   `dpmn_error`: J_high, Rd, Vcmax, tau
 #
 # The acronym at the end of this function's name is derived from the first
 # letters of the non-fixed inputs. This function is not intended to be called
 # directly by a user.
 #
-dpmn_error_gjrttv <- function(
-    Kc,  # micromol / mol
-    Ko,  # mmol / mol
-    O    # mmol / mol
+dpmn_error_jrv_tau <- function(
+    O,   # mmol / mol
+    TPU  # micromol / m^2 / s
 )
 {
-    function(
-        An_meas,
-        Ci_meas,
-        PhiPSII_meas,
-        Qin_meas,
-        X
-    )
+    function(An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN, X)
     {
         dpmn_error(
-            An_meas,
-            Ci_meas,
-            PhiPSII_meas,
-            Qin_meas,
-            X[1],  # Gamma_star
-            X[2],  # J_high
-            Kc,
-            Ko,
+            An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN,
             O,
-            X[3],  # Rd
-            X[4],  # tau
-            X[5],  # TPU,
-            X[6]   # Vcmax
+            X[1], # J_high
+            X[2], # Rd
+            X[3], # Vcmax
+            X[4], # tau
+            TPU
+        )
+    }
+}
+
+# Uses partial application to fix the O and tau inputs of the `dpmn_error`
+# function, creating a function suitable for passing to the
+# `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
+# function has the following inputs:
+#
+# - An_meas: same as the input to `dpmn_error`
+#
+# - Ci_meas: same as the input to `dpmn_error`
+#
+# - PhiPSII_meas: same as the input to `dpmn_error`
+#
+# - Qin_meas: same as the input to `dpmn_error`
+#
+# - Tleaf_meas: same as the input to `dpmn_error`
+#
+# - PTR_FUN: same as the input to `dpmn_error`
+#
+# - X: a vector with 4 elements representing the remaining non-fixed inputs to
+#   `dpmn_error`: J_high, Rd, Vcmax, TPU
+#
+# The acronym at the end of this function's name is derived from the first
+# letters of the non-fixed inputs. This function is not intended to be called
+# directly by a user.
+#
+dpmn_error_jrv_tpu <- function(
+    O,   # mmol / mol
+    tau  # dimensionless
+)
+{
+    function(An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN, X)
+    {
+        dpmn_error(
+            An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN,
+            O,
+            X[1], # J_high
+            X[2], # Rd
+            X[3], # Vcmax
+            tau,
+            X[4]  # TPU
         )
     }
 }
 
 
+# Uses partial application to fix the O, tau, and TPU inputs of the `dpmn_error`
+# function, creating a function suitable for passing to the
+# `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
+# function has the following inputs:
+#
+# - An_meas: same as the input to `dpmn_error`
+#
+# - Ci_meas: same as the input to `dpmn_error`
+#
+# - PhiPSII_meas: same as the input to `dpmn_error`
+#
+# - Qin_meas: same as the input to `dpmn_error`
+#
+# - Tleaf_meas: same as the input to `dpmn_error`
+#
+# - PTR_FUN: same as the input to `dpmn_error`
+#
+# - X: a vector with 4 elements representing the remaining non-fixed inputs to
+#   `dpmn_error`: J_high, Rd, and Vcmax
+#
+# The acronym at the end of this function's name is derived from the first
+# letters of the non-fixed inputs. This function is not intended to be called
+# directly by a user.
+#
+dpmn_error_jrv <- function(
+    O,   # mmol / mol
+    tau, # dimensionless
+    TPU  # micromol / m^2 / s
+)
+{
+    function(An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN, X)
+    {
+        dpmn_error(
+            An_meas, Ci_meas, PhiPSII_meas, Qin_meas, Tleaf_meas, PTR_FUN,
+            O,
+            X[1], # J_high
+            X[2], # Rd
+            X[3], # Vcmax
+            tau,
+            TPU
+        )
+    }
+}
 
-fit_variable_j_gjrtv <- function(
+##############################################
+##                                          ##
+## FITTING FUNCTIONS TO BE CALLED BY A USER ##
+##                                          ##
+##############################################
+
+fit_variable_j_jrvtt <- function(
     dataframe,
     replicate_column_name,
-    OPTIM_FUN,
     A_COLUMN_NAME,
     CI_COLUMN_NAME,
     PHIPS2_COLUMN_NAME,
     QIN_COLUMN_NAME,
-    Kc = 404,    # micromol / mol
-    Ko = 278,    # mmol / mol
-    O = 210,     # mmol / mol
-    TPU = 1000,  # micromol / m^2 / s
-    initial_guess = c(Gamma_star = 37, J_high = 110, Rd = 1, tau = 0.47, Vcmax = 100),
-    lower = c(0, 0, 0, 0.2, 0),
-    upper = c(500, 500, 10, 0.6, 500)
+    TLEAF_COLUMN_NAME,
+    PTR_FUN,
+    OPTIM_FUN,
+    O = 210,
+    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42, TPU = 13),
+    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2,  TPU = 0),
+    upper =         c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6,  TPU = 20)
 )
 {
     apply_fit_function_across_reps(
@@ -395,8 +501,10 @@ fit_variable_j_gjrtv <- function(
         CI_COLUMN_NAME,
         PHIPS2_COLUMN_NAME,
         QIN_COLUMN_NAME,
-        dpmn_error_gjrtv(Kc, Ko, O, TPU),
+        TLEAF_COLUMN_NAME,
+        PTR_FUN,
         OPTIM_FUN,
+        dpmn_error_jrvtt(O),
         initial_guess,
         lower,
         upper,
@@ -404,20 +512,21 @@ fit_variable_j_gjrtv <- function(
     )
 }
 
-fit_variable_j_gjrttv <- function(
+fit_variable_j_jrv_tau <- function(
     dataframe,
     replicate_column_name,
-    OPTIM_FUN,
     A_COLUMN_NAME,
     CI_COLUMN_NAME,
     PHIPS2_COLUMN_NAME,
     QIN_COLUMN_NAME,
-    Kc = 404,    # micromol / mol
-    Ko = 278,    # mmol / mol
-    O = 210,     # mmol / mol
-    initial_guess = c(Gamma_star = 37, J_high = 230, Rd = 3, tau = 0.3, TPU = 13, Vcmax = 300),
-    lower = c(0, 0, 0, 0.2, 0, 0),
-    upper = c(100, 500, 10, 0.6, 20, 500)
+    TLEAF_COLUMN_NAME,
+    PTR_FUN,
+    OPTIM_FUN,
+    O = 210,
+    TPU = 1000,
+    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42),
+    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2),
+    upper =         c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6)
 )
 {
     apply_fit_function_across_reps(
@@ -427,8 +536,81 @@ fit_variable_j_gjrttv <- function(
         CI_COLUMN_NAME,
         PHIPS2_COLUMN_NAME,
         QIN_COLUMN_NAME,
-        dpmn_error_gjrttv(Kc, Ko, O),
+        TLEAF_COLUMN_NAME,
+        PTR_FUN,
         OPTIM_FUN,
+        dpmn_error_jrv_tau(O, TPU),
+        initial_guess,
+        lower,
+        upper,
+        FUN = fit_variable_j_replicate
+    )
+}
+
+fit_variable_j_jrv_tpu <- function(
+    dataframe,
+    replicate_column_name,
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    PHIPS2_COLUMN_NAME,
+    QIN_COLUMN_NAME,
+    TLEAF_COLUMN_NAME,
+    PTR_FUN,
+    OPTIM_FUN,
+    O = 210,
+    tau = 0.42,
+    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, TPU = 13),
+    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   TPU = 0),
+    upper =         c(J_high = 500, Rd = 10, Vcmax = 500, TPU = 20)
+)
+{
+    apply_fit_function_across_reps(
+        dataframe,
+        replicate_column_name,
+        A_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        PHIPS2_COLUMN_NAME,
+        QIN_COLUMN_NAME,
+        TLEAF_COLUMN_NAME,
+        PTR_FUN,
+        OPTIM_FUN,
+        dpmn_error_jrv_tpu(O, tau),
+        initial_guess,
+        lower,
+        upper,
+        FUN = fit_variable_j_replicate
+    )
+}
+
+fit_variable_j_jrv <- function(
+    dataframe,
+    replicate_column_name,
+    A_COLUMN_NAME,
+    CI_COLUMN_NAME,
+    PHIPS2_COLUMN_NAME,
+    QIN_COLUMN_NAME,
+    TLEAF_COLUMN_NAME,
+    PTR_FUN,
+    OPTIM_FUN,
+    O = 210,
+    tau = 0.42,
+    TPU = 1000,
+    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100),
+    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0),
+    upper =         c(J_high = 500, Rd = 10, Vcmax = 500)
+)
+{
+    apply_fit_function_across_reps(
+        dataframe,
+        replicate_column_name,
+        A_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        PHIPS2_COLUMN_NAME,
+        QIN_COLUMN_NAME,
+        TLEAF_COLUMN_NAME,
+        PTR_FUN,
+        OPTIM_FUN,
+        dpmn_error_jrv(O, tau, TPU),
         initial_guess,
         lower,
         upper,

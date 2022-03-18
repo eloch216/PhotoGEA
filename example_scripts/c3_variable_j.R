@@ -87,8 +87,10 @@ REP_COLUMN_NAME <- "replicate"
 
 A_COLUMN_NAME <- "A"
 CI_COLUMN_NAME <- "Ci"
-MEASUREMENT_NUMBER_NAME <- "obs"
+TLEAF_COLUMN_NAME <- "TleafCnd"
+ETR_COLUMN_NAME <- "ETR"
 PHIPS2_COLUMN_NAME <- "PhiPS2"
+MEASUREMENT_NUMBER_NAME <- "obs"
 QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
 
@@ -151,8 +153,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
-        "10",
-        "14"
+        #"10", # T1
+        #"14"  # T1
     )
 
     all_samples <-
@@ -177,15 +179,26 @@ if (PERFORM_CALCULATIONS) {
         EVENT_COLUMN_NAME
     )
 
-    # Perform the variable J fitting analysis using the `nmkb` optimizer from the
-    # `dfoptim` package. Here we allow Gamma_star, J_high, Rd, tau, TPU, and Vcmax
-    # to vary during the fits, keeping Ko, Kc, and O fixed. Before performing the
-    # fits, we truncate the data to the specified Ci range.
-    variable_j_results <- fit_variable_j_gjrttv(
+    # Perform the variable J fitting using the general strategy of
+    # Moualeu-Ngangue et al. (2017) with the following specifications: (1) we
+    # disable TPU limitations by fixing TPU to a high value, (2) we allow `tau`
+    # to vary, and (3) we use the temperature response functions from Sharkey et
+    # al. (2007). This leaves J_high, Rd, Vcmax, and tau as fitting parameters.
+    #
+    # Here, the fitting is performed with the `nmkb` optimizer from the
+    # `dfoptim` package. Before performing the fits, we truncate the data to
+    # the specified Ci range.
+    variable_j_results <- fit_variable_j_jrv_tau(
         all_samples[
             all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
             all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
         UNIQUE_ID_COLUMN_NAME,
+        A_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        PHIPS2_COLUMN_NAME,
+        QIN_COLUMN_NAME,
+        TLEAF_COLUMN_NAME,
+        photosynthesis_TRF(temperature_response_parameters_Sharkey),
         function(guess, fun, lower, upper) {
             dfoptim::nmkb(guess, fun, lower, upper, control = list(
                 tol = 1e-7,
@@ -193,19 +206,17 @@ if (PERFORM_CALCULATIONS) {
                 restarts.max = 10
             ))
         },
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PHIPS2_COLUMN_NAME,
-        QIN_COLUMN_NAME,
+        TPU = 1000
     )
 
     # Separate the parameters and the fitted curves
     variable_j_parameters <- variable_j_results[['parameters']]
     variable_j_fits <- variable_j_results[['fits']]
-
-    # View the fitted parameter values
-    View(variable_j_parameters)
 }
+
+# Determine the value of `tau` assumed in the Licor files
+tau_licor <- mean(all_samples[[ETR_COLUMN_NAME]] /
+        (all_samples[[PHIPS2_COLUMN_NAME]] * all_samples[[QIN_COLUMN_NAME]]))
 
 # Make a subset of the full result for just the one measurement point
 variable_j_fits_one_point <-
@@ -219,6 +230,7 @@ variable_j_fits_one_point <- factorize_id_column(variable_j_fits_one_point, EVEN
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(variable_j_parameters)
+    View(variable_j_fits_one_point)
 }
 
 ###                                   ###
@@ -227,14 +239,8 @@ if (VIEW_DATA_FRAMES) {
 
 # Ignore particular replicates
 REPS_TO_IGNORE <- c(
-    #"36625-14 11",  # For T1
-    #"10 6",
-    #"14 2",
-    #"8 3",
-    #"8 4",
-    #"WT 3",
-    #"WT 4",
-    #"WT 6"
+    #"11 16", # T1
+    #"8 14"   # T1
 )
 
 fits_for_plotting <- variable_j_fits[!variable_j_fits[[UNIQUE_ID_COLUMN_NAME]] %in% REPS_TO_IGNORE,]
@@ -339,10 +345,50 @@ gm_cc_fitting_plot <- xyplot(
 x11(width = 12, height = 6)
 print(gm_cc_fitting_plot)
 
+# Plot the average estimated gm-Ci curves
+gm_ci_avg_plot <- avg_xyplot(
+    Y = fits_for_plotting$gm,
+    X = fits_for_plotting$Ci,
+    seq_num = fits_for_plotting$seq_num,
+    event = fits_for_plotting[[EVENT_COLUMN_NAME]],
+    x_error_bars = FALSE,
+    type = 'b',
+    pch = 20,
+    auto = TRUE,
+    grid = TRUE,
+    xlim = ci_range,
+    ylim = gm_range,
+    xlab = "Intercellular CO2 concentration (ppm)",
+    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+
+)
+x11(width = 12, height = 6)
+print(gm_ci_avg_plot)
+
+# Plot the average estimated gm-Cc curves
+gm_cc_avg_plot <- avg_xyplot(
+    Y = fits_for_plotting$gm,
+    X = fits_for_plotting$Cc,
+    seq_num = fits_for_plotting$seq_num,
+    event = fits_for_plotting[[EVENT_COLUMN_NAME]],
+    x_error_bars = FALSE,
+    type = 'b',
+    pch = 20,
+    auto = TRUE,
+    grid = TRUE,
+    xlim = cc_range,
+    ylim = gm_range,
+    xlab = "Chloroplast CO2 concentration (ppm)",
+    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+
+)
+x11(width = 12, height = 6)
+print(gm_cc_avg_plot)
+
 # Make box-whisker plots and bar charts for the selected measurement point
 
 # Define a caption
-boxplot_caption <- paste0(
+one_point_caption <- paste0(
     "Quartiles for measurement point ",
     POINT_FOR_BOX_PLOTS,
     "\n(where CO2 setpoint = ",
@@ -350,12 +396,20 @@ boxplot_caption <- paste0(
     ")"
 )
 
+fitting_caption <- "Fitted values"
+
+tau_caption <-
+    paste0(fitting_caption, "\n(Licor 6800 assumes a value of ", tau_licor, ")")
+
 # Define plotting parameters
 x <- fits_one_point_for_plotting[[EVENT_COLUMN_NAME]]
-xl <- "Genotype"
+xl <- "Event"
 plot_param <- list(
-  list(Y = fits_one_point_for_plotting$gm, X = x, xlab = xl, ylab = "Mesophyll conductance (mol / m^2 / s)", ylim = c(0, max(gm_range)), main = boxplot_caption),
-  list(Y = parameters_for_plotting$Vcmax,  X = x, xlab = xl, ylab = "Vcmax (micromol / m^2 / s)",            ylim = c(0, 500),           main = boxplot_caption)
+  list(Y = fits_one_point_for_plotting$gm, X = x, xlab = xl, ylab = "Mesophyll conductance (mol / m^2 / s)", ylim = c(0, max(gm_range)), main = one_point_caption),
+  list(Y = parameters_for_plotting$Vcmax,  X = x, xlab = xl, ylab = "Vcmax (micromol / m^2 / s)",            ylim = c(0, 350),           main = fitting_caption),
+  list(Y = parameters_for_plotting$J_high, X = x, xlab = xl, ylab = "Jhigh (micromol / m^2 / s)",            ylim = c(0, 350),           main = fitting_caption),
+  list(Y = parameters_for_plotting$Rd,     X = x, xlab = xl, ylab = "Rd (micromol / m^2 / s)",               ylim = c(0, 5),             main = fitting_caption),
+  list(Y = parameters_for_plotting$tau,    X = x, xlab = xl, ylab = "tau (dimensionless)",                   ylim = c(0.2, 0.6),         main = tau_caption)
 )
 
 # Make all the plots

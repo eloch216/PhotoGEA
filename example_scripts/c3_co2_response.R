@@ -95,6 +95,9 @@ NUM_OBS_IN_SEQ <- 17
 MEASUREMENT_NUMBERS <- c(1:8, 11:17)
 POINT_FOR_BOX_PLOTS <- 1
 
+# Decide which temperature response parameters to use
+PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -199,7 +202,8 @@ if (PERFORM_CALCULATIONS) {
         KC_COLUMN_NAME,
         KO_COLUMN_NAME,
         O2_COLUMN_NAME,
-        TLEAF_COLUMN_NAME
+        TLEAF_COLUMN_NAME,
+        PTR_FUN
     )
 
     combined_info <- calculate_iwue(
@@ -268,6 +272,8 @@ if (PERFORM_CALCULATIONS) {
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
         F_PRIME_COLUMN_NAME,
+        TLEAF_COLUMN_NAME,
+        PTR_FUN,
         CI_THRESHOLD
     )
 
@@ -431,8 +437,8 @@ boxplot_caption <- paste0(
     ")"
 )
 
-vcmax_caption <- paste(
-    "Vcmax values obtained by fitting A vs. f'\nusing a Ci cutoff of",
+fitting_caption <- paste(
+    "Values obtained by fitting A vs. f'\nusing a Ci cutoff of",
     CI_THRESHOLD,
     "micromol / mol"
 )
@@ -445,7 +451,8 @@ xl <- "Genotype"
 plot_param <- list(
   list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 50),  main = boxplot_caption),
   list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption),
-  list(Y = vcmax_parameters[['Vcmax']],               X = x_v, xlab = xl, ylab = "Maximum rate of Rubisco carboxylase activity (Vcmax; micromol / m^2 / s)", ylim = c(0, 200), main = vcmax_caption)
+  list(Y = vcmax_parameters[['Vcmax_at_25']],         X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 200), main = fitting_caption),
+  list(Y = vcmax_parameters[['Rd_at_25']],            X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 1.2), main = fitting_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {

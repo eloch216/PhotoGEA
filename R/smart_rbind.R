@@ -2,6 +2,12 @@
 # to all the data frames, restricts each data frame to the common columns, and
 # binds all of them together using `rbind`.
 smart_rbind <- function(list_of_data_frames) {
+    # Remove any NULL entries or those with zero rows
+    list_of_data_frames <-
+        list_of_data_frames[!sapply(list_of_data_frames, function(x) {
+            is.null(x) || nrow(x) < 1
+        })]
+
     # Create a list where each entry is a data frame of all the column names
     # from one element of `list_of_data_frames`
     all_column_list <-
