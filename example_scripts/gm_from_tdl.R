@@ -48,7 +48,7 @@ MAKE_GM_PLOTS <- TRUE
 RESPIRATION <- -2.2
 
 MIN_GM <- 0
-MAX_GM <- 4
+MAX_GM <- 2
 MIN_CC <- 0.0
 
 ###                                                                        ###
@@ -293,6 +293,16 @@ if (PERFORM_CALCULATIONS) {
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
         dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_m_avg']], g = rep_stats[['event']], control = "WT")
+        print(dunnett_test_result)
+        
+        # Do more stats on assimilation
+        bf_test_result <- bf.test(A_avg ~ event, data = rep_stats)
+        shapiro_test_result <- shapiro.test(rep_stats[['A_avg']])
+        print(shapiro_test_result)
+        anova_result <- aov(A_avg ~ event, data = rep_stats)
+        cat("    ANOVA result\n\n")
+        print(summary(anova_result))
+        dunnett_test_result <- DunnettTest(x = rep_stats[['A_avg']], g = rep_stats[['event']], control = "WT")
         print(dunnett_test_result)
     }
 }
