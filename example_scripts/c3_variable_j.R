@@ -97,7 +97,7 @@ TIME_COLUMN_NAME <- "time"
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
 # Choose a Ci cutoff value for fitting
-CI_THRESHOLD_UPPER <- 800
+CI_THRESHOLD_UPPER <- 850
 CI_THRESHOLD_LOWER <- 0
 
 ###                                                                   ###
@@ -255,6 +255,7 @@ ci_range <- c(0, 850)
 cc_range <- c(0, 300)
 a_range <- c(-10, 60)
 gm_range <- c(0, 0.5)
+ps2_range <- c(0, 0.4)
 
 # Define some legend labels
 a_legend <- c("Ac", "Aj", "Ap", "An_estimated", "An_measured")
@@ -267,6 +268,28 @@ assimilation_fit_colors <- c(
     "#E7298A",
     "#000000"
 )
+
+# Plot all measured PhiPSII-A curves
+ps2_a_plot <- xyplot(
+    variable_j_fits[[PHIPS2_COLUMN_NAME]] ~ variable_j_fits[[A_COLUMN_NAME]] |
+        variable_j_fits[[UNIQUE_ID_COLUMN_NAME]],
+    type = 'b',
+    pch = 20,
+    grid = TRUE,
+    xlim = a_range,
+    ylim = ps2_range,
+    xlab = "Carbon assimilation rate (micromol / m^2 / s)",
+    ylab = "Photosystem II efficiency (dimensionless)",
+    main = paste(
+        "Only showing points where",
+        CI_THRESHOLD_LOWER,
+        "< Ci <",
+        CI_THRESHOLD_UPPER,
+        "ppm"
+    )
+)
+x11(width = 12, height = 6)
+print(ps2_a_plot)
 
 # Plot all measured and fitted A-Ci curves
 a_ci_fitting_plot <- xyplot(
