@@ -62,7 +62,7 @@ PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
-VIEW_DATA_FRAMES <- FALSE
+VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
@@ -233,8 +233,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
-        "10",
-        "14"
+        "2",
+        "1"
     )
 
     all_samples <-
@@ -296,7 +296,7 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats)
-    View(vcmax_parameters)
+    View(vcmax_parameters[c("event", "replicate", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
 }
 
 # Determine if there is fluorescence data
@@ -324,7 +324,7 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(-50, 1300)
+ci_lim <- c(-50, 1500)
 a_lim <- c(-10, 50)
 etr_lim <- c(0, 325)
 
@@ -449,9 +449,9 @@ x_v <- vcmax_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 
 plot_param <- list(
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 50),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 40),  main = boxplot_caption),
   list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption),
-  list(Y = vcmax_parameters[['Vcmax_at_25']],         X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 200), main = fitting_caption),
+  list(Y = vcmax_parameters[['Vcmax_at_25']],         X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 175), main = fitting_caption),
   list(Y = vcmax_parameters[['Rd_at_25']],            X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 1.2), main = fitting_caption)
 )
 

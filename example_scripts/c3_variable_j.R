@@ -97,7 +97,7 @@ TIME_COLUMN_NAME <- "time"
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
 # Choose a Ci cutoff value for fitting
-CI_THRESHOLD_UPPER <- 850
+CI_THRESHOLD_UPPER <- 700
 CI_THRESHOLD_LOWER <- 0
 
 ###                                                                   ###

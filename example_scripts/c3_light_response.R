@@ -76,7 +76,7 @@ if (PERFORM_CALCULATIONS) {
 #
 # These numbers have been chosen for a sequence with 12 measurements. Here we
 # want to keep all of them.
-NUM_OBS_IN_SEQ <- 12
+NUM_OBS_IN_SEQ <- 11
 MEASUREMENT_NUMBERS <- seq_len(NUM_OBS_IN_SEQ)
 POINT_FOR_BOX_PLOTS <- 1
 

@@ -90,8 +90,8 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 13 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
-NUM_OBS_IN_SEQ <- 13
-MEASUREMENT_NUMBERS <- c(1:7, 10:13)
+NUM_OBS_IN_SEQ <- 14
+MEASUREMENT_NUMBERS <- c(1:7, 11:13)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
@@ -189,6 +189,13 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
+    
+    ###                     ###
+    ### EXCLUDE SOME EVENTS ###
+    ###                     ###
+    
+    EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "28", "53", "14", "4", "10", "15", "30")
+    all_samples <- all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_EXCLUDE,]
 
     # Calculate basic stats for each event
     all_stats <- basic_stats(
@@ -253,8 +260,8 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(-50, 1300)
-a_lim <- c(-5, 65)
+ci_lim <- c(0, 800)
+a_lim <- c(0, 50)
 etr_lim <- c(0, 325)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
@@ -278,7 +285,7 @@ invisible(lapply(avg_plot_param, function(x) {
     plot_obj <- do.call(avg_xyplot, c(x, list(
         type = 'b',
         pch = 20,
-        auto = TRUE,
+        auto.key = list(space = "right"),
         grid = TRUE,
         main = rc_caption
     )))
@@ -342,6 +349,7 @@ print(multi_gsci_curves)
 ### PLOT FITTING RESULTS ###
 ###                      ###
 
+
 aci_fit_plot <- xyplot(
     all_fits[[A_COLUMN_NAME]] + all_fits[[paste0(A_COLUMN_NAME, '_fit')]] ~ all_fits[[CI_COLUMN_NAME]] | all_fits[[UNIQUE_ID_COLUMN_NAME]],
     type = 'b',
@@ -370,6 +378,7 @@ boxplot_caption <- paste0(
 )
 
 fitting_caption <- "Fitted values"
+
 
 # Define plotting parameters
 x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
