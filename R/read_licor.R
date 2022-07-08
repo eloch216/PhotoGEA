@@ -242,7 +242,7 @@ choose_input_licor_files <- function()
         )
     }
 
-    choose.files(
+    utils::choose.files(
         default = "",
         caption = "Select Licor Excel input files",
         multi = TRUE,

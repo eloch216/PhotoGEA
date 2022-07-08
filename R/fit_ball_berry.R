@@ -38,7 +38,7 @@ fit_ball_berry_replicate <- function(
 {
     # Make a linear fit of stomatal conductance vs. Ball-Berry index
     linear_fit <-
-        lm(replicate_data_frame[[gsw_column_name]] ~
+        stats::lm(replicate_data_frame[[gsw_column_name]] ~
             replicate_data_frame[[bb_index_column_name]])
 
     # Extract the fit results

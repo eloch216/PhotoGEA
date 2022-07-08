@@ -23,7 +23,7 @@ fit_c3_vcmax_replicate <- function(
 
     # Do the fitting
     linear_fit <-
-        lm(replicate_data_frame[[a_column_name]] ~ replicate_data_frame[[f_prime_column_name]])
+        stats::lm(replicate_data_frame[[a_column_name]] ~ replicate_data_frame[[f_prime_column_name]])
 
     # Extract the fit results
     fit_summary <- summary(linear_fit)

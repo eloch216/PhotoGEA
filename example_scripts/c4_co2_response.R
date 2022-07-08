@@ -189,11 +189,11 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
-    
+
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
-    
+
     EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "28", "53", "14", "4", "10", "15", "30")
     all_samples <- all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_EXCLUDE,]
 
@@ -211,7 +211,8 @@ if (PERFORM_CALCULATIONS) {
         CI_COLUMN_NAME,
         PRESSURE_COLUMN_NAME,
         DELTA_PRESSURE_COLUMN_NAME,
-        TLEAF_COLUMN_NAME
+        TLEAF_COLUMN_NAME,
+        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)
     )
     all_fit_parameters <- fit_result[['parameters']]
     all_fits <- fit_result[['fits']]

@@ -33,7 +33,7 @@ read_gm_table <- function(
     GM_COLUMN_NAME
 )
 {
-    raw_data <- read.csv(filename, header = FALSE)
+    raw_data <- utils::read.csv(filename, header = FALSE)
 
     table_columns <- raw_data[1,]
 
@@ -140,7 +140,7 @@ choose_input_gm_table_file <- function()
         )
     }
 
-    choose.files(
+    utils::choose.files(
         default = "",
         caption = "Select a gm table input file",
         multi = FALSE,

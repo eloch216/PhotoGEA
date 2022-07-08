@@ -101,7 +101,7 @@ as.data.frame.exdf <- function(x, ...) {
 }
 
 # Define a helper function for making nice column names (used to improve `print`
-# and `str`)
+# and `utils::str`)
 fancy_column_names <- function(x) {
     paste0(
         colnames(x[['units']]),
@@ -111,17 +111,17 @@ fancy_column_names <- function(x) {
 }
 
 # Print an exdf
-print.exdf <- function(x) {
+print.exdf <- function(x, ...) {
     res <- x[['main_data']]
     colnames(res) <- fancy_column_names(x)
-    print(res)
+    print(res, ...)
 }
 
 # Display the structure of an exdf
-str.exdf <- function(x) {
-    res <- x[['main_data']]
-    colnames(res) <- fancy_column_names(x)
-    str(res)
+str.exdf <- function(object, ...) {
+    res <- object[['main_data']]
+    colnames(res) <- fancy_column_names(object)
+    utils::str(res, ...)
 }
 
 # Get the length of an exdf

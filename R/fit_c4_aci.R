@@ -117,7 +117,7 @@ fit_c4_aci_replicate <- function(
     # Perform a nonlinear least squares fit
     aci_fit <- tryCatch(
         {
-            nls(
+            stats::nls(
                 A ~ c4_aci(A, Ci_microbar, Tleaf, PTR_FUN, Om, gbs, Vpmax, Vcmax),
                 start = initial_guess
             )
@@ -182,7 +182,7 @@ fit_c4_aci <- function(
     PRESSURE_COLUMN_NAME,        # kPa
     DELTA_PRESSURE_COLUMN_NAME,  # kPa
     TLEAF_COLUMN_NAME,           # degrees C
-    PTR_FUN = photosynthesis_TRF(temperature_response_parameters_von_Caemmerer),
+    PTR_FUN,
     Om = 210000,                 # microbar
     gbs = 0.003,                 # mol / m^2 / s / bar
     initial_guess = list(Vpmax = 150, Vcmax = 30)
