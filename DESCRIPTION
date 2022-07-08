@@ -10,7 +10,7 @@ Authors@R: c(
     person("Coralie E.", "Salesse-Smith", role = 'ctb'),
     person("PhotoGEA authors", role = "cph")
     )
-License: CC0 1.0 Universal
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
