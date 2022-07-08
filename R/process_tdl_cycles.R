@@ -81,7 +81,7 @@ process_erml_tdl_cycle <- function(
 
     # Fit a quadratic model
     quadratic_fit <-
-        lm(expected_13c_values ~ poly(measured_13c_values, 2, raw = TRUE))
+        stats::lm(expected_13c_values ~ poly(measured_13c_values, 2, raw = TRUE))
 
     # Get the coefficients
     fit_summary <- summary(quadratic_fit)
@@ -167,7 +167,7 @@ process_tdl_cycles <- function(
 
     # Convert the result list into a list of data frames and return it
     return(
-        setNames(
+        stats::setNames(
             lapply(
                 element_names,
                 function(n) {

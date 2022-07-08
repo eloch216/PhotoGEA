@@ -83,7 +83,7 @@ add_licor_sheet <- function(
     }
 
     # Write the preamble to the sheet
-    preamble <<- licor_file[['preamble']]
+    preamble <- licor_file[['preamble']]
     for (i in seq_along(licor_file[['preamble_data_rows']])) {
         write_row(
             as.list(colnames(data.frame(
@@ -246,7 +246,7 @@ choose_output_licor_file <- function()
         )
     }
 
-    choose.files(
+    utils::choose.files(
         default = "",
         caption = "Create a Licor Excel file to store the output",
         multi = FALSE,

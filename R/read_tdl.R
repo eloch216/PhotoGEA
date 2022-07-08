@@ -52,7 +52,7 @@ read_tdl_file <- function(
     timestamp_colname
 )
 {
-    raw_tdl <- read.csv(
+    raw_tdl <- utils::read.csv(
         file_name,
         header = FALSE,
         skip = rows_to_skip
@@ -170,7 +170,7 @@ choose_input_tdl_files <- function()
         )
     }
 
-    choose.files(
+    utils::choose.files(
         default = "",
         caption = "Select TDL input files",
         multi = TRUE,

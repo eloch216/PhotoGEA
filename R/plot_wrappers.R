@@ -2,12 +2,12 @@
 # `bar_wrapper`
 box_wrapper <- function(Y, X, S = NULL, ...) {
   plot_formula <- if(is.null(S)) {
-    formula(Y ~ X)
+    stats::formula(Y ~ X)
   } else {
-    formula(Y ~ X | S)
+    stats::formula(Y ~ X | S)
   }
 
-  x11()
+  grDevices::dev.new()
   print(lattice::bwplot(plot_formula, ...))
 }
 
@@ -16,7 +16,7 @@ box_wrapper <- function(Y, X, S = NULL, ...) {
 bar_wrapper <- function(Y, X, ...) {
   # Get the mean, standard deviation, and number of replicates for each genotype
   means <- tapply(Y, X, mean)
-  sds <- tapply(Y, X, sd)
+  sds <- tapply(Y, X, stats::sd)
   ns <- tapply(Y, X, length)
 
   # Determine the standard error and the upper/lower limits for the error bars
@@ -28,24 +28,56 @@ bar_wrapper <- function(Y, X, ...) {
   eb_length = 0.2
   eb_lwd = 1
 
-  x11()
+  grDevices::dev.new()
   print(lattice::barchart(
     means,
     horizontal = FALSE,
     panel = function(x, y, ...) {
-      panel.barchart(x, y, ...)
-      panel.arrows(x, y, x, upper, length = eb_length, angle = 90, col = "black", lwd = eb_lwd)
-      panel.arrows(x, y, x, lower, length = eb_length, angle = 90, col = "black", lwd = eb_lwd)
+      lattice::panel.barchart(x, y, ...)
+      lattice::panel.arrows(x, y, x, upper, length = eb_length, angle = 90, col = "black", lwd = eb_lwd)
+      lattice::panel.arrows(x, y, x, lower, length = eb_length, angle = 90, col = "black", lwd = eb_lwd)
     },
     ...
   ))
 }
 
+# Originally formed by calling the following:
+#
+# default_colors <- c(
+#     "#000000",
+#     RColorBrewer::brewer.pal(8, "Set2"),
+#     RColorBrewer::brewer.pal(12, "Paired")[c(1:10,12)],
+#     RColorBrewer::brewer.pal(8, "Dark2")
+# )
 default_colors <- c(
     "#000000",
-    RColorBrewer::brewer.pal(8, "Set2"),
-    RColorBrewer::brewer.pal(12, "Paired")[c(1:10,12)],
-    RColorBrewer::brewer.pal(8, "Dark2")
+    "#66C2A5",
+    "#FC8D62",
+    "#8DA0CB",
+    "#E78AC3",
+    "#A6D854",
+    "#FFD92F",
+    "#E5C494",
+    "#B3B3B3",
+    "#A6CEE3",
+    "#1F78B4",
+    "#B2DF8A",
+    "#33A02C",
+    "#FB9A99",
+    "#E31A1C",
+    "#FDBF6F",
+    "#FF7F00",
+    "#CAB2D6",
+    "#6A3D9A",
+    "#B15928",
+    "#1B9E77",
+    "#D95F02",
+    "#7570B3",
+    "#E7298A",
+    "#66A61E",
+    "#E6AB02",
+    "#A6761D",
+    "#666666"
 )
 
 # Make a helping function for plotting average response curves, where the
@@ -78,10 +110,10 @@ avg_xyplot <- function(
             function(chunk) {
                 # Get some basic info
                 X_mean <- mean(chunk$X)
-                X_sd <- sd(chunk$X)
+                X_sd <- stats::sd(chunk$X)
 
                 Y_mean <- mean(chunk$Y)
-                Y_sd <- sd(chunk$Y)
+                Y_sd <- stats::sd(chunk$Y)
 
                 num <- nrow(chunk)
 
@@ -149,15 +181,15 @@ avg_xyplot <- function(
             superpose.symbol = list(col = rc_cols)
         ),
         panel = function(x, y, ...) {
-            panel.arrows(x, y, x, tdf_stats[['Y_upper']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
-            panel.arrows(x, y, x, tdf_stats[['Y_lower']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+            lattice::panel.arrows(x, y, x, tdf_stats[['Y_upper']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+            lattice::panel.arrows(x, y, x, tdf_stats[['Y_lower']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
 
             if(x_error_bars) {
-                panel.arrows(x, y, tdf_stats[['X_upper']], y, length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
-                panel.arrows(x, y, tdf_stats[['X_lower']], y, length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+                lattice::panel.arrows(x, y, tdf_stats[['X_upper']], y, length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+                lattice::panel.arrows(x, y, tdf_stats[['X_lower']], y, length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
             }
 
-            panel.xyplot(x, y, ...)
+            lattice::panel.xyplot(x, y, ...)
         },
         ...
     )

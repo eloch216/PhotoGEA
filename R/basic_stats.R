@@ -5,12 +5,12 @@ basic_stats_column <- function(column, name, npts) {
     } else {
         # Calculate basic stats for the column
         column_avg <- mean(column)
-        column_sd <- sd(column)
+        column_sd <- stats::sd(column)
         column_stderr <- column_sd / sqrt(npts)
 
         # Return the results as a list
         return(
-            setNames(
+            stats::setNames(
                 list(column_avg, column_sd, column_stderr),
                 paste0(name, c("_avg", "_sd", "_stderr"))
             )
