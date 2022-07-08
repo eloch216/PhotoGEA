@@ -51,13 +51,16 @@ library(RColorBrewer)
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                   ###
 
-# Decide whether to load new data and calculate stats. If the data has already
+# Decide whether to load new data and do basic calculations. If the data has already
 # been loaded and the script is being run to tweak the plotting parameters, then
 # set PERFORM_CALCULATIONS to FALSE to save a little time. If this is the first
 # time running the script in a particular R session or for a particular data
 # set, the data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS
 # to TRUE.
 PERFORM_CALCULATIONS <- TRUE
+
+# Decide whether to calculate stats
+CALCULATE_STATS <- FALSE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -155,12 +158,14 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
+}
 
-    # Calculate basic stats for each event
-    all_stats <- basic_stats(
-        all_samples,
-        c('seq_num', EVENT_COLUMN_NAME)
-    )
+if (CALCULATE_STATS) {
+  # Calculate basic stats for each event
+  all_stats <- basic_stats(
+    all_samples,
+    c('seq_num', EVENT_COLUMN_NAME)
+  )
 }
 
 # Make a subset of the full result for just the one measurement point
@@ -175,7 +180,9 @@ all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    if (CALCULATE_STATS) {
+      View(all_stats)
+    }
 }
 
 # Determine if there is fluorescence data
