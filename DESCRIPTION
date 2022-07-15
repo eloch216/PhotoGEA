@@ -18,4 +18,5 @@ Imports:
     lattice
 Suggests:
     onewaytests,
-    DescTools
+    DescTools,
+    signal

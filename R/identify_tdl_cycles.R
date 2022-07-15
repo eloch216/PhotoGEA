@@ -38,7 +38,8 @@ identify_tdl_cycles <- function(
     # Add a new column to the data for the cycle number
     tdl_exdf <- specify_variables(
         tdl_exdf,
-        c("calculated", "cycle_num", "NA")
+        c("calculated", "cycle_num", "NA"),
+        c("calculated", "elapsed_time", "minutes")
     )
 
     # Make sure the data isn't empty
@@ -99,6 +100,9 @@ identify_tdl_cycles <- function(
     )
     colnames(new_main_data) <- colnames(tdl_exdf)
 
+    # Get the first time point
+    start_time <- tdl_exdf[1,timestamp_colname]
+
     # Fill in the new data frame with only valid TDL cycles
     n_cycles <- 1
     for (i in seq_along(starting_indices)) {
@@ -111,6 +115,13 @@ identify_tdl_cycles <- function(
 
         if (check_cycle(possible_cycle)) {
             possible_cycle[['cycle_num']] <- n_cycles
+
+            possible_cycle[['elapsed_time']] <- as.double(difftime(
+                possible_cycle[1,timestamp_colname],
+                start_time,
+                units = "min"
+            ))
+
             new_main_data <- rbind(new_main_data, possible_cycle)
             n_cycles <- n_cycles + 1
         }

@@ -29,6 +29,7 @@ process_erml_tdl_cycle <- function(
     # Make a data frame to store the zero information
     calibration_zero <- data.frame(
         cycle_num = tdl_cycle[['cycle_num']][1],
+        elapsed_time = tdl_cycle[['elapsed_time']][1],
         offset_12c = zero_carbon_reference[[raw_12c_colname]],
         offset_13c = zero_carbon_reference[[raw_13c_colname]]
     )
@@ -51,6 +52,7 @@ process_erml_tdl_cycle <- function(
     # Make a data frame containing the info used to calibrate the 12CO2 data
     calibration_12CO2 <- data.frame(
         cycle_num = tdl_cycle[['cycle_num']][1],
+        elapsed_time = tdl_cycle[['elapsed_time']][1],
         total_mixing_ratio_noaa = total_mixing_ratio_noaa,
         R_noaa = R_noaa,
         noaa_12C16O16O = noaa_12C16O16O,
@@ -81,7 +83,7 @@ process_erml_tdl_cycle <- function(
 
     # Fit a quadratic model
     quadratic_fit <-
-        stats::lm(expected_13c_values ~ poly(measured_13c_values, 2, raw = TRUE))
+        stats::lm(expected_13c_values ~ stats::poly(measured_13c_values, 2, raw = TRUE))
 
     # Get the coefficients
     fit_summary <- summary(quadratic_fit)
@@ -96,6 +98,7 @@ process_erml_tdl_cycle <- function(
     # Make a data frame containing the conversion factor and fit parameters
     calibration_13CO2_fit <- data.frame(
         cycle_num = tdl_cycle[['cycle_num']][1],
+        elapsed_time = tdl_cycle[['elapsed_time']][1],
         calibrated_12c_to_13c_conversion_factor = conversion_factor,
         a0 = a0,
         a1 = a1,
@@ -113,6 +116,7 @@ process_erml_tdl_cycle <- function(
     # Make a data frame containing the points used for the fit
     calibration_13CO2_data <- data.frame(
         cycle_num = tdl_cycle[['cycle_num']][1],
+        elapsed_time = tdl_cycle[['elapsed_time']][1],
         measured_13c_values = measured_13c_values,
         expected_13c_values = expected_13c_values,
         fitted_13c_values = fitted_13c_values
