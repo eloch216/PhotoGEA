@@ -28,6 +28,7 @@
 
 library(PhotoGEA)
 library(lattice)
+library(signal)       # for butter and filter
 library(onewaytests)  # for bf.test, shapiro.test, A.aov
 library(DescTools)    # for DunnettTest
 
@@ -93,6 +94,8 @@ LICOR_RHLEAF_COLUMN_NAME <- 'RHleaf'
 LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
 LICOR_TLEAF_COLUMN_NAME <- 'TleafCnd'
 
+TDL_VALVES_TO_SMOOTH <- c(2, 20, 21, 23, 26)
+
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -130,8 +133,27 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
+    tdl_files_smoothed <- tdl_files
+
+    smooth_function <- function(Y, X) {
+        # Create a low-pass Butterworth filter
+        lpf <- signal::butter(1, 0.25, type = "low")
+
+        # Apply it to the Y data
+        signal::filter(lpf, Y)
+    }
+
+    for (valve in TDL_VALVES_TO_SMOOTH) {
+        tdl_files_smoothed <- smooth_tdl_data(
+            tdl_files_smoothed,
+            TDL_VALVE_COLUMN_NAME,
+            valve,
+            smooth_function
+        )
+    }
+
     processed_tdl_data <- process_tdl_cycles(
-        tdl_files[['main_data']],
+        tdl_files_smoothed[['main_data']],
         process_erml_tdl_cycle,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         noaa_valve = 2,
@@ -331,6 +353,129 @@ if (SAVE_RESULTS) {
 ###                            ###
 
 if (MAKE_TDL_PLOTS) {
+    # Make a data frame to use when comparing raw and smoothed TDL data
+    tdl_comp <- rbind(
+        within(tdl_files[['main_data']],          {smth_type = 'raw'}),
+        within(tdl_files_smoothed[['main_data']], {smth_type = 'smoothed'})
+    )
+
+    # Get a list of all TDL cycles that correspond to Licor measurements
+    active_tdl_cycles <- sort(unique(licor_files[,'cycle_num']))
+
+    # Get a list of all unsmoothed valves in the TDL data
+    tdl_valves <- sort(unique(tdl_files[,TDL_VALVE_COLUMN_NAME]))
+    unsmoothed_valves <- tdl_valves[!tdl_valves %in% TDL_VALVES_TO_SMOOTH]
+
+    # Make comparison plots for each valve that was smoothed
+    for (valve in TDL_VALVES_TO_SMOOTH) {
+        tdl_comp_valve <- tdl_comp[tdl_comp[[TDL_VALVE_COLUMN_NAME]] == valve,]
+        tdl_valve_caption <- paste("TDL valve", valve, "\n(Black points indicate when Licor measurements were made)")
+
+        active_cycles_valve <-
+            tdl_comp_valve[tdl_comp_valve[['smth_type']] == 'raw' & tdl_comp_valve[['cycle_num']] %in% active_tdl_cycles,]
+
+        active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_RAW_12C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_RAW_13C_COLUMN_NAME]])
+
+        C12_plot <- xyplot(
+            tdl_comp_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
+            group = tdl_comp_valve[['smth_type']],
+            type = 'b',
+            pch = 20,
+            auto = TRUE,
+            xlab = "TDL cycle number",
+            ylab = "12CO2 concentration (ppm)",
+            main = tdl_valve_caption,
+            panel = function(...) {
+                panel.xyplot(...)
+                panel.points(
+                    active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    type = 'p',
+                    col = 'black',
+                    pch = 20
+                )
+            }
+        )
+        x11()
+        print(C12_plot)
+
+        C13_plot <- xyplot(
+            tdl_comp_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
+            group = tdl_comp_valve[['smth_type']],
+            type = 'b',
+            pch = 20,
+            auto = TRUE,
+            xlab = "TDL cycle number",
+            ylab = "13CO2 concentration (ppm)",
+            main = tdl_valve_caption,
+            panel = function(...) {
+                panel.xyplot(...)
+                panel.points(
+                    active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    type = 'p',
+                    col = 'black',
+                    pch = 20
+                )
+            }
+        )
+        x11()
+        print(C13_plot)
+    }
+
+    # Make plots for valves that weren't smoothed
+    for (valve in unsmoothed_valves) {
+        valve_data <-
+            extract_tdl_valve(tdl_files_smoothed, TDL_VALVE_COLUMN_NAME, valve)
+
+        tdl_valve_caption <- paste("TDL valve", valve, "\n(Black points indicate when Licor measurements were made)")
+
+        active_cycles_valve <-
+            valve_data[valve_data[['cycle_num']] %in% active_tdl_cycles,]
+
+        active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] <- min(valve_data[[TDL_RAW_12C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] <- min(valve_data[[TDL_RAW_13C_COLUMN_NAME]])
+
+        C12_plot <- xyplot(
+            valve_data[[TDL_RAW_12C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
+            type = 'b',
+            pch = 20,
+            xlab = "TDL cycle number",
+            ylab = "12CO2 concentration (ppm)",
+            main = tdl_valve_caption,
+            panel = function(...) {
+                panel.xyplot(...)
+                panel.points(
+                    active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    type = 'p',
+                    col = 'black',
+                    pch = 20
+                )
+            }
+        )
+        x11()
+        print(C12_plot)
+
+        C13_plot <- xyplot(
+            valve_data[[TDL_RAW_13C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
+            type = 'b',
+            pch = 20,
+            xlab = "TDL cycle number",
+            ylab = "13CO2 concentration (ppm)",
+            main = tdl_valve_caption,
+            panel = function(...) {
+                panel.xyplot(...)
+                panel.points(
+                    active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    type = 'p',
+                    col = 'black',
+                    pch = 20
+                )
+            }
+        )
+        x11()
+        print(C13_plot)
+    }
+
     # Make a plot of all the fits from the processing
     tdl_fitting <- xyplot(
         expected_13c_values + fitted_13c_values ~ measured_13c_values | factor(cycle_num),
