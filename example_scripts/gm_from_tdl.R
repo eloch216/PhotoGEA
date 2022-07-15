@@ -28,7 +28,6 @@
 
 library(PhotoGEA)
 library(lattice)
-library(signal)       # for butter and filter
 library(onewaytests)  # for bf.test, shapiro.test, A.aov
 library(DescTools)    # for DunnettTest
 
@@ -98,6 +97,32 @@ TDL_VALVES_TO_SMOOTH <- c(2, 20, 21, 23, 26)
 
 TDL_CYCLES_TO_EXCLUDE <- c()
 
+###                                                ###
+### DEFINE SMOOTHING FUNCTION OPTIONS FOR TDL DATA ###
+###                                                ###
+
+# Use splines to smooth the data
+spline_smoothing_function <- function(Y, X) {
+    ss <- smooth.spline(X, Y)
+    return(ss$y)
+}
+
+# This Butterworth filter might be useful, but requires another package
+ALLOW_BUTTERWORTH <- FALSE
+if (ALLOW_BUTTERWORTH) {
+    library(signal)
+    butterworth_smoothing_function <- function(Y, X) {
+        # Create a low-pass Butterworth filter
+        lpf <- signal::butter(1, 0.25, type = "low")
+
+        # Apply it to the Y data
+        signal::filter(lpf, Y)
+    }
+}
+
+# Don't do any smoothing
+null_smoothing_function <- function(Y, X) {return(Y)}
+
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -137,20 +162,12 @@ if (PERFORM_CALCULATIONS) {
 
     tdl_files_smoothed <- exclude_tdl_cycles(tdl_files, TDL_CYCLES_TO_EXCLUDE)
 
-    smooth_function <- function(Y, X) {
-        # Create a low-pass Butterworth filter
-        lpf <- signal::butter(1, 0.25, type = "low")
-
-        # Apply it to the Y data
-        signal::filter(lpf, Y)
-    }
-
     for (valve in TDL_VALVES_TO_SMOOTH) {
         tdl_files_smoothed <- smooth_tdl_data(
             tdl_files_smoothed,
             TDL_VALVE_COLUMN_NAME,
             valve,
-            smooth_function
+            null_smoothing_function
         )
     }
 
