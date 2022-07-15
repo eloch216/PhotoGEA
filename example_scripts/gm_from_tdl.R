@@ -47,9 +47,10 @@ MAKE_GM_PLOTS <- TRUE
 
 RESPIRATION <- -2.2
 
-MIN_GM <- 0
-MAX_GM <- 5
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
+MIN_GM <- 0
+MAX_GM <- Inf
 MIN_CC <- 0.0
 
 ###                                                                        ###
@@ -167,7 +168,7 @@ if (PERFORM_CALCULATIONS) {
             tdl_files_smoothed,
             TDL_VALVE_COLUMN_NAME,
             valve,
-            null_smoothing_function
+            spline_smoothing_function
         )
     }
 
@@ -273,13 +274,40 @@ if (PERFORM_CALCULATIONS) {
     licor_files[['main_data']] <-
         licor_files[['main_data']][!licor_files[['main_data']][['event']] %in% EVENTS_TO_IGNORE,]
 
-    # Make a copy of the data where we have removed extreme gm and Cc values
+    # Exclude outliers using the calculated gm values for each event
+    # Exclude any bad values and outliers. First, elimate all measurements where
+    # mesophyll conductance or chloroplast CO2 concentration is out of the
+    # acceptable range. Then, if desired, elimate any statistical outliers from
+    # the points that remain. When determining statistical outliers, keep
+    # repeating the procedure until no more outliers are removed.
     licor_files_no_outliers <- licor_files
+    cat(paste("Total number of Licor measurements:", nrow(licor_files_no_outliers), "\n"))
+
     licor_files_no_outliers[['main_data']] <-
-        licor_files_no_outliers[['main_data']][which(
+        licor_files_no_outliers[['main_data']][!is.na(licor_files_no_outliers[['main_data']][['gmc']]),]
+    cat(paste("Number of Licor measurements after excluding TDL data:", nrow(licor_files_no_outliers), "\n"))
+
+    licor_files_no_outliers[['main_data']] <-
+        licor_files_no_outliers[['main_data']][
             licor_files_no_outliers[['main_data']][['gmc']] > MIN_GM &
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
-            licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC),]
+            licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC,]
+    cat(paste("Number of Licor measurements after removing unacceptable gm and Cc:", nrow(licor_files_no_outliers), "\n"))
+
+    if (REMOVE_STATISTICAL_OUTLIERS) {
+        old_nrow <- nrow(licor_files_no_outliers)
+        pt_diff <- Inf
+        while (pt_diff > 0) {
+            licor_files_no_outliers <- exclude_outliers(
+                licor_files_no_outliers,
+                'gmc',
+                licor_files_no_outliers[,'event']
+            )
+            pt_diff <- old_nrow - nrow(licor_files_no_outliers)
+            old_nrow <- nrow(licor_files_no_outliers)
+        }
+        cat(paste("Number of Licor measurements after removing statistical outliers:", nrow(licor_files_no_outliers), "\n"))
+    }
 
     # Check the data for any issues before proceeding with additional analysis
     check_signal_averaging_data(
