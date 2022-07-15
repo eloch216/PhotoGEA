@@ -81,7 +81,7 @@ process_erml_tdl_cycle <- function(
 
     # Fit a quadratic model
     quadratic_fit <-
-        stats::lm(expected_13c_values ~ poly(measured_13c_values, 2, raw = TRUE))
+        stats::lm(expected_13c_values ~ stats::poly(measured_13c_values, 2, raw = TRUE))
 
     # Get the coefficients
     fit_summary <- summary(quadratic_fit)
