@@ -268,51 +268,63 @@ pair_licor_and_tdl <- function(
                 "the maximum allowed value of ", max_allowed_time_difference,
                 " minutes"
             )
-            stop(msg)
+            warning(msg)
+
+            # There is no associated TDL data for this point
+            tdl_time_sample <- NA
+            tdl_time_reference <- NA
+            calibrated_12c_s <- NA
+            calibrated_13c_s <- NA
+            total_mixing_ratio_s <- NA
+            total_isotope_ratio_s <- NA
+            calibrated_12c_r <- NA
+            calibrated_13c_r <- NA
+            total_mixing_ratio_r <- NA
+            total_isotope_ratio_r <- NA
+        } else {
+            # Find the TDL times for the sample and reference measurements
+            tdl_time_sample <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == sample_valve, tdl_timestamp_column_name]
+
+            tdl_time_reference <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == reference_valve, tdl_timestamp_column_name]
+
+            # Find the sample CO2 data
+            calibrated_12c_s <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == sample_valve, 'calibrated_12c']
+
+            calibrated_13c_s <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == sample_valve, 'calibrated_13c']
+
+            total_mixing_ratio_s <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == sample_valve, 'total_mixing_ratio']
+
+            total_isotope_ratio_s <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == sample_valve, 'total_isotope_ratio']
+
+            # Find the reference CO2 data
+            calibrated_12c_r <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == reference_valve, 'calibrated_12c']
+
+            calibrated_13c_r <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == reference_valve, 'calibrated_13c']
+
+            total_mixing_ratio_r <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == reference_valve, 'total_mixing_ratio']
+
+            total_isotope_ratio_r <-
+                tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
+                    tdl_data[['valve_number']] == reference_valve, 'total_isotope_ratio']
         }
-
-        # Find the TDL times for the sample and reference measurements
-        tdl_time_sample <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == sample_valve, tdl_timestamp_column_name]
-
-        tdl_time_reference <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == reference_valve, tdl_timestamp_column_name]
-
-        # Find the sample CO2 data
-        calibrated_12c_s <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == sample_valve, 'calibrated_12c']
-
-        calibrated_13c_s <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == sample_valve, 'calibrated_13c']
-
-        total_mixing_ratio_s <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == sample_valve, 'total_mixing_ratio']
-
-        total_isotope_ratio_s <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == sample_valve, 'total_isotope_ratio']
-
-        # Find the reference CO2 data
-        calibrated_12c_r <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == reference_valve, 'calibrated_12c']
-
-        calibrated_13c_r <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == reference_valve, 'calibrated_13c']
-
-        total_mixing_ratio_r <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == reference_valve, 'total_mixing_ratio']
-
-        total_isotope_ratio_r <-
-            tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                tdl_data[['valve_number']] == reference_valve, 'total_isotope_ratio']
 
         # Store results in the Licor file
         licor_file[['main_data']][['cycle_num']][i] <- cycle_of_closest_tdl_pnt

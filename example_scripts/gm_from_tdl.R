@@ -96,6 +96,8 @@ LICOR_TLEAF_COLUMN_NAME <- 'TleafCnd'
 
 TDL_VALVES_TO_SMOOTH <- c(2, 20, 21, 23, 26)
 
+TDL_CYCLES_TO_EXCLUDE <- c()
+
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -133,7 +135,7 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files_smoothed <- tdl_files
+    tdl_files_smoothed <- exclude_tdl_cycles(tdl_files, TDL_CYCLES_TO_EXCLUDE)
 
     smooth_function <- function(Y, X) {
         # Create a low-pass Butterworth filter
