@@ -89,29 +89,6 @@ specify_variables <- function(exdf_obj, ...)
     return(exdf_obj)
 }
 
-# batch_specify_variables: a function for specifying the units and categories of
-# columns of multiple exdf objects; any new columns will be initialized to NA.
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# - exdf_objs: a list of exdf objects
-#
-# any additional inputs should be vectors of strings that describe the variable
-# specifications, where the first element is the category, second is the name,
-# and third is the units
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# a list of exdf objects with new and/or updated columns
-#
-batch_specify_variables <- function(exdf_objs, ...) {
-    lapply(exdf_objs, function(x) {specify_variables(x, ...)})
-}
-
 # extract_variables: a function for choosing a subset of variables from an exdf
 # object
 #

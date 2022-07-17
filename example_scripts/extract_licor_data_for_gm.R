@@ -249,18 +249,20 @@ print_all <- function(
     )
 
     # Add blank columns to each file
-    licor_files <- batch_specify_variables(
-        licor_files,
-        c("in",          "Oxygen",    "%"),
-        c("in",          "O2",        "kPa"),
-        c("in",          "[CO2]",     "micromol mol^(-1)"),
-        c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
-        c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
-        c("calculated",  "ppO2",      "bar"),
-        c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "Csurface",  "micromol mol^(-1)")
-    )
+    licor_files <- lapply(licor_files, function(exdf_obj) {
+        specify_variables(
+            exdf_obj,
+            c("in",          "Oxygen",    "%"),
+            c("in",          "O2",        "kPa"),
+            c("in",          "[CO2]",     "micromol mol^(-1)"),
+            c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
+            c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
+            c("calculated",  "ppO2",      "bar"),
+            c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
+            c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
+            c("calculated",  "Csurface",  "micromol mol^(-1)")
+        )
+    })
 
     # Extract the desired columns from each file
     licor_files <- batch_extract_variables(
