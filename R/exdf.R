@@ -1,6 +1,8 @@
-# Constructor for the exdf (extended data frame) class, which is similar to a
-# data.frame but is extended by specifying units and a category for each column
-# in addition to names
+# This file defines a constructor for the exdf class and some essential S3
+# methods. An exdf object is similar to a data frame but is extended by
+# specifying units and a category for each column in addition to names.
+
+# Constructor
 exdf <- function(main_data, units, categories, ...) {
     # Get ready to store messages about any problems with the inputs
     errors <- character()
@@ -139,6 +141,22 @@ dimnames.exdf <- function(x) {
     dimnames(x[['main_data']])
 }
 
+# Set the dimension names of an exdf; don't attempt to change the row names for
+# the units and categories.
+`dimnames<-.exdf` <- function(x, value) {
+    dimnames(x[['main_data']]) <- value
+
+    unit_dimnames <- dimnames(x[['units']])
+    unit_dimnames[[2]] <- value[[2]]
+    dimnames(x[['units']]) <- unit_dimnames
+
+    category_dimnames <- dimnames(x[['categories']])
+    category_dimnames[[2]] <- value[[2]]
+    dimnames(x[['categories']]) <- category_dimnames
+
+    return(x)
+}
+
 # Access elements of an exdf's main_data
 `[.exdf` <- function(x, i, j) {
     return(x[['main_data']][i,j])
@@ -164,60 +182,12 @@ dimnames.exdf <- function(x) {
     return(x)
 }
 
-# Set the units and category for a column of an exdf
-set_column_info <- function(x, name, units, category) {
-    if (!is.exdf(x)) {
-        stop("`x` must be a exdf")
-    }
-
-    should_be_strings <- list(
-        name = name,
-        units = units,
-        category = category
-    )
-
-    for (i in seq_along(should_be_strings)) {
-        if (length(should_be_strings[[i]]) > 1) {
-            stop(
-                paste0(
-                    "`",
-                    names(should_be_strings)[[i]],
-                    "` must have length 1 (input was '",
-                    should_be_strings[[i]],
-                    "')"
-                )
-            )
-        }
-
-        if (!is.character(should_be_strings[[i]])) {
-            stop(
-                paste0(
-                    "`",
-                    names(should_be_strings)[[i]],
-                    "` must be a string (input was '",
-                    should_be_strings[[i]],
-                    "')"
-                )
-            )
-        }
-    }
-
-    if (!name %in% colnames(x)) {
-        x[['main_data']][[name]] <- NA
-    }
-
-    x[['units']][[name]] <- units
-    x[['categories']][[name]] <- category
-
-    return(x)
-}
-
 # Combine exdf objects by the rows of their main_data
 rbind.exdf <- function(
     ...,
     deparse.level = 1,
     make.row.names = TRUE,
-    stringsAsFactors = default.stringsAsFactors(),
+    stringsAsFactors = FALSE,
     factor.exclude = TRUE
 )
 {
@@ -248,7 +218,18 @@ rbind.exdf <- function(
         main_data_list[[i]] <- exdf_list[[i]][['main_data']]
     }
 
-    new_main_data <- do.call("rbind", main_data_list)
+    new_main_data <- do.call(
+        "rbind",
+        c(
+            main_data_list,
+            list(
+                deparse.level = deparse.level,
+                make.row.names = make.row.names,
+                stringsAsFactors = stringsAsFactors,
+                factor.exclude = factor.exclude
+            )
+        )
+    )
 
     return(
         exdf(

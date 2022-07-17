@@ -1,3 +1,51 @@
+# Set the units and category for a column of an exdf
+set_column_info <- function(x, name, units, category) {
+    if (!is.exdf(x)) {
+        stop("`x` must be a exdf")
+    }
+
+    should_be_strings <- list(
+        name = name,
+        units = units,
+        category = category
+    )
+
+    for (i in seq_along(should_be_strings)) {
+        if (length(should_be_strings[[i]]) > 1) {
+            stop(
+                paste0(
+                    "`",
+                    names(should_be_strings)[[i]],
+                    "` must have length 1 (input was '",
+                    should_be_strings[[i]],
+                    "')"
+                )
+            )
+        }
+
+        if (!is.character(should_be_strings[[i]])) {
+            stop(
+                paste0(
+                    "`",
+                    names(should_be_strings)[[i]],
+                    "` must be a string (input was '",
+                    should_be_strings[[i]],
+                    "')"
+                )
+            )
+        }
+    }
+
+    if (!name %in% colnames(x)) {
+        x[['main_data']][[name]] <- NA
+    }
+
+    x[['units']][[name]] <- units
+    x[['categories']][[name]] <- category
+
+    return(x)
+}
+
 # specify_variables: a function for specifying the units and categories of
 # columns of an exdf object; any new columns will be initialized to NA.
 #
