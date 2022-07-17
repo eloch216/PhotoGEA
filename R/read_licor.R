@@ -1,67 +1,7 @@
-# This script includes functions for reading Licor data files.
-#
-# ------------------------------------------------------------------------------
-#
-# IMPORTANT NOTE ABOUT LICOR EXCEL FILES: by default, Licor Excel files do not
-# `calculate` formula values. This causes a problem when reading them in R,
-# since any data entry determined from a formula will be read as 0. To fix this
-# issue for a Licor Excel file, open it in in Excel, go to the `Formulas` menu,
-# and choose `Calculate Now`. (Alternatively, press F9.) Then save the file and
-# close it. See https://github.com/tidyverse/readxl/issues/495 for more details.
+# This file includes functions for reading Licor data files.
 
 # read_licor_file: a function for reading the data from a Licor Excel file into
 # an exdf object.
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# - file_name: a relative or absolute path to an Excel file containing Licor
-#       data
-#
-# - preamble_data_rows: a numeric vector whose entries indicate the rows in the
-#       Licor excel file that contain the preamble information
-#
-# - variable_category_row: the row number in the Licor Excel file containing the
-#       variable category information, e.g. "GasEx", "FLR", etc
-#
-# - variable_name_row: the row number in the Licor Excel file containing the
-#       variable names, e.g. "A", "Ci", etc
-#
-# - variable_unit_row: the row number in the Licor Excel file containing the
-#       variable units, e.g. "Pa", "s", etc
-#
-# - data_start_row: the first row number of the table containing the measured
-#       data
-#
-# - timestamp_colname: the name of the column that contains the timestamp of
-#       each measurement
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# an exdf object with the following "extra" elements that fully includes all the
-# data from the Licor Excel file:
-#
-# - file_name: a copy of the input argument with the same name
-#
-# - preamble: a list of data frames representing each line in the preamble,
-#             where each data frame has one row and named columns. No Unicode
-#             replacement is performed for the preamble data.
-#
-# - preamble_data_rows: a copy of the input argument with the same name
-#
-# - variable_category_row: a copy of the input argument with the same name
-#
-# - variable_name_row: a copy of the input argument with the same name
-#
-# - variable_unit_row: a copy of the input argument with the same name
-#
-# - data_start_row: a copy of the input argument with the same name
-#
-# - timestamp_colname: a copy of the input argument with the same name
-#
 read_licor_file <- function(
     file_name,
     preamble_data_rows,
