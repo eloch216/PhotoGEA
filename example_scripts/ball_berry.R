@@ -19,15 +19,17 @@ TLEAF_COLUMN_NAME <- 'TleafCnd'
 
 # Read Licor files, extract important columns, and combine the results into one
 # exdf object
-multi_file_info <- batch_read_licor_file(
-    choose_input_licor_files(),
-    preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-    variable_category_row = 14,
-    variable_name_row = 15,
-    variable_unit_row = 16,
-    data_start_row = 17,
-    timestamp_colname = 'time'
-)
+multi_file_info <- lapply(choose_input_licor_files(), function(fname) {
+    read_licor_file(
+        fname,
+        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+        variable_category_row = 14,
+        variable_name_row = 15,
+        variable_unit_row = 16,
+        data_start_row = 17,
+        timestamp_colname = 'time'
+    )
+})
 
 extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
     extract_variables(exdf_obj, c(

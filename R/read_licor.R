@@ -169,51 +169,6 @@ read_licor_file <- function(
     )
 }
 
-# batch_read_licor_file: a function for reading the data from multiple Licor
-# Excel files into an R list.
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# - file_names: a vector of relative or absolute paths to Excel files containing
-#       Licor data
-#
-# All other inputs are identical to those in the `read_licor_file` function.
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# a list with unnamed elements, each of which is an exdf object representing the
-# contents of a Licor file
-#
-batch_read_licor_file <- function(
-    file_names,
-    preamble_data_rows,
-    variable_category_row,
-    variable_name_row,
-    variable_unit_row,
-    data_start_row,
-    timestamp_colname
-)
-{
-    lapply(
-        file_names,
-        function(filename) {
-            read_licor_file(
-                filename,
-                preamble_data_rows,
-                variable_category_row,
-                variable_name_row,
-                variable_unit_row,
-                data_start_row,
-                timestamp_colname
-            )
-        }
-    )
-}
-
 # choose_input_licor_files: a function for interactively selecting multiple
 # Licor Excel files.
 #

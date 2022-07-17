@@ -238,15 +238,17 @@ print_all <- function(
 )
 {
     # Load the files
-    licor_files <- batch_read_licor_file(
-        files_to_process,
-        preamble_data_rows,
-        variable_category_row,
-        variable_name_row,
-        variable_unit_row,
-        data_start_row,
-        'time'
-    )
+    licor_files <- lapply(files_to_process, function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows,
+            variable_category_row,
+            variable_name_row,
+            variable_unit_row,
+            data_start_row,
+            'time'
+        )
+    })
 
     # Add blank columns to each file
     licor_files <- lapply(licor_files, function(exdf_obj) {

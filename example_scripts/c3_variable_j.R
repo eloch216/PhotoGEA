@@ -106,15 +106,17 @@ CI_THRESHOLD_LOWER <- 0
 
 if (PERFORM_CALCULATIONS) {
     # Load the data
-    multi_file_info <- batch_read_licor_file(
-        LICOR_FILES_TO_PROCESS,
-        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_category_row = 14,
-        variable_name_row = 15,
-        variable_unit_row = 16,
-        data_start_row = 17,
-        timestamp_colname = TIME_COLUMN_NAME
-    )
+    multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+            variable_category_row = 14,
+            variable_name_row = 15,
+            variable_unit_row = 16,
+            data_start_row = 17,
+            timestamp_colname = TIME_COLUMN_NAME
+        )
+    })
 
     # Extract the common columns
     common_columns <-

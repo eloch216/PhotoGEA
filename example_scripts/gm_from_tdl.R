@@ -191,15 +191,17 @@ if (PERFORM_CALCULATIONS) {
 
     # Get all the Licor information and process it
 
-    licor_files <- batch_read_licor_file(
-        choose_input_licor_files(),
-        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_category_row = 14,
-        variable_name_row = 15,
-        variable_unit_row = 16,
-        data_start_row = 17,
-        timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
-    )
+    licor_files <- lapply(choose_input_licor_files(), function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+            variable_category_row = 14,
+            variable_name_row = 15,
+            variable_unit_row = 16,
+            data_start_row = 17,
+            timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
+        )
+    })
 
     common_columns <-
         identify_common_licor_columns(licor_files, verbose = FALSE)
