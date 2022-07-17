@@ -265,10 +265,9 @@ print_all <- function(
     })
 
     # Extract the desired columns from each file
-    licor_files <- batch_extract_variables(
-        licor_files,
-        variables_to_extract
-    )
+    licor_files <- lapply(licor_files, function(exdf_obj) {
+        extract_variables(exdf_obj, variables_to_extract)
+    })
 
     # Add formulas to some columns
     licor_files <- batch_add_licor_formulas(

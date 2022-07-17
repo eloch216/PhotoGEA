@@ -29,9 +29,8 @@ multi_file_info <- batch_read_licor_file(
     timestamp_colname = 'time'
 )
 
-extracted_multi_file_info <- batch_extract_variables(
-    multi_file_info,
-    c(
+extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
+    extract_variables(exdf_obj, c(
         'obs',
         'time',
         'elapsed',
@@ -49,8 +48,8 @@ extracted_multi_file_info <- batch_extract_variables(
         H2O_S_COLUMN_NAME,
         PA_COLUMN_NAME,
         TLEAF_COLUMN_NAME
-    )
-)
+    ))
+})
 
 combined_info <- combine_exdf(extracted_multi_file_info)
 

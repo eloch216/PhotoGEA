@@ -130,27 +130,6 @@ extract_variables <- function(
     return(exdf_obj)
 }
 
-# batch_extract_variables: a function for choosing a subset of variables from
-# multiple exdf objects
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# - exdf_objs: a list of exdf objects
-#
-# - variables_to_extract: a vector of variable names that should be extracted
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# a list of exdf objects, each having a subset of its orignal columns
-#
-batch_extract_variables <- function(exdf_objs, variables_to_extract) {
-    lapply(exdf_objs, function(x) {extract_variables(x, variables_to_extract)})
-}
-
 # combine_exdf: a function for combining the information from multiple exdf
 # objects into a single list. Here, any "extra information" specified when by
 # the objects will be lost (i.e., only the main data, units, and categories will

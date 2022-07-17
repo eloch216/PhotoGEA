@@ -102,10 +102,12 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TIME_COLUMN_NAME
     )
 
-    extracted_multi_file_info <- batch_extract_variables(
-        multi_file_info,
+    common_columns <-
         identify_common_licor_columns(multi_file_info, verbose = FALSE)
-    )
+
+    extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
+        extract_variables(exdf_obj, common_columns)
+    })
 
     combined_info <- combine_exdf(extracted_multi_file_info)
 
