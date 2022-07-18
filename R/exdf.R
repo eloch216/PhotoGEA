@@ -85,7 +85,7 @@ is.exdf <- function(x) {
 # Convert an exdf to a data.frame (used by `View`, `write.csv`, and others)
 as.data.frame.exdf <- function(x, ...) {
     # Make sure time columns are properly formatted for displaying
-    main_data <- x[['main_data']]
+    main_data <- x$main_data
     for (col in colnames(main_data)) {
         if ("POSIXlt" %in% class(main_data[[col]])) {
             main_data[[col]] <- format(main_data[[col]])
@@ -93,92 +93,81 @@ as.data.frame.exdf <- function(x, ...) {
     }
 
     # Store the categories and units as the first rows of the data.frame
-    return(
-        rbind(
-            x[['categories']],
-            x[['units']],
-            main_data
-        )
-    )
+    return(rbind(x$categories, x$units, main_data))
 }
 
 # Define a helper function for making nice column names (used to improve `print`
 # and `utils::str`)
 fancy_column_names <- function(x) {
     paste0(
-        colnames(x[['units']]),
-        " [", x[['categories']][1,], "]",
-        " (", x[['units']][1,], ")"
+        colnames(x$units),
+        " [", x$categories[1,], "]",
+        " (", x$units[1,], ")"
     )
 }
 
 # Print an exdf
 print.exdf <- function(x, ...) {
-    res <- x[['main_data']]
+    res <- x$main_data
     colnames(res) <- fancy_column_names(x)
     print(res, ...)
 }
 
 # Display the structure of an exdf
 str.exdf <- function(object, ...) {
-    res <- object[['main_data']]
+    res <- object$main_data
     colnames(res) <- fancy_column_names(object)
     utils::str(res, ...)
 }
 
 # Get the length of an exdf
 length.exdf <- function(x) {
-    length(x[['main_data']])
+    length(x$main_data)
 }
 
 # Get the dimensions of an exdf
 dim.exdf <- function(x) {
-    dim(x[['main_data']])
+    dim(x$main_data)
 }
 
 # Get the dimension names of an exdf
 dimnames.exdf <- function(x) {
-    dimnames(x[['main_data']])
+    dimnames(x$main_data)
 }
 
 # Set the dimension names of an exdf; don't attempt to change the row names for
 # the units and categories.
 `dimnames<-.exdf` <- function(x, value) {
-    dimnames(x[['main_data']]) <- value
+    dimnames(x$main_data) <- value
 
-    unit_dimnames <- dimnames(x[['units']])
+    unit_dimnames <- dimnames(x$units)
     unit_dimnames[[2]] <- value[[2]]
-    dimnames(x[['units']]) <- unit_dimnames
+    dimnames(x$units) <- unit_dimnames
 
-    category_dimnames <- dimnames(x[['categories']])
+    category_dimnames <- dimnames(x$categories)
     category_dimnames[[2]] <- value[[2]]
-    dimnames(x[['categories']]) <- category_dimnames
+    dimnames(x$categories) <- category_dimnames
 
     return(x)
 }
 
 # Access elements of an exdf's main_data
 `[.exdf` <- function(x, i, j) {
-    return(x[['main_data']][i,j])
+    return(x$main_data[i,j])
 }
 
 # Modify elements of an exdf's main_data
 `[<-.exdf` <- function(x, i, j, value) {
     if (!is.character(j)) {
-        stop(
-            paste(
-                "when modifying a exdf using [i,j], the column `j` must be",
-                "specified as a name rather than an index"
-            )
-        )
+        stop("when modifying a exdf using [i,j], the column `j` must be specified as a name rather than an index")
     }
 
     if (!j %in% colnames(x)) {
-        x[['units']][1,j] <- "NA"
-        x[['categories']][1,j] <- "NA"
+        x$units[1,j] <- "NA"
+        x$categories[1,j] <- "NA"
     }
 
-    x[['main_data']][i,j] <- value
+    x$main_data[i,j] <- value
     return(x)
 }
 
@@ -193,33 +182,47 @@ rbind.exdf <- function(
 {
     exdf_list <- list(...)
 
+    # Make sure there is one or more exdf object
     if (length(exdf_list) < 1) {
         stop("rbind.exdf requires one or more exdf objects")
     }
 
-    type_check <- rep(FALSE, times = length(exdf_list))
+    # Make sure all the objects are indeed exdf objects
+    type_check <- lapply(exdf_list, function(x) {is.exdf(x)})
+
+    if (!all(as.logical(type_check))) {
+        stop("exdf objects can only be combined with other exdf objects when using rbind")
+    }
+
+    # Get the info from the first file to use as a reference
+    first_exdf <- exdf_list[[1]]
+
+    # Check to make sure all the exdf objects have the same variables, units,
+    # and categories
     for (i in seq_along(exdf_list)) {
-        if (is.exdf(exdf_list[[i]])) {
-            type_check[i] <- TRUE
+        current_exdf <- exdf_list[[i]]
+
+        if (!identical(colnames(first_exdf$main_data), colnames(current_exdf$main_data))) {
+            stop("exdf objects must all have the same column names when using rbind")
+        }
+
+        if (!identical(first_exdf$categories, current_exdf$categories)) {
+            stop("exdf objects must all have the same categories when using rbind")
+        }
+
+        if (!identical(first_exdf$units, current_exdf$units)) {
+            stop("exdf objects must all have the same units when using rbind")
         }
     }
 
-    if (!all(type_check)) {
-        stop(
-            paste(
-                "exdf objects can only be combined with other exdf",
-                "objects when using rbind"
-            )
-        )
-    }
-
+    # Use rbind for data frames to combine all the main_data elements
     main_data_list <- list()
     for (i in seq_along(exdf_list)) {
-        main_data_list[[i]] <- exdf_list[[i]][['main_data']]
+        main_data_list[[i]] <- exdf_list[[i]]$main_data
     }
 
     new_main_data <- do.call(
-        "rbind",
+        rbind,
         c(
             main_data_list,
             list(
@@ -231,11 +234,5 @@ rbind.exdf <- function(
         )
     )
 
-    return(
-        exdf(
-            new_main_data,
-            exdf_list[[1]][['units']],
-            exdf_list[[1]][['categories']]
-        )
-    )
+    return(exdf(new_main_data, first_exdf$units, first_exdf$categories))
 }

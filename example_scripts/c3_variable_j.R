@@ -127,7 +127,7 @@ if (PERFORM_CALCULATIONS) {
     })
 
     # Combine the Licor files into one table
-    combined_info <- combine_exdf(extracted_multi_file_info)
+    combined_info <- do.call(rbind, extracted_multi_file_info)
 
     combined_info <- process_id_columns(
         combined_info,

@@ -149,7 +149,7 @@ if (PERFORM_CALCULATIONS) {
         ))
     })
 
-    tdl_files <- combine_exdf(tdl_files)
+    tdl_files <- do.call(rbind, tdl_files)
 
     tdl_files <- identify_tdl_cycles(
         tdl_files,
@@ -226,7 +226,7 @@ if (PERFORM_CALCULATIONS) {
         max_allowed_time_difference = 1
     )
 
-    licor_files <- combine_exdf(licor_files)
+    licor_files <- do.call(rbind, licor_files)
 
     # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
     licor_files <- calculate_gas_properties(
