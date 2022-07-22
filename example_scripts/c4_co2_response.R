@@ -135,8 +135,7 @@ if (PERFORM_CALCULATIONS) {
         )
     })
 
-    common_columns <-
-        identify_common_licor_columns(multi_file_info, verbose = FALSE)
+    common_columns <- do.call(identify_common_columns, multi_file_info)
 
     extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
         exdf_obj[ , common_columns, TRUE]

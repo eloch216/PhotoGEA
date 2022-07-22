@@ -205,8 +205,7 @@ if (PERFORM_CALCULATIONS) {
         )
     })
 
-    common_columns <-
-        identify_common_licor_columns(licor_files, verbose = FALSE)
+    common_columns <- do.call(identify_common_columns, licor_files)
 
     licor_files <- lapply(licor_files, function(exdf_obj) {
         exdf_obj[ , common_columns, TRUE]

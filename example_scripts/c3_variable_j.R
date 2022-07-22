@@ -120,7 +120,7 @@ if (PERFORM_CALCULATIONS) {
 
     # Extract the common columns
     common_columns <-
-        identify_common_licor_columns(multi_file_info, verbose = FALSE)
+        identify_common_columns(multi_file_info, verbose = FALSE)
 
     extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
         exdf_obj[ , common_columns, TRUE]
