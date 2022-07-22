@@ -1,35 +1,3 @@
-# Calculates the Ball-Berry index, which typically must be done after a call to
-# `calculate_gas_properties` and before a call to `fit_ball_berry`.
-calculate_ball_berry_index <- function(
-    licor_exdf,
-    a_column_name,
-    rhleaf_column_name,
-    csurface_column_name
-)
-{
-    if (!is.exdf(licor_exdf)) {
-        stop("calculate_ball_berry_index requires an exdf object")
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[rhleaf_column_name]] <- "%"
-    required_columns[[csurface_column_name]] <- "micromol mol^(-1)"
-
-    check_required_columns(licor_exdf, required_columns)
-
-    # Calculate the Ball-Berry index
-    licor_exdf[,'bb_index'] <-
-        0.01 * licor_exdf[,'A'] * licor_exdf[,'RHleaf'] / licor_exdf[,'Csurface']
-
-    # Document the column that was added
-    licor_exdf <- specify_variables(
-        licor_exdf,
-        c("calculate_ball_berry_index", 'bb_index', "mmol m^(-2) s^(-1)")
-    )
-}
-
 # This function is intended to be passed to the `apply_fit_function_across_reps`
 # function as its `FUN` argument. A user shouldn't be directly calling this
 # function, so don't provide default arguments here.
