@@ -86,7 +86,6 @@ small_exdf[small_exdf[,'A'] > 2, 'B'] <- 0 # Replace some rows of column B with 
 new_exdf <- small_exdf[small_exdf[,'A'] > 2, , TRUE]
 names(new_exdf) # Check that the `extra_exdf_element` is still present
 print(new_exdf) # Check that only the rows with A > 2 are included
-
 }
 
 \concept{exdf}

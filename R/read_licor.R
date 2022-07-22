@@ -1,7 +1,3 @@
-# This file includes functions for reading Licor data files.
-
-# read_licor_file: a function for reading the data from a Licor Excel file into
-# an exdf object.
 read_licor_file <- function(
     file_name,
     preamble_data_rows,
@@ -106,48 +102,5 @@ read_licor_file <- function(
             variable_unit_row = variable_unit_row,
             data_start_row = data_start_row
         )
-    )
-}
-
-# choose_input_licor_files: a function for interactively selecting multiple
-# Licor Excel files.
-#
-# Important note: this function is only available on MS Windows.
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# None
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# a vector of file name strings representing absolute paths to Licor Excel files
-#
-choose_input_licor_files <- function()
-{
-    if (!interactive() | .Platform$OS.type != "windows") {
-        stop(
-            paste(
-                "The `choose_input_licor_files` function is only available in",
-                "interactive R sessions running in MS Windows"
-            )
-        )
-    }
-
-    utils::choose.files(
-        default = "",
-        caption = "Select Licor Excel input files",
-        multi = TRUE,
-        filters = matrix(
-            c(
-                "Excel files (*.xlsx)", "All files (*.*)",
-                "*.xlsx", "*.*"
-            ),
-            ncol = 2
-        ),
-        index = 1
     )
 }
