@@ -5,7 +5,11 @@
 \title{calculate_gas_properties}
 
 \description{
-  Calculates gas properties that are typically not included in Licor files.
+  Calculates gas properties that are typically not included in Licor files. This
+  function can accomodate alternative column names for the variables taken from
+  the Licor file in case they change at some point in the future. This function
+  also checks the units of each required column and will produce an error if any
+  units are incorrect.
 }
 
 \usage{
@@ -109,9 +113,6 @@
     \item CO2 conductance to diffusion through the boundary layer (\code{gbc}).
     \item CO2 concentration at the leaf surface (\code{Cs}).
   }
-
-  This function can accomodate alternative column names for the variables taken
-  from the Licor file in case they change at some point in the future.
 
   \emph{Equations used for these calculations}
 
