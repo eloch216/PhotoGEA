@@ -151,9 +151,32 @@ dimnames.exdf <- function(x) {
     return(x)
 }
 
-# Access elements of an exdf's main_data
-`[.exdf` <- function(x, i, j) {
-    return(x$main_data[i,j])
+# Access elements of an exdf
+`[.exdf` <- function(x, i, j, return_exdf = FALSE) {
+    if (return_exdf) {
+        exdf_elements <- names(x)
+
+        essential_elements <- c("main_data", "units", "categories")
+
+        extra_elements <-
+            exdf_elements[!exdf_elements %in% essential_elements]
+
+        extra_element_list <- stats::setNames(
+            lapply(extra_elements, function(ele) {return(x[[ele]])}),
+            extra_elements
+        )
+
+        essential_element_list <- list(
+            x$main_data[i,j],
+            x$units[1,j],
+            x$categories[1,j]
+        )
+
+        return(do.call(exdf, c(essential_element_list, extra_element_list)))
+    }
+    else {
+        return(x$main_data[i,j])
+    }
 }
 
 # Modify elements of an exdf's main_data

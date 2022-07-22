@@ -31,26 +31,11 @@ multi_file_info <- lapply(choose_input_licor_files(), function(fname) {
     )
 })
 
+common_columns <-
+    identify_common_licor_columns(multi_file_info, verbose = FALSE)
+
 extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
-    extract_variables(exdf_obj, c(
-        'obs',
-        'time',
-        'elapsed',
-        'date',
-        'hhmmss',
-        'species',
-        'plot',
-        'instrument',
-        A_COLUMN_NAME,
-        CA_COLUMN_NAME,
-        DELTAPCHAM_COLUMN_NAME,
-        E_COLUMN_NAME,
-        GBW_COLUMN_NAME,
-        GSW_COLUMN_NAME,
-        H2O_S_COLUMN_NAME,
-        PA_COLUMN_NAME,
-        TLEAF_COLUMN_NAME
-    ))
+    exdf_obj[ , common_columns, TRUE]
 })
 
 combined_info <- do.call(rbind, extracted_multi_file_info)

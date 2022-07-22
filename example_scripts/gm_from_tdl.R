@@ -140,13 +140,15 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
+    tdl_columns_to_extract <- c(
+        TDL_TIMESTAMP_COLUMN_NAME,
+        TDL_VALVE_COLUMN_NAME,
+        'Conc12C_Avg',
+        'Conc13C_Avg'
+    )
+
     tdl_files <- lapply(tdl_files, function(exdf_obj) {
-        extract_variables(exdf_obj, c(
-            TDL_TIMESTAMP_COLUMN_NAME,
-            TDL_VALVE_COLUMN_NAME,
-            'Conc12C_Avg',
-            'Conc13C_Avg'
-        ))
+        exdf_obj[ , tdl_columns_to_extract, TRUE]
     })
 
     tdl_files <- do.call(rbind, tdl_files)
@@ -207,7 +209,7 @@ if (PERFORM_CALCULATIONS) {
         identify_common_licor_columns(licor_files, verbose = FALSE)
 
     licor_files <- lapply(licor_files, function(exdf_obj) {
-        extract_variables(exdf_obj, common_columns)
+        exdf_obj[ , common_columns, TRUE]
     })
 
     licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)

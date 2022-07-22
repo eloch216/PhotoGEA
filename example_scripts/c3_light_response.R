@@ -123,7 +123,7 @@ if (PERFORM_CALCULATIONS) {
         identify_common_licor_columns(multi_file_info, verbose = FALSE)
 
     extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
-        extract_variables(exdf_obj, common_columns)
+        exdf_obj[ , common_columns, TRUE]
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
