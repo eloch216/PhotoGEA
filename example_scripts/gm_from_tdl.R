@@ -251,7 +251,9 @@ if (PERFORM_CALCULATIONS) {
         LICOR_A_COLUMN_NAME,
         LICOR_CA_COLUMN_NAME,
         LICOR_CI_COLUMN_NAME,
-        LICOR_GM_COLUMN_NAME
+        LICOR_GM_COLUMN_NAME,
+        LICOR_PA_COLUMN_NAME,
+        LICOR_DELTAPCHAM_COLUMN_NAME
     )
 
     licor_files <- calculate_iwue(

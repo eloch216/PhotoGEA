@@ -117,18 +117,21 @@ calculate_gas_properties <- function(
     tleaf_column_name
 )
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        a_column_name,
-        ca_column_name,
-        deltapcham_column_name,
-        e_column_name,
-        gbw_column_name,
-        gsw_column_name,
-        h2o_s_column_name,
-        pa_column_name,
-        tleaf_column_name
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("calculate_gas_properties requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_columns[[ca_column_name]] <- "micromol mol^(-1)"
+    required_columns[[deltapcham_column_name]] <- "kPa"
+    required_columns[[e_column_name]] <- "mol m^(-2) s^(-1)"
+    required_columns[[gbw_column_name]] <- "mol m^(-2) s^(-1)"
+    required_columns[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
+    required_columns[[h2o_s_column_name]] <- "mmol mol^(-1)"
+    required_columns[[pa_column_name]] <- "kPa"
+    required_columns[[tleaf_column_name]] <- "degrees C"
 
     check_required_columns(licor_exdf, required_columns)
 

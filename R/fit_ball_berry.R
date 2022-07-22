@@ -7,12 +7,15 @@ calculate_ball_berry_index <- function(
     csurface_column_name
 )
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        a_column_name,          # micromol m^(-2) s^(-1)
-        rhleaf_column_name,     # %
-        csurface_column_name    # micromol mol^(-1)
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("calculate_ball_berry_index requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_columns[[rhleaf_column_name]] <- "%"
+    required_columns[[csurface_column_name]] <- "micromol mol^(-1)"
 
     check_required_columns(licor_exdf, required_columns)
 

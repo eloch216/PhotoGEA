@@ -12,13 +12,16 @@ calculate_g_ratio <- function(
     g_ratio_column_name
 )
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        pa_column_name,          # kPa
-        deltapcham_column_name,  # kPa
-        gsc_column_name,         # mol / m^2 / s
-        gmc_column_name          # mol / m^2 / s / bar
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("calculate_g_ratio requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[pa_column_name]] <- "kPa"
+    required_columns[[deltapcham_column_name]] <- "kPa"
+    required_columns[[gsc_column_name]] <- "mol m^(-2) s^(-1)"
+    required_columns[[gmc_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
 
     check_required_columns(licor_exdf, required_columns)
 

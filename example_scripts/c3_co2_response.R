@@ -71,7 +71,7 @@ VIEW_DATA_FRAMES <- TRUE
 # that have identical Vcmax but different gm.
 USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
-GM_UNITS <- "mol m^(-2) s^(-1)"
+GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
@@ -121,6 +121,8 @@ KO_COLUMN_NAME <- "Ko"
 TLEAF_COLUMN_NAME <- "TleafCnd"
 TIME_COLUMN_NAME <- "time"
 ETR_COLUMN_NAME <- "ETR"
+PA_COLUMN_NAME <- "Pa"
+DELTAPCHAM_COLUMN_NAME <- 'DeltaPcham'
 
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
@@ -193,7 +195,9 @@ if (PERFORM_CALCULATIONS) {
         A_COLUMN_NAME,
         CA_COLUMN_NAME,
         CI_COLUMN_NAME,
-        GM_COLUMN_NAME
+        GM_COLUMN_NAME,
+        PA_COLUMN_NAME,
+        DELTAPCHAM_COLUMN_NAME
     )
 
     # Calculate f_prime (required for the Vcmax fitting procedure)

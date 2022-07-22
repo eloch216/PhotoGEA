@@ -1,24 +1,27 @@
 calculate_gm_ubierna <- function(licor_exdf)
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        'CO2_s',
-        'H2O_s',
-        'CO2_r',
-        'H2O_r',
-        'Oxygen',
-        'Pa',
-        'Csurface',
-        'Ci',
-        'total_mixing_ratio_r',
-        'total_mixing_ratio_s',
-        'E',
-        'gtc',
-        'total_isotope_ratio_r',
-        'total_isotope_ratio_s',
-        'A',
-        'respiration'
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("calculate_gm_ubierna requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns$CO2_s <- "micromol mol^(-1)"
+    required_columns$H2O_s <- "mmol mol^(-1)"
+    required_columns$CO2_r <- "micromol mol^(-1)"
+    required_columns$H2O_r <- "mmol mol^(-1)"
+    required_columns$Oxygen <- "%"
+    required_columns$Pa <- "kPa"
+    required_columns$Csurface <- "micromol mol^(-1)"
+    required_columns$Ci <- "micromol mol^(-1)"
+    required_columns$total_mixing_ratio_r <- "ppm"
+    required_columns$total_mixing_ratio_s <- "ppm"
+    required_columns$E <- "mol m^(-2) s^(-1)"
+    required_columns$gtc <- "mol m^(-2) s^(-1)"
+    required_columns$total_isotope_ratio_r <- "ppt"
+    required_columns$total_isotope_ratio_s <- "ppt"
+    required_columns$A <- "micromol m^(-2) s^(-1)"
+    required_columns$respiration <- "micromol m^(-2) s^(-1)"
 
     check_required_columns(licor_exdf, required_columns)
 
