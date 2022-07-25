@@ -24,6 +24,6 @@ calculate_ball_berry_index <- function(
     # Document the column that was added
     licor_exdf <- specify_variables(
         licor_exdf,
-        c("calculate_ball_berry_index", 'bb_index', "mmol m^(-2) s^(-1)")
+        c("calculate_ball_berry_index", 'bb_index', "mol m^(-2) s^(-1)")
     )
 }

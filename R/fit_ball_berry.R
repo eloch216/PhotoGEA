@@ -38,16 +38,27 @@ fit_ball_berry_replicate <- function(
     ))
 }
 
-# Performs a Ball-Berry fitting procedure to each replicate in the data set,
+# Performs a Ball-Berry fitting procedure to each curve in the data set,
 # returning the extracted parameters as well as the fitted values of stomatal
 # conductance.
 fit_ball_berry <- function(
     exdf_obj,
     replicate_column_name,
-    gsw_column_name = 'gsw',
-    bb_index_column_name = 'bb_index'
+    gsw_column_name,
+    bb_index_column_name
 )
 {
+    if (!is.exdf(exdf_obj)) {
+        stop("fit_ball_berry requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
+    required_columns[[bb_index_column_name]] <- "mol m^(-2) s^(-1)"
+
+    check_required_columns(exdf_obj, required_columns)
+
     apply_fit_function_across_reps(
         exdf_obj[['main_data']],
         replicate_column_name,
