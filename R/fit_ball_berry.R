@@ -70,11 +70,13 @@ fit_ball_berry <- function(
 
     # Make sure the required columns are defined and have the correct units
     required_columns <- list()
+    required_columns[[replicate_column_name]] <- NA
     required_columns[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
     required_columns[[bb_index_column_name]] <- "mol m^(-2) s^(-1)"
 
     check_required_columns(exdf_obj, required_columns)
 
+    # Apply the fit
     apply_fit_function_across_reps(
         exdf_obj,
         exdf_obj[ ,replicate_column_name],

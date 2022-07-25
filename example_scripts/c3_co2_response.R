@@ -220,21 +220,19 @@ if (PERFORM_CALCULATIONS) {
         IWUE_COLUMN_NAME
     )
 
-    all_samples <- combined_info[['main_data']]
-
     # Rename the prefix "36625-" from any event names that contain it
     prefix_to_remove <- "36625-"
-    all_samples[[EVENT_COLUMN_NAME]] <- gsub(
+    combined_info[, EVENT_COLUMN_NAME] <- gsub(
         prefix_to_remove,
         "",
-        all_samples[[EVENT_COLUMN_NAME]],
+        combined_info[, EVENT_COLUMN_NAME],
         fixed = TRUE
     )
 
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <- gsub(
+    combined_info[, UNIQUE_ID_COLUMN_NAME] <- gsub(
         prefix_to_remove,
         "",
-        all_samples[[UNIQUE_ID_COLUMN_NAME]],
+        combined_info[, UNIQUE_ID_COLUMN_NAME],
         fixed = TRUE
     )
 
@@ -244,20 +242,20 @@ if (PERFORM_CALCULATIONS) {
         "1"
     )
 
-    all_samples <-
-        all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
+    combined_info <-
+        combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_IGNORE, , return_exdf = TRUE]
 
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
-        all_samples,
+        combined_info,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
         NUM_OBS_IN_SEQ
     )
 
     # Organize the data, keeping only the desired measurement points
-    all_samples <- organize_response_curve_data(
-        all_samples,
+    combined_info <- organize_response_curve_data(
+        combined_info,
         MEASUREMENT_NUMBER_NAME,
         NUM_OBS_IN_SEQ,
         MEASUREMENT_NUMBERS,
@@ -266,15 +264,16 @@ if (PERFORM_CALCULATIONS) {
         EVENT_COLUMN_NAME
     )
 
-    # Calculate basic stats for each event
-    all_stats <- basic_stats(
-        all_samples,
-        c('seq_num', EVENT_COLUMN_NAME)
-    )
+    # Calculate basic stats for each event (temporarily disabled since
+    # basic_stats) needs to be updated
+    # all_stats <- basic_stats(
+    #     all_samples,
+    #     c('seq_num', EVENT_COLUMN_NAME)
+    # )
 
     # Perform Vcmax fitting procedure
     vcmax_results <- fit_c3_vcmax(
-        all_samples,
+        combined_info,
         UNIQUE_ID_COLUMN_NAME,
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
@@ -284,8 +283,10 @@ if (PERFORM_CALCULATIONS) {
         CI_THRESHOLD
     )
 
-    vcmax_parameters <- vcmax_results[['parameters']]
-    vcmax_fits <- vcmax_results[['fits']]
+    vcmax_parameters <- vcmax_results[['parameters']]$main_data
+    vcmax_fits <- vcmax_results[['fits']]$main_data
+
+    all_samples <- combined_info[['main_data']]
 }
 
 # Make a subset of the full result for just the one measurement point
@@ -302,7 +303,7 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    # View(all_stats)
     View(vcmax_parameters[c("event", "replicate", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
 }
 
