@@ -22,24 +22,24 @@
 }
 
 \arguments{
-  \item{licor_exdf}{
+  \item{exdf_obj}{
     An \code{exdf} object representing data from a Licor gas exchange
     measurement system.
   }
 
   \item{replicate_column_name}{
-    The name of a column in \code{licor_exdf} that can be treated as a factor to
+    The name of a column in \code{exdf_obj} that can be treated as a factor to
     identify individual Ball-Berry curves (typically \code{replicate} or
     something similar).
   }
 
   \item{gsw_column_name}{
-    The name of the column in \code{licor_exdf} that contains the stomatal
+    The name of the column in \code{exdf_obj} that contains the stomatal
     conductance to water vapor (typically \code{'gsw'}).
   }
 
   \item{bb_index_column_name}{
-    The name of the column in \code{licor_exdf} that contains the Ball-Berry
+    The name of the column in \code{exdf_obj} that contains the Ball-Berry
     index (typically \code{'bb_index'}).
   }
 }
@@ -102,16 +102,16 @@
 \value{
   A list with two elements:
   \itemize{
-    \item \code{fits}: A data frame including the measured values and the fitted
-          values of stomatal conductance. The fitted values will be stored in a
-          column whose name is determined by appending \code{'_fits'} to the end
-          of \code{gsw_column_name}.
-    \item \code{parameters}: A data frame including the fitting parameters and
-          R-squared values for each Ball-Berry curve. The Ball-Berry intercept
-          (in \code{mol / m^2 / s}) is stored in the \code{bb_intercept}
-          column, the Ball-Berry slope (dimensionless) is stored in the
-          \code{bb_slope} column, and the R-squared value for the fit is stored
-          in the \code{r_squared} column.
+    \item \code{fits}: An \code{exdf} object including the measured values and
+          the fitted values of stomatal conductance. The fitted values will be
+          stored in a column whose name is determined by appending
+          \code{'_fits'} to the end of \code{gsw_column_name}; typically, this
+          will be \code{'gsw_fits'}.
+    \item \code{parameters}: An \code{exdf} object including the fitting
+          parameters and R-squared values for each Ball-Berry curve. The
+          Ball-Berry intercept is stored in the \code{bb_intercept} column, the
+          Ball-Berry slope is stored in the \code{bb_slope} column, and the
+          R-squared value for the fit is stored in the \code{r_squared} column.
   }
 }
 
@@ -161,12 +161,13 @@ bb_results <- fit_ball_berry(
 )
 
 # View the fitting parameters for each species / plot
-bb_results$parameters[,c('species', 'plot', 'species_plot', 'bb_intercept', 'bb_slope', 'r_squared')]
+col_to_keep <- c('species', 'plot', 'species_plot', 'bb_intercept', 'bb_slope', 'r_squared')
+bb_results$parameters[ , col_to_keep]
 
 # View the fits for each species / plot
 lattice::xyplot(
   gsw_fit + gsw ~ bb_index | species_plot,
-  data = bb_results$fit,
+  data = bb_results$fit$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,

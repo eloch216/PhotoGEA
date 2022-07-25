@@ -92,8 +92,8 @@ bb_results <- fit_ball_berry(
     BB_INDEX_COLUMN_NAME
 )
 
-bb_parameters <- bb_results[['parameters']]
-bb_fits <- bb_results[['fits']]
+bb_parameters <- bb_results$parameters$main_data
+bb_fits <- bb_results$fits$main_data
 
 # Get averages, standard deviations, and standard errors for the Ball-Berry
 # slope and intercept for each crop
