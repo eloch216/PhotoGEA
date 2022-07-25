@@ -91,28 +91,32 @@ c4_aci <- function(
 
 # This function is intended to be passed to the `apply_fit_function_across_reps`
 # function as its `FUN` argument. A user shouldn't be directly calling this
-# function, so don't provide default arguments here.
+# function, so don't provide default arguments here. We don't need to check the
+# inputs here since this will be taken care of by `fit_c4_aci`.
 fit_c4_aci_replicate <- function(
-    replicate_data_frame,
-    A_COLUMN_NAME,               # micromol / m^2 / s
-    CI_COLUMN_NAME,              # micromol / mol
-    PRESSURE_COLUMN_NAME,        # kPa
-    DELTA_PRESSURE_COLUMN_NAME,  # kPa
-    TLEAF_COLUMN_NAME,           # degrees C
+    replicate_exdf,
+    a_column_name,               # micromol / m^2 / s
+    ci_column_name,              # micromol / mol
+    pressure_column_name,        # kPa
+    delta_pressure_column_name,  # kPa
+    tleaf_column_name,           # degrees C
     PTR_FUN,
     Om,                          # microbar
     gbs,                         # mol / m^2 / s / bar
     initial_guess
 )
 {
+    # Get the replicate identifier columns
+    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+
     # Calculate Ci values in microbar, using the fact that 1 kPa = 0.01 bar
     Ci_microbar <-
-        0.01 * replicate_data_frame[[CI_COLUMN_NAME]] *
-        (replicate_data_frame[[PRESSURE_COLUMN_NAME]] + replicate_data_frame[[DELTA_PRESSURE_COLUMN_NAME]])
+        0.01 * replicate_exdf[, ci_column_name] *
+        (replicate_exdf[, pressure_column_name] + replicate_exdf[, delta_pressure_column_name])
 
-    # Extract A and gm values
-    A <- replicate_data_frame[[A_COLUMN_NAME]]
-    Tleaf <- replicate_data_frame[[TLEAF_COLUMN_NAME]]
+    # Extract A and Tleaf values
+    A <- replicate_exdf[, a_column_name]
+    Tleaf <- replicate_exdf[, tleaf_column_name]
 
     # Perform a nonlinear least squares fit
     aci_fit <- tryCatch(
@@ -123,79 +127,124 @@ fit_c4_aci_replicate <- function(
             )
         },
         error = function(cond) {
-            print("Having trouble fitting an A-Ci curve:")
-            print(find_identifier_columns(replicate_data_frame))
-            print("Giving up on the fit :(")
+            print('Having trouble fitting an A-Ci curve:')
+            print(find_identifier_columns(replicate_exdf))
+            print('Giving up on the fit :(')
             print(cond)
             return(NULL)
         },
         warning = function(cond) {
-            print("Having trouble fitting an A-Ci curve:")
-            print(find_identifier_columns(replicate_data_frame))
-            print("Giving up on the fit :(")
+            print('Having trouble fitting an A-Ci curve:')
+            print(find_identifier_columns(replicate_exdf))
+            print('Giving up on the fit :(')
             print(cond)
             return(NULL)
         }
     )
 
+    # Extract the fit results and add the fit line to the exdf object
     if (is.null(aci_fit)) {
-        return(list(parameters = NULL, fits = NULL))
+        Vpmax <- NA
+        Vcmax <- NA
+        sum_squared_residuals <- NA
+        final_convergence <- NA
+        replicate_exdf[, paste0(a_column_name, '_fit')] <- NA
+    } else {
+        fit_summary <- summary(aci_fit)
+        fit_coeff <- fit_summary[['coefficients']]
+
+        Vpmax <- fit_coeff[1,1]
+        Vcmax <- fit_coeff[2,1]
+
+        sum_squared_residuals <- sum((fit_summary[['residuals']])^2)
+
+        final_convergence <- fit_summary[['convInfo']][['finTol']]
+
+        replicate_exdf[, paste0(a_column_name, '_fit')] <-
+            c4_aci(A, Ci_microbar, Tleaf, PTR_FUN, Om, gbs, Vpmax, Vcmax)
     }
 
-    # Extract the fit results
-    fit_summary <- summary(aci_fit)
-    fit_coeff <- fit_summary[['coefficients']]
+    # Document the column that was added
+    replicate_exdf <- specify_variables(
+        replicate_exdf,
+        c('fit_c4_aci', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
+    )
 
-    Vpmax <- fit_coeff[1,1]
-    Vcmax <- fit_coeff[2,1]
+    # Add the values of the fitted parameters
+    replicate_identifiers[, 'Vpmax_at_25'] <- Vpmax
+    replicate_identifiers[, 'Vcmax_at_25'] <- Vcmax
+    replicate_identifiers[, 'sum_squared_residuals'] <- sum_squared_residuals
+    replicate_identifiers[, 'final_convergence'] <- final_convergence
 
-    sum_squared_residuals <- sum((fit_summary[['residuals']])^2)
-
-    final_convergence <- fit_summary[['convInfo']][['finTol']]
-
-    # Calculate the fit line and add it to the data frame
-    replicate_data_frame[[paste0(A_COLUMN_NAME, '_fit')]] <-
-        c4_aci(A, Ci_microbar, Tleaf, PTR_FUN, Om, gbs, Vpmax, Vcmax)
+    # Document the columns that were added
+    replicate_identifiers <- specify_variables(
+        replicate_identifiers,
+        c('fit_c4_aci', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpmax_at_25', 'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'sum_squared_residuals', ''),
+        c('fit_c4_aci', 'final_convergence', '')
+    )
 
     # Return the results
     return(list(
-        parameters = c(
-            find_identifier_columns(replicate_data_frame),
-            list(
-                Vpmax = Vpmax,
-                Vcmax = Vcmax,
-                sum_squared_residuals = sum_squared_residuals,
-                final_convergence = final_convergence
-            )
-        ),
-        fits = replicate_data_frame
+        parameters = replicate_identifiers,
+        fits = replicate_exdf
     ))
 }
 
 # Applies a fitting procedure to each replicate in the data set, returning the
 # extracted parameters as well as the fitted values of net assimilation.
 fit_c4_aci <- function(
-    dataframe,
+    exdf_obj,
     replicate_column_name,
-    A_COLUMN_NAME,               # micromol / m^2 / s
-    CI_COLUMN_NAME,              # micromol / mol
-    PRESSURE_COLUMN_NAME,        # kPa
-    DELTA_PRESSURE_COLUMN_NAME,  # kPa
-    TLEAF_COLUMN_NAME,           # degrees C
+    a_column_name,               # micromol / m^2 / s
+    ci_column_name,              # micromol / mol
+    pressure_column_name,        # kPa
+    delta_pressure_column_name,  # kPa
+    tleaf_column_name,           # degrees C
     PTR_FUN,
+    ci_threshold,                # ppm
     Om = 210000,                 # microbar
     gbs = 0.003,                 # mol / m^2 / s / bar
     initial_guess = list(Vpmax = 150, Vcmax = 30)
 )
 {
+    if (!is.exdf(exdf_obj)) {
+        stop('fit_c4_aci requires an exdf object')
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[replicate_column_name]] <- NA
+    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
+    required_columns[[pressure_column_name]] <- 'kPa'
+    required_columns[[delta_pressure_column_name]] <- 'kPa'
+    required_columns[[tleaf_column_name]] <- 'degrees C'
+
+    check_required_columns(exdf_obj, required_columns)
+
+    # Truncate to a limited range of Ci values
+    exdf_subset <-
+        exdf_obj[exdf_obj[ , ci_column_name] <= ci_threshold, , return_exdf = TRUE]
+
+    cat(
+        paste(
+            '\n\nMaximum Ci used for Vcmax fitting:',
+            max(exdf_subset[, ci_column_name]),
+            ' ppm\n\n'
+        )
+    )
+
+    # Apply the fit
     apply_fit_function_across_reps(
-        dataframe,
-        replicate_column_name,
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PRESSURE_COLUMN_NAME,
-        DELTA_PRESSURE_COLUMN_NAME,
-        TLEAF_COLUMN_NAME,
+        exdf_obj,
+        exdf_subset[, replicate_column_name],
+        a_column_name,
+        ci_column_name,
+        pressure_column_name,
+        delta_pressure_column_name,
+        tleaf_column_name,
         PTR_FUN,
         Om,
         gbs,

@@ -45,7 +45,7 @@ fit_c3_vcmax_replicate <- function(
     # Document the column that was added
     replicate_exdf <- specify_variables(
         replicate_exdf,
-        c("fit_c3_vcmax", paste0(a_column_name, '_fit'), "micromol m^(-2) s^(-1)")
+        c('fit_c3_vcmax', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
     )
 
     # Add the values of the fitted parameters
@@ -60,13 +60,13 @@ fit_c3_vcmax_replicate <- function(
     # Document the columns that were added
     replicate_identifiers <- specify_variables(
         replicate_identifiers,
-        c("fit_c3_vcmax", 'Vcmax', "micromol m^(-2) s^(-1)"),
-        c("fit_c3_vcmax", 'Vcmax_stderr', "micromol m^(-2) s^(-1)"),
-        c("fit_c3_vcmax", 'Vcmax_at_25', "micromol m^(-2) s^(-1)"),
-        c("fit_c3_vcmax", 'Rd', "micromol m^(-2) s^(-1)"),
-        c("fit_c3_vcmax", 'Rd_stderr', "micromol m^(-2) s^(-1)"),
-        c("fit_c3_vcmax", 'Rd_at_25', "micromol m^(-2) s^(-1)"),
-        c("fit_c3_vcmax", 'r_squared', "")
+        c('fit_c3_vcmax', 'Vcmax', 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_vcmax', 'Vcmax_stderr', 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_vcmax', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_vcmax', 'Rd', 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_vcmax', 'Rd_stderr', 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_vcmax', 'Rd_at_25', 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_vcmax', 'r_squared', '')
     )
 
     # Return the results
@@ -91,16 +91,16 @@ fit_c3_vcmax <- function(
 )
 {
     if (!is.exdf(exdf_obj)) {
-        stop("fit_c3_vcmax requires an exdf object")
+        stop('fit_c3_vcmax requires an exdf object')
     }
 
     # Make sure the required columns are defined and have the correct units
     required_columns <- list()
     required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[f_prime_column_name]] <- "dimensionless"
-    required_columns[[tleaf_column_name]] <- "degrees C"
+    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
+    required_columns[[f_prime_column_name]] <- 'dimensionless'
+    required_columns[[tleaf_column_name]] <- 'degrees C'
 
     check_required_columns(exdf_obj, required_columns)
 
@@ -110,9 +110,9 @@ fit_c3_vcmax <- function(
 
     cat(
         paste(
-            "\n\nMaximum Ci used for Vcmax fitting:",
+            '\n\nMaximum Ci used for Vcmax fitting:',
             max(exdf_subset[, ci_column_name]),
-            " ppm\n\n"
+            ' ppm\n\n'
         )
     )
 
