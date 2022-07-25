@@ -259,3 +259,15 @@ rbind.exdf <- function(
 
     return(exdf(new_main_data, first_exdf$units, first_exdf$categories))
 }
+
+# Split an exdf object into a list of smaller exdf objects by the value of one
+# or more factors
+split.exdf <- function(x, f, drop = FALSE, lex.order = FALSE, ...)
+{
+    f <- interaction(f, drop = drop, lex.order = lex.order)
+
+    lapply(
+        split(x = seq_len(nrow(x)), f = f, drop = drop, ...),
+        function(ind) x[ind, , return_exdf = TRUE]
+    )
+}
