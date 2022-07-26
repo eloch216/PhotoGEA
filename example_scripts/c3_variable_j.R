@@ -166,9 +166,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
-        all_samples,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
+        combined_info,
+        c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
     )
 

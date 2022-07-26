@@ -78,11 +78,7 @@ combined_info[,'species_plot_instrument'] <- paste(
 )
 
 # Check the data for any issues before proceeding with additional analysis
-check_response_curve_data(
-    combined_info[['main_data']],
-    'species',
-    'plot_instrument'
-)
+check_response_curve_data(combined_info, c('species', 'plot_instrument'))
 
 # Do Ball-Berry fitting
 bb_results <- fit_ball_berry(
