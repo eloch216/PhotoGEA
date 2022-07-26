@@ -13,5 +13,5 @@ insert_final_newline = true
 
 # Use smaller indentation for some file types that tend to have many layers of
 # indentation
-[*.{yml,yaml,Rd,Rnw,md}]
+[*.{yml,yaml,Rd,Rnw,md,Rmd}]
 indent_size = 2

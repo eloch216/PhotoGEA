@@ -19,4 +19,7 @@ Imports:
 Suggests:
     onewaytests,
     DescTools,
-    signal
+    signal,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

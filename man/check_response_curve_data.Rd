@@ -11,7 +11,7 @@
 
 \usage{
   check_response_curve_data(
-    exdf_obj,
+    licor_exdf,
     identifier_columns,
     expected_npts = 0,
     col_to_ignore_for_inf = "gmc"
