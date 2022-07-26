@@ -18,7 +18,19 @@ for the next release.
 
 # UNRELEASED
 
+# PhotoGEA VERSION 0.2.0 (2022-07-26)
+
+- This version adds a substantial amount of documentation, including a vignette
+  describing how to use PhotoGEA to analyze Ball-Berry data.
+- While working on documentation, several changes were made to key functions so
+  they behaved more reasonably and became easier to document.
+- At the moment, `basic_stats` and the "Variable J" example script have been
+  broken.
+
 # PhotoGEA VERSION 0.1.0
 
 - This is the first version of PhotoGEA. At this point, the package is in a
   state of rapid development, and not all changes will be described here.
+- We are reserving version `1.0.0` for the first version where all R package
+  functions and data sets have been documented; until then, major changes should
+  only increase the minor version number.
