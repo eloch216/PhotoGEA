@@ -123,22 +123,25 @@ UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
-    multi_file_info <- batch_read_licor_file(
-        LICOR_FILES_TO_PROCESS,
-        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_category_row = 14,
-        variable_name_row = 15,
-        variable_unit_row = 16,
-        data_start_row = 17,
-        timestamp_colname = TIME_COLUMN_NAME
-    )
+    multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+            variable_category_row = 14,
+            variable_name_row = 15,
+            variable_unit_row = 16,
+            data_start_row = 17,
+            timestamp_colname = TIME_COLUMN_NAME
+        )
+    })
 
-    extracted_multi_file_info <- batch_extract_variables(
-        multi_file_info,
-        identify_common_licor_columns(multi_file_info, verbose = FALSE)
-    )
+    common_columns <- do.call(identify_common_columns, multi_file_info)
 
-    combined_info <- combine_exdf(extracted_multi_file_info)
+    extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
+        exdf_obj[ , common_columns, TRUE]
+    })
+
+    combined_info <- do.call(rbind, extracted_multi_file_info)
 
     combined_info <- process_id_columns(
         combined_info,
@@ -169,19 +172,16 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
-    all_samples <- combined_info[['main_data']]
-
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
-        all_samples,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
+        combined_info,
+        c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
     )
 
     # Organize the data, keeping only the desired measurement points
-    all_samples <- organize_response_curve_data(
-        all_samples,
+    combined_info <- organize_response_curve_data(
+        combined_info,
         MEASUREMENT_NUMBER_NAME,
         NUM_OBS_IN_SEQ,
         MEASUREMENT_NUMBERS,
@@ -195,27 +195,32 @@ if (PERFORM_CALCULATIONS) {
     ###                     ###
 
     EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "28", "53", "14", "4", "10", "15", "30")
-    all_samples <- all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_EXCLUDE,]
+    combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
-    # Calculate basic stats for each event
-    all_stats <- basic_stats(
-        all_samples,
-        c('seq_num', EVENT_COLUMN_NAME)
-    )
+    # Calculate basic stats for each event (temporarily disabled since
+    # basic_stats) needs to be updated
+    # all_stats <- basic_stats(
+    #     all_samples,
+    #     c('seq_num', EVENT_COLUMN_NAME)
+    # )
 
     # Perform A-Ci fits
     fit_result <- fit_c4_aci(
-        all_samples[all_samples[[CI_COLUMN_NAME]] < CI_UPPER_LIMIT,],
+        combined_info,
         UNIQUE_ID_COLUMN_NAME,
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
         PRESSURE_COLUMN_NAME,
         DELTA_PRESSURE_COLUMN_NAME,
         TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)
+        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer),
+        CI_UPPER_LIMIT
     )
-    all_fit_parameters <- fit_result[['parameters']]
-    all_fits <- fit_result[['fits']]
+
+    all_fit_parameters <- fit_result[['parameters']]$main_data
+    all_fits <- fit_result[['fits']]$main_data
+
+    all_samples <- combined_info[['main_data']]
 }
 
 # Make a subset of the full result for just the one measurement point
@@ -232,7 +237,7 @@ all_fit_parameters <- factorize_id_column(all_fit_parameters, EVENT_COLUMN_NAME)
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    # View(all_stats)
     View(all_fit_parameters)
 }
 

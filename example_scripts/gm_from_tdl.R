@@ -43,7 +43,7 @@ SAVE_RESULTS <- FALSE
 
 MAKE_TDL_PLOTS <- TRUE
 
-MAKE_GM_PLOTS <- TRUE
+MAKE_GM_PLOTS <- FALSE
 
 RESPIRATION <- -2.2
 
@@ -140,17 +140,18 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files <- batch_extract_variables(
-        tdl_files,
-        c(
-            TDL_TIMESTAMP_COLUMN_NAME,
-            TDL_VALVE_COLUMN_NAME,
-            'Conc12C_Avg',
-            'Conc13C_Avg'
-        )
+    tdl_columns_to_extract <- c(
+        TDL_TIMESTAMP_COLUMN_NAME,
+        TDL_VALVE_COLUMN_NAME,
+        'Conc12C_Avg',
+        'Conc13C_Avg'
     )
 
-    tdl_files <- combine_exdf(tdl_files)
+    tdl_files <- lapply(tdl_files, function(exdf_obj) {
+        exdf_obj[ , tdl_columns_to_extract, TRUE]
+    })
+
+    tdl_files <- do.call(rbind, tdl_files)
 
     tdl_files <- identify_tdl_cycles(
         tdl_files,
@@ -192,20 +193,23 @@ if (PERFORM_CALCULATIONS) {
 
     # Get all the Licor information and process it
 
-    licor_files <- batch_read_licor_file(
-        choose_input_licor_files(),
-        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_category_row = 14,
-        variable_name_row = 15,
-        variable_unit_row = 16,
-        data_start_row = 17,
-        timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
-    )
+    licor_files <- lapply(choose_input_licor_files(), function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+            variable_category_row = 14,
+            variable_name_row = 15,
+            variable_unit_row = 16,
+            data_start_row = 17,
+            timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
+        )
+    })
 
-    licor_files <- batch_extract_variables(
-        licor_files,
-        identify_common_licor_columns(licor_files, verbose = FALSE)
-    )
+    common_columns <- do.call(identify_common_columns, licor_files)
+
+    licor_files <- lapply(licor_files, function(exdf_obj) {
+        exdf_obj[ , common_columns, TRUE]
+    })
 
     licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
 
@@ -223,7 +227,7 @@ if (PERFORM_CALCULATIONS) {
         max_allowed_time_difference = 1
     )
 
-    licor_files <- combine_exdf(licor_files)
+    licor_files <- do.call(rbind, licor_files)
 
     # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
     licor_files <- calculate_gas_properties(
@@ -246,7 +250,9 @@ if (PERFORM_CALCULATIONS) {
         LICOR_A_COLUMN_NAME,
         LICOR_CA_COLUMN_NAME,
         LICOR_CI_COLUMN_NAME,
-        LICOR_GM_COLUMN_NAME
+        LICOR_GM_COLUMN_NAME,
+        LICOR_PA_COLUMN_NAME,
+        LICOR_DELTAPCHAM_COLUMN_NAME
     )
 
     licor_files <- calculate_iwue(
@@ -316,16 +322,18 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Get stats for each event by averaging over all corresponding reps
-    event_stats <- basic_stats(
-        licor_files_no_outliers[['main_data']],
-        'event'
-    )
+    # (temporarily disabled)
+    # event_stats <- basic_stats(
+    #     licor_files_no_outliers[['main_data']],
+    #     'event'
+    # )
 
     # Get stats for each rep by averaging over all corresponding observations
-    rep_stats <- basic_stats(
-        licor_files_no_outliers[['main_data']],
-        'event_replicate'
-    )
+    # (temporarily disabled)
+    # rep_stats <- basic_stats(
+    #     licor_files_no_outliers[['main_data']],
+    #     'event_replicate'
+    # )
 
     if (PERFORM_STATS_TESTS) {
         # Convert the "event" column to a group or onewaytests will yell at us
@@ -391,8 +399,8 @@ if (SAVE_RESULTS) {
 
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
-    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
-    write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
+    # write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
+    # write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }
 
 ###                            ###

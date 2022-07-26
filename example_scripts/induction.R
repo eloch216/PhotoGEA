@@ -92,22 +92,25 @@ UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
-    multi_file_info <- batch_read_licor_file(
-        LICOR_FILES_TO_PROCESS,
-        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_category_row = 14,
-        variable_name_row = 15,
-        variable_unit_row = 16,
-        data_start_row = 17,
-        timestamp_colname = TIME_COLUMN_NAME
-    )
+    multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+            variable_category_row = 14,
+            variable_name_row = 15,
+            variable_unit_row = 16,
+            data_start_row = 17,
+            timestamp_colname = TIME_COLUMN_NAME
+        )
+    })
 
-    extracted_multi_file_info <- batch_extract_variables(
-        multi_file_info,
-        identify_common_licor_columns(multi_file_info, verbose = FALSE)
-    )
+    common_columns <- do.call(identify_common_columns, multi_file_info)
 
-    combined_info <- combine_exdf(extracted_multi_file_info)
+    extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
+        exdf_obj[ , common_columns, TRUE]
+    })
+
+    combined_info <- do.call(rbind, extracted_multi_file_info)
 
     combined_info <- process_id_columns(
         combined_info,
@@ -116,19 +119,16 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
-    all_samples <- combined_info[['main_data']]
-
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
-        all_samples,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
+        combined_info,
+        c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
     )
 
     # Organize the data, keeping only the desired measurement points
-    all_samples <- organize_response_curve_data(
-        all_samples,
+    combined_info <- organize_response_curve_data(
+        combined_info,
         MEASUREMENT_NUMBER_NAME,
         NUM_OBS_IN_SEQ,
         MEASUREMENT_NUMBERS,
@@ -138,14 +138,17 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Add an "elapsed time" column
-    all_samples[['elapsed_time']] <-
-        (all_samples[['seq_num']] - 1) * TIME_INCREMENT
+    combined_info[, 'elapsed_time'] <-
+        (combined_info[, 'seq_num'] - 1) * TIME_INCREMENT
 
-    # Calculate basic stats for each event
-    all_stats <- basic_stats(
-        all_samples,
-        c('seq_num', EVENT_COLUMN_NAME)
-    )
+    all_samples <- combined_info[['main_data']]
+
+    # Calculate basic stats for each event (temporarily disabled since
+    # basic_stats) needs to be updated
+    # all_stats <- basic_stats(
+    #     all_samples,
+    #     c('seq_num', EVENT_COLUMN_NAME)
+    # )
 }
 
 # Convert event columns to factors to control the order of events in subsequent
@@ -156,7 +159,7 @@ all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    # View(all_stats)
 }
 
 ###                            ###

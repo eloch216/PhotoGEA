@@ -107,22 +107,25 @@ UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
-    multi_file_info <- batch_read_licor_file(
-        LICOR_FILES_TO_PROCESS,
-        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-        variable_category_row = 14,
-        variable_name_row = 15,
-        variable_unit_row = 16,
-        data_start_row = 17,
-        timestamp_colname = TIME_COLUMN_NAME
-    )
+    multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+            variable_category_row = 14,
+            variable_name_row = 15,
+            variable_unit_row = 16,
+            data_start_row = 17,
+            timestamp_colname = TIME_COLUMN_NAME
+        )
+    })
 
-    extracted_multi_file_info <- batch_extract_variables(
-        multi_file_info,
-        identify_common_licor_columns(multi_file_info, verbose = FALSE)
-    )
+    common_columns <- do.call(identify_common_columns, multi_file_info)
 
-    combined_info <- combine_exdf(extracted_multi_file_info)
+    extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
+        exdf_obj[ , common_columns, TRUE]
+    })
+
+    combined_info <- do.call(rbind, extracted_multi_file_info)
 
     combined_info <- process_id_columns(
         combined_info,
@@ -142,9 +145,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
-        all_samples,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
+        combined_info,
+        c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
     )
 

@@ -13,11 +13,14 @@ process_id_columns <- function(
     unique_id_column_name
 )
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        event_column_name,
-        rep_column_name
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("process_id_columns requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[event_column_name]] <- NA
+    required_columns[[rep_column_name]] <- NA
 
     check_required_columns(licor_exdf, required_columns)
 

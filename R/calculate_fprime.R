@@ -30,11 +30,14 @@ calculate_fprime <- function(
     PTRF
 )
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        cc_column_name,    # micromol / mol
-        tleaf_column_name  # degrees c
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("calculate_fprime requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[cc_column_name]] <- "micromol mol^(-1)"
+    required_columns[[tleaf_column_name]] <- "degrees C"
 
     check_required_columns(licor_exdf, required_columns)
 

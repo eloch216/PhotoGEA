@@ -1,73 +1,88 @@
 # `apply_fit_function_across_reps` applies a fitting function to each replicate
-# in a data frame.
+# in an exdf pbject. This function is intended for internal use and is not
+# exported to the PhotoGEA namespace.
 #
-# main_data_frame: a data frame of measurement sequences acquired from multiple
-#     replicates
+# exdf_obj: an exdf object representing measurement sequences acquired from
+#     multiple replicates
 #
-# replicate_column_name: a string specifying the replicate column in the data
-#     frame
+# f: a vector or list of vectors that can be coerced to factors, each with the
+#    same number of rows as exdf_obj, that can be used to identify individual
+#    replicates in the data.
 #
-# FUN: a function that takes a "replicate data frame" as an input argument
-#     (a subset of the "main data frame" corresponding to the data from one
-#     replicate) and applies a fitting procedure, returning a list with two
-#     elements: `parameters`, which should be a list with named elements
-#     representing the calculated fitting parameters and any identifying
-#     information that describes the replicate; and `fits`, which should
-#     be a data frame containing fitted values and any identifying information
-#     that describes the replicate, which is usually accomplished by appending
-#     the fitted values onto the original replicate data frame as a new column.
+# FUN: a function that takes a "replicate exdf object" as an input argument
+#     (a subset of exdf_obj corresponding to the data from one replicate) and
+#     applies a fitting procedure, returning a list with two elements:
+#     `parameters`, which should be a list with named elements representing the
+#     calculated fitting parameters and any identifying information that
+#     describes the replicate; and `fits`, which should be a data frame
+#     containing fitted values and any identifying information that describes
+#     the replicate, which is usually accomplished by appending the fitted
+#     values onto the original replicate data frame as a new column.
 #
 # ...: further arguments to FUN
 #
 # This function returns a list with two named elements: `parameters`, which
 # includes the fitted parameters from each replicate, and `fits`, which includes
 # the fits from each replicate.
-#
-apply_fit_function_across_reps <- function(
-    main_data_frame,
-    replicate_column_name,
-    ...,
-    FUN
-)
-{
-    # Use `by` to apply the function to subsets of the main data frame, broken
-    # up according to the values in the replicate column. The result should be a
-    # list where each element is itself a list with two elements corresponding
-    # to the output of FUN.
-    full_results <- by(
-        main_data_frame,
-        main_data_frame[[replicate_column_name]],
-        ...,
-        FUN = FUN
-    )
+apply_fit_function_across_reps <- function(exdf_obj, f, ..., FUN) {
+    # Make sure exdf_obj is an exdf object
+    if (!is.exdf(exdf_obj)) {
+        stop("apply_fit_function_across_reps requires an exdf object")
+    }
 
-    # Use `lapply` to make a list of just the `fits` element from each entry in
-    # the `full_results` list, and then use `smart_rbind` to combine them into
-    # one data frame, keeping only the columns that are present in all of the
-    # `fits` elements.
-    fits <- smart_rbind(lapply(
-        full_results,
-        function(x) {x[['fits']]}
-    ))
+    # Split exdf_obj according to f, dropping any unused levels
+    split_exdf_obj <- split(exdf_obj, f, drop = TRUE)
 
-    # Apply the same procedure to the `parameters` elements.
-    parameters <- smart_rbind(lapply(
-        full_results,
-        function(x) {as.data.frame(x[['parameters']])}
-    ))
+    # Apply FUN to each subgroup of exdf_obj
+    full_results <- lapply(split_exdf_obj, function(x) {FUN(x, ...)})
 
+    # Get all the `fits` elements, identify columns that are present in all of
+    # them, and combine them
+    list_of_fits <- lapply(full_results, function(x) {x$fits})
+
+    common_columns_fits <-
+        do.call(identify_common_columns, list_of_fits)
+
+    list_of_fits <- lapply(list_of_fits, function(x) {
+        x[ , common_columns_fits, return_exdf = TRUE]
+    })
+
+    fits <- do.call(rbind, list_of_fits)
+
+    # Get all the `parameters` elements, identify columns that are present in
+    # all of them, and combine them
+    list_of_parameters <- lapply(full_results, function(x) {x$parameters})
+
+    common_columns_parameters <-
+        do.call(identify_common_columns, list_of_parameters)
+
+    list_of_parameters <- lapply(list_of_parameters, function(x) {
+        x[ , common_columns_parameters, return_exdf = TRUE]
+    })
+
+    parameters <- do.call(rbind, list_of_parameters)
+
+    # Return the results
     return(list(fits = fits, parameters = parameters))
 }
 
-# `find_identifier_columns` gets the names and values of any columns in the data
-# frame that have a single unique value; these columns are taken to be
+# `find_identifier_columns` gets the names and values of any columns in an exdf
+# object that have a single unique value; these columns are taken to be
 # "identifiers" that describe a replicate. This function is often used inside
 # fitting functions that are passed to `apply_fit_function_across_reps` as its
 # `FUN` input argument.
-find_identifier_columns <- function(data_frame) {
+find_identifier_columns <- function(exdf_obj) {
+    # Make sure exdf_obj is an exdf object
+    if (!is.exdf(exdf_obj)) {
+        stop("apply_fit_function_across_reps requires an exdf object")
+    }
+
+    # Find columns that have a single unique value
     id_column_indx <- sapply(
-        colnames(data_frame),
-        function(x) {length(unique(data_frame[[x]]))==1}
+        colnames(exdf_obj),
+        function(x) {length(unique(exdf_obj[ , x])) == 1}
     )
-    id_columns <- unique(data_frame[id_column_indx])
+
+    # Make an exdf object that includes the unique value of each such column
+    id_columns <- exdf_obj[1, id_column_indx, return_exdf = TRUE]
 }

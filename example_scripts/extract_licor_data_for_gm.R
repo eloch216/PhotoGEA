@@ -238,35 +238,38 @@ print_all <- function(
 )
 {
     # Load the files
-    licor_files <- batch_read_licor_file(
-        files_to_process,
-        preamble_data_rows,
-        variable_category_row,
-        variable_name_row,
-        variable_unit_row,
-        data_start_row,
-        'time'
-    )
+    licor_files <- lapply(files_to_process, function(fname) {
+        read_licor_file(
+            fname,
+            preamble_data_rows,
+            variable_category_row,
+            variable_name_row,
+            variable_unit_row,
+            data_start_row,
+            'time'
+        )
+    })
 
     # Add blank columns to each file
-    licor_files <- batch_specify_variables(
-        licor_files,
-        c("in",          "Oxygen",    "%"),
-        c("in",          "O2",        "kPa"),
-        c("in",          "[CO2]",     "micromol mol^(-1)"),
-        c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
-        c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
-        c("calculated",  "ppO2",      "bar"),
-        c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
-        c("calculated",  "Csurface",  "micromol mol^(-1)")
-    )
+    licor_files <- lapply(licor_files, function(exdf_obj) {
+        specify_variables(
+            exdf_obj,
+            c("in",          "Oxygen",    "%"),
+            c("in",          "O2",        "kPa"),
+            c("in",          "[CO2]",     "micromol mol^(-1)"),
+            c("CO2Scorr",    "Cs_licor",  "micromol mol^(-1)"),
+            c("CO2Rcorr",    "Ce_licor",  "micromol mol^(-1)"),
+            c("calculated",  "ppO2",      "bar"),
+            c("calculated",  "gsc",       "mol m^(-2) s^(-1)"),
+            c("calculated",  "gbc",       "mol m^(-2) s^(-1)"),
+            c("calculated",  "Csurface",  "micromol mol^(-1)")
+        )
+    })
 
     # Extract the desired columns from each file
-    licor_files <- batch_extract_variables(
-        licor_files,
-        variables_to_extract
-    )
+    licor_files <- lapply(licor_files, function(exdf_obj) {
+        exdf_obj[ , variables_to_extract, TRUE]
+    })
 
     # Add formulas to some columns
     licor_files <- batch_add_licor_formulas(

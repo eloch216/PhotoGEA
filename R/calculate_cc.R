@@ -14,22 +14,29 @@
 # - Atmospheric CO2 concentration (Ca): micromol / mol
 # - Intercellular CO2 concentration (Ci): micromol / mol
 # - Net assimilation (A): micromol / m^2 / s
-# - Mesophyll conductance to CO2 (gmc): mol / m^2 / s
+# - Mesophyll conductance to CO2 (gmc): mol / m^2 / s / bar
 calculate_cc <- function(
     licor_exdf,
     a_column_name,
     ca_column_name,
     ci_column_name,
-    gm_column_name
+    gm_column_name,
+    pa_column_name,
+    deltapcham_column_name
 )
 {
-    # Make sure the required columns are defined
-    required_columns <- c(
-        a_column_name,   # micromol / m^2 / s
-        ca_column_name,  # micromol / mol
-        ci_column_name,  # micromol / mol
-        gm_column_name   # mol / m^2 / s
-    )
+    if (!is.exdf(licor_exdf)) {
+        stop("calculate_cc requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_columns[[ca_column_name]] <- "micromol mol^(-1)"
+    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
+    required_columns[[gm_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
+    required_columns[[pa_column_name]] <- "kPa"
+    required_columns[[deltapcham_column_name]] <- "kPa"
 
     check_required_columns(licor_exdf, required_columns)
 
@@ -40,7 +47,8 @@ calculate_cc <- function(
 
     # Make calculations
     licor_exdf[,cc_column_name] <-
-        licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] / licor_exdf[,gm_column_name]
+        licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] /
+            (licor_exdf[,gm_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100)
 
     licor_exdf[,drawdown_m_column_name] <-
         licor_exdf[,ci_column_name] - licor_exdf[,cc_column_name]

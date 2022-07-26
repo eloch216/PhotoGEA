@@ -121,42 +121,6 @@ check_rep_npts <- function(
     return(msg)
 }
 
-# Checks a set of Licor data representing multiple response curves to make sure
-# it meets basic requirements for further analysis
-check_response_curve_data <- function(
-    full_data_set,
-    event_column_name,
-    rep_column_name,
-    expected_npts = 0,
-    col_to_ignore_for_inf = "gmc"
-)
-{
-    # Make sure there is at least one event defined
-    error_messages <- check_event_num(full_data_set, event_column_name)
-
-    # Make sure there are no infinities
-    error_messages <- append(
-        error_messages,
-        check_inf(
-            full_data_set, col_to_ignore_for_inf)
-    )
-
-    # Make sure each (event, replicate) pair (i.e., each response curve) has
-    # the correct number of measurement points
-    error_messages <- append(
-        error_messages,
-        check_rep_npts(
-            full_data_set,
-            event_column_name,
-            rep_column_name,
-            expected_npts
-        )
-    )
-
-    # Notify the user about any errors that have occurred
-    send_error_messages(error_messages)
-}
-
 # Checks a set of Licor data representing signal-averaging data to make sure
 # it meets basic requirements for further analysis
 check_signal_averaging_data <- function(

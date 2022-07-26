@@ -19,40 +19,25 @@ TLEAF_COLUMN_NAME <- 'TleafCnd'
 
 # Read Licor files, extract important columns, and combine the results into one
 # exdf object
-multi_file_info <- batch_read_licor_file(
-    choose_input_licor_files(),
-    preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-    variable_category_row = 14,
-    variable_name_row = 15,
-    variable_unit_row = 16,
-    data_start_row = 17,
-    timestamp_colname = 'time'
-)
-
-extracted_multi_file_info <- batch_extract_variables(
-    multi_file_info,
-    c(
-        'obs',
-        'time',
-        'elapsed',
-        'date',
-        'hhmmss',
-        'species',
-        'plot',
-        'instrument',
-        A_COLUMN_NAME,
-        CA_COLUMN_NAME,
-        DELTAPCHAM_COLUMN_NAME,
-        E_COLUMN_NAME,
-        GBW_COLUMN_NAME,
-        GSW_COLUMN_NAME,
-        H2O_S_COLUMN_NAME,
-        PA_COLUMN_NAME,
-        TLEAF_COLUMN_NAME
+multi_file_info <- lapply(choose_input_licor_files(), function(fname) {
+    read_licor_file(
+        fname,
+        preamble_data_rows = c(3, 5, 7, 9, 11, 13),
+        variable_category_row = 14,
+        variable_name_row = 15,
+        variable_unit_row = 16,
+        data_start_row = 17,
+        timestamp_colname = 'time'
     )
-)
+})
 
-combined_info <- combine_exdf(extracted_multi_file_info)
+common_columns <- do.call(identify_common_columns, multi_file_info)
+
+extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
+    exdf_obj[ , common_columns, TRUE]
+})
+
+combined_info <- do.call(rbind, extracted_multi_file_info)
 
 # Calculate gas properties and use the result to determine the Ball-Berry index
 combined_info <- calculate_gas_properties(
@@ -93,11 +78,7 @@ combined_info[,'species_plot_instrument'] <- paste(
 )
 
 # Check the data for any issues before proceeding with additional analysis
-check_response_curve_data(
-    combined_info[['main_data']],
-    'species',
-    'plot_instrument'
-)
+check_response_curve_data(combined_info, c('species', 'plot_instrument'))
 
 # Do Ball-Berry fitting
 bb_results <- fit_ball_berry(
@@ -107,8 +88,8 @@ bb_results <- fit_ball_berry(
     BB_INDEX_COLUMN_NAME
 )
 
-bb_parameters <- bb_results[['parameters']]
-bb_fits <- bb_results[['fits']]
+bb_parameters <- bb_results$parameters$main_data
+bb_fits <- bb_results$fits$main_data
 
 # Get averages, standard deviations, and standard errors for the Ball-Berry
 # slope and intercept for each crop
