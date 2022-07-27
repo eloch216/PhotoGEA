@@ -280,6 +280,9 @@ if (PERFORM_CALCULATIONS) {
     licor_files[['main_data']] <-
         licor_files[['main_data']][!licor_files[['main_data']][['event']] %in% EVENTS_TO_IGNORE,]
 
+    # Check the data for any issues before proceeding with additional analysis
+    check_response_curve_data(licor_files, 'event_replicate', -1)
+
     # Exclude outliers using the calculated gm values for each event
     # Exclude any bad values and outliers. First, elimate all measurements where
     # mesophyll conductance or chloroplast CO2 concentration is out of the
@@ -314,12 +317,6 @@ if (PERFORM_CALCULATIONS) {
         }
         cat(paste("Number of Licor measurements after removing statistical outliers:", nrow(licor_files_no_outliers), "\n"))
     }
-
-    # Check the data for any issues before proceeding with additional analysis
-    check_signal_averaging_data(
-        licor_files_no_outliers[['main_data']],
-        'event_replicate'
-    )
 
     # Get stats for each event by averaging over all corresponding reps
     event_stats <- basic_stats(

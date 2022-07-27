@@ -27,7 +27,9 @@ check_response_curve_data <- function(
     # Check the number of points in each curve
     curve_npts <- lapply(split_exdf, nrow)
 
-    npt_problem <- if (expected_npts == 0) {
+    npt_problem <- if (expected_npts < 0) {
+        FALSE
+    } else if (expected_npts == 0) {
         length(unique(curve_npts)) > 1
     } else {
         !all(curve_npts == expected_npts)

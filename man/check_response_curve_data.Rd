@@ -32,7 +32,8 @@
   \item{expected_npts}{
     The number of points that should be in each response curve. If
     \code{expected_npts == 0}, then all response curves are expected to
-    have the same (unspecified) number of points.
+    have the same (unspecified) number of points. If \code{expected_npts < 0},
+    then this check will be skipped.
   }
 
   \item{col_to_ignore_for_inf}{
