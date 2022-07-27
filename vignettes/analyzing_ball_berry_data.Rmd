@@ -187,25 +187,31 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_response_curve_data` function
-from `PhotoGEA`, which requires an `exdf` object that contains response curves,
-the name of a column that should uniquely identify each curve, and the expected
-number of points in each curve. If the data passes the checks, this function
-will have no output and will not produce any messages:
+response curve. To do this, we can use the `check_licor_data` function from
+`PhotoGEA`. Here we will supply the name of a column that should uniquely
+identify each response curve (`curve_identifier`), the expected number of points
+in each curve (`7`), the name of a "driving" column that should follow the same
+sequence in each curve (`Qin`), and tolerance for the values of the driving
+column (`1.0 mol / m^2 / s`). If the data passes the checks, this function will
+have no output and will not produce any messages. (For more information, see the
+built-in help menu entry by typing `?check_licor_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_response_curve_data(licor_data, 'curve_identifier', 7)
+check_licor_data(licor_data, 'curve_identifier', 7, 'Qin', 1.0)
 ```
 
-However, if `check_response_curve_data` detects an issue, it will print a
+However, if `check_licor_data` detects an issue, it will print a
 helpful message to the R terminal. For example, if we had specified the wrong
-number of points or the wrong identifier column, we would get error messages:
+number of points, the wrong identifier column, or an unrealistic tolerance, we
+would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_response_curve_data(licor_data, 'curve_identifier', 8)
+check_licor_data(licor_data, 'curve_identifier', 8)
 
-check_response_curve_data(licor_data, 'species', 7)
+check_licor_data(licor_data, 'species', 7)
+
+check_licor_data(licor_data, 'curve_identifier', 7, 'Qin', 0.1)
 ```
 
 ## Qualitative Checks

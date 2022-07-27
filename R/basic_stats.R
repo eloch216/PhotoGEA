@@ -62,7 +62,7 @@ basic_stats <- function(
 )
 {
     if (!is.exdf(exdf_obj)) {
-        stop("check_response_curve_data requires an exdf object")
+        stop("basic_stats requires an exdf object")
     }
 
     # Make sure the identifier columns are defined

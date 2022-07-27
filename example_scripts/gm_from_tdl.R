@@ -281,7 +281,7 @@ if (PERFORM_CALCULATIONS) {
         licor_files[['main_data']][!licor_files[['main_data']][['event']] %in% EVENTS_TO_IGNORE,]
 
     # Check the data for any issues before proceeding with additional analysis
-    check_response_curve_data(licor_files, 'event_replicate', -1)
+    check_licor_data(licor_files, 'event_replicate', -1)
 
     # Exclude outliers using the calculated gm values for each event
     # Exclude any bad values and outliers. First, elimate all measurements where

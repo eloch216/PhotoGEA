@@ -246,7 +246,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_IGNORE, , return_exdf = TRUE]
 
     # Check the data for any issues before proceeding with additional analysis
-    check_response_curve_data(
+    check_licor_data(
         combined_info,
         c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
