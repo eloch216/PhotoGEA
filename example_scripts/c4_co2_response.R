@@ -197,12 +197,11 @@ if (PERFORM_CALCULATIONS) {
     EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "28", "53", "14", "4", "10", "15", "30")
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
-    # Calculate basic stats for each event (temporarily disabled since
-    # basic_stats) needs to be updated
-    # all_stats <- basic_stats(
-    #     all_samples,
-    #     c('seq_num', EVENT_COLUMN_NAME)
-    # )
+    # Calculate basic stats for each event
+    all_stats <- basic_stats(
+        combined_info,
+        c('seq_num', EVENT_COLUMN_NAME)
+    )
 
     # Perform A-Ci fits
     fit_result <- fit_c4_aci(
@@ -237,7 +236,7 @@ all_fit_parameters <- factorize_id_column(all_fit_parameters, EVENT_COLUMN_NAME)
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    # View(all_stats)
+    View(all_stats)
     View(all_fit_parameters)
 }
 

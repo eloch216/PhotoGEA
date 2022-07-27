@@ -63,6 +63,8 @@
     \item \code{\link{[.exdf}}
     \item \code{\link{[<-.exdf}}
     \item \code{\link{rbind.exdf}}
+    \item \code{\link{cbind.exdf}}
+    \item \code{\link{split.exdf}}
   }
 }
 

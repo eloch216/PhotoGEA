@@ -1,68 +1,93 @@
-basic_stats_column <- function(column, name, npts) {
-    if(!is.numeric(column)) {
-        # This is not a numeric column, so just return an empty list
-        return(list())
-    } else {
-        # Calculate basic stats for the column
-        column_avg <- mean(column)
-        column_sd <- stats::sd(column)
-        column_stderr <- column_sd / sqrt(npts)
-
-        # Return the results as a list
-        return(
-            stats::setNames(
-                list(column_avg, column_sd, column_stderr),
-                paste0(name, c("_avg", "_sd", "_stderr"))
-            )
-        )
-    }
-}
-
-basic_stats_chunk <- function(chunk) {
-    # Get the number of rows in the chunk
-    npts <- nrow(chunk)
-
-    # If there is only one row, it doesn't make sense to calculate stats
-    if (npts < 2) {
-        return(NULL)
-    }
-
+basic_stats_chunk <- function(exdf_chunk) {
     # Find the identifier columns and their names
-    id_columns <- find_identifier_columns(chunk)
-    id_column_names <- names(id_columns)
+    id_columns <- find_identifier_columns(exdf_chunk)
+    id_column_names <- colnames(id_columns)
 
     # Find the names of the non-id columns
-    all_column_names <- colnames(chunk)
+    all_column_names <- colnames(exdf_chunk)
     other_column_names <-
         all_column_names[!all_column_names %in% id_column_names]
 
-    # Calculate basic stats for each non-id column
-    stats <- lapply(
-        other_column_names,
-        function(x) {basic_stats_column(chunk[[x]], x, npts)}
+    # Get a subset of the chunk limited to the non-id columns so we can get
+    # their units, and categories
+    other_columns <- exdf_chunk[ , other_column_names, TRUE]
+
+    # Get the mean of all the non-id columns
+    mean_list <- lapply(other_column_names, function(x) {
+        column <- exdf_chunk[ , x]
+        if (is.numeric(column)) {
+            mean(exdf_chunk[ , x])
+        } else {
+            NA
+        }
+    })
+    names(mean_list) <- paste0(other_column_names, '_avg')
+
+    # Get the standard deviation of all the non-id columns
+    sd_list <- lapply(other_column_names, function(x) {
+        column <- exdf_chunk[ , x]
+        if (is.numeric(column)) {
+            stats::sd(exdf_chunk[ , x])
+        } else {
+            NA
+        }
+    })
+
+    # Get the standard error of the mean for all the non-id columns
+    stderr_list <- lapply(sd_list, function(x) {x / sqrt(nrow(exdf_chunk))})
+    names(stderr_list) <- paste0(other_column_names, '_stderr')
+
+    # Create new exdf objects for the means and standard errors
+    mean_exdf <- exdf(
+        as.data.frame(mean_list),
+        stats::setNames(other_columns$units, names(mean_list)),
+        stats::setNames(other_columns$categories, names(mean_list))
     )
 
-    # Return everything as a data frame
-    return(as.data.frame(do.call(c, c(id_columns, stats, list(npts = npts)))))
+    stderr_exdf <- exdf(
+        as.data.frame(stderr_list),
+        stats::setNames(other_columns$units, names(stderr_list)),
+        stats::setNames(other_columns$categories, names(stderr_list))
+    )
+
+    stats_exdf <- cbind(mean_exdf, stderr_exdf)
+    stats_exdf <- stats_exdf[ , order(colnames(stats_exdf)), TRUE]
+
+    return(cbind(id_columns, stats_exdf))
 }
 
 basic_stats <- function(
-    dataframe,
-    factor_column_names,
-    columns_to_exclude = c('time', 'TIME', 'time.1', 'TIME.1', 'obs', 'elapsed')
+    exdf_obj,
+    identifier_columns
 )
 {
-    factor_columns <- lapply(factor_column_names, function(x) {dataframe[[x]]})
-
-    subdataframe <- dataframe[,!(names(dataframe) %in% columns_to_exclude)]
-
-    stats <- smart_rbind(by(subdataframe, factor_columns, basic_stats_chunk))
-
-    for (i in seq_along(factor_column_names)) {
-        stats <- stats[order(stats[[factor_column_names[i]]]),]
+    if (!is.exdf(exdf_obj)) {
+        stop("check_response_curve_data requires an exdf object")
     }
 
-    row.names(stats) <- NULL
+    # Make sure the identifier columns are defined
+    required_columns <- list()
+    for (cn in identifier_columns) {
+        required_columns[[cn]] <- NA
+    }
 
-    return(stats)
+    check_required_columns(exdf_obj, required_columns)
+
+    # Split the exdf object by the identifiers
+    f <- lapply(identifier_columns, function(x) {exdf_obj[ , x]})
+
+    split_exdf <- split(exdf_obj, f, drop = TRUE)
+
+    # Calculate the basic stats
+    stats_list <- lapply(split_exdf, basic_stats_chunk)
+
+    # Restrict to common column names
+    common_columns <- do.call(identify_common_columns, stats_list)
+
+    stats_list <- lapply(stats_list, function(x) {x[ , common_columns, TRUE]})
+
+    # Combine all the individual exdf objects and return them
+    new_exdf_obj <- do.call(rbind, stats_list)
+    row.names(new_exdf_obj$main_data) <- NULL
+    return(new_exdf_obj)
 }

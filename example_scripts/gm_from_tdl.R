@@ -37,13 +37,13 @@ library(DescTools)    # for DunnettTest
 
 PERFORM_CALCULATIONS <- TRUE
 
-PERFORM_STATS_TESTS <- FALSE
+PERFORM_STATS_TESTS <- TRUE
 
 SAVE_RESULTS <- FALSE
 
 MAKE_TDL_PLOTS <- TRUE
 
-MAKE_GM_PLOTS <- FALSE
+MAKE_GM_PLOTS <- TRUE
 
 RESPIRATION <- -2.2
 
@@ -322,18 +322,16 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Get stats for each event by averaging over all corresponding reps
-    # (temporarily disabled)
-    # event_stats <- basic_stats(
-    #     licor_files_no_outliers[['main_data']],
-    #     'event'
-    # )
+    event_stats <- basic_stats(
+        licor_files_no_outliers,
+        'event'
+    )$main_data
 
     # Get stats for each rep by averaging over all corresponding observations
-    # (temporarily disabled)
-    # rep_stats <- basic_stats(
-    #     licor_files_no_outliers[['main_data']],
-    #     'event_replicate'
-    # )
+    rep_stats <- basic_stats(
+        licor_files_no_outliers,
+        'event_replicate'
+    )$main_data
 
     if (PERFORM_STATS_TESTS) {
         # Convert the "event" column to a group or onewaytests will yell at us
@@ -399,8 +397,8 @@ if (SAVE_RESULTS) {
 
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
-    # write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
-    # write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }
 
 ###                            ###

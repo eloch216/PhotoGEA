@@ -141,8 +141,6 @@ if (PERFORM_CALCULATIONS) {
         IWUE_COLUMN_NAME
     )
 
-    all_samples <- combined_info[['main_data']]
-
     # Check the data for any issues before proceeding with additional analysis
     check_response_curve_data(
         combined_info,
@@ -151,8 +149,8 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Organize the data, keeping only the desired measurement points
-    all_samples <- organize_response_curve_data(
-        all_samples,
+    combined_info <- organize_response_curve_data(
+        combined_info,
         MEASUREMENT_NUMBER_NAME,
         NUM_OBS_IN_SEQ,
         MEASUREMENT_NUMBERS,
@@ -160,12 +158,14 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
+
+    all_samples <- combined_info[['main_data']]
 }
 
 if (CALCULATE_STATS) {
   # Calculate basic stats for each event
   all_stats <- basic_stats(
-    all_samples,
+    combined_info,
     c('seq_num', EVENT_COLUMN_NAME)
   )
 }
