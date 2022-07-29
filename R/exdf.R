@@ -261,14 +261,29 @@ rbind.exdf <- function(
         current_exdf <- exdf_list[[i]]
 
         if (!identical(colnames(first_exdf$main_data), colnames(current_exdf$main_data))) {
+            cat('\ncolnames from first exdf object:\n')
+            print(colnames(first_exdf$main_data))
+            cat('\ncolnames from current exdf object:\n')
+            colnames(current_exdf$main_data)
+            cat('\n')
             stop("exdf objects must all have the same column names when using rbind")
         }
 
         if (!identical(first_exdf$categories, current_exdf$categories)) {
+            cat('\ncategories from first exdf object:\n')
+            print(colnames(first_exdf$categories))
+            cat('\ncategories from current exdf object:\n')
+            colnames(current_exdf$categories)
+            cat('\n')
             stop("exdf objects must all have the same categories when using rbind")
         }
 
         if (!identical(first_exdf$units, current_exdf$units)) {
+            cat('\nunits from first exdf object:\n')
+            print(colnames(first_exdf$units))
+            cat('\nunits from current exdf object:\n')
+            colnames(current_exdf$units)
+            cat('\n')
             stop("exdf objects must all have the same units when using rbind")
         }
     }
