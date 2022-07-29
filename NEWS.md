@@ -18,6 +18,13 @@ for the next release.
 
 # UNRELEASED
 
+- `basic_stats` and the "Variable J" example script have been fixed.
+- All functions for creating or modifying Excel files have been removed since we
+  no longer want to follow this strategy.
+- `check_response_curve_data` and `check_signal_averaging_data` have been
+  consolidated into one function: `check_licor_data`.
+- An `exdf` method for `cbind` has been added.
+
 # PhotoGEA VERSION 0.2.0 (2022-07-26)
 
 - This version adds a substantial amount of documentation, including a vignette
