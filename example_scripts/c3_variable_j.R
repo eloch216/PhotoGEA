@@ -119,8 +119,7 @@ if (PERFORM_CALCULATIONS) {
     })
 
     # Extract the common columns
-    common_columns <-
-        identify_common_columns(multi_file_info, verbose = FALSE)
+    common_columns <- do.call(identify_common_columns, multi_file_info)
 
     extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
         exdf_obj[ , common_columns, TRUE]
@@ -136,22 +135,19 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
-    # Extract the data (without units)
-    all_samples <- combined_info[['main_data']]
-
     # Rename the prefix "36625-" from any event names that contain it
     prefix_to_remove <- "36625-"
-    all_samples[[EVENT_COLUMN_NAME]] <- gsub(
+    combined_info[, EVENT_COLUMN_NAME] <- gsub(
         prefix_to_remove,
         "",
-        all_samples[[EVENT_COLUMN_NAME]],
+        combined_info[, EVENT_COLUMN_NAME],
         fixed = TRUE
     )
 
-    all_samples[[UNIQUE_ID_COLUMN_NAME]] <- gsub(
+    combined_info[, UNIQUE_ID_COLUMN_NAME] <- gsub(
         prefix_to_remove,
         "",
-        all_samples[[UNIQUE_ID_COLUMN_NAME]],
+        combined_info[, UNIQUE_ID_COLUMN_NAME],
         fixed = TRUE
     )
 
@@ -161,19 +157,19 @@ if (PERFORM_CALCULATIONS) {
         #"14"  # T1
     )
 
-    all_samples <-
-        all_samples[!all_samples[[EVENT_COLUMN_NAME]] %in% EVENTS_TO_IGNORE,]
+    combined_info <-
+        combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_IGNORE, return_exdf = TRUE]
 
     # Check the data for any issues before proceeding with additional analysis
-    check_response_curve_data(
+    check_licor_data(
         combined_info,
         c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
     )
 
     # Organize the data, keeping only the desired measurement points
-    all_samples <- organize_response_curve_data(
-        all_samples,
+    combined_info <- organize_response_curve_data(
+        combined_info,
         MEASUREMENT_NUMBER_NAME,
         NUM_OBS_IN_SEQ,
         MEASUREMENT_NUMBERS,
@@ -192,9 +188,8 @@ if (PERFORM_CALCULATIONS) {
     # `dfoptim` package. Before performing the fits, we truncate the data to
     # the specified Ci range.
     variable_j_results <- fit_variable_j_jrv_tau(
-        all_samples[
-            all_samples[[CI_COLUMN_NAME]] <= CI_THRESHOLD_UPPER &
-            all_samples[[CI_COLUMN_NAME]] >= CI_THRESHOLD_LOWER,],
+        combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD_UPPER &
+            combined_info[, CI_COLUMN_NAME] >= CI_THRESHOLD_LOWER, , return_exdf = TRUE],
         UNIQUE_ID_COLUMN_NAME,
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
@@ -212,9 +207,12 @@ if (PERFORM_CALCULATIONS) {
         TPU = 1000
     )
 
-    # Separate the parameters and the fitted curves
-    variable_j_parameters <- variable_j_results[['parameters']]
-    variable_j_fits <- variable_j_results[['fits']]
+    # Separate the parameters and the fitted curves (without units)
+    variable_j_parameters <- variable_j_results$parameters$main_data
+    variable_j_fits <- variable_j_results$fits$main_data
+
+    # Extract the data (without units)
+    all_samples <- combined_info$main_data
 }
 
 # Determine the value of `tau` assumed in the Licor files

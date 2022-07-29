@@ -1,34 +1,22 @@
-# Sends the error messages to the user in the proper format
-send_error_messages <- function(error_messages) {
-    if (length(error_messages) > 0) {
-        stop(paste(error_messages, collapse='  '))
-    }
-}
-
-# Checks to make sure at least one event is defined, returning an error message
-# if there is a problem
-check_event_num <- function(full_data_set, event_column_name) {
-    all_events <- unique(full_data_set[[event_column_name]])
-
-    msg <- if (length(all_events) < 1) {
-        paste(
-            "At least one value of the",
-            event_column_name,
-            "column must be defined"
-        )
-    } else {
-        character()
+# Checks a set of Licor data representing multiple response curves to make sure
+# it meets basic requirements for further analysis
+check_licor_data <- function(
+    licor_exdf,
+    identifier_columns,
+    expected_npts = 0,
+    driving_column = NULL,
+    driving_column_tolerance = 0,
+    col_to_ignore_for_inf = 'gmc'
+)
+{
+    if (!is.exdf(licor_exdf)) {
+        stop('check_licor_data requires an exdf object')
     }
 
-    return(msg)
-}
-
-# Checks whether any infinite values exist, returning an error message if there
-# is a problem
-check_inf <- function(full_data_set, col_to_ignore) {
+    # Check for any infinite values
     inf_columns <- as.logical(
         lapply(
-            full_data_set[,!colnames(full_data_set) %in% col_to_ignore],
+            licor_exdf[ , !colnames(licor_exdf) %in% col_to_ignore_for_inf],
             function(x) {
                 if (is.numeric(x)) {
                     any(is.infinite(x))
@@ -39,105 +27,78 @@ check_inf <- function(full_data_set, col_to_ignore) {
         )
     )
 
-    msg <- if (any(inf_columns)) {
-        paste(
-            "The following columns contain infinite values:",
-            paste(colnames(full_data_set)[inf_columns], collapse = ', ')
+    if (any(inf_columns)) {
+        msg <- paste(
+            'The following columns contain infinite values:',
+            paste(colnames(licor_exdf)[inf_columns], collapse = ', ')
         )
-    } else {
-        character()
+        stop(msg)
     }
 
-    return(msg)
-}
+    # Make sure certain columns are defined
+    required_columns <- list()
+    for (cn in identifier_columns) {
+        required_columns[[cn]] <- NA
+    }
 
-# Checks whether each (event, replicate) combination has the correct number of
-# measurement points
-check_rep_npts <- function(
-    full_data_set,
-    event_column_name,
-    rep_column_name,
-    expected_npts
-)
-{
-    measurement_point_list <- by(
-        full_data_set,
-        list(
-            full_data_set[[event_column_name]],
-            full_data_set[[rep_column_name]]
-        ),
-        function(x) {
-            data.frame(
-                event = unique(x[[event_column_name]]),
-                replicate = unique(x[[rep_column_name]]),
-                npts = nrow(x)
-            )
+    if (!is.null(driving_column)) {
+        required_columns[[driving_column]] <- NA
+    }
+
+    check_required_columns(licor_exdf, required_columns)
+
+    # Split the exdf object by the identifiers
+    f <- lapply(identifier_columns, function(x) {licor_exdf[ , x]})
+
+    split_exdf <- split(licor_exdf, f, drop = TRUE)
+
+    # Check the number of points in each curve
+    curve_npts <- lapply(split_exdf, nrow)
+
+    npt_problem <- if (expected_npts < 0) {
+        FALSE
+    } else if (expected_npts == 0) {
+        length(unique(curve_npts)) > 1
+    } else {
+        !all(curve_npts == expected_npts)
+    }
+
+    if (npt_problem) {
+        npts_df <- do.call(rbind, lapply(split_exdf, function(x) {
+            unique(x[ , as.character(identifier_columns)])
+        }))
+        npts_df <- as.data.frame(npts_df)
+        colnames(npts_df) <- identifier_columns
+        npts_df$npts <- as.numeric(curve_npts)
+        row.names(npts_df) <- NULL
+        print(npts_df)
+        stop('One or more curves does not have the expected number of points.')
+    }
+
+    # Check the driving column to see if it takes the same values in each curve
+    if (!is.null(driving_column)) {
+        driving_df <- do.call(
+            rbind,
+            lapply(split_exdf, function(x) {x[ , driving_column]})
+        )
+
+        for (i in seq_len(ncol(driving_df))) {
+            col_mean <- mean(driving_df[ , i])
+            col_diff <- driving_df[ , i] - col_mean
+            if (!all(abs(col_diff) < driving_column_tolerance)) {
+                print(driving_df[ , i])
+                stop(paste0(
+                    'Values of the `',
+                    driving_column,
+                    '` column are not identical (within the tolerance of ',
+                    driving_column_tolerance,
+                    ') for point ',
+                    i,
+                    ' within the curve sequence.'
+                ))
+            }
         }
-    )
-
-    measurement_point_list <-
-        measurement_point_list[!sapply(measurement_point_list, is.null)]
-
-    measurement_points <- do.call(rbind, measurement_point_list)
-
-    colnames(measurement_points) <-
-        c(event_column_name, rep_column_name, 'npts')
-
-    measurement_points <-
-        measurement_points[order(measurement_points[[rep_column_name]]),]
-
-    measurement_points <-
-        measurement_points[order(measurement_points[[event_column_name]]),]
-
-    error_condition <- if (expected_npts == 0) {
-        length(unique(measurement_points[['npts']])) > 1
-    } else {
-        any(measurement_points[['npts']] != expected_npts)
     }
 
-    error_message <- if (expected_npts == 0) {
-        paste0(
-            "Each unique (", event_column_name, ", ",
-            rep_column_name,
-            ") combination must have the same number of associated ",
-            "measurement points"
-        )
-    } else {
-        paste0(
-            "Each unique (", event_column_name, ", ",
-            rep_column_name, ") combination must have ",
-            expected_npts,
-            " associated measurement points"
-        )
-    }
-
-    msg <- if (error_condition) {
-        print(measurement_points, row.names = FALSE)
-        error_message
-    } else {
-        character()
-    }
-
-    return(msg)
-}
-
-# Checks a set of Licor data representing signal-averaging data to make sure
-# it meets basic requirements for further analysis
-check_signal_averaging_data <- function(
-    full_data_set,
-    event_column_name,
-    col_to_ignore_for_inf = c()
-)
-{
-    # Make sure there is at least one event defined
-    error_messages <- check_event_num(full_data_set, event_column_name)
-
-    # Make sure there are no infinities
-    error_messages <- append(
-        error_messages,
-        check_inf(full_data_set, col_to_ignore_for_inf)
-    )
-
-    # Notify the user about any errors that have occurred
-    send_error_messages(error_messages)
+    return(invisible(NULL))
 }

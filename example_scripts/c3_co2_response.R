@@ -246,7 +246,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_IGNORE, , return_exdf = TRUE]
 
     # Check the data for any issues before proceeding with additional analysis
-    check_response_curve_data(
+    check_licor_data(
         combined_info,
         c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
@@ -263,12 +263,11 @@ if (PERFORM_CALCULATIONS) {
         EVENT_COLUMN_NAME
     )
 
-    # Calculate basic stats for each event (temporarily disabled since
-    # basic_stats) needs to be updated
-    # all_stats <- basic_stats(
-    #     all_samples,
-    #     c('seq_num', EVENT_COLUMN_NAME)
-    # )
+    # Calculate basic stats for each event
+    all_stats <- basic_stats(
+        combined_info,
+        c('seq_num', EVENT_COLUMN_NAME)
+    )
 
     # Perform Vcmax fitting procedure
     vcmax_results <- fit_c3_vcmax(
@@ -302,7 +301,7 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    # View(all_stats)
+    View(all_stats)
     View(vcmax_parameters[c("event", "replicate", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
 }
 

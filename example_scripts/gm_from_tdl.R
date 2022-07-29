@@ -37,13 +37,13 @@ library(DescTools)    # for DunnettTest
 
 PERFORM_CALCULATIONS <- TRUE
 
-PERFORM_STATS_TESTS <- FALSE
+PERFORM_STATS_TESTS <- TRUE
 
 SAVE_RESULTS <- FALSE
 
 MAKE_TDL_PLOTS <- TRUE
 
-MAKE_GM_PLOTS <- FALSE
+MAKE_GM_PLOTS <- TRUE
 
 RESPIRATION <- -2.2
 
@@ -280,6 +280,9 @@ if (PERFORM_CALCULATIONS) {
     licor_files[['main_data']] <-
         licor_files[['main_data']][!licor_files[['main_data']][['event']] %in% EVENTS_TO_IGNORE,]
 
+    # Check the data for any issues before proceeding with additional analysis
+    check_licor_data(licor_files, 'event_replicate', -1)
+
     # Exclude outliers using the calculated gm values for each event
     # Exclude any bad values and outliers. First, elimate all measurements where
     # mesophyll conductance or chloroplast CO2 concentration is out of the
@@ -315,25 +318,17 @@ if (PERFORM_CALCULATIONS) {
         cat(paste("Number of Licor measurements after removing statistical outliers:", nrow(licor_files_no_outliers), "\n"))
     }
 
-    # Check the data for any issues before proceeding with additional analysis
-    check_signal_averaging_data(
-        licor_files_no_outliers[['main_data']],
-        'event_replicate'
-    )
-
     # Get stats for each event by averaging over all corresponding reps
-    # (temporarily disabled)
-    # event_stats <- basic_stats(
-    #     licor_files_no_outliers[['main_data']],
-    #     'event'
-    # )
+    event_stats <- basic_stats(
+        licor_files_no_outliers,
+        'event'
+    )$main_data
 
     # Get stats for each rep by averaging over all corresponding observations
-    # (temporarily disabled)
-    # rep_stats <- basic_stats(
-    #     licor_files_no_outliers[['main_data']],
-    #     'event_replicate'
-    # )
+    rep_stats <- basic_stats(
+        licor_files_no_outliers,
+        'event_replicate'
+    )$main_data
 
     if (PERFORM_STATS_TESTS) {
         # Convert the "event" column to a group or onewaytests will yell at us
@@ -399,8 +394,8 @@ if (SAVE_RESULTS) {
 
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
-    # write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
-    # write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }
 
 ###                            ###

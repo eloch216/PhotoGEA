@@ -194,6 +194,41 @@ dimnames.exdf <- function(x) {
     return(x)
 }
 
+# Combine exdf objects by the columns of their main_data, units, and categories
+cbind.exdf <- function(..., deparse.level = 1) {
+    exdf_list <- list(...)
+
+    # Make sure there is one or more exdf object
+    if (length(exdf_list) < 1) {
+        stop("rbind.exdf requires one or more exdf objects")
+    }
+
+    # Make sure all the objects are indeed exdf objects
+    type_check <- lapply(exdf_list, function(x) {is.exdf(x)})
+
+    if (!all(as.logical(type_check))) {
+        stop("exdf objects can only be combined with other exdf objects when using cbind")
+    }
+
+    # Get the main_data, units, and categories from each exdf object
+    main_data_list <- lapply(exdf_list, function(x) {x$main_data})
+    units_list <- lapply(exdf_list, function(x) {x$units})
+    categories_list <- lapply(exdf_list, function(x) {x$categories})
+
+    # Make sure all the main_data data frames have the same number of rows
+    nrow_check <- lapply(main_data_list, nrow)
+    if (length(unique(nrow_check)) != 1) {
+        stop("exdf objects must have the same number of rows when using cbind")
+    }
+
+    # Make a new exdf object by combining them all with cbind
+    return(exdf(
+        do.call(cbind, c(main_data_list, list(deparse.level = deparse.level))),
+        do.call(cbind, c(units_list, list(deparse.level = deparse.level))),
+        do.call(cbind, c(categories_list, list(deparse.level = deparse.level)))
+    ))
+}
+
 # Combine exdf objects by the rows of their main_data
 rbind.exdf <- function(
     ...,
@@ -226,14 +261,29 @@ rbind.exdf <- function(
         current_exdf <- exdf_list[[i]]
 
         if (!identical(colnames(first_exdf$main_data), colnames(current_exdf$main_data))) {
+            cat('\ncolnames from first exdf object:\n')
+            print(colnames(first_exdf$main_data))
+            cat('\ncolnames from current exdf object:\n')
+            colnames(current_exdf$main_data)
+            cat('\n')
             stop("exdf objects must all have the same column names when using rbind")
         }
 
         if (!identical(first_exdf$categories, current_exdf$categories)) {
+            cat('\ncategories from first exdf object:\n')
+            print(colnames(first_exdf$categories))
+            cat('\ncategories from current exdf object:\n')
+            colnames(current_exdf$categories)
+            cat('\n')
             stop("exdf objects must all have the same categories when using rbind")
         }
 
         if (!identical(first_exdf$units, current_exdf$units)) {
+            cat('\nunits from first exdf object:\n')
+            print(colnames(first_exdf$units))
+            cat('\nunits from current exdf object:\n')
+            colnames(current_exdf$units)
+            cat('\n')
             stop("exdf objects must all have the same units when using rbind")
         }
     }

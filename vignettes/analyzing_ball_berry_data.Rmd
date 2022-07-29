@@ -187,25 +187,31 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_response_curve_data` function
-from `PhotoGEA`, which requires an `exdf` object that contains response curves,
-the name of a column that should uniquely identify each curve, and the expected
-number of points in each curve. If the data passes the checks, this function
-will have no output and will not produce any messages:
+response curve. To do this, we can use the `check_licor_data` function from
+`PhotoGEA`. Here we will supply the name of a column that should uniquely
+identify each response curve (`curve_identifier`), the expected number of points
+in each curve (`7`), the name of a "driving" column that should follow the same
+sequence in each curve (`Qin`), and tolerance for the values of the driving
+column (`1.0 mol / m^2 / s`). If the data passes the checks, this function will
+have no output and will not produce any messages. (For more information, see the
+built-in help menu entry by typing `?check_licor_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_response_curve_data(licor_data, 'curve_identifier', 7)
+check_licor_data(licor_data, 'curve_identifier', 7, 'Qin', 1.0)
 ```
 
-However, if `check_response_curve_data` detects an issue, it will print a
+However, if `check_licor_data` detects an issue, it will print a
 helpful message to the R terminal. For example, if we had specified the wrong
-number of points or the wrong identifier column, we would get error messages:
+number of points, the wrong identifier column, or an unrealistic tolerance, we
+would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_response_curve_data(licor_data, 'curve_identifier', 8)
+check_licor_data(licor_data, 'curve_identifier', 8)
 
-check_response_curve_data(licor_data, 'species', 7)
+check_licor_data(licor_data, 'species', 7)
+
+check_licor_data(licor_data, 'curve_identifier', 7, 'Qin', 0.1)
 ```
 
 ## Qualitative Checks
@@ -440,55 +446,18 @@ print(ball_berry_parameters)
 ## Extracting Average Values
 
 Finally, we can extract average values of the Ball-Berry parameters for each
-species. To do this, the `tapply` function can be helpful:
+species using the `basic_stats` function from `PhotoGEA`:
 
-```{r extract_averages}
-# Specify which column should be used for grouping the data when calculating
-# averages
-id_column_for_avg <- 'species'
-
-# Calculate average Ball-Berry intercept for each group
-tapply(
-  ball_berry_parameters[ , 'bb_intercept'],
-  ball_berry_parameters[ , id_column_for_avg],
-  mean
+```{r calculate_stats}
+# Compute the average and standard error for the Ball-Berry slope and intercept
+# for each species
+ball_berry_averages <- basic_stats(
+  ball_berry_results$parameters[ , c('species', 'K', 'bb_intercept', 'bb_slope'), TRUE],
+  'species'
 )
 
-# Calculate average Ball-Berry slope for each group
-tapply(
-  ball_berry_parameters[ , 'bb_slope'],
-  ball_berry_parameters[ , id_column_for_avg],
-  mean
-)
-```
-
-Of course, it would also be useful to calculate the standard error for each of
-these average values; this can also be done using `tapply`, but here we have to
-write our own simple function for calculating the standard error, since R does
-not have a built-in one:
-
-```{r extract_errors}
-# Define a function for calculating the standard error
-std_err <- function(x) {
-  stdev <- sd(x)
-  n <- length(x)
-  stdev / sqrt(n)
-}
-
-# Calculate standard error of the mean Ball-Berry intercept for each group
-tapply(
-  ball_berry_parameters[ , 'bb_intercept'],
-  ball_berry_parameters[ , id_column_for_avg],
-  std_err
-)
-
-# Calculate the standard error of the mean Ball-Berry slope for each group
-tapply(
-  ball_berry_parameters[ , 'bb_slope'],
-  ball_berry_parameters[ , id_column_for_avg],
-  std_err
-)
-
+# View the averages and errors
+print(ball_berry_averages)
 ```
 
 # Customizing Your Script
@@ -496,7 +465,8 @@ tapply(
 Note that most of the commands in this vignette have been written in a general
 way so they can be used as the basis for your own Ball-Berry analysis script
 (see [Commands From This Document]). In order to use them in your own script,
-some or all of the following changes may be required.
+some or all of the following changes may be required. There may also be others
+not specifically mentioned here.
 
 ## Input Files
 
@@ -527,10 +497,8 @@ of the `curves_to_remove` vector.
 
 ## Averages and Standard Errors
 
-Depending on how your data is organized, you may want to change
-`id_column_for_avg`, which specifies how to group the data when computing
-average Ball-Berry parameter values. You may also want to store the results in a
-named variable instead of printing them directly to the terminal.
+Depending on how your data is organized, you may want to change the column used
+to divide the data when calculating averages and standard errors.
 
 ## Plots
 
@@ -547,6 +515,7 @@ choose output filenames for the resulting `csv` files:
 ```{r saving_csv_files, eval = FALSE}
 write.csv(ball_berry_results$fits, file.choose(), row.names = FALSE)
 write.csv(ball_berry_results$parameters, file.choose(), row.names = FALSE)
+write.csv(ball_berry_averages, file.choose(), row.names = FALSE)
 ```
 
 # Commands From This Document
@@ -586,9 +555,7 @@ file to initialize your own script.
 
 <<ball_berry_parameters>>
 
-<<extract_averages>>
-
-<<extract_errors>>
+<<calculate_stats>>
 ```
 
 # References
