@@ -131,14 +131,16 @@ null_smoothing_function <- function(Y, X) {return(Y)}
 if (PERFORM_CALCULATIONS) {
     # Get all the TDL information and process it
 
-    tdl_files <- batch_read_tdl_file(
-        choose_input_tdl_files(),
-        rows_to_skip = 1,
-        variable_name_row = 2,
-        variable_unit_row = 3,
-        data_start_row = 5,
-        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
-    )
+    tdl_files <- lapply(choose_input_tdl_files(), function(fname) {
+        read_tdl_file(
+            fname,
+            rows_to_skip = 1,
+            variable_name_row = 2,
+            variable_unit_row = 3,
+            data_start_row = 5,
+            timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
+        )
+    })
 
     tdl_columns_to_extract <- c(
         TDL_TIMESTAMP_COLUMN_NAME,
