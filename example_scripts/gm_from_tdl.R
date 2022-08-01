@@ -164,7 +164,8 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files_smoothed <- exclude_tdl_cycles(tdl_files, TDL_CYCLES_TO_EXCLUDE)
+    tdl_files_smoothed <-
+        tdl_files[!tdl_files[, 'cycle_num'] %in% TDL_CYCLES_TO_EXCLUDE, , TRUE]
 
     for (valve in TDL_VALVES_TO_SMOOTH) {
         tdl_files_smoothed <- smooth_tdl_data(
@@ -477,7 +478,7 @@ if (MAKE_TDL_PLOTS) {
     # Make plots for valves that weren't smoothed
     for (valve in unsmoothed_valves) {
         valve_data <-
-            extract_tdl_valve(tdl_files_smoothed, TDL_VALVE_COLUMN_NAME, valve)
+            tdl_files_smoothed[tdl_files_smoothed[, TDL_VALVE_COLUMN_NAME] == valve, ]
 
         tdl_valve_caption <- paste("TDL valve", valve, "\n(Black points indicate when Licor measurements were made)")
 

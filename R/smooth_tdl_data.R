@@ -6,7 +6,7 @@ smooth_tdl_data <- function(
 )
 {
     # Extract data corresponding to a single valve
-    valve_time_series <- extract_tdl_valve(tdl_exdf, valve_column_name, valve_number)
+    valve_time_series <- tdl_exdf[tdl_exdf[, valve_column_name] == valve_number, ]
 
     # Apply the smoothing function to the valve time series
     filtered_12C <- smoothing_function(valve_time_series[['Conc12C_Avg']], valve_time_series[['elapsed_time']])
