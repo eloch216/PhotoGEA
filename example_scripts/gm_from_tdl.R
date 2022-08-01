@@ -180,8 +180,8 @@ if (PERFORM_CALCULATIONS) {
     }
 
     processed_tdl_data <- process_tdl_cycles(
-        tdl_files_smoothed[['main_data']],
-        process_erml_tdl_cycle,
+        tdl_files_smoothed,
+        process_tdl_cycle_erml,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         noaa_valve = 2,
         calibration_0_valve = 20,
@@ -227,7 +227,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_pair_licor_and_tdl(
         licor_files,
-        processed_tdl_data[['tdl_data']],
+        processed_tdl_data$tdl_data$main_data,
         LICOR_TIMESTAMP_COLUMN_NAME,
         TDL_TIMESTAMP_COLUMN_NAME,
         max_allowed_time_difference = 1
@@ -535,7 +535,7 @@ if (MAKE_TDL_PLOTS) {
     # Make a plot of all the fits from the processing
     tdl_fitting <- xyplot(
         expected_13c_values + fitted_13c_values ~ measured_13c_values | factor(cycle_num),
-        data = processed_tdl_data[['calibration_13CO2_data']],
+        data = processed_tdl_data$calibration_13CO2_data$main_data,
         type = 'b',
         pch = 20,
         xlab = "Measured 13CO2 mixing ratio (ppm)",
@@ -548,7 +548,7 @@ if (MAKE_TDL_PLOTS) {
     # Make a plot showing how the zeroes drift with time
     tdl_12CO2_zero_drift <- xyplot(
         offset_12c ~ elapsed_time,
-        data = processed_tdl_data[['calibration_zero']],
+        data = processed_tdl_data$calibration_zero$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "12CO2 zero offset"
@@ -558,7 +558,7 @@ if (MAKE_TDL_PLOTS) {
 
     tdl_13CO2_zero_drift <- xyplot(
         offset_13c ~ elapsed_time,
-        data = processed_tdl_data[['calibration_zero']],
+        data = processed_tdl_data$calibration_zero$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 zero offset"
@@ -569,7 +569,7 @@ if (MAKE_TDL_PLOTS) {
     # Make a plot showing how the 12CO2 calibration factor drifts with time
     tdl_12CO2_calibration_drift <- xyplot(
         gain_12CO2 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_12CO2']],
+        data = processed_tdl_data$calibration_12CO2$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "12CO2 gain factor"
@@ -580,7 +580,7 @@ if (MAKE_TDL_PLOTS) {
     # Make plots showing how the 13CO2 calibration parameters drift with time
     tdl_13CO2_calibration_drift_a0 <- xyplot(
         a0 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_13CO2_fit']],
+        data = processed_tdl_data$calibration_13CO2_fit$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 polynomial calibration parameter a0",
@@ -592,7 +592,7 @@ if (MAKE_TDL_PLOTS) {
 
     tdl_13CO2_calibration_drift_a1 <- xyplot(
         a1 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_13CO2_fit']],
+        data = processed_tdl_data$calibration_13CO2_fit$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 polynomial calibration parameter a1",
@@ -605,7 +605,7 @@ if (MAKE_TDL_PLOTS) {
 
     tdl_13CO2_calibration_drift_a2 <- xyplot(
         a2 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_13CO2_fit']],
+        data = processed_tdl_data$calibration_13CO2_fit$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 polynomial calibration parameter a2",
