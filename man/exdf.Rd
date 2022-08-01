@@ -11,7 +11,7 @@
 }
 
 \usage{
-  exdf(main_data, units, categories, ...)
+  exdf(main_data, units = NULL, categories = NULL, ...)
 }
 
 \arguments{
@@ -20,13 +20,15 @@
   \item{units}{
     A data frame with the same columns as \code{main_data} but with just one
     row, where each entry describes the units for the corresponding column of
-    \code{main_data}.
+    \code{main_data}. If \code{units} is \code{NULL}, it will be initialized
+    with \code{NA} for each column.
   }
 
   \item{categories}{
     A data frame with the same columns as \code{main_data} but with just one
     row, where each entry describes the category for the corresponding column of
-    \code{main_data}.
+    \code{main_data}. If \code{categories} is \code{NULL}, it will be
+    initialized with \code{NA} for each column.
   }
 
   \item{...}{
@@ -73,7 +75,12 @@
 }
 
 \examples{
-# Example: Creating a simple exdf object with two columns (`A` and `B`) that
+# Example 1: Creating a simple exdf object with two columns (`A` and `B`) and
+# default values for its units and categories. There are four values of each
+# variable.
+exdf(data.frame(A = c(3, 2, 7, 9), B = c(4, 5, 1, 8)))
+
+# Example 2: Creating a simple exdf object with two columns (`A` and `B`) that
 # have units of `m` and `s`, respectively, and categories of `Cat1` and `Cat2`,
 # respectively. There are four values of each variable.
 exdf(
