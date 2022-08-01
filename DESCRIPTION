@@ -17,9 +17,6 @@ Imports:
     openxlsx,
     lattice
 Suggests:
-    onewaytests,
-    DescTools,
-    signal,
     knitr,
     rmarkdown
 VignetteBuilder: knitr

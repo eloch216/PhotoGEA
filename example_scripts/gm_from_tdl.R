@@ -60,8 +60,8 @@ MIN_CC <- 0.0
 # Names of important columns in the TDL data
 TDL_TIMESTAMP_COLUMN_NAME <- 'TIMESTAMP'
 TDL_VALVE_COLUMN_NAME <- 'valve_number'
-TDL_RAW_12C_COLUMN_NAME <- 'Conc12C_Avg'
-TDL_RAW_13C_COLUMN_NAME <- 'Conc13C_Avg'
+TDL_12C_COLUMN_NAME <- 'Conc12C_Avg'
+TDL_13C_COLUMN_NAME <- 'Conc13C_Avg'
 
 # Specify the variables to extract from the TDL data files. Note that when the
 # files are loaded, any Unicode characters such as Greek letters will be
@@ -71,8 +71,8 @@ TDL_RAW_13C_COLUMN_NAME <- 'Conc13C_Avg'
 TDL_COLUMNS_TO_EXTRACT <- c(
     TDL_TIMESTAMP_COLUMN_NAME,
     TDL_VALVE_COLUMN_NAME,
-    TDL_RAW_12C_COLUMN_NAME,
-    TDL_RAW_13C_COLUMN_NAME
+    TDL_12C_COLUMN_NAME,
+    TDL_13C_COLUMN_NAME
 )
 
 # Names of important columns in the Licor data
@@ -168,12 +168,15 @@ if (PERFORM_CALCULATIONS) {
         tdl_files[!tdl_files[, 'cycle_num'] %in% TDL_CYCLES_TO_EXCLUDE, , TRUE]
 
     for (valve in TDL_VALVES_TO_SMOOTH) {
-        tdl_files_smoothed <- smooth_tdl_data(
-            tdl_files_smoothed,
-            TDL_VALVE_COLUMN_NAME,
-            valve,
-            spline_smoothing_function
-        )
+        for (column in c(TDL_12C_COLUMN_NAME, TDL_13C_COLUMN_NAME)) {
+            tdl_files_smoothed <- smooth_tdl_data(
+                tdl_files_smoothed,
+                column,
+                TDL_VALVE_COLUMN_NAME,
+                valve,
+                spline_smoothing_function
+            )
+        }
     }
 
     processed_tdl_data <- process_tdl_cycles(
@@ -185,8 +188,8 @@ if (PERFORM_CALCULATIONS) {
         calibration_1_valve = 21,
         calibration_2_valve = 23,
         calibration_3_valve = 26,
-        raw_12c_colname = TDL_RAW_12C_COLUMN_NAME,
-        raw_13c_colname = TDL_RAW_13C_COLUMN_NAME,
+        raw_12c_colname = TDL_12C_COLUMN_NAME,
+        raw_13c_colname = TDL_13C_COLUMN_NAME,
         noaa_cylinder_co2_concentration = 294.996,  # ppm
         noaa_cylinder_isotope_ratio = -8.40,        # ppt
         calibration_isotope_ratio = -11.505,        # ppt
@@ -427,11 +430,11 @@ if (MAKE_TDL_PLOTS) {
         active_cycles_valve <-
             tdl_comp_valve[tdl_comp_valve[['smth_type']] == 'raw' & tdl_comp_valve[['cycle_num']] %in% active_tdl_cycles,]
 
-        active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_RAW_12C_COLUMN_NAME]])
-        active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_RAW_13C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_12C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_12C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_13C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_13C_COLUMN_NAME]])
 
         C12_plot <- xyplot(
-            tdl_comp_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
+            tdl_comp_valve[[TDL_12C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
             group = tdl_comp_valve[['smth_type']],
             type = 'b',
             pch = 20,
@@ -442,7 +445,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -453,7 +456,7 @@ if (MAKE_TDL_PLOTS) {
         print(C12_plot)
 
         C13_plot <- xyplot(
-            tdl_comp_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
+            tdl_comp_valve[[TDL_13C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
             group = tdl_comp_valve[['smth_type']],
             type = 'b',
             pch = 20,
@@ -464,7 +467,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -485,11 +488,11 @@ if (MAKE_TDL_PLOTS) {
         active_cycles_valve <-
             valve_data[valve_data[['cycle_num']] %in% active_tdl_cycles,]
 
-        active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] <- min(valve_data[[TDL_RAW_12C_COLUMN_NAME]])
-        active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] <- min(valve_data[[TDL_RAW_13C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_12C_COLUMN_NAME]] <- min(valve_data[[TDL_12C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_13C_COLUMN_NAME]] <- min(valve_data[[TDL_13C_COLUMN_NAME]])
 
         C12_plot <- xyplot(
-            valve_data[[TDL_RAW_12C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
+            valve_data[[TDL_12C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
             type = 'b',
             pch = 20,
             xlab = "TDL cycle number",
@@ -498,7 +501,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -509,7 +512,7 @@ if (MAKE_TDL_PLOTS) {
         print(C12_plot)
 
         C13_plot <- xyplot(
-            valve_data[[TDL_RAW_13C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
+            valve_data[[TDL_13C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
             type = 'b',
             pch = 20,
             xlab = "TDL cycle number",
@@ -518,7 +521,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
