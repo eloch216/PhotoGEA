@@ -5,41 +5,33 @@
 \title{fit_ball_berry}
 
 \description{
-  Calculates a linear fit of stomatal conductance vs. the Ball-Berry index for
-  all curves present in the \code{exdf} object. This function can accomodate
-  alternative column names for the variables taken from the Licor file in case
-  they change at some point in the future. This function also checks the units
-  of each required column and will produce an error if any units are incorrect.
+  Calculates a linear fit of stomatal conductance vs. the Ball-Berry index using
+  the data in the \code{exdf} object. This function can accomodate alternative
+  column names for the variables taken from the Licor file in case they change
+  at some point in the future. This function also checks the units of each
+  required column and will produce an error if any units are incorrect.
 }
 
 \usage{
   fit_ball_berry(
-    exdf_obj,
-    replicate_column_name,
+    replicate_exdf,
     gsw_column_name,
     bb_index_column_name
   )
 }
 
 \arguments{
-  \item{exdf_obj}{
-    An \code{exdf} object representing data from a Licor gas exchange
-    measurement system.
-  }
-
-  \item{replicate_column_name}{
-    The name of a column in \code{exdf_obj} that can be treated as a factor to
-    identify individual Ball-Berry curves (typically \code{replicate} or
-    something similar).
+  \item{replicate_exdf}{
+    An \code{exdf} object representing one Ball-Berry curve.
   }
 
   \item{gsw_column_name}{
-    The name of the column in \code{exdf_obj} that contains the stomatal
+    The name of the column in \code{replicate_exdf} that contains the stomatal
     conductance to water vapor (typically \code{'gsw'}).
   }
 
   \item{bb_index_column_name}{
-    The name of the column in \code{exdf_obj} that contains the Ball-Berry
+    The name of the column in \code{replicate_exdf} that contains the Ball-Berry
     index (typically \code{'bb_index'}).
   }
 }
@@ -94,9 +86,9 @@
   Ball-Berry index is performed to extract estimates for the Ball-Berry
   intercept and slope.
 
-  This function automatically performs such fits to one or more Ball-Berry
-  curves that are included in \code{exdf_obj}, where each curve is identified by
-  a unique value of the \code{replicate_column_name} column.
+  This function assumes that \code{replicate_exdf} represents a single
+  Ball-Berry curve. To fit multiple curves at once, this function is often used
+  along with \code{\link{by.exdf}} and \code{\link{consolidate}}.
 }
 
 \value{
@@ -119,15 +111,10 @@
 # Read an example Licor file included in the PhotoGEA package, calculate
 # additional gas properties, calculate the Ball-Berry index, define a new column
 # that uniquely identifies each curve, and then perform a fit to extract the
-# Ball-Berry parameters.
+# Ball-Berry parameters from each curve.
 licor_file <- read_licor_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-  variable_category_row = 14,
-  variable_name_row = 15,
-  variable_unit_row = 16,
-  data_start_row = 17,
-  timestamp_colname = 'time'
+  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
 )
 
 licor_file <- calculate_gas_properties(
@@ -153,12 +140,21 @@ licor_file <- calculate_ball_berry_index(
     'Csurface'
 )
 
-bb_results <- fit_ball_berry(
-    licor_file,
-    'species_plot',
-    'gsw',
-    'bb_index'
+# Fit just one curve from the data set (it is rare to do this)
+one_result <- fit_ball_berry(
+  licor_file[licor_file[, 'species_plot'] == 'soybean - 1a', , TRUE],
+  'gsw',
+  'bb_index'
 )
+
+# Fit all curves in the data set (it is more common to do this)
+bb_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_ball_berry,
+  'gsw',
+  'bb_index'
+))
 
 # View the fitting parameters for each species / plot
 col_to_keep <- c('species', 'plot', 'species_plot', 'bb_intercept', 'bb_slope', 'r_squared')

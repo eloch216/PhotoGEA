@@ -187,10 +187,14 @@ if (PERFORM_CALCULATIONS) {
     # Here, the fitting is performed with the `nmkb` optimizer from the
     # `dfoptim` package. Before performing the fits, we truncate the data to
     # the specified Ci range.
-    variable_j_results <- fit_variable_j_jrv_tau(
+    exdf_for_fitting <-
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD_UPPER &
-            combined_info[, CI_COLUMN_NAME] >= CI_THRESHOLD_LOWER, , return_exdf = TRUE],
-        UNIQUE_ID_COLUMN_NAME,
+            combined_info[, CI_COLUMN_NAME] >= CI_THRESHOLD_LOWER, , return_exdf = TRUE]
+
+    variable_j_results <- consolidate(by(
+        exdf_for_fitting,
+        exdf_for_fitting[, UNIQUE_ID_COLUMN_NAME],
+        fit_variable_j,
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
         PHIPS2_COLUMN_NAME,
@@ -204,8 +208,11 @@ if (PERFORM_CALCULATIONS) {
                 restarts.max = 10
             ))
         },
-        TPU = 1000
-    )
+        dpmn_error_jrv_tau(O = 210, TPU = 1000),           # Fix O and TPU, leaving J_high, Rd, Vcmax, and tau as variables
+        c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42), # Initial guess
+        c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2),  # Lower limit
+        c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6)   # Upper limit
+    ))
 
     # Separate the parameters and the fitted curves (without units)
     variable_j_parameters <- variable_j_results$parameters$main_data

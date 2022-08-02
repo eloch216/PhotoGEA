@@ -1,12 +1,8 @@
 # Determine Vcmax and Rd by making a linear fit to A vs. f_prime. The slope is
 # Vcmax and the intercept is -Rd. See the `calculate_fprime` function for more
-# information about this fitting method.
-#
-# This function is intended to be passed to the `apply_fit_function_across_reps`
-# function as its `FUN` argument. A user shouldn't be directly calling this
-# function, so don't provide default arguments here. We don't need to check the
-# inputs here since this will be taken care of by `fit_c3_vcmax`.
-fit_c3_vcmax_replicate <- function(
+# information about this fitting method. Note: it is often helpful to truncate
+# the data to a limited range of Ci values before calling this function.
+fit_c3_vcmax <- function(
     replicate_exdf,
     a_column_name,
     f_prime_column_name,
@@ -14,6 +10,18 @@ fit_c3_vcmax_replicate <- function(
     PTR_FUN
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('fit_c3_vcmax requires an exdf object')
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_columns[[f_prime_column_name]] <- 'dimensionless'
+    required_columns[[tleaf_column_name]] <- 'degrees C'
+
+    check_required_columns(replicate_exdf, required_columns)
+
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
 
@@ -74,56 +82,4 @@ fit_c3_vcmax_replicate <- function(
         parameters = replicate_identifiers,
         fits = replicate_exdf
     ))
-}
-
-# Performs a C3 Vcmax fitting procedure to each replicate in the data set,
-# returning the extracted parameters as well as the fitted values of net
-# assimilation.
-fit_c3_vcmax <- function(
-    exdf_obj,
-    replicate_column_name,
-    a_column_name,
-    ci_column_name,
-    f_prime_column_name,
-    tleaf_column_name,
-    PTR_FUN,
-    ci_threshold
-)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop('fit_c3_vcmax requires an exdf object')
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
-    required_columns[[f_prime_column_name]] <- 'dimensionless'
-    required_columns[[tleaf_column_name]] <- 'degrees C'
-
-    check_required_columns(exdf_obj, required_columns)
-
-    # Truncate to a limited range of Ci values
-    exdf_subset <-
-        exdf_obj[exdf_obj[ , ci_column_name] <= ci_threshold, , return_exdf = TRUE]
-
-    cat(
-        paste(
-            '\n\nMaximum Ci used for Vcmax fitting:',
-            max(exdf_subset[, ci_column_name]),
-            ' ppm\n\n'
-        )
-    )
-
-    # Apply the fit
-    apply_fit_function_across_reps(
-        exdf_subset,
-        exdf_subset[, replicate_column_name],
-        a_column_name,
-        f_prime_column_name,
-        tleaf_column_name,
-        PTR_FUN,
-        FUN = fit_c3_vcmax_replicate
-    )
 }

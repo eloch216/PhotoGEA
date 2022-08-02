@@ -179,8 +179,9 @@ if (PERFORM_CALCULATIONS) {
         }
     }
 
-    processed_tdl_data <- process_tdl_cycles(
+    processed_tdl_data <- consolidate(by(
         tdl_files_smoothed,
+        tdl_files_smoothed[, 'cycle_num'],
         process_tdl_cycle_erml,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         noaa_valve = 2,
@@ -195,7 +196,7 @@ if (PERFORM_CALCULATIONS) {
         calibration_isotope_ratio = -11.505,        # ppt
         f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
         R_VPDB = 0.0111797
-    )
+    ))
 
     # Get all the Licor information and process it
 

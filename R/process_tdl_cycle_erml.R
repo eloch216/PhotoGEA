@@ -1,5 +1,5 @@
 process_tdl_cycle_erml <- function(
-    tdl_cycle,                        # data frame
+    tdl_cycle,                        # exdf object
     valve_column_name,                # column name string
     noaa_valve,                       # value of valve column
     calibration_0_valve,              # value of valve column

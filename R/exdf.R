@@ -340,3 +340,12 @@ split.exdf <- function(x, f, drop = FALSE, lex.order = FALSE, ...)
         function(ind) x[ind, , return_exdf = TRUE]
     )
 }
+
+# Split an exdf object into chunks by the value of one or more factors, apply
+# FUN to each of the chunks, and return the output of each call to FUN as one
+# element of a list
+by.exdf <- function(data, INDICES, FUN, ...)
+{
+    split_exdf_obj <- split(data, INDICES, drop = TRUE)
+    lapply(split_exdf_obj, function(x) {FUN(x, ...)})
+}

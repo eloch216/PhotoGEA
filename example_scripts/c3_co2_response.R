@@ -270,19 +270,26 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Perform Vcmax fitting procedure
-    vcmax_results <- fit_c3_vcmax(
-        combined_info,
-        UNIQUE_ID_COLUMN_NAME,
+    vcmax_results <- consolidate(by(
+        combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD, , TRUE],
+        combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD, UNIQUE_ID_COLUMN_NAME],
+        fit_c3_vcmax,
         A_COLUMN_NAME,
-        CI_COLUMN_NAME,
         F_PRIME_COLUMN_NAME,
         TLEAF_COLUMN_NAME,
-        PTR_FUN,
-        CI_THRESHOLD
-    )
+        PTR_FUN
+    ))
 
     vcmax_parameters <- vcmax_results[['parameters']]$main_data
     vcmax_fits <- vcmax_results[['fits']]$main_data
+
+    cat(
+        paste(
+            '\n\nMaximum Ci used for Vcmax fitting:',
+            max(vcmax_fits[, CI_COLUMN_NAME]),
+            ' ppm\n\n'
+        )
+    )
 
     all_samples <- combined_info[['main_data']]
 }

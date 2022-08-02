@@ -67,6 +67,7 @@
     \item \code{\link{rbind.exdf}}
     \item \code{\link{cbind.exdf}}
     \item \code{\link{split.exdf}}
+    \item \code{\link{by.exdf}}
   }
 }
 
