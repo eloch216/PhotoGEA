@@ -86,7 +86,7 @@ process_tdl_cycle_erml <- function(
         c('process_tdl_cycle_erml', 'total_mixing_ratio_noaa', 'ppm'),
         c('process_tdl_cycle_erml', 'R_noaa',                  '?'),
         c('process_tdl_cycle_erml', 'noaa_12C16O16O',          '?'),
-        c('process_tdl_cycle_erml', 'gain_12CO2',              '?')
+        c('process_tdl_cycle_erml', 'gain_12CO2',              'dimensionless')
     )
 
     # Make adjustments for 13C calibration using another reference that has been
