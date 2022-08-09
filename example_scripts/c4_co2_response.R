@@ -97,6 +97,9 @@ POINT_FOR_BOX_PLOTS <- 1
 # Specify a Ci upper limit to use for fitting
 CI_UPPER_LIMIT <- Inf # ppm
 
+# Decide whether to remove statistical outliers
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -216,8 +219,30 @@ if (PERFORM_CALCULATIONS) {
         CI_UPPER_LIMIT
     )
 
-    all_fit_parameters <- fit_result[['parameters']]$main_data
-    all_fits <- fit_result[['fits']]$main_data
+    all_fit_parameters <- fit_result$parameters
+    all_fits <- fit_result$fits
+
+    if (REMOVE_STATISTICAL_OUTLIERS) {
+        # Remove fit parameters where the Vpmax value is an outlier
+        all_fit_parameters <- exclude_outliers(
+            all_fit_parameters,
+            'Vpmax_at_25',
+            all_fit_parameters[, EVENT_COLUMN_NAME]
+        )
+
+        # Remove fit parameters where the Vcmax value is an outlier
+        all_fit_parameters <- exclude_outliers(
+            all_fit_parameters,
+            'Vcmax_at_25',
+            all_fit_parameters[, EVENT_COLUMN_NAME]
+        )
+
+        # Also remove any problematic fits
+        all_fits <- all_fits[all_fits[, UNIQUE_ID_COLUMN_NAME] %in% all_fit_parameters[, UNIQUE_ID_COLUMN_NAME], , TRUE]
+    }
+
+    all_fit_parameters <- all_fit_parameters$main_data
+    all_fits <- all_fits$main_data
 
     all_samples <- combined_info[['main_data']]
 }
