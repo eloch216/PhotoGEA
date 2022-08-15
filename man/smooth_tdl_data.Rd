@@ -2,7 +2,7 @@
 
 \alias{smooth_tdl_data}
 
-\title{Identifying cycles in TDL data}
+\title{Smoothing data from one TDL valve}
 
 \description{
   Tool for applying a smoothing function to the time series corresponding to

@@ -153,7 +153,7 @@ objects into a single one.
 # Get the names of all columns that are present in all of the Licor files
 columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
 
-# Extract just these columns using the `[` operator with `return_exdf = TRUE`
+# Extract just these columns
 licor_exdf_list <- lapply(licor_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
@@ -393,15 +393,10 @@ apply this function to each curve in a larger data set and then consolidate the
 results, we can use it in conjunction with `by` and `consolidate`, which are
 also part of `PhotoGEA`. (For more information about these functions, see the
 built-in help menu entries by typing `?fit_ball_berry`, `?by.exdf`, or
-`?consolidate`.)
-
-Detailed information about this function is available from the built-in help
-menu by typing `?fit_ball_berry`. In short, `fit_ball_berry` will
-
-split apart
-the main data using the curve identifier column we defined before
-([Basic Checks]), make a linear fit of $g_{sw}$ against the Ball-Berry index,
-and return the resulting parameters and fits:
+`?consolidate`.) Together, these functions will split apart the main data using
+the curve identifier column we defined before ([Basic Checks]), make a linear
+fit of $g_{sw}$ against the Ball-Berry index, and return the resulting
+parameters and fits:
 
 ```{r fit_ball_berry}
 # Fit a linear model to the Ball-Berry data
