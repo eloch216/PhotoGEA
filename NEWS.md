@@ -34,10 +34,9 @@ for the next release.
     consolidated into one function: `check_licor_data`.
   - An `exdf` method for `cbind` has been added.
   - `exclude_tdl_cycles` and `extract_tdl_valve` have been removed since they
-     can easily be reproduced with more basic exdf functionality.
+    can easily be reproduced with more basic exdf functionality.
   - All functions for creating or modifying Excel files have been removed since
     we no longer want to follow this strategy.
-
 - `basic_stats` and the "Variable J" example script have been fixed.
 
 # PhotoGEA VERSION 0.2.0 (2022-07-26)
