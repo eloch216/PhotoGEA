@@ -1,0 +1,11 @@
+pandoc: 2.14.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  analyzing_ball_berry_data: analyzing_ball_berry_data.html
+  analyzing_tdl_data: analyzing_tdl_data.html
+last_built: 2022-08-15T20:32Z
+urls:
+  reference: https://eloch216.github.io/PhotoGEA/reference
+  article: https://eloch216.github.io/PhotoGEA/articles
+
