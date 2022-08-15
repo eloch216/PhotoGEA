@@ -60,8 +60,8 @@ MIN_CC <- 0.0
 # Names of important columns in the TDL data
 TDL_TIMESTAMP_COLUMN_NAME <- 'TIMESTAMP'
 TDL_VALVE_COLUMN_NAME <- 'valve_number'
-TDL_RAW_12C_COLUMN_NAME <- 'Conc12C_Avg'
-TDL_RAW_13C_COLUMN_NAME <- 'Conc13C_Avg'
+TDL_12C_COLUMN_NAME <- 'Conc12C_Avg'
+TDL_13C_COLUMN_NAME <- 'Conc13C_Avg'
 
 # Specify the variables to extract from the TDL data files. Note that when the
 # files are loaded, any Unicode characters such as Greek letters will be
@@ -71,8 +71,8 @@ TDL_RAW_13C_COLUMN_NAME <- 'Conc13C_Avg'
 TDL_COLUMNS_TO_EXTRACT <- c(
     TDL_TIMESTAMP_COLUMN_NAME,
     TDL_VALVE_COLUMN_NAME,
-    TDL_RAW_12C_COLUMN_NAME,
-    TDL_RAW_13C_COLUMN_NAME
+    TDL_12C_COLUMN_NAME,
+    TDL_13C_COLUMN_NAME
 )
 
 # Names of important columns in the Licor data
@@ -131,14 +131,16 @@ null_smoothing_function <- function(Y, X) {return(Y)}
 if (PERFORM_CALCULATIONS) {
     # Get all the TDL information and process it
 
-    tdl_files <- batch_read_tdl_file(
-        choose_input_tdl_files(),
-        rows_to_skip = 1,
-        variable_name_row = 2,
-        variable_unit_row = 3,
-        data_start_row = 5,
-        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
-    )
+    tdl_files <- lapply(choose_input_tdl_files(), function(fname) {
+        read_tdl_file(
+            fname,
+            rows_to_skip = 1,
+            variable_name_row = 2,
+            variable_unit_row = 3,
+            data_start_row = 5,
+            timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
+        )
+    })
 
     tdl_columns_to_extract <- c(
         TDL_TIMESTAMP_COLUMN_NAME,
@@ -162,34 +164,39 @@ if (PERFORM_CALCULATIONS) {
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
 
-    tdl_files_smoothed <- exclude_tdl_cycles(tdl_files, TDL_CYCLES_TO_EXCLUDE)
+    tdl_files_smoothed <-
+        tdl_files[!tdl_files[, 'cycle_num'] %in% TDL_CYCLES_TO_EXCLUDE, , TRUE]
 
     for (valve in TDL_VALVES_TO_SMOOTH) {
-        tdl_files_smoothed <- smooth_tdl_data(
-            tdl_files_smoothed,
-            TDL_VALVE_COLUMN_NAME,
-            valve,
-            spline_smoothing_function
-        )
+        for (column in c(TDL_12C_COLUMN_NAME, TDL_13C_COLUMN_NAME)) {
+            tdl_files_smoothed <- smooth_tdl_data(
+                tdl_files_smoothed,
+                column,
+                TDL_VALVE_COLUMN_NAME,
+                valve,
+                spline_smoothing_function
+            )
+        }
     }
 
-    processed_tdl_data <- process_tdl_cycles(
-        tdl_files_smoothed[['main_data']],
-        process_erml_tdl_cycle,
+    processed_tdl_data <- consolidate(by(
+        tdl_files_smoothed,
+        tdl_files_smoothed[, 'cycle_num'],
+        process_tdl_cycle_erml,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         noaa_valve = 2,
         calibration_0_valve = 20,
         calibration_1_valve = 21,
         calibration_2_valve = 23,
         calibration_3_valve = 26,
-        raw_12c_colname = TDL_RAW_12C_COLUMN_NAME,
-        raw_13c_colname = TDL_RAW_13C_COLUMN_NAME,
+        raw_12c_colname = TDL_12C_COLUMN_NAME,
+        raw_13c_colname = TDL_13C_COLUMN_NAME,
         noaa_cylinder_co2_concentration = 294.996,  # ppm
         noaa_cylinder_isotope_ratio = -8.40,        # ppt
         calibration_isotope_ratio = -11.505,        # ppt
         f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
         R_VPDB = 0.0111797
-    )
+    ))
 
     # Get all the Licor information and process it
 
@@ -221,7 +228,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_pair_licor_and_tdl(
         licor_files,
-        processed_tdl_data[['tdl_data']],
+        processed_tdl_data$tdl_data$main_data,
         LICOR_TIMESTAMP_COLUMN_NAME,
         TDL_TIMESTAMP_COLUMN_NAME,
         max_allowed_time_difference = 1
@@ -424,11 +431,11 @@ if (MAKE_TDL_PLOTS) {
         active_cycles_valve <-
             tdl_comp_valve[tdl_comp_valve[['smth_type']] == 'raw' & tdl_comp_valve[['cycle_num']] %in% active_tdl_cycles,]
 
-        active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_RAW_12C_COLUMN_NAME]])
-        active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_RAW_13C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_12C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_12C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_13C_COLUMN_NAME]] <- min(tdl_comp_valve[[TDL_13C_COLUMN_NAME]])
 
         C12_plot <- xyplot(
-            tdl_comp_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
+            tdl_comp_valve[[TDL_12C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
             group = tdl_comp_valve[['smth_type']],
             type = 'b',
             pch = 20,
@@ -439,7 +446,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -450,7 +457,7 @@ if (MAKE_TDL_PLOTS) {
         print(C12_plot)
 
         C13_plot <- xyplot(
-            tdl_comp_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
+            tdl_comp_valve[[TDL_13C_COLUMN_NAME]] ~ tdl_comp_valve[['cycle_num']],
             group = tdl_comp_valve[['smth_type']],
             type = 'b',
             pch = 20,
@@ -461,7 +468,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -475,18 +482,18 @@ if (MAKE_TDL_PLOTS) {
     # Make plots for valves that weren't smoothed
     for (valve in unsmoothed_valves) {
         valve_data <-
-            extract_tdl_valve(tdl_files_smoothed, TDL_VALVE_COLUMN_NAME, valve)
+            tdl_files_smoothed[tdl_files_smoothed[, TDL_VALVE_COLUMN_NAME] == valve, ]
 
         tdl_valve_caption <- paste("TDL valve", valve, "\n(Black points indicate when Licor measurements were made)")
 
         active_cycles_valve <-
             valve_data[valve_data[['cycle_num']] %in% active_tdl_cycles,]
 
-        active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] <- min(valve_data[[TDL_RAW_12C_COLUMN_NAME]])
-        active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] <- min(valve_data[[TDL_RAW_13C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_12C_COLUMN_NAME]] <- min(valve_data[[TDL_12C_COLUMN_NAME]])
+        active_cycles_valve[[TDL_13C_COLUMN_NAME]] <- min(valve_data[[TDL_13C_COLUMN_NAME]])
 
         C12_plot <- xyplot(
-            valve_data[[TDL_RAW_12C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
+            valve_data[[TDL_12C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
             type = 'b',
             pch = 20,
             xlab = "TDL cycle number",
@@ -495,7 +502,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_12C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -506,7 +513,7 @@ if (MAKE_TDL_PLOTS) {
         print(C12_plot)
 
         C13_plot <- xyplot(
-            valve_data[[TDL_RAW_13C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
+            valve_data[[TDL_13C_COLUMN_NAME]] ~ valve_data[['cycle_num']],
             type = 'b',
             pch = 20,
             xlab = "TDL cycle number",
@@ -515,7 +522,7 @@ if (MAKE_TDL_PLOTS) {
             panel = function(...) {
                 panel.xyplot(...)
                 panel.points(
-                    active_cycles_valve[[TDL_RAW_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
+                    active_cycles_valve[[TDL_13C_COLUMN_NAME]] ~ active_cycles_valve[['cycle_num']],
                     type = 'p',
                     col = 'black',
                     pch = 20
@@ -529,7 +536,7 @@ if (MAKE_TDL_PLOTS) {
     # Make a plot of all the fits from the processing
     tdl_fitting <- xyplot(
         expected_13c_values + fitted_13c_values ~ measured_13c_values | factor(cycle_num),
-        data = processed_tdl_data[['calibration_13CO2_data']],
+        data = processed_tdl_data$calibration_13CO2_data$main_data,
         type = 'b',
         pch = 20,
         xlab = "Measured 13CO2 mixing ratio (ppm)",
@@ -542,7 +549,7 @@ if (MAKE_TDL_PLOTS) {
     # Make a plot showing how the zeroes drift with time
     tdl_12CO2_zero_drift <- xyplot(
         offset_12c ~ elapsed_time,
-        data = processed_tdl_data[['calibration_zero']],
+        data = processed_tdl_data$calibration_zero$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "12CO2 zero offset"
@@ -552,7 +559,7 @@ if (MAKE_TDL_PLOTS) {
 
     tdl_13CO2_zero_drift <- xyplot(
         offset_13c ~ elapsed_time,
-        data = processed_tdl_data[['calibration_zero']],
+        data = processed_tdl_data$calibration_zero$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 zero offset"
@@ -563,7 +570,7 @@ if (MAKE_TDL_PLOTS) {
     # Make a plot showing how the 12CO2 calibration factor drifts with time
     tdl_12CO2_calibration_drift <- xyplot(
         gain_12CO2 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_12CO2']],
+        data = processed_tdl_data$calibration_12CO2$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "12CO2 gain factor"
@@ -574,7 +581,7 @@ if (MAKE_TDL_PLOTS) {
     # Make plots showing how the 13CO2 calibration parameters drift with time
     tdl_13CO2_calibration_drift_a0 <- xyplot(
         a0 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_13CO2_fit']],
+        data = processed_tdl_data$calibration_13CO2_fit$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 polynomial calibration parameter a0",
@@ -586,7 +593,7 @@ if (MAKE_TDL_PLOTS) {
 
     tdl_13CO2_calibration_drift_a1 <- xyplot(
         a1 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_13CO2_fit']],
+        data = processed_tdl_data$calibration_13CO2_fit$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 polynomial calibration parameter a1",
@@ -599,7 +606,7 @@ if (MAKE_TDL_PLOTS) {
 
     tdl_13CO2_calibration_drift_a2 <- xyplot(
         a2 ~ elapsed_time,
-        data = processed_tdl_data[['calibration_13CO2_fit']],
+        data = processed_tdl_data$calibration_13CO2_fit$main_data,
         type = 'l',
         xlab = "Elapsed time at cycle start (minutes)",
         ylab = "13CO2 polynomial calibration parameter a2",

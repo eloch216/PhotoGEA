@@ -1,22 +1,31 @@
 smooth_tdl_data <- function(
     tdl_exdf,
+    column_to_be_smoothed,
     valve_column_name,
     valve_number,
     smoothing_function # should be a function with input arguments Y, X, that returns a smoothed version of Y
 )
 {
+    if (!is.exdf(tdl_exdf)) {
+        stop("smooth_tdl_data requires an exdf object")
+    }
+
+    # Make sure the required columns are defined
+    required_columns <- list()
+    required_columns[[column_to_be_smoothed]] <- NA
+    required_columns[[valve_column_name]] <- NA
+    required_columns[['elapsed_time']] <- NA
+
+    check_required_columns(tdl_exdf, required_columns)
+
     # Extract data corresponding to a single valve
-    valve_time_series <- extract_tdl_valve(tdl_exdf, valve_column_name, valve_number)
+    valve_time_series <- tdl_exdf[tdl_exdf[, valve_column_name] == valve_number, ]
 
     # Apply the smoothing function to the valve time series
-    filtered_12C <- smoothing_function(valve_time_series[['Conc12C_Avg']], valve_time_series[['elapsed_time']])
-    filtered_13C <- smoothing_function(valve_time_series[['Conc13C_Avg']], valve_time_series[['elapsed_time']])
+    smoothed <- smoothing_function(valve_time_series[[column_to_be_smoothed]], valve_time_series[['elapsed_time']])
 
     # Store it in the exdf object
-    tdl_data <- tdl_exdf[['main_data']]
-    tdl_data[tdl_data[[valve_column_name]] == valve_number, 'Conc12C_Avg'] <- filtered_12C
-    tdl_data[tdl_data[[valve_column_name]] == valve_number, 'Conc13C_Avg'] <- filtered_13C
-    tdl_exdf[['main_data']] <- tdl_data
+    tdl_exdf$main_data[tdl_exdf[, valve_column_name] == valve_number, column_to_be_smoothed] <- smoothed
 
     # Return the modified exdf object
     return(tdl_exdf)

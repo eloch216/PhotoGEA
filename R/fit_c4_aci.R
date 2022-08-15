@@ -89,11 +89,7 @@ c4_aci <- function(
     return(Ac)
 }
 
-# This function is intended to be passed to the `apply_fit_function_across_reps`
-# function as its `FUN` argument. A user shouldn't be directly calling this
-# function, so don't provide default arguments here. We don't need to check the
-# inputs here since this will be taken care of by `fit_c4_aci`.
-fit_c4_aci_replicate <- function(
+fit_c4_aci <- function(
     replicate_exdf,
     a_column_name,               # micromol / m^2 / s
     ci_column_name,              # micromol / mol
@@ -101,11 +97,25 @@ fit_c4_aci_replicate <- function(
     delta_pressure_column_name,  # kPa
     tleaf_column_name,           # degrees C
     PTR_FUN,
-    Om,                          # microbar
-    gbs,                         # mol / m^2 / s / bar
-    initial_guess
+    Om = 210000,                 # microbar
+    gbs = 0.003,                 # mol / m^2 / s / bar
+    initial_guess = list(Vpmax = 150, Vcmax = 30)
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('fit_c4_aci requires an exdf object')
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
+    required_columns[[pressure_column_name]] <- 'kPa'
+    required_columns[[delta_pressure_column_name]] <- 'kPa'
+    required_columns[[tleaf_column_name]] <- 'degrees C'
+
+    check_required_columns(replicate_exdf, required_columns)
+
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
 
@@ -190,65 +200,4 @@ fit_c4_aci_replicate <- function(
         parameters = replicate_identifiers,
         fits = replicate_exdf
     ))
-}
-
-# Applies a fitting procedure to each replicate in the data set, returning the
-# extracted parameters as well as the fitted values of net assimilation.
-fit_c4_aci <- function(
-    exdf_obj,
-    replicate_column_name,
-    a_column_name,               # micromol / m^2 / s
-    ci_column_name,              # micromol / mol
-    pressure_column_name,        # kPa
-    delta_pressure_column_name,  # kPa
-    tleaf_column_name,           # degrees C
-    PTR_FUN,
-    ci_threshold,                # ppm
-    Om = 210000,                 # microbar
-    gbs = 0.003,                 # mol / m^2 / s / bar
-    initial_guess = list(Vpmax = 150, Vcmax = 30)
-)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop('fit_c4_aci requires an exdf object')
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
-    required_columns[[pressure_column_name]] <- 'kPa'
-    required_columns[[delta_pressure_column_name]] <- 'kPa'
-    required_columns[[tleaf_column_name]] <- 'degrees C'
-
-    check_required_columns(exdf_obj, required_columns)
-
-    # Truncate to a limited range of Ci values
-    exdf_subset <-
-        exdf_obj[exdf_obj[ , ci_column_name] <= ci_threshold, , return_exdf = TRUE]
-
-    cat(
-        paste(
-            '\n\nMaximum Ci used for Vcmax fitting:',
-            max(exdf_subset[, ci_column_name]),
-            ' ppm\n\n'
-        )
-    )
-
-    # Apply the fit
-    apply_fit_function_across_reps(
-        exdf_obj,
-        exdf_subset[, replicate_column_name],
-        a_column_name,
-        ci_column_name,
-        pressure_column_name,
-        delta_pressure_column_name,
-        tleaf_column_name,
-        PTR_FUN,
-        Om,
-        gbs,
-        initial_guess,
-        FUN = fit_c4_aci_replicate
-    )
 }

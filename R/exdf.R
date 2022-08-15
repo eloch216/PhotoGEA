@@ -3,14 +3,33 @@
 # specifying units and a category for each column in addition to names.
 
 # Constructor
-exdf <- function(main_data, units, categories, ...) {
+exdf <- function(main_data, units = NULL, categories = NULL, ...) {
+    # Make sure `main_data` is a data frame
+    if (!is.data.frame(main_data)) {
+        stop("`main_data` must be a data frame")
+    }
+
+    # If `units` or `categories` is NULL, replace it with a default data frame
+    # that has the same names as `main_data` and one row where all entries are
+    # NA.
+    if (is.null(units)) {
+        units <- main_data[1, ]
+        units[1, ] <- NA
+        row.names(units) <- NULL
+    }
+
+    if (is.null(categories)) {
+        categories <- main_data[1, ]
+        categories[1, ] <- NA
+        row.names(categories) <- NULL
+    }
+
     # Get ready to store messages about any problems with the inputs
     errors <- character()
 
     # Check to make sure the main_data, units, and categories inputs are data
-    # frames with the same column names
+    # frames with the same column names, unless they are NULL
     should_be_data_frames <- list(
-        main_data = main_data,
         units = units,
         categories = categories
     )
@@ -320,4 +339,13 @@ split.exdf <- function(x, f, drop = FALSE, lex.order = FALSE, ...)
         split(x = seq_len(nrow(x)), f = f, drop = drop, ...),
         function(ind) x[ind, , return_exdf = TRUE]
     )
+}
+
+# Split an exdf object into chunks by the value of one or more factors, apply
+# FUN to each of the chunks, and return the output of each call to FUN as one
+# element of a list
+by.exdf <- function(data, INDICES, FUN, ...)
+{
+    split_exdf_obj <- split(data, INDICES, drop = TRUE)
+    lapply(split_exdf_obj, function(x) {FUN(x, ...)})
 }

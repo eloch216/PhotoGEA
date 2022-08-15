@@ -5,7 +5,7 @@ check_licor_data <- function(
     identifier_columns,
     expected_npts = 0,
     driving_column = NULL,
-    driving_column_tolerance = 0,
+    driving_column_tolerance = 1.0,
     col_to_ignore_for_inf = 'gmc'
 )
 {
@@ -14,25 +14,27 @@ check_licor_data <- function(
     }
 
     # Check for any infinite values
-    inf_columns <- as.logical(
-        lapply(
-            licor_exdf[ , !colnames(licor_exdf) %in% col_to_ignore_for_inf],
-            function(x) {
-                if (is.numeric(x)) {
-                    any(is.infinite(x))
-                } else {
-                    FALSE
+    if (!is.null(col_to_ignore_for_inf)) {
+        inf_columns <- as.logical(
+            lapply(
+                licor_exdf[ , !colnames(licor_exdf) %in% col_to_ignore_for_inf],
+                function(x) {
+                    if (is.numeric(x)) {
+                        any(is.infinite(x))
+                    } else {
+                        FALSE
+                    }
                 }
-            }
+            )
         )
-    )
 
-    if (any(inf_columns)) {
-        msg <- paste(
-            'The following columns contain infinite values:',
-            paste(colnames(licor_exdf)[inf_columns], collapse = ', ')
-        )
-        stop(msg)
+        if (any(inf_columns)) {
+            msg <- paste(
+                'The following columns contain infinite values:',
+                paste(colnames(licor_exdf)[inf_columns], collapse = ', ')
+            )
+            stop(msg)
+        }
     }
 
     # Make sure certain columns are defined

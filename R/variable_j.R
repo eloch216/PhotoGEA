@@ -157,12 +157,6 @@ dpmn_error <- function(
     ))
 }
 
-# This function is intended to be passed to the `apply_fit_function_across_reps`
-# function as its `FUN` argument. A user shouldn't be directly calling this
-# function, so don't provide default arguments here. We don't need to check the
-# inputs here since this will be taken care of by one of the `fit_variable_j_*`
-# functions.
-#
 # ERROR_FUN should expect seven inputs: An, Ci, PhiPSII, Qin, Tl, PTR_FUN, and
 # X, where X is a numeric vector of named elements, PTR_FUN is a temperature
 # response function, and the others are single numeric values. ERROR_FUN should
@@ -179,9 +173,20 @@ dpmn_error <- function(
 # to be 'L-BFGS-B'.
 #
 # `initial_guess` should be a starting value of the X input argument of the
-# ERROR_FUN function.
+# ERROR_FUN function, and `lower` and `upper` should define the ranges for the
+# elements of X. Suggestions:
 #
-fit_variable_j_replicate <- function(
+#   initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42, TPU = 13),
+#   lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2,  TPU = 0),
+#   upper =         c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6,  TPU = 20)
+#
+#  Suggested values for other parameters that might be required by ERROR_FUN:
+#
+#   O = 210,
+#   TPU = 1000,
+#   tau = 0.42,
+#
+fit_variable_j <- function(
     replicate_exdf,
     a_column_name,
     ci_column_name,
@@ -196,6 +201,21 @@ fit_variable_j_replicate <- function(
     upper
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop("fit_variable_j requires an exdf object")
+    }
+
+    # Make sure the required columns are defined and have the correct units
+    required_columns <- list()
+    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
+    required_columns[[phips2_column_name]] <- "NA"
+    required_columns[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_columns[[tleaf_column_name]] <- "degrees C"
+
+    check_required_columns(replicate_exdf, required_columns)
+
+    # Get the identifiers
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
 
     # Let the user know which rep is being fit
@@ -348,7 +368,7 @@ fit_variable_j_replicate <- function(
 
 
 # Uses partial application to fix the O input of the `dpmn_error` function,
-# creating a function suitable for passing to the `fit_variable_j_replicate`
+# creating a function suitable for passing to the `fit_variable_j`
 # function as its ERROR_FUN argument. The return function has the following
 # inputs:
 #
@@ -392,7 +412,7 @@ dpmn_error_jrvtt <- function(
 
 # Uses partial application to fix the O and TPU inputs of the `dpmn_error`
 # function, creating a function suitable for passing to the
-# `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
+# `fit_variable_j` function as its ERROR_FUN argument. The return
 # function has the following inputs:
 #
 # - An_meas: same as the input to `dpmn_error`
@@ -435,7 +455,7 @@ dpmn_error_jrv_tau <- function(
 
 # Uses partial application to fix the O and tau inputs of the `dpmn_error`
 # function, creating a function suitable for passing to the
-# `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
+# `fit_variable_j` function as its ERROR_FUN argument. The return
 # function has the following inputs:
 #
 # - An_meas: same as the input to `dpmn_error`
@@ -479,7 +499,7 @@ dpmn_error_jrv_tpu <- function(
 
 # Uses partial application to fix the O, tau, and TPU inputs of the `dpmn_error`
 # function, creating a function suitable for passing to the
-# `fit_variable_j_replicate` function as its ERROR_FUN argument. The return
+# `fit_variable_j` function as its ERROR_FUN argument. The return
 # function has the following inputs:
 #
 # - An_meas: same as the input to `dpmn_error`
@@ -519,214 +539,4 @@ dpmn_error_jrv <- function(
             TPU
         )
     }
-}
-
-##############################################
-##                                          ##
-## FITTING FUNCTIONS TO BE CALLED BY A USER ##
-##                                          ##
-##############################################
-
-fit_variable_j_jrvtt <- function(
-    exdf_obj,
-    replicate_column_name,
-    a_column_name,
-    ci_column_name,
-    phips2_column_name,
-    qin_column_name,
-    tleaf_column_name,
-    PTR_FUN,
-    OPTIM_FUN,
-    O = 210,
-    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42, TPU = 13),
-    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2,  TPU = 0),
-    upper =         c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6,  TPU = 20)
-)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop("fit_variable_j_jrvtt requires an exdf object")
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[phips2_column_name]] <- "NA"
-    required_columns[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[tleaf_column_name]] <- "degrees C"
-
-    check_required_columns(exdf_obj, required_columns)
-
-    # Apply the fit
-    apply_fit_function_across_reps(
-        exdf_obj,
-        exdf_obj[ ,replicate_column_name],
-        a_column_name,
-        ci_column_name,
-        phips2_column_name,
-        qin_column_name,
-        tleaf_column_name,
-        PTR_FUN,
-        OPTIM_FUN,
-        dpmn_error_jrvtt(O),
-        initial_guess,
-        lower,
-        upper,
-        FUN = fit_variable_j_replicate
-    )
-}
-
-fit_variable_j_jrv_tau <- function(
-    exdf_obj,
-    replicate_column_name,
-    a_column_name,
-    ci_column_name,
-    phips2_column_name,
-    qin_column_name,
-    tleaf_column_name,
-    PTR_FUN,
-    OPTIM_FUN,
-    O = 210,
-    TPU = 1000,
-    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42),
-    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2),
-    upper =         c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6)
-)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop("fit_variable_j_jrv_tau requires an exdf object")
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[phips2_column_name]] <- "NA"
-    required_columns[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[tleaf_column_name]] <- "degrees C"
-
-    check_required_columns(exdf_obj, required_columns)
-
-    # Apply the fit
-    apply_fit_function_across_reps(
-        exdf_obj,
-        exdf_obj[ ,replicate_column_name],
-        a_column_name,
-        ci_column_name,
-        phips2_column_name,
-        qin_column_name,
-        tleaf_column_name,
-        PTR_FUN,
-        OPTIM_FUN,
-        dpmn_error_jrv_tau(O, TPU),
-        initial_guess,
-        lower,
-        upper,
-        FUN = fit_variable_j_replicate
-    )
-}
-
-fit_variable_j_jrv_tpu <- function(
-    exdf_obj,
-    replicate_column_name,
-    a_column_name,
-    ci_column_name,
-    phips2_column_name,
-    qin_column_name,
-    tleaf_column_name,
-    PTR_FUN,
-    OPTIM_FUN,
-    O = 210,
-    tau = 0.42,
-    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100, TPU = 13),
-    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0,   TPU = 0),
-    upper =         c(J_high = 500, Rd = 10, Vcmax = 500, TPU = 20)
-)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop("fit_variable_j_jrv_tpu requires an exdf object")
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[phips2_column_name]] <- "NA"
-    required_columns[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[tleaf_column_name]] <- "degrees C"
-
-    check_required_columns(exdf_obj, required_columns)
-
-    # Apply the fit
-    apply_fit_function_across_reps(
-        exdf_obj,
-        exdf_obj[ ,replicate_column_name],
-        a_column_name,
-        ci_column_name,
-        phips2_column_name,
-        qin_column_name,
-        tleaf_column_name,
-        PTR_FUN,
-        OPTIM_FUN,
-        dpmn_error_jrv_tpu(O, tau),
-        initial_guess,
-        lower,
-        upper,
-        FUN = fit_variable_j_replicate
-    )
-}
-
-fit_variable_j_jrv <- function(
-    exdf_obj,
-    replicate_column_name,
-    a_column_name,
-    ci_column_name,
-    phips2_column_name,
-    qin_column_name,
-    tleaf_column_name,
-    PTR_FUN,
-    OPTIM_FUN,
-    O = 210,
-    tau = 0.42,
-    TPU = 1000,
-    initial_guess = c(J_high = 110, Rd = 1,  Vcmax = 100),
-    lower =         c(J_high = 0,   Rd = 0,  Vcmax = 0),
-    upper =         c(J_high = 500, Rd = 10, Vcmax = 500)
-)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop("fit_variable_j_jrv requires an exdf object")
-    }
-
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[replicate_column_name]] <- NA
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[phips2_column_name]] <- "NA"
-    required_columns[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[tleaf_column_name]] <- "degrees C"
-
-    check_required_columns(exdf_obj, required_columns)
-
-    # Apply the fit
-    apply_fit_function_across_reps(
-        exdf_obj,
-        exdf_obj[ ,replicate_column_name],
-        a_column_name,
-        ci_column_name,
-        phips2_column_name,
-        qin_column_name,
-        tleaf_column_name,
-        PTR_FUN,
-        OPTIM_FUN,
-        dpmn_error_jrv(O, tau, TPU),
-        initial_guess,
-        lower,
-        upper,
-        FUN = fit_variable_j_replicate
-    )
 }

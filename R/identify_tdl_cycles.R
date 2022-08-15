@@ -1,31 +1,3 @@
-# identify_tdl_cycles: a function that identifies complete TDL measurement
-# cycles, i.e., sets of one measurement from each "site" in the system.
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# - tdl_exdf: an exdf object representing data from a TDL file
-#
-# - valve_column_name: the name of the data column that represents the site
-#
-# - cycle_start_valve: the value of the site column that indicates the
-#       start of a new cycle
-#
-# - expected_cycle_length_minutes: the expected length of a full cycle in
-#       minutes
-#
-# - expected_cycle_num_pts: the expected number of points in a full cycle
-#
-# - timestamp_colname: the name of the data column that represents the timestamp
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# an exdf object representing data from a TDL file, but now only including full
-# cycles, each of which is numbered in a new `num_cycles` column.
-#
 identify_tdl_cycles <- function(
     tdl_exdf,
     valve_column_name,
@@ -35,6 +7,17 @@ identify_tdl_cycles <- function(
     timestamp_colname
 )
 {
+    if (!is.exdf(tdl_exdf)) {
+        stop("identify_tdl_cycles requires an exdf object")
+    }
+
+    # Make sure the required columns are defined
+    required_columns <- list()
+    required_columns[[valve_column_name]] <- NA
+    required_columns[[timestamp_colname]] <- NA
+
+    check_required_columns(tdl_exdf, required_columns)
+
     # Add a new column to the data for the cycle number
     tdl_exdf <- specify_variables(
         tdl_exdf,
@@ -48,7 +31,7 @@ identify_tdl_cycles <- function(
     }
 
     # Make sure the data is sorted in chronological order
-    tdl_exdf[['main_data']] <- tdl_exdf[order(tdl_exdf[,timestamp_colname]),]
+    tdl_exdf$main_data <- tdl_exdf[order(tdl_exdf[,timestamp_colname]),]
 
     # Find all the row numbers in the TDL data where the site value is equal to
     # the cycle start site value
@@ -101,7 +84,7 @@ identify_tdl_cycles <- function(
     colnames(new_main_data) <- colnames(tdl_exdf)
 
     # Get the first time point
-    start_time <- tdl_exdf[1,timestamp_colname]
+    start_time <- tdl_exdf[1, timestamp_colname]
 
     # Fill in the new data frame with only valid TDL cycles
     n_cycles <- 1
@@ -117,7 +100,7 @@ identify_tdl_cycles <- function(
             possible_cycle[['cycle_num']] <- n_cycles
 
             possible_cycle[['elapsed_time']] <- as.double(difftime(
-                possible_cycle[1,timestamp_colname],
+                possible_cycle[1, timestamp_colname],
                 start_time,
                 units = "min"
             ))
@@ -129,12 +112,6 @@ identify_tdl_cycles <- function(
 
     # Clean up and return the result
     row.names(new_main_data) <- NULL
-
-    return(
-        exdf(
-            new_main_data,
-            tdl_exdf[['units']],
-            tdl_exdf[['categories']]
-        )
-    )
+    tdl_exdf$main_data <- new_main_data
+    return(tdl_exdf)
 }

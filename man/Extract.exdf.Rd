@@ -1,5 +1,6 @@
-\name{[.exdf}
+\name{extract.exdf}
 
+\alias{extract.exdf}
 \alias{[.exdf}
 \alias{[<-.exdf}
 
