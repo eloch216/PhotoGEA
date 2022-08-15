@@ -1,54 +1,45 @@
-## licor-processing-and-analysis
+## PhotoGEA
 
-This repository contains the source code for an R package called **PhotoGEA**
-(short for **photo**synthetic **g**as **e**xchange **a**nalysis), which is a
-suite of tools for loading, processing, and analyzing photosynthetic gas
-exchange data.
+**PhotoGEA** (short for **photo**synthetic **g**as **e**xchange **a**nalysis) is
+an R package that provides a suite of tools for loading, processing, and
+analyzing photosynthetic gas exchange data.
 
-This package is a work in progress and is not yet fully documented.
+This package is a work in progress and is not yet fully documented. As
+documentation proceeds, functions are subject to modification or removal without
+notice.
 
-### R package installation steps
+### Installing the R Package
 
-Obtain the (unzipped) source code from GitHub and install from the command line
-using the following set of commands, which assume the source code is contained
-in a directory called `licor-processing-and-analysis`, which is a subdirectory
-of `path_to_unzipped_directory`:
-
-```
-cd path_to_unzipped_directory
-R CMD build licor-processing-and-analysis
-R CMD INSTALL output_file
-```
-
-where `output_file` is the name of the file produced by `R CMD build`; its name
-will be something like `PhotoGEA_0.2.0.tar.gz`, although the details will depend
-on your operating system. This is the preferred installation method because it
-will build and install the package vignettes.
-
-Alternatively, PhotoGEA can be installed from within R using these commands:
+The easiest way to install `PhotoGEA` is to type the following from within the R
+terminal:
 
 ```
-setwd('path_to_unzipped_directory')
-install.packages('licor-processing-and-analysis', repos=NULL, type='SOURCE')
+remotes::install_github('eloch216/PhotoGEA')
 ```
 
-However, the vignettes will not automatically be built using this method.
+Note that this method requires the `remotes` package, which can be installed
+from within R by typing `install.packages('remotes')`.
 
-### Viewing the vignettes
+### Learning to Use PhotoGEA
 
-To see the available vignettes, type `browseVignettes("PhotoGEA")` from within
-R. (This command will only work if you follow the preferred installation method
-described above.) The vignettes describe important use cases for the PhotoGEA
-package and can be used as the basis for your own scripts.
+The best way to learn about using `PhotoGEA` is to visit the
+[PhotoGEA website](https://eloch216.github.io/PhotoGEA/index.html), which
+includes articles that describe several important use cases. Currently, the
+following articles are available:
 
-### Using example scripts
+- [Analyzing Ball-Berry Data](https://eloch216.github.io/PhotoGEA/articles/analyzing_ball_berry_data.html)
+- [Analyzing TDL Data](https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html)
 
-Additionally, several example scripts are provided in the `example_scripts`
-directory. To run one of these scripts, set the working directory to
-`example_scripts` and use the `source` command to execute the code in the
-script.
+### Example Scripts
+
+Several example scripts are provided in the `example_scripts` directory of the
+[source code repository](https://github.com/eloch216/PhotoGEA). To run one of
+these scripts, set the working directory to a folder that contains a local copy
+of the script and use the `source` command to execute the code in the script. No
+guarantees are made that these scripts will run on your machine or be
+compatible with your data, but they may be a useful source of ideas.
 
 ### License
 
-The PhotoGEA R package and associated example scripts are licensed under the MIT
-license.
+The `PhotoGEA` R package, its documentation, and its associated example scripts
+are licensed under the MIT license.

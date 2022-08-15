@@ -20,4 +20,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: https://eloch216.github.io/PhotoGEA/
+URL: https://github.com/eloch216/PhotoGEA, https://eloch216.github.io/PhotoGEA/
