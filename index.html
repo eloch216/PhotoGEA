@@ -22,9 +22,9 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
+    padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="index.html">PhotoGEA</a>
 
@@ -55,7 +55,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -63,40 +70,45 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level2">
-<h2 id="licor-processing-and-analysis">licor-processing-and-analysis<a class="anchor" aria-label="anchor" href="#licor-processing-and-analysis"></a>
+<h2 id="photogea">PhotoGEA<a class="anchor" aria-label="anchor" href="#photogea"></a>
 </h2>
-<p>This repository contains the source code for an R package called <strong>PhotoGEA</strong> (short for <strong>photo</strong>synthetic <strong>g</strong>as <strong>e</strong>xchange <strong>a</strong>nalysis), which is a suite of tools for loading, processing, and analyzing photosynthetic gas exchange data.</p>
-<p>This package is a work in progress and is not yet fully documented.</p>
+<p><strong>PhotoGEA</strong> (short for <strong>photo</strong>synthetic <strong>g</strong>as <strong>e</strong>xchange <strong>a</strong>nalysis) is an R package that provides a suite of tools for loading, processing, and analyzing photosynthetic gas exchange data.</p>
+<p>This package is a work in progress and is not yet fully documented. As documentation proceeds, functions are subject to modification or removal without notice.</p>
 <div class="section level3">
-<h3 id="r-package-installation-steps">R package installation steps<a class="anchor" aria-label="anchor" href="#r-package-installation-steps"></a>
+<h3 id="installing-the-r-package">Installing the R Package<a class="anchor" aria-label="anchor" href="#installing-the-r-package"></a>
 </h3>
-<p>Obtain the (unzipped) source code from GitHub and install from the command line using the following set of commands, which assume the source code is contained in a directory called <code>licor-processing-and-analysis</code>, which is a subdirectory of <code>path_to_unzipped_directory</code>:</p>
-<pre><code>cd path_to_unzipped_directory
-R CMD build licor-processing-and-analysis
-R CMD INSTALL output_file</code></pre>
-<p>where <code>output_file</code> is the name of the file produced by <code>R CMD build</code>; its name will be something like <code>PhotoGEA_0.2.0.tar.gz</code>, although the details will depend on your operating system. This is the preferred installation method because it will build and install the package vignettes.</p>
-<p>Alternatively, PhotoGEA can be installed from within R using these commands:</p>
-<pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">'path_to_unzipped_directory'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'licor-processing-and-analysis'</span>, repos<span class="op">=</span><span class="cn">NULL</span>, type<span class="op">=</span><span class="st">'SOURCE'</span><span class="op">)</span></span></code></pre>
-<p>However, the vignettes will not automatically be built using this method.</p>
+<p>The easiest way to install <code>PhotoGEA</code> is to type the following from within the R terminal:</p>
+<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'eloch216/PhotoGEA'</span><span class="op">)</span></span></code></pre>
+<p>Note that this method requires the <code>remotes</code> package, which can be installed from within R by typing <code>install.packages('remotes')</code>.</p>
 </div>
 <div class="section level3">
-<h3 id="viewing-the-vignettes">Viewing the vignettes<a class="anchor" aria-label="anchor" href="#viewing-the-vignettes"></a>
+<h3 id="learning-to-use-photogea">Learning to Use PhotoGEA<a class="anchor" aria-label="anchor" href="#learning-to-use-photogea"></a>
 </h3>
-<p>To see the available vignettes, type <code>browseVignettes("PhotoGEA")</code> from within R. (This command will only work if you follow the preferred installation method described above.) The vignettes describe important use cases for the PhotoGEA package and can be used as the basis for your own scripts.</p>
+<p>The best way to learn about using <code>PhotoGEA</code> is to visit the <a href="https://eloch216.github.io/PhotoGEA/index.html">PhotoGEA website</a>, which includes articles that describe several important use cases. Currently, the following articles are available:</p>
+<ul>
+<li><a href="https://eloch216.github.io/PhotoGEA/articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+<li><a href="https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+</ul>
 </div>
 <div class="section level3">
-<h3 id="using-example-scripts">Using example scripts<a class="anchor" aria-label="anchor" href="#using-example-scripts"></a>
+<h3 id="example-scripts">Example Scripts<a class="anchor" aria-label="anchor" href="#example-scripts"></a>
 </h3>
-<p>Additionally, several example scripts are provided in the <code>example_scripts</code> directory. To run one of these scripts, set the working directory to <code>example_scripts</code> and use the <code>source</code> command to execute the code in the script.</p>
+<p>Several example scripts are provided in the <code>example_scripts</code> directory of the <a href="https://github.com/eloch216/PhotoGEA" class="external-link">source code repository</a>. To run one of these scripts, set the working directory to a folder that contains a local copy of the script and use the <code>source</code> command to execute the code in the script. No guarantees are made that these scripts will run on your machine or be compatible with your data, but they may be a useful source of ideas.</p>
 </div>
 <div class="section level3">
 <h3 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h3>
-<p>The PhotoGEA R package and associated example scripts are licensed under the MIT license.</p>
+<p>The <code>PhotoGEA</code> R package, its documentation, and its associated example scripts are licensed under the MIT license.</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/eloch216/PhotoGEA/" class="external-link">Browse source code</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>

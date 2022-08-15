@@ -28,9 +28,6 @@
     <loc>https://eloch216.github.io/PhotoGEA/news/index.html</loc>
   </url>
   <url>
-    <loc>https://eloch216.github.io/PhotoGEA/reference/Extract.exdf.html</loc>
-  </url>
-  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/as.data.frame.exdf.html</loc>
   </url>
   <url>
@@ -68,6 +65,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/exdf.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/extract.exdf.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/fit_ball_berry.html</loc>
