@@ -18,6 +18,13 @@ for the next release.
 
 # UNRELEASED
 
+- Renamed GitHub repository from `licor-processing-and-analysis` to `PhotoGEA`.
+- Made GitHub repository public, which allows for a simpler installation via
+  `remotes::install_github`.
+- Initialized website using `pkgdown` and GitHub Pages by using
+  `usethis::use_pkgdown_github_pages`; website is now available at
+  https://eloch216.github.io/PhotoGEA/index.html.
+
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 
 - This version adds a substantial amount of documentation, including a vignette
