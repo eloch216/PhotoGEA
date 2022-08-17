@@ -310,6 +310,46 @@ so it is reasonable to expect that the measurements represent true steady-state
 values. Considering this, all of these curves are acceptable based on the CO~2~
 plots.
 
+### Stability
+
+```{r plot_stability}
+xyplot(
+  `A:OK` + `gsw:OK` + Stable ~ Qin | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlim = c(0, 2200),
+  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')')
+)
+```
+
+When measuring response curves with a Licor, it is possible to specify stability
+criteria for each point in addition to minimum and maximum wait times. In other
+words, once the set point for the driving variable is changed, the machine waits
+until the stability criteria are met; there is a minimum waiting period, and
+also a maximum to prevent the machine from waiting for too long. These stability
+criteria are especially important for Ball-Berry curves, since the stomata may
+take a long time to reach steady state.
+
+When these curves were measured, stability criteria were supplied for the net
+assimilation rate `A` and the stomatal conductance `gsw`. The stability status
+for each was stored in the log file because the appropriate logging option for
+stability was set. Now, for each point, it is possible to check whether
+stability was achieved or whether the point was logged because the maximum
+waiting period had been met. If the maximum waiting period is reached and the
+plant has still not stabilized, the data point may be unreliable, so it is very
+important to check this information.
+
+In the plot, `A:OK` indicates whether `A` was stable (0 for no, 1 for yes),
+`gsw:OK` indicates whether `gsw` was stable (0 for no, 1 for yes), and
+`Stable` indicates the total number of stability conditions that were met. So,
+we are looking for points where `Stable` is 2. Otherwise, we can check the other
+traces to see whether `A` or `gsw` was unstable. Here it looks like many of the
+high light points were not stable, and it may be a good idea to remove them
+before proceeding with the Ball-Berry fitting.
+
 ### Light-Response Curves
 
 ```{r plot_assimilation}
@@ -340,10 +380,31 @@ likely a byproduct of the noise that was intentionally added to the true
 measured data (see [The Data]). Nevertheless, it may be a good idea to remove
 them before proceeding with the Ball-Berry fitting.
 
-## Removing Bad Curves
+## Cleaning the Licor Data
+
+While checking over the plots in [Qualitative Checks], two issues were noticed:
+(1) some points were logged before stability was achieved and (2) some of the
+curves look abnormal. In this section, we will demonstrate how to remove the
+unstable points and the weird curves.
+
+The following command will keep only the points where `Stable` is exactly 2;
+this condition means that all of the stability criteria were satisfied.
+Sometimes, following this procedure, a curve will have very few stable points
+remaining; it is usually a good idea to automatically exclude any curve with
+fewer than three stable points.
+
+```{r remove_unstable_points}
+# Only keep points where stability was achieved
+licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+
+# Remove any curves that have fewer than three remaining points
+npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+ids_to_keep <- names(npts[npts > 2])
+licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+```
 
 Since we have identified a few curves that may not be acceptable for Ball-Berry
-fitting, we can remove them as follows:
+fitting, we can remove them via the `remove_points` function from `PhotoGEA`:
 
 ```{r remove_curves}
 # Define a list of curves to remove from the data set
@@ -355,8 +416,12 @@ curves_to_remove <- c(
 
 # Remove them
 licor_data <-
-  licor_data[!licor_data[, 'curve_identifier'] %in% curves_to_remove, , TRUE]
+  remove_points(licor_data, list(curve_identifier = curves_to_remove))
 ```
+
+Note that `remove_points` can also be used to exclude individual points instead
+of entire curves; see its help entry by typing `?remove_points` for more
+information.
 
 # Fitting Licor Data
 
@@ -553,6 +618,8 @@ file to initialize your own script.
 <<plot_co2>>
 
 <<plot_assimilation>>
+
+<<remove_unstable_points>>
 
 <<remove_curves>>
 
