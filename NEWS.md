@@ -24,6 +24,9 @@ for the next release.
 - Initialized website using `pkgdown` and GitHub Pages by using
   `usethis::use_pkgdown_github_pages`; website is now available at
   https://eloch216.github.io/PhotoGEA/index.html.
+- Added a stability check to the Ball-Berry vignette.
+- Added a new function for excluding data points (`remove_points`) and used it
+  in the Ball-Berry and TDL vignettes.
 
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 
