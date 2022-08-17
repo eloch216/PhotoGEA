@@ -404,7 +404,7 @@ licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TR
 ```
 
 Since we have identified a few curves that may not be acceptable for Ball-Berry
-fitting, we can remove them as follows:
+fitting, we can remove them via the `remove_points` function from `PhotoGEA`:
 
 ```{r remove_curves}
 # Define a list of curves to remove from the data set
@@ -416,8 +416,12 @@ curves_to_remove <- c(
 
 # Remove them
 licor_data <-
-  licor_data[!licor_data[, 'curve_identifier'] %in% curves_to_remove, , TRUE]
+  remove_points(licor_data, list(curve_identifier = curves_to_remove))
 ```
+
+Note that `remove_points` can also be used to exclude individual points instead
+of entire curves; see its help entry by typing `?remove_points` for more
+information.
 
 # Fitting Licor Data
 
