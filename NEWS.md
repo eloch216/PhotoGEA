@@ -27,6 +27,7 @@ for the next release.
 - Added a stability check to the Ball-Berry vignette.
 - Added a new function for excluding data points (`remove_points`) and used it
   in the Ball-Berry and TDL vignettes.
+- Added an option for a more thorough check in `is.exdf`.
 
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 
