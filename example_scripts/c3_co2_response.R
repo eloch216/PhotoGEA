@@ -101,7 +101,7 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS <- c(1:8, 11:17)
+MEASUREMENT_NUMBERS <- c(1:8, 12:17)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide which temperature response parameters to use
@@ -275,13 +275,10 @@ if (PERFORM_CALCULATIONS) {
 
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
-        combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        CI_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+      combined_info,
+      UNIQUE_ID_COLUMN_NAME,
+      MEASUREMENT_NUMBERS,
+      'CO2_r_sp'
     )
 
     # Remove specific problematic points
