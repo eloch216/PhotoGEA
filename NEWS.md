@@ -28,6 +28,8 @@ for the next release.
 - Added a new function for excluding data points (`remove_points`) and used it
   in the Ball-Berry and TDL vignettes.
 - Added an option for a more thorough check in `is.exdf`.
+- Added documentation for `specify_variables`.
+- Added a vignette describing how to work with extended data frames.
 
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 

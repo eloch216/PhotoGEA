@@ -5,7 +5,8 @@
 \title{by.exdf}
 
 \description{
-  Divides an \code{exdf} object into groups defined by one or more factors.
+  Divides an \code{exdf} object into groups defined by one or more factors and
+  applies a function to each group.
 }
 
 \usage{
