@@ -67,6 +67,12 @@ VIEW_DATA_FRAMES <- TRUE
 # Decide whether to remove a few specific points from the data before fitting
 REMOVE_SPECIFIC_POINTS <- TRUE
 
+# Decide whether to remove statistical outliers after fitting
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
+
+# Decide whether to perform stats tests
+PERFORM_STATS_TESTS <- TRUE
+
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
 # (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
@@ -160,7 +166,7 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
-    
+
     has_plot_info <- TRUE
     if (has_plot_info) {
       # This might not be required for most data sets
@@ -171,7 +177,7 @@ if (PERFORM_CALCULATIONS) {
         "plot_replicate"
       )
     }
-    
+
 
     combined_info <- process_id_columns(
         combined_info,
@@ -277,7 +283,7 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
-    
+
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
@@ -293,7 +299,7 @@ if (PERFORM_CALCULATIONS) {
         list(event = 'WT', replicate = 10, plot = 3, obs = 36),
         list(event = 25, replicate = 6, plot = 4, obs = 62)
       )
-      
+
       # Remove each of the points
       for (pt in points_to_remove) {
         combined_info <- combined_info[
@@ -303,7 +309,6 @@ if (PERFORM_CALCULATIONS) {
               combined_info[, 'obs'] != pt$obs, , TRUE]
       }
     }
-    
 
     # Calculate basic stats for each event
     all_stats <- basic_stats(
@@ -333,6 +338,47 @@ if (PERFORM_CALCULATIONS) {
         )
     )
 
+    if (REMOVE_STATISTICAL_OUTLIERS) {
+        vcmax_parameters <- exclude_outliers(
+            vcmax_parameters,
+            'Vcmax_at_25',
+            vcmax_parameters[, EVENT_COLUMN_NAME]
+        )
+
+        vcmax_fits <- vcmax_fits[vcmax_fits[, UNIQUE_ID_COLUMN_NAME] %in% vcmax_parameters[, UNIQUE_ID_COLUMN_NAME], , TRUE]
+    }
+
+    vcmax_parameter_stats <- basic_stats(vcmax_parameters, EVENT_COLUMN_NAME)
+
+    if (PERFORM_STATS_TESTS) {
+        # Convert the "event" column to a factor or onewaytests will yell at us
+        vcmax_parameters$event <- as.factor(vcmax_parameters$event)
+
+        # Perform Brown-Forsythe test to check for equal variance
+        # This test automatically prints its results to the R terminal
+        bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = vcmax_parameters)
+
+        # If p > 0.05 variances among populations is equal and proceed with anova
+        # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+
+        # Check normality of data with Shapiro-Wilks test
+        shapiro_test_result <- shapiro.test(vcmax_parameters$Vcmax_at_25)
+        print(shapiro_test_result)
+
+        # If p > 0.05 data has normal distribution and proceed with anova
+
+        # Perform one way analysis of variance
+        anova_result <- aov(Vcmax_at_25 ~ event, data = vcmax_parameters)
+        cat("    ANOVA result\n\n")
+        print(summary(anova_result))
+
+        # If p < 0.05 perform Dunnett's posthoc test
+
+        # Perform Dunnett's Test
+        dunnett_test_result <- DunnettTest(x = vcmax_parameters$Vcmax_at_25, g = vcmax_parameters$event, control = "WT")
+        print(dunnett_test_result)
+    }
+
     all_samples <- combined_info[['main_data']]
 }
 
@@ -352,6 +398,7 @@ if (VIEW_DATA_FRAMES) {
     View(all_samples$main_data)
     View(all_stats$main_data)
     View(vcmax_parameters[c("event", "replicate", "plot", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
+    View(vcmax_parameter_stats[c("event", "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr")])
 }
 
 # Determine if there is fluorescence data
