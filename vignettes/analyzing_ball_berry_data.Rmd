@@ -153,7 +153,7 @@ objects into a single one.
 # Get the names of all columns that are present in all of the Licor files
 columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
 
-# Extract just these columns using the `[` operator with `return_exdf = TRUE`
+# Extract just these columns
 licor_exdf_list <- lapply(licor_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
@@ -387,17 +387,26 @@ licor_data <- calculate_ball_berry_index(licor_data, 'A', 'RHleaf', 'Csurface')
 Together, these functions add several new columns to `licor_data`, including one
 called `bb_index`, which includes values of the Ball-Berry index. With this
 information, we are now ready to perform the fitting procedure. For this
-operation, we can use the `fit_ball_berry` function from the `PhotoGEA` package.
-Detailed information about this function is available from the built-in help
-menu by typing `?fit_ball_berry`. In short, `fit_ball_berry` will split apart
-the main data using the curve identifier column we defined before
-([Basic Checks]), make a linear fit of $g_{sw}$ against the Ball-Berry index,
-and return the resulting parameters and fits:
+operation, we can use the `fit_ball_berry` function from the `PhotoGEA` package,
+which fits a single Ball-Berry curve to extract the Ball-Berry parameters. To
+apply this function to each curve in a larger data set and then consolidate the
+results, we can use it in conjunction with `by` and `consolidate`, which are
+also part of `PhotoGEA`. (For more information about these functions, see the
+built-in help menu entries by typing `?fit_ball_berry`, `?by.exdf`, or
+`?consolidate`.) Together, these functions will split apart the main data using
+the curve identifier column we defined before ([Basic Checks]), make a linear
+fit of $g_{sw}$ against the Ball-Berry index, and return the resulting
+parameters and fits:
 
 ```{r fit_ball_berry}
 # Fit a linear model to the Ball-Berry data
-ball_berry_results <-
-  fit_ball_berry(licor_data, 'curve_identifier', 'gsw', 'bb_index')
+ball_berry_results <- consolidate(by(
+  licor_data,                       # The `exdf` object containing the curves
+  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
+  fit_ball_berry,                   # The function to apply to each chunk of `licor_data`
+  'gsw',                            # Additional argument required by `fit_ball_berry`
+  'bb_index'                        # Additional argument required by `fit_ball_berry`
+))
 ```
 
 ## Viewing the Fitted Curves

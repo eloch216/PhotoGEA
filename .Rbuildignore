@@ -18,3 +18,9 @@
 
 ^LICENSE\.md$
 # Required by the MIT license but not allowed on CRAN
+
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+# Related to pkgdown

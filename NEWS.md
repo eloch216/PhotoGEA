@@ -18,12 +18,33 @@ for the next release.
 
 # UNRELEASED
 
+- Renamed GitHub repository from `licor-processing-and-analysis` to `PhotoGEA`.
+- Made GitHub repository public, which allows for a simpler installation via
+  `remotes::install_github`.
+- Initialized website using `pkgdown` and GitHub Pages by using
+  `usethis::use_pkgdown_github_pages`; website is now available at
+  https://eloch216.github.io/PhotoGEA/index.html.
+
+# PhotoGEA VERSION 0.3.0 (2022-08-15)
+
+- This version adds a substantial amount of documentation, including a vignette
+  describing how to use PhotoGEA to analyze TDL data.
+- While working on documentation, several changes were made to key functions so
+  they behaved more reasonably and became easier to document.
+- Changes to functions and their documentation includes:
+  - `exdf` objects can now be initialized from just a data frame; in this case,
+    units and categories will all be `NA`.
+  - `apply_fit_across_reps` and `process_tdl_cycles` have been replaced by two
+    new lower-level functions that offer more generality: `by.exdf` and
+    `consolidate`.
+  - `check_response_curve_data` and `check_signal_averaging_data` have been
+    consolidated into one function: `check_licor_data`.
+  - An `exdf` method for `cbind` has been added.
+  - `exclude_tdl_cycles` and `extract_tdl_valve` have been removed since they
+    can easily be reproduced with more basic exdf functionality.
+  - All functions for creating or modifying Excel files have been removed since
+    we no longer want to follow this strategy.
 - `basic_stats` and the "Variable J" example script have been fixed.
-- All functions for creating or modifying Excel files have been removed since we
-  no longer want to follow this strategy.
-- `check_response_curve_data` and `check_signal_averaging_data` have been
-  consolidated into one function: `check_licor_data`.
-- An `exdf` method for `cbind` has been added.
 
 # PhotoGEA VERSION 0.2.0 (2022-07-26)
 

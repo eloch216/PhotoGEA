@@ -1,0 +1,7 @@
+url: https://eloch216.github.io/PhotoGEA/
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  theme: arrow-light
+  includes:
+    before_body: "padding-top: 70px;"

@@ -81,12 +81,13 @@ combined_info[,'species_plot_instrument'] <- paste(
 check_licor_data(combined_info, c('species', 'plot_instrument'))
 
 # Do Ball-Berry fitting
-bb_results <- fit_ball_berry(
+bb_results <- consolidate(by(
     combined_info,
-    'species_plot_instrument',
+    combined_info[, 'species_plot_instrument'],
+    fit_ball_berry,
     GSW_COLUMN_NAME,
     BB_INDEX_COLUMN_NAME
-)
+))
 
 bb_parameters <- bb_results$parameters$main_data
 bb_fits <- bb_results$fits$main_data

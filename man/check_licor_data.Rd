@@ -15,7 +15,7 @@
     identifier_columns,
     expected_npts = 0,
     driving_column = NULL,
-    driving_column_tolerance = 0,
+    driving_column_tolerance = 1.0,
     col_to_ignore_for_inf = 'gmc'
   )
 }
@@ -28,7 +28,8 @@
 
   \item{identifier_columns}{
     A vector or list of strings representing the names of columns in
-    \code{licor_exdf} that, taken together, uniquely identify each curve.
+    \code{licor_exdf} that, taken together, uniquely identify each curve. This
+    often includes names like \code{plot}, \code{event}, \code{replicate}, etc.
   }
 
   \item{expected_npts}{
@@ -52,7 +53,8 @@
   \item{col_to_ignore_for_inf}{
     Any columns to ignore while checking for infinite values. Mesophyll
     conductance (\code{gmc}) is often set to infinity intentionally so should be
-    ignored when performing this check.
+    ignored when performing this check. To completely disable this check, set
+    \code{col_to_ignore_for_inf} to \code{NULL}.
   }
 }
 
@@ -62,9 +64,9 @@
   detected, it will be silent with no return value. It will perform the
   following checks, some of which are optional:
   \itemize{
-    \item No numeric columns in \code{licor_exdf} should have infinite values,
-          with the exception of columns designated in
-          \code{col_to_ignore_for_inf}.
+    \item If \code{col_to_ignore_for_inf} is not \code{NULL}, no numeric columns
+          in \code{licor_exdf} should have infinite values, with the exception
+          of columns designated in \code{col_to_ignore_for_inf}.
     \item All elements of \code{identifier_columns} should be present as columns
           in \code{licor_exdf}. If \code{driving_column} is not \code{NULL}, it
           should also be present as a column in \code{licor_exdf}.

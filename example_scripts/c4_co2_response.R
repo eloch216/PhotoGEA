@@ -207,17 +207,17 @@ if (PERFORM_CALCULATIONS) {
     )$main_data
 
     # Perform A-Ci fits
-    fit_result <- fit_c4_aci(
-        combined_info,
-        UNIQUE_ID_COLUMN_NAME,
+    fit_result <- consolidate(by(
+        combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
+        combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
+        fit_c4_aci,
         A_COLUMN_NAME,
         CI_COLUMN_NAME,
         PRESSURE_COLUMN_NAME,
         DELTA_PRESSURE_COLUMN_NAME,
         TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer),
-        CI_UPPER_LIMIT
-    )
+        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)
+    ))
 
     all_fit_parameters <- fit_result$parameters
     all_fits <- fit_result$fits
@@ -243,6 +243,14 @@ if (PERFORM_CALCULATIONS) {
 
     all_fit_parameters <- all_fit_parameters$main_data
     all_fits <- all_fits$main_data
+
+    cat(
+        paste(
+            '\n\nMaximum Ci used for fitting:',
+            max(all_fits[, CI_COLUMN_NAME]),
+            ' ppm\n\n'
+        )
+    )
 
     all_samples <- combined_info[['main_data']]
 }
