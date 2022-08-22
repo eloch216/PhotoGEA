@@ -47,6 +47,8 @@
 library(PhotoGEA)
 library(lattice)
 library(RColorBrewer)
+library(onewaytests)  # for bf.test, shapiro.test, A.aov
+library(DescTools)    # for DunnettTest
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -324,8 +326,8 @@ if (PERFORM_CALCULATIONS) {
         PTR_FUN
     ))
 
-    vcmax_parameters <- vcmax_results[['parameters']]$main_data
-    vcmax_fits <- vcmax_results[['fits']]$main_data
+    vcmax_parameters <- vcmax_results[['parameters']]
+    vcmax_fits <- vcmax_results[['fits']]
 
     cat(
         paste(
@@ -336,16 +338,23 @@ if (PERFORM_CALCULATIONS) {
     )
 
     if (REMOVE_STATISTICAL_OUTLIERS) {
+        print(paste("Number of rows before removing outliers:", nrow(vcmax_parameters)))  
+      
         vcmax_parameters <- exclude_outliers(
             vcmax_parameters,
             'Vcmax_at_25',
             vcmax_parameters[, EVENT_COLUMN_NAME]
         )
+        
+        print(paste("Number of rows after removing outliers:", nrow(vcmax_parameters)))
 
         vcmax_fits <- vcmax_fits[vcmax_fits[, UNIQUE_ID_COLUMN_NAME] %in% vcmax_parameters[, UNIQUE_ID_COLUMN_NAME], , TRUE]
     }
 
     vcmax_parameter_stats <- basic_stats(vcmax_parameters, EVENT_COLUMN_NAME)
+    
+    vcmax_parameters <- vcmax_parameters$main_data
+    vcmax_fits <- vcmax_fits$main_data
 
     if (PERFORM_STATS_TESTS) {
         # Convert the "event" column to a factor or onewaytests will yell at us
