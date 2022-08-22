@@ -77,8 +77,8 @@ TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 ###                                                                        ###
 
 # Specify the names of a few important columns
-EVENT_COLUMN_NAME <- "Line"
-REP_COLUMN_NAME <- "Sample"
+EVENT_COLUMN_NAME <- "event"
+REP_COLUMN_NAME <- "replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 CI_COLUMN_NAME <- "Ci"
 A_COLUMN_NAME <- "A"

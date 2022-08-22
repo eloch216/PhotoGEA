@@ -64,6 +64,9 @@ PERFORM_CALCULATIONS <- TRUE
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
 
+# Decide whether to remove a few specific points from the data before fitting
+REMOVE_SPECIFIC_POINTS <- TRUE
+
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
 # (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
@@ -104,7 +107,7 @@ PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
 
 # Specify the names of a few important columns
 EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "replicate"
+REP_COLUMN_NAME <- "plot_replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
 CA_COLUMN_NAME <- "Ca"
@@ -124,7 +127,7 @@ ETR_COLUMN_NAME <- "ETR"
 PA_COLUMN_NAME <- "Pa"
 DELTAPCHAM_COLUMN_NAME <- 'DeltaPcham'
 
-UNIQUE_ID_COLUMN_NAME <- "event_replicate"
+UNIQUE_ID_COLUMN_NAME <- "event_replicate_plot"
 
 # Specify oxygen concentration as a percentage
 O2_PERCENT <- 21
@@ -157,6 +160,18 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
+    
+    has_plot_info <- TRUE
+    if (has_plot_info) {
+      # This might not be required for most data sets
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        "replicate",
+        "plot_replicate"
+      )
+    }
+    
 
     combined_info <- process_id_columns(
         combined_info,
@@ -262,6 +277,33 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         EVENT_COLUMN_NAME
     )
+    
+    # Remove specific problematic points
+    if (REMOVE_SPECIFIC_POINTS) {
+      # Specify the points to remove
+      points_to_remove <- list(
+        list(event = 25, replicate = 4, plot = 2, obs = 3),
+        list(event = 25, replicate = 8, plot = 6, obs = 118),
+        list(event = 25, replicate = 8, plot = 6, obs = 119),
+        list(event = 23, replicate = 9, plot = 6, obs = 118),
+        list(event = 23, replicate = 9, plot = 6, obs = 119),
+        list(event = 'WT', replicate = 9, plot = 2, obs = 30),
+        list(event = 20, replicate = 6, plot = 3, obs = 49),
+        list(event = 'WT', replicate = 10, plot = 3, obs = 35),
+        list(event = 'WT', replicate = 10, plot = 3, obs = 36),
+        list(event = 25, replicate = 6, plot = 4, obs = 62)
+      )
+      
+      # Remove each of the points
+      for (pt in points_to_remove) {
+        combined_info <- combined_info[
+            combined_info[, 'plot'] != pt$plot |
+              combined_info[, 'replicate'] != pt$replicate |
+              combined_info[, 'event'] != pt$event|
+              combined_info[, 'obs'] != pt$obs, , TRUE]
+      }
+    }
+    
 
     # Calculate basic stats for each event
     all_stats <- basic_stats(
@@ -300,9 +342,9 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
-    View(all_samples)
-    View(all_stats)
-    View(vcmax_parameters[c("event", "replicate", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
+    View(all_samples$main_data)
+    View(all_stats$main_data)
+    View(vcmax_parameters[c("event", "replicate", "plot", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
 }
 
 # Determine if there is fluorescence data
