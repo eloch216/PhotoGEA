@@ -1,12 +1,7 @@
 choose_input_licor_files <- function()
 {
     if (!interactive() | .Platform$OS.type != "windows") {
-        stop(
-            paste(
-                "The `choose_input_licor_files` function is only available in",
-                "interactive R sessions running in MS Windows"
-            )
-        )
+        stop("The `choose_input_licor_files` function is only available in interactive R sessions running in MS Windows")
     }
 
     utils::choose.files(
