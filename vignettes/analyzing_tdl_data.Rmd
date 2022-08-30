@@ -620,10 +620,22 @@ Then, this function should be passed to `smooth_tdl_data` in place of
 
 The following code chunk includes all the central commands used throughout this
 document. They are compiled here to make them easy to copy/paste into a text
-file to initialize your own script.
+file to initialize your own script. Annotation has also been added to clearly
+indicate the four steps involved in data analysis, as described in the
+_Developing a Data Analysis Pipeline_ vignette.
 
 ```{r, eval = FALSE}
+###
+### PRELIMINARIES:
+### Loading packages, defining constants, creating helping functions, etc.
+###
+
 <<setup>>
+
+###
+### TRANSLATION:
+### Creating convenient R objects from raw data files
+###
 
 <<tdl_file_names>>
 
@@ -631,13 +643,28 @@ file to initialize your own script.
 
 <<combining_tdl_data>>
 
+###
+### VALIDATION:
+### Organizing the data, checking its consistency and quality, cleaning it
+###
+
 <<identifying_cycles>>
 
 <<removing_cycles>>
 
 <<smoothing_valves>>
 
+###
+### PROCESSING:
+### Extracting new pieces of information from the data
+###
+
 <<processing_smooth_tdl_cycles>>
+
+###
+### SYNTHESIS:
+### Using plots and statistics to help draw conclusions from the data
+###
 
 <<compare_smoothing>>
 
