@@ -377,7 +377,7 @@ x11(width = 12, height = 6)
 print(gm_cc_fitting_plot)
 
 # Plot the average estimated gm-Ci curves
-gm_ci_avg_plot <- avg_xyplot(
+gm_ci_avg_plot <- xyplot_avg_rc(
     Y = fits_for_plotting$gm,
     X = fits_for_plotting$Ci,
     seq_num = fits_for_plotting$seq_num,
@@ -397,7 +397,7 @@ x11(width = 12, height = 6)
 print(gm_ci_avg_plot)
 
 # Plot the average estimated gm-Cc curves
-gm_cc_avg_plot <- avg_xyplot(
+gm_cc_avg_plot <- xyplot_avg_rc(
     Y = fits_for_plotting$gm,
     X = fits_for_plotting$Cc,
     seq_num = fits_for_plotting$seq_num,
@@ -445,6 +445,9 @@ plot_param <- list(
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))

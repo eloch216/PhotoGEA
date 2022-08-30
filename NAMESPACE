@@ -43,12 +43,6 @@ export(fit_c4_aci)
 export(fit_variable_j)
 export(photosynthesis_TRF)
 
-# Convenience functions for plotting
-export(avg_xyplot)
-export(bar_wrapper)
-export(box_wrapper)
-export(default_colors)
-
 # Basic methods for `exdf` class
 export(as.data.frame.exdf)
 export(by.exdf)
@@ -92,3 +86,8 @@ export(consolidate.data.frame)
 export(consolidate.exdf)
 S3method(consolidate, data.frame)
 S3method(consolidate, exdf)
+
+# Convenience functions for plotting
+export(barchart_with_errorbars)
+export(bwplot_wrapper)
+export(xyplot_avg_rc)

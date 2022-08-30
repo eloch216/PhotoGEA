@@ -47,12 +47,7 @@
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_licor_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-  variable_category_row = 14,
-  variable_name_row = 15,
-  variable_unit_row = 16,
-  data_start_row = 17,
-  timestamp_colname = 'time'
+  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
 )
 
 # Calculate the average assimilation and stomatal conductance values for each

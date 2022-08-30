@@ -181,7 +181,7 @@ avg_plot_param <- list(
 )
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
@@ -212,8 +212,8 @@ multi_induction_curves <- xyplot(
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     ylim = c(-10, 60),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
