@@ -68,7 +68,7 @@ if (PERFORM_CALCULATIONS) {
 #
 #
 NUM_OBS_IN_SEQ <- 390
-MEASUREMENT_NUMBERS <- c(1:390)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 
@@ -129,12 +129,10 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        MEASUREMENT_NUMBER_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        'Obs', # Order the induction curves according to their `Obs` values
+        Inf    # Do not require the curves to follow the same sequence of `Obs` values
     )
 
     # Add an "elapsed time" column

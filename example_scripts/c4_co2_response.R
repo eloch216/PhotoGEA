@@ -87,11 +87,11 @@ if (PERFORM_CALCULATIONS) {
 # Specify which measurement numbers to choose. Here, the numbers refer to
 # points along the sequence of A-Ci measurements.
 #
-# These numbers have been chosen for a sequence with 13 measurements. Points 1,
+# These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS <- c(1:7,11:13)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
@@ -185,12 +185,9 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        CI_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        'CO2_r_sp'
     )
 
     ###                     ###

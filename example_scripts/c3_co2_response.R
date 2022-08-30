@@ -103,7 +103,7 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS <- c(1:8, 12:17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide which temperature response parameters to use
@@ -279,7 +279,7 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- organize_response_curve_data(
       combined_info,
       UNIQUE_ID_COLUMN_NAME,
-      MEASUREMENT_NUMBERS,
+      MEASUREMENT_NUMBERS_TO_REMOVE,
       'CO2_r_sp'
     )
 
@@ -338,21 +338,21 @@ if (PERFORM_CALCULATIONS) {
     )
 
     if (REMOVE_STATISTICAL_OUTLIERS) {
-        print(paste("Number of rows before removing outliers:", nrow(vcmax_parameters)))  
-      
+        print(paste("Number of rows before removing outliers:", nrow(vcmax_parameters)))
+
         vcmax_parameters <- exclude_outliers(
             vcmax_parameters,
             'Vcmax_at_25',
             vcmax_parameters[, EVENT_COLUMN_NAME]
         )
-        
+
         print(paste("Number of rows after removing outliers:", nrow(vcmax_parameters)))
 
         vcmax_fits <- vcmax_fits[vcmax_fits[, UNIQUE_ID_COLUMN_NAME] %in% vcmax_parameters[, UNIQUE_ID_COLUMN_NAME], , TRUE]
     }
 
     vcmax_parameter_stats <- basic_stats(vcmax_parameters, EVENT_COLUMN_NAME)
-    
+
     vcmax_parameters <- vcmax_parameters$main_data
     vcmax_fits <- vcmax_fits$main_data
 

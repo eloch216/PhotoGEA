@@ -13,7 +13,7 @@
   organize_response_curve_data(
     licor_exdf,
     identifier_columns,
-    measurement_numbers_to_keep,
+    measurement_numbers_to_remove,
     column_for_ordering,
     ordering_column_tolerance = 1.0
   )
@@ -31,12 +31,11 @@
     often includes names like \code{plot}, \code{event}, \code{replicate}, etc.
   }
 
-  \item{measurement_numbers_to_keep}{
-    A vector of integers specifying which points to keep for each curve; for
+  \item{measurement_numbers_to_remove}{
+    A vector of integers specifying which points to remove from each curve; for
     example, if each curve has 16 points and the 10^th^ and 11^th^ points along
     the sequence should not be included in subsequent analysis,
-    \code{measurement_numbers_to_keep} could be specified as
-    \code{c(1:9, 12:16)}.
+    \code{measurement_numbers_to_remove} could be specified as \code{c(10, 11)}.
   }
 
   \item{column_for_ordering}{
@@ -46,7 +45,9 @@
 
   \item{ordering_column_tolerance}{
     To be passed to \code{\link{check_licor_data}} as the
-    \code{driving_column_tolerance} input argument.
+    \code{driving_column_tolerance} input argument; the
+    \code{ordering_column_tolerance} can be set to \code{Inf} to disable this
+    check.
   }
 }
 
@@ -60,12 +61,13 @@
           given number 1, the second is given number 2, etc. These numbers are
           stored as a new column called \code{seq_num}.
     \item Extracts a subset of the data corresponding to the values of
-          \code{seq_num} in \code{measurement_numbers_to_keep}; this is often
-          helpful for A-Ci curves, where the CO~2~ concentration begins at the
-          ambient value, is decreased to a low value, is reset to atmospheric
-          for several measurements to allow the plant to reacclimate, and then
-          is increased to higher values. In this case, only the first
-          measurement at ambient is used for plotting or additional analysis.
+          \code{seq_num} not in \code{measurement_numbers_to_remove}; this is
+          often helpful for A-Ci curves, where the CO~2~ concentration begins at
+          the ambient value, is decreased to a low value, is reset to
+          atmospheric for several measurements to allow the plant to
+          reacclimate, and then is increased to higher values. In this case,
+          only the first measurement at ambient CO~2~ is used for plotting or
+          additional analysis.
     \item Reorders the data according to ascending values of the
           \code{column_for_ordering}. For example, the points in an A-Ci curve
           would not be ordered according to their Ci values in a curve measured
@@ -106,7 +108,7 @@ licor_file <- read_licor_file(
 licor_file <- organize_response_curve_data(
   licor_file,
   c('species', 'plot'),
-  1:7,
+  c(),
   'Qin'
 )
 

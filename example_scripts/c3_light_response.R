@@ -80,7 +80,7 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 12 measurements. Here we
 # want to keep all of them.
 NUM_OBS_IN_SEQ <- 12
-MEASUREMENT_NUMBERS <- seq_len(NUM_OBS_IN_SEQ)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
@@ -151,12 +151,9 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        QIN_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        QIN_COLUMN_NAME
     )
 
     all_samples <- combined_info[['main_data']]
