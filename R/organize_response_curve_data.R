@@ -10,17 +10,6 @@ organize_response_curve_data <- function(
         stop('organize_response_curve_data requires an exdf object')
     }
 
-    # Check to make sure the identifier columns specify curves with the same
-    # number of points. Don't check for any infinite values since we don't know
-    # which columns should be ignored for this check.
-    check_licor_data(
-        licor_exdf,
-        identifier_columns,
-        driving_column = column_for_ordering,
-        driving_column_tolerance = ordering_column_tolerance,
-        col_to_ignore_for_inf = NULL
-    )
-
     # Make sure the column for ordering is defined
     required_columns <- list()
     required_columns[[column_for_ordering]] <- NA
@@ -40,6 +29,17 @@ organize_response_curve_data <- function(
     # measurement points
     licor_exdf <-
         licor_exdf[licor_exdf[, 'seq_num'] %in% measurement_numbers_to_keep, , TRUE]
+    
+    # Check to make sure the identifier columns specify curves with the same
+    # number of points. Don't check for any infinite values since we don't know
+    # which columns should be ignored for this check.
+    check_licor_data(
+      licor_exdf,
+      identifier_columns,
+      driving_column = column_for_ordering,
+      driving_column_tolerance = ordering_column_tolerance,
+      col_to_ignore_for_inf = NULL
+    )
 
     # Make sure the data is ordered properly for plotting
     for (cn in c(column_for_ordering, identifier_columns)) {

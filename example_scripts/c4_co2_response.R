@@ -91,7 +91,7 @@ if (PERFORM_CALCULATIONS) {
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS <- c(1:7, 11:13)
+MEASUREMENT_NUMBERS <- c(1:7,11:13)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
@@ -204,7 +204,7 @@ if (PERFORM_CALCULATIONS) {
     all_stats <- basic_stats(
         combined_info,
         c('seq_num', EVENT_COLUMN_NAME)
-    )
+    )$main_data
 
     # Perform A-Ci fits
     fit_result <- consolidate(by(
@@ -298,8 +298,8 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(0, 800)
-a_lim <- c(0, 50)
+ci_lim <- c(0, 1200)
+a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
@@ -423,9 +423,9 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax']],          X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
-  list(Y = all_fit_parameters[['Vpmax']],          X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 60),   main = boxplot_caption)
+  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 80),   main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {
