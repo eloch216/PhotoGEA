@@ -526,12 +526,17 @@ species using the `basic_stats` function from `PhotoGEA`:
 # Compute the average and standard error for the Ball-Berry slope and intercept
 # for each species
 ball_berry_averages <- basic_stats(
-  ball_berry_results$parameters[ , c('species', 'K', 'bb_intercept', 'bb_slope'), TRUE],
+  ball_berry_results$parameters,
   'species'
 )
 
 # View the averages and errors
-print(ball_berry_averages)
+columns_to_view <- c(
+  'species',
+  'bb_intercept_avg', 'bb_intercept_stderr',
+  'bb_slope_avg', 'bb_slope_stderr'
+)
+print(ball_berry_averages[ , columns_to_view, TRUE])
 ```
 
 # Customizing Your Script
