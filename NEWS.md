@@ -18,18 +18,36 @@ for the next release.
 
 # UNRELEASED
 
-- Renamed GitHub repository from `licor-processing-and-analysis` to `PhotoGEA`.
-- Made GitHub repository public, which allows for a simpler installation via
-  `remotes::install_github`.
-- Initialized website using `pkgdown` and GitHub Pages by using
-  `usethis::use_pkgdown_github_pages`; website is now available at
-  https://eloch216.github.io/PhotoGEA/index.html.
-- Added a stability check to the Ball-Berry vignette.
-- Added a new function for excluding data points (`remove_points`) and used it
-  in the Ball-Berry and TDL vignettes.
-- Added an option for a more thorough check in `is.exdf`.
-- Added documentation for `specify_variables`.
-- Added a vignette describing how to work with extended data frames.
+- Made several improvements to accessibility:
+  - Renamed GitHub repository from `licor-processing-and-analysis` to
+    `PhotoGEA`.
+  - Made GitHub repository public, which allows for a simpler installation via
+    `remotes::install_github`.
+  - Initialized website using `pkgdown` and GitHub Pages by using
+    `usethis::use_pkgdown_github_pages`; website is now available at
+    [https://eloch216.github.io/PhotoGEA/index.html](https://eloch216.github.io/PhotoGEA/index.html).
+- Made minor improvements to the Ball-Berry vignette:
+  - Added a stability check.
+  - Made the stats calculations more clear.
+- Added new functions to the package namespace:
+  - Added a new function for excluding data points (`remove_points`) and used it
+    in the Ball-Berry and TDL vignettes.
+  - Added a cross-platform file selection tool (`choose_input_files`) and
+    referenced it in the vignettes.
+- Modified the behavior of several functions:
+  - Added an option for a more thorough check in `is.exdf`.
+  - `organize_response_curve_data` now has a specification for points to remove
+    rather than points to keep, because this is usually easier to do.
+- Added documentation for several functions:
+  - `specify_variables`
+  - `exclude_outliers`
+  - `barchart_with_errorbars` (formerly `bar_wrapper`)
+  - `bwplot_wrapper` (formerly `box_wrapper`)
+  - `xyplot_avg_rc` (formerly `avg_xyplot`)
+  - `multi_curve_colors` (formerly `default_colors`)
+- Added new vignettes:
+  - A vignette describing how to work with extended data frames.
+  - A vignette describing how to develop a data analysis pipeline.
 
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 

@@ -87,11 +87,11 @@ if (PERFORM_CALCULATIONS) {
 # Specify which measurement numbers to choose. Here, the numbers refer to
 # points along the sequence of A-Ci measurements.
 #
-# These numbers have been chosen for a sequence with 13 measurements. Points 1,
+# These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS <- c(1:7, 11:13)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
@@ -185,12 +185,9 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        CI_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        'CO2_r_sp'
     )
 
     ###                     ###
@@ -204,7 +201,7 @@ if (PERFORM_CALCULATIONS) {
     all_stats <- basic_stats(
         combined_info,
         c('seq_num', EVENT_COLUMN_NAME)
-    )
+    )$main_data
 
     # Perform A-Ci fits
     fit_result <- consolidate(by(
@@ -298,8 +295,8 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(0, 800)
-a_lim <- c(0, 50)
+ci_lim <- c(0, 1200)
+a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
@@ -320,7 +317,7 @@ if (INCLUDE_FLUORESCENCE) {
 }
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto.key = list(space = "right"),
@@ -352,8 +349,8 @@ multi_aci_curves <- xyplot(
     ylim = c(-5, 65),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
@@ -375,8 +372,8 @@ multi_gsci_curves <- xyplot(
     ylim = c(0, 0.8),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
@@ -423,9 +420,9 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax']],          X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
-  list(Y = all_fit_parameters[['Vpmax']],          X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 60),   main = boxplot_caption)
+  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 80),   main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -437,6 +434,10 @@ if (INCLUDE_FLUORESCENCE) {
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))
+

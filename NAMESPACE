@@ -7,10 +7,10 @@ export(batch_pair_licor_and_tdl)
 export(batch_specify_oxygen)
 export(batch_specify_respiration)
 export(check_licor_data)
+export(choose_input_files)
 export(choose_input_gm_table_file)
 export(choose_input_licor_files)
 export(choose_input_tdl_files)
-export(exclude_outliers)
 export(factorize_id_column)
 export(identify_tdl_cycles)
 export(organize_response_curve_data)
@@ -41,12 +41,6 @@ export(fit_c3_vcmax)
 export(fit_c4_aci)
 export(fit_variable_j)
 export(photosynthesis_TRF)
-
-# Convenience functions for plotting
-export(avg_xyplot)
-export(bar_wrapper)
-export(box_wrapper)
-export(default_colors)
 
 # Basic methods for `exdf` class
 export(as.data.frame.exdf)
@@ -91,3 +85,15 @@ export(consolidate.data.frame)
 export(consolidate.exdf)
 S3method(consolidate, data.frame)
 S3method(consolidate, exdf)
+
+# Functions for excluding outliers
+export(exclude_outliers)
+export(exclude_outliers.data.frame)
+export(exclude_outliers.exdf)
+S3method(exclude_outliers, data.frame)
+S3method(exclude_outliers, exdf)
+
+# Convenience functions for plotting
+export(barchart_with_errorbars)
+export(bwplot_wrapper)
+export(xyplot_avg_rc)

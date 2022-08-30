@@ -526,12 +526,17 @@ species using the `basic_stats` function from `PhotoGEA`:
 # Compute the average and standard error for the Ball-Berry slope and intercept
 # for each species
 ball_berry_averages <- basic_stats(
-  ball_berry_results$parameters[ , c('species', 'K', 'bb_intercept', 'bb_slope'), TRUE],
+  ball_berry_results$parameters,
   'species'
 )
 
 # View the averages and errors
-print(ball_berry_averages)
+columns_to_view <- c(
+  'species',
+  'bb_intercept_avg', 'bb_intercept_stderr',
+  'bb_slope_avg', 'bb_slope_stderr'
+)
+print(ball_berry_averages[ , columns_to_view, TRUE])
 ```
 
 # Customizing Your Script
@@ -596,16 +601,33 @@ write.csv(ball_berry_averages, file.choose(), row.names = FALSE)
 
 The following code chunk includes all the central commands used throughout this
 document. They are compiled here to make them easy to copy/paste into a text
-file to initialize your own script.
+file to initialize your own script. Annotation has also been added to clearly
+indicate the four steps involved in data analysis, as described in the
+_Developing a Data Analysis Pipeline_ vignette.
 
 ```{r, eval = FALSE}
+###
+### PRELIMINARIES:
+### Loading packages, defining constants, creating helping functions, etc.
+###
+
 <<setup>>
+
+###
+### TRANSLATION:
+### Creating convenient R objects from raw data files
+###
 
 <<licor_file_names>>
 
 <<loading_licor_data>>
 
 <<combining_licor_data>>
+
+###
+### VALIDATION:
+### Organizing the data, checking its consistency and quality, cleaning it
+###
 
 <<adding_id_column>>
 
@@ -623,6 +645,11 @@ file to initialize your own script.
 
 <<remove_curves>>
 
+###
+### PROCESSING:
+### Extracting new pieces of information from the data
+###
+
 <<calculate_bb_index>>
 
 <<fit_ball_berry>>
@@ -630,6 +657,11 @@ file to initialize your own script.
 <<plot_fits>>
 
 <<ball_berry_parameters>>
+
+###
+### SYNTHESIS:
+### Using plots and statistics to help draw conclusions from the data
+###
 
 <<calculate_stats>>
 ```

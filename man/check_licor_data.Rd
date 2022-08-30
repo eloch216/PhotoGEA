@@ -47,7 +47,9 @@
 
   \item{driving_column_tolerance}{
     An absolute tolerance for the deviation of each value of
-    \code{driving_column} away from its mean across all the curves.
+    \code{driving_column} away from its mean across all the curves; the
+    \code{driving_column_tolerance} can be set to \code{Inf} to disable this
+    check.
   }
 
   \item{col_to_ignore_for_inf}{

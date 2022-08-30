@@ -47,6 +47,8 @@
 library(PhotoGEA)
 library(lattice)
 library(RColorBrewer)
+library(onewaytests)  # for bf.test, shapiro.test, A.aov
+library(DescTools)    # for DunnettTest
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -63,6 +65,15 @@ PERFORM_CALCULATIONS <- TRUE
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
+
+# Decide whether to remove a few specific points from the data before fitting
+REMOVE_SPECIFIC_POINTS <- TRUE
+
+# Decide whether to remove statistical outliers after fitting
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
+
+# Decide whether to perform stats tests
+PERFORM_STATS_TESTS <- TRUE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
@@ -92,7 +103,7 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS <- c(1:8, 11:17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide which temperature response parameters to use
@@ -104,7 +115,7 @@ PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
 
 # Specify the names of a few important columns
 EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "replicate"
+REP_COLUMN_NAME <- "plot_replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
 CA_COLUMN_NAME <- "Ca"
@@ -124,7 +135,7 @@ ETR_COLUMN_NAME <- "ETR"
 PA_COLUMN_NAME <- "Pa"
 DELTAPCHAM_COLUMN_NAME <- 'DeltaPcham'
 
-UNIQUE_ID_COLUMN_NAME <- "event_replicate"
+UNIQUE_ID_COLUMN_NAME <- "event_replicate_plot"
 
 # Specify oxygen concentration as a percentage
 O2_PERCENT <- 21
@@ -157,6 +168,18 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
+
+    has_plot_info <- TRUE
+    if (has_plot_info) {
+      # This might not be required for most data sets
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        "replicate",
+        "plot_replicate"
+      )
+    }
+
 
     combined_info <- process_id_columns(
         combined_info,
@@ -254,14 +277,37 @@ if (PERFORM_CALCULATIONS) {
 
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
-        combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        CI_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+      combined_info,
+      UNIQUE_ID_COLUMN_NAME,
+      MEASUREMENT_NUMBERS_TO_REMOVE,
+      'CO2_r_sp'
     )
+
+    # Remove specific problematic points
+    if (REMOVE_SPECIFIC_POINTS) {
+      # Specify the points to remove
+      points_to_remove <- list(
+        list(event = 25, replicate = 4, plot = 2, obs = 3),
+        list(event = 25, replicate = 8, plot = 6, obs = 118),
+        list(event = 25, replicate = 8, plot = 6, obs = 119),
+        list(event = 23, replicate = 9, plot = 6, obs = 118),
+        list(event = 23, replicate = 9, plot = 6, obs = 119),
+        list(event = 'WT', replicate = 9, plot = 2, obs = 30),
+        list(event = 20, replicate = 6, plot = 3, obs = 49),
+        list(event = 'WT', replicate = 10, plot = 3, obs = 35),
+        list(event = 'WT', replicate = 10, plot = 3, obs = 36),
+        list(event = 25, replicate = 6, plot = 4, obs = 62)
+      )
+
+      # Remove each of the points
+      for (pt in points_to_remove) {
+        combined_info <- combined_info[
+            combined_info[, 'plot'] != pt$plot |
+              combined_info[, 'replicate'] != pt$replicate |
+              combined_info[, 'event'] != pt$event|
+              combined_info[, 'obs'] != pt$obs, , TRUE]
+      }
+    }
 
     # Calculate basic stats for each event
     all_stats <- basic_stats(
@@ -280,8 +326,8 @@ if (PERFORM_CALCULATIONS) {
         PTR_FUN
     ))
 
-    vcmax_parameters <- vcmax_results[['parameters']]$main_data
-    vcmax_fits <- vcmax_results[['fits']]$main_data
+    vcmax_parameters <- vcmax_results[['parameters']]
+    vcmax_fits <- vcmax_results[['fits']]
 
     cat(
         paste(
@@ -290,6 +336,54 @@ if (PERFORM_CALCULATIONS) {
             ' ppm\n\n'
         )
     )
+
+    if (REMOVE_STATISTICAL_OUTLIERS) {
+        print(paste("Number of rows before removing outliers:", nrow(vcmax_parameters)))
+
+        vcmax_parameters <- exclude_outliers(
+            vcmax_parameters,
+            'Vcmax_at_25',
+            vcmax_parameters[, EVENT_COLUMN_NAME]
+        )
+
+        print(paste("Number of rows after removing outliers:", nrow(vcmax_parameters)))
+
+        vcmax_fits <- vcmax_fits[vcmax_fits[, UNIQUE_ID_COLUMN_NAME] %in% vcmax_parameters[, UNIQUE_ID_COLUMN_NAME], , TRUE]
+    }
+
+    vcmax_parameter_stats <- basic_stats(vcmax_parameters, EVENT_COLUMN_NAME)
+
+    vcmax_parameters <- vcmax_parameters$main_data
+    vcmax_fits <- vcmax_fits$main_data
+
+    if (PERFORM_STATS_TESTS) {
+        # Convert the "event" column to a factor or onewaytests will yell at us
+        vcmax_parameters$event <- as.factor(vcmax_parameters$event)
+
+        # Perform Brown-Forsythe test to check for equal variance
+        # This test automatically prints its results to the R terminal
+        bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = vcmax_parameters)
+
+        # If p > 0.05 variances among populations is equal and proceed with anova
+        # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+
+        # Check normality of data with Shapiro-Wilks test
+        shapiro_test_result <- shapiro.test(vcmax_parameters$Vcmax_at_25)
+        print(shapiro_test_result)
+
+        # If p > 0.05 data has normal distribution and proceed with anova
+
+        # Perform one way analysis of variance
+        anova_result <- aov(Vcmax_at_25 ~ event, data = vcmax_parameters)
+        cat("    ANOVA result\n\n")
+        print(summary(anova_result))
+
+        # If p < 0.05 perform Dunnett's posthoc test
+
+        # Perform Dunnett's Test
+        dunnett_test_result <- DunnettTest(x = vcmax_parameters$Vcmax_at_25, g = vcmax_parameters$event, control = "WT")
+        print(dunnett_test_result)
+    }
 
     all_samples <- combined_info[['main_data']]
 }
@@ -307,9 +401,10 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
-    View(all_samples)
-    View(all_stats)
-    View(vcmax_parameters[c("event", "replicate", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
+    View(all_samples$main_data)
+    View(all_stats$main_data)
+    View(vcmax_parameters[c("event", "replicate", "plot", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
+    View(vcmax_parameter_stats[c("event", "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr")])
 }
 
 # Determine if there is fluorescence data
@@ -359,7 +454,7 @@ if (INCLUDE_FLUORESCENCE) {
 }
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
@@ -391,8 +486,8 @@ multi_aci_curves <- xyplot(
     ylim = c(-10, 60),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 x11(width = 8, height = 6)
@@ -413,8 +508,8 @@ multi_gsci_curves <- xyplot(
     ylim = c(0, 0.8),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol=list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol=list(col = multi_curve_colors())
     )
 )
 x11(width = 8, height = 6)
@@ -480,6 +575,9 @@ if (INCLUDE_FLUORESCENCE) {
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))

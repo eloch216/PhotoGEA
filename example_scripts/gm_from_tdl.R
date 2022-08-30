@@ -41,16 +41,15 @@ PERFORM_STATS_TESTS <- TRUE
 
 SAVE_RESULTS <- FALSE
 
-MAKE_TDL_PLOTS <- TRUE
+MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- -2.2
+RESPIRATION <- -3
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
-
 MIN_GM <- 0
-MAX_GM <- Inf
+MAX_GM <- 10
 MIN_CC <- 0.0
 
 ###                                                                        ###
@@ -159,7 +158,7 @@ if (PERFORM_CALCULATIONS) {
         tdl_files,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
-        expected_cycle_length_minutes = 2.7,
+        expected_cycle_length_minutes = 3,
         expected_cycle_num_pts = 9,
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
     )
@@ -280,8 +279,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
-        #"10",
-        #"14"
+        #"2",
+        #"3"
     )
 
     licor_files[['main_data']] <-
@@ -655,7 +654,7 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 1.5)
+    gmc_lim <- c(0, 1)
     cc_lim <- c(0, 275)
     drawdown_lim <- c(0, 150)
     a_lim <- c(0, 50)
@@ -685,21 +684,25 @@ if (MAKE_GM_PLOTS) {
 
     # Make all the box and bar charts
     invisible(lapply(box_plot_param, function(x) {
-      do.call(box_wrapper, x)
+      dev.new()
+      print(do.call(bwplot_wrapper, x))
     }))
 
     invisible(lapply(box_bar_plot_param, function(x) {
-      do.call(box_wrapper, x)
-      do.call(bar_wrapper, x)
+      dev.new()
+      print(do.call(bwplot_wrapper, x))
+
+      dev.new()
+      print(do.call(barchart_with_errorbars, x))
     }))
 
     # Show iWUE time series
     iwue_time_plot <- xyplot(
-        licor_files_no_outliers_data[['iWUE']] ~ as.numeric(row.names(licor_files_no_outliers_data)),
+        licor_files_no_outliers_data[['iWUE']] ~ licor_files_no_outliers_data[['cycle_num']],
         group = licor_files_no_outliers_data[['event']],
         type = 'p',
         auto = TRUE,
-        xlab = "Measurement number (in chronological order)",
+        xlab = "TDL Cycle",
         ylab = iwue_lab
     )
     x11()
