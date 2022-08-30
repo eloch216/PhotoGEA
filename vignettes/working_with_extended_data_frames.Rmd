@@ -421,6 +421,11 @@ licor_data <- calculate_gas_properties(
 licor_data <- calculate_ball_berry_index(licor_data, 'A', 'RHleaf', 'Csurface')
 ```
 
+In this example, the vector of files to load was defined manually by typing out
+the file names; files can also be selected interactively using the
+`choose_input_files`, `choose_input_licor_files`, and `choose_input_tdl_files`
+functions.
+
 ## Processing Multiple Pieces of an Extended Data Frame
 
 It is common for an `exdf` object to contain data that represents multiple
