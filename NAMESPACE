@@ -21,6 +21,7 @@ export(read_gm_table)
 export(read_licor_file)
 export(read_tdl_file)
 export(remove_points)
+export(set_variable)
 export(smooth_tdl_data)
 
 # Functions for scientific analysis
