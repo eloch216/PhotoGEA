@@ -67,7 +67,7 @@ PERFORM_CALCULATIONS <- TRUE
 VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Decide whether to remove statistical outliers after fitting
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
@@ -84,6 +84,9 @@ USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list()
+
+# Indicate whether a `plot` column is present
+HAS_PLOT_INFO <- FALSE
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
@@ -113,7 +116,6 @@ PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
 
 # Specify the names of a few important columns
 EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "plot_replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
 CA_COLUMN_NAME <- "Ca"
@@ -167,9 +169,18 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
 
-    has_plot_info <- TRUE
-    if (has_plot_info) {
-      # This might not be required for most data sets
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+
+    # Set the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+        "plot_replicate"
+    } else {
+        "replicate"
+    }
+
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
       combined_info <- process_id_columns(
         combined_info,
         "plot",
@@ -177,7 +188,6 @@ if (PERFORM_CALCULATIONS) {
         "plot_replicate"
       )
     }
-
 
     combined_info <- process_id_columns(
         combined_info,
@@ -282,7 +292,8 @@ if (PERFORM_CALCULATIONS) {
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
-      points_to_remove <- list(
+      combined_info <- remove_points(
+        combined_info,
         list(event = 25, replicate = 4, plot = 2, obs = 3),
         list(event = 25, replicate = 8, plot = 6, obs = 118),
         list(event = 25, replicate = 8, plot = 6, obs = 119),
@@ -294,15 +305,6 @@ if (PERFORM_CALCULATIONS) {
         list(event = 'WT', replicate = 10, plot = 3, obs = 36),
         list(event = 25, replicate = 6, plot = 4, obs = 62)
       )
-
-      # Remove each of the points
-      for (pt in points_to_remove) {
-        combined_info <- combined_info[
-            combined_info[, 'plot'] != pt$plot |
-              combined_info[, 'replicate'] != pt$replicate |
-              combined_info[, 'event'] != pt$event|
-              combined_info[, 'obs'] != pt$obs, , TRUE]
-      }
     }
 
     # Calculate basic stats for each event
@@ -397,10 +399,10 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
-    View(all_samples$main_data)
+    View(all_samples)
     View(all_stats$main_data)
-    View(vcmax_parameters[c("event", "replicate", "plot", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
-    View(vcmax_parameter_stats[c("event", "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr")])
+    View(vcmax_parameters[, c(EVENT_COLUMN_NAME, REP_COLUMN_NAME, "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
+    View(vcmax_parameter_stats[, c(EVENT_COLUMN_NAME, "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr"), TRUE])
 }
 
 # Determine if there is fluorescence data

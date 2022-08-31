@@ -92,4 +92,5 @@ S3method(exclude_outliers, exdf)
 # Convenience functions for plotting
 export(barchart_with_errorbars)
 export(bwplot_wrapper)
+export(multi_curve_colors)
 export(xyplot_avg_rc)
