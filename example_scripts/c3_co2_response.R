@@ -83,17 +83,15 @@ PERFORM_STATS_TESTS <- TRUE
 USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
+GM_TABLE <- list()
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 GM_TABLE_FILE_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the USE_GM_TABLE boolean
+# Specify the filenames
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-    if (USE_GM_TABLE) {
-        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
-    }
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
@@ -189,25 +187,23 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Include gm values (required for calculating Cc)
-    if (USE_GM_TABLE) {
-        gm_table_info <- read_gm_table(
-            GM_TABLE_FILE_TO_PROCESS,
-            EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
-        )
-
-        combined_info <- add_gm_to_licor_data_from_table(
+    combined_info <- if (USE_GM_TABLE) {
+        set_variable(
             combined_info,
-            gm_table_info,
+            GM_COLUMN_NAME,
+            GM_UNITS,
+            'c3_co2_response',
+            GM_VALUE,
             EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
+            GM_TABLE
         )
     } else {
-        combined_info <- add_gm_to_licor_data_from_value(
+        set_variable(
             combined_info,
-            GM_VALUE,
+            GM_COLUMN_NAME,
             GM_UNITS,
-            GM_COLUMN_NAME
+            'c3_co2_response',
+            GM_VALUE
         )
     }
 

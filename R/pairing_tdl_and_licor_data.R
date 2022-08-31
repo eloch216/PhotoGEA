@@ -1,44 +1,3 @@
-# Specify the respiration rate (in units of micromol / m^2 / s) to store in the
-# Licor file. (The rate can be supplied as a positive or negative number, and
-# its absolute value will be stored.)
-specify_respiration <- function(licor_exdf, respiration) {
-    # Add a new column to the Licor file in preparation for adding the
-    # respiration information
-    licor_exdf <- document_variables(
-        licor_exdf,
-        c("in", "respiration", "micromol m^(-2) s^(-1)")
-    )
-
-    # Store it in the Licor file and return the updated file
-    licor_exdf[,'respiration'] <- abs(respiration)
-
-    return(licor_exdf)
-}
-
-batch_specify_respiration <- function(licor_exdfs, respiration) {
-    lapply(licor_exdfs, function(x) {specify_respiration(x, respiration)})
-}
-
-# Specify the oxygen level (as a percentage, typically either 2 or 21) to store
-# in the Licor file
-specify_oxygen <- function(licor_exdf, oxygen) {
-    # Add a new column to the Licor file in preparation for adding the
-    # oxygen information
-    licor_exdf <- document_variables(
-        licor_exdf,
-        c("in", "Oxygen", "%")
-    )
-
-    # Store it in the Licor file and return the updated file
-    licor_exdf[,'Oxygen'] <- oxygen
-
-    return(licor_exdf)
-}
-
-batch_specify_oxygen <- function(licor_exdfs, oxygen) {
-    lapply(licor_exdfs, function(x) {specify_oxygen(x, oxygen)})
-}
-
 get_oxygen_info_from_preamble <- function(licor_exdf) {
     # Add a new column to the Licor file in preparation for adding the
     # oxygen information
@@ -64,8 +23,8 @@ get_oxygen_info_from_preamble <- function(licor_exdf) {
         msg <- paste0(
             "Could not automatically get oxygen information from Licor file:\n'",
             licor_exdf[['file_name']],
-            "'\nConsider adding it with the `specify_oxygen` function rather ",
-            "than using `get_oxygen_info_from_preamble`"
+            "'\nConsider adding oxygen values with the `set_variable` function ",
+            "rather than using `get_oxygen_info_from_preamble`"
         )
         stop(msg)
     }

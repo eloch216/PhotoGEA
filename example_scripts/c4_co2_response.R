@@ -70,18 +70,15 @@ VIEW_DATA_FRAMES <- TRUE
 USE_GM_TABLE <- FALSE
 GM_VALUE <- 3.0  # mol / m^2 / s / bar
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
+GM_TABLE <- list()
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 GM_TABLE_FILE_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
-# and USE_GM_TABLE booleans
+# Specify the filenames
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-    if (USE_GM_TABLE) {
-        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
-    }
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
@@ -153,25 +150,24 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
-    if (USE_GM_TABLE) {
-        gm_table_info <- read_gm_table(
-            GM_TABLE_FILE_TO_PROCESS,
-            EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
-        )
-
-        combined_info <- add_gm_to_licor_data_from_table(
+    # Include gm values
+    combined_info <- if (USE_GM_TABLE) {
+        set_variable(
             combined_info,
-            gm_table_info,
+            GM_COLUMN_NAME,
+            GM_UNITS,
+            'c4_co2_response',
+            GM_VALUE,
             EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
+            GM_TABLE
         )
     } else {
-        combined_info <- add_gm_to_licor_data_from_value(
+        set_variable(
             combined_info,
-            GM_VALUE,
+            GM_COLUMN_NAME,
             GM_UNITS,
-            GM_COLUMN_NAME
+            'c4_co2_response',
+            GM_VALUE
         )
     }
 

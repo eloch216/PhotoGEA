@@ -221,7 +221,13 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_get_oxygen_info_from_preamble(licor_files)
 
-    licor_files <- batch_specify_respiration(licor_files, RESPIRATION)
+    licor_files <- set_variable(
+        licor_files,
+        'respiration',
+        'micromol m^(-2) s^(-1)',
+        'gm_from_tdl',
+        abs(RESPIRATION)
+    )
 
     # Combine the Licor and TDL data
 
