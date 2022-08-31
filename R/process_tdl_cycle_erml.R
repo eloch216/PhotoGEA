@@ -46,7 +46,7 @@ process_tdl_cycle_erml <- function(
         offset_13c = zero_carbon_reference[[raw_13c_colname]]
     ))
 
-    calibration_zero <- specify_variables(
+    calibration_zero <- document_variables(
         calibration_zero,
         c('process_tdl_cycle_erml', 'cycle_num',    tdl_cycle$units$cycle_num),
         c('process_tdl_cycle_erml', 'elapsed_time', tdl_cycle$units$elapsed_time),
@@ -79,7 +79,7 @@ process_tdl_cycle_erml <- function(
         gain_12CO2 = gain_12CO2
     ))
 
-    calibration_12CO2 <- specify_variables(
+    calibration_12CO2 <- document_variables(
         calibration_12CO2,
         c('process_tdl_cycle_erml', 'cycle_num',               tdl_cycle$units$cycle_num),
         c('process_tdl_cycle_erml', 'elapsed_time',            tdl_cycle$units$elapsed_time),
@@ -136,7 +136,7 @@ process_tdl_cycle_erml <- function(
         r_squared = r_squared
     ))
 
-    calibration_13CO2_fit <- specify_variables(
+    calibration_13CO2_fit <- document_variables(
         calibration_13CO2_fit,
         c('process_tdl_cycle_erml', 'cycle_num',                               tdl_cycle$units$cycle_num),
         c('process_tdl_cycle_erml', 'elapsed_time',                            tdl_cycle$units$elapsed_time),
@@ -163,7 +163,7 @@ process_tdl_cycle_erml <- function(
         fitted_13c_values = fitted_13c_values
     ))
 
-    calibration_13CO2_data <- specify_variables(
+    calibration_13CO2_data <- document_variables(
         calibration_13CO2_data,
         c('process_tdl_cycle_erml', 'cycle_num',           tdl_cycle$units$cycle_num),
         c('process_tdl_cycle_erml', 'elapsed_time',        tdl_cycle$units$elapsed_time),
@@ -183,7 +183,7 @@ process_tdl_cycle_erml <- function(
         1000 * (tdl_cycle[, 'calibrated_13c'] / tdl_cycle[, 'calibrated_12c'] / R_VPDB - 1)
 
     # Document the columns that were added to the cycle data
-    tdl_cycle <- specify_variables(
+    tdl_cycle <- document_variables(
         tdl_cycle,
         c('process_tdl_cycle_erml', 'zero_corrected_12c',    'ppm'),
         c('process_tdl_cycle_erml', 'zero_corrected_13c',    'ppm'),

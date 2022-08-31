@@ -175,7 +175,7 @@ fit_c4_aci <- function(
     }
 
     # Document the column that was added
-    replicate_exdf <- specify_variables(
+    replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_c4_aci', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
     )
@@ -187,7 +187,7 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'final_convergence'] <- final_convergence
 
     # Document the columns that were added
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_c4_aci', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci', 'Vpmax_at_25', 'micromol m^(-2) s^(-1)'),

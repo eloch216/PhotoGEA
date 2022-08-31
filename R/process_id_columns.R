@@ -41,7 +41,7 @@ process_id_columns <- function(
         paste(licor_exdf[,event_column_name], licor_exdf[,rep_column_name])
 
     # Document the column that was added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("process_id_columns", unique_id_column_name, "")
     )

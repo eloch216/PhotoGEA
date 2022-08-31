@@ -323,7 +323,7 @@ fit_variable_j <- function(
         p_name <- param[[1]]
         p_units <- param[[2]]
         if (p_name %in% names(best_X)) {
-            replicate_identifiers <<- specify_variables(
+            replicate_identifiers <<- document_variables(
                 replicate_identifiers,
                 c("fit_variable_j", p_name, p_units)
             )
@@ -345,7 +345,7 @@ fit_variable_j <- function(
     replicate_identifiers[, 'feval'] <- optim_result[['feval']]
     replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
 
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_variable_j', 'convergence', ''),
         c('fit_variable_j', 'convergence_msg', ''),

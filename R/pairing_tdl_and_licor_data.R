@@ -4,7 +4,7 @@
 specify_respiration <- function(licor_exdf, respiration) {
     # Add a new column to the Licor file in preparation for adding the
     # respiration information
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("in", "respiration", "micromol m^(-2) s^(-1)")
     )
@@ -24,7 +24,7 @@ batch_specify_respiration <- function(licor_exdfs, respiration) {
 specify_oxygen <- function(licor_exdf, oxygen) {
     # Add a new column to the Licor file in preparation for adding the
     # oxygen information
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("in", "Oxygen", "%")
     )
@@ -42,7 +42,7 @@ batch_specify_oxygen <- function(licor_exdfs, oxygen) {
 get_oxygen_info_from_preamble <- function(licor_exdf) {
     # Add a new column to the Licor file in preparation for adding the
     # oxygen information
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("in", "Oxygen", "%")
     )
@@ -83,7 +83,7 @@ batch_get_oxygen_info_from_preamble <- function(licor_exdfs) {
 get_genotype_info_from_licor_filename <- function(licor_exdf) {
     # Add some new columns to the Licor file in preparation for adding the plant
     # information
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("plant specification", "genotype",                 "NA"),
         c("plant specification", "event",                    "NA"),
@@ -182,7 +182,7 @@ pair_licor_and_tdl <- function(
 {
     # Add some new columns to the Licor file in preparation for adding the TDL
     # data
-    licor_file <- specify_variables(
+    licor_file <- document_variables(
         licor_file,
         c("calibrated TDL",              "cycle_num",              ""),
         c("calibrated TDL (sample)",     "valve_number_s",         ""),

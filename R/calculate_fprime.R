@@ -59,7 +59,7 @@ calculate_fprime <- function(
         (licor_exdf[,cc_column_name] + photo_param$Kc * (1 + O2 / photo_param$Ko))
 
     # Document the columns that were added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculated", gamma_star_column_name, "micromol mol^(-1)"),
         c("calculated", kc_column_name,         "micromol mol^(-1)"),

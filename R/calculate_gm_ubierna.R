@@ -27,7 +27,7 @@ calculate_gm_ubierna <- function(licor_exdf)
 
     # Add some new columns to the Licor file in preparation for calculating
     # mesophyll conductance
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculated", "Cs_licor",         "micromol mol^(-1)"),
         c("calculated", "Ce_licor",         "micromol mol^(-1)"),

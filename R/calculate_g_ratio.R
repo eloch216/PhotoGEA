@@ -36,7 +36,7 @@ calculate_g_ratio <- function(
     licor_exdf[,g_ratio_column_name] <- gsc / (gmc * pressure)
 
     # Document the columns that were added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculate_g_ratio", g_ratio_column_name, "dimensionless")
     )

@@ -1,4 +1,4 @@
-# A helping function for `specify_variables` that sets the units and category
+# A helping function for `document_variables` that sets the units and category
 # for one column of an exdf
 set_column_info <- function(x, name, units, category) {
     if (!is.exdf(x)) {
@@ -47,7 +47,7 @@ set_column_info <- function(x, name, units, category) {
     return(x)
 }
 
-specify_variables <- function(exdf_obj, ...)
+document_variables <- function(exdf_obj, ...)
 {
     if (!is.exdf(exdf_obj)) {
         stop("exdf_obj must be an exdf object")

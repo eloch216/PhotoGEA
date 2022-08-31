@@ -36,7 +36,7 @@ fit_ball_berry <- function(
         bb_intercept + bb_slope * replicate_exdf[, bb_index_column_name]
 
     # Document the column that was added
-    replicate_exdf <- specify_variables(
+    replicate_exdf <- document_variables(
         replicate_exdf,
         c("fit_ball_berry", paste0(gsw_column_name, '_fit'), "mol m^(-2) s^(-1)")
     )
@@ -47,7 +47,7 @@ fit_ball_berry <- function(
     replicate_identifiers[, 'r_squared'] <- r_squared
 
     # Document the columns that were added
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c("fit_ball_berry", 'bb_intercept', "mol m^(-2) s^(-1)"),
         c("fit_ball_berry", 'bb_slope', "dimensionless"),

@@ -19,7 +19,7 @@ identify_tdl_cycles <- function(
     check_required_columns(tdl_exdf, required_columns)
 
     # Add a new column to the data for the cycle number
-    tdl_exdf <- specify_variables(
+    tdl_exdf <- document_variables(
         tdl_exdf,
         c("calculated", "cycle_num", "NA"),
         c("calculated", "elapsed_time", "minutes")

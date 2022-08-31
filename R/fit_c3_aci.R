@@ -176,7 +176,7 @@ fit_c3_aci <- function(
     # Append it to the original exdf object
     replicate_exdf[, paste0(a_column_name, '_fit')] <- An_fit
 
-    replicate_exdf <- specify_variables(
+    replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_c3_aci', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
     )
@@ -203,7 +203,7 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
 
     # Document the new columns that were added
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_c3_aci', 'gmc',             'mol m^(-2) s^(-1) bar^(-1)'),
         c('fit_c3_aci', 'TPU',             'micromol m^(-2) s^(-1)'),

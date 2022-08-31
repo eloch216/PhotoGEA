@@ -28,7 +28,7 @@ calculate_iwue <- function(
         licor_exdf[,a_column_name] / licor_exdf[,gsw_column_name]
 
     # Document the column that was added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculate_iwue", iwue_column_name, "micromol CO2 / mol H2O")
     )

@@ -11,7 +11,7 @@ add_gm_to_licor_data_from_value <- function(
 )
 {
     # Add a column for gm
-    licor_data <- specify_variables(
+    licor_data <- document_variables(
         licor_data,
         c("gm input", GM_COLUMN_NAME, gm_units)
     )
@@ -91,7 +91,7 @@ add_gm_to_licor_data_from_table <- function(
 )
 {
     # Add a new column to the licor data representing gm
-    licor_data <- specify_variables(
+    licor_data <- document_variables(
         licor_data,
         c(
             gm_table[['categories']][[GM_COLUMN_NAME]],

@@ -22,7 +22,7 @@ calculate_ball_berry_index <- function(
         0.01 * licor_exdf[,'A'] * licor_exdf[,'RHleaf'] / licor_exdf[,'Csurface']
 
     # Document the column that was added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculate_ball_berry_index", 'bb_index', "mol m^(-2) s^(-1)")
     )

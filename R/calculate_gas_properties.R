@@ -59,7 +59,7 @@ calculate_gas_properties <- function(
                                (licor_exdf[,'gbc'] + E / 2)
 
     # Document the columns that were added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculate_gas_properties", 'H2O_surf', "mmol mol^(-1)"),
         c("calculate_gas_properties", 'SVPleaf',  "kPa"),

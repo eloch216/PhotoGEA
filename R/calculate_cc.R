@@ -57,7 +57,7 @@ calculate_cc <- function(
         licor_exdf[,ca_column_name] - licor_exdf[,ci_column_name]
 
     # Document the columns that were added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculate_cc", cc_column_name,         "micromol mol^(-1)"),
         c("calculate_cc", drawdown_m_column_name, "micromol mol^(-1)"),

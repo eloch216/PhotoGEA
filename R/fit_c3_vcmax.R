@@ -51,7 +51,7 @@ fit_c3_vcmax <- function(
         Vcmax * replicate_exdf[, f_prime_column_name] - Rd
 
     # Document the column that was added
-    replicate_exdf <- specify_variables(
+    replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_c3_vcmax', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
     )
@@ -66,7 +66,7 @@ fit_c3_vcmax <- function(
     replicate_identifiers[, 'r_squared'] <- r_squared
 
     # Document the columns that were added
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_c3_vcmax', 'Vcmax', 'micromol m^(-2) s^(-1)'),
         c('fit_c3_vcmax', 'Vcmax_stderr', 'micromol m^(-2) s^(-1)'),

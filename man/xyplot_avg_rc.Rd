@@ -76,7 +76,7 @@ licor_file <- read_licor_file(
 licor_file <- organize_response_curve_data(
   licor_file,
   c('species', 'plot'),
-  1:7,
+  c(),
   'Qin'
 )
 
