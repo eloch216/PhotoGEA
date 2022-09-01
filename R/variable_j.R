@@ -205,15 +205,15 @@ fit_variable_j <- function(
         stop("fit_variable_j requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[phips2_column_name]] <- "NA"
-    required_columns[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[tleaf_column_name]] <- "degrees C"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_variables[[ci_column_name]] <- "micromol mol^(-1)"
+    required_variables[[phips2_column_name]] <- "NA"
+    required_variables[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_variables[[tleaf_column_name]] <- "degrees C"
 
-    check_required_columns(replicate_exdf, required_columns)
+    check_required_variables(replicate_exdf, required_variables)
 
     # Get the identifiers
     replicate_identifiers <- find_identifier_columns(replicate_exdf)

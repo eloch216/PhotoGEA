@@ -16,14 +16,14 @@ calculate_g_ratio <- function(
         stop("calculate_g_ratio requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[pa_column_name]] <- "kPa"
-    required_columns[[deltapcham_column_name]] <- "kPa"
-    required_columns[[gsc_column_name]] <- "mol m^(-2) s^(-1)"
-    required_columns[[gmc_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[pa_column_name]] <- "kPa"
+    required_variables[[deltapcham_column_name]] <- "kPa"
+    required_variables[[gsc_column_name]] <- "mol m^(-2) s^(-1)"
+    required_variables[[gmc_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Extract some columns to make the calculations cleaner
     Pa <- licor_exdf[,pa_column_name]                  # kPa

@@ -8,12 +8,12 @@ fit_ball_berry <- function(
         stop("fit_ball_berry requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
-    required_columns[[bb_index_column_name]] <- "mol m^(-2) s^(-1)"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
+    required_variables[[bb_index_column_name]] <- "mol m^(-2) s^(-1)"
 
-    check_required_columns(replicate_exdf, required_columns)
+    check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)

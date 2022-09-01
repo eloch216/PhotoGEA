@@ -19,13 +19,13 @@ process_tdl_cycle_erml <- function(
         stop('process_tdl_cycle_erml requires an exdf object')
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[valve_column_name]] <- NA
-    required_columns[[raw_12c_colname]] <- 'ppm'
-    required_columns[[raw_13c_colname]] <- 'ppm'
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[valve_column_name]] <- NA
+    required_variables[[raw_12c_colname]] <- 'ppm'
+    required_variables[[raw_13c_colname]] <- 'ppm'
 
-    check_required_columns(tdl_cycle, required_columns)
+    check_required_variables(tdl_cycle, required_variables)
 
     # Make a correction by subtracting the carbon concentrations measured in a
     # line that should have no carbon

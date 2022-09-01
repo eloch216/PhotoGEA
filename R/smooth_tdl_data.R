@@ -10,13 +10,13 @@ smooth_tdl_data <- function(
         stop("smooth_tdl_data requires an exdf object")
     }
 
-    # Make sure the required columns are defined
-    required_columns <- list()
-    required_columns[[column_to_be_smoothed]] <- NA
-    required_columns[[valve_column_name]] <- NA
-    required_columns[['elapsed_time']] <- NA
+    # Make sure the required variables are defined
+    required_variables <- list()
+    required_variables[[column_to_be_smoothed]] <- NA
+    required_variables[[valve_column_name]] <- NA
+    required_variables[['elapsed_time']] <- NA
 
-    check_required_columns(tdl_exdf, required_columns)
+    check_required_variables(tdl_exdf, required_variables)
 
     # Extract data corresponding to a single valve
     valve_time_series <- tdl_exdf[tdl_exdf[, valve_column_name] == valve_number, ]

@@ -16,12 +16,12 @@ calculate_iwue <- function(
         stop("calculate_iwue requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_variables[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Make calculations
     licor_exdf[,iwue_column_name] <-

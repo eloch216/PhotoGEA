@@ -30,9 +30,9 @@ set_variable <- function(
 
     # If an id_column was provided, set column values based on the table
     if (!is.null(id_column)) {
-        required_columns <- list()
-        required_columns[[id_column]] <- NA
-        check_required_columns(exdf_obj, required_columns)
+        required_variables <- list()
+        required_variables[[id_column]] <- NA
+        check_required_variables(exdf_obj, required_variables)
 
         for (i in seq_along(value_table)) {
             exdf_obj[as.character(exdf_obj[, id_column]) == names(value_table)[i], name] <- value_table[[i]]

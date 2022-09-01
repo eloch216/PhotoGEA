@@ -21,10 +21,10 @@ remove_points <- function(exdf_obj, ...) {
     # Go through each set of conditions to remove the desired points
     for (point_description in arg_list) {
         # Make sure the exdf object contains the specified columns
-        required_columns <-
+        required_variables <-
             lapply(point_description, function(x) {return(NA)})
 
-        check_required_columns(exdf_obj, required_columns)
+        check_required_variables(exdf_obj, required_variables)
 
         # Initialize the logical vector of points to keep
         points_to_keep <- rep.int(FALSE, nrow(exdf_obj))

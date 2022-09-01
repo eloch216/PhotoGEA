@@ -210,8 +210,8 @@ processing than A-Ci curves measured from C~4~ plants.
 All of these functions are designed to be applied to `exdf` objects. In this
 case, `exdf` objects provide a large advantage over regular data frames because
 they include information about units; in fact, all of these functions will check
-the units of any required columns before proceeding to make sure the results are
-correct.
+the units of any required variables before proceeding to make sure the results
+are correct.
 
 ### Functions for Calculating New Variable Values
 

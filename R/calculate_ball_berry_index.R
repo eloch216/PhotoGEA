@@ -9,13 +9,13 @@ calculate_ball_berry_index <- function(
         stop("calculate_ball_berry_index requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[rhleaf_column_name]] <- "%"
-    required_columns[[csurface_column_name]] <- "micromol mol^(-1)"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_variables[[rhleaf_column_name]] <- "%"
+    required_variables[[csurface_column_name]] <- "micromol mol^(-1)"
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Calculate the Ball-Berry index
     licor_exdf[,'bb_index'] <-

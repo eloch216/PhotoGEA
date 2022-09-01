@@ -14,13 +14,13 @@ fit_c3_vcmax <- function(
         stop('fit_c3_vcmax requires an exdf object')
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_columns[[f_prime_column_name]] <- 'dimensionless'
-    required_columns[[tleaf_column_name]] <- 'degrees C'
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[[f_prime_column_name]] <- 'dimensionless'
+    required_variables[[tleaf_column_name]] <- 'degrees C'
 
-    check_required_columns(replicate_exdf, required_columns)
+    check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)

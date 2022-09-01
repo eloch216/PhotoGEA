@@ -106,15 +106,15 @@ fit_c4_aci <- function(
         stop('fit_c4_aci requires an exdf object')
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
-    required_columns[[pressure_column_name]] <- 'kPa'
-    required_columns[[delta_pressure_column_name]] <- 'kPa'
-    required_columns[[tleaf_column_name]] <- 'degrees C'
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[pressure_column_name]] <- 'kPa'
+    required_variables[[delta_pressure_column_name]] <- 'kPa'
+    required_variables[[tleaf_column_name]] <- 'degrees C'
 
-    check_required_columns(replicate_exdf, required_columns)
+    check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)

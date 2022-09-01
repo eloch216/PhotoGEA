@@ -3,8 +3,8 @@ factorize_id_column <- function(full_data_set, id_column_name) {
         stop("factorize_id_column requires a data frame")
     }
 
-    # Make sure the required columns are defined
-    check_required_columns(full_data_set, id_column_name)
+    # Make sure the required variables are defined
+    check_required_variables(full_data_set, id_column_name)
 
     if (is.factor(full_data_set[[id_column_name]])) {
         # This column is already a factor, so turn it back into a character

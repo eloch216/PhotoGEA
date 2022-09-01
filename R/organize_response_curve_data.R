@@ -11,10 +11,10 @@ organize_response_curve_data <- function(
     }
 
     # Make sure the column for ordering is defined
-    required_columns <- list()
-    required_columns[[column_for_ordering]] <- NA
+    required_variables <- list()
+    required_variables[[column_for_ordering]] <- NA
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Create factors from the identifier columns
     f <- lapply(identifier_columns, function(x) {licor_exdf[ , x]})

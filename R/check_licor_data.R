@@ -38,16 +38,16 @@ check_licor_data <- function(
     }
 
     # Make sure certain columns are defined
-    required_columns <- list()
+    required_variables <- list()
     for (cn in identifier_columns) {
-        required_columns[[cn]] <- NA
+        required_variables[[cn]] <- NA
     }
 
     if (!is.null(driving_column)) {
-        required_columns[[driving_column]] <- NA
+        required_variables[[driving_column]] <- NA
     }
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Split the exdf object by the identifiers
     f <- lapply(identifier_columns, function(x) {licor_exdf[ , x]})

@@ -12,16 +12,16 @@ calculate_cc <- function(
         stop("calculate_cc requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ca_column_name]] <- "micromol mol^(-1)"
-    required_columns[[ci_column_name]] <- "micromol mol^(-1)"
-    required_columns[[gm_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
-    required_columns[[pa_column_name]] <- "kPa"
-    required_columns[[deltapcham_column_name]] <- "kPa"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_variables[[ca_column_name]] <- "micromol mol^(-1)"
+    required_variables[[ci_column_name]] <- "micromol mol^(-1)"
+    required_variables[[gm_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
+    required_variables[[pa_column_name]] <- "kPa"
+    required_variables[[deltapcham_column_name]] <- "kPa"
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Define new column names
     cc_column_name <- "Cc"
