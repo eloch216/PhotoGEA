@@ -1,20 +1,3 @@
-# Adds a new column to the Licor data representing the CO2 concentration in the
-# chloroplast (Cc; in micromol / mol). Here we use a standard 1D
-# flux-conductance equation, assuming the CO2 flow is in equilibrium (i.e., that
-# the CO2 flux from the intercellular spaces to the chloroplast is the net
-# assimilation rate). This equation can be found in many places, e.g. as
-# Equation 4 in Sharkey et al. "Fitting photosynthetic carbon dioxide response
-# curves for C3 leaves" Plant, Cell & Environment 30, 1035–1040 (2007)
-# (https://doi.org/10.1111/j.1365-3040.2007.01710.x).
-#
-# We also add a column for the CO2 drawdown across the mesophyll (drawdown_m =
-# Ci - Cc) and the CO2 drawdown across the stomata (drawdown_s = Ca - Ci).
-#
-# Here we assume the following units:
-# - Atmospheric CO2 concentration (Ca): micromol / mol
-# - Intercellular CO2 concentration (Ci): micromol / mol
-# - Net assimilation (A): micromol / m^2 / s
-# - Mesophyll conductance to CO2 (gmc): mol / m^2 / s / bar
 calculate_cc <- function(
     licor_exdf,
     a_column_name,
