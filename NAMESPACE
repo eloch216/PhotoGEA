@@ -21,6 +21,7 @@ export(smooth_tdl_data)
 # Functions for scientific analysis
 export(basic_stats)
 export(calculate_ball_berry_index)
+export(calculate_c3_assimilation)
 export(calculate_cc)
 export(calculate_fprime)
 export(calculate_gas_properties)
