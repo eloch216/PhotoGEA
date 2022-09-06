@@ -1,11 +1,11 @@
 calculate_cc <- function(
     licor_exdf,
-    a_column_name,
-    ca_column_name,
-    ci_column_name,
-    gmc_column_name,
-    pa_column_name,
-    deltapcham_column_name
+    a_column_name = 'A',
+    ca_column_name = 'Ca',
+    ci_column_name = 'Ci',
+    gmc_column_name = 'gmc',
+    pa_column_name = 'Pa',
+    deltapcham_column_name = 'DeltaPcham'
 )
 {
     if (!is.exdf(licor_exdf)) {

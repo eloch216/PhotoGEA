@@ -1,8 +1,8 @@
 calculate_ball_berry_index <- function(
     licor_exdf,
-    a_column_name,
-    rhleaf_column_name,
-    csurface_column_name
+    a_column_name = 'A',
+    rhleaf_column_name = 'RHleaf',
+    csurface_column_name = 'Csurface'
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -19,7 +19,8 @@ calculate_ball_berry_index <- function(
 
     # Calculate the Ball-Berry index
     licor_exdf[,'bb_index'] <-
-        0.01 * licor_exdf[,'A'] * licor_exdf[,'RHleaf'] / licor_exdf[,'Csurface']
+        0.01 * licor_exdf[, a_column_name] * licor_exdf[, rhleaf_column_name] /
+            licor_exdf[, csurface_column_name]
 
     # Document the column that was added
     licor_exdf <- document_variables(

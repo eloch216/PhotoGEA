@@ -1,23 +1,16 @@
-# OPTIM_FUN must be an optimization function that accepts the following input
-# arguments: an initial guess, an error function, lower bounds, and upper
-# bounds. It should return a list with the following elements: `par`,
-# `convergence`, `value`, and (optionally) `message`. The bounded optimizers
-# from the `dfoptim` package meet these requirements. The base function `optim`
-# can also be used, provided it is supplied as a wrapper with the method fixed
-# to be 'L-BFGS-B'.
 fit_c3_aci <- function(
     replicate_exdf,
-    a_column_name,
-    cc_column_name,
-    pa_column_name,
-    deltapcham_column_name,
-    kc_column_name,
-    ko_column_name,
-    gamma_star_column_name,
-    vcmax_norm_column_name,
-    rd_norm_column_name,
-    j_norm_column_name,
-    POc,      # microbar             (typically this value is known from the experimental setup)
+    a_column_name = 'A',
+    cc_column_name = 'Cc',
+    pa_column_name = 'Pa',
+    deltapcham_column_name = 'DeltaPcham',
+    kc_column_name = 'Kc',
+    ko_column_name = 'Ko',
+    gamma_star_column_name = 'Gamma_star',
+    vcmax_norm_column_name = 'Vcmax_norm',
+    rd_norm_column_name = 'Rd_norm',
+    j_norm_column_name = 'J_norm',
+    POc = 210000,
     OPTIM_FUN = function(guess, fun, lower, upper) {
         dfoptim::nmkb(guess, fun, lower, upper, control = list(
             tol = 1e-7,
@@ -44,6 +37,11 @@ fit_c3_aci <- function(
     total_error_fcn <- function(X) {
         assim <- calculate_c3_assimilation(
             replicate_exdf,
+            X[1], # TPU
+            X[2], # J
+            X[3], # Rd
+            X[4], # Vcmax
+            POc,
             cc_column_name,
             pa_column_name,
             deltapcham_column_name,
@@ -52,12 +50,7 @@ fit_c3_aci <- function(
             gamma_star_column_name,
             vcmax_norm_column_name,
             rd_norm_column_name,
-            j_norm_column_name,
-            POc,
-            X[1], # TPU
-            X[2], # J
-            X[3], # Rd
-            X[4]  # Vcmax
+            j_norm_column_name
         )
         sum((replicate_exdf[, 'A'] - assim[, 'An'])^2)
     }
@@ -75,6 +68,11 @@ fit_c3_aci <- function(
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(
         replicate_exdf,
+        best_X[1], # TPU
+        best_X[2], # J
+        best_X[3], # Rd
+        best_X[4], # Vcmax
+        POc,
         cc_column_name,
         pa_column_name,
         deltapcham_column_name,
@@ -83,12 +81,7 @@ fit_c3_aci <- function(
         gamma_star_column_name,
         vcmax_norm_column_name,
         rd_norm_column_name,
-        j_norm_column_name,
-        POc,
-        best_X[1], # TPU
-        best_X[2], # J
-        best_X[3], # Rd
-        best_X[4]  # Vcmax
+        j_norm_column_name
     )
 
     # Set all categories to `fit_c3_aci` and rename the `An` variable to

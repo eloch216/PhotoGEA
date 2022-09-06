@@ -431,22 +431,18 @@ of the Ball-Berry index; in fact, they do not even include values of $h_s$ and
 $C_s$ required to calculate the Ball-Berry index. However, the `PhotoGEA`
 package includes two functions to help with these calculations:
 `calculate_gas_properties` and `calculate_ball_berry_index`. Each of these
-requires an `exdf` object containing Licor data, as well as the names of
-several important columns in the data. The units for each column will be checked
-in an attempt to avoid unit-related errors. More information about these
-functions can be obtained from the built-in help system by typing
-`?calculate_gas_properties` or `?calculate_ball_berry_index`. Here we will use
-them sequentially to calculate values of the Ball-Berry index:
+requires an `exdf` object containing Licor data. The units for each required
+column will be checked in an attempt to avoid unit-related errors. More
+information about these functions can be obtained from the built-in help system
+by typing `?calculate_gas_properties` or `?calculate_ball_berry_index`. Here we
+will use them sequentially to calculate values of the Ball-Berry index:
 
 ```{r calculate_bb_index}
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
-licor_data <- calculate_gas_properties(
-  licor_data,
-  'A', 'Ca', 'DeltaPcham', 'E', 'gbw', 'gsw', 'H2O_s', 'Pa', 'TleafCnd'
-)
+licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate the Ball-Berry index
-licor_data <- calculate_ball_berry_index(licor_data, 'A', 'RHleaf', 'Csurface')
+licor_data <- calculate_ball_berry_index(licor_data)
 ```
 
 Together, these functions add several new columns to `licor_data`, including one
@@ -468,9 +464,7 @@ parameters and fits:
 ball_berry_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_ball_berry,                   # The function to apply to each chunk of `licor_data`
-  'gsw',                            # Additional argument required by `fit_ball_berry`
-  'bb_index'                        # Additional argument required by `fit_ball_berry`
+  fit_ball_berry                    # The function to apply to each chunk of `licor_data`
 ))
 ```
 

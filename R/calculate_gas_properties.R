@@ -1,14 +1,14 @@
 calculate_gas_properties <- function(
     licor_exdf,
-    a_column_name,
-    ca_column_name,
-    deltapcham_column_name,
-    e_column_name,
-    gbw_column_name,
-    gsw_column_name,
-    h2o_s_column_name,
-    pa_column_name,
-    tleaf_column_name
+    a_column_name = 'A',
+    ca_column_name = 'Ca',
+    deltapcham_column_name = 'DeltaPcham',
+    e_column_name = 'E',
+    gbw_column_name = 'gbw',
+    gsw_column_name = 'gsw',
+    h2o_s_column_name = 'H2O_s',
+    pa_column_name = 'Pa',
+    tleaf_column_name = 'TleafCnd'
 )
 {
     if (!is.exdf(licor_exdf)) {

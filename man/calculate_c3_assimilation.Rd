@@ -16,78 +16,25 @@
 \usage{
   calculate_c3_assimilation(
     exdf_obj,
-    cc_column_name,
-    pa_column_name,
-    deltapcham_column_name,
-    kc_column_name,
-    ko_column_name,
-    gamma_star_column_name,
-    vcmax_norm_column_name,
-    rd_norm_column_name,
-    j_norm_column_name,
-    POc,
     TPU,
     J,
     Rd,
-    Vcmax
+    Vcmax,
+    POc = 210000,
+    cc_column_name = 'Cc',
+    pa_column_name = 'Pa',
+    deltapcham_column_name = 'DeltaPcham',
+    kc_column_name = 'Kc',
+    ko_column_name = 'Ko',
+    gamma_star_column_name = 'Gamma_star',
+    vcmax_norm_column_name = 'Vcmax_norm',
+    rd_norm_column_name = 'Rd_norm',
+    j_norm_column_name = 'J_norm'
   )
 }
 
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
-
-  \item{cc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the chloroplastic
-    CO2 concentration (typically \code{'Cc'}).
-  }
-
-  \item{pa_column_name}{
-    The name of the column in \code{exdf_obj} that contains the atmospheric
-    pressure (typically \code{'Pa'}).
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{exdf_obj} that contains the chamber
-    overpressure (typically \code{'DeltaPcham'}).
-  }
-
-  \item{kc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the Michaelis-Menten
-    constant for rubisco carboxylation (typically \code{'Kc'}).
-  }
-
-  \item{ko_column_name}{
-    The name of the column in \code{exdf_obj} that contains the Michaelis-Menten
-    constant for rubisco oxygenation (typically \code{'Ko'}).
-  }
-
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the Gamma_star
-    values (typically \code{'Gamma_star'}).
-  }
-
-  \item{vcmax_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized Vcmax
-    values (typically \code{'Vcmax_norm'}).
-  }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized Rd
-    values (typically \code{'Rd_norm'}).
-  }
-
-  \item{j_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized J
-    values (typically \code{'J_norm'}).
-  }
-
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
-  }
 
   \item{TPU}{
     The maximum rate of triphosphate utilization, expressed in
@@ -108,6 +55,62 @@
   \item{Vcmax}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{POc}{
+    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
+    This is often assumed to be the ambient value. For air measurements, this
+    would be 21 percent O2, which is about 210000 microbar at standard
+    atmospheric pressure. For low oxygen measurements, this would be 2 percent
+    O2, which is about 20000 microbar.
+  }
+
+  \item{cc_column_name}{
+    The name of the column in \code{exdf_obj} that contains the
+    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{pa_column_name}{
+    The name of the column in \code{exdf_obj} that contains the atmospheric
+    pressure in \code{kPa}.
+  }
+
+  \item{deltapcham_column_name}{
+    The name of the column in \code{exdf_obj} that contains the chamber
+    overpressure in \code{kPa}.
+  }
+
+  \item{kc_column_name}{
+    The name of the column in \code{exdf_obj} that contains the
+    Michaelis-Menten constant for rubisco carboxylation in
+    \code{micromol mol^(-1)}.
+  }
+
+  \item{ko_column_name}{
+    The name of the column in \code{exdf_obj} that contains the
+    Michaelis-Menten constant for rubisco oxygenation in
+    \code{mmol mol^(-1)}.
+  }
+
+  \item{gamma_star_column_name}{
+    The name of the column in \code{exdf_obj} that contains the
+    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  }
+
+  \item{vcmax_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Vcmax} values (with units of
+    \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{j_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 }
 
@@ -181,23 +184,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(
-  inputs,
-  'Cc',
-  'Pa',
-  'DeltaPcham',
-  'Kc',
-  'Ko',
-  'Gamma_star',
-  'Vcmax_norm',
-  'Rd_norm',
-  'J_norm',
-  POc = 210000,
-  TPU = 12,
-  J = 150,
-  Rd = 1,
-  Vcmax = 120
-)
+assim <- calculate_c3_assimilation(inputs, 12, 150, 1, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ Cc,

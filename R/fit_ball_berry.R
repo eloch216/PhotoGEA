@@ -1,7 +1,7 @@
 fit_ball_berry <- function(
     replicate_exdf,
-    gsw_column_name,
-    bb_index_column_name
+    gsw_column_name = 'gsw',
+    bb_index_column_name = 'bb_index'
 )
 {
     if (!is.exdf(replicate_exdf)) {

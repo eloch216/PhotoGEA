@@ -20,20 +20,20 @@
 #
 calculate_c3_assimilation <- function(
     exdf_obj,
-    cc_column_name,
-    pa_column_name,
-    deltapcham_column_name,
-    kc_column_name,
-    ko_column_name,
-    gamma_star_column_name,
-    vcmax_norm_column_name,
-    rd_norm_column_name,
-    j_norm_column_name,
-    POc,      # microbar             (typically this value is known from the experimental setup)
-    TPU,      # micromol / m^2 / s   (typically this value is being fitted)
-    J,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Rd,       # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Vcmax     # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    TPU,          # micromol / m^2 / s   (typically this value is being fitted)
+    J,            # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Rd,           # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Vcmax,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    POc = 210000, # microbar             (typically this value is known from the experimental setup)
+    cc_column_name = 'Cc',
+    pa_column_name = 'Pa',
+    deltapcham_column_name = 'DeltaPcham',
+    kc_column_name = 'Kc',
+    ko_column_name = 'Ko',
+    gamma_star_column_name = 'Gamma_star',
+    vcmax_norm_column_name = 'Vcmax_norm',
+    rd_norm_column_name = 'Rd_norm',
+    j_norm_column_name = 'J_norm'
 )
 {
     if (!is.exdf(exdf_obj)) {

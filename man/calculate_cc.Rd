@@ -16,12 +16,12 @@
 \usage{
   calculate_cc(
     licor_exdf,
-    a_column_name,
-    ca_column_name,
-    ci_column_name,
-    gmc_column_name,
-    pa_column_name,
-    deltapcham_column_name
+    a_column_name = 'A',
+    ca_column_name = 'Ca',
+    ci_column_name = 'Ci',
+    gmc_column_name = 'gmc',
+    pa_column_name = 'Pa',
+    deltapcham_column_name = 'DeltaPcham'
   )
 }
 
@@ -33,32 +33,32 @@
 
   \item{a_column_name}{
     The name of the column in \code{licor_exdf} that contains the net
-    assimilation (typically \code{'A'}).
+    assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{ca_column_name}{
     The name of the column in \code{licor_exdf} that contains the ambient CO2
-    concentration in the chamber (typically \code{'Ca'}).
+    concentration in the chamber in \code{micromol mol^(-1)}.
   }
 
   \item{ci_column_name}{
     The name of the column in \code{licor_exdf} that contains the intercellular
-    CO2 concentration (typically \code{'Ci'}).
+    CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{gmc_column_name}{
     The name of the column in \code{licor_exdf} that contains the mesophyll
-    conductance to CO2 (typically \code{'gmc'}).
+    conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
   }
 
   \item{pa_column_name}{
     The name of the column in \code{licor_exdf} that contains the atmospheric
-    pressure (typically \code{'Pa'}).
+    pressure in \code{kPa}.
   }
 
   \item{deltapcham_column_name}{
     The name of the column in \code{licor_exdf} that contains the chamber
-    overpressure (typically \code{'DeltaPcham'}).
+    overpressure in \code{kPa}.
   }
 }
 
@@ -142,15 +142,7 @@ licor_file <-
   set_variable(licor_file, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0)
 
 # Calculate Cc and drawdowns
-licor_file <- calculate_cc(
-    licor_file,
-    'A',
-    'Ca',
-    'Ci',
-    'gmc',
-    'Pa',
-    'DeltaPcham'
-  )
+licor_file <- calculate_cc(licor_file)
 
 licor_file$units$Cc      # View the units of the new `Cc` column
 licor_file$categories$Cc # View the category of the new `Cc` column

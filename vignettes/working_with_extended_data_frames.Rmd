@@ -412,13 +412,10 @@ additional gas properties and the Ball-Berry index:
 
 ```{r}
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
-licor_data <- calculate_gas_properties(
-  licor_data,
-  'A', 'Ca', 'DeltaPcham', 'E', 'gbw', 'gsw', 'H2O_s', 'Pa', 'TleafCnd'
-)
+licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate the Ball-Berry index
-licor_data <- calculate_ball_berry_index(licor_data, 'A', 'RHleaf', 'Csurface')
+licor_data <- calculate_ball_berry_index(licor_data)
 ```
 
 In this example, the vector of files to load was defined manually by typing out
@@ -457,8 +454,7 @@ curve in `licor_data`:
 by_result <- by(
   licor_data,                                          # exdf object
   list(licor_data[, 'species'], licor_data[, 'plot']), # identifier columns
-  fit_ball_berry,                                      # function to apply to chunks
-  'gsw', 'bb_index'                                    # additional function arguments
+  fit_ball_berry                                       # function to apply to chunks
 )
 ```
 
