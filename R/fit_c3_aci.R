@@ -8,13 +8,15 @@
 fit_c3_aci <- function(
     replicate_exdf,
     a_column_name,
-    ca_column_name,
-    ci_column_name,
-    gmc_column_name,
+    cc_column_name,
     pa_column_name,
     deltapcham_column_name,
-    tleaf_column_name,
-    PTR_FUN,  # a function such as `photosynthesis_TRF(temperature_response_parameters_Bernacchi)`
+    kc_column_name,
+    ko_column_name,
+    gamma_star_column_name,
+    vcmax_norm_column_name,
+    rd_norm_column_name,
+    j_norm_column_name,
     POc,      # microbar             (typically this value is known from the experimental setup)
     OPTIM_FUN = function(guess, fun, lower, upper) {
         dfoptim::nmkb(guess, fun, lower, upper, control = list(
@@ -32,30 +34,25 @@ fit_c3_aci <- function(
         stop('fit_c3_aci requires an exdf object')
     }
 
-    # No need to check required columns or units; this will be taken care of by
-    # `calculate_cc` and `calculate_c3_assimilation`
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
 
-    # Calculate Cc
-    replicate_exdf <- calculate_cc(
-        replicate_exdf,
-        a_column_name,
-        ca_column_name,
-        ci_column_name,
-        gmc_column_name,
-        pa_column_name,
-        deltapcham_column_name
-    )
+    check_required_variables(replicate_exdf, required_variables)
 
     # Define the total error function
     total_error_fcn <- function(X) {
         assim <- calculate_c3_assimilation(
             replicate_exdf,
-            'Cc', # We are calling `calculate_cc` so we can assume the column is named `Cc`
-            tleaf_column_name,
+            cc_column_name,
             pa_column_name,
             deltapcham_column_name,
-            gmc_column_name,
-            PTR_FUN,
+            kc_column_name,
+            ko_column_name,
+            gamma_star_column_name,
+            vcmax_norm_column_name,
+            rd_norm_column_name,
+            j_norm_column_name,
             POc,
             X[1], # TPU
             X[2], # J
@@ -78,12 +75,15 @@ fit_c3_aci <- function(
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(
         replicate_exdf,
-        'Cc', # We are calling `calculate_cc` so we can assume the column is named `Cc`
-        tleaf_column_name,
+        cc_column_name,
         pa_column_name,
         deltapcham_column_name,
-        gmc_column_name,
-        PTR_FUN,
+        kc_column_name,
+        ko_column_name,
+        gamma_star_column_name,
+        vcmax_norm_column_name,
+        rd_norm_column_name,
+        j_norm_column_name,
         POc,
         best_X[1], # TPU
         best_X[2], # J

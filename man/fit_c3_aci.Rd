@@ -23,13 +23,15 @@
   fit_c3_aci(
     replicate_exdf,
     a_column_name,
-    ca_column_name,
-    ci_column_name,
-    gmc_column_name,
+    cc_column_name,
     pa_column_name,
     deltapcham_column_name,
-    tleaf_column_name,
-    PTR_FUN,
+    kc_column_name,
+    ko_column_name,
+    gamma_star_column_name,
+    vcmax_norm_column_name,
+    rd_norm_column_name,
+    j_norm_column_name,
     POc,
     OPTIM_FUN = function(guess, fun, lower, upper) {
       dfoptim::nmkb(guess, fun, lower, upper, control = list(
@@ -54,19 +56,9 @@
     assimilation (typically \code{'A'}).
   }
 
-  \item{ca_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the ambient
-    CO2 concentration in the chamber (typically \code{'Ca'}).
-  }
-
-  \item{ci_column_name}{
+  \item{cc_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
-    intercellular CO2 concentration (typically \code{'Ci'}).
-  }
-
-  \item{gmc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the mesophyll
-    conductance to CO2 (typically \code{'gmc'}).
+    chloroplastic CO2 concentration (typically \code{'Cc'}).
   }
 
   \item{pa_column_name}{
@@ -79,14 +71,34 @@
     overpressure (typically \code{'DeltaPcham'}).
   }
 
-  \item{tleaf_column_name}{
-    The name of the column in \code{exdf_obj} that contains the leaf temperature
-    (typically \code{'TleafCnd'}).
+  \item{kc_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    Michaelis-Menten constant for rubisco carboxylation (typically \code{'Kc'}).
   }
 
-  \item{PTR_FUN}{
-    A photosynthetic temperature response function such as
-    \code{photosynthesis_TRF(temperature_response_parameters_Bernacchi)}.
+  \item{ko_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    Michaelis-Menten constant for rubisco oxygenation (typically \code{'Ko'}).
+  }
+
+  \item{gamma_star_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the Gamma_star
+    values (typically \code{'Gamma_star'}).
+  }
+
+  \item{vcmax_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    Vcmax values (typically \code{'Vcmax_norm'}).
+  }
+
+  \item{rd_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    Rd values (typically \code{'Rd_norm'}).
+  }
+
+  \item{j_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    J values (typically \code{'J_norm'}).
   }
 
   \item{POc}{
@@ -123,12 +135,11 @@
 }
 
 \details{
-  Internally, this function calls \code{\link{calculate_cc}} to determine the
-  chloroplastic CO2 concentration, and then
-  \code{\link{calculate_c3_assimilation}} to calculate values of net
-  assimilation. The user-supplied optimization function is used to vary the
-  values of \code{TPU}, \code{J}, \code{Rd}, and \code{Vcmax} to find ones that
-  best reproduce the experimentally measured values of net assimilation.
+  This function calls \code{\link{calculate_c3_assimilation}} to calculate
+  values of net assimilation. The user-supplied optimization function is used to
+  vary the values of \code{TPU}, \code{J}, \code{Rd}, and \code{Vcmax} to find
+  ones that best reproduce the experimentally measured values of net
+  assimilation.
 
   The photosynthesis model represented by \code{calculate_c3_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
@@ -164,17 +175,17 @@
 }
 
 \examples{
-# Read an example Licor file included in the PhotoGEA package, define a new
-# column that uniquely identifies each curve, organize the data, and specify an
-# inifnite mesophyll conductance (so `Cc` = `Ci`).
+# Read an example Licor file included in the PhotoGEA package
 licor_file <- read_licor_file(
   system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA'),
   c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
 )
 
+# Define a new column that uniquely identifies each curve
 licor_file[, 'species_plot'] <-
   paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
 
+# Organize the data
 licor_file <- organize_response_curve_data(
     licor_file,
     'species_plot',
@@ -182,24 +193,35 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
+# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
 licor_file <- set_variable(
   licor_file,
   'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
 )
 
+# Calculate Cc
+licor_file <- calculate_cc(
+  licor_file,
+  'A', 'Ca', 'Ci', 'gmc', 'Pa', 'DeltaPcham'
+)
+
+# Calculate temperature-dependent values of C3 photosynthetic parameters
+licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+
 # Fit just one curve from the data set (it is rare to do this)
 one_result <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
-  'A', 'Ca', 'Ci', 'gmc', 'Pa', 'DeltaPcham', 'TleafCnd',
-  photosynthesis_TRF(temperature_response_parameters_Sharkey),
-  210000,
-  function(guess, fun, lower, upper) {
-    dfoptim::nmkb(guess, fun, lower, upper, control = list(
-      tol = 1e-7,
-      maxfeval = 2000,
-      restarts.max = 10
-    ))
-  }
+  'A',
+  'Cc',
+  'Pa',
+  'DeltaPcham',
+  'Kc',
+  'Ko',
+  'Gamma_star',
+  'Vcmax_norm',
+  'Rd_norm',
+  'J_norm',
+  210000
 )
 
 # Fit all curves in the data set (it is more common to do this)
@@ -207,8 +229,16 @@ aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c3_aci,
-  'A', 'Ca', 'Ci', 'gmc', 'Pa', 'DeltaPcham', 'TleafCnd',
-  photosynthesis_TRF(temperature_response_parameters_Sharkey),
+  'A',
+  'Cc',
+  'Pa',
+  'DeltaPcham',
+  'Kc',
+  'Ko',
+  'Gamma_star',
+  'Vcmax_norm',
+  'Rd_norm',
+  'J_norm',
   210000
 ))
 

@@ -20,6 +20,7 @@ export(smooth_tdl_data)
 
 # Functions for scientific analysis
 export(basic_stats)
+export(calculate_arrhenius)
 export(calculate_ball_berry_index)
 export(calculate_c3_assimilation)
 export(calculate_cc)

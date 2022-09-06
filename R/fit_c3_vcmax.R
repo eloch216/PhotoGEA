@@ -43,8 +43,8 @@ fit_c3_vcmax <- function(
 
     # Adjust Vcmax and Rd to 25 C
     photo_param <- PTR_FUN(mean(replicate_exdf[, tleaf_column_name]))
-    Vcmax_at_25 <- Vcmax / photo_param$Vcmax
-    Rd_at_25 <- Rd / photo_param$Rd
+    Vcmax_at_25 <- Vcmax / photo_param$Vcmax_norm
+    Rd_at_25 <- Rd / photo_param$Rd_norm
 
     # Calculate the fit line and add it to the data frame
     replicate_exdf[, paste0(a_column_name, '_fit')] <-

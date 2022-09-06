@@ -21,11 +21,14 @@
 calculate_c3_assimilation <- function(
     exdf_obj,
     cc_column_name,
-    tleaf_column_name,
     pa_column_name,
     deltapcham_column_name,
-    gmc_column_name,
-    PTR_FUN,  # a function such as `photosynthesis_TRF(temperature_response_parameters_Bernacchi)`
+    kc_column_name,
+    ko_column_name,
+    gamma_star_column_name,
+    vcmax_norm_column_name,
+    rd_norm_column_name,
+    j_norm_column_name,
     POc,      # microbar             (typically this value is known from the experimental setup)
     TPU,      # micromol / m^2 / s   (typically this value is being fitted)
     J,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
@@ -34,40 +37,37 @@ calculate_c3_assimilation <- function(
 )
 {
     if (!is.exdf(exdf_obj)) {
-        stop("calculate_c3_assimilation requires an exdf object")
+        stop('calculate_c3_assimilation requires an exdf object')
     }
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[cc_column_name]] <- "micromol mol^(-1)"
-    required_variables[[tleaf_column_name]] <- "degrees C"
-    required_variables[[pa_column_name]] <- "kPa"
-    required_variables[[deltapcham_column_name]] <- "kPa"
-    required_variables[[gmc_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
+    required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[pa_column_name]] <- 'kPa'
+    required_variables[[deltapcham_column_name]] <- 'kPa'
+    required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
+    required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
+    required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
+    required_variables[[j_norm_column_name]] <- 'normalized to J at 25 degrees C'
 
     check_required_variables(exdf_obj, required_variables)
 
     # Extract a few columns from the exdf object to make the equations easier to
-    # read
+    # read, converting units as necessary
     pressure <- 0.01 *
         (exdf_obj[, pa_column_name] + exdf_obj[, deltapcham_column_name]) # bar
 
     PCc <- exdf_obj[, cc_column_name] * pressure # microbar
-    Tleaf <- exdf_obj[, tleaf_column_name]       # degrees C
-    gmc <- exdf_obj[, gmc_column_name]           # mol m^(-2) s^(-1) bar^(-1)
 
-    # Calculate temperature-dependent parameter values
-    photo_param <- PTR_FUN(Tleaf)
+    Kc <- exdf_obj[, kc_column_name] * pressure                 # microbar
+    Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
+    Gamma_star <- exdf_obj[, gamma_star_column_name] * pressure # microbar
 
-    # Extract Kc, Ko, Kp, Gamma_star, ao, and gm
-    Kc <- photo_param$Kc * pressure                 # microbar
-    Ko <- photo_param$Ko * pressure * 1000          # microbar
-    Gamma_star <- photo_param$Gamma_star * pressure # microbar
-
-    # Apply temperature responses to Vcmax, Rd, and J
-    Vcmax_tl <- Vcmax * photo_param$Vcmax  # micromol / m^2 / s
-    Rd_tl <- Rd * photo_param$Rd           # micromol / m^2 / s
-    J_tl <- J * photo_param$J              # micromol / m^2 / s
+    Vcmax_tl <- Vcmax * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
+    Rd_tl <- Rd * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
+    J_tl <- J * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
 
     # Calculate terms that appear in several of the next equations
     CG <- PCc - Gamma_star # microbar
@@ -91,9 +91,6 @@ calculate_c3_assimilation <- function(
     # Make a new exdf object from the calculated variables and make sure units
     # are included
     return_exdf <- exdf(data.frame(
-        Kc = Kc,
-        Ko = Ko,
-        Gamma_star = Gamma_star,
         Vcmax_tl = Vcmax_tl,
         Rd_tl = Rd_tl,
         J_tl = J_tl,
@@ -105,9 +102,6 @@ calculate_c3_assimilation <- function(
 
     document_variables(
         return_exdf,
-        c('calculate_c3_assimilation', 'Kc',         'microbar'),
-        c('calculate_c3_assimilation', 'Ko',         'microbar'),
-        c('calculate_c3_assimilation', 'Gamma_star', 'microbar'),
         c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
         c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
         c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),

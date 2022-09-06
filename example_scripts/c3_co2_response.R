@@ -108,7 +108,7 @@ MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide which temperature response parameters to use
-PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
+PTR_FUN <- photosynthesis_TRF(c3_arrhenius_bernacchi)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -126,7 +126,7 @@ GSW_COLUMN_NAME <- "gsw"
 IWUE_COLUMN_NAME <- "iwue"
 O2_COLUMN_NAME <- "O2"
 F_PRIME_COLUMN_NAME <- "f_prime"
-GAMMA_STAR_COLUMN_NAME <- "gamma_star"
+GAMMA_STAR_COLUMN_NAME <- "Gamma_star"
 KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
 TLEAF_COLUMN_NAME <- "TleafCnd"

@@ -15,19 +15,22 @@
 
 \usage{
   calculate_c3_assimilation(
-  exdf_obj,
-  cc_column_name,
-  tleaf_column_name,
-  pa_column_name,
-  deltapcham_column_name,
-  gmc_column_name,
-  PTR_FUN,
-  POc,
-  TPU,
-  J,
-  Rd,
-  Vcmax
-)
+    exdf_obj,
+    cc_column_name,
+    pa_column_name,
+    deltapcham_column_name,
+    kc_column_name,
+    ko_column_name,
+    gamma_star_column_name,
+    vcmax_norm_column_name,
+    rd_norm_column_name,
+    j_norm_column_name,
+    POc,
+    TPU,
+    J,
+    Rd,
+    Vcmax
+  )
 }
 
 \arguments{
@@ -36,11 +39,6 @@
   \item{cc_column_name}{
     The name of the column in \code{exdf_obj} that contains the chloroplastic
     CO2 concentration (typically \code{'Cc'}).
-  }
-
-  \item{tleaf_column_name}{
-    The name of the column in \code{exdf_obj} that contains the leaf
-    temperature (typically \code{'TleafCnd'}).
   }
 
   \item{pa_column_name}{
@@ -53,14 +51,34 @@
     overpressure (typically \code{'DeltaPcham'}).
   }
 
-  \item{gmc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the mesophyll
-    conductance to CO2 (typically \code{'gmc'}).
+  \item{kc_column_name}{
+    The name of the column in \code{exdf_obj} that contains the Michaelis-Menten
+    constant for rubisco carboxylation (typically \code{'Kc'}).
   }
 
-  \item{PTR_FUN}{
-    A photosynthetic temperature response function such as
-    \code{photosynthesis_TRF(temperature_response_parameters_Bernacchi)}.
+  \item{ko_column_name}{
+    The name of the column in \code{exdf_obj} that contains the Michaelis-Menten
+    constant for rubisco oxygenation (typically \code{'Ko'}).
+  }
+
+  \item{gamma_star_column_name}{
+    The name of the column in \code{exdf_obj} that contains the Gamma_star
+    values (typically \code{'Gamma_star'}).
+  }
+
+  \item{vcmax_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized Vcmax
+    values (typically \code{'Vcmax_norm'}).
+  }
+
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized Rd
+    values (typically \code{'Rd_norm'}).
+  }
+
+  \item{j_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized J
+    values (typically \code{'J_norm'}).
   }
 
   \item{POc}{
@@ -113,8 +131,7 @@
   the Michaelis-Menten constant for CO2, \code{Ko} is the Michaelis-Menten
   constant for O2, and \code{Rd_tl} is the leaf-temperature-adjusted respiration
   rate. Here, the temperature corrections are applied to \code{Vcmax} and
-  \code{Rd} using \code{PTR_FUN}, and temperature-dependent values of \code{Kc},
-  \code{Ko}, and \code{Gamma_star} are also determined from \code{PTR_FUN}.
+  \code{Rd} using the normalized values \code{Vcmax_norm} and \code{Rd_norm}.
   \code{PCc} is calculated from the chloroplastic CO2 concentration \code{Cc}
   using the total pressure (ambient pressure + chamber overpressure).
 
@@ -122,8 +139,8 @@
 
   \code{Aj = (PCc - Gamma_star) * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl}
 
-  where \code{J_tl} is the leaf-temperature-adjusted value of \code{J}, as
-  determined using \code{PTR_FUN}.
+  where \code{J_tl} is the leaf-temperature-adjusted value of \code{J},
+  determined from the normalized value \code{J_norm}.
 
   The phosphate-limited rate is calculated using Equation 2.26:
 
@@ -135,10 +152,10 @@
 
 \value{
   An \code{exdf} object with the following columns, calculated as described
-  above: \code{Kc}, \code{Ko}, \code{Gamma_star}, \code{Vcmax_tl}, \code{Rd_tl},
-  \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, and \code{An}. The category for
-  each of these new columns is \code{calculate_c3_assimilation} to indicate that
-  they were created using this function.
+  above: \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac}, \code{Aj},
+  \code{Ap}, and \code{An}. The category for each of these new columns is
+  \code{calculate_c3_assimilation} to indicate that they were created using this
+  function.
 }
 
 \examples{
@@ -151,8 +168,7 @@ inputs <- exdf(data.frame(
   Cc = seq(0, 600, length.out = npts),
   Tleaf = 30,
   Pa = 100,
-  DeltaPcham = 0.1,
-  gmc = 1.0
+  DeltaPcham = 0.1
 ))
 
 inputs <- document_variables(
@@ -160,18 +176,22 @@ inputs <- document_variables(
   c('', 'Cc',         'micromol mol^(-1)'),
   c('', 'Tleaf',      'degrees C'),
   c('', 'Pa',         'kPa'),
-  c('', 'DeltaPcham', 'kPa'),
-  c('', 'gmc',        'mol m^(-2) s^(-1) bar^(-1)')
+  c('', 'DeltaPcham', 'kPa')
 )
+
+inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
 assim <- calculate_c3_assimilation(
   inputs,
   'Cc',
-  'Tleaf',
   'Pa',
   'DeltaPcham',
-  'gmc',
-  photosynthesis_TRF(temperature_response_parameters_Sharkey),
+  'Kc',
+  'Ko',
+  'Gamma_star',
+  'Vcmax_norm',
+  'Rd_norm',
+  'J_norm',
   POc = 210000,
   TPU = 12,
   J = 150,
