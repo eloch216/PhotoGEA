@@ -35,8 +35,7 @@
 
   \item{cc_column_name}{
     The name of the column in \code{exdf_obj} that contains the chloroplastic
-    CO2 concentration (typically \code{'Cc'}). The values of column are often
-    calculated using the \code{\link{calculate_cc}} function.
+    CO2 concentration (typically \code{'Cc'}).
   }
 
   \item{tleaf_column_name}{
@@ -56,8 +55,7 @@
 
   \item{gmc_column_name}{
     The name of the column in \code{exdf_obj} that contains the mesophyll
-    conductance to CO2 (typically \code{'gmc'}). The values of this column are
-    often set using the \code{\link{set_variable}} function.
+    conductance to CO2 (typically \code{'gmc'}).
   }
 
   \item{PTR_FUN}{

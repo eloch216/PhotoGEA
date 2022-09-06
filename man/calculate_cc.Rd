@@ -19,7 +19,7 @@
     a_column_name,
     ca_column_name,
     ci_column_name,
-    gm_column_name,
+    gmc_column_name,
     pa_column_name,
     deltapcham_column_name
   )
@@ -46,7 +46,7 @@
     CO2 concentration (typically \code{'Ci'}).
   }
 
-  \item{gm_column_name}{
+  \item{gmc_column_name}{
     The name of the column in \code{licor_exdf} that contains the mesophyll
     conductance to CO2 (typically \code{'gmc'}).
   }

@@ -240,6 +240,8 @@ response curves:
 
 - `fit_ball_berry`: Calculates a linear fit of stomatal conductance to H~2~O vs.
   the Ball-Berry index.
+- `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.
+  chloroplastic CO~2~ concentration.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)

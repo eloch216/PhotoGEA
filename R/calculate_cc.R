@@ -3,7 +3,7 @@ calculate_cc <- function(
     a_column_name,
     ca_column_name,
     ci_column_name,
-    gm_column_name,
+    gmc_column_name,
     pa_column_name,
     deltapcham_column_name
 )
@@ -17,7 +17,7 @@ calculate_cc <- function(
     required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
     required_variables[[ca_column_name]] <- "micromol mol^(-1)"
     required_variables[[ci_column_name]] <- "micromol mol^(-1)"
-    required_variables[[gm_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
+    required_variables[[gmc_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
     required_variables[[pa_column_name]] <- "kPa"
     required_variables[[deltapcham_column_name]] <- "kPa"
 
@@ -31,7 +31,7 @@ calculate_cc <- function(
     # Make calculations
     licor_exdf[,cc_column_name] <-
         licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] /
-            (licor_exdf[,gm_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100)
+            (licor_exdf[,gmc_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100)
 
     licor_exdf[,drawdown_m_column_name] <-
         licor_exdf[,ci_column_name] - licor_exdf[,cc_column_name]
