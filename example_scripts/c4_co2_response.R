@@ -171,6 +171,10 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
+    # Calculate temperature-dependent values of C4 parameters
+    combined_info <-
+        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
+
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
         combined_info,
@@ -208,8 +212,15 @@ if (PERFORM_CALCULATIONS) {
         CI_COLUMN_NAME,
         PRESSURE_COLUMN_NAME,
         DELTA_PRESSURE_COLUMN_NAME,
-        TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)
+        'Kc',
+        'Ko',
+        'Kp',
+        'gamma_star',
+        'ao',
+        'gmc',
+        'Vcmax_norm',
+        'Vpmax_norm',
+        'Rd_norm',
     ))
 
     all_fit_parameters <- fit_result$parameters
