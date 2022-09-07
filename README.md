@@ -23,9 +23,11 @@ from within R by typing `install.packages('remotes')`.
 ### Learning to Use PhotoGEA
 
 The best way to learn about using `PhotoGEA` is to visit the
-[PhotoGEA website](https://eloch216.github.io/PhotoGEA/index.html), which
-includes several articles that describe the general features of `PhotoGEA` and
-several important use cases.
+[PhotoGEA website](https://eloch216.github.io/PhotoGEA/index.html) and click the
+[Get started](https://eloch216.github.io/PhotoGEA/articles/PhotoGEA.html) link
+in the top menu bar. The website includes documentation for all the functions
+and data sets included in the package, as well as articles that describe its
+general features and several important use cases.
 
 ### Example Scripts
 

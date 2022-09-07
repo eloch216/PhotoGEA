@@ -117,7 +117,9 @@ as `exdf` objects). The `exdf` class is a special data structure defined by the
 `PhotoGEA` package. In many ways, an `exdf` object is equivalent to a data
 frame, with the major difference being that an `exdf` object includes the units
 of each column. For more information, type `?exdf` in the R terminal to access
-the built-in help menu entry.
+the built-in help menu entry, or check out the
+[Working With Extended Data Frames](working_with_extended_data_frames.html)
+vignette.
 
 Generally, it is more convenient to work with a single `exdf` object rather than
 a list of them, so our next step will be to combine the objects in the list.
@@ -145,7 +147,10 @@ tdl_files <- do.call(rbind, tdl_exdf_list)
 ```
 
 Now we have a single R object called `tdl_files` that includes all the data
-from several TDL data files.
+from several TDL data files. For more information about consolidating
+information from multiple files, see the _Common Patterns_ section of the
+[Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
+vignette.
 
 # Identifying TDL Cycles
 
@@ -207,9 +212,12 @@ from `PhotoGEA`. To apply this function to each TDL cycle in a larger data set
 and then consolidate the results, we can use it in conjunction with `by` and
 `consolidate`, which are also part of `PhotoGEA`. (For more information about
 these functions, see the built-in help menu entries by typing
-`?process_tdl_cycle_erml`, `?by.exdf`, or `?consolidate`.) As with the previous
-function, many of the inputs here (such as `noaa_cylinder_isotope_ratio`) must
-be obtained from whoever is managing the TDL system being used:
+`?process_tdl_cycle_erml`, `?by.exdf`, or `?consolidate`, or check out the
+_Common Patterns_ section of the
+[Working With Extended Data Frames](working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
+vignette.) As with the previous function, many of the inputs here (such as
+`noaa_cylinder_isotope_ratio`) must be obtained from whoever is managing the TDL
+system being used:
 
 ```{r}
 # Use the data from the calibration valves to determine calibrated carbon
@@ -573,7 +581,10 @@ file_paths <- choose_input_tdl_files()
 ```
 
 Unfortunately, `choose_input_tdl_files` is only available in interactive R
-sessions running on Microsoft Windows.
+sessions running on Microsoft Windows, but there is also a platform-independent
+option: `choose_input_files`. See the _Translation_ section of the
+[Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html#translation)
+vignette for more details.
 
 ## Plots for Checking
 
@@ -622,7 +633,8 @@ The following code chunk includes all the central commands used throughout this
 document. They are compiled here to make them easy to copy/paste into a text
 file to initialize your own script. Annotation has also been added to clearly
 indicate the four steps involved in data analysis, as described in the
-_Developing a Data Analysis Pipeline_ vignette.
+[Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html)
+vignette.
 
 ```{r, eval = FALSE}
 ###

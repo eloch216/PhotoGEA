@@ -135,7 +135,9 @@ as `exdf` objects). The `exdf` class is a special data structure defined by the
 `PhotoGEA` package. In many ways, an `exdf` object is equivalent to a data
 frame, with the major difference being that an `exdf` object includes the units
 of each column. For more information, type `?exdf` in the R terminal to access
-the built-in help menu entry.
+the built-in help menu entry, or check out the
+[Working With Extended Data Frames](working_with_extended_data_frames.html)
+vignette.
 
 Generally, it is more convenient to work with a single `exdf` object rather than
 a list of them, so our next step will be to combine the objects in the list.
@@ -163,7 +165,10 @@ licor_data <- do.call(rbind, licor_exdf_list)
 ```
 
 Now we have a single R object called `licor_data` that includes all the data
-from several Licor Excel files.
+from several Licor Excel files. For more information about consolidating
+information from multiple files, see the _Common Patterns_ section of the
+[Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
+vignette.
 
 # Checking Licor Data
 
@@ -454,7 +459,9 @@ apply this function to each curve in a larger data set and then consolidate the
 results, we can use it in conjunction with `by` and `consolidate`, which are
 also part of `PhotoGEA`. (For more information about these functions, see the
 built-in help menu entries by typing `?fit_ball_berry`, `?by.exdf`, or
-`?consolidate`.) Together, these functions will split apart the main data using
+`?consolidate`, or check out the _Common Patterns_ section of the
+[Working With Extended Data Frames](working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
+vignette.) Together, these functions will split apart the main data using
 the curve identifier column we defined before ([Basic Checks]), make a linear
 fit of $g_{sw}$ against the Ball-Berry index, and return the resulting
 parameters and fits:
@@ -556,7 +563,10 @@ file_paths <- choose_input_licor_files()
 ```
 
 Unfortunately, `choose_input_licor_files` is only available in interactive R
-sessions running on Microsoft Windows.
+sessions running on Microsoft Windows, but there is also a platform-independent
+option: `choose_input_files`. See the _Translation_ section of the
+[Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html#translation)
+vignette for more details.
 
 ## Curve Identifier
 
@@ -597,7 +607,8 @@ The following code chunk includes all the central commands used throughout this
 document. They are compiled here to make them easy to copy/paste into a text
 file to initialize your own script. Annotation has also been added to clearly
 indicate the four steps involved in data analysis, as described in the
-_Developing a Data Analysis Pipeline_ vignette.
+[Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html)
+vignette.
 
 ```{r, eval = FALSE}
 ###

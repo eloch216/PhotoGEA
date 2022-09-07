@@ -44,9 +44,9 @@ time writing code.
 In this vignette, we will describe the most important functions in `PhotoGEA`
 and how they relate to a general data workflow or "pipeline." The description
 given here will be general, but more detailed examples can be found in the other
-vignettes such as _Analyzing Ball-Berry Data_. We will also discuss some general
-strategies for writing scripts that are customized for your own data and
-preferences.
+vignettes such as [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html).
+We will also discuss some general strategies for writing scripts that are
+customized for your own data and preferences.
 
 # Key Steps in Analyzing Data
 
@@ -87,8 +87,9 @@ Both of these functions produce "extended data frame" (`exdf`) objects in R. The
 `exdf` class is very similar to a regular data frame, with the main difference
 being that an `exdf` object keeps track of the units associated with each
 column. This data structure provides several key benefits when analyzing gas
-exchange data, and more information is available in the _Working with Extended
-Data Frames_ vignette.
+exchange data, and more information is available in the
+[Working with Extended Data Frames](working_with_extended_data_frames.html)
+vignette.
 
 It is often the case that a full data set is spread across multiple files.
 Because of this, translating data into R often involves combining multiple
@@ -103,7 +104,8 @@ that can be used to select files via dialog windows:
 It also provides the `identify_common_columns` function, which can be used along
 with `rbind` to easily combine a set of `exdf` objects. This operation is
 described in the _Combining Data From Several Files_ section of the
-_Working with Extended Data Frames_ vignette.
+[Working with Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
+vignette.
 
 The process of translation "sets the stage" for the validation, processing, and
 synthesis steps in the sense that it determines the structure of the data. In
@@ -186,9 +188,10 @@ validation:
   temperatures for the other points in a response curve.
 
 In addition to these functions, there are more basic operations for subsetting
-and plotting that can be used to help with validation; see the _Working with
-Extended Data Frames_ vignette for more details about subsetting and plotting
-data from `exdf` objects.
+and plotting that can be used to help with validation; see the
+[Working with Extended Data Frames](working_with_extended_data_frames.html)
+vignette for more details about subsetting and plotting data from `exdf`
+objects.
 
 ## Processing
 
@@ -258,8 +261,9 @@ single response curve. However, they can be used in conjunction with the `by`
 and `consolidate` functions to automatically split a large `exdf` into
 individual curves, apply the fitting function to each curve, and combine the
 results from each fit; see the _Processing Multiple Pieces of an Extended Data
-Frame_ section of the _Working with Extended Data Frames_ vignette for more
-details about doing this.
+Frame_ section of the
+[Working with Extended Data Frames](working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
+vignette for more details about doing this.
 
 ## Synthesis
 

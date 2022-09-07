@@ -322,18 +322,33 @@ print(exdf_2)
 The units and category of the new column can be modified later with
 `document_variables` as in [Initializing with Default Units and Categories].
 
-**Important note**: It is generally a bad idea to directly modify `main_data`
-because this can cause problems. For example, we could try adding another new
-column called `D` using the following code:
+Alternatively, the `set_variable` function can be used to set the value, units,
+and category of a column in an extended data frame in one step. Here we use this
+function to add a new column called `D` with units of `kg` and category `cat4`
+whose value is 20:
 
 ```{r}
-exdf_2$main_data$D <- 17
+exdf_2 <- set_variable(exdf_2, 'D', 'kg', 'cat4', 20)
+
+print(exdf_2)
+```
+
+The `set_variable` function also has more advanced abilities to set separate
+values of a column for different subsets of an extended data frame; for more
+information, see its help menu entry by typing `?set_variable`.
+
+**Important note**: It is generally a bad idea to directly modify `main_data`
+because this can cause problems. For example, we could try adding another new
+column called `E` using the following code:
+
+```{r}
+exdf_2$main_data$E <- 17
 ```
 
 Now, `exdf_2` is no longer a properly defined `exdf` object because there is a
-`D` column in `exdf_2$main_data` that is not present in `exdf_2$units` or
+`E` column in `exdf_2$main_data` that is not present in `exdf_2$units` or
 `exdf_2$categories`. This may prevent other functions from working properly; for
-example, `print` will not properly display the `D` column. This is a subtle
+example, `print` will not properly display the `E` column. This is a subtle
 problem that can only be detected using `is.exdf` with `consistency_check` set
 to `TRUE`:
 
@@ -374,7 +389,7 @@ be visualized as stacking tables on top of each other vertically, and it only
 makes sense if they all have the same columns. It is common for Licor files to
 have some differences between their columns, so these steps are usually
 necessary. Even if all the files *do* have the same columns, taking these steps
-will not cause any issues.
+will not cause any issues, so there's no harm in always doing this.
 
 The following is an example of code that accomplishes these steps:
 
@@ -404,7 +419,7 @@ licor_data <- do.call(rbind, licor_exdf_list)
 
 This pattern (where files are loaded, truncated to common columns, and then
 combined) is found in most analysis scripts, such as the one in the
-_Analyzing Ball-Berry Data_ vignette.
+[Analyzing Ball-Berry Data](analyzing_ball_berry_data.html) vignette.
 
 Now that the data from the files has been combined into one `exdf` object, it's
 easy to perform calculations on all of it at once. For example, we can calculate
@@ -502,7 +517,7 @@ ball_berry_parameters <- ball_berry_result$parameters
 
 This pattern (where a function is applied to multiple curves using `consolidate`
 and `by`) is found in most analysis scripts, such as the one in the
-_Analyzing Ball-Berry Data_ vignette.
+[Analyzing Ball-Berry Data](analyzing_ball_berry_data.html) vignette.
 
 ## Plotting Data From an Extended Data Frame
 
@@ -553,7 +568,7 @@ xyplot(
 This pattern (where the `main_data` element of an `exdf` object is passed to
 `lattice::xyplot` and its `units` element is used to create informative axis
 labels) is found in most analysis scripts, such as the one in the
-_Analyzing Ball-Berry Data_ vignette.
+[Analyzing Ball-Berry Data](analyzing_ball_berry_data.html) vignette.
 
 # How To Find More Information
 
