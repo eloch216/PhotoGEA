@@ -90,7 +90,7 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The main purpose of the <code>PhotoGEA</code> package is to provide tools for creating a “data analysis pipeline” for photosynthetic gas exchange data. Although the base version of R coupled with popular packages like <code>lattice</code> and <code>ggplot2</code> provides an excellent set of general tools for data analysis, it is not specialized for gas exchange data, and using it for this purpose can sometimes be tedious because it usually requires writing various customized functions. <code>PhotoGEA</code> is designed to address these gaps by providing several specialized functions related to photosynthetic gas exchange data. By using these functions, you can spend more time extracting important information from your data and less time writing code.</p>
-<p>In this vignette, we will describe the most important functions in <code>PhotoGEA</code> and how they relate to a general data workflow or “pipeline.” The description given here will be general, but more detailed examples can be found in the other vignettes such as <em>Analyzing Ball-Berry Data</em>. We will also discuss some general strategies for writing scripts that are customized for your own data and preferences.</p>
+<p>In this vignette, we will describe the most important functions in <code>PhotoGEA</code> and how they relate to a general data workflow or “pipeline.” The description given here will be general, but more detailed examples can be found in the other vignettes such as <a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>. We will also discuss some general strategies for writing scripts that are customized for your own data and preferences.</p>
 </div>
 <div class="section level2">
 <h2 id="key-steps-in-analyzing-data">Key Steps in Analyzing Data<a class="anchor" aria-label="anchor" href="#key-steps-in-analyzing-data"></a>
@@ -118,7 +118,7 @@
 <li>
 <code>read_tdl_file</code>: Creates an R data object from a data file created by a tunable diode laser measurement system.</li>
 </ul>
-<p>Both of these functions produce “extended data frame” (<code>exdf</code>) objects in R. The <code>exdf</code> class is very similar to a regular data frame, with the main difference being that an <code>exdf</code> object keeps track of the units associated with each column. This data structure provides several key benefits when analyzing gas exchange data, and more information is available in the <em>Working with Extended Data Frames</em> vignette.</p>
+<p>Both of these functions produce “extended data frame” (<code>exdf</code>) objects in R. The <code>exdf</code> class is very similar to a regular data frame, with the main difference being that an <code>exdf</code> object keeps track of the units associated with each column. This data structure provides several key benefits when analyzing gas exchange data, and more information is available in the <a href="working_with_extended_data_frames.html">Working with Extended Data Frames</a> vignette.</p>
 <p>It is often the case that a full data set is spread across multiple files. Because of this, translating data into R often involves combining multiple <code>exdf</code> objects (one from each file) together into one object that holds all of the data. To help with this, the <code>PhotoGEA</code> package provides several functions that can be used to select files via dialog windows:</p>
 <ul>
 <li><code>choose_input_files</code></li>
@@ -127,7 +127,7 @@
 <li>
 <code>choose_input_tdl_files</code> (only available on Microsoft Windows)</li>
 </ul>
-<p>It also provides the <code>identify_common_columns</code> function, which can be used along with <code>rbind</code> to easily combine a set of <code>exdf</code> objects. This operation is described in the <em>Combining Data From Several Files</em> section of the <em>Working with Extended Data Frames</em> vignette.</p>
+<p>It also provides the <code>identify_common_columns</code> function, which can be used along with <code>rbind</code> to easily combine a set of <code>exdf</code> objects. This operation is described in the <em>Combining Data From Several Files</em> section of the <a href="working_with_extended_data_frames.html#combining-data-from-several-files">Working with Extended Data Frames</a> vignette.</p>
 <p>The process of translation “sets the stage” for the validation, processing, and synthesis steps in the sense that it determines the structure of the data. In other words, because these translation functions produce <code>exdf</code> objects, many of the other functions used in the remaining data analysis steps are also designed to work with <code>exdf</code> objects.</p>
 </div>
 <div class="section level3">
@@ -177,7 +177,7 @@
 <li>
 <code>exclude_outliers</code>: This function can be used to remove points where measurement conditions are unusual; for example, if a leaf temperature value recorded by a Li-6800 is significantly different from the recorded temperatures for the other points in a response curve.</li>
 </ul>
-<p>In addition to these functions, there are more basic operations for subsetting and plotting that can be used to help with validation; see the <em>Working with Extended Data Frames</em> vignette for more details about subsetting and plotting data from <code>exdf</code> objects.</p>
+<p>In addition to these functions, there are more basic operations for subsetting and plotting that can be used to help with validation; see the <a href="working_with_extended_data_frames.html">Working with Extended Data Frames</a> vignette for more details about subsetting and plotting data from <code>exdf</code> objects.</p>
 </div>
 <div class="section level3">
 <h3 id="processing">Processing<a class="anchor" aria-label="anchor" href="#processing"></a>
@@ -214,7 +214,7 @@
 </ul>
 <p>(This list is not exhaustive; instead, it only includes functions for which documentation has been written.)</p>
 <p>These functions generally assume that the input <code>exdf</code> object represents a single response curve, and they return both the optimized parameter values and the fitted values of the measured varaibles; for example, <code>fit_ball_berry</code> performs the fit on a single Ball-Berry curve and returns the Ball-Berry intercept, the Ball-Berry slope, and the fitted values of stomatal conductance.</p>
-<p>These functions cannot be applied directly to an <code>exdf</code> object that contains a full set of multiple response curves, because they assume that their input is a single response curve. However, they can be used in conjunction with the <code>by</code> and <code>consolidate</code> functions to automatically split a large <code>exdf</code> into individual curves, apply the fitting function to each curve, and combine the results from each fit; see the <em>Processing Multiple Pieces of an Extended Data Frame</em> section of the <em>Working with Extended Data Frames</em> vignette for more details about doing this.</p>
+<p>These functions cannot be applied directly to an <code>exdf</code> object that contains a full set of multiple response curves, because they assume that their input is a single response curve. However, they can be used in conjunction with the <code>by</code> and <code>consolidate</code> functions to automatically split a large <code>exdf</code> into individual curves, apply the fitting function to each curve, and combine the results from each fit; see the <em>Processing Multiple Pieces of an Extended Data Frame</em> section of the <a href="working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame">Working with Extended Data Frames</a> vignette for more details about doing this.</p>
 </div>
 </div>
 <div class="section level3">
