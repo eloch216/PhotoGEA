@@ -1,0 +1,193 @@
+---
+title: "Getting Started With PhotoGEA"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Getting Started With PhotoGEA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5,
+  fig.align = "center"
+)
+```
+
+# Overview
+
+**PhotoGEA** (short for **photo**synthetic **g**as **e**xchange **a**nalysis) is
+an R package that provides a suite of tools for loading, processing, and
+analyzing photosynthetic gas exchange data.
+
+# Installing PhotoGEA
+
+The easiest way to install `PhotoGEA` is to type the following from within the R
+terminal:
+
+```{r, eval = FALSE}
+remotes::install_github('eloch216/PhotoGEA')
+```
+
+Note that this method requires the `remotes` package, which can be installed
+from within R by typing `install.packages('remotes')`.
+
+# An Example: C~3~ CO~2~ Response Curves
+
+As an example, we will read data from two Licor Li-6800 log files that
+contain several A-Ci curves measured from tobacco and soybean plants, fit a
+model to each response curve, and then plot some of the results. This is a
+basic example that just scratches the surface of what is possible with
+`PhotoGEA`.
+
+## Fitting the Curves
+
+The following code can be used to read the data and fit each curve:
+
+```{r example, eval = FALSE}
+# Load required packages
+library(PhotoGEA)
+library(lattice)
+
+# Define a vector of paths to the files we wish to load
+file_paths <- c(
+  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA'),
+  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
+)
+
+# Load the data from each file
+licor_exdf_list <- lapply(file_paths, function(fpath) {
+  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+})
+
+# Get the names of all columns that are present in all of the Licor files
+columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+
+# Extract just these columns
+licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+  x[ , columns_to_keep, TRUE]
+})
+
+# Combine the data from all the files
+licor_data <- do.call(rbind, licor_exdf_list)
+
+# Define a new column that uniquely identifies each curve
+licor_data[, 'curve_id'] <-
+  paste(licor_data[, 'species'], '-', licor_data[, 'plot'] )
+
+# Organize the data
+licor_data <- organize_response_curve_data(
+    licor_data,
+    'curve_id',
+    c(9, 10, 16),
+    'CO2_r_sp'
+)
+
+# Specify separate mesophyll conductance values for each species
+licor_data <- set_variable(
+  licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
+  id_column = 'species',
+  value_table = list(soybean = 0.9, tobacco = 1.1)
+)
+
+# Calculate Cc
+licor_data <- calculate_cc(licor_data)
+
+# Calculate temperature-dependent values of C3 photosynthetic parameters
+licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
+
+# Fit all curves in the data set
+aci_results <- consolidate(by(
+  licor_data,
+  licor_data[, 'curve_id'],
+  fit_c3_aci
+))
+```
+
+```{r, echo = FALSE}
+timing <- system.time({
+<<example>>
+})
+```
+
+When this document was generated, evaluating this code required the following
+amount of time:
+
+```{r, echo = FALSE}
+timing
+```
+
+The timing results may vary depending on the particular machine used to run the
+code. Nevertheless: _Do you think you could fit six A-Ci curves in less than
+`r ceiling(timing[['elapsed']])` seconds using any other method?_
+
+This example contains 11 commands, so it certainly isn't short; however, a close
+look reveals that much of the commands are general and would apply to _any_ set
+of C~3~ response curves. In fact, only a few parts would need to be modified,
+such as the list of files to read, the curve identifier, and the value of
+mesophyll conductance. While using `PhotoGEA`, you are encouraged to copy this
+example and any others to use as the base of your own scripts; work smarter, not
+harder!
+
+## Viewing the Results
+
+Having fit the response curves, it is also possible to view the fits and the
+extracted parameters. For example, we can plot the measured values of net
+assimilation (`A`), the fitted values of net assimilation (`A_fit`), and each of
+the limiting assimilation rates calculated during the fitting procedure: the
+RuBP-regeneration-limited rate (`Ac`), the electron-transport-limited rate
+(`Aj`), and the phosphate-limited rate (`Ap`).
+
+```{r}
+lattice::xyplot(
+  A + A_fit + Ac + Aj + Ap ~ Ci | curve_id,
+  data = aci_results$fits$main_data,
+  type = 'b',
+  auto.key = list(space = 'right'),
+  grid = TRUE,
+  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')'),
+  par.settings = list(
+    superpose.line = list(col = multi_curve_colors()),
+    superpose.symbol = list(col = multi_curve_colors(), pch = 16)
+  )
+)
+```
+
+Another possibility is to plot one or more of the fitting parameters averaged
+across species in a bar chart with error bars; here we plot values of `Vcmax` at
+25 degrees C.
+
+```{r}
+barchart_with_errorbars(
+  aci_results$parameters[, 'Vcmax_at_25'],
+  aci_results$parameters[, 'species'],
+  xlab = 'Species',
+  ylab = paste0('Vcmax at 25 degrees C (', aci_results$parameters$units$Vcmax_at_25, ')'),
+  ylim = c(0, 200)
+)
+```
+
+# Learning More
+
+The `PhotoGEA` package includes extensive documentation, and more articles are
+being added all the time:
+
+- [Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html):
+  Discusses how `PhotoGEA` provides functionality for all parts of a data
+  analysis pipeline, including loading and validating the data -- and how it can
+  help save your time and improve the reproducibility of your data analysis!
+- [Working With Extended Data Frames](working_with_extended_data_frames.html):
+  Discusses how to work with extended data frames, which are a critical part of
+  `PhotoGEA`.
+- [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html):
+  A detailed example demonstrating one way to analyze Ball-Berry curves.
+- [Analyzing TDL Data](analyzing_tdl_data.html):
+  A detailed example demonstrating one way to analyze data from a tunable diode
+  laser.
