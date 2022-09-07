@@ -33,26 +33,30 @@ calculate_c3_assimilation <- function(
     gamma_star_column_name = 'Gamma_star',
     vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm'
+    j_norm_column_name = 'J_norm',
+    perform_checks = TRUE,
+    return_exdf = TRUE
 )
 {
-    if (!is.exdf(exdf_obj)) {
-        stop('calculate_c3_assimilation requires an exdf object')
+    if (perform_checks) {
+        if (!is.exdf(exdf_obj)) {
+            stop('calculate_c3_assimilation requires an exdf object')
+        }
+
+        # Make sure the required variables are defined and have the correct units
+        required_variables <- list()
+        required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
+        required_variables[[pa_column_name]] <- 'kPa'
+        required_variables[[deltapcham_column_name]] <- 'kPa'
+        required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
+        required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
+        required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
+        required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
+        required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
+        required_variables[[j_norm_column_name]] <- 'normalized to J at 25 degrees C'
+
+        check_required_variables(exdf_obj, required_variables)
     }
-
-    # Make sure the required variables are defined and have the correct units
-    required_variables <- list()
-    required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[pa_column_name]] <- 'kPa'
-    required_variables[[deltapcham_column_name]] <- 'kPa'
-    required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
-    required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
-    required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
-    required_variables[[j_norm_column_name]] <- 'normalized to J at 25 degrees C'
-
-    check_required_variables(exdf_obj, required_variables)
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
@@ -88,26 +92,30 @@ calculate_c3_assimilation <- function(
     # Equation 2.27: net assimilation rate (micromol / m^2 / s)
     An <- pmin(Ac, Aj, Ap)
 
-    # Make a new exdf object from the calculated variables and make sure units
-    # are included
-    return_exdf <- exdf(data.frame(
-        Vcmax_tl = Vcmax_tl,
-        Rd_tl = Rd_tl,
-        J_tl = J_tl,
-        Ac = Ac,
-        Aj = Aj,
-        Ap = Ap,
-        An = An
-    ))
+    if (return_exdf) {
+        # Make a new exdf object from the calculated variables and make sure units
+        # are included
+        output <- exdf(data.frame(
+            Vcmax_tl = Vcmax_tl,
+            Rd_tl = Rd_tl,
+            J_tl = J_tl,
+            Ac = Ac,
+            Aj = Aj,
+            Ap = Ap,
+            An = An
+        ))
 
-    document_variables(
-        return_exdf,
-        c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
-        c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
-        c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
-        c('calculate_c3_assimilation', 'Ac',         'micromol m^(-2) s^(-1)'),
-        c('calculate_c3_assimilation', 'Aj',         'micromol m^(-2) s^(-1)'),
-        c('calculate_c3_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
-        c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)')
-    )
+        document_variables(
+            output,
+            c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Ac',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Aj',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)')
+        )
+    } else {
+        return(An)
+    }
 }

@@ -146,7 +146,7 @@ RuBP-regeneration-limited rate (`Ac`), the electron-transport-limited rate
 
 ```{r}
 lattice::xyplot(
-  A + A_fit + Ac + Aj + Ap ~ Ci | curve_id,
+  A + Ac + Aj + Ap + A_fit ~ Ci | curve_id,
   data = aci_results$fits$main_data,
   type = 'b',
   auto.key = list(space = 'right'),

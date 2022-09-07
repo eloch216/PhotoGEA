@@ -29,7 +29,9 @@
     gamma_star_column_name = 'Gamma_star',
     vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm'
+    j_norm_column_name = 'J_norm',
+    perform_checks = TRUE,
+    return_exdf = TRUE
   )
 }
 
@@ -112,6 +114,22 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
+
+  \item{perform_checks}{
+    A logical value indicating whether to check units for the required columns.
+    This should almost always be \code{TRUE}. The option to disable these checks
+    is only intended to be used when \code{\link{fit_c3_aci}} calls this
+    function, since performing these checks many times repeatedly slows down the
+    fitting procedure.
+  }
+
+  \item{return_exdf}{
+    A logical value indicating whether to return an \code{exdf} object. This
+    should almost always be \code{TRUE}. The option to return a vector is mainly
+    intended to be used when  \code{\link{fit_c3_aci}} calls this function,
+    since creating an \code{exdf} object to return will slows down the fitting
+    procedure.
+  }
 }
 
 \details{
@@ -154,11 +172,17 @@
 }
 
 \value{
-  An \code{exdf} object with the following columns, calculated as described
-  above: \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac}, \code{Aj},
-  \code{Ap}, and \code{An}. The category for each of these new columns is
-  \code{calculate_c3_assimilation} to indicate that they were created using this
-  function.
+  The return value depends on the value of \code{return_exdf}:
+  \itemize{
+    \item If \code{return_exdf} is \code{TRUE}, the return value is an
+          \code{exdf} object with the following columns, calculated as described
+          above: \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
+          \code{Aj}, \code{Ap}, and \code{An}. The category for each of these
+          new columns is \code{calculate_c3_assimilation} to indicate that they
+          were created using this function.
+    \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
+          vector containing the calculated values of \code{An}.
+  }
 }
 
 \examples{
