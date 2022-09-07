@@ -80,6 +80,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/35
   - https://github.com/eloch216/PhotoGEA/pull/37
   - https://github.com/eloch216/PhotoGEA/pull/41
+  - https://github.com/eloch216/PhotoGEA/pull/42
 
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 
