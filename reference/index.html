@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -26,6 +29,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
+    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
 </li>
 <li class="nav-item">
@@ -68,6 +73,11 @@
         <dd>as.data.frame.exdf</dd>
       </dl><dl><dt>
           
+          <code><a href="barchart_with_errorbars.html">barchart_with_errorbars()</a></code> <code><a href="barchart_with_errorbars.html">bwplot_wrapper()</a></code> 
+        </dt>
+        <dd>Barcharts with error bars</dd>
+      </dl><dl><dt>
+          
           <code><a href="basic_stats.html">basic_stats()</a></code> 
         </dt>
         <dd>basic_stats</dd>
@@ -78,9 +88,39 @@
         <dd>by.exdf</dd>
       </dl><dl><dt>
           
+          <code><a href="c3_arrhenius_bernacchi.html">c3_arrhenius_bernacchi</a></code> 
+        </dt>
+        <dd>C3 Arrhenius parameters from Bernacchi et al.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="c3_arrhenius_sharkey.html">c3_arrhenius_sharkey</a></code> 
+        </dt>
+        <dd>C3 Arrhenius parameters from Sharkey et al.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="c4_arrhenius_von_caemmerer.html">c4_arrhenius_von_caemmerer</a></code> 
+        </dt>
+        <dd>C4 Arrhenius parameters from von Caemmerer</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_arrhenius.html">calculate_arrhenius()</a></code> 
+        </dt>
+        <dd>calculate_arrhenius</dd>
+      </dl><dl><dt>
+          
           <code><a href="calculate_ball_berry_index.html">calculate_ball_berry_index()</a></code> 
         </dt>
         <dd>calculate_ball_berry_index</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_c3_assimilation.html">calculate_c3_assimilation()</a></code> 
+        </dt>
+        <dd>calculate_c3_assimilation</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_cc.html">calculate_cc()</a></code> 
+        </dt>
+        <dd>calculate_cc</dd>
       </dl><dl><dt>
           
           <code><a href="calculate_gas_properties.html">calculate_gas_properties()</a></code> 
@@ -98,14 +138,9 @@
         <dd>Check response curve data for common issues</dd>
       </dl><dl><dt>
           
-          <code><a href="choose_input_licor_files.html">choose_input_licor_files()</a></code> 
+          <code><a href="choose_input_files.html">choose_input_files()</a></code> <code><a href="choose_input_files.html">choose_input_licor_files()</a></code> <code><a href="choose_input_files.html">choose_input_tdl_files()</a></code> 
         </dt>
-        <dd>Choosing Licor Excel files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="choose_input_tdl_files.html">choose_input_tdl_files()</a></code> 
-        </dt>
-        <dd>Choosing TDL data files</dd>
+        <dd>Choosing input files</dd>
       </dl><dl><dt>
           
           <code><a href="consolidate.html">consolidate()</a></code> 
@@ -123,6 +158,21 @@
         <dd>dimnames.exdf</dd>
       </dl><dl><dt>
           
+          <code><a href="document_variables.html">document_variables()</a></code> 
+        </dt>
+        <dd>Document exdf columns by specifying units and categories</dd>
+      </dl><dl><dt>
+          
+          <code><a href="example_data_files.html">example_data_files</a></code> <code><a href="example_data_files.html">ball_berry_1</a></code> <code><a href="example_data_files.html">ball_berry_2</a></code> <code><a href="example_data_files.html">c3_aci_1</a></code> <code><a href="example_data_files.html">c3_aci_2</a></code> <code><a href="example_data_files.html">tdl_sampling_1</a></code> <code><a href="example_data_files.html">tdl_sampling_2</a></code> <code><a href="example_data_files.html">ball_berry_1.xlsx</a></code> <code><a href="example_data_files.html">ball_berry_2.xlsx</a></code> <code><a href="example_data_files.html">c3_aci_1.xlsx</a></code> <code><a href="example_data_files.html">c3_aci_2.xlsx</a></code> <code><a href="example_data_files.html">tdl_sampling_1.dat</a></code> <code><a href="example_data_files.html">tdl_sampling_2.dat</a></code> 
+        </dt>
+        <dd>Example data files</dd>
+      </dl><dl><dt>
+          
+          <code><a href="exclude_outliers.html">exclude_outliers()</a></code> 
+        </dt>
+        <dd>Exclude outliers from a data set</dd>
+      </dl><dl><dt>
+          
           <code><a href="exdf.html">exdf()</a></code> 
         </dt>
         <dd>Extended data frame</dd>
@@ -136,6 +186,11 @@
           <code><a href="fit_ball_berry.html">fit_ball_berry()</a></code> 
         </dt>
         <dd>fit_ball_berry</dd>
+      </dl><dl><dt>
+          
+          <code><a href="fit_c3_aci.html">fit_c3_aci()</a></code> 
+        </dt>
+        <dd>fit_c3_aci</dd>
       </dl><dl><dt>
           
           <code><a href="identify_common_columns.html">identify_common_columns()</a></code> 
@@ -156,6 +211,11 @@
           <code><a href="length.exdf.html">length(<i>&lt;exdf&gt;</i>)</a></code> 
         </dt>
         <dd>length.exdf</dd>
+      </dl><dl><dt>
+          
+          <code><a href="multi_curve_colors.html">multi_curve_colors()</a></code> 
+        </dt>
+        <dd>Set of colors for plotting multiple curves</dd>
       </dl><dl><dt>
           
           <code><a href="organize_response_curve_data.html">organize_response_curve_data()</a></code> 
@@ -183,6 +243,16 @@
         <dd>Reading a TDL data file</dd>
       </dl><dl><dt>
           
+          <code><a href="remove_points.html">remove_points()</a></code> 
+        </dt>
+        <dd>Remove specific points from an exdf object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="set_variable.html">set_variable()</a></code> 
+        </dt>
+        <dd>Document exdf columns by specifying units and categories</dd>
+      </dl><dl><dt>
+          
           <code><a href="smooth_tdl_data.html">smooth_tdl_data()</a></code> 
         </dt>
         <dd>Smoothing data from one TDL valve</dd>
@@ -196,6 +266,11 @@
           <code><a href="str.exdf.html">str(<i>&lt;exdf&gt;</i>)</a></code> 
         </dt>
         <dd>str.exdf</dd>
+      </dl><dl><dt>
+          
+          <code><a href="xyplot_avg_rc.html">xyplot_avg_rc()</a></code> 
+        </dt>
+        <dd>xyplot_avg_rc</dd>
       </dl></div>
   </main></div>
 

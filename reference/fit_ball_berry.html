@@ -18,7 +18,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,7 +26,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -34,6 +37,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
+    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
 </li>
 <li class="nav-item">
@@ -72,8 +77,8 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_ball_berry</span><span class="op">(</span></span>
 <span>    <span class="va">replicate_exdf</span>,</span>
-<span>    <span class="va">gsw_column_name</span>,</span>
-<span>    <span class="va">bb_index_column_name</span></span>
+<span>    gsw_column_name <span class="op">=</span> <span class="st">'gsw'</span>,</span>
+<span>    bb_index_column_name <span class="op">=</span> <span class="st">'bb_index'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -85,12 +90,12 @@
 
   <dt>gsw_column_name</dt>
 <dd><p>The name of the column in <code>replicate_exdf</code> that contains the stomatal
-    conductance to water vapor (typically <code>'gsw'</code>).</p></dd>
+    conductance to water vapor in <code>mol m^(-2) s^(-1)</code>.</p></dd>
 
 
   <dt>bb_index_column_name</dt>
 <dd><p>The name of the column in <code>replicate_exdf</code> that contains the Ball-Berry
-    index (typically <code>'bb_index'</code>).</p></dd>
+    index in <code>mol m^(-2) s^(-1)</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -173,43 +178,23 @@
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">17</span>, <span class="st">'time'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'A'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'Ca'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'DeltaPcham'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'E'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'gbw'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'gsw'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'H2O_s'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'Pa'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'TleafCnd'</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span><span class="op">[</span>,<span class="st">'species_plot'</span><span class="op">]</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">[</span>,<span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_file</span><span class="op">[</span>,<span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_ball_berry_index.html">calculate_ball_berry_index</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">licor_file</span>,</span></span>
-<span class="r-in"><span>    <span class="st">'A'</span>,</span></span>
-<span class="r-in"><span>    <span class="st">'RHleaf'</span>,</span></span>
-<span class="r-in"><span>    <span class="st">'Csurface'</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_ball_berry_index.html">calculate_ball_berry_index</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit just one curve from the data set (it is rare to do this)</span></span></span>
 <span class="r-in"><span><span class="va">one_result</span> <span class="op">&lt;-</span> <span class="fu">fit_ball_berry</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'soybean - 1a'</span>, , <span class="cn">TRUE</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'gsw'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'bb_index'</span></span></span>
+<span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'soybean - 1a'</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit all curves in the data set (it is more common to do this)</span></span></span>
 <span class="r-in"><span><span class="va">bb_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>  <span class="va">fit_ball_berry</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'gsw'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'bb_index'</span></span></span>
+<span class="r-in"><span>  <span class="va">fit_ball_berry</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># View the fitting parameters for each species / plot</span></span></span>

@@ -10,13 +10,22 @@
     <loc>https://eloch216.github.io/PhotoGEA/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/PhotoGEA.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_ball_berry_data.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/developing_a_data_analysis_pipeline.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/working_with_extended_data_frames.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/authors.html</loc>
@@ -31,13 +40,34 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/as.data.frame.exdf.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/barchart_with_errorbars.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/basic_stats.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/by.exdf.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/c3_arrhenius_bernacchi.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/c3_arrhenius_sharkey.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/c4_arrhenius_von_caemmerer.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_arrhenius.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_ball_berry_index.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_c3_assimilation.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_cc.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gas_properties.html</loc>
@@ -49,10 +79,7 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/check_licor_data.html</loc>
   </url>
   <url>
-    <loc>https://eloch216.github.io/PhotoGEA/reference/choose_input_licor_files.html</loc>
-  </url>
-  <url>
-    <loc>https://eloch216.github.io/PhotoGEA/reference/choose_input_tdl_files.html</loc>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/choose_input_files.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/consolidate.html</loc>
@@ -64,6 +91,15 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/dimnames.exdf.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/document_variables.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/example_data_files.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/exclude_outliers.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/exdf.html</loc>
   </url>
   <url>
@@ -71,6 +107,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/fit_ball_berry.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/fit_c3_aci.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/identify_common_columns.html</loc>
@@ -88,6 +127,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/length.exdf.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/multi_curve_colors.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/organize_response_curve_data.html</loc>
   </url>
   <url>
@@ -103,6 +145,12 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/read_tdl_file.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/remove_points.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/set_variable.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/smooth_tdl_data.html</loc>
   </url>
   <url>
@@ -110,5 +158,8 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/str.exdf.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/xyplot_avg_rc.html</loc>
   </url>
 </urlset>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,9 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
@@ -43,6 +46,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
+    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
 </li>
 <li class="nav-item">
@@ -258,7 +263,7 @@
 <h3 id="removing-problematic-cycles">Removing Problematic Cycles<a class="anchor" aria-label="anchor" href="#removing-problematic-cycles"></a>
 </h3>
 <p>In <a href="#checking-the-calibrated-data">Checking the Calibrated Data</a>, we located a spike in the measured <sup>12</sup>C concentration from valve 26, which is one of the calibration values. Since the presence of this spike indicates that something unexpected happened to the TDL system, and there is evidence that the calibration may be compromised during the spike, it is probably a good idea to remove the TDL cycles where the <sup>12</sup>C signal from valve 26 suddenly becomes large.</p>
-<p>Fortunately, this is simple to do in R. The following illustrates one way to “clean” the data by removing the unreliable TDL cycles; here, we actually remove two regions of the data that appear to be suspicious:</p>
+<p>Fortunately, this is simple to do using the <code>remove_points</code> function from <code>PhotoGEA</code>. The following illustrates how to “clean” the data by removing the unreliable TDL cycles; here, we actually remove two regions of the data that appear to be suspicious:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of cycle numbers that should be removed</span></span>
 <span><span class="va">tdl_cycles_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -268,7 +273,7 @@
 <span></span>
 <span><span class="co"># Remove them</span></span>
 <span><span class="va">tdl_files_clean</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">tdl_files</span><span class="op">[</span><span class="op">!</span><span class="va">tdl_files</span><span class="op">[</span>, <span class="st">'cycle_num'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">tdl_cycles_to_remove</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span><span class="va">tdl_files</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cycle_num <span class="op">=</span> <span class="va">tdl_cycles_to_remove</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="smoothing-the-tdl-data">Smoothing the TDL Data<a class="anchor" aria-label="anchor" href="#smoothing-the-tdl-data"></a>
@@ -425,7 +430,7 @@
 <p>The file paths specified in <code>file_paths</code> will need to be modified so they point to your TDL data files. In your own script, you may want to consider using the <code>choose_input_tdl_files</code> function from <code>PhotoGEA</code>; this function will create a pop-up browser window where you can interactively select a set of <code>.dat</code> files. Sometimes this is more convenient than writing out full file paths. For example, you could replace the previous definition of <code>file_paths</code> with this one:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
-<span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_tdl_files.html">choose_input_tdl_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_files.html">choose_input_tdl_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Unfortunately, <code>choose_input_tdl_files</code> is only available in interactive R sessions running on Microsoft Windows.</p>
 </div>
 <div class="section level3">
@@ -461,11 +466,21 @@
 <div class="section level2">
 <h2 id="commands-from-this-document">Commands From This Document<a class="anchor" aria-label="anchor" href="#commands-from-this-document"></a>
 </h2>
-<p>The following code chunk includes all the central commands used throughout this document. They are compiled here to make them easy to copy/paste into a text file to initialize your own script.</p>
+<p>The following code chunk includes all the central commands used throughout this document. They are compiled here to make them easy to copy/paste into a text file to initialize your own script. Annotation has also been added to clearly indicate the four steps involved in data analysis, as described in the <em>Developing a Data Analysis Pipeline</em> vignette.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
+<code class="sourceCode R"><span><span class="co">###</span></span>
+<span><span class="co">### PRELIMINARIES:</span></span>
+<span><span class="co">### Loading packages, defining constants, creating helping functions, etc.</span></span>
+<span><span class="co">###</span></span>
+<span></span>
+<span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### TRANSLATION:</span></span>
+<span><span class="co">### Creating convenient R objects from raw data files</span></span>
+<span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -489,6 +504,11 @@
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
 <span><span class="va">tdl_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">tdl_exdf_list</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### VALIDATION:</span></span>
+<span><span class="co">### Organizing the data, checking its consistency and quality, cleaning it</span></span>
+<span><span class="co">###</span></span>
+<span></span>
 <span><span class="co"># Assign numbers to all full cycles in the data set</span></span>
 <span><span class="va">tdl_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/identify_tdl_cycles.html">identify_tdl_cycles</a></span><span class="op">(</span></span>
 <span>  <span class="va">tdl_files</span>,</span>
@@ -507,7 +527,7 @@
 <span></span>
 <span><span class="co"># Remove them</span></span>
 <span><span class="va">tdl_files_clean</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">tdl_files</span><span class="op">[</span><span class="op">!</span><span class="va">tdl_files</span><span class="op">[</span>, <span class="st">'cycle_num'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">tdl_cycles_to_remove</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span><span class="va">tdl_files</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cycle_num <span class="op">=</span> <span class="va">tdl_cycles_to_remove</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define a spline smoothing function</span></span>
 <span><span class="va">spline_smoothing_function</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span><span class="op">)</span> <span class="op">{</span></span>
@@ -529,6 +549,11 @@
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span>
 <span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### PROCESSING:</span></span>
+<span><span class="co">### Extracting new pieces of information from the data</span></span>
+<span><span class="co">###</span></span>
+<span></span>
 <span><span class="co"># Use the data from the calibration valves to determine calibrated carbon</span></span>
 <span><span class="co"># concentrations from all valves in each TDL cycle</span></span>
 <span><span class="va">processed_smooth_tdl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
@@ -549,6 +574,11 @@
 <span>  f_other <span class="op">=</span> <span class="fl">0.00474</span>,</span>
 <span>  R_VPDB <span class="op">=</span> <span class="fl">0.0111797</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### SYNTHESIS:</span></span>
+<span><span class="co">### Using plots and statistics to help draw conclusions from the data</span></span>
+<span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Add columns indicating which which operations have been applied to each exdf</span></span>
 <span><span class="va">tdl_files</span><span class="op">[</span> , <span class="st">'data_type'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">'01 raw data'</span></span>

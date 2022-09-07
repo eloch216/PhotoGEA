@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,9 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
@@ -43,6 +46,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
+    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
 </li>
 <li class="nav-item">
@@ -262,9 +267,28 @@
 <p>Here, <code>CO2_s</code> is the CO<sub>2</sub> concentration in the sample cell and <code>CO2_r</code> is the CO<sub>2</sub> concentration in the reference cell. When these curves were measured, a sample cell CO<sub>2</sub> concentration setpoint was supplied. So, when looking at this plot, we should check that <code>CO2_s</code> is constant during each curve. Here, it looks like the <code>ripe5</code> instrument was not controlling CO<sub>2</sub> as expected during several of its curves; <code>CO2_s</code> is not constant for <code>ripe5 - soybean - 1</code>, <code>ripe5 - soybean - 5c</code>, and <code>ripe5 - soybean - 5</code>. However, <code>CO2_r</code> is relatively constant during these curves, and the changes in <code>CO2_s</code> are smooth, so it is reasonable to expect that the measurements represent true steady-state values. Considering this, all of these curves are acceptable based on the CO<sub>2</sub> plots.</p>
 </div>
 <div class="section level4">
-<h4 id="light-response-curves">Light-Response Curves<a class="anchor" aria-label="anchor" href="#light-response-curves"></a>
+<h4 id="stability">Stability<a class="anchor" aria-label="anchor" href="#stability"></a>
 </h4>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
+<span>  <span class="va">`A:OK`</span> <span class="op">+</span> <span class="va">`gsw:OK`</span> <span class="op">+</span> <span class="va">Stable</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
+<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
+<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2200</span><span class="op">)</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Incident PPFD ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Qin</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_stability-1.png" width="720" style="display: block; margin: auto;"></p>
+<p>When measuring response curves with a Licor, it is possible to specify stability criteria for each point in addition to minimum and maximum wait times. In other words, once the set point for the driving variable is changed, the machine waits until the stability criteria are met; there is a minimum waiting period, and also a maximum to prevent the machine from waiting for too long. These stability criteria are especially important for Ball-Berry curves, since the stomata may take a long time to reach steady state.</p>
+<p>When these curves were measured, stability criteria were supplied for the net assimilation rate <code>A</code> and the stomatal conductance <code>gsw</code>. The stability status for each was stored in the log file because the appropriate logging option for stability was set. Now, for each point, it is possible to check whether stability was achieved or whether the point was logged because the maximum waiting period had been met. If the maximum waiting period is reached and the plant has still not stabilized, the data point may be unreliable, so it is very important to check this information.</p>
+<p>In the plot, <code>A:OK</code> indicates whether <code>A</code> was stable (0 for no, 1 for yes), <code>gsw:OK</code> indicates whether <code>gsw</code> was stable (0 for no, 1 for yes), and <code>Stable</code> indicates the total number of stability conditions that were met. So, we are looking for points where <code>Stable</code> is 2. Otherwise, we can check the other traces to see whether <code>A</code> or <code>gsw</code> was unstable. Here it looks like many of the high light points were not stable, and it may be a good idea to remove them before proceeding with the Ball-Berry fitting.</p>
+</div>
+<div class="section level4">
+<h4 id="light-response-curves">Light-Response Curves<a class="anchor" aria-label="anchor" href="#light-response-curves"></a>
+</h4>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check light-response curves</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -283,10 +307,20 @@
 </div>
 </div>
 <div class="section level3">
-<h3 id="removing-bad-curves">Removing Bad Curves<a class="anchor" aria-label="anchor" href="#removing-bad-curves"></a>
+<h3 id="cleaning-the-licor-data">Cleaning the Licor Data<a class="anchor" aria-label="anchor" href="#cleaning-the-licor-data"></a>
 </h3>
-<p>Since we have identified a few curves that may not be acceptable for Ball-Berry fitting, we can remove them as follows:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>While checking over the plots in <a href="#qualitative-checks">Qualitative Checks</a>, two issues were noticed: (1) some points were logged before stability was achieved and (2) some of the curves look abnormal. In this section, we will demonstrate how to remove the unstable points and the weird curves.</p>
+<p>The following command will keep only the points where <code>Stable</code> is exactly 2; this condition means that all of the stability criteria were satisfied. Sometimes, following this procedure, a curve will have very few stable points remaining; it is usually a good idea to automatically exclude any curve with fewer than three stable points.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Only keep points where stability was achieved</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
+<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
+<p>Since we have identified a few curves that may not be acceptable for Ball-Berry fitting, we can remove them via the <code>remove_points</code> function from <code>PhotoGEA</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a list of curves to remove from the data set</span></span>
 <span><span class="va">curves_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'ripe4 - soybean - 1a'</span>,</span>
@@ -296,37 +330,33 @@
 <span></span>
 <span><span class="co"># Remove them</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span><span class="op">!</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">curves_to_remove</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>curve_identifier <span class="op">=</span> <span class="va">curves_to_remove</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Note that <code>remove_points</code> can also be used to exclude individual points instead of entire curves; see its help entry by typing <code><a href="../reference/remove_points.html">?remove_points</a></code> for more information.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="fitting-licor-data">Fitting Licor Data<a class="anchor" aria-label="anchor" href="#fitting-licor-data"></a>
 </h2>
-<p>Now that we have checked the data quality, we are ready to perform the fitting. As they are produced by the instruments, Licor data files do not include values of the Ball-Berry index; in fact, they do not even include values of <span class="math inline">\(h_s\)</span> and <span class="math inline">\(C_s\)</span> required to calculate the Ball-Berry index. However, the <code>PhotoGEA</code> package includes two functions to help with these calculations: <code>calculate_gas_properties</code> and <code>calculate_ball_berry_index</code>. Each of these requires an <code>exdf</code> object containing Licor data, as well as the names of several important columns in the data. The units for each column will be checked in an attempt to avoid unit-related errors. More information about these functions can be obtained from the built-in help system by typing <code><a href="../reference/calculate_gas_properties.html">?calculate_gas_properties</a></code> or <code><a href="../reference/calculate_ball_berry_index.html">?calculate_ball_berry_index</a></code>. Here we will use them sequentially to calculate values of the Ball-Berry index:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>Now that we have checked the data quality, we are ready to perform the fitting. As they are produced by the instruments, Licor data files do not include values of the Ball-Berry index; in fact, they do not even include values of <span class="math inline">\(h_s\)</span> and <span class="math inline">\(C_s\)</span> required to calculate the Ball-Berry index. However, the <code>PhotoGEA</code> package includes two functions to help with these calculations: <code>calculate_gas_properties</code> and <code>calculate_ball_berry_index</code>. Each of these requires an <code>exdf</code> object containing Licor data. The units for each required column will be checked in an attempt to avoid unit-related errors. More information about these functions can be obtained from the built-in help system by typing <code><a href="../reference/calculate_gas_properties.html">?calculate_gas_properties</a></code> or <code><a href="../reference/calculate_ball_berry_index.html">?calculate_ball_berry_index</a></code>. Here we will use them sequentially to calculate values of the Ball-Berry index:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate additional gas properties, including `RHleaf` and `Csurface`</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="st">'A'</span>, <span class="st">'Ca'</span>, <span class="st">'DeltaPcham'</span>, <span class="st">'E'</span>, <span class="st">'gbw'</span>, <span class="st">'gsw'</span>, <span class="st">'H2O_s'</span>, <span class="st">'Pa'</span>, <span class="st">'TleafCnd'</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate the Ball-Berry index</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_ball_berry_index.html">calculate_ball_berry_index</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'A'</span>, <span class="st">'RHleaf'</span>, <span class="st">'Csurface'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_ball_berry_index.html">calculate_ball_berry_index</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
 <p>Together, these functions add several new columns to <code>licor_data</code>, including one called <code>bb_index</code>, which includes values of the Ball-Berry index. With this information, we are now ready to perform the fitting procedure. For this operation, we can use the <code>fit_ball_berry</code> function from the <code>PhotoGEA</code> package, which fits a single Ball-Berry curve to extract the Ball-Berry parameters. To apply this function to each curve in a larger data set and then consolidate the results, we can use it in conjunction with <code>by</code> and <code>consolidate</code>, which are also part of <code>PhotoGEA</code>. (For more information about these functions, see the built-in help menu entries by typing <code><a href="../reference/fit_ball_berry.html">?fit_ball_berry</a></code>, <code><a href="../reference/by.exdf.html">?by.exdf</a></code>, or <code><a href="../reference/consolidate.html">?consolidate</a></code>.) Together, these functions will split apart the main data using the curve identifier column we defined before (<a href="#basic-checks">Basic Checks</a>), make a linear fit of <span class="math inline">\(g_{sw}\)</span> against the Ball-Berry index, and return the resulting parameters and fits:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit a linear model to the Ball-Berry data</span></span>
 <span><span class="va">ball_berry_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_ball_berry</span>,                   <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
-<span>  <span class="st">'gsw'</span>,                            <span class="co"># Additional argument required by `fit_ball_berry`</span></span>
-<span>  <span class="st">'bb_index'</span>                        <span class="co"># Additional argument required by `fit_ball_berry`</span></span>
+<span>  <span class="va">fit_ball_berry</span>                    <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="viewing-the-fitted-curves">Viewing the Fitted Curves<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-curves"></a>
 </h3>
 <p>Having made the fits, it is now a good idea to visually check them, making sure they look reasonable. As before, we can use <code>xyplot</code> from the <code>lattice</code> library to quickly make plots of all the fits, which are stored in <code>ball_berry_results$fits</code>, an <code>exdf</code> object:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the Ball-Berry fits</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gsw</span> <span class="op">+</span> <span class="va">gsw_fit</span> <span class="op">~</span> <span class="va">bb_index</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -347,7 +377,7 @@
 <h3 id="viewing-the-fitted-parameter-values">Viewing the Fitted Parameter Values<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-parameter-values"></a>
 </h3>
 <p>We can also take a look at the fitted Ball-Berry parameter values, which are stored in <code>ball_berry_results$parameters</code>, another <code>exdf</code> object. This object includes many columns but we only care about a few of them. We can view them as follows:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View the Ball-Berry parameters</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'bb_intercept'</span>, <span class="st">'bb_slope'</span>, <span class="st">'r_squared'</span><span class="op">)</span></span>
@@ -357,53 +387,58 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_parameters</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    instrument [UserDefCon] (NA) species [UserDefCon] (NA)</span></span>
-<span><span class="co">#&gt; 22                        ripe4                   tobacco</span></span>
-<span><span class="co">#&gt; 36                        ripe5                   soybean</span></span>
+<span><span class="co">#&gt; 23                        ripe4                   tobacco</span></span>
+<span><span class="co">#&gt; 37                        ripe5                   soybean</span></span>
 <span><span class="co">#&gt; 29                        ripe5                   soybean</span></span>
-<span><span class="co">#&gt; 43                        ripe5                   soybean</span></span>
-<span><span class="co">#&gt; 50                        ripe5                   tobacco</span></span>
+<span><span class="co">#&gt; 44                        ripe5                   soybean</span></span>
+<span><span class="co">#&gt; 51                        ripe5                   tobacco</span></span>
 <span><span class="co">#&gt;    plot [UserDefCon] (NA) bb_intercept [fit_ball_berry] (mol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 22                      2                                        0.09410874</span></span>
-<span><span class="co">#&gt; 36                      1                                        0.18849637</span></span>
+<span><span class="co">#&gt; 23                      2                                        0.08778255</span></span>
+<span><span class="co">#&gt; 37                      1                                        0.21437406</span></span>
 <span><span class="co">#&gt; 29                     5a                                        0.10722148</span></span>
-<span><span class="co">#&gt; 43                     5c                                        0.09976589</span></span>
-<span><span class="co">#&gt; 50                      5                                        0.12819393</span></span>
+<span><span class="co">#&gt; 44                     5c                                        0.11118324</span></span>
+<span><span class="co">#&gt; 51                      5                                        0.13565311</span></span>
 <span><span class="co">#&gt;    bb_slope [fit_ball_berry] (dimensionless) r_squared [fit_ball_berry] ()</span></span>
-<span><span class="co">#&gt; 22                                  3.613489                     0.7186892</span></span>
-<span><span class="co">#&gt; 36                                  5.240165                     0.9321769</span></span>
+<span><span class="co">#&gt; 23                                  3.864316                     0.6452714</span></span>
+<span><span class="co">#&gt; 37                                  4.462244                     0.9004803</span></span>
 <span><span class="co">#&gt; 29                                  4.823671                     0.8866346</span></span>
-<span><span class="co">#&gt; 43                                  5.123674                     0.8454999</span></span>
-<span><span class="co">#&gt; 50                                  4.332600                     0.9846671</span></span></code></pre></div>
+<span><span class="co">#&gt; 44                                  4.750743                     0.7726284</span></span>
+<span><span class="co">#&gt; 51                                  4.097481                     0.9849869</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="extracting-average-values">Extracting Average Values<a class="anchor" aria-label="anchor" href="#extracting-average-values"></a>
 </h3>
 <p>Finally, we can extract average values of the Ball-Berry parameters for each species using the <code>basic_stats</code> function from <code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute the average and standard error for the Ball-Berry slope and intercept</span></span>
 <span><span class="co"># for each species</span></span>
 <span><span class="va">ball_berry_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span></span>
-<span>  <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'species'</span>, <span class="st">'K'</span>, <span class="st">'bb_intercept'</span>, <span class="st">'bb_slope'</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">]</span>,</span>
+<span>  <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span>,</span>
 <span>  <span class="st">'species'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View the averages and errors</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_averages</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   species [UserDefCon] (NA) K [Const] (NA)</span></span>
-<span><span class="co">#&gt; 1                   soybean            0.5</span></span>
-<span><span class="co">#&gt; 2                   tobacco            0.5</span></span>
+<span><span class="va">columns_to_view</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">'species'</span>,</span>
+<span>  <span class="st">'bb_intercept_avg'</span>, <span class="st">'bb_intercept_stderr'</span>,</span>
+<span>  <span class="st">'bb_slope_avg'</span>, <span class="st">'bb_slope_stderr'</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   species [UserDefCon] (NA)</span></span>
+<span><span class="co">#&gt; 1                   soybean</span></span>
+<span><span class="co">#&gt; 2                   tobacco</span></span>
 <span><span class="co">#&gt;   bb_intercept_avg [fit_ball_berry] (mol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             0.1318279</span></span>
-<span><span class="co">#&gt; 2                                             0.1111513</span></span>
+<span><span class="co">#&gt; 1                                             0.1442596</span></span>
+<span><span class="co">#&gt; 2                                             0.1117178</span></span>
 <span><span class="co">#&gt;   bb_intercept_stderr [fit_ball_berry] (mol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                               0.02841585</span></span>
-<span><span class="co">#&gt; 2                                               0.01704259</span></span>
+<span><span class="co">#&gt; 1                                               0.03507588</span></span>
+<span><span class="co">#&gt; 2                                               0.02393528</span></span>
 <span><span class="co">#&gt;   bb_slope_avg [fit_ball_berry] (dimensionless)</span></span>
-<span><span class="co">#&gt; 1                                      5.062503</span></span>
-<span><span class="co">#&gt; 2                                      3.973044</span></span>
+<span><span class="co">#&gt; 1                                      4.678886</span></span>
+<span><span class="co">#&gt; 2                                      3.980898</span></span>
 <span><span class="co">#&gt;   bb_slope_stderr [fit_ball_berry] (dimensionless)</span></span>
-<span><span class="co">#&gt; 1                                        0.1240609</span></span>
-<span><span class="co">#&gt; 2                                        0.3595554</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                        0.1103477</span></span>
+<span><span class="co">#&gt; 2                                        0.1165826</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -414,9 +449,9 @@
 <h3 id="input-files">Input Files<a class="anchor" aria-label="anchor" href="#input-files"></a>
 </h3>
 <p>The file paths specified in <code>file_paths</code> will need to be modified so they point to your Licor files. In your own script, you may want to consider using the <code>choose_input_licor_files</code> function from <code>PhotoGEA</code>; this function will create a pop-up browser window where you can interactively select a set of Excel files. Sometimes this is more convenient than writing out full file paths. For example, you could replace the previous definition of <code>file_paths</code> with this one:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
-<span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_licor_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Unfortunately, <code>choose_input_licor_files</code> is only available in interactive R sessions running on Microsoft Windows.</p>
 </div>
 <div class="section level3">
@@ -443,7 +478,7 @@
 <h3 id="saving-results">Saving Results<a class="anchor" aria-label="anchor" href="#saving-results"></a>
 </h3>
 <p>You may want to use <code>write.csv</code> to save some or all of the fitting results as <code>csv</code> files. For example, the following commands will allow you to interactively choose output filenames for the resulting <code>csv</code> files:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">ball_berry_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -452,11 +487,21 @@
 <div class="section level2">
 <h2 id="commands-from-this-document">Commands From This Document<a class="anchor" aria-label="anchor" href="#commands-from-this-document"></a>
 </h2>
-<p>The following code chunk includes all the central commands used throughout this document. They are compiled here to make them easy to copy/paste into a text file to initialize your own script.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
+<p>The following code chunk includes all the central commands used throughout this document. They are compiled here to make them easy to copy/paste into a text file to initialize your own script. Annotation has also been added to clearly indicate the four steps involved in data analysis, as described in the <em>Developing a Data Analysis Pipeline</em> vignette.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">###</span></span>
+<span><span class="co">### PRELIMINARIES:</span></span>
+<span><span class="co">### Loading packages, defining constants, creating helping functions, etc.</span></span>
+<span><span class="co">###</span></span>
+<span></span>
+<span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### TRANSLATION:</span></span>
+<span><span class="co">### Creating convenient R objects from raw data files</span></span>
+<span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -479,6 +524,11 @@
 <span></span>
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### VALIDATION:</span></span>
+<span><span class="co">### Organizing the data, checking its consistency and quality, cleaning it</span></span>
+<span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Create a new identifier column formatted like `instrument - species - plot`</span></span>
 <span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
@@ -542,6 +592,14 @@
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net assimilation ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Only keep points where stability was achieved</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
+<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span></span>
 <span><span class="co"># Define a list of curves to remove from the data set</span></span>
 <span><span class="va">curves_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'ripe4 - soybean - 1a'</span>,</span>
@@ -551,24 +609,24 @@
 <span></span>
 <span><span class="co"># Remove them</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span><span class="op">!</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">curves_to_remove</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>curve_identifier <span class="op">=</span> <span class="va">curves_to_remove</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### PROCESSING:</span></span>
+<span><span class="co">### Extracting new pieces of information from the data</span></span>
+<span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Calculate additional gas properties, including `RHleaf` and `Csurface`</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="st">'A'</span>, <span class="st">'Ca'</span>, <span class="st">'DeltaPcham'</span>, <span class="st">'E'</span>, <span class="st">'gbw'</span>, <span class="st">'gsw'</span>, <span class="st">'H2O_s'</span>, <span class="st">'Pa'</span>, <span class="st">'TleafCnd'</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate the Ball-Berry index</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_ball_berry_index.html">calculate_ball_berry_index</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'A'</span>, <span class="st">'RHleaf'</span>, <span class="st">'Csurface'</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_ball_berry_index.html">calculate_ball_berry_index</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Fit a linear model to the Ball-Berry data</span></span>
 <span><span class="va">ball_berry_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_ball_berry</span>,                   <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
-<span>  <span class="st">'gsw'</span>,                            <span class="co"># Additional argument required by `fit_ball_berry`</span></span>
-<span>  <span class="st">'bb_index'</span>                        <span class="co"># Additional argument required by `fit_ball_berry`</span></span>
+<span>  <span class="va">fit_ball_berry</span>                    <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the Ball-Berry fits</span></span>
@@ -594,15 +652,25 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_parameters</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">###</span></span>
+<span><span class="co">### SYNTHESIS:</span></span>
+<span><span class="co">### Using plots and statistics to help draw conclusions from the data</span></span>
+<span><span class="co">###</span></span>
+<span></span>
 <span><span class="co"># Compute the average and standard error for the Ball-Berry slope and intercept</span></span>
 <span><span class="co"># for each species</span></span>
 <span><span class="va">ball_berry_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span></span>
-<span>  <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'species'</span>, <span class="st">'K'</span>, <span class="st">'bb_intercept'</span>, <span class="st">'bb_slope'</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">]</span>,</span>
+<span>  <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span>,</span>
 <span>  <span class="st">'species'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View the averages and errors</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_averages</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">columns_to_view</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">'species'</span>,</span>
+<span>  <span class="st">'bb_intercept_avg'</span>, <span class="st">'bb_intercept_stderr'</span>,</span>
+<span>  <span class="st">'bb_slope_avg'</span>, <span class="st">'bb_slope_stderr'</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

@@ -18,7 +18,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,7 +26,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -34,6 +37,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
+    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
 </li>
 <li class="nav-item">
@@ -72,15 +77,15 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_gas_properties</span><span class="op">(</span></span>
 <span>    <span class="va">licor_exdf</span>,</span>
-<span>    <span class="va">a_column_name</span>,</span>
-<span>    <span class="va">ca_column_name</span>,</span>
-<span>    <span class="va">deltapcham_column_name</span>,</span>
-<span>    <span class="va">e_column_name</span>,</span>
-<span>    <span class="va">gbw_column_name</span>,</span>
-<span>    <span class="va">gsw_column_name</span>,</span>
-<span>    <span class="va">h2o_s_column_name</span>,</span>
-<span>    <span class="va">pa_column_name</span>,</span>
-<span>    <span class="va">tleaf_column_name</span></span>
+<span>    a_column_name <span class="op">=</span> <span class="st">'A'</span>,</span>
+<span>    ca_column_name <span class="op">=</span> <span class="st">'Ca'</span>,</span>
+<span>    deltapcham_column_name <span class="op">=</span> <span class="st">'DeltaPcham'</span>,</span>
+<span>    e_column_name <span class="op">=</span> <span class="st">'E'</span>,</span>
+<span>    gbw_column_name <span class="op">=</span> <span class="st">'gbw'</span>,</span>
+<span>    gsw_column_name <span class="op">=</span> <span class="st">'gsw'</span>,</span>
+<span>    h2o_s_column_name <span class="op">=</span> <span class="st">'H2O_s'</span>,</span>
+<span>    pa_column_name <span class="op">=</span> <span class="st">'Pa'</span>,</span>
+<span>    tleaf_column_name <span class="op">=</span> <span class="st">'TleafCnd'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,47 +98,47 @@
 
   <dt>a_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the net
-    assimilation (typically <code>'A'</code>).</p></dd>
+    assimilation in <code>micromol m^(-2) s^(-1)</code>.</p></dd>
 
 
   <dt>ca_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the ambient CO2
-    concentration in the chamber (typically <code>'Ca'</code>).</p></dd>
+    concentration in the chamber in <code>micromol mol^(-1)</code>.</p></dd>
 
 
   <dt>deltapcham_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the chamber
-    overpressure (typically <code>'DeltaPcham'</code>).</p></dd>
+    overpressure in <code>kPa</code>.</p></dd>
 
 
   <dt>e_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the transpiration
-    rate (typically <code>'E'</code>).</p></dd>
+    rate in <code>mol m^(-2) s^(-1)</code>.</p></dd>
 
 
   <dt>gbw_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the boundary layer
-    conductance to water vapor (typically <code>'gbw'</code>).</p></dd>
+    conductance to water vapor in <code>mol m^(-2) s^(-1)</code>.</p></dd>
 
 
   <dt>gsw_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the stomatal
-    conductance to water vapor (typically <code>'gsw'</code>).</p></dd>
+    conductance to water vapor in <code>mol m^(-2) s^(-1)</code>.</p></dd>
 
 
   <dt>h2o_s_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the sample cell
-    H2O concentration (typically <code>'H2O_s'</code>).</p></dd>
+    H2O concentration in <code>mmol mol^(-1)</code>.</p></dd>
 
 
   <dt>pa_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the atmospheric
-    pressure (typically <code>'Pa'</code>).</p></dd>
+    pressure in <code>kPa</code>.</p></dd>
 
 
   <dt>tleaf_column_name</dt>
 <dd><p>The name of the column in <code>licor_exdf</code> that contains the leaf
-    temperature (typically <code>'TleafCnd'</code>).</p></dd>
+    temperature in <code>degrees C</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -238,26 +243,10 @@
 <span class="r-in"><span><span class="co"># additional gas properties.</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_licor_file.html">read_licor_file</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"ball_berry_1.xlsx"</span>, package <span class="op">=</span> <span class="st">"PhotoGEA"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  preamble_data_rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  variable_category_row <span class="op">=</span> <span class="fl">14</span>,</span></span>
-<span class="r-in"><span>  variable_name_row <span class="op">=</span> <span class="fl">15</span>,</span></span>
-<span class="r-in"><span>  variable_unit_row <span class="op">=</span> <span class="fl">16</span>,</span></span>
-<span class="r-in"><span>  data_start_row <span class="op">=</span> <span class="fl">17</span>,</span></span>
-<span class="r-in"><span>  timestamp_colname <span class="op">=</span> <span class="st">'time'</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">17</span>, <span class="st">'time'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">calculate_gas_properties</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'A'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'Ca'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'DeltaPcham'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'E'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'gbw'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'gsw'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'H2O_s'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'Pa'</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'TleafCnd'</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">calculate_gas_properties</span><span class="op">(</span><span class="va">licor_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">RHleaf</span>      <span class="co"># View the units of the new `RHleaf` column</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "%"</span>

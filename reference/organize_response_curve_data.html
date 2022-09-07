@@ -12,7 +12,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,7 +20,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
@@ -28,6 +31,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
+    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
 </li>
 <li class="nav-item">
@@ -64,7 +69,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">organize_response_curve_data</span><span class="op">(</span></span>
 <span>    <span class="va">licor_exdf</span>,</span>
 <span>    <span class="va">identifier_columns</span>,</span>
-<span>    <span class="va">measurement_numbers_to_keep</span>,</span>
+<span>    <span class="va">measurement_numbers_to_remove</span>,</span>
 <span>    <span class="va">column_for_ordering</span>,</span>
 <span>    ordering_column_tolerance <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
@@ -83,12 +88,11 @@
     often includes names like <code>plot</code>, <code>event</code>, <code>replicate</code>, etc.</p></dd>
 
 
-  <dt>measurement_numbers_to_keep</dt>
-<dd><p>A vector of integers specifying which points to keep for each curve; for
+  <dt>measurement_numbers_to_remove</dt>
+<dd><p>A vector of integers specifying which points to remove from each curve; for
     example, if each curve has 16 points and the 10^th^ and 11^th^ points along
     the sequence should not be included in subsequent analysis,
-    <code>measurement_numbers_to_keep</code> could be specified as
-    <code>c(1:9, 12:16)</code>.</p></dd>
+    <code>measurement_numbers_to_remove</code> could be specified as <code>c(10, 11)</code>.</p></dd>
 
 
   <dt>column_for_ordering</dt>
@@ -98,7 +102,9 @@
 
   <dt>ordering_column_tolerance</dt>
 <dd><p>To be passed to <code><a href="check_licor_data.html">check_licor_data</a></code> as the
-    <code>driving_column_tolerance</code> input argument.</p></dd>
+    <code>driving_column_tolerance</code> input argument; the
+    <code>ordering_column_tolerance</code> can be set to <code>Inf</code> to disable this
+    check.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -110,12 +116,13 @@
           given number 1, the second is given number 2, etc. These numbers are
           stored as a new column called <code>seq_num</code>.</p></li>
 <li><p>Extracts a subset of the data corresponding to the values of
-          <code>seq_num</code> in <code>measurement_numbers_to_keep</code>; this is often
-          helpful for A-Ci curves, where the CO~2~ concentration begins at the
-          ambient value, is decreased to a low value, is reset to atmospheric
-          for several measurements to allow the plant to reacclimate, and then
-          is increased to higher values. In this case, only the first
-          measurement at ambient is used for plotting or additional analysis.</p></li>
+          <code>seq_num</code> not in <code>measurement_numbers_to_remove</code>; this is
+          often helpful for A-Ci curves, where the CO~2~ concentration begins at
+          the ambient value, is decreased to a low value, is reset to
+          atmospheric for several measurements to allow the plant to
+          reacclimate, and then is increased to higher values. In this case,
+          only the first measurement at ambient CO~2~ is used for plotting or
+          additional analysis.</p></li>
 <li><p>Reorders the data according to ascending values of the
           <code>column_for_ordering</code>. For example, the points in an A-Ci curve
           would not be ordered according to their Ci values in a curve measured
@@ -157,7 +164,7 @@
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">organize_response_curve_data</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'species'</span>, <span class="st">'plot'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  <span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="st">'Qin'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
