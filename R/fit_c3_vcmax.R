@@ -14,13 +14,13 @@ fit_c3_vcmax <- function(
         stop('fit_c3_vcmax requires an exdf object')
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_columns[[f_prime_column_name]] <- 'dimensionless'
-    required_columns[[tleaf_column_name]] <- 'degrees C'
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[[f_prime_column_name]] <- 'dimensionless'
+    required_variables[[tleaf_column_name]] <- 'degrees C'
 
-    check_required_columns(replicate_exdf, required_columns)
+    check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
@@ -43,15 +43,15 @@ fit_c3_vcmax <- function(
 
     # Adjust Vcmax and Rd to 25 C
     photo_param <- PTR_FUN(mean(replicate_exdf[, tleaf_column_name]))
-    Vcmax_at_25 <- Vcmax / photo_param$Vcmax
-    Rd_at_25 <- Rd / photo_param$Rd
+    Vcmax_at_25 <- Vcmax / photo_param$Vcmax_norm
+    Rd_at_25 <- Rd / photo_param$Rd_norm
 
     # Calculate the fit line and add it to the data frame
     replicate_exdf[, paste0(a_column_name, '_fit')] <-
         Vcmax * replicate_exdf[, f_prime_column_name] - Rd
 
     # Document the column that was added
-    replicate_exdf <- specify_variables(
+    replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_c3_vcmax', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
     )
@@ -66,7 +66,7 @@ fit_c3_vcmax <- function(
     replicate_identifiers[, 'r_squared'] <- r_squared
 
     # Document the columns that were added
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_c3_vcmax', 'Vcmax', 'micromol m^(-2) s^(-1)'),
         c('fit_c3_vcmax', 'Vcmax_stderr', 'micromol m^(-2) s^(-1)'),

@@ -221,7 +221,13 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_get_oxygen_info_from_preamble(licor_files)
 
-    licor_files <- batch_specify_respiration(licor_files, RESPIRATION)
+    licor_files <- lapply(licor_files, function(x) {set_variable(
+        x,
+        'respiration',
+        'micromol m^(-2) s^(-1)',
+        'gm_from_tdl',
+        abs(RESPIRATION)
+    )})
 
     # Combine the Licor and TDL data
 
@@ -684,21 +690,25 @@ if (MAKE_GM_PLOTS) {
 
     # Make all the box and bar charts
     invisible(lapply(box_plot_param, function(x) {
-      do.call(box_wrapper, x)
+      dev.new()
+      print(do.call(bwplot_wrapper, x))
     }))
 
     invisible(lapply(box_bar_plot_param, function(x) {
-      do.call(box_wrapper, x)
-      do.call(bar_wrapper, x)
+      dev.new()
+      print(do.call(bwplot_wrapper, x))
+
+      dev.new()
+      print(do.call(barchart_with_errorbars, x))
     }))
 
     # Show iWUE time series
     iwue_time_plot <- xyplot(
-        licor_files_no_outliers_data[['iWUE']] ~ as.numeric(row.names(licor_files_no_outliers_data)),
+        licor_files_no_outliers_data[['iWUE']] ~ licor_files_no_outliers_data[['cycle_num']],
         group = licor_files_no_outliers_data[['event']],
         type = 'p',
         auto = TRUE,
-        xlab = "Measurement number (in chronological order)",
+        xlab = "TDL Cycle",
         ylab = iwue_lab
     )
     x11()

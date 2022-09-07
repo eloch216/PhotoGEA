@@ -67,7 +67,7 @@ PERFORM_CALCULATIONS <- TRUE
 VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Decide whether to remove statistical outliers after fitting
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
@@ -83,17 +83,18 @@ PERFORM_STATS_TESTS <- TRUE
 USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
+GM_TABLE <- list()
+
+# Indicate whether a `plot` column is present
+HAS_PLOT_INFO <- FALSE
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 GM_TABLE_FILE_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the USE_GM_TABLE boolean
+# Specify the filenames
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-    if (USE_GM_TABLE) {
-        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
-    }
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
@@ -103,11 +104,11 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS <- c(1:8, 12:17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide which temperature response parameters to use
-PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
+PTR_FUN <- photosynthesis_TRF(c3_arrhenius_bernacchi)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -115,7 +116,6 @@ PTR_FUN <- photosynthesis_TRF(temperature_response_parameters_Bernacchi)
 
 # Specify the names of a few important columns
 EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "plot_replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
 CA_COLUMN_NAME <- "Ca"
@@ -126,7 +126,7 @@ GSW_COLUMN_NAME <- "gsw"
 IWUE_COLUMN_NAME <- "iwue"
 O2_COLUMN_NAME <- "O2"
 F_PRIME_COLUMN_NAME <- "f_prime"
-GAMMA_STAR_COLUMN_NAME <- "gamma_star"
+GAMMA_STAR_COLUMN_NAME <- "Gamma_star"
 KC_COLUMN_NAME <- "Kc"
 KO_COLUMN_NAME <- "Ko"
 TLEAF_COLUMN_NAME <- "TleafCnd"
@@ -169,9 +169,18 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
 
-    has_plot_info <- TRUE
-    if (has_plot_info) {
-      # This might not be required for most data sets
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+
+    # Set the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+        "plot_replicate"
+    } else {
+        "replicate"
+    }
+
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
       combined_info <- process_id_columns(
         combined_info,
         "plot",
@@ -179,7 +188,6 @@ if (PERFORM_CALCULATIONS) {
         "plot_replicate"
       )
     }
-
 
     combined_info <- process_id_columns(
         combined_info,
@@ -189,25 +197,23 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Include gm values (required for calculating Cc)
-    if (USE_GM_TABLE) {
-        gm_table_info <- read_gm_table(
-            GM_TABLE_FILE_TO_PROCESS,
-            EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
-        )
-
-        combined_info <- add_gm_to_licor_data_from_table(
+    combined_info <- if (USE_GM_TABLE) {
+        set_variable(
             combined_info,
-            gm_table_info,
+            GM_COLUMN_NAME,
+            GM_UNITS,
+            'c3_co2_response',
+            GM_VALUE,
             EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
+            GM_TABLE
         )
     } else {
-        combined_info <- add_gm_to_licor_data_from_value(
+        set_variable(
             combined_info,
-            GM_VALUE,
+            GM_COLUMN_NAME,
             GM_UNITS,
-            GM_COLUMN_NAME
+            'c3_co2_response',
+            GM_VALUE
         )
     }
 
@@ -279,14 +285,15 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- organize_response_curve_data(
       combined_info,
       UNIQUE_ID_COLUMN_NAME,
-      MEASUREMENT_NUMBERS,
+      MEASUREMENT_NUMBERS_TO_REMOVE,
       'CO2_r_sp'
     )
 
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
-      points_to_remove <- list(
+      combined_info <- remove_points(
+        combined_info,
         list(event = 25, replicate = 4, plot = 2, obs = 3),
         list(event = 25, replicate = 8, plot = 6, obs = 118),
         list(event = 25, replicate = 8, plot = 6, obs = 119),
@@ -298,15 +305,6 @@ if (PERFORM_CALCULATIONS) {
         list(event = 'WT', replicate = 10, plot = 3, obs = 36),
         list(event = 25, replicate = 6, plot = 4, obs = 62)
       )
-
-      # Remove each of the points
-      for (pt in points_to_remove) {
-        combined_info <- combined_info[
-            combined_info[, 'plot'] != pt$plot |
-              combined_info[, 'replicate'] != pt$replicate |
-              combined_info[, 'event'] != pt$event|
-              combined_info[, 'obs'] != pt$obs, , TRUE]
-      }
     }
 
     # Calculate basic stats for each event
@@ -338,21 +336,21 @@ if (PERFORM_CALCULATIONS) {
     )
 
     if (REMOVE_STATISTICAL_OUTLIERS) {
-        print(paste("Number of rows before removing outliers:", nrow(vcmax_parameters)))  
-      
+        print(paste("Number of rows before removing outliers:", nrow(vcmax_parameters)))
+
         vcmax_parameters <- exclude_outliers(
             vcmax_parameters,
             'Vcmax_at_25',
             vcmax_parameters[, EVENT_COLUMN_NAME]
         )
-        
+
         print(paste("Number of rows after removing outliers:", nrow(vcmax_parameters)))
 
         vcmax_fits <- vcmax_fits[vcmax_fits[, UNIQUE_ID_COLUMN_NAME] %in% vcmax_parameters[, UNIQUE_ID_COLUMN_NAME], , TRUE]
     }
 
     vcmax_parameter_stats <- basic_stats(vcmax_parameters, EVENT_COLUMN_NAME)
-    
+
     vcmax_parameters <- vcmax_parameters$main_data
     vcmax_fits <- vcmax_fits$main_data
 
@@ -401,10 +399,10 @@ vcmax_parameters <- factorize_id_column(vcmax_parameters, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
-    View(all_samples$main_data)
+    View(all_samples)
     View(all_stats$main_data)
-    View(vcmax_parameters[c("event", "replicate", "plot", "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
-    View(vcmax_parameter_stats[c("event", "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr")])
+    View(vcmax_parameters[, c(EVENT_COLUMN_NAME, REP_COLUMN_NAME, "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
+    View(vcmax_parameter_stats[, c(EVENT_COLUMN_NAME, "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr"), TRUE])
 }
 
 # Determine if there is fluorescence data
@@ -454,7 +452,7 @@ if (INCLUDE_FLUORESCENCE) {
 }
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
@@ -486,8 +484,8 @@ multi_aci_curves <- xyplot(
     ylim = c(-10, 60),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 x11(width = 8, height = 6)
@@ -508,8 +506,8 @@ multi_gsci_curves <- xyplot(
     ylim = c(0, 0.8),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol=list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol=list(col = multi_curve_colors())
     )
 )
 x11(width = 8, height = 6)
@@ -575,6 +573,9 @@ if (INCLUDE_FLUORESCENCE) {
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))

@@ -1,5 +1,5 @@
 Package: PhotoGEA
-Version: 0.3.0
+Version: 0.4.0
 Title: Photosynthetic Gas Exchange Analysis
 Description: A collection of tools for loading and analyzing photosynthetic gas
     exchange data.
@@ -18,6 +18,7 @@ Imports:
     lattice
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    dfoptim
 VignetteBuilder: knitr
 URL: https://github.com/eloch216/PhotoGEA, https://eloch216.github.io/PhotoGEA/

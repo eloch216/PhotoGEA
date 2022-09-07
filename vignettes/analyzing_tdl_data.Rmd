@@ -349,9 +349,10 @@ system, and there is evidence that the calibration may be compromised during the
 spike, it is probably a good idea to remove the TDL cycles where the ^12^C
 signal from valve 26 suddenly becomes large.
 
-Fortunately, this is simple to do in R. The following illustrates one way to
-"clean" the data by removing the unreliable TDL cycles; here, we actually remove
-two regions of the data that appear to be suspicious:
+Fortunately, this is simple to do using the `remove_points` function from
+`PhotoGEA`. The following illustrates how to "clean" the data by removing the
+unreliable TDL cycles; here, we actually remove two regions of the data that
+appear to be suspicious:
 
 ```{r removing_cycles}
 # Define a vector of cycle numbers that should be removed
@@ -362,7 +363,7 @@ tdl_cycles_to_remove <- c(
 
 # Remove them
 tdl_files_clean <-
-  tdl_files[!tdl_files[, 'cycle_num'] %in% tdl_cycles_to_remove, , TRUE]
+  remove_points(tdl_files, list(cycle_num = tdl_cycles_to_remove))
 ```
 
 ## Smoothing the TDL Data
@@ -619,10 +620,22 @@ Then, this function should be passed to `smooth_tdl_data` in place of
 
 The following code chunk includes all the central commands used throughout this
 document. They are compiled here to make them easy to copy/paste into a text
-file to initialize your own script.
+file to initialize your own script. Annotation has also been added to clearly
+indicate the four steps involved in data analysis, as described in the
+_Developing a Data Analysis Pipeline_ vignette.
 
 ```{r, eval = FALSE}
+###
+### PRELIMINARIES:
+### Loading packages, defining constants, creating helping functions, etc.
+###
+
 <<setup>>
+
+###
+### TRANSLATION:
+### Creating convenient R objects from raw data files
+###
 
 <<tdl_file_names>>
 
@@ -630,13 +643,28 @@ file to initialize your own script.
 
 <<combining_tdl_data>>
 
+###
+### VALIDATION:
+### Organizing the data, checking its consistency and quality, cleaning it
+###
+
 <<identifying_cycles>>
 
 <<removing_cycles>>
 
 <<smoothing_valves>>
 
+###
+### PROCESSING:
+### Extracting new pieces of information from the data
+###
+
 <<processing_smooth_tdl_cycles>>
+
+###
+### SYNTHESIS:
+### Using plots and statistics to help draw conclusions from the data
+###
 
 <<compare_smoothing>>
 

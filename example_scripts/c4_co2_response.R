@@ -70,28 +70,25 @@ VIEW_DATA_FRAMES <- TRUE
 USE_GM_TABLE <- FALSE
 GM_VALUE <- 3.0  # mol / m^2 / s / bar
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
+GM_TABLE <- list()
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 GM_TABLE_FILE_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the CHOOSE_FILES_INTERACTIVELY
-# and USE_GM_TABLE booleans
+# Specify the filenames
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-    if (USE_GM_TABLE) {
-        GM_TABLE_FILE_TO_PROCESS <- choose_input_gm_table_file()
-    }
 }
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
 # points along the sequence of A-Ci measurements.
 #
-# These numbers have been chosen for a sequence with 13 measurements. Points 1,
+# These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS <- c(1:7,11:13)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
@@ -153,27 +150,30 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
-    if (USE_GM_TABLE) {
-        gm_table_info <- read_gm_table(
-            GM_TABLE_FILE_TO_PROCESS,
-            EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
-        )
-
-        combined_info <- add_gm_to_licor_data_from_table(
+    # Include gm values
+    combined_info <- if (USE_GM_TABLE) {
+        set_variable(
             combined_info,
-            gm_table_info,
+            GM_COLUMN_NAME,
+            GM_UNITS,
+            'c4_co2_response',
+            GM_VALUE,
             EVENT_COLUMN_NAME,
-            GM_COLUMN_NAME
+            GM_TABLE
         )
     } else {
-        combined_info <- add_gm_to_licor_data_from_value(
+        set_variable(
             combined_info,
-            GM_VALUE,
+            GM_COLUMN_NAME,
             GM_UNITS,
-            GM_COLUMN_NAME
+            'c4_co2_response',
+            GM_VALUE
         )
     }
+
+    # Calculate temperature-dependent values of C4 parameters
+    combined_info <-
+        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -185,12 +185,9 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        CI_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        'CO2_r_sp'
     )
 
     ###                     ###
@@ -215,8 +212,15 @@ if (PERFORM_CALCULATIONS) {
         CI_COLUMN_NAME,
         PRESSURE_COLUMN_NAME,
         DELTA_PRESSURE_COLUMN_NAME,
-        TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)
+        'Kc',
+        'Ko',
+        'Kp',
+        'gamma_star',
+        'ao',
+        'gmc',
+        'Vcmax_norm',
+        'Vpmax_norm',
+        'Rd_norm',
     ))
 
     all_fit_parameters <- fit_result$parameters
@@ -320,7 +324,7 @@ if (INCLUDE_FLUORESCENCE) {
 }
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto.key = list(space = "right"),
@@ -352,8 +356,8 @@ multi_aci_curves <- xyplot(
     ylim = c(-5, 65),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
@@ -375,8 +379,8 @@ multi_gsci_curves <- xyplot(
     ylim = c(0, 0.8),
     xlim = c(-100, 1600),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
@@ -437,6 +441,10 @@ if (INCLUDE_FLUORESCENCE) {
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))
+

@@ -68,7 +68,7 @@ if (PERFORM_CALCULATIONS) {
 #
 #
 NUM_OBS_IN_SEQ <- 390
-MEASUREMENT_NUMBERS <- c(1:390)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 
@@ -129,12 +129,10 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        MEASUREMENT_NUMBER_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        'Obs', # Order the induction curves according to their `Obs` values
+        Inf    # Do not require the curves to follow the same sequence of `Obs` values
     )
 
     # Add an "elapsed time" column
@@ -181,7 +179,7 @@ avg_plot_param <- list(
 )
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
@@ -212,8 +210,8 @@ multi_induction_curves <- xyplot(
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
     ylim = c(-10, 60),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 

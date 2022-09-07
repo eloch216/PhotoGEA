@@ -80,7 +80,7 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 12 measurements. Here we
 # want to keep all of them.
 NUM_OBS_IN_SEQ <- 12
-MEASUREMENT_NUMBERS <- seq_len(NUM_OBS_IN_SEQ)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
@@ -151,12 +151,9 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        QIN_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        QIN_COLUMN_NAME
     )
 
     all_samples <- combined_info[['main_data']]
@@ -234,7 +231,7 @@ if (INCLUDE_FLUORESCENCE) {
 }
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(avg_xyplot, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
@@ -266,8 +263,8 @@ multi_aq_curves <- xyplot(
     ylim = c(-10, 50),
     xlim = c(-100, 2100),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
@@ -289,8 +286,8 @@ multi_gsci_curves <- xyplot(
     ylim = c(0, 0.8),
     xlim = c(-100, 2100),
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 
@@ -331,6 +328,9 @@ if (INCLUDE_FLUORESCENCE) {
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))

@@ -97,8 +97,63 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
 }
 
 # Check if an object is an exdf
-is.exdf <- function(x) {
-    inherits(x, "exdf")
+is.exdf <- function(x, consistency_check = FALSE) {
+    # Make sure the class of x includes `exdf`
+    class_check <- inherits(x, "exdf")
+
+    if (!class_check) {
+        return(FALSE)
+    }
+
+    if (consistency_check) {
+        # Make sure x has elements with the required names
+        required_elements <- c('main_data', 'units', 'categories')
+        element_check <- all(sapply(
+            required_elements,
+            function(ele) {ele %in% names(x)}
+        ))
+
+        if (!element_check) {
+            warning('x must have elements named `main_data`, `units`, and `categories`')
+            return(FALSE)
+        }
+
+        # Make sure the required elements are all data frames
+        type_check <- all(sapply(
+            required_elements,
+            function(ele) {is.data.frame(x[[ele]])}
+        ))
+
+        if (!element_check) {
+            warning('`x$main_data`, `x$units`, and `x$categories` must be data frames')
+            return(FALSE)
+        }
+
+        # Make sure the required elements have the same column names
+        columns <- colnames(x$main_data)
+        column_check <- all(sapply(
+            c('units', 'categories'),
+            function(ele) {identical(colnames(x[[ele]]), columns)}
+        ))
+
+        if (!column_check) {
+            warning('`x$main_data`, `x$units`, and `x$categories` must have the same column names')
+            return(FALSE)
+        }
+
+        # Make sure the units and categories have just one row
+        row_check <- all(sapply(
+            c('units', 'categories'),
+            function(ele) {nrow(x[[ele]] == 1)}
+        ))
+
+        if (!row_check) {
+            warning('`x$units` and `x$categories` must each have exactly one row')
+            return(FALSE)
+        }
+    }
+
+    return(TRUE)
 }
 
 # Convert an exdf to a data.frame (used by `View`, `write.csv`, and others)

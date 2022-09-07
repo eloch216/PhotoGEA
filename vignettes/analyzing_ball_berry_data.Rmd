@@ -310,6 +310,46 @@ so it is reasonable to expect that the measurements represent true steady-state
 values. Considering this, all of these curves are acceptable based on the CO~2~
 plots.
 
+### Stability
+
+```{r plot_stability}
+xyplot(
+  `A:OK` + `gsw:OK` + Stable ~ Qin | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlim = c(0, 2200),
+  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')')
+)
+```
+
+When measuring response curves with a Licor, it is possible to specify stability
+criteria for each point in addition to minimum and maximum wait times. In other
+words, once the set point for the driving variable is changed, the machine waits
+until the stability criteria are met; there is a minimum waiting period, and
+also a maximum to prevent the machine from waiting for too long. These stability
+criteria are especially important for Ball-Berry curves, since the stomata may
+take a long time to reach steady state.
+
+When these curves were measured, stability criteria were supplied for the net
+assimilation rate `A` and the stomatal conductance `gsw`. The stability status
+for each was stored in the log file because the appropriate logging option for
+stability was set. Now, for each point, it is possible to check whether
+stability was achieved or whether the point was logged because the maximum
+waiting period had been met. If the maximum waiting period is reached and the
+plant has still not stabilized, the data point may be unreliable, so it is very
+important to check this information.
+
+In the plot, `A:OK` indicates whether `A` was stable (0 for no, 1 for yes),
+`gsw:OK` indicates whether `gsw` was stable (0 for no, 1 for yes), and
+`Stable` indicates the total number of stability conditions that were met. So,
+we are looking for points where `Stable` is 2. Otherwise, we can check the other
+traces to see whether `A` or `gsw` was unstable. Here it looks like many of the
+high light points were not stable, and it may be a good idea to remove them
+before proceeding with the Ball-Berry fitting.
+
 ### Light-Response Curves
 
 ```{r plot_assimilation}
@@ -340,10 +380,31 @@ likely a byproduct of the noise that was intentionally added to the true
 measured data (see [The Data]). Nevertheless, it may be a good idea to remove
 them before proceeding with the Ball-Berry fitting.
 
-## Removing Bad Curves
+## Cleaning the Licor Data
+
+While checking over the plots in [Qualitative Checks], two issues were noticed:
+(1) some points were logged before stability was achieved and (2) some of the
+curves look abnormal. In this section, we will demonstrate how to remove the
+unstable points and the weird curves.
+
+The following command will keep only the points where `Stable` is exactly 2;
+this condition means that all of the stability criteria were satisfied.
+Sometimes, following this procedure, a curve will have very few stable points
+remaining; it is usually a good idea to automatically exclude any curve with
+fewer than three stable points.
+
+```{r remove_unstable_points}
+# Only keep points where stability was achieved
+licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+
+# Remove any curves that have fewer than three remaining points
+npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+ids_to_keep <- names(npts[npts > 2])
+licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+```
 
 Since we have identified a few curves that may not be acceptable for Ball-Berry
-fitting, we can remove them as follows:
+fitting, we can remove them via the `remove_points` function from `PhotoGEA`:
 
 ```{r remove_curves}
 # Define a list of curves to remove from the data set
@@ -355,8 +416,12 @@ curves_to_remove <- c(
 
 # Remove them
 licor_data <-
-  licor_data[!licor_data[, 'curve_identifier'] %in% curves_to_remove, , TRUE]
+  remove_points(licor_data, list(curve_identifier = curves_to_remove))
 ```
+
+Note that `remove_points` can also be used to exclude individual points instead
+of entire curves; see its help entry by typing `?remove_points` for more
+information.
 
 # Fitting Licor Data
 
@@ -366,22 +431,18 @@ of the Ball-Berry index; in fact, they do not even include values of $h_s$ and
 $C_s$ required to calculate the Ball-Berry index. However, the `PhotoGEA`
 package includes two functions to help with these calculations:
 `calculate_gas_properties` and `calculate_ball_berry_index`. Each of these
-requires an `exdf` object containing Licor data, as well as the names of
-several important columns in the data. The units for each column will be checked
-in an attempt to avoid unit-related errors. More information about these
-functions can be obtained from the built-in help system by typing
-`?calculate_gas_properties` or `?calculate_ball_berry_index`. Here we will use
-them sequentially to calculate values of the Ball-Berry index:
+requires an `exdf` object containing Licor data. The units for each required
+column will be checked in an attempt to avoid unit-related errors. More
+information about these functions can be obtained from the built-in help system
+by typing `?calculate_gas_properties` or `?calculate_ball_berry_index`. Here we
+will use them sequentially to calculate values of the Ball-Berry index:
 
 ```{r calculate_bb_index}
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
-licor_data <- calculate_gas_properties(
-  licor_data,
-  'A', 'Ca', 'DeltaPcham', 'E', 'gbw', 'gsw', 'H2O_s', 'Pa', 'TleafCnd'
-)
+licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate the Ball-Berry index
-licor_data <- calculate_ball_berry_index(licor_data, 'A', 'RHleaf', 'Csurface')
+licor_data <- calculate_ball_berry_index(licor_data)
 ```
 
 Together, these functions add several new columns to `licor_data`, including one
@@ -403,9 +464,7 @@ parameters and fits:
 ball_berry_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_ball_berry,                   # The function to apply to each chunk of `licor_data`
-  'gsw',                            # Additional argument required by `fit_ball_berry`
-  'bb_index'                        # Additional argument required by `fit_ball_berry`
+  fit_ball_berry                    # The function to apply to each chunk of `licor_data`
 ))
 ```
 
@@ -461,12 +520,17 @@ species using the `basic_stats` function from `PhotoGEA`:
 # Compute the average and standard error for the Ball-Berry slope and intercept
 # for each species
 ball_berry_averages <- basic_stats(
-  ball_berry_results$parameters[ , c('species', 'K', 'bb_intercept', 'bb_slope'), TRUE],
+  ball_berry_results$parameters,
   'species'
 )
 
 # View the averages and errors
-print(ball_berry_averages)
+columns_to_view <- c(
+  'species',
+  'bb_intercept_avg', 'bb_intercept_stderr',
+  'bb_slope_avg', 'bb_slope_stderr'
+)
+print(ball_berry_averages[ , columns_to_view, TRUE])
 ```
 
 # Customizing Your Script
@@ -531,16 +595,33 @@ write.csv(ball_berry_averages, file.choose(), row.names = FALSE)
 
 The following code chunk includes all the central commands used throughout this
 document. They are compiled here to make them easy to copy/paste into a text
-file to initialize your own script.
+file to initialize your own script. Annotation has also been added to clearly
+indicate the four steps involved in data analysis, as described in the
+_Developing a Data Analysis Pipeline_ vignette.
 
 ```{r, eval = FALSE}
+###
+### PRELIMINARIES:
+### Loading packages, defining constants, creating helping functions, etc.
+###
+
 <<setup>>
+
+###
+### TRANSLATION:
+### Creating convenient R objects from raw data files
+###
 
 <<licor_file_names>>
 
 <<loading_licor_data>>
 
 <<combining_licor_data>>
+
+###
+### VALIDATION:
+### Organizing the data, checking its consistency and quality, cleaning it
+###
 
 <<adding_id_column>>
 
@@ -554,7 +635,14 @@ file to initialize your own script.
 
 <<plot_assimilation>>
 
+<<remove_unstable_points>>
+
 <<remove_curves>>
+
+###
+### PROCESSING:
+### Extracting new pieces of information from the data
+###
 
 <<calculate_bb_index>>
 
@@ -563,6 +651,11 @@ file to initialize your own script.
 <<plot_fits>>
 
 <<ball_berry_parameters>>
+
+###
+### SYNTHESIS:
+### Using plots and statistics to help draw conclusions from the data
+###
 
 <<calculate_stats>>
 ```

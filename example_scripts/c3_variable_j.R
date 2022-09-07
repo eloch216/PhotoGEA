@@ -74,7 +74,7 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS <- c(1:8, 11:17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
@@ -170,12 +170,9 @@ if (PERFORM_CALCULATIONS) {
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
-        MEASUREMENT_NUMBER_NAME,
-        NUM_OBS_IN_SEQ,
-        MEASUREMENT_NUMBERS,
-        CI_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        EVENT_COLUMN_NAME
+        UNIQUE_ID_COLUMN_NAME,
+        MEASUREMENT_NUMBERS_TO_REMOVE,
+        'CO2_r_sp'
     )
 
     # Perform the variable J fitting using the general strategy of
@@ -377,12 +374,11 @@ x11(width = 12, height = 6)
 print(gm_cc_fitting_plot)
 
 # Plot the average estimated gm-Ci curves
-gm_ci_avg_plot <- avg_xyplot(
-    Y = fits_for_plotting$gm,
-    X = fits_for_plotting$Ci,
-    seq_num = fits_for_plotting$seq_num,
-    event = fits_for_plotting[[EVENT_COLUMN_NAME]],
-    x_error_bars = FALSE,
+gm_ci_avg_plot <- xyplot_avg_rc(
+    fits_for_plotting$gm,
+    fits_for_plotting$Ci,
+    fits_for_plotting$seq_num,
+    fits_for_plotting[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto = TRUE,
@@ -397,12 +393,11 @@ x11(width = 12, height = 6)
 print(gm_ci_avg_plot)
 
 # Plot the average estimated gm-Cc curves
-gm_cc_avg_plot <- avg_xyplot(
-    Y = fits_for_plotting$gm,
-    X = fits_for_plotting$Cc,
-    seq_num = fits_for_plotting$seq_num,
-    event = fits_for_plotting[[EVENT_COLUMN_NAME]],
-    x_error_bars = FALSE,
+gm_cc_avg_plot <- xyplot_avg_rc(
+    fits_for_plotting$gm,
+    fits_for_plotting$Cc,
+    fits_for_plotting$seq_num,
+    fits_for_plotting[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto = TRUE,
@@ -445,6 +440,9 @@ plot_param <- list(
 
 # Make all the plots
 invisible(lapply(plot_param, function(x) {
-  do.call(box_wrapper, x)
-  do.call(bar_wrapper, x)
+  dev.new()
+  print(do.call(bwplot_wrapper, x))
+
+  dev.new()
+  print(do.call(barchart_with_errorbars, x))
 }))

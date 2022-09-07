@@ -16,14 +16,71 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# UNRELEASED
+# PhotoGEA VERSION 0.4.0 (2022-09-07)
 
-- Renamed GitHub repository from `licor-processing-and-analysis` to `PhotoGEA`.
-- Made GitHub repository public, which allows for a simpler installation via
-  `remotes::install_github`.
-- Initialized website using `pkgdown` and GitHub Pages by using
-  `usethis::use_pkgdown_github_pages`; website is now available at
-  https://eloch216.github.io/PhotoGEA/index.html.
+- Made several improvements to accessibility:
+  - Renamed GitHub repository from `licor-processing-and-analysis` to
+    `PhotoGEA`.
+  - Made GitHub repository public, which allows for a simpler installation via
+    `remotes::install_github`.
+  - Initialized website using `pkgdown` and GitHub Pages by using
+    `usethis::use_pkgdown_github_pages`; website is now available at
+    [https://eloch216.github.io/PhotoGEA/index.html](https://eloch216.github.io/PhotoGEA/index.html).
+- Made minor improvements to the Ball-Berry vignette:
+  - Added a stability check.
+  - Made the stats calculations more clear.
+- Added new functions to the package namespace:
+  - A function for excluding data points (`remove_points`).
+  - A cross-platform file selection tool (`choose_input_files`).
+  - A function for calculating C3 assimilation rates
+    (`calculate_c3_assimilation`).
+  - A function for fitting C3 CO2 response curves (`fit_c3_aci`).
+  - A function for setting `exdf` column values (`set_variable`).
+  - A function for calculating Arrhenius exponents (`calculate_arrhenius`).
+- Modified the behavior of several functions:
+  - Added an option for a more thorough check in `is.exdf`.
+  - `organize_response_curve_data` now has a specification for points to remove
+    rather than points to keep, because this is usually easier to do.
+- Added documentation for several code objects:
+  - `document_variables` (formerly `specify_variables`)
+  - `exclude_outliers`
+  - `barchart_with_errorbars` (formerly `bar_wrapper`)
+  - `bwplot_wrapper` (formerly `box_wrapper`)
+  - `xyplot_avg_rc` (formerly `avg_xyplot`)
+  - `multi_curve_colors` (formerly `default_colors`)
+  - `calculate_cc`
+  - `check_required_variables` (formerly `check_required_columns`)
+  - `example_data_files` (and also added new files for C3 A-Ci curves)
+  - `c3_arrhenius_bernacchi`, `c3_arrhenius_sharkey`, and
+    `c4_arrhenius_von_caemmerer`
+- Removed several limited-use functions from the package namespace:
+  - `add_gm_to_licor_data_from_table`
+  - `add_gm_to_licor_data_from_value`
+  - `batch_specify_oxygen`
+  - `batch_specify_respiration`
+  - `choose_input_gm_table_file`
+  - `read_gm_table`
+  - (All of these functions can be replicated with `set_variable`)
+- Added new vignettes:
+  - A vignette describing how to work with extended data frames.
+  - A vignette describing how to develop a data analysis pipeline.
+  - A vignette introducing new users to PhotoGEA.
+- Started supplying default column names in several functions to make code
+  shorter:
+  - `fit_c3_aci`
+  - `calculate_c3_assimilation`
+  - `calculate_cc`
+  - `calculate_gas_properties`
+  - `calculate_c3_assimilation`
+  - `calculate_ball_berry_index`
+  - `fit_ball_berry`
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/33
+  - https://github.com/eloch216/PhotoGEA/pull/34
+  - https://github.com/eloch216/PhotoGEA/pull/35
+  - https://github.com/eloch216/PhotoGEA/pull/37
+  - https://github.com/eloch216/PhotoGEA/pull/41
+  - https://github.com/eloch216/PhotoGEA/pull/42
 
 # PhotoGEA VERSION 0.3.0 (2022-08-15)
 

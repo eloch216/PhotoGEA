@@ -1,4 +1,5 @@
-# Set the units and category for a column of an exdf
+# A helping function for `document_variables` that sets the units and category
+# for one column of an exdf
 set_column_info <- function(x, name, units, category) {
     if (!is.exdf(x)) {
         stop("`x` must be a exdf")
@@ -46,26 +47,7 @@ set_column_info <- function(x, name, units, category) {
     return(x)
 }
 
-# specify_variables: a function for specifying the units and categories of
-# columns of an exdf object; any new columns will be initialized to NA.
-#
-# ------------------------------------------------------------------------------
-#
-# INPUTS:
-#
-# - exdf_obj: an exdf object
-#
-# any additional inputs should be vectors of strings that describe the variable
-# specifications, where the first element is the category, second is the name,
-# and third is the units
-#
-# ------------------------------------------------------------------------------
-#
-# OUTPUT:
-#
-# an exdf object with new and/or updated columns
-#
-specify_variables <- function(exdf_obj, ...)
+document_variables <- function(exdf_obj, ...)
 {
     if (!is.exdf(exdf_obj)) {
         stop("exdf_obj must be an exdf object")

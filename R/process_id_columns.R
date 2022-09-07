@@ -17,12 +17,12 @@ process_id_columns <- function(
         stop("process_id_columns requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[event_column_name]] <- NA
-    required_columns[[rep_column_name]] <- NA
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[event_column_name]] <- NA
+    required_variables[[rep_column_name]] <- NA
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Make sure both columns are treated as character data and trim any
     # whitespace
@@ -41,7 +41,7 @@ process_id_columns <- function(
         paste(licor_exdf[,event_column_name], licor_exdf[,rep_column_name])
 
     # Document the column that was added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("process_id_columns", unique_id_column_name, "")
     )

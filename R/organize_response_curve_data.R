@@ -1,7 +1,7 @@
 organize_response_curve_data <- function(
     licor_exdf,
     identifier_columns,
-    measurement_numbers_to_keep,
+    measurement_numbers_to_remove,
     column_for_ordering,
     ordering_column_tolerance = 1.0
 )
@@ -11,10 +11,10 @@ organize_response_curve_data <- function(
     }
 
     # Make sure the column for ordering is defined
-    required_columns <- list()
-    required_columns[[column_for_ordering]] <- NA
+    required_variables <- list()
+    required_variables[[column_for_ordering]] <- NA
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Create factors from the identifier columns
     f <- lapply(identifier_columns, function(x) {licor_exdf[ , x]})
@@ -28,8 +28,8 @@ organize_response_curve_data <- function(
     # Make a subset of the full result that only includes the desired
     # measurement points
     licor_exdf <-
-        licor_exdf[licor_exdf[, 'seq_num'] %in% measurement_numbers_to_keep, , TRUE]
-    
+        licor_exdf[!licor_exdf[, 'seq_num'] %in% measurement_numbers_to_remove, , TRUE]
+
     # Check to make sure the identifier columns specify curves with the same
     # number of points. Don't check for any infinite values since we don't know
     # which columns should be ignored for this check.

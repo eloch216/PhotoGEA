@@ -135,8 +135,8 @@ multi_bb_curves <- xyplot(
     ylim = gsw_range,
     xlim = bb_index_range,
     par.settings = list(
-        superpose.line = list(col = default_colors),
-        superpose.symbol = list(col = default_colors)
+        superpose.line = list(col = multi_curve_colors()),
+        superpose.symbol = list(col = multi_curve_colors())
     )
 )
 

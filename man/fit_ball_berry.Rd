@@ -15,8 +15,8 @@
 \usage{
   fit_ball_berry(
     replicate_exdf,
-    gsw_column_name,
-    bb_index_column_name
+    gsw_column_name = 'gsw',
+    bb_index_column_name = 'bb_index'
   )
 }
 
@@ -27,12 +27,12 @@
 
   \item{gsw_column_name}{
     The name of the column in \code{replicate_exdf} that contains the stomatal
-    conductance to water vapor (typically \code{'gsw'}).
+    conductance to water vapor in \code{mol m^(-2) s^(-1)}.
   }
 
   \item{bb_index_column_name}{
     The name of the column in \code{replicate_exdf} that contains the Ball-Berry
-    index (typically \code{'bb_index'}).
+    index in \code{mol m^(-2) s^(-1)}.
   }
 }
 
@@ -117,43 +117,23 @@ licor_file <- read_licor_file(
   c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
 )
 
-licor_file <- calculate_gas_properties(
-  licor_file,
-  'A',
-  'Ca',
-  'DeltaPcham',
-  'E',
-  'gbw',
-  'gsw',
-  'H2O_s',
-  'Pa',
-  'TleafCnd'
-)
+licor_file <- calculate_gas_properties(licor_file)
 
 licor_file[,'species_plot'] <-
   paste(licor_file[,'species'], '-', licor_file[,'plot'])
 
-licor_file <- calculate_ball_berry_index(
-    licor_file,
-    'A',
-    'RHleaf',
-    'Csurface'
-)
+licor_file <- calculate_ball_berry_index(licor_file)
 
 # Fit just one curve from the data set (it is rare to do this)
 one_result <- fit_ball_berry(
-  licor_file[licor_file[, 'species_plot'] == 'soybean - 1a', , TRUE],
-  'gsw',
-  'bb_index'
+  licor_file[licor_file[, 'species_plot'] == 'soybean - 1a', , TRUE]
 )
 
 # Fit all curves in the data set (it is more common to do this)
 bb_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
-  fit_ball_berry,
-  'gsw',
-  'bb_index'
+  fit_ball_berry
 ))
 
 # View the fitting parameters for each species / plot
