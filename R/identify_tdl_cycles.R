@@ -11,15 +11,15 @@ identify_tdl_cycles <- function(
         stop("identify_tdl_cycles requires an exdf object")
     }
 
-    # Make sure the required columns are defined
-    required_columns <- list()
-    required_columns[[valve_column_name]] <- NA
-    required_columns[[timestamp_colname]] <- NA
+    # Make sure the required variables are defined
+    required_variables <- list()
+    required_variables[[valve_column_name]] <- NA
+    required_variables[[timestamp_colname]] <- NA
 
-    check_required_columns(tdl_exdf, required_columns)
+    check_required_variables(tdl_exdf, required_variables)
 
     # Add a new column to the data for the cycle number
-    tdl_exdf <- specify_variables(
+    tdl_exdf <- document_variables(
         tdl_exdf,
         c("calculated", "cycle_num", "NA"),
         c("calculated", "elapsed_time", "minutes")

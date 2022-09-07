@@ -14,7 +14,7 @@
 # Cm:         mesophyll CO2 partial pressure
 # gamma_star: half the reciprocal of rubisco specificity
 # gbs:        bundle sheath conductance to CO2
-# gm:         mesophyll conductance to CO2
+# gmc:        mesophyll conductance to CO2
 # Kc:         Michaelis constant of rubisco for CO2
 # Ko:         Michaelis constant of rubisco for O2
 # Kp:         Michaelis constant of PEP carboxylase for CO2
@@ -27,40 +27,39 @@
 # -------------------
 #
 c4_aci <- function(
-    An,      # micromol / m^2 / s   (typically this value comes from Licor measurements)
-    Ci,      # microbar             (typically this value comes from Licor measurements)
-    Tleaf,   # degrees C            (typically this value comes from Licor measurements)
-    PTR_FUN, # a function such as `photosynthesis_TRF(temperature_response_parameters_von_Caemmerer)`
-    Om,      # microbar             (typically this value is known from the experimental setup)
-    gbs,     # mol / m^2 / s / bar  (typically this value is fixed)
-    Vpmax,   # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Vcmax    # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    An,         # micromol / m^2 / s   (typically this value comes from Licor measurements)
+    Ci,         # microbar             (typically this value comes from Licor measurements)
+    Kc,         # microbar
+    Ko,         # mbar
+    Kp,         # microbar
+    gamma_star, # dimensionless
+    ao,         # dimensionless
+    gmc,        # mol / m^2 / s / bar
+    Vcmax_norm, # dimensionless
+    Vpmax_norm, # dimensionless
+    Rd_norm,    # dimensionless
+    Om,         # microbar             (typically this value is known from the experimental setup)
+    gbs,        # mol / m^2 / s / bar  (typically this value is fixed)
+    Vpmax,      # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Vcmax       # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
 )
 {
     # Assume that no photosynthesis occurs in the bundle sheath
     alpha <- 0.0  # dimensionless
 
-    # Calculate temperature-dependent parameter values
-    photo_param <- PTR_FUN(Tleaf)
-
-    # Extract Kc, Ko, Kp, gamma_star, ao, and gm
-    Kc <- photo_param$Kc                  # microbar
-    Ko <- photo_param$Ko * 1000           # microbar
-    Kp <- photo_param$Kp                  # microbar
-    gamma_star <- photo_param$gamma_star  # dimensionless
-    ao <- photo_param$ao                  # dimensionless
-    gm <- photo_param$gm                  # mol / m^2 / s / bar
+    # Convert units of Ko
+    Ko <- Ko * 1000 # microbar
 
     # Apply temperature responses to Vcmax, Vpmax, Rd, and Rm, making use of
     # Table 4.1
-    Vcmax_tl <- Vcmax * photo_param$Vcmax  # micromol / m^2 / s
-    Vpmax_tl <- Vpmax * photo_param$Vpmax  # micromol / m^2 / s
-    Rd_tl <- Vcmax * photo_param$Rd        # micromol / m^2 / s
-    Rm_tl <- 0.5 * Rd_tl                   # micromol / m^2 / s
+    Vcmax_tl <- Vcmax * Vcmax_norm  # micromol / m^2 / s
+    Vpmax_tl <- Vpmax * Vpmax_norm  # micromol / m^2 / s
+    Rd_tl <- Vcmax * Rd_norm        # micromol / m^2 / s
+    Rm_tl <- 0.5 * Rd_tl            # micromol / m^2 / s
 
-    # Use the definition of mesophyll conductance (An = gm * (Ci - Cm)) to solve
+    # Use the definition of mesophyll conductance (An = gmc * (Ci - Cm)) to solve
     # for Cm
-    Cm <- Ci - An / gm  # microbar
+    Cm <- Ci - An / gmc  # microbar
 
     # Equation 4.17
     Vp <- Cm * Vpmax_tl / (Cm + Kp)  # micromol / m^2 / s
@@ -95,8 +94,15 @@ fit_c4_aci <- function(
     ci_column_name,              # micromol / mol
     pressure_column_name,        # kPa
     delta_pressure_column_name,  # kPa
-    tleaf_column_name,           # degrees C
-    PTR_FUN,
+    kc_column_name,              # microbar
+    ko_column_name,              # mbar
+    kp_column_name,              # microbar
+    gamma_star_column_name,      # dimensionless
+    ao_column_name,              # dimensionless
+    gmc_column_name,             # mol / m^2 / s / bar
+    vcmax_norm_column_name,      # dimensionless
+    vpmax_norm_column_name,      # dimensionless
+    rd_norm_column_name,         # dimensionless
     Om = 210000,                 # microbar
     gbs = 0.003,                 # mol / m^2 / s / bar
     initial_guess = list(Vpmax = 150, Vcmax = 30)
@@ -106,15 +112,23 @@ fit_c4_aci <- function(
         stop('fit_c4_aci requires an exdf object')
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_columns[[ci_column_name]] <- 'micromol mol^(-1)'
-    required_columns[[pressure_column_name]] <- 'kPa'
-    required_columns[[delta_pressure_column_name]] <- 'kPa'
-    required_columns[[tleaf_column_name]] <- 'degrees C'
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[pressure_column_name]] <- 'kPa'
+    required_variables[[delta_pressure_column_name]] <- 'kPa'
+    required_variables[[kc_column_name]] <- 'microbar'
+    required_variables[[ko_column_name]] <- 'mbar'
+    required_variables[[kp_column_name]] <- 'microbar'
+    required_variables[[gamma_star_column_name]] <- 'dimensionless'
+    required_variables[[ao_column_name]] <- 'dimensionless'
+    required_variables[[gmc_column_name]] <- 'mol m^(-2) s^(-1) bar^(-1)'
+    required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
+    required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
+    required_variables[[rd_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
 
-    check_required_columns(replicate_exdf, required_columns)
+    check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
@@ -124,15 +138,23 @@ fit_c4_aci <- function(
         0.01 * replicate_exdf[, ci_column_name] *
         (replicate_exdf[, pressure_column_name] + replicate_exdf[, delta_pressure_column_name])
 
-    # Extract A and Tleaf values
+    # Extract the values of several important columns
     A <- replicate_exdf[, a_column_name]
-    Tleaf <- replicate_exdf[, tleaf_column_name]
+    Ko <- replicate_exdf[, ko_column_name]
+    Kc <- replicate_exdf[, kc_column_name]
+    Kp <- replicate_exdf[, kp_column_name]
+    gamma_star <- replicate_exdf[, gamma_star_column_name]
+    ao <- replicate_exdf[, ao_column_name]
+    gmc <- replicate_exdf[, gmc_column_name]
+    Vcmax_norm <- replicate_exdf[, vcmax_norm_column_name]
+    Vpmax_norm <- replicate_exdf[, vpmax_norm_column_name]
+    Rd_norm <- replicate_exdf[, rd_norm_column_name]
 
     # Perform a nonlinear least squares fit
     aci_fit <- tryCatch(
         {
             stats::nls(
-                A ~ c4_aci(A, Ci_microbar, Tleaf, PTR_FUN, Om, gbs, Vpmax, Vcmax),
+                A ~ c4_aci(A, Ci_microbar, Ko, Kc, Kp, gamma_star, ao, gmc, Vcmax_norm, Vpmax_norm, Rd_norm, Om, gbs, Vpmax, Vcmax),
                 start = initial_guess
             )
         },
@@ -171,11 +193,11 @@ fit_c4_aci <- function(
         final_convergence <- fit_summary[['convInfo']][['finTol']]
 
         replicate_exdf[, paste0(a_column_name, '_fit')] <-
-            c4_aci(A, Ci_microbar, Tleaf, PTR_FUN, Om, gbs, Vpmax, Vcmax)
+            c4_aci(A, Ci_microbar, Ko, Kc, Kp, gamma_star, ao, gmc, Vcmax_norm, Vpmax_norm, Rd_norm, Om, gbs, Vpmax, Vcmax)
     }
 
     # Document the column that was added
-    replicate_exdf <- specify_variables(
+    replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_c4_aci', paste0(a_column_name, '_fit'), 'micromol m^(-2) s^(-1)')
     )
@@ -187,7 +209,7 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'final_convergence'] <- final_convergence
 
     # Document the columns that were added
-    replicate_identifiers <- specify_variables(
+    replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_c4_aci', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci', 'Vpmax_at_25', 'micromol m^(-2) s^(-1)'),

@@ -18,6 +18,7 @@ Imports:
     lattice
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    dfoptim
 VignetteBuilder: knitr
 URL: https://github.com/eloch216/PhotoGEA, https://eloch216.github.io/PhotoGEA/

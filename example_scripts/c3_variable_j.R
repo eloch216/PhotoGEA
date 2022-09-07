@@ -375,11 +375,10 @@ print(gm_cc_fitting_plot)
 
 # Plot the average estimated gm-Ci curves
 gm_ci_avg_plot <- xyplot_avg_rc(
-    Y = fits_for_plotting$gm,
-    X = fits_for_plotting$Ci,
-    seq_num = fits_for_plotting$seq_num,
-    event = fits_for_plotting[[EVENT_COLUMN_NAME]],
-    x_error_bars = FALSE,
+    fits_for_plotting$gm,
+    fits_for_plotting$Ci,
+    fits_for_plotting$seq_num,
+    fits_for_plotting[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto = TRUE,
@@ -395,11 +394,10 @@ print(gm_ci_avg_plot)
 
 # Plot the average estimated gm-Cc curves
 gm_cc_avg_plot <- xyplot_avg_rc(
-    Y = fits_for_plotting$gm,
-    X = fits_for_plotting$Cc,
-    seq_num = fits_for_plotting$seq_num,
-    event = fits_for_plotting[[EVENT_COLUMN_NAME]],
-    x_error_bars = FALSE,
+    fits_for_plotting$gm,
+    fits_for_plotting$Cc,
+    fits_for_plotting$seq_num,
+    fits_for_plotting[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto = TRUE,

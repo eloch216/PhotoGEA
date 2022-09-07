@@ -210,8 +210,8 @@ processing than A-Ci curves measured from C~4~ plants.
 All of these functions are designed to be applied to `exdf` objects. In this
 case, `exdf` objects provide a large advantage over regular data frames because
 they include information about units; in fact, all of these functions will check
-the units of any required columns before proceeding to make sure the results are
-correct.
+the units of any required variables before proceeding to make sure the results
+are correct.
 
 ### Functions for Calculating New Variable Values
 
@@ -240,6 +240,8 @@ response curves:
 
 - `fit_ball_berry`: Calculates a linear fit of stomatal conductance to H~2~O vs.
   the Ball-Berry index.
+- `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.
+  chloroplastic CO~2~ concentration.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)

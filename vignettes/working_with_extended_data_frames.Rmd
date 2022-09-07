@@ -147,10 +147,10 @@ print(exdf_2)
 ```
 
 The units and categories have been initialized to default values of `NA`, but we
-can supply new units and categories using the `specify_variables` function:
+can supply new units and categories using the `document_variables` function:
 
 ```{r}
-exdf_2 <- specify_variables(exdf_2, c('Cat1', 'A', 'm'), c('Cat2', 'B', 's'))
+exdf_2 <- document_variables(exdf_2, c('Cat1', 'A', 'm'), c('Cat2', 'B', 's'))
 ```
 
 Now `exdf_2` is identical to `exdf_1`:
@@ -320,7 +320,7 @@ print(exdf_2)
 ```
 
 The units and category of the new column can be modified later with
-`specify_variables` as in [Initializing with Default Units and Categories].
+`document_variables` as in [Initializing with Default Units and Categories].
 
 **Important note**: It is generally a bad idea to directly modify `main_data`
 because this can cause problems. For example, we could try adding another new
@@ -412,13 +412,10 @@ additional gas properties and the Ball-Berry index:
 
 ```{r}
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
-licor_data <- calculate_gas_properties(
-  licor_data,
-  'A', 'Ca', 'DeltaPcham', 'E', 'gbw', 'gsw', 'H2O_s', 'Pa', 'TleafCnd'
-)
+licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate the Ball-Berry index
-licor_data <- calculate_ball_berry_index(licor_data, 'A', 'RHleaf', 'Csurface')
+licor_data <- calculate_ball_berry_index(licor_data)
 ```
 
 In this example, the vector of files to load was defined manually by typing out
@@ -457,8 +454,7 @@ curve in `licor_data`:
 by_result <- by(
   licor_data,                                          # exdf object
   list(licor_data[, 'species'], licor_data[, 'plot']), # identifier columns
-  fit_ball_berry,                                      # function to apply to chunks
-  'gsw', 'bb_index'                                    # additional function arguments
+  fit_ball_berry                                       # function to apply to chunks
 )
 ```
 

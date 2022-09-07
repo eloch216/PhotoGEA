@@ -1,8 +1,8 @@
-\name{specify_variables}
+\name{document_variables}
 
-\alias{specify_variables}
+\alias{document_variables}
 
-\title{Specify units and categories for columns in exdf objects}
+\title{Document exdf columns by specifying units and categories}
 
 \description{
   Adds new columns to an \code{exdf} object or modifies the units or categories
@@ -10,7 +10,7 @@
 }
 
 \usage{
-  specify_variables(exdf_obj, \dots)
+  document_variables(exdf_obj, \dots)
 }
 
 \arguments{
@@ -42,7 +42,7 @@ print(simple_exdf)
 
 # Specify units and categories for the `A` and `B` columns, and add a new `C`
 # column.
-specify_variables(
+document_variables(
   simple_exdf,
   c('cat1', 'A', 'm'), # The category of `A` is `cat1` and its units are `m`
   c('cat2', 'B', 's'), # The category of `B` is `cat2` and its units are `s`

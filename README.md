@@ -24,11 +24,8 @@ from within R by typing `install.packages('remotes')`.
 
 The best way to learn about using `PhotoGEA` is to visit the
 [PhotoGEA website](https://eloch216.github.io/PhotoGEA/index.html), which
-includes articles that describe several important use cases. Currently, the
-following articles are available:
-
-- [Analyzing Ball-Berry Data](https://eloch216.github.io/PhotoGEA/articles/analyzing_ball_berry_data.html)
-- [Analyzing TDL Data](https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html)
+includes several articles that describe the general features of `PhotoGEA` and
+several important use cases.
 
 ### Example Scripts
 

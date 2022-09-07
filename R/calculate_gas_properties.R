@@ -1,33 +1,33 @@
 calculate_gas_properties <- function(
     licor_exdf,
-    a_column_name,
-    ca_column_name,
-    deltapcham_column_name,
-    e_column_name,
-    gbw_column_name,
-    gsw_column_name,
-    h2o_s_column_name,
-    pa_column_name,
-    tleaf_column_name
+    a_column_name = 'A',
+    ca_column_name = 'Ca',
+    deltapcham_column_name = 'DeltaPcham',
+    e_column_name = 'E',
+    gbw_column_name = 'gbw',
+    gsw_column_name = 'gsw',
+    h2o_s_column_name = 'H2O_s',
+    pa_column_name = 'Pa',
+    tleaf_column_name = 'TleafCnd'
 )
 {
     if (!is.exdf(licor_exdf)) {
         stop("calculate_gas_properties requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-    required_columns[[ca_column_name]] <- "micromol mol^(-1)"
-    required_columns[[deltapcham_column_name]] <- "kPa"
-    required_columns[[e_column_name]] <- "mol m^(-2) s^(-1)"
-    required_columns[[gbw_column_name]] <- "mol m^(-2) s^(-1)"
-    required_columns[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
-    required_columns[[h2o_s_column_name]] <- "mmol mol^(-1)"
-    required_columns[[pa_column_name]] <- "kPa"
-    required_columns[[tleaf_column_name]] <- "degrees C"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
+    required_variables[[ca_column_name]] <- "micromol mol^(-1)"
+    required_variables[[deltapcham_column_name]] <- "kPa"
+    required_variables[[e_column_name]] <- "mol m^(-2) s^(-1)"
+    required_variables[[gbw_column_name]] <- "mol m^(-2) s^(-1)"
+    required_variables[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
+    required_variables[[h2o_s_column_name]] <- "mmol mol^(-1)"
+    required_variables[[pa_column_name]] <- "kPa"
+    required_variables[[tleaf_column_name]] <- "degrees C"
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Extract some columns to make the calculations cleaner
     A <- licor_exdf[,a_column_name]                    # micromol m^(-2) s^(-1)
@@ -59,7 +59,7 @@ calculate_gas_properties <- function(
                                (licor_exdf[,'gbc'] + E / 2)
 
     # Document the columns that were added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculate_gas_properties", 'H2O_surf', "mmol mol^(-1)"),
         c("calculate_gas_properties", 'SVPleaf',  "kPa"),

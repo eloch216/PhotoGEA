@@ -66,12 +66,12 @@ basic_stats <- function(
     }
 
     # Make sure the identifier columns are defined
-    required_columns <- list()
+    required_variables <- list()
     for (cn in identifier_columns) {
-        required_columns[[cn]] <- NA
+        required_variables[[cn]] <- NA
     }
 
-    check_required_columns(exdf_obj, required_columns)
+    check_required_variables(exdf_obj, required_variables)
 
     # Split the exdf object by the identifiers
     f <- lapply(identifier_columns, function(x) {exdf_obj[ , x]})

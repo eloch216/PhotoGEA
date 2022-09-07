@@ -39,7 +39,7 @@ for the next release.
   - `organize_response_curve_data` now has a specification for points to remove
     rather than points to keep, because this is usually easier to do.
 - Added documentation for several functions:
-  - `specify_variables`
+  - `document_variables` (formerly `specify_variables`)
   - `exclude_outliers`
   - `barchart_with_errorbars` (formerly `bar_wrapper`)
   - `bwplot_wrapper` (formerly `box_wrapper`)

@@ -15,15 +15,15 @@
 \usage{
   calculate_gas_properties(
     licor_exdf,
-    a_column_name,
-    ca_column_name,
-    deltapcham_column_name,
-    e_column_name,
-    gbw_column_name,
-    gsw_column_name,
-    h2o_s_column_name,
-    pa_column_name,
-    tleaf_column_name
+    a_column_name = 'A',
+    ca_column_name = 'Ca',
+    deltapcham_column_name = 'DeltaPcham',
+    e_column_name = 'E',
+    gbw_column_name = 'gbw',
+    gsw_column_name = 'gsw',
+    h2o_s_column_name = 'H2O_s',
+    pa_column_name = 'Pa',
+    tleaf_column_name = 'TleafCnd'
   )
 }
 
@@ -35,47 +35,47 @@
 
   \item{a_column_name}{
     The name of the column in \code{licor_exdf} that contains the net
-    assimilation (typically \code{'A'}).
+    assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{ca_column_name}{
     The name of the column in \code{licor_exdf} that contains the ambient CO2
-    concentration in the chamber (typically \code{'Ca'}).
+    concentration in the chamber in \code{micromol mol^(-1)}.
   }
 
   \item{deltapcham_column_name}{
     The name of the column in \code{licor_exdf} that contains the chamber
-    overpressure (typically \code{'DeltaPcham'}).
+    overpressure in \code{kPa}.
   }
 
   \item{e_column_name}{
     The name of the column in \code{licor_exdf} that contains the transpiration
-    rate (typically \code{'E'}).
+    rate in \code{mol m^(-2) s^(-1)}.
   }
 
   \item{gbw_column_name}{
     The name of the column in \code{licor_exdf} that contains the boundary layer
-    conductance to water vapor (typically \code{'gbw'}).
+    conductance to water vapor in \code{mol m^(-2) s^(-1)}.
   }
 
   \item{gsw_column_name}{
     The name of the column in \code{licor_exdf} that contains the stomatal
-    conductance to water vapor (typically \code{'gsw'}).
+    conductance to water vapor in \code{mol m^(-2) s^(-1)}.
   }
 
   \item{h2o_s_column_name}{
     The name of the column in \code{licor_exdf} that contains the sample cell
-    H2O concentration (typically \code{'H2O_s'}).
+    H2O concentration in \code{mmol mol^(-1)}.
   }
 
   \item{pa_column_name}{
     The name of the column in \code{licor_exdf} that contains the atmospheric
-    pressure (typically \code{'Pa'}).
+    pressure in \code{kPa}.
   }
 
   \item{tleaf_column_name}{
     The name of the column in \code{licor_exdf} that contains the leaf
-    temperature (typically \code{'TleafCnd'}).
+    temperature in \code{degrees C}.
   }
 }
 
@@ -204,26 +204,10 @@
 # additional gas properties.
 licor_file <- read_licor_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-  variable_category_row = 14,
-  variable_name_row = 15,
-  variable_unit_row = 16,
-  data_start_row = 17,
-  timestamp_colname = 'time'
+  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
 )
 
-licor_file <- calculate_gas_properties(
-  licor_file,
-  'A',
-  'Ca',
-  'DeltaPcham',
-  'E',
-  'gbw',
-  'gsw',
-  'H2O_s',
-  'Pa',
-  'TleafCnd'
-)
+licor_file <- calculate_gas_properties(licor_file)
 
 licor_file$units$RHleaf      # View the units of the new `RHleaf` column
 licor_file$categories$RHleaf # View the category of the new `RHleaf` column

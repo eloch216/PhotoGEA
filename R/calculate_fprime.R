@@ -34,12 +34,12 @@ calculate_fprime <- function(
         stop("calculate_fprime requires an exdf object")
     }
 
-    # Make sure the required columns are defined and have the correct units
-    required_columns <- list()
-    required_columns[[cc_column_name]] <- "micromol mol^(-1)"
-    required_columns[[tleaf_column_name]] <- "degrees C"
+    # Make sure the required variables are defined and have the correct units
+    required_variables <- list()
+    required_variables[[cc_column_name]] <- "micromol mol^(-1)"
+    required_variables[[tleaf_column_name]] <- "degrees C"
 
-    check_required_columns(licor_exdf, required_columns)
+    check_required_variables(licor_exdf, required_variables)
 
     # Get temperature-corrected values for the photosynthesis parameters
     photo_param <- PTRF(licor_exdf[,tleaf_column_name])
@@ -59,7 +59,7 @@ calculate_fprime <- function(
         (licor_exdf[,cc_column_name] + photo_param$Kc * (1 + O2 / photo_param$Ko))
 
     # Document the columns that were added
-    licor_exdf <- specify_variables(
+    licor_exdf <- document_variables(
         licor_exdf,
         c("calculated", gamma_star_column_name, "micromol mol^(-1)"),
         c("calculated", kc_column_name,         "micromol mol^(-1)"),
