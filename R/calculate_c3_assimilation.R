@@ -96,6 +96,7 @@ calculate_c3_assimilation <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
+            TPU = TPU,
             Vcmax_tl = Vcmax_tl,
             Rd_tl = Rd_tl,
             J_tl = J_tl,
@@ -107,6 +108,7 @@ calculate_c3_assimilation <- function(
 
         document_variables(
             output,
+            c('calculate_c3_assimilation', 'TPU',        'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
@@ -116,6 +118,6 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)')
         )
     } else {
-        return(An)
+        return(list(An = An, Ac = Ac, Aj = Aj, Ap = Ap))
     }
 }

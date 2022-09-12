@@ -15,7 +15,7 @@
     identifier_columns,
     measurement_numbers_to_remove,
     column_for_ordering,
-    ordering_column_tolerance = 1.0
+    ordering_column_tolerance = Inf
   )
 }
 

@@ -18,9 +18,11 @@ fit_c3_aci <- function(
             restarts.max = 10
         ))
     },
-    initial_guess = c(10, 100,  0.5, 90),  # TPU, J, Rd, Vcmax
-    lower =         c(0,  0,    0,   0),   # TPU, J, Rd, Vcmax
-    upper =         c(40, 1000, 100, 1000) # TPU, J, Rd, Vcmax
+    initial_guess = c(10, 100,  0.5, 90),   # TPU, J, Rd, Vcmax
+    lower =         c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
+    upper =         c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
+    min_aj_cutoff = NA,
+    max_aj_cutoff = NA
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -42,7 +44,9 @@ fit_c3_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
-    # Define the total error function
+    # Define the total error function. If `min_aj_cutoff` is not NA, apply a
+    # penalty when Aj < Ac and Cc < min_aj_cutoff. If `max_aj_cutoff` is not NA,
+    # apply a penalty when Aj > Ac and Cc > max_aj_cutoff.
     total_error_fcn <- function(X) {
         assim <- calculate_c3_assimilation(
             replicate_exdf,
@@ -63,7 +67,28 @@ fit_c3_aci <- function(
             perform_checks = FALSE,
             return_exdf = FALSE
         )
-        sum((replicate_exdf[, 'A'] - assim)^2)
+
+        if (!is.na(min_aj_cutoff)) {
+            for (i in seq_along(assim$An)) {
+                if (replicate_exdf[i, a_column_name] > 0 &&
+                        replicate_exdf[i, cc_column_name] < min_aj_cutoff &&
+                            assim$Aj[i] < assim$Ac[i]) {
+                    assim$An[i] <- 1e10
+                }
+            }
+        }
+
+        if (!is.na(max_aj_cutoff)) {
+            for (i in seq_along(assim$An)) {
+                if (replicate_exdf[i, a_column_name] > 0 &&
+                        replicate_exdf[i, cc_column_name] > max_aj_cutoff &&
+                            assim$Aj[i] > assim$Ac[i]) {
+                    assim$An[i] <- 1e10
+                }
+            }
+        }
+
+        sum((replicate_exdf[, 'A'] - assim$An)^2)
     }
 
     # Find the best value for X
