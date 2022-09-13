@@ -645,8 +645,8 @@ xyplot(
   pch = 16,
   auto.key = list(space = 'right'),
   grid = TRUE,
-  xlab = paste0('Chloroplast CO~2~ concentration (', c3_aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Net CO~2~ assimilation rate (', c3_aci_results$fits$units$A, ')'),
+  xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
   par.settings = list(
     superpose.line = list(col = multi_curve_colors()),
     superpose.symbol = list(col = multi_curve_colors(), pch = 16)
