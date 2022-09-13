@@ -60,10 +60,10 @@ process_tdl_cycle_polynomial <- function(
 
     # Calculate calibrated values of 12C and 13C for each valve
     tdl_cycle[, 'calibrated_12c'] <-
-        predict(fit_12C, data.frame(measured_12C = tdl_cycle[, raw_12c_colname]))
+        stats::predict(fit_12C, data.frame(measured_12C = tdl_cycle[, raw_12c_colname]))
 
     tdl_cycle[, 'calibrated_13c'] <-
-        predict(fit_13C, data.frame(measured_13C = tdl_cycle[, raw_13c_colname]))
+        stats::predict(fit_13C, data.frame(measured_13C = tdl_cycle[, raw_13c_colname]))
 
     # Determine the total mixing and isotope ratios from the calibrated 12C and
     # 13C concentrations
