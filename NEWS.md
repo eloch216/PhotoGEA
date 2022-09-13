@@ -16,6 +16,18 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# UNRELEASED
+
+- Added a new vignette demonstrating how to analyze C3 A-Ci curve data.
+- Included `TPU` in the output from `calculate_c3_assimilation`.
+- In the `organize_response_curve_data` function, changed the default value of
+  the `ordering_column_tolerance` column to `Inf` to disable this check by
+  default, since we often want to reorder using a column like `Ci` that does not
+  follow the same sequence of values in every curve.
+- Added new input arguments to `fit_c3_aci`: `min_aj_cutoff` and
+  `max_aj_cutoff`, which provide a way to constrain the range of `Cc` where `Aj`
+  is allowed to be the limiting assimilation rate.
+
 # PhotoGEA VERSION 0.4.0 (2022-09-07)
 
 - Made several improvements to accessibility:

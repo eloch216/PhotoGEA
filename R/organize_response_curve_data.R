@@ -3,7 +3,7 @@ organize_response_curve_data <- function(
     identifier_columns,
     measurement_numbers_to_remove,
     column_for_ordering,
-    ordering_column_tolerance = 1.0
+    ordering_column_tolerance = Inf
 )
 {
     if (!is.exdf(licor_exdf)) {
