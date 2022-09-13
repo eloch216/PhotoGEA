@@ -176,10 +176,10 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
-          \code{Aj}, \code{Ap}, and \code{An}. The category for each of these
-          new columns is \code{calculate_c3_assimilation} to indicate that they
-          were created using this function.
+          above: \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
+          \code{Ac}, \code{Aj}, \code{Ap}, and \code{An}. The category for each
+          of these new columns is \code{calculate_c3_assimilation} to indicate
+          that they were created using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
           vector containing the calculated values of \code{An}.
   }

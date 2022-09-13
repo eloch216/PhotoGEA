@@ -42,7 +42,9 @@
     },
     initial_guess = c(10, 100,  0.5, 90),
     lower =         c(0,  0,    0,   0),
-    upper =         c(40, 1000, 100, 1000)
+    upper =         c(40, 1000, 100, 1000),
+    min_aj_cutoff = NA,
+    max_aj_cutoff = NA
   )
 }
 
@@ -135,6 +137,18 @@
     A numeric vector containing upper bounds for the values of \code{TPU},
     \code{J}, \code{Rd}, and \code{Vcmax}, in that order.
   }
+
+  \item{min_aj_cutoff}{
+    The minimum value of \code{Cc} (in ppm) where \code{Aj} is allowed to become
+    the overall rate-limiting factor. If \code{min_aj_cutoff} is set to
+    \code{NA}, this restriction will not be applied.
+  }
+
+  \item{max_aj_cutoff}{
+    The maximum value of \code{Cc} (in ppm) where \code{Aj} is allowed to be
+    smaller than \code{Ac}. If \code{max_aj_cutoff} is set to \code{NA}, this
+    restriction will not be applied.
+  }
 }
 
 \details{
@@ -154,6 +168,16 @@
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that \code{dfoptim::nmkb} is often able to find a
   good fit.
+
+  Sometimes the optimizer will choose biologically unreasonable parameter values
+  that nevertheless produce good fits to the supplied assimilation values. A
+  common problem is that the fit result may not follow the expected progression
+  of \code{Ac-limited -> Aj-limited -> Ap-limited} assimilation as \code{Cc}
+  increases. In this case, the optional \code{min_aj_cutoff} and
+  \code{max_aj_cutoff} can be used to constrain the range of \code{Cc} values
+  (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
+  See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
+  arguments can be used to improve the quality of a fit.
 
   This function assumes that \code{replicate_exdf} represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used

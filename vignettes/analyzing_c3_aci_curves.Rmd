@@ -1,0 +1,910 @@
+---
+title: "Analyzing C3 A-Ci Curves"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Analyzing C3 A-Ci Curves}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: references.bib
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7.5,
+  fig.height = 5,
+  fig.align = "center"
+)
+```
+
+# Overview
+
+In this vignette, we will give an example showing how to analyze C~3~ A-Ci data
+using the `PhotoGEA` package. The commands in this vignette can be used to
+initialize your own script, as described in [Customizing Your Script].
+
+# Background
+
+## Understanding C3 A-Ci Curves
+
+An _A-Ci curve_ (or _CO~2~ response curve_) is a particular type of gas exchange
+measurement where a living leaf is exposed to varying concentrations of CO~2~.
+For each CO~2~ concentration in the sequence, the net assimilation rate $A_n$,
+stomatal conductance to H~2~O ($g_{sw}$), and other important quantities are
+measured and recorded. Typically, other environmental variables such as
+temperature, humidity, and incident photosynthetically-active photon flux
+density are held constant during the measurement sequence so that changes in
+photosynthesis can be attributed to CO~2~ alone.
+
+Because of their different cell structures and biochemical pathways, C~3~ and
+C~4~ plants have very different responses to CO~2~. Here, we will only be
+discussing C~3~ plants.
+
+The full C~3~ photosynthetic pathway is quite complicated, consisting of at
+least two hundred individual reactions, each of which may have an impact on a
+measured A-Ci curve. However, simplified models for photosynthesis are available
+and are much easier to understand and work with. These models tend to be based
+around rubisco kinetics, describing how the net assimilation rate responds to
+the amount of CO~2~ available in the chloroplast. The most widely-used model is
+typically referred to as the _Farquhar-von-Caemmerer-Berry_ model (often
+shortened to the _FvCB_ model or _Farquhar_ model) after the three scientists
+who originally developed it. An excellent description of this model can be found
+in _Biochemical Models of Leaf Photosynthesis_ [@caemmerer_biochemical_2000].
+
+This model provides a framework for understanding the changes in $A_n$ that
+occur as a C~3~ plant is exposed to successively higher concentrations of CO~2~.
+Overall, the photosynthetic response to CO~2~ under high light conditions can be
+divided into three separate ranges:
+
+- At low levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
+  limited by RuBP regeneration.
+- At intermediate levels of CO~2~ in the chloroplast, CO~2~ assimilation is
+  primarily limited by the electron transport rate.
+- At high levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
+  limited by phosphate utilization.
+
+More specifically, the model provides equations that separately describe the
+responses of three separate assimilation rates to the chloroplastic CO~2~
+concentration:
+
+- The RuBP-limited net CO~2~ assimilation rate ($A_c$).
+- The electron-transport-limited rate ($A_j$).
+- The phosphate-limited rate ($A_p$).
+
+The overall net assimilation rate $A_n$ at a particular value of the
+chloroplastic CO~2~ concentration is then taken to be the smallest of the three
+individual limiting rates. Using the equations that compose this model, it is
+possible to calculate plots like the one below, which illustrates the three
+different assimilation ranges.
+
+```{r, echo = FALSE}
+library(PhotoGEA)
+library(lattice)
+
+npts <- 101
+
+Tleaf <- 30
+
+inputs <- exdf(data.frame(
+  Cc = seq(0, 1000, length.out = npts),
+  Tleaf = Tleaf,
+  Pa = 100,
+  DeltaPcham = 0.1
+))
+
+inputs <- document_variables(
+  inputs,
+  c('', 'Cc',         'micromol mol^(-1)'),
+  c('', 'Tleaf',      'degrees C'),
+  c('', 'Pa',         'kPa'),
+  c('', 'DeltaPcham', 'kPa')
+)
+
+inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
+
+TPU <- 18
+J <- 200
+Rd <- 1.8
+Vcmax <- 125
+
+assim <- calculate_c3_assimilation(inputs, TPU, J, Rd, Vcmax)
+
+c3_col <- rev(multi_curve_colors()[1:4])
+
+xyplot(
+  Ac + Aj + Ap + An ~ Cc,
+  data = cbind(inputs, assim)$main_data,
+  type = 'l',
+  grid = TRUE,
+  auto = TRUE,
+  xlab = paste('Chloroplast CO2 concentration [', inputs$units$Cc, ']'),
+  ylab = paste('Assimilation rate [', assim$units$An, ']'),
+  par.settings = list(
+    superpose.line = list(col = c3_col),
+    superpose.symbol = list(col = c3_col, pch = 16)
+  )
+)
+```
+
+(Note: this figure was generated using the `c3_assimilation` function from
+the `PhotoGEA` package, and it represents the photosynethetic response of a C~3~
+plant according to the FvCB model with `TPU` = `r TPU` `r assim$units$TPU`,
+`J` = `r J` `r assim$units$J_tl`, `Rd` = `r Rd` `r assim$units$Rd_tl`,
+`Vcmax` = `r Vcmax` `r assim$units$Vcmax_tl`, and a leaf temperature of
+`r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response parameters were
+taken from @sharkey_fitting_2007.)
+
+Thus, one of the most common reasons to measure an A-Ci curve is to interpret it
+in the context of this model. In other words, by fitting the model's equations
+to a measured curve, it is possible to estimate values for `TPU`, `J`, `Rd`, and
+`Vcmax`. See the documentation for `calculate_c3_assimilation` for more
+information about these important quantities.
+
+## Practicalities
+
+There are a few important practicalities to keep in mind when thinking about
+CO~2~ response curves.
+
+One point is that photosynthesis models generally predict the response of
+assimilation to the CO~2~ concentration in the chloroplast ($C_c$), but gas
+exchange measurements can only determine the CO~2~ concentration in the leaf's
+intercellular spaces ($C_i$). Thus, an extra step is required when interpreting
+A-Ci curves. If the mesophyll conductance $g_{mc}$ to CO~2~ is known, then it is
+possible to calculate values of $C_c$ from $A_n$, $C_i$, and $g_{mc}$.
+Otherwise, it is typical to assume an infinite mesophyll conductance; in this
+case, $C_c = C_i$, and the estimated values of `Vcmax` and other parameters can
+be considered to be "effective values" describing the plant's response to
+intercellular CO~2~ rather than the true enzyme response to chloroplastic CO~2~.
+
+Another important point is that plants generally do not appreciate being starved
+of CO~2~, so it is not usually possible to start a response curve at low CO~2~
+and proceed upwards. A more typical approach is to:
+
+1. Begin at ambient atmospheric CO~2~ levels.
+2. Decrease towards a low value.
+3. Return to ambient levels and wait for the plant to reacclimate; this waiting
+   period is usually accomplished by logging several points at ambient CO~2~
+   levels.
+4. Increase to higher values.
+
+When taking this approach, it therefore becomes necessary to remove the extra
+points measured at ambient CO~2~ levels and to reorder the points according to
+their CO~2~ values before plotting or analyzing them.
+
+## The Data
+
+A-Ci curves are commonly measured using a Licor portable photosynthesis system
+such as the Li-6400 or Li-6800. These machines record values of $A_n$, $g_{sw}$,
+and many other important quantities. They produce two types of output files:
+plain-text and Microsoft Excel. It is often more convenient to work with the
+Excel files since the entries can be easily modified (for example, to remove an
+extraneous row or add a new column). On the other hand, it can be more difficult
+to access the file contents using other pieces of software such as R. However,
+the `PhotoGEA` package reduces this barrier by including tools for reading Licor
+Excel files in R, which will be demonstrated in the following section.
+
+# Loading Packages
+
+As always, the first step is to load the packages we will be using. In addition
+to `PhotoGEA`, we will also use the `lattice` package for generating plots.
+
+```{r setup, eval = FALSE}
+# Load required packages
+library(PhotoGEA)
+library(lattice)
+```
+
+If the `lattice` package is not installed on your R setup, you can install it by
+typing `install.packages('lattice')`.
+
+# Loading Licor Data
+
+The `PhotoGEA` package includes two files representing A-Ci curves measured
+using two Li-6800 instruments. The data is stored in Microsoft Excel files, and
+includes curves measured from two different crop species (tobacco and soybean)
+and several different plots of each. Each curve is a sixteen-point CO~2~
+response curve; in other words, the CO~2~ concentration in the air surrounding
+the leaf was varied, and $A_n$ (among other variables) was measured at each
+CO~2~ setpoint. Although these two files are based on real data, noise was added
+to it since it is unpublished, so these files should only be used as examples.
+
+The files will be stored on your computer somewhere in your R package
+installation directory, and full paths to these files can be obtained with
+`system.file`:
+
+```{r licor_file_names}
+# Define a vector of paths to the files we wish to load
+file_paths <- c(
+  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA'),
+  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
+)
+```
+
+To actually read the data in the files and store them in R objects, we will use
+the `read_licor_file` function from `PhotoGEA`. Since there are multiple files
+to read, we will call this function once for each file using `lapply`:
+
+```{r loading_licor_data}
+# Load each file, storing the result in a list
+licor_exdf_list <- lapply(file_paths, function(fpath) {
+  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+})
+```
+
+The result from this command is an R list of "extended data frames" (abbreviated
+as `exdf` objects). The `exdf` class is a special data structure defined by the
+`PhotoGEA` package. In many ways, an `exdf` object is equivalent to a data
+frame, with the major difference being that an `exdf` object includes the units
+of each column. For more information, type `?exdf` in the R terminal to access
+the built-in help menu entry, or check out the
+[Working With Extended Data Frames](working_with_extended_data_frames.html)
+vignette.
+
+Generally, it is more convenient to work with a single `exdf` object rather than
+a list of them, so our next step will be to combine the objects in the list.
+This action can be accomplished using the `rbind` function, which combines
+table-like objects by their rows; in other words, it stacks two or more tables
+vertically. This action only makes sense if the tables have the same columns, so
+before we combine the `exdf` objects, we should make sure this is the case.
+
+The `PhotoGEA` package includes a function called `identify_common_columns` that
+can be used to get the names of all columns that are present in all of the Licor
+files. Then, we can extract just those columns, and then combine the `exdf`
+objects into a single one.
+
+```{r combining_licor_data}
+# Get the names of all columns that are present in all of the Licor files
+columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+
+# Extract just these columns
+licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+  x[ , columns_to_keep, TRUE]
+})
+
+# Use `rbind` to combine all the data
+licor_data <- do.call(rbind, licor_exdf_list)
+```
+
+Now we have a single R object called `licor_data` that includes all the data
+from several Licor Excel files. For more information about consolidating
+information from multiple files, see the _Common Patterns_ section of the
+[Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
+vignette.
+
+# Validating the Data
+
+Before attempting to fit the curves, it is a good idea to do some basic checks
+of the data to ensure it is organized properly and that it was measured
+properly.
+
+## Basic Checks
+
+First, we should make sure there is a column in the data whose value uniquely
+identifies each curve. In this particular data set, several "user constants"
+were defined while making the measurements that help to identify each curve:
+`instrument`, `species`, and `plot`. However, neither of these columns alone are
+sufficient to uniquely identify each curve. We can solve this issue by creating
+a new column that combines the values from each of these:
+
+```{r adding_id_column}
+# Create a new identifier column formatted like `instrument - species - plot`
+licor_data[ , 'curve_identifier'] <-
+  paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
+```
+
+The next step is to make sure that this column correctly identifies each
+response curve. To do this, we can use the `check_licor_data` function from
+`PhotoGEA`. Here we will supply the name of a column that should uniquely
+identify each response curve (`curve_identifier`), the expected number of points
+in each curve (`16`), the name of a "driving" column that should follow the same
+sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
+function will have no output and will not produce any messages. (For more
+information, see the built-in help menu entry by typing `?check_licor_data`.)
+
+```{r check_response_curve}
+# Make sure the data meets basic requirements
+check_licor_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+```
+
+However, if `check_licor_data` detects an issue, it will print a
+helpful message to the R terminal. For example, if we had specified the wrong
+number of points or the wrong identifier column, we would get error messages:
+
+```{r check_response_curve_error, error = TRUE}
+check_licor_data(licor_data, 'curve_identifier', 15)
+
+check_licor_data(licor_data, 'species', 16)
+
+check_licor_data(licor_data, 'curve_identifier', 16, 'Ci')
+```
+
+## Plotting the A-Ci Curves
+
+One qualitative way to check the data is to simply create a plot of the A-Ci
+curves. In this situation, the `lattice` library makes it simple to include each
+curve as its own separate subplot of a figure. For example:
+
+```{r plot_aci}
+# Plot all A-Ci curves in the data set
+xyplot(
+  A ~ Ci | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+  ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+)
+```
+
+Whoops! Why do these curves look so strange? Well, some of the issues are
+related to the sequence of CO~2~ values that was used when measuring the curves.
+As discussed in [Practicalities], there are several repeated points logged at
+the same CO~2~ concentration, and the points are not logged in order of
+ascending or descending concentration. In fact, the sequence of CO~2~ setpoints
+is as follows:
+
+```{r}
+licor_data[licor_data[, 'curve_identifier'] == 'ripe2 - soybean - 1', 'CO2_r_sp']
+```
+
+Ideally, we would like to remove the ninth and tenth points (where the setpoint
+has been reset to 400 to allow the leaf to reacclimate to ambient CO~2~ levels),
+and reorder the data so it is arranged from low to high values of `Ci`. This can
+be done using the `organize_response_curve` function from `PhotoGEA`:
+
+```{r reorganizing_curves}
+# Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+licor_data <- organize_response_curve_data(
+    licor_data,
+    'curve_identifier',
+    c(9, 10),
+    'Ci'
+)
+```
+
+Now we can plot them again:
+
+```{r}
+<<plot_aci>>
+```
+
+They still look a bit strange. Some of this is related to the noise that was
+intentionally added to the data. Nevertheless, there are a few points that we
+should probably exclude before attempting to fit the curves. One issue is that
+the model _never_ predicts a decrease in $A$ when $Ci$ increases. So, it is
+usually a good idea to exclude any points at high $Ci$ where $A$ is observed to
+decrease. This dropoff in assimilation is due to one or more processes that are
+not captured by the model, and the fits will be unreliable. We will remove these
+points later, after we have made several other data quality checks.
+
+## Additional Plots for Qualitative Validation
+
+Sometimes a Licor will override the temperature or humidity controls while
+making measurements; in this case, conditions inside the measurement chamber may
+not be stable, and we may wish to exclude some of these points. We can check for
+these types of issues by making more plots. In the following sections, we will
+generate several different plots to check each curve for quality.
+
+### Humidity Control
+
+```{r plot_humidity}
+# Make a plot to check humidity control
+xyplot(
+  RHcham + `Humidifier_%` + `Desiccant_%` ~ Ci | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  ylim = c(0, 100),
+  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
+)
+```
+
+Here, `Humidifier_%` and `Desiccant_%` represent the flow from the humidifier
+and desiccant columns, where a value of 0 indicates that the valve to the column
+is fully closed and a value of 100 indicates that the valve to the column is
+fully opened. `RHcham` represents the relative humidity inside the chamber as a
+percentage (in other words, as a value between 0 and 100).
+
+When these curves were measured, a chamber humidity setpoint was specified. So,
+when looking at this plot, we should check that the relative humidity is fairly
+constant during each curve. Typically, this should be accompanied by relatively
+smooth changes in the valve percentages as they accomodate changes in ambient
+humidity and leaf photosynthesis. In this plot, all the data looks good.
+
+### Temperature Control
+
+```{r plot_temperature}
+# Make a plot to check temperature control
+xyplot(
+  TleafCnd + Txchg ~ Ci | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  ylim = c(25, 40),
+  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+  ylab = paste0('Temperature (', licor_data$units$TleafCnd, ')')
+)
+```
+
+Here, `TleafCnd` is the leaf temperature measured using a thermocouple, and
+`Txchg` is the temperature of the heat exhanger that is used to control the air
+temperature in the measurement instrument. When these curves were measured, an
+exchanger setpoint was specified. So, when looking at this plot, we should check
+that `Txchg` is constant during each curve and that the leaf temperature does
+not vary in an erratic way. In this plot, all the data looks good.
+
+### CO~2~ Control
+
+```{r plot_co2}
+# Make a plot to check CO2 control
+xyplot(
+  CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+  ylab = paste0('CO2 concentration (', licor_data$units$CO2_r, ')')
+)
+```
+
+Here, `CO2_s` is the CO~2~ concentration in the sample cell, `CO2_r` is the
+CO~2~ concentration in the reference cell, and `CO2_r_sp` is the setpoint for
+`CO2_r`. When these curves were measured, a sequence of `CO2_r` values was
+specified, so, when looking at this plot, we should check that `CO2_r` is
+close to `CO2_r_sp`. We also expect that `CO2_s` should be a bit lower than
+`CO2_r` because the leaf in the sample chamber is assimilating CO~2~, which
+should reduce its concentration in the surrounding air. (An exception to this
+rule occurs at very low values of `CO2_r_sp`, since in this case there is not
+enough carbon available to assimilate, and the leaf actually releases CO~2~ due
+to respiration.) In this plot, all the data looks good.
+
+### Stability
+
+```{r plot_stability}
+# Make a plot to check stability criteria
+xyplot(
+  `A:OK` + `gsw:OK` + Stable ~ Ci | curve_identifier,
+  data = licor_data$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
+)
+```
+
+When measuring response curves with a Licor, it is possible to specify stability
+criteria for each point in addition to minimum and maximum wait times. In other
+words, once the set point for the driving variable is changed, the machine waits
+until the stability criteria are met; there is a minimum waiting period, and
+also a maximum to prevent the machine from waiting for too long.
+
+When these curves were measured, stability criteria were supplied for the net
+assimilation rate `A` and the stomatal conductance `gsw`. The stability status
+for each was stored in the log file because the appropriate logging option for
+stability was set. Now, for each point, it is possible to check whether
+stability was achieved or whether the point was logged because the maximum
+waiting period had been met. If the maximum waiting period is reached and the
+plant has still not stabilized, the data point may be unreliable, so it can be
+helpful to check this information.
+
+In the plot, `A:OK` indicates whether `A` was stable (0 for no, 1 for yes),
+`gsw:OK` indicates whether `gsw` was stable (0 for no, 1 for yes), and
+`Stable` indicates the total number of stability conditions that were met. So,
+we are looking for points where `Stable` is 2. Otherwise, we can check the other
+traces to see whether `A` or `gsw` was unstable.
+
+Comparing these plots with the ones in [Plotting the A-Ci Curves], it seems that
+the unstable points correspond with some of the "odd-looking" points in the A-Ci
+curves, so it is probably a good idea to remove them before fitting the data.
+
+## Cleaning the Licor Data
+
+While checking over the plots in the previous sections, two issues were noticed:
+(1) some points were logged before stability was achieved and (2) some of the
+curves exhibit a decrease in $A$ at high values of $C_i$. In this section, we
+will demonstrate how to remove the unstable and unusual points.
+
+The following command will keep only the points where `Stable` is exactly 2;
+this condition means that all of the stability criteria were satisfied.
+Sometimes, following this procedure, a curve will have very few stable points
+remaining; it is usually a good idea to automatically exclude any curve with
+fewer than three stable points.
+
+```{r remove_unstable_points}
+# Only keep points where stability was achieved
+licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+
+# Remove any curves that have fewer than three remaining points
+npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+ids_to_keep <- names(npts[npts > 2])
+licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+```
+
+Next, we can use the `remove_points` function from `PhotoGEA` to exclude the
+points where there is a decrease in $A$ at high $C_i$. It just so happens that
+all of these points were measured by the `ripe1` instrument and occur at the
+highest CO~2~ setpoint value, so it is easy to specify them all at once:
+
+```{r remove_points}
+# Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
+licor_data <- remove_points(
+  licor_data,
+  list(instrument = 'ripe1', CO2_r_sp = 1800)
+)
+```
+
+# Fitting Licor Data
+
+Now that we have checked the data quality, we are ready to perform the fitting.
+In order to fit the curves, there are several required pieces of information
+that are not included in the Licor data files as produced by the instrument:
+values of the chloroplast CO~2~ concentration $C_c$ and temperature-dependent
+values of important photosynthetic parameters such as $\Gamma^*$. However, the
+`PhotoGEA` package includes two functions to help with these calculations:
+`calculate_cc` and `calculate_arrhenius`. Each of these requires an `exdf`
+object containing Licor data. The units for each required column will be checked
+in an attempt to avoid unit-related errors. More information about these
+functions can be obtained from the built-in help system by typing
+`?calculate_cc` or `?calculate_arrhenius`.
+
+Another important consideration is that `calculate_cc` requires values of the
+mesophyll conductance to CO~2~. Values of mesophyll conductance can be specified
+using the `set_variable` function from `PhotoGEA`. Here we will set
+`gmc = 1.0 mol / m^2 / s / bar` for tobacco and `gmc = Inf` for soybean; in this
+case, the soybean parameters determined by the fitting process will be
+"effective" parameters. Then we will calculate values of $C_c$, and use
+Arrhenius parameters from @sharkey_fitting_2007 to calculate the
+temperature-dependent inputs:
+
+```{r prepare_for_fitting}
+# Specify separate mesophyll conductance values for each species
+licor_data <- set_variable(
+  licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
+  id_column = 'species',
+  value_table = list(tobacco = 1.0, soybean = Inf)
+)
+
+# Calculate Cc
+licor_data <- calculate_cc(licor_data)
+
+# Calculate temperature-dependent values of C3 photosynthetic parameters
+licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)
+```
+
+Together, these functions add several new columns to `licor_data`, including
+`gmc`, 'Cc', 'Gamma_star', and others. With this information, we are now ready
+to perform the fitting procedure. For this operation, we can use the
+`fit_c3_aci` function from the `PhotoGEA` package, which fits a single response
+curve to extract the values of key photosynthetic parameters. To apply this
+function to each curve in a larger data set and then consolidate the results, we
+can use it in conjunction with `by` and `consolidate`, which are also part of
+`PhotoGEA`. (For more information about these functions, see the built-in help
+menu entries by typing `?fit_c3_aci`, `?by.exdf`, or `?consolidate`, or check
+out the _Common Patterns_ section of the
+[Working With Extended Data Frames](working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
+vignette.) Together, these functions will split apart the main data using
+the curve identifier column we defined before ([Basic Checks]), fit each A-Ci
+curve using the FvCB model discussed in [Understanding C3 A-Ci Curves], and
+return the resulting parameters and fits:
+
+```{r}
+# Fit the C3 A-Ci curves
+c3_aci_results <- consolidate(by(
+  licor_data,                       # The `exdf` object containing the curves
+  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
+  fit_c3_aci                        # The function to apply to each chunk of `licor_data`
+))
+```
+
+## Viewing the Fitted Curves
+
+Having made the fits, it is now a good idea to visually check them, making sure
+they look reasonable. As before, we can use `xyplot` from the `lattice` library
+to quickly make plots of all the fits, which are stored in
+`c3_aci_results$fits`, an `exdf` object:
+
+```{r plot_fits}
+# Plot the C3 A-Ci fits
+xyplot(
+  A + A_fit ~ Ci | curve_identifier,
+  data = c3_aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlab = paste0('Intercellular CO~2~ concentration (', c3_aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Net CO~2~ assimilation rate (', c3_aci_results$fits$units$A, ')')
+)
+```
+
+Note that in addition to the fitted values of `A`, the output also includes
+values of the individual limiting rates `Ac`, `Aj`, and `Ap`. We can also take a
+look at these, although they make the plots a bit busy. We can also choose to
+plot assimilation against `Cc` rather than `Ci`:
+
+```{r fit_aci_limiting}
+# Plot the C3 A-Ci fits (including limiting rates)
+xyplot(
+  A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
+  data = c3_aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  auto.key = list(space = 'right'),
+  grid = TRUE,
+  xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
+  par.settings = list(
+    superpose.line = list(col = multi_curve_colors()),
+    superpose.symbol = list(col = multi_curve_colors(), pch = 16)
+  )
+)
+```
+
+Considering these two plots, we can see that although the model is able to
+reproduce the observed `A` values fairly well, some output parameters may be
+less reliable than others. For example, the phosphate-limited rate `Ap` is
+determined by the `TPU` parameter; for some of the curves, the assimilation rate
+is never limited by `Ap`, so the resulting "best-fit" values of `TPU` may not be
+meaningful for these curves.
+
+There is also one curve (`ripe1 - tobacco - 2`) that does not follow the
+expected progression from RuBP-limited assimilation to
+electron-transport-limited assimilation as `Cc` increases; this entire fit may
+be unreliable, even if `A_fit` closely matches `A`. It is possible to force the
+optimizer to only allow fits where `Ac` is less than `Ap` below a certain
+threshold value of `Cc`; adding this restriction can sometimes produce more
+reasonable fits.
+
+```{r fit_c3_aci}
+# Fit the C3 A-Ci curves
+c3_aci_results <- consolidate(by(
+  licor_data,                       # The `exdf` object containing the curves
+  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
+  fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
+  min_aj_cutoff = 100,              # Aj must be > Ac when Cc < 100 ppm
+  max_aj_cutoff = 800               # Aj must be < Ac when Cc > 800 ppm
+))
+
+<<fit_aci_limiting>>
+```
+
+Here we can see an improvement in the fit for `ripe1 - tobacco - 2`. The fit for
+`ripe1 - soybean - 5a` is a little strange, but based on the values of `Ci` and
+`Cc`, it seems that this plant's stomata did not fully open during the
+measurement, restricting the measured assimilation values to the RuBP-limited
+range; there is nothing that can be done about this. It is also apparent that
+the `TPU` issue remains; again, there is nothing that can really be done to
+address it besides measuring more A-Ci curves.
+
+# Examining the Results
+
+## Visualizing Average Fit Parameters
+
+Having performed the fits, we can now take a look at the fitted parameter
+values, which are stored in `c3_aci_results$parameters`, another `exdf` object.
+One way to do this is by using the `barchart_with_errorbars` function from
+`PhotoGEA` to create barcharts of the average values for each species, such as
+the following example showing the fitted values of `Vcmax`:
+
+```{r vcmax_barchart}
+barchart_with_errorbars(
+  c3_aci_results$parameters[, 'Vcmax_at_25'],
+  c3_aci_results$parameters[, 'species'],
+  ylim = c(0, 150),
+  xlab = 'Species',
+  ylab = paste0('Vcmax at 25 degrees C (', c3_aci_results$parameters$units$Vcmax_at_25, ')')
+)
+```
+
+Another option is to create box-whisper plots using the `bwplot` function from
+the `lattice` package. Here we use this function to show values of `J`:
+
+```{r j_bwplot}
+bwplot(
+  J_at_25 ~ species,
+  data = c3_aci_results$parameters$main_data,
+  ylim = c(0, 250),
+  xlab = 'Species',
+  ylab = paste0('J at 25 degrees C (', c3_aci_results$parameters$units$J_at_25, ')')
+)
+```
+
+## Calculating Average Fit Parameters
+
+We can also take a look at the raw numbers of the fitted parameters and their
+average values. The `c3_aci_results$parameters` object contains many columns but
+we only care about a few of them. We can view them as follows:
+
+```{r c3_aci_parameters}
+# View the C3 parameters
+columns_for_viewing <-
+  c('instrument', 'species', 'plot', 'Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'TPU')
+
+c3_aci_parameters <-
+  c3_aci_results$parameters[ , columns_for_viewing, TRUE]
+
+print(c3_aci_parameters)
+```
+
+Alternatively, we can extract average values of the parameters for each species
+using the `basic_stats` function from `PhotoGEA`:
+
+```{r calculate_stats}
+# Compute the average and standard error of each parameter for each species
+c3_aci_averages <- basic_stats(c3_aci_results$parameters, 'species')
+
+# View the averages and errors
+columns_to_view <- c(
+  'species',
+  'Vcmax_at_25_avg', 'Vcmax_at_25_stderr',
+  'J_at_25_avg', 'J_at_25_stderr',
+  'Rd_at_25_avg', 'Rd_at_25_stderr',
+  'TPU_avg', 'TPU_stderr'
+)
+print(c3_aci_averages[ , columns_to_view, TRUE])
+```
+
+Of course, more advanced statistical tests to check for differences between
+groups can also be performed within R using other packages such as `onewaytests`
+or `DescTools`. Alternatively, the parameter values can be exported to a
+comma-separated-value (CSV) file and analyzed in another software environment
+like `jmp`.
+
+# Customizing Your Script
+
+Note that most of the commands in this vignette have been written in a general
+way so they can be used as the basis for your own analysis script (see
+[Commands From This Document]). In order to use them in your own script, some or
+all of the following changes may be required. There may also be others not
+specifically mentioned here.
+
+## Input Files
+
+The file paths specified in `file_paths` will need to be modified so they point
+to your Licor files. In your own script, you may want to consider using the
+`choose_input_licor_files` function from `PhotoGEA`; this function will create a
+pop-up browser window where you can interactively select a set of Excel files.
+Sometimes this is more convenient than writing out full file paths. For example,
+you could replace the previous definition of `file_paths` with this one:
+
+```{r choose_licor_files, eval = FALSE}
+# Interactively define a vector of paths to the files we wish to load
+file_paths <- choose_input_licor_files()
+```
+
+Unfortunately, `choose_input_licor_files` is only available in interactive R
+sessions running on Microsoft Windows, but there is also a platform-independent
+option: `choose_input_files`. See the _Translation_ section of the
+[Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html#translation)
+vignette for more details.
+
+## Curve Identifier
+
+Depending on which user constants are defined in your Licor Excel files, you may
+need to modify the definition of the `curve_identifier` column.
+
+## Data Cleaning
+
+Depending on the qualitative data checks, you may need to change the input
+arguments to `remove_points`. It might also not be necessary to remove the
+unstable points before performing the fits. Often, it is helpful to not perform
+any data cleaning at first, and then remove problematic points if they seem to
+cause problems with the fits.
+
+## Averages and Standard Errors
+
+Depending on how your data is organized, you may want to change the column used
+to divide the data when calculating averages and standard errors.
+
+## Plots
+
+You may need to change the axis limits in some or all of the plots.
+Alternatively, you can remove them, allowing `xyplot` to automatically choose
+them for you.
+
+## Saving Results
+
+You may want to use `write.csv` to save some or all of the fitting results as
+`csv` files. For example, the following commands will allow you to interactively
+choose output filenames for the resulting `csv` files:
+
+```{r saving_csv_files, eval = FALSE}
+write.csv(c3_aci_results$fits, file.choose(), row.names = FALSE)
+write.csv(c3_aci_results$parameters, file.choose(), row.names = FALSE)
+write.csv(c3_aci_averages, file.choose(), row.names = FALSE)
+```
+
+# Commands From This Document
+
+The following code chunk includes all the central commands used throughout this
+document. They are compiled here to make them easy to copy/paste into a text
+file to initialize your own script. Annotation has also been added to clearly
+indicate the four steps involved in data analysis, as described in the
+[Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html)
+vignette.
+
+```{r, eval = FALSE}
+###
+### PRELIMINARIES:
+### Loading packages, defining constants, creating helping functions, etc.
+###
+
+<<setup>>
+
+###
+### TRANSLATION:
+### Creating convenient R objects from raw data files
+###
+
+<<licor_file_names>>
+
+<<loading_licor_data>>
+
+<<combining_licor_data>>
+
+###
+### VALIDATION:
+### Organizing the data, checking its consistency and quality, cleaning it
+###
+
+<<adding_id_column>>
+
+<<check_response_curve>>
+
+<<reorganizing_curves>>
+
+<<plot_aci>>
+
+<<plot_humidity>>
+
+<<plot_temperature>>
+
+<<plot_co2>>
+
+<<plot_stability>>
+
+<<remove_unstable_points>>
+
+<<remove_points>>
+
+###
+### PROCESSING:
+### Extracting new pieces of information from the data
+###
+
+<<prepare_for_fitting>>
+
+<<fit_c3_aci>>
+
+<<plot_fits>>
+
+###
+### SYNTHESIS:
+### Using plots and statistics to help draw conclusions from the data
+###
+
+<<vcmax_barchart>>
+
+<<j_bwplot>>
+
+<<c3_aci_parameters>>
+
+<<calculate_stats>>
+
+```
+
+# References
