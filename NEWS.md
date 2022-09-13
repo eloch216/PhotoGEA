@@ -27,6 +27,8 @@ for the next release.
 - Added new input arguments to `fit_c3_aci`: `min_aj_cutoff` and
   `max_aj_cutoff`, which provide a way to constrain the range of `Cc` where `Aj`
   is allowed to be the limiting assimilation rate.
+- Added new function for calibrating TDL data (`process_tdl_cycle_polynomial`)
+  and an option for using it in the `gm_from_tdl` script.
 
 # PhotoGEA VERSION 0.4.0 (2022-09-07)
 

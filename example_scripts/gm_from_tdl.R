@@ -45,12 +45,16 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- -3
+RESPIRATION <- -2.2
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 MIN_GM <- 0
-MAX_GM <- 10
+MAX_GM <- 5
 MIN_CC <- 0.0
+
+# If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
+# we assume this is data from the ERML TDL
+IGB_TDL <- FALSE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -93,7 +97,11 @@ LICOR_RHLEAF_COLUMN_NAME <- 'RHleaf'
 LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
 LICOR_TLEAF_COLUMN_NAME <- 'TleafCnd'
 
-TDL_VALVES_TO_SMOOTH <- c(2, 20, 21, 23, 26)
+TDL_VALVES_TO_SMOOTH <- if (IGB_TDL) {
+  c(2, 3)
+} else {
+  c(2, 20, 21, 23, 26)
+}
 
 TDL_CYCLES_TO_EXCLUDE <- c()
 
@@ -153,15 +161,26 @@ if (PERFORM_CALCULATIONS) {
     })
 
     tdl_files <- do.call(rbind, tdl_files)
-
-    tdl_files <- identify_tdl_cycles(
+    
+    tdl_files <- if (IGB_TDL) {
+      identify_tdl_cycles(
+        tdl_files,
+        valve_column_name = TDL_VALVE_COLUMN_NAME,
+        cycle_start_valve = 2,
+        expected_cycle_length_minutes = 2.5,
+        expected_cycle_num_pts = 6,
+        timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
+      )
+    } else {
+      identify_tdl_cycles(
         tdl_files,
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
         expected_cycle_length_minutes = 3,
         expected_cycle_num_pts = 9,
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
-    )
+      )
+    }
 
     tdl_files_smoothed <-
         tdl_files[!tdl_files[, 'cycle_num'] %in% TDL_CYCLES_TO_EXCLUDE, , TRUE]
@@ -178,24 +197,37 @@ if (PERFORM_CALCULATIONS) {
         }
     }
 
-    processed_tdl_data <- consolidate(by(
-        tdl_files_smoothed,
-        tdl_files_smoothed[, 'cycle_num'],
-        process_tdl_cycle_erml,
-        valve_column_name = TDL_VALVE_COLUMN_NAME,
-        noaa_valve = 2,
-        calibration_0_valve = 20,
-        calibration_1_valve = 21,
-        calibration_2_valve = 23,
-        calibration_3_valve = 26,
-        raw_12c_colname = TDL_12C_COLUMN_NAME,
-        raw_13c_colname = TDL_13C_COLUMN_NAME,
-        noaa_cylinder_co2_concentration = 294.996,  # ppm
-        noaa_cylinder_isotope_ratio = -8.40,        # ppt
-        calibration_isotope_ratio = -11.505,        # ppt
-        f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
-        R_VPDB = 0.0111797
-    ))
+    processed_tdl_data <- if (IGB_TDL) {
+        processed_tdl <- consolidate(by(
+            tdl_files_smoothed,
+            tdl_files_smoothed[, 'cycle_num'],
+            process_tdl_cycle_polynomial,
+            poly_order = 1,
+            reference_tanks = list(
+                list(valve = 2, conc_12C = 94.7481903273293, conc_13C = 1.05425581021001),
+                list(valve = 3, conc_12C = 454.455905134605, conc_13C = 5.04814985601282)
+            )
+        ))
+    } else {
+        consolidate(by(
+            tdl_files_smoothed,
+            tdl_files_smoothed[, 'cycle_num'],
+            process_tdl_cycle_erml,
+            valve_column_name = TDL_VALVE_COLUMN_NAME,
+            noaa_valve = 2,
+            calibration_0_valve = 20,
+            calibration_1_valve = 21,
+            calibration_2_valve = 23,
+            calibration_3_valve = 26,
+            raw_12c_colname = TDL_12C_COLUMN_NAME,
+            raw_13c_colname = TDL_13C_COLUMN_NAME,
+            noaa_cylinder_co2_concentration = 294.996,  # ppm
+            noaa_cylinder_isotope_ratio = -8.40,        # ppt
+            calibration_isotope_ratio = -11.505,        # ppt
+            f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
+            R_VPDB = 0.0111797
+        ))
+    }
 
     # Get all the Licor information and process it
 
@@ -228,6 +260,15 @@ if (PERFORM_CALCULATIONS) {
         'gm_from_tdl',
         abs(RESPIRATION)
     )})
+
+    licor_files <- lapply(licor_files, function(x) {
+        get_sample_valve_from_licor_filename(x, list(
+            '13' = 12, # ERML TDL
+            '11' = 10, # ERML TDL
+             '8' = 7,  # IGB TDL
+             '6' = 13  # IGB TDL
+        ))
+    })
 
     # Combine the Licor and TDL data
 
@@ -316,16 +357,25 @@ if (PERFORM_CALCULATIONS) {
     cat(paste("Number of Licor measurements after removing unacceptable gm and Cc:", nrow(licor_files_no_outliers), "\n"))
 
     if (REMOVE_STATISTICAL_OUTLIERS) {
-        old_nrow <- nrow(licor_files_no_outliers)
+      
+      old_nrow <- nrow(licor_files_no_outliers)
+      
+      licor_files_no_outliers <- exclude_outliers(
+        licor_files_no_outliers,
+        'A',
+        licor_files_no_outliers[,'event_replicate']
+      )
+      
         pt_diff <- Inf
         while (pt_diff > 0) {
             licor_files_no_outliers <- exclude_outliers(
                 licor_files_no_outliers,
                 'gmc',
-                licor_files_no_outliers[,'event']
+                licor_files_no_outliers[,'event_replicate']
             )
             pt_diff <- old_nrow - nrow(licor_files_no_outliers)
             old_nrow <- nrow(licor_files_no_outliers)
+            #pt_diff <- 0
         }
         cat(paste("Number of Licor measurements after removing statistical outliers:", nrow(licor_files_no_outliers), "\n"))
     }
@@ -538,88 +588,90 @@ if (MAKE_TDL_PLOTS) {
         print(C13_plot)
     }
 
-    # Make a plot of all the fits from the processing
-    tdl_fitting <- xyplot(
-        expected_13c_values + fitted_13c_values ~ measured_13c_values | factor(cycle_num),
-        data = processed_tdl_data$calibration_13CO2_data$main_data,
-        type = 'b',
-        pch = 20,
-        xlab = "Measured 13CO2 mixing ratio (ppm)",
-        ylab = "True 13CO2 mixing ratio (ppm)",
-        auto = TRUE
-    )
-    x11(width = 12, height = 6)
-    print(tdl_fitting)
+    if (!IGB_TDL) {
+        # Make a plot of all the fits from the processing
+        tdl_fitting <- xyplot(
+            expected_13c_values + fitted_13c_values ~ measured_13c_values | factor(cycle_num),
+            data = processed_tdl_data$calibration_13CO2_data$main_data,
+            type = 'b',
+            pch = 20,
+            xlab = "Measured 13CO2 mixing ratio (ppm)",
+            ylab = "True 13CO2 mixing ratio (ppm)",
+            auto = TRUE
+        )
+        x11(width = 12, height = 6)
+        print(tdl_fitting)
 
-    # Make a plot showing how the zeroes drift with time
-    tdl_12CO2_zero_drift <- xyplot(
-        offset_12c ~ elapsed_time,
-        data = processed_tdl_data$calibration_zero$main_data,
-        type = 'l',
-        xlab = "Elapsed time at cycle start (minutes)",
-        ylab = "12CO2 zero offset"
-    )
-    x11()
-    print(tdl_12CO2_zero_drift)
+        # Make a plot showing how the zeroes drift with time
+        tdl_12CO2_zero_drift <- xyplot(
+            offset_12c ~ elapsed_time,
+            data = processed_tdl_data$calibration_zero$main_data,
+            type = 'l',
+            xlab = "Elapsed time at cycle start (minutes)",
+            ylab = "12CO2 zero offset"
+        )
+        x11()
+        print(tdl_12CO2_zero_drift)
 
-    tdl_13CO2_zero_drift <- xyplot(
-        offset_13c ~ elapsed_time,
-        data = processed_tdl_data$calibration_zero$main_data,
-        type = 'l',
-        xlab = "Elapsed time at cycle start (minutes)",
-        ylab = "13CO2 zero offset"
-    )
-    x11()
-    print(tdl_13CO2_zero_drift)
+        tdl_13CO2_zero_drift <- xyplot(
+            offset_13c ~ elapsed_time,
+            data = processed_tdl_data$calibration_zero$main_data,
+            type = 'l',
+            xlab = "Elapsed time at cycle start (minutes)",
+            ylab = "13CO2 zero offset"
+        )
+        x11()
+        print(tdl_13CO2_zero_drift)
 
-    # Make a plot showing how the 12CO2 calibration factor drifts with time
-    tdl_12CO2_calibration_drift <- xyplot(
-        gain_12CO2 ~ elapsed_time,
-        data = processed_tdl_data$calibration_12CO2$main_data,
-        type = 'l',
-        xlab = "Elapsed time at cycle start (minutes)",
-        ylab = "12CO2 gain factor"
-    )
-    x11()
-    print(tdl_12CO2_calibration_drift)
+        # Make a plot showing how the 12CO2 calibration factor drifts with time
+        tdl_12CO2_calibration_drift <- xyplot(
+            gain_12CO2 ~ elapsed_time,
+            data = processed_tdl_data$calibration_12CO2$main_data,
+            type = 'l',
+            xlab = "Elapsed time at cycle start (minutes)",
+            ylab = "12CO2 gain factor"
+        )
+        x11()
+        print(tdl_12CO2_calibration_drift)
 
-    # Make plots showing how the 13CO2 calibration parameters drift with time
-    tdl_13CO2_calibration_drift_a0 <- xyplot(
-        a0 ~ elapsed_time,
-        data = processed_tdl_data$calibration_13CO2_fit$main_data,
-        type = 'l',
-        xlab = "Elapsed time at cycle start (minutes)",
-        ylab = "13CO2 polynomial calibration parameter a0",
-        auto = TRUE,
-        main = "true_13CO2 =\na0 +\na1 * measured_13CO2 +\na2 * measured_13CO2^2"
-    )
-    x11()
-    print(tdl_13CO2_calibration_drift_a0)
+        # Make plots showing how the 13CO2 calibration parameters drift with time
+        tdl_13CO2_calibration_drift_a0 <- xyplot(
+            a0 ~ elapsed_time,
+            data = processed_tdl_data$calibration_13CO2_fit$main_data,
+            type = 'l',
+            xlab = "Elapsed time at cycle start (minutes)",
+            ylab = "13CO2 polynomial calibration parameter a0",
+            auto = TRUE,
+            main = "true_13CO2 =\na0 +\na1 * measured_13CO2 +\na2 * measured_13CO2^2"
+        )
+        x11()
+        print(tdl_13CO2_calibration_drift_a0)
 
-    tdl_13CO2_calibration_drift_a1 <- xyplot(
-        a1 ~ elapsed_time,
-        data = processed_tdl_data$calibration_13CO2_fit$main_data,
-        type = 'l',
-        xlab = "Elapsed time at cycle start (minutes)",
-        ylab = "13CO2 polynomial calibration parameter a1",
-        auto = TRUE,
-        main = "true_13CO2 =\na0 +\na1 * measured_13CO2 +\na2 * measured_13CO2^2"
-    )
-    x11()
-    print(tdl_13CO2_calibration_drift_a1)
+        tdl_13CO2_calibration_drift_a1 <- xyplot(
+            a1 ~ elapsed_time,
+            data = processed_tdl_data$calibration_13CO2_fit$main_data,
+            type = 'l',
+            xlab = "Elapsed time at cycle start (minutes)",
+            ylab = "13CO2 polynomial calibration parameter a1",
+            auto = TRUE,
+            main = "true_13CO2 =\na0 +\na1 * measured_13CO2 +\na2 * measured_13CO2^2"
+        )
+        x11()
+        print(tdl_13CO2_calibration_drift_a1)
 
 
-    tdl_13CO2_calibration_drift_a2 <- xyplot(
-        a2 ~ elapsed_time,
-        data = processed_tdl_data$calibration_13CO2_fit$main_data,
-        type = 'l',
-        xlab = "Elapsed time at cycle start (minutes)",
-        ylab = "13CO2 polynomial calibration parameter a2",
-        auto = TRUE,
-        main = "true_13CO2 =\na0 +\na1 * measured_13CO2 +\na2 * measured_13CO2^2"
-    )
-    x11()
-    print(tdl_13CO2_calibration_drift_a2)
+        tdl_13CO2_calibration_drift_a2 <- xyplot(
+            a2 ~ elapsed_time,
+            data = processed_tdl_data$calibration_13CO2_fit$main_data,
+            type = 'l',
+            xlab = "Elapsed time at cycle start (minutes)",
+            ylab = "13CO2 polynomial calibration parameter a2",
+            auto = TRUE,
+            main = "true_13CO2 =\na0 +\na1 * measured_13CO2 +\na2 * measured_13CO2^2"
+        )
+        x11()
+        print(tdl_13CO2_calibration_drift_a2)
+    }
 }
 
 ###                           ###
@@ -660,7 +712,7 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 1)
+    gmc_lim <- c(0, 3)
     cc_lim <- c(0, 275)
     drawdown_lim <- c(0, 150)
     a_lim <- c(0, 50)

@@ -131,6 +131,56 @@ batch_get_genotype_info_from_licor_filename <- function(licor_exdfs) {
     lapply(licor_exdfs, function(x) {get_genotype_info_from_licor_filename(x)})
 }
 
+get_sample_valve_from_licor_filename <- function(licor_exdf, reference_table) {
+    # We need to find the "site number" of the Licor data, which is encoded in
+    # the file name. This will tell us which valves to use for the sample CO2
+    # data from the TDL file.
+    trimmed_name <-
+        tools::file_path_sans_ext(basename(licor_exdf[['file_name']]))
+
+    # Search for the following pattern: one or more spaces, followed by 'site',
+    # possibly followed by one or more space, followed by one or more digits,
+    # followed by one or more spaces.
+    site_phrase <-
+        regmatches(trimmed_name, regexpr(" +site *[0-9]+ +", trimmed_name))
+
+    # Make sure we found something
+    if (length(site_phrase) == 0) {
+        msg <- paste0(
+            "Could not extract TDL site number from Licor file:\n'",
+            licor_exdf[['file_name']],
+            "'\nThe filename must include the phrase ` siteNN `, where `NN` ",
+            "is the TDL valve number that should be used for the sample data"
+        )
+        stop(msg)
+    }
+
+    # Remove the whitespace and the word "site"
+    site_phrase <- sub(" ", "", site_phrase)
+    site_phrase <- sub("site", "", site_phrase)
+
+    # Make sure the result is treated as a numeric value
+    sample_valve <- as.numeric(site_phrase)
+
+    # Add it as a new column in the exdf
+    licor_exdf <- set_variable(
+        licor_exdf,
+        'valve_number_s',
+        "",
+        "calibrated TDL (sample)",
+        sample_valve
+    )
+
+    # Now add the corresponding reference valve and return the exdf
+    set_variable(
+        licor_exdf,
+        'valve_number_r',
+        '',
+        'calibrated TDL (reference)',
+        reference_table[[as.character(sample_valve)]]
+    )
+}
+
 pair_licor_and_tdl <- function(
     licor_file,
     tdl_data,
@@ -144,13 +194,11 @@ pair_licor_and_tdl <- function(
     licor_file <- document_variables(
         licor_file,
         c("calibrated TDL",              "cycle_num",              ""),
-        c("calibrated TDL (sample)",     "valve_number_s",         ""),
         c("calibrated TDL (sample)",     "tdl_time_s",             ""),
         c("calibrated TDL (sample)",     "calibrated_12c_s",       "ppm"),
         c("calibrated TDL (sample)",     "calibrated_13c_s",       "ppm"),
         c("calibrated TDL (sample)",     "total_mixing_ratio_s",   "ppm"),
         c("calibrated TDL (sample)",     "total_isotope_ratio_s",  "ppt"),
-        c("calibrated TDL (reference)",  "valve_number_r",         ""),
         c("calibrated TDL (reference)",  "tdl_time_r",             ""),
         c("calibrated TDL (reference)",  "calibrated_12c_r",       "ppm"),
         c("calibrated TDL (reference)",  "calibrated_13c_r",       "ppm"),
@@ -166,42 +214,9 @@ pair_licor_and_tdl <- function(
     licor_file[['main_data']][['tdl_time_r']] <-
         as.POSIXlt(licor_file[['main_data']][['tdl_time_r']])
 
-    # Next, we need to find the "site number" of the Licor data, which is
-    # encoded in the file name. This will tell us which valves to use for the
-    # sample and reference CO2 data from the TDL file.
-    trimmed_name <-
-        tools::file_path_sans_ext(basename(licor_file[['file_name']]))
-
-    # Search for the following pattern: one or more spaces, followed by 'site',
-    # possibly followed by one or more space, followed by one or more digits,
-    # followed by one or more spaces.
-    site_phrase <-
-        regmatches(trimmed_name, regexpr(" +site *[0-9]+ +", trimmed_name))
-
-    # Make sure we found something
-    if (length(site_phrase) == 0) {
-        msg <- paste0(
-            "Could not extract TDL site number from Licor file:\n'",
-            licor_file[['file_name']],
-            "'\nThe filename must include the phrase ` siteNN `, where `NN` ",
-            "is the TDL valve number that should be used for the sample data"
-        )
-        stop(msg)
-    }
-
-    # Remove the whitespace and the word "site"
-    site_phrase <- sub(" ", "", site_phrase)
-    site_phrase <- sub("site", "", site_phrase)
-
-    # Make sure the result is treated as a numeric value
-    sample_valve <- as.numeric(site_phrase)
-
-    # The reference valve is one less than the sample valve
-    reference_valve <- sample_valve - 1
-
-    # Store this info in the Licor file
-    licor_file[['main_data']][['valve_number_s']] <- sample_valve
-    licor_file[['main_data']][['valve_number_r']] <- reference_valve
+    # Get the sample and reference valve numbers
+    sample_valve <- licor_file[1, 'valve_number_s']
+    reference_valve <- licor_file[1, 'valve_number_r']
 
     # Now extract TDL data for each time point
     for (i in seq_len(nrow(licor_file[['main_data']]))) {

@@ -222,12 +222,17 @@ The `PhotoGEA` package includes the following functions for calculating the
 values of new variables from the values of variables that already exist in the
 data set:
 
-- `calculate_gas_properties`: Calculates gas properties that are not included in
-  the default Licor log files, such as the H~2~O concentration at the leaf
-  surface and the stomatal conductance to CO~2~.
+- `calculate_arrhenius`: Calculates temperature-dependent values of
+  photosynthetic parameters using Arrhenius exponents.
 - `calculate_ball_berry_index`: Calculates the Ball-Berry index from values of
   net assimilation, relative humidity at the leaf surface, and CO~2~
   concentration at the leaf surface.
+- `calculate_c3_assimilation`: Calculates assimilation rates using the
+  Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.
+- `calculate_cc`: Calculates values of the chloroplast CO~2~ concentration.
+- `calculate_gas_properties`: Calculates gas properties that are not included in
+  the default Licor log files, such as the H~2~O concentration at the leaf
+  surface and the stomatal conductance to CO~2~.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)
@@ -264,6 +269,19 @@ results from each fit; see the _Processing Multiple Pieces of an Extended Data
 Frame_ section of the
 [Working with Extended Data Frames](working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
 vignette for more details about doing this.
+
+### Functions for Calibrating TDL Data
+
+The `PhotoGEA` package includes the following functions for calibrating TDL
+data:
+
+- `process_tdl_cycle_erml`: Designed for the TDL in ERML.
+- `process_tdl_cycle_polynomial`: Applies a correction based on a polynomial fit
+  to the readings from two or more reference tanks.
+
+As with the fitting functions above, these functions generally assume that the
+input `exdf` object represents data from a single TDL cycle, and must be used
+along with `by` and `consolidate` when processing a full TDL data set.
 
 ## Synthesis
 
