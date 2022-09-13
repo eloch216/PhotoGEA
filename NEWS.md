@@ -29,6 +29,8 @@ for the next release.
   is allowed to be the limiting assimilation rate.
 - Added new function for calibrating TDL data (`process_tdl_cycle_polynomial`)
   and an option for using it in the `gm_from_tdl` script.
+- Modified Licor-TDL pairing to stop assuming a particular relationship between
+  the sample and reference valve numbers.
 
 # PhotoGEA VERSION 0.4.0 (2022-09-07)
 
