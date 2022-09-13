@@ -89,7 +89,7 @@ POINT_FOR_BOX_PLOTS <- 1
 
 # Specify the names of a few important columns
 EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "replicate"
+REP_COLUMN_NAME <- "plot_replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 CI_COLUMN_NAME <- "Ci"
 A_COLUMN_NAME <- "A"
@@ -126,6 +126,17 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
+    
+    has_plot_info <- TRUE
+    if (has_plot_info) {
+      # This might not be required for most data sets
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        "replicate",
+        "plot_replicate"
+      )
+    }
 
     combined_info <- process_id_columns(
         combined_info,

@@ -102,8 +102,8 @@ REMOVE_STATISTICAL_OUTLIERS <- TRUE
 ###                                                                        ###
 
 # Specify the names of a few important columns
-EVENT_COLUMN_NAME <- "Line"
-REP_COLUMN_NAME <- "Sample"
+EVENT_COLUMN_NAME <- "event"
+REP_COLUMN_NAME <- "replicate"
 MEASUREMENT_NUMBER_NAME <- "obs"
 GM_COLUMN_NAME <- "gmc"
 GS_COLUMN_NAME <- "gsw"
@@ -194,7 +194,7 @@ if (PERFORM_CALCULATIONS) {
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
 
-    EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "28", "53", "14", "4", "10", "15", "30")
+    EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "14", "4", "10", "15", "30")
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
     # Calculate basic stats for each event

@@ -286,7 +286,8 @@ if (PERFORM_CALCULATIONS) {
       combined_info,
       UNIQUE_ID_COLUMN_NAME,
       MEASUREMENT_NUMBERS_TO_REMOVE,
-      'CO2_r_sp'
+      'CO2_r_sp',
+      Inf
     )
 
     # Remove specific problematic points
@@ -431,7 +432,7 @@ x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 ci_lim <- c(-50, 1500)
-a_lim <- c(-10, 50)
+a_lim <- c(-10, 65)
 etr_lim <- c(0, 325)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
