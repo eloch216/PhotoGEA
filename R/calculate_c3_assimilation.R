@@ -2,11 +2,6 @@
 # equations from s. von Caemmerer, Biochemical Models of Leaf Photosynthesis.
 # (CSIRO Publishing, 2000). doi:10.1071/9780643103405.
 #
-# POc is typically assumed to be the same as the ambient O2 concentration. For
-# air measurements, this would be 21% O2, which is about 210000 microbar at
-# standard atmospheric pressure. For low oxygen measurements, this would be 2%
-# O2, which is about 20000 microbar.
-#
 # Meaning of symbols:
 # -------------------
 # alpha:      fraction of glycolate carbon _not_ returned to the chloroplast
@@ -76,11 +71,12 @@ calculate_c3_assimilation <- function(
     # Calculate terms that appear in several of the next equations
     CG <- PCc - Gamma_star # microbar
 
-    # Equation 2.20: RuBP-limited assimilation rate (micromol / m^2 / s)
+    # Equation 2.20: rubisco-limited (RuBP-saturated) assimilation rate
+    # (micromol / m^2 / s)
     Ac <- CG * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko)) - Rd_tl
 
-    # Equation 2.23: electron-transport-limited assimilation rate
-    # (micromol / m^2 / s)
+    # Equation 2.23: electron-transport-limited (RuBP-regeneration-limited)
+    # assimilation rate (micromol / m^2 / s)
     Aj <- CG * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl
 
     # Assume that all glycolate carbon is returned to the choloroplast
@@ -89,8 +85,16 @@ calculate_c3_assimilation <- function(
     # Equation 2.26: phosphate-limited assimilation rate (micromol / m^2 / s)
     Ap <- CG * (3 * TPU) / (PCc - (1 + 3 * alpha / 2) * Gamma_star) - Rd_tl
 
-    # Equation 2.27: net assimilation rate (micromol / m^2 / s)
-    An <- pmin(Ac, Aj, Ap)
+    # Equation 2.27: net assimilation rate (micromol / m^2 / s). This is not
+    # discussed in the text, but Equation 2.27 is not quite right. See, for
+    # example, Figure 2.6, where Ac is the limiting rate at very low Cc even
+    # though Aj < Ac. This is probably due to Equation 2.23 (for Aj) only being
+    # valid at higher values of Cc. To address this, we apply Equation 2.27
+    # using Aj_mod instead of Aj, which is determined by setting Aj_mod to
+    # infinity when Aj < 0 and Aj otherwise.
+    Aj_mod <- Aj
+    Aj_mod[Aj_mod < 0] <- Inf
+    An <- pmin(Ac, Aj_mod, Ap)
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units

@@ -62,7 +62,7 @@ Overall, the photosynthetic response to CO~2~ under high light conditions can be
 divided into three separate ranges:
 
 - At low levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
-  limited by RuBP regeneration.
+  limited by rubisco activity.
 - At intermediate levels of CO~2~ in the chloroplast, CO~2~ assimilation is
   primarily limited by the electron transport rate.
 - At high levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
@@ -72,7 +72,7 @@ More specifically, the model provides equations that separately describe the
 responses of three separate assimilation rates to the chloroplastic CO~2~
 concentration:
 
-- The RuBP-limited net CO~2~ assimilation rate ($A_c$).
+- The rubisco-limited net CO~2~ assimilation rate ($A_c$).
 - The electron-transport-limited rate ($A_j$).
 - The phosphate-limited rate ($A_p$).
 
@@ -661,8 +661,8 @@ determined by the `TPU` parameter; for some of the curves, the assimilation rate
 is never limited by `Ap`, so the resulting "best-fit" values of `TPU` may not be
 meaningful for these curves.
 
-There is also one curve (`ripe1 - tobacco - 2`) that does not follow the
-expected progression from RuBP-limited assimilation to
+There is also one curve (`ripe2 - tobacco - 4`) that does not follow the
+expected progression from rubisco-limited assimilation to
 electron-transport-limited assimilation as `Cc` increases; this entire fit may
 be unreliable, even if `A_fit` closely matches `A`. It is possible to force the
 optimizer to only allow fits where `Ac` is less than `Ap` below a certain
@@ -676,19 +676,19 @@ c3_aci_results <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
   min_aj_cutoff = 100,              # Aj must be > Ac when Cc < 100 ppm
-  max_aj_cutoff = 800               # Aj must be < Ac when Cc > 800 ppm
+  max_aj_cutoff = 550               # Aj must be < Ac when Cc > 550 ppm
 ))
 
 <<fit_aci_limiting>>
 ```
 
-Here we can see an improvement in the fit for `ripe1 - tobacco - 2`. The fit for
+Here we can see an improvement in the fit for `ripe2 - tobacco - 4`. The fit for
 `ripe1 - soybean - 5a` is a little strange, but based on the values of `Ci` and
 `Cc`, it seems that this plant's stomata did not fully open during the
-measurement, restricting the measured assimilation values to the RuBP-limited
-range; there is nothing that can be done about this. It is also apparent that
-the `TPU` issue remains; again, there is nothing that can really be done to
-address it besides measuring more A-Ci curves.
+measurement, almost fully restricting the measured assimilation values to the
+rubisco-limited range; there is nothing that can be done about this. It is also
+apparent that the `TPU` issue remains; again, there is nothing that can really
+be done to address it besides measuring more A-Ci curves.
 
 # Examining the Results
 
@@ -704,7 +704,7 @@ the following example showing the fitted values of `Vcmax`:
 barchart_with_errorbars(
   c3_aci_results$parameters[, 'Vcmax_at_25'],
   c3_aci_results$parameters[, 'species'],
-  ylim = c(0, 150),
+  ylim = c(0, 180),
   xlab = 'Species',
   ylab = paste0('Vcmax at 25 degrees C (', c3_aci_results$parameters$units$Vcmax_at_25, ')')
 )
@@ -723,7 +723,7 @@ bwplot(
 )
 ```
 
-## Calculating Average Fit Parameters
+## Accessing Raw and Average Values of Fit Parameters
 
 We can also take a look at the raw numbers of the fitted parameters and their
 average values. The `c3_aci_results$parameters` object contains many columns but

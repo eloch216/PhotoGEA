@@ -135,13 +135,13 @@
 \details{
   This function follows Chapter 2 from S. von Caemmerer's textbook, referenced
   above. In this model, the net CO2 assimilation rate \code{An} is given by the
-  smaller of the RuBP-regeneration-limited rate \code{Ac}, the
-  electron-transport-limited rate \code{Aj}, and the phosphate-limited rate
-  \code{Ap}, as expressed by Equation 2.27:
+  smaller of the rubisco-limited rate \code{Ac}, the electron-transport-limited
+  rate \code{Aj}, and the phosphate-limited rate \code{Ap}, as expressed by
+  Equation 2.27:
 
   \code{An = min(Ac, Aj, Ap)}
 
-  The RuBP-regeneration-limited rate is calculated using Equation 2.20:
+  The rubisco-regeneration-limited rate is calculated using Equation 2.20:
 
   \code{Ac = (PCc - Gamma_star) * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko)) - Rd_tl}
 

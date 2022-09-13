@@ -141,8 +141,8 @@ Having fit the response curves, it is also possible to view the fits and the
 extracted parameters. For example, we can plot the measured values of net
 assimilation (`A`), the fitted values of net assimilation (`A_fit`), and each of
 the limiting assimilation rates calculated during the fitting procedure: the
-RuBP-regeneration-limited rate (`Ac`), the electron-transport-limited rate
-(`Aj`), and the phosphate-limited rate (`Ap`).
+rubisco-limited rate (`Ac`), the electron-transport-limited rate (`Aj`), and the
+phosphate-limited rate (`Ap`).
 
 ```{r}
 lattice::xyplot(

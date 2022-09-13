@@ -31,6 +31,12 @@ for the next release.
   and an option for using it in the `gm_from_tdl` script.
 - Modified Licor-TDL pairing to stop assuming a particular relationship between
   the sample and reference valve numbers.
+- Fixed an issue with `calculate_c3_assimilation` that was causing it to report
+  incorrect `An` values at low `Cc`.
+- Fixed several typos where `Ac` was misidentified as the "RuBP-limited" rate;
+  in fact, it is the RuBP-saturated rate but is more commonly referred to as the
+  rubisco-limited rate.
+- Added a new example script that uses `fit_c3_aci`.
 
 # PhotoGEA VERSION 0.4.0 (2022-09-07)
 
