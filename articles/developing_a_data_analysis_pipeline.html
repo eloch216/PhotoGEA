@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
+    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
@@ -195,9 +196,15 @@
 <p>The <code>PhotoGEA</code> package includes the following functions for calculating the values of new variables from the values of variables that already exist in the data set:</p>
 <ul>
 <li>
-<code>calculate_gas_properties</code>: Calculates gas properties that are not included in the default Licor log files, such as the H<sub>2</sub>O concentration at the leaf surface and the stomatal conductance to CO<sub>2</sub>.</li>
+<code>calculate_arrhenius</code>: Calculates temperature-dependent values of photosynthetic parameters using Arrhenius exponents.</li>
 <li>
 <code>calculate_ball_berry_index</code>: Calculates the Ball-Berry index from values of net assimilation, relative humidity at the leaf surface, and CO<sub>2</sub> concentration at the leaf surface.</li>
+<li>
+<code>calculate_c3_assimilation</code>: Calculates assimilation rates using the Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.</li>
+<li>
+<code>calculate_cc</code>: Calculates values of the chloroplast CO<sub>2</sub> concentration.</li>
+<li>
+<code>calculate_gas_properties</code>: Calculates gas properties that are not included in the default Licor log files, such as the H<sub>2</sub>O concentration at the leaf surface and the stomatal conductance to CO<sub>2</sub>.</li>
 </ul>
 <p>(This list is not exhaustive; instead, it only includes functions for which documentation has been written.)</p>
 <p>These functions generally treat each row in an <code>exdf</code> object as an independent observation, and so they can be applied to objects that include data from many plants or response curves.</p>
@@ -215,6 +222,18 @@
 <p>(This list is not exhaustive; instead, it only includes functions for which documentation has been written.)</p>
 <p>These functions generally assume that the input <code>exdf</code> object represents a single response curve, and they return both the optimized parameter values and the fitted values of the measured varaibles; for example, <code>fit_ball_berry</code> performs the fit on a single Ball-Berry curve and returns the Ball-Berry intercept, the Ball-Berry slope, and the fitted values of stomatal conductance.</p>
 <p>These functions cannot be applied directly to an <code>exdf</code> object that contains a full set of multiple response curves, because they assume that their input is a single response curve. However, they can be used in conjunction with the <code>by</code> and <code>consolidate</code> functions to automatically split a large <code>exdf</code> into individual curves, apply the fitting function to each curve, and combine the results from each fit; see the <em>Processing Multiple Pieces of an Extended Data Frame</em> section of the <a href="working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame">Working with Extended Data Frames</a> vignette for more details about doing this.</p>
+</div>
+<div class="section level4">
+<h4 id="functions-for-calibrating-tdl-data">Functions for Calibrating TDL Data<a class="anchor" aria-label="anchor" href="#functions-for-calibrating-tdl-data"></a>
+</h4>
+<p>The <code>PhotoGEA</code> package includes the following functions for calibrating TDL data:</p>
+<ul>
+<li>
+<code>process_tdl_cycle_erml</code>: Designed for the TDL in ERML.</li>
+<li>
+<code>process_tdl_cycle_polynomial</code>: Applies a correction based on a polynomial fit to the readings from two or more reference tanks.</li>
+</ul>
+<p>As with the fitting functions above, these functions generally assume that the input <code>exdf</code> object represents data from a single TDL cycle, and must be used along with <code>by</code> and <code>consolidate</code> when processing a full TDL data set.</p>
 </div>
 </div>
 <div class="section level3">

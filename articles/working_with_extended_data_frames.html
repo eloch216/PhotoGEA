@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
+    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
@@ -92,6 +93,7 @@
 <p>The <em>extended data frame</em> (abbreviated as <code>exdf</code>) class is a special data structure defined by the <code>PhotoGEA</code> package. In many ways, an <code>exdf</code> object is equivalent to a data frame, with the major difference being that an <code>exdf</code> object includes the units and “category” of each column. The <code>exdf</code> class was originally created as a way to represent the contents of a Licor Excel file in an R structure. In Licor Excel files, the data is arranged in a table where each column has a name, units, and a category; for example, the column for values of net assimilation rate is called <code>A</code>, has units of <code>micromol / m^2 / s</code>, and is categorized as a <code>GasEx</code> variable.</p>
 <p>Because <code>exdf</code> objects keep track of the units for each column, functions acting on <code>exdf</code> objects are able to check that important variables have the correct units, ensuring that the output they produce is correct. Additionally, the category for each column can be used to store other important information about it, such as the function that was used to calculate its values. For example, the <code>calculate_ball_berry_index</code> function takes an <code>exdf</code> object as an input and (1) checks whether the net assimilation, relative humidity, and CO<sub>2</sub> concentration columns of the object have the expected units, (2) adds a new column containing values of the Ball-Berry index, and (3) uses the category of the new column to indicate it was calculated by <code>calculate_ball_berry_index</code>.</p>
 <p>Thus, <code>exdf</code> objects provide a clear method for ensuring that requirements about units are met before making calculations and for retaining a record of how the values of new columns were calculated. Because of these important properties, nearly all functions in the <code>PhotoGEA</code> package create or modify <code>exdf</code> objects rather than regular data frames. In the following sections, this vignette will demonstrate how to create <code>exdf</code> objects, extract information from them, and modify their contents.</p>
+<p><em>Note</em>: here, we will assume that you have some basic familiarity with common R data structures like lists, vectors, and data frames. If you are unfamiliar with these, it may be helpful to consult with another online guide or tutorial such as the <a href="http://adv-r.had.co.nz/Data-structures.html" class="external-link">Data Structures</a> chapter from <em>Advanced R</em>.</p>
 </div>
 <div class="section level2">
 <h2 id="loading-packages">Loading Packages<a class="anchor" aria-label="anchor" href="#loading-packages"></a>

@@ -30,7 +30,7 @@ Fits a model to an experimentally measured CO2 response curve using the data
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,7 @@ Fits a model to an experimentally measured CO2 response curve using the data
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
+    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
@@ -115,7 +116,9 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <span>    <span class="op">}</span>,</span>
 <span>    initial_guess <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">100</span>,  <span class="fl">0.5</span>, <span class="fl">90</span><span class="op">)</span>,</span>
 <span>    lower <span class="op">=</span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,  <span class="fl">0</span>,    <span class="fl">0</span>,   <span class="fl">0</span><span class="op">)</span>,</span>
-<span>    upper <span class="op">=</span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">1000</span>, <span class="fl">100</span>, <span class="fl">1000</span><span class="op">)</span></span>
+<span>    upper <span class="op">=</span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">1000</span>, <span class="fl">100</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
+<span>    min_aj_cutoff <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    max_aj_cutoff <span class="op">=</span> <span class="cn">NA</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -209,6 +212,18 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <dd><p>A numeric vector containing upper bounds for the values of <code>TPU</code>,
     <code>J</code>, <code>Rd</code>, and <code>Vcmax</code>, in that order.</p></dd>
 
+
+  <dt>min_aj_cutoff</dt>
+<dd><p>The minimum value of <code>Cc</code> (in ppm) where <code>Aj</code> is allowed to become
+    the overall rate-limiting factor. If <code>min_aj_cutoff</code> is set to
+    <code>NA</code>, this restriction will not be applied.</p></dd>
+
+
+  <dt>max_aj_cutoff</dt>
+<dd><p>The maximum value of <code>Cc</code> (in ppm) where <code>Aj</code> is allowed to be
+    smaller than <code>Ac</code>. If <code>max_aj_cutoff</code> is set to <code>NA</code>, this
+    restriction will not be applied.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -227,6 +242,15 @@ Fits a model to an experimentally measured CO2 response curve using the data
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">dfoptim::nmkb</a></code> is often able to find a
   good fit.</p>
+<p>Sometimes the optimizer will choose biologically unreasonable parameter values
+  that nevertheless produce good fits to the supplied assimilation values. A
+  common problem is that the fit result may not follow the expected progression
+  of <code>Ac-limited -&gt; Aj-limited -&gt; Ap-limited</code> assimilation as <code>Cc</code>
+  increases. In this case, the optional <code>min_aj_cutoff</code> and
+  <code>max_aj_cutoff</code> can be used to constrain the range of <code>Cc</code> values
+  (in ppm) where <code>Aj</code> is allowed to be the overall rate limiting factor.
+  See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
+  arguments can be used to improve the quality of a fit.</p>
 <p>This function assumes that <code>replicate_exdf</code> represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used
   along with <code><a href="by.exdf.html">by.exdf</a></code> and <code><a href="consolidate.html">consolidate</a></code>.</p>
@@ -306,29 +330,29 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14                   tobacco                      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27                   tobacco                      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   39.99994</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                  32.66335</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                  39.99495</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   25.58415</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                  29.32262</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                  20.03634</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       199.6833</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                      230.3633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                      204.0849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       190.8857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                      232.8343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                     1000.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    3.491796e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                   5.068584e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                   3.242989e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    5.769933e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                   3.554089e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                   6.369200e-08</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           119.8780</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                          143.1554</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                          121.8959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           144.6398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                          145.4359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                          116.7613</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    convergence [fit_c3_aci] () convergence_msg [fit_c3_aci] ()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                            0          Successful convergence</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14                           0          Successful convergence</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27                           0          Successful convergence</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    feval [fit_c3_aci] () optimum_val [fit_c3_aci] ()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    327                   177.33804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                   289                    65.12822</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                   298                    68.23641</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    195                   149.01374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                   203                    38.87372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                   295                   114.27896</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># View the fits for each species / plot</span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>

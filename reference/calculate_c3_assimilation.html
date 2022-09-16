@@ -22,7 +22,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
+    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
@@ -205,11 +206,11 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function follows Chapter 2 from S. von Caemmerer's textbook, referenced
   above. In this model, the net CO2 assimilation rate <code>An</code> is given by the
-  smaller of the RuBP-regeneration-limited rate <code>Ac</code>, the
-  electron-transport-limited rate <code>Aj</code>, and the phosphate-limited rate
-  <code>Ap</code>, as expressed by Equation 2.27:</p>
+  smaller of the rubisco-limited rate <code>Ac</code>, the electron-transport-limited
+  rate <code>Aj</code>, and the phosphate-limited rate <code>Ap</code>, as expressed by
+  Equation 2.27:</p>
 <p><code>An = min(Ac, Aj, Ap)</code></p>
-<p>The RuBP-regeneration-limited rate is calculated using Equation 2.20:</p>
+<p>The rubisco-regeneration-limited rate is calculated using Equation 2.20:</p>
 <p><code>Ac = (PCc - Gamma_star) * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko)) - Rd_tl</code></p>
 <p>where <code>PCc</code> is the partial pressure of CO2 in the chloroplast,
   <code>Gamma_star</code> is the value of <code>Pcc</code> at which no assimilation occurs
@@ -238,10 +239,10 @@
 <p></p>
 <ul><li><p>If <code>return_exdf</code> is <code>TRUE</code>, the return value is an
           <code>exdf</code> object with the following columns, calculated as described
-          above: <code>Vcmax_tl</code>, <code>Rd_tl</code>, <code>J_tl</code>, <code>Ac</code>,
-          <code>Aj</code>, <code>Ap</code>, and <code>An</code>. The category for each of these
-          new columns is <code>calculate_c3_assimilation</code> to indicate that they
-          were created using this function.</p></li>
+          above: <code>TPU</code>, <code>Vcmax_tl</code>, <code>Rd_tl</code>, <code>J_tl</code>,
+          <code>Ac</code>, <code>Aj</code>, <code>Ap</code>, and <code>An</code>. The category for each
+          of these new columns is <code>calculate_c3_assimilation</code> to indicate
+          that they were created using this function.</p></li>
 <li><p>If <code>return_exdf</code> is <code>FALSE</code>, the return value is a numeric
           vector containing the calculated values of <code>An</code>.</p></li>
 </ul></div>

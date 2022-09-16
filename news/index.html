@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
+    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
@@ -56,6 +57,23 @@
       <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.0" id="photogea-version-050-2022-09-16">PhotoGEA VERSION 0.5.0 (2022-09-16)<a class="anchor" aria-label="anchor" href="#photogea-version-050-2022-09-16"></a></h2>
+<ul><li>Added a new vignette demonstrating how to analyze C3 A-Ci curve data.</li>
+<li>Included <code>TPU</code> in the output from <code>calculate_c3_assimilation</code>.</li>
+<li>In the <code>organize_response_curve_data</code> function, changed the default value of the <code>ordering_column_tolerance</code> column to <code>Inf</code> to disable this check by default, since we often want to reorder using a column like <code>Ci</code> that does not follow the same sequence of values in every curve.</li>
+<li>Added new input arguments to <code>fit_c3_aci</code>: <code>min_aj_cutoff</code> and <code>max_aj_cutoff</code>, which provide a way to constrain the range of <code>Cc</code> where <code>Aj</code> is allowed to be the limiting assimilation rate.</li>
+<li>Added new function for calibrating TDL data (<code>process_tdl_cycle_polynomial</code>) and an option for using it in the <code>gm_from_tdl</code> script.</li>
+<li>Modified Licor-TDL pairing to stop assuming a particular relationship between the sample and reference valve numbers.</li>
+<li>Fixed an issue with <code>calculate_c3_assimilation</code> that was causing it to report incorrect <code>An</code> values at low <code>Cc</code>.</li>
+<li>Fixed several typos where <code>Ac</code> was misidentified as the “RuBP-limited” rate; in fact, it is the RuBP-saturated rate but is more commonly referred to as the rubisco-limited rate.</li>
+<li>Added a new example script that uses <code>fit_c3_aci</code>.</li>
+<li>PRs related to creating this version:<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/44" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/44</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/46" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/46</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/47" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/47</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/48" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/48</a></li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="photogea-version-040-2022-09-07">PhotoGEA VERSION 0.4.0 (2022-09-07)<a class="anchor" aria-label="anchor" href="#photogea-version-040-2022-09-07"></a></h2>
 <ul><li>Made several improvements to accessibility:<ul><li>Renamed GitHub repository from <code>licor-processing-and-analysis</code> to <code>PhotoGEA</code>.</li>

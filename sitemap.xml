@@ -16,6 +16,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_ball_berry_data.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_c3_aci_curves.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html</loc>
   </url>
   <url>
@@ -137,6 +140,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/process_tdl_cycle_erml.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/process_tdl_cycle_polynomial.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/read_licor_file.html</loc>

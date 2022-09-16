@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
+    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
@@ -167,14 +168,14 @@
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>When this document was generated, evaluating this code required the following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.357   0.072   1.430</span></span></code></pre>
+<span><span class="co">#&gt;   1.267   0.044   1.310</span></span></code></pre>
 <p>The timing results may vary depending on the particular machine used to run the code. Nevertheless: <em>Do you think you could fit six A-Ci curves in less than 2 seconds using any other method?</em></p>
 <p>This example contains 11 commands, so it certainly isn’t short; however, a close look reveals that much of the commands are general and would apply to <em>any</em> set of C<sub>3</sub> response curves. In fact, only a few parts would need to be modified, such as the list of files to read, the curve identifier, and the value of mesophyll conductance. While using <code>PhotoGEA</code>, you are encouraged to copy this example and any others to use as the base of your own scripts; work smarter, not harder!</p>
 </div>
 <div class="section level3">
 <h3 id="viewing-the-results">Viewing the Results<a class="anchor" aria-label="anchor" href="#viewing-the-results"></a>
 </h3>
-<p>Having fit the response curves, it is also possible to view the fits and the extracted parameters. For example, we can plot the measured values of net assimilation (<code>A</code>), the fitted values of net assimilation (<code>A_fit</code>), and each of the limiting assimilation rates calculated during the fitting procedure: the RuBP-regeneration-limited rate (<code>Ac</code>), the electron-transport-limited rate (<code>Aj</code>), and the phosphate-limited rate (<code>Ap</code>).</p>
+<p>Having fit the response curves, it is also possible to view the fits and the extracted parameters. For example, we can plot the measured values of net assimilation (<code>A</code>), the fitted values of net assimilation (<code>A_fit</code>), and each of the limiting assimilation rates calculated during the fitting procedure: the rubisco-limited rate (<code>Ac</code>), the electron-transport-limited rate (<code>Aj</code>), and the phosphate-limited rate (<code>Ap</code>).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_id</span>,</span>
@@ -213,6 +214,8 @@
 <a href="working_with_extended_data_frames.html">Working With Extended Data Frames</a>: Discusses how to work with extended data frames, which are a critical part of <code>PhotoGEA</code>.</li>
 <li>Analysis case studies:
 <ul>
+<li>
+<a href="analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a> (This example is more detailed than the analysis demonstrated here.)</li>
 <li><a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
 <li><a href="analyzing_tdl_data.html">Analyzing TDL Data</a></li>
 </ul>
