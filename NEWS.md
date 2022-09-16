@@ -16,7 +16,7 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# UNRELEASED
+# PhotoGEA VERSION 0.5.0 (2022-09-16)
 
 - Added a new vignette demonstrating how to analyze C3 A-Ci curve data.
 - Included `TPU` in the output from `calculate_c3_assimilation`.
@@ -37,6 +37,11 @@ for the next release.
   in fact, it is the RuBP-saturated rate but is more commonly referred to as the
   rubisco-limited rate.
 - Added a new example script that uses `fit_c3_aci`.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/44
+  - https://github.com/eloch216/PhotoGEA/pull/46
+  - https://github.com/eloch216/PhotoGEA/pull/47
+  - https://github.com/eloch216/PhotoGEA/pull/48
 
 # PhotoGEA VERSION 0.4.0 (2022-09-07)
 
