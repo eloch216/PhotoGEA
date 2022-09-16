@@ -135,13 +135,13 @@
 \details{
   This function follows Chapter 2 from S. von Caemmerer's textbook, referenced
   above. In this model, the net CO2 assimilation rate \code{An} is given by the
-  smaller of the RuBP-regeneration-limited rate \code{Ac}, the
-  electron-transport-limited rate \code{Aj}, and the phosphate-limited rate
-  \code{Ap}, as expressed by Equation 2.27:
+  smaller of the rubisco-limited rate \code{Ac}, the electron-transport-limited
+  rate \code{Aj}, and the phosphate-limited rate \code{Ap}, as expressed by
+  Equation 2.27:
 
   \code{An = min(Ac, Aj, Ap)}
 
-  The RuBP-regeneration-limited rate is calculated using Equation 2.20:
+  The rubisco-regeneration-limited rate is calculated using Equation 2.20:
 
   \code{Ac = (PCc - Gamma_star) * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko)) - Rd_tl}
 
@@ -176,10 +176,10 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
-          \code{Aj}, \code{Ap}, and \code{An}. The category for each of these
-          new columns is \code{calculate_c3_assimilation} to indicate that they
-          were created using this function.
+          above: \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
+          \code{Ac}, \code{Aj}, \code{Ap}, and \code{An}. The category for each
+          of these new columns is \code{calculate_c3_assimilation} to indicate
+          that they were created using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
           vector containing the calculated values of \code{An}.
   }

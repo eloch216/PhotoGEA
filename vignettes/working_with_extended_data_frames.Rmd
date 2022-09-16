@@ -51,6 +51,12 @@ rather than regular data frames. In the following sections, this vignette will
 demonstrate how to create `exdf` objects, extract information from them, and
 modify their contents.
 
+_Note_: here, we will assume that you have some basic familiarity with common R
+data structures like lists, vectors, and data frames. If you are unfamiliar with
+these, it may be helpful to consult with another online guide or tutorial such
+as the [Data Structures](http://adv-r.had.co.nz/Data-structures.html) chapter
+from _Advanced R_.
+
 # Loading Packages
 
 As always, the first step is to load the packages we will be using. In addition

@@ -16,6 +16,33 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.5.0 (2022-09-16)
+
+- Added a new vignette demonstrating how to analyze C3 A-Ci curve data.
+- Included `TPU` in the output from `calculate_c3_assimilation`.
+- In the `organize_response_curve_data` function, changed the default value of
+  the `ordering_column_tolerance` column to `Inf` to disable this check by
+  default, since we often want to reorder using a column like `Ci` that does not
+  follow the same sequence of values in every curve.
+- Added new input arguments to `fit_c3_aci`: `min_aj_cutoff` and
+  `max_aj_cutoff`, which provide a way to constrain the range of `Cc` where `Aj`
+  is allowed to be the limiting assimilation rate.
+- Added new function for calibrating TDL data (`process_tdl_cycle_polynomial`)
+  and an option for using it in the `gm_from_tdl` script.
+- Modified Licor-TDL pairing to stop assuming a particular relationship between
+  the sample and reference valve numbers.
+- Fixed an issue with `calculate_c3_assimilation` that was causing it to report
+  incorrect `An` values at low `Cc`.
+- Fixed several typos where `Ac` was misidentified as the "RuBP-limited" rate;
+  in fact, it is the RuBP-saturated rate but is more commonly referred to as the
+  rubisco-limited rate.
+- Added a new example script that uses `fit_c3_aci`.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/44
+  - https://github.com/eloch216/PhotoGEA/pull/46
+  - https://github.com/eloch216/PhotoGEA/pull/47
+  - https://github.com/eloch216/PhotoGEA/pull/48
+
 # PhotoGEA VERSION 0.4.0 (2022-09-07)
 
 - Made several improvements to accessibility:
