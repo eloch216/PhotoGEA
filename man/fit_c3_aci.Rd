@@ -33,13 +33,7 @@
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
     POc = 210000,
-    OPTIM_FUN = function(guess, fun, lower, upper) {
-      dfoptim::nmkb(guess, fun, lower, upper, control = list(
-        tol = 1e-7,
-        maxfeval = 2000,
-        restarts.max = 10
-      ))
-    },
+    OPTIM_FUN = default_optimizer(),
     initial_guess = c(10, 100,  0.5, 90),
     lower =         c(0,  0,    0,   0),
     upper =         c(40, 1000, 100, 1000),
