@@ -6,7 +6,10 @@
 
 \description{
   Creates a function that makes an initial guess of FvCB model parameter values
-  for one curve. Values estimated in this way should be considered inaccurate,
+  for one curve. The returned function meets the requirements for the
+  \code{initial_guess_fun} input argument of \code{\link{fit_c3_aci}}.
+
+  Values estimated by this guessing function should be considered inaccurate,
   and should always be improved upon by an optimizer.
 }
 

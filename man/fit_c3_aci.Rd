@@ -34,7 +34,17 @@
     j_norm_column_name = 'J_norm',
     POc = 210000,
     OPTIM_FUN = default_optimizer(),
-    initial_guess = c(10, 100,  0.5, 90),
+    initial_guess_fun = initial_guess_c3_aci(
+        Oc = POc,
+        a_column_name = a_column_name,
+        cc_column_name = cc_column_name,
+        kc_column_name = kc_column_name,
+        ko_column_name = ko_column_name,
+        gamma_star_column_name = gamma_star_column_name,
+        vcmax_norm_column_name = vcmax_norm_column_name,
+        rd_norm_column_name = rd_norm_column_name,
+        j_norm_column_name = j_norm_column_name
+    ),
     lower =         c(0,  0,    0,   0),
     upper =         c(40, 1000, 100, 1000),
     min_aj_cutoff = NA,
@@ -117,9 +127,11 @@
     \code{optim} with the \code{L-BFGS-B} method can also be used.
   }
 
-  \item{initial_guess}{
-    A numeric vector containing initial guesses for the values of \code{TPU},
-    \code{J}, \code{Rd}, and \code{Vcmax}, in that order.
+  \item{initial_guess_fun}{
+    A function that estimates values of \code{TPU}, \code{J}, \code{Rd}, and
+    \code{Vcmax}; \code{initial_guess_fun} should have one input argument (an
+    \code{exdf} object representing a single response curve and should return a
+    vector of the estimated values (at 25 degrees C) in the order above.
   }
 
   \item{lower}{
@@ -172,6 +184,13 @@
   (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
   See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
   arguments can be used to improve the quality of a fit.
+
+  By default, this function will use \code{initial_guess_c3_aci} to make rough
+  estimates of the parameters to use as an initial guess. However, it is
+  possible to also use a fixed initial guess by using something like the
+  following for the \code{initial_guess_fun}:
+  \code{function(x){c(10, 100,  0.5, 90)}}, which would set the initial guess to
+  \code{TPU = 10}, \code{J = 100}, \code{Rd = 0.5}, and \code{Vcmax = 90}.
 
   This function assumes that \code{replicate_exdf} represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used

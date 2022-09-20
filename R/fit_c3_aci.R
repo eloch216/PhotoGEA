@@ -12,9 +12,19 @@ fit_c3_aci <- function(
     j_norm_column_name = 'J_norm',
     POc = 210000,
     OPTIM_FUN = default_optimizer(),
-    initial_guess = c(10, 100,  0.5, 90),   # TPU, J, Rd, Vcmax
-    lower =         c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
-    upper =         c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
+    initial_guess_fun = initial_guess_c3_aci(
+        Oc = POc,
+        a_column_name = a_column_name,
+        cc_column_name = cc_column_name,
+        kc_column_name = kc_column_name,
+        ko_column_name = ko_column_name,
+        gamma_star_column_name = gamma_star_column_name,
+        vcmax_norm_column_name = vcmax_norm_column_name,
+        rd_norm_column_name = rd_norm_column_name,
+        j_norm_column_name = j_norm_column_name
+    ),
+    lower = c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
+    upper = c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
     min_aj_cutoff = NA,
     max_aj_cutoff = NA
 )
@@ -84,6 +94,9 @@ fit_c3_aci <- function(
 
         sum((replicate_exdf[, 'A'] - assim$An)^2)
     }
+
+    # Get an initial guess for X
+    initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best value for X
     optim_result <- OPTIM_FUN(
