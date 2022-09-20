@@ -40,6 +40,7 @@ export(fit_c3_vcmax)
 export(fit_c4_aci)
 export(fit_variable_j)
 export(get_sample_valve_from_licor_filename)
+export(initial_guess_c3_aci)
 export(photosynthesis_TRF)
 
 # Basic methods for `exdf` class

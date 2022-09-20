@@ -79,21 +79,22 @@ calculate_c3_assimilation <- function(
     # assimilation rate (micromol / m^2 / s)
     Aj <- CG * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl
 
+    # This is not explicitly discussed in the text, but Equation 2.23 is only
+    # valid when Cc is sufficiently high that rubisco is no longer the main
+    # limiting factor. See, for example, Figure 2.6, where Ac is the limiting
+    # rate at very low Cc even though Aj < Ac. To address this, we create a
+    # "modified" version of Aj whose value is set to Ac whenever Aj is negative.
+    # The modified Aj is used when determining the overall assimilation rate.
+    Aj_mod <- Aj
+    Aj_mod[Aj_mod < 0] <- Ac[Aj_mod < 0]
+
     # Assume that all glycolate carbon is returned to the choloroplast
     alpha <- 0 # dimensionless
 
     # Equation 2.26: phosphate-limited assimilation rate (micromol / m^2 / s)
     Ap <- CG * (3 * TPU) / (PCc - (1 + 3 * alpha / 2) * Gamma_star) - Rd_tl
 
-    # Equation 2.27: net assimilation rate (micromol / m^2 / s). This is not
-    # discussed in the text, but Equation 2.27 is not quite right. See, for
-    # example, Figure 2.6, where Ac is the limiting rate at very low Cc even
-    # though Aj < Ac. This is probably due to Equation 2.23 (for Aj) only being
-    # valid at higher values of Cc. To address this, we apply Equation 2.27
-    # using Aj_mod instead of Aj, which is determined by setting Aj_mod to
-    # infinity when Aj < 0 and Aj otherwise.
-    Aj_mod <- Aj
-    Aj_mod[Aj_mod < 0] <- Inf
+    # Equation 2.27: net assimilation rate (micromol / m^2 / s)
     An <- pmin(Ac, Aj_mod, Ap)
 
     if (return_exdf) {
