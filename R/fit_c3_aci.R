@@ -26,7 +26,8 @@ fit_c3_aci <- function(
     lower = c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
     upper = c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
     min_aj_cutoff = NA,
-    max_aj_cutoff = NA
+    max_aj_cutoff = NA,
+    curvature = 0.95
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -48,6 +49,11 @@ fit_c3_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
+    # Make sure the curvature value is acceptable
+    if (curvature < 0 || curvature > 1) {
+        stop('curvature must be between 0 and 1')
+    }
+
     # Define the total error function. If `min_aj_cutoff` is not NA, apply a
     # penalty when Aj < Ac and Cc < min_aj_cutoff. If `max_aj_cutoff` is not NA,
     # apply a penalty when Aj > Ac and Cc > max_aj_cutoff.
@@ -59,6 +65,7 @@ fit_c3_aci <- function(
             X[3], # Rd
             X[4], # Vcmax
             POc,
+            curvature,
             cc_column_name,
             pa_column_name,
             deltapcham_column_name,
@@ -116,6 +123,7 @@ fit_c3_aci <- function(
         best_X[3], # Rd
         best_X[4], # Vcmax
         POc,
+        curvature,
         cc_column_name,
         pa_column_name,
         deltapcham_column_name,

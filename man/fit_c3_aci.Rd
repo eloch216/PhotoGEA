@@ -48,7 +48,8 @@
     lower =         c(0,  0,    0,   0),
     upper =         c(40, 1000, 100, 1000),
     min_aj_cutoff = NA,
-    max_aj_cutoff = NA
+    max_aj_cutoff = NA,
+    curvature = 0.95
   )
 }
 
@@ -154,6 +155,12 @@
     The maximum value of \code{Cc} (in ppm) where \code{Aj} is allowed to be
     smaller than \code{Ac}. If \code{max_aj_cutoff} is set to \code{NA}, this
     restriction will not be applied.
+  }
+
+  \item{curvature}{
+    A dimensionless quadratic curvature parameter to be passed to
+    \code{\link{calculate_c3_assimilation}} as the input argument with the same
+    name.
   }
 }
 
