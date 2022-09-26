@@ -45,8 +45,8 @@
         rd_norm_column_name = rd_norm_column_name,
         j_norm_column_name = j_norm_column_name
     ),
-    lower =         c(0,  0,    0,   0),
-    upper =         c(40, 1000, 100, 1000),
+    lower = c(0,  0,    0,   0),
+    upper = c(40, 1000, 100, 1000),
     min_aj_cutoff = NA,
     max_aj_cutoff = NA,
     curvature = 0.95
