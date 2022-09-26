@@ -106,7 +106,8 @@ licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
 aci_results <- consolidate(by(
   licor_data,
   licor_data[, 'curve_id'],
-  fit_c3_aci
+  fit_c3_aci,
+  max_aj_cutoff = 650
 ))
 ```
 
@@ -148,19 +149,34 @@ phosphate-limited rate (`Ap`).
 lattice::xyplot(
   A + Ac + Aj + Ap + A_fit ~ Ci | curve_id,
   data = aci_results$fits$main_data,
-  type = 'b',
+  type = 'l',
   auto.key = list(space = 'right'),
   grid = TRUE,
   xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
   ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')'),
   par.settings = list(
     superpose.line = list(col = multi_curve_colors()),
-    superpose.symbol = list(col = multi_curve_colors(), pch = 16)
+    superpose.symbol = list(col = multi_curve_colors())
   )
 )
 ```
 
-Another possibility is to plot one or more of the fitting parameters averaged
+Another way to check the quality of the fits is to plot the residuals, which
+should be randomly distributed:
+
+```{r}
+lattice::xyplot(
+  A_residuals ~ Ci | curve_id,
+  data = aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  grid = TRUE,
+  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', aci_results$fits$units$A, ')'),
+)
+```
+
+It is also possible to plot one or more of the fitting parameters averaged
 across species in a bar chart with error bars; here we plot values of `Vcmax` at
 25 degrees C.
 

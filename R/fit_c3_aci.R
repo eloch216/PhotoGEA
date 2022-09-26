@@ -105,6 +105,10 @@ fit_c3_aci <- function(
     # Get an initial guess for X
     initial_guess <- initial_guess_fun(replicate_exdf)
 
+    # Make sure the initial guess is acceptable
+    initial_guess <- pmax(initial_guess, lower)
+    initial_guess <- pmin(initial_guess, upper)
+
     # Find the best value for X
     optim_result <- OPTIM_FUN(
         initial_guess,
