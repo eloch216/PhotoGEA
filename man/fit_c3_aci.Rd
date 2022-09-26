@@ -34,11 +34,22 @@
     j_norm_column_name = 'J_norm',
     POc = 210000,
     OPTIM_FUN = default_optimizer(),
-    initial_guess = c(10, 100,  0.5, 90),
-    lower =         c(0,  0,    0,   0),
-    upper =         c(40, 1000, 100, 1000),
+    initial_guess_fun = initial_guess_c3_aci(
+        Oc = POc,
+        a_column_name = a_column_name,
+        cc_column_name = cc_column_name,
+        kc_column_name = kc_column_name,
+        ko_column_name = ko_column_name,
+        gamma_star_column_name = gamma_star_column_name,
+        vcmax_norm_column_name = vcmax_norm_column_name,
+        rd_norm_column_name = rd_norm_column_name,
+        j_norm_column_name = j_norm_column_name
+    ),
+    lower = c(0,  0,    0,   0),
+    upper = c(40, 1000, 100, 1000),
     min_aj_cutoff = NA,
-    max_aj_cutoff = NA
+    max_aj_cutoff = NA,
+    curvature = 0.95
   )
 }
 
@@ -117,9 +128,11 @@
     \code{optim} with the \code{L-BFGS-B} method can also be used.
   }
 
-  \item{initial_guess}{
-    A numeric vector containing initial guesses for the values of \code{TPU},
-    \code{J}, \code{Rd}, and \code{Vcmax}, in that order.
+  \item{initial_guess_fun}{
+    A function that estimates values of \code{TPU}, \code{J}, \code{Rd}, and
+    \code{Vcmax}; \code{initial_guess_fun} should have one input argument (an
+    \code{exdf} object representing a single response curve and should return a
+    vector of the estimated values (at 25 degrees C) in the order above.
   }
 
   \item{lower}{
@@ -142,6 +155,12 @@
     The maximum value of \code{Cc} (in ppm) where \code{Aj} is allowed to be
     smaller than \code{Ac}. If \code{max_aj_cutoff} is set to \code{NA}, this
     restriction will not be applied.
+  }
+
+  \item{curvature}{
+    A dimensionless quadratic curvature parameter to be passed to
+    \code{\link{calculate_c3_assimilation}} as the input argument with the same
+    name.
   }
 }
 
@@ -173,6 +192,13 @@
   See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
   arguments can be used to improve the quality of a fit.
 
+  By default, this function will use \code{initial_guess_c3_aci} to make rough
+  estimates of the parameters to use as an initial guess. However, it is
+  possible to also use a fixed initial guess by using something like the
+  following for the \code{initial_guess_fun}:
+  \code{function(x){c(10, 100,  0.5, 90)}}, which would set the initial guess to
+  \code{TPU = 10}, \code{J = 100}, \code{Rd = 0.5}, and \code{Vcmax = 90}.
+
   This function assumes that \code{replicate_exdf} represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used
   along with \code{\link{by.exdf}} and \code{\link{consolidate}}.
@@ -184,8 +210,11 @@
     \item \code{fits}: An \code{exdf} object including the measured values and
           the fitted values of net assimilation. The fitted values will be
           stored in a column whose name is determined by appending
-          \code{'_fits'} to the end of \code{a_column_name}; typically, this
-          will be \code{'A_fits'}.
+          \code{'_fit'} to the end of \code{a_column_name}; typically, this
+          will be \code{'A_fit'}. Residuals (measured - fitted) will be
+          stored in a column whose name is determined by appending
+          \code{'_residuals'} to the end of \code{a_column_name}; typically,
+          this will be \code{'A_residuals'}.
     \item \code{parameters}: An \code{exdf} object including the fitting
           parameters and convergence information for each A-Ci curve. The
           best-fit values are stored in the \code{TPU}, \code{J_at_25},
@@ -256,6 +285,18 @@ lattice::xyplot(
   grid = TRUE,
   xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
   ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')')
+)
+
+# View the residuals for each species / plot
+lattice::xyplot(
+  A_residuals ~ Ci | species_plot,
+  data = aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate residuals (', aci_results$fits$units$A_residuals, ')')
 )
 }
 

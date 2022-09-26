@@ -12,11 +12,22 @@ fit_c3_aci <- function(
     j_norm_column_name = 'J_norm',
     POc = 210000,
     OPTIM_FUN = default_optimizer(),
-    initial_guess = c(10, 100,  0.5, 90),   # TPU, J, Rd, Vcmax
-    lower =         c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
-    upper =         c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
+    initial_guess_fun = initial_guess_c3_aci(
+        Oc = POc,
+        a_column_name = a_column_name,
+        cc_column_name = cc_column_name,
+        kc_column_name = kc_column_name,
+        ko_column_name = ko_column_name,
+        gamma_star_column_name = gamma_star_column_name,
+        vcmax_norm_column_name = vcmax_norm_column_name,
+        rd_norm_column_name = rd_norm_column_name,
+        j_norm_column_name = j_norm_column_name
+    ),
+    lower = c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
+    upper = c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
     min_aj_cutoff = NA,
-    max_aj_cutoff = NA
+    max_aj_cutoff = NA,
+    curvature = 0.95
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -38,6 +49,11 @@ fit_c3_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
+    # Make sure the curvature value is acceptable
+    if (curvature < 0 || curvature > 1) {
+        stop('curvature must be between 0 and 1')
+    }
+
     # Define the total error function. If `min_aj_cutoff` is not NA, apply a
     # penalty when Aj < Ac and Cc < min_aj_cutoff. If `max_aj_cutoff` is not NA,
     # apply a penalty when Aj > Ac and Cc > max_aj_cutoff.
@@ -49,6 +65,7 @@ fit_c3_aci <- function(
             X[3], # Rd
             X[4], # Vcmax
             POc,
+            curvature,
             cc_column_name,
             pa_column_name,
             deltapcham_column_name,
@@ -85,6 +102,13 @@ fit_c3_aci <- function(
         sum((replicate_exdf[, 'A'] - assim$An)^2)
     }
 
+    # Get an initial guess for X
+    initial_guess <- initial_guess_fun(replicate_exdf)
+
+    # Make sure the initial guess is acceptable
+    initial_guess <- pmax(initial_guess, lower)
+    initial_guess <- pmin(initial_guess, upper)
+
     # Find the best value for X
     optim_result <- OPTIM_FUN(
         initial_guess,
@@ -103,6 +127,7 @@ fit_c3_aci <- function(
         best_X[3], # Rd
         best_X[4], # Vcmax
         POc,
+        curvature,
         cc_column_name,
         pa_column_name,
         deltapcham_column_name,
@@ -122,6 +147,15 @@ fit_c3_aci <- function(
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
+
+    # Add a column for the residuals
+    replicate_exdf <- set_variable(
+        replicate_exdf,
+        paste0(a_column_name, '_residuals'),
+        replicate_exdf$units[[a_column_name]],
+        'fit_c3_aci',
+        replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
 
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
