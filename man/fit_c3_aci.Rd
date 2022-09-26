@@ -210,8 +210,11 @@
     \item \code{fits}: An \code{exdf} object including the measured values and
           the fitted values of net assimilation. The fitted values will be
           stored in a column whose name is determined by appending
-          \code{'_fits'} to the end of \code{a_column_name}; typically, this
-          will be \code{'A_fits'}.
+          \code{'_fit'} to the end of \code{a_column_name}; typically, this
+          will be \code{'A_fit'}. Residuals (measured - fitted) will be
+          stored in a column whose name is determined by appending
+          \code{'_residuals'} to the end of \code{a_column_name}; typically,
+          this will be \code{'A_residuals'}.
     \item \code{parameters}: An \code{exdf} object including the fitting
           parameters and convergence information for each A-Ci curve. The
           best-fit values are stored in the \code{TPU}, \code{J_at_25},
@@ -282,6 +285,18 @@ lattice::xyplot(
   grid = TRUE,
   xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
   ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')')
+)
+
+# View the residuals for each species / plot
+lattice::xyplot(
+  A_residuals ~ Ci | species_plot,
+  data = aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  auto = TRUE,
+  grid = TRUE,
+  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate residuals (', aci_results$fits$units$A_residuals, ')')
 )
 }
 

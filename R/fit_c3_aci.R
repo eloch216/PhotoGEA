@@ -144,6 +144,15 @@ fit_c3_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Add a column for the residuals
+    replicate_exdf <- set_variable(
+        replicate_exdf,
+        paste0(a_column_name, '_residuals'),
+        replicate_exdf$units[[a_column_name]],
+        'fit_c3_aci',
+        replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
+
     # Get the replicate identifier columns
     replicate_identifiers <- find_identifier_columns(replicate_exdf)
 
