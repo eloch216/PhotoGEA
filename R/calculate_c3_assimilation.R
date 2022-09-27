@@ -54,8 +54,8 @@ calculate_c3_assimilation <- function(
         check_required_variables(exdf_obj, required_variables)
 
         # Make sure the curvature value is acceptable
-        if (curvature < 0 || curvature > 1) {
-            stop('curvature must be between 0 and 1')
+        if (curvature <= 0 || curvature > 1) {
+            stop('curvature must be > 0 and <= 1')
         }
     }
 

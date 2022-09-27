@@ -130,7 +130,7 @@ xyplot(
   )
 )
 
-curvature <- 0.95
+curvature <- 0.97
 ```
 
 (Note: this figure was generated using the `c3_assimilation` function from
@@ -644,9 +644,17 @@ return the resulting parameters and fits:
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c3_aci                        # The function to apply to each chunk of `licor_data`
+  fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
+  fixed = c(NA, NA, NA, NA)         # Additional argument passed to `fit_c3_aci`
 ))
 ```
+
+Note that in this command, we specified `fixed = c(NA, NA, NA, NA)` when calling
+`fit_c3_aci`. By doing this, we are choosing to vary all four key photosynthetic
+parameters: `TPU`, `J`, `Rd`, and `Vcmax`. If `fixed` is not specified, it will
+take its default value: `c(Inf, NA, NA, NA)`. In that case, `TPU` would be fixed
+to a high value that essentially disables phosphate limited assimilation, and
+only `J`, `Rd`, and `Vcmax` would be varied.
 
 ## Viewing the Fitted Curves
 
@@ -713,6 +721,7 @@ c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
+  fixed = c(NA, NA, NA, NA),        # Additional argument passed to `fit_c3_aci`
   min_aj_cutoff = 100,              # Aj must be > Ac when Cc < 100 ppm
   max_aj_cutoff = 550               # Aj must be < Ac when Cc > 550 ppm
 ))
@@ -741,8 +750,7 @@ lattice::xyplot(
   pch = 16,
   grid = TRUE,
   xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', aci_results$fits$units$A, ')'),
-  ylim = c(-10, 10)
+  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', aci_results$fits$units$A, ')')
 )
 ```
 
@@ -864,6 +872,15 @@ arguments to `remove_points`. It might also not be necessary to remove the
 unstable points before performing the fits. Often, it is helpful to not perform
 any data cleaning at first, and then remove problematic points if they seem to
 cause problems with the fits.
+
+## TPU Limitations
+
+In this example, we consider phosphate utilization as a factor that may possibly
+limit assimilation. However, as discussed in [Fitting Licor Data], it is also
+possible to remove phosphate-limited assimilation from the model by fixing `TPU`
+to a high value and only fitting `J`, `Rd`, and `Vcmax`. Often it is wise to
+first try fitting a set of curves without `TPU` limitations, and only consider
+allowing `TPU` limitations if the resulting fits are not good.
 
 ## Averages and Standard Errors
 

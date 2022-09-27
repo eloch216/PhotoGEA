@@ -47,9 +47,10 @@
     ),
     lower = c(0,  0,    0,   0),
     upper = c(40, 1000, 100, 1000),
+    fixed = c(40, NA,   NA,  NA),
     min_aj_cutoff = NA,
     max_aj_cutoff = NA,
-    curvature = 0.95
+    curvature = 0.97
   )
 }
 
@@ -145,6 +146,16 @@
     \code{J}, \code{Rd}, and \code{Vcmax}, in that order.
   }
 
+  \item{fixed}{
+    A numeric vector specifying fixed values of \code{TPU}, \code{J}, \code{Rd},
+    and \code{Vcmax}, in that order. Values of \code{NA} indicate that the
+    corresponding parameter is not fixed and should be varied during the
+    optimization procedure. The default value of this argument fixes \code{TPU}
+    to its upper limit (so net assimilation is never limited by phosphate
+    utilization) and allows the other parameters to vary. To vary all of the
+    parameters, set \code{fixed} to \code{c(NA, NA, NA, NA)}.
+  }
+
   \item{min_aj_cutoff}{
     The minimum value of \code{Cc} (in ppm) where \code{Aj} is allowed to become
     the overall rate-limiting factor. If \code{min_aj_cutoff} is set to
@@ -198,6 +209,12 @@
   following for the \code{initial_guess_fun}:
   \code{function(x){c(10, 100,  0.5, 90)}}, which would set the initial guess to
   \code{TPU = 10}, \code{J = 100}, \code{Rd = 0.5}, and \code{Vcmax = 90}.
+
+  By default, this function fixes \code{TPU} to a high value (\code{40 micromol
+  m^(-2) s^(-1)}) and allows the other parameters to be fitted. This behavior
+  is determined by the value of the \code{fixed} input argument, and the value
+  of \code{TPU} specified in this way will override any value returned by
+  \code{initial_guess_fun}.
 
   This function assumes that \code{replicate_exdf} represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used

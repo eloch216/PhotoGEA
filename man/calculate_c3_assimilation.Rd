@@ -68,9 +68,9 @@
   }
 
   \item{curvature}{
-    A dimensionless quadratic curvature parameter between 0 and 1 that sets the
-    degree of co-limitation between \code{Ac}, \code{Aj}, and \code{Ap}. A value
-    of 1 indicates no co-limitation.
+    A dimensionless quadratic curvature parameter greater than 0 and less than
+    or equal to 1 that sets the degree of co-limitation between \code{Ac},
+    \code{Aj}, and \code{Ap}. A value of 1 indicates no co-limitation.
   }
 
   \item{cc_column_name}{
