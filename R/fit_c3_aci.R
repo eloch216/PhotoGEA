@@ -25,9 +25,10 @@ fit_c3_aci <- function(
     ),
     lower = c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
     upper = c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
+    fixed = c(40, NA,   NA,  NA),   # TPU, J, Rd, Vcmax
     min_aj_cutoff = NA,
     max_aj_cutoff = NA,
-    curvature = 0.95
+    curvature = 0.97
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -54,10 +55,17 @@ fit_c3_aci <- function(
         stop('curvature must be between 0 and 1')
     }
 
+    # Make sure at least one parameter will be fit
+    if (!any(is.na(fixed))) {
+        stop('no element of `fixed` is NA, so there are no parameters to fit')
+    }
+
     # Define the total error function. If `min_aj_cutoff` is not NA, apply a
     # penalty when Aj < Ac and Cc < min_aj_cutoff. If `max_aj_cutoff` is not NA,
     # apply a penalty when Aj > Ac and Cc > max_aj_cutoff.
-    total_error_fcn <- function(X) {
+    total_error_fcn <- function(guess) {
+        X <- fixed
+        X[is.na(fixed)] <- guess
         assim <- calculate_c3_assimilation(
             replicate_exdf,
             X[1], # TPU
@@ -102,22 +110,24 @@ fit_c3_aci <- function(
         sum((replicate_exdf[, 'A'] - assim$An)^2)
     }
 
-    # Get an initial guess for X
+    # Get an initial guess for all the parameter values
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Make sure the initial guess is acceptable
     initial_guess <- pmax(initial_guess, lower)
     initial_guess <- pmin(initial_guess, upper)
 
-    # Find the best value for X
+    # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
-        initial_guess,
+        initial_guess[is.na(fixed)],
         total_error_fcn,
-        lower = lower,
-        upper = upper
+        lower = lower[is.na(fixed)],
+        upper = upper[is.na(fixed)]
     )
 
-    best_X <- optim_result[['par']]
+    # Get the values of all parameters following the optimization
+    best_X <- fixed
+    best_X[is.na(fixed)] <- optim_result[['par']]
 
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(

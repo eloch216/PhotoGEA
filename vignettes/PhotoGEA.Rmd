@@ -106,8 +106,7 @@ licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
 aci_results <- consolidate(by(
   licor_data,
   licor_data[, 'curve_id'],
-  fit_c3_aci,
-  max_aj_cutoff = 650
+  fit_c3_aci
 ))
 ```
 
@@ -142,12 +141,11 @@ Having fit the response curves, it is also possible to view the fits and the
 extracted parameters. For example, we can plot the measured values of net
 assimilation (`A`), the fitted values of net assimilation (`A_fit`), and each of
 the limiting assimilation rates calculated during the fitting procedure: the
-rubisco-limited rate (`Ac`), the electron-transport-limited rate (`Aj`), and the
-phosphate-limited rate (`Ap`).
+rubisco-limited rate (`Ac`) and the electron-transport-limited rate (`Aj`).
 
 ```{r}
 lattice::xyplot(
-  A + Ac + Aj + Ap + A_fit ~ Ci | curve_id,
+  A + Ac + Aj + A_fit ~ Ci | curve_id,
   data = aci_results$fits$main_data,
   type = 'l',
   auto.key = list(space = 'right'),
