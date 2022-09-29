@@ -16,7 +16,7 @@ fit_ball_berry <- function(
     check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Make a linear fit of stomatal conductance vs. Ball-Berry index
     linear_fit <-

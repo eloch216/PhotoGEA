@@ -1,6 +1,6 @@
 basic_stats_chunk <- function(exdf_chunk) {
     # Find the identifier columns and their names
-    id_columns <- find_identifier_columns(exdf_chunk)
+    id_columns <- identifier_columns(exdf_chunk)
     id_column_names <- colnames(id_columns)
 
     # Find the names of the non-id columns

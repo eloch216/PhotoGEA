@@ -80,6 +80,13 @@ export(check_required_variables.exdf)
 S3method(check_required_variables, data.frame)
 S3method(check_required_variables, exdf)
 
+# Functions for getting identifier columns
+export(identifier_columns)
+export(identifier_columns.data.frame)
+export(identifier_columns.exdf)
+S3method(identifier_columns, data.frame)
+S3method(identifier_columns, exdf)
+
 # Convenience functions for identifying common columns
 export(identify_common_columns)
 export(identify_common_columns.data.frame)

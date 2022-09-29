@@ -131,7 +131,7 @@ fit_c4_aci <- function(
     check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Calculate Ci values in microbar, using the fact that 1 kPa = 0.01 bar
     Ci_microbar <-
@@ -160,14 +160,14 @@ fit_c4_aci <- function(
         },
         error = function(cond) {
             print('Having trouble fitting an A-Ci curve:')
-            print(find_identifier_columns(replicate_exdf))
+            print(identifier_columns(replicate_exdf))
             print('Giving up on the fit :(')
             print(cond)
             return(NULL)
         },
         warning = function(cond) {
             print('Having trouble fitting an A-Ci curve:')
-            print(find_identifier_columns(replicate_exdf))
+            print(identifier_columns(replicate_exdf))
             print('Giving up on the fit :(')
             print(cond)
             return(NULL)

@@ -168,7 +168,7 @@ fit_c3_aci <- function(
     )
 
     # Get the replicate identifier columns
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Attach the best-fit parameters to the identifiers
     replicate_identifiers[, 'TPU'] <- best_X[1]
