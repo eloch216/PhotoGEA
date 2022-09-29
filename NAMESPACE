@@ -73,6 +73,13 @@ S3method(`dimnames<-`, exdf)
 S3method(`[<-`, exdf)
 S3method(`[`, exdf)
 
+# Functions for checking required columns
+export(check_required_variables)
+export(check_required_variables.data.frame)
+export(check_required_variables.exdf)
+S3method(check_required_variables, data.frame)
+S3method(check_required_variables, exdf)
+
 # Convenience functions for identifying common columns
 export(identify_common_columns)
 export(identify_common_columns.data.frame)
