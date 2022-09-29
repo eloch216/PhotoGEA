@@ -241,15 +241,15 @@ dimnames.exdf <- function(x) {
         )
 
         essential_element_list <- list(
-            x$main_data[i,j],
-            x$units[1,j],
-            x$categories[1,j]
+            x$main_data[i, j],
+            x$units[1, j],
+            x$categories[1, j]
         )
 
         return(do.call(exdf, c(essential_element_list, extra_element_list)))
     }
     else {
-        return(x$main_data[i,j])
+        return(x$main_data[i, j])
     }
 }
 
@@ -260,11 +260,16 @@ dimnames.exdf <- function(x) {
     }
 
     if (!j %in% colnames(x)) {
-        x$units[1,j] <- "NA"
-        x$categories[1,j] <- "NA"
+        x$units[ ,j] <- "NA"
+        x$categories[ ,j] <- "NA"
     }
 
-    x$main_data[i,j] <- value
+    if (is.null(value)) {
+        x$units[ , j] <- NULL
+        x$categories[ , j] <- NULL
+    }
+
+    x$main_data[i, j] <- value
     return(x)
 }
 
