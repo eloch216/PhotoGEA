@@ -19,6 +19,7 @@ Imports:
     dfoptim
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    plantecophys
 VignetteBuilder: knitr
 URL: https://github.com/eloch216/PhotoGEA, https://eloch216.github.io/PhotoGEA/

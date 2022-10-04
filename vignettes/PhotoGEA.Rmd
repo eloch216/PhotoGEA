@@ -205,3 +205,7 @@ being added all the time:
     more detailed than the analysis demonstrated here.)
   - [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html)
   - [Analyzing TDL Data](analyzing_tdl_data.html)
+- More advanced topics:
+  - [Combining PhotoGEA With Other Packages](combining_with_other_packages.html):
+    Discusses how to create wrappers for functions from other packages to extend
+    the processing capabilities of `PhotoGEA`.
