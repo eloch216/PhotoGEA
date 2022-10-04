@@ -294,12 +294,6 @@ cbind.exdf <- function(..., deparse.level = 1) {
     units_list <- lapply(exdf_list, function(x) {x$units})
     categories_list <- lapply(exdf_list, function(x) {x$categories})
 
-    # Make sure all the main_data data frames have the same number of rows
-    nrow_check <- lapply(main_data_list, nrow)
-    if (length(unique(nrow_check)) != 1) {
-        stop("exdf objects must have the same number of rows when using cbind")
-    }
-
     # Make a new exdf object by combining them all with cbind
     return(exdf(
         do.call(cbind, c(main_data_list, list(deparse.level = deparse.level))),
