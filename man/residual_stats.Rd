@@ -8,7 +8,9 @@
   Calculates several key statistics from the residuals of of a fit: the residual
   sum of squares (\code{RSS}), the mean squared error (\code{MSE}), the root
   mean squared error (\code{RMSE}), and the residual standard error
-  (\code{RSE}).
+  (\code{RSE}). This function is used internally by several fitting functions in
+  the \code{PhotoGEA} package, such as \code{\link{fit_ball_berry}} and
+  \code{\link{fit_c3_aci}}.
 }
 
 \usage{

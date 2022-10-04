@@ -15,9 +15,6 @@ fit_ball_berry <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
-    # Get the replicate identifier columns
-    replicate_identifiers <- identifier_columns(replicate_exdf)
-
     # Make a linear fit of stomatal conductance vs. Ball-Berry index
     linear_fit <-
         stats::lm(replicate_exdf[ , gsw_column_name] ~
@@ -39,6 +36,28 @@ fit_ball_berry <- function(
     replicate_exdf <- document_variables(
         replicate_exdf,
         c("fit_ball_berry", paste0(gsw_column_name, '_fit'), "mol m^(-2) s^(-1)")
+    )
+
+    # Add a column for the residuals
+    replicate_exdf <- set_variable(
+        replicate_exdf,
+        paste0(gsw_column_name, '_residuals'),
+        replicate_exdf$units[[gsw_column_name]],
+        'fit_ball_berry',
+        replicate_exdf[, gsw_column_name] - replicate_exdf[, paste0(gsw_column_name, '_fit')]
+    )
+
+    # Get the replicate identifier columns
+    replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach the residual stats to the identifiers
+    replicate_identifiers <- cbind(
+        replicate_identifiers,
+        residual_stats(
+            replicate_exdf[, paste0(gsw_column_name, '_residuals')],
+            replicate_exdf$units[[gsw_column_name]],
+            2
+        )
     )
 
     # Add the values of the fitted parameters

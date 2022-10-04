@@ -170,6 +170,16 @@ fit_c3_aci <- function(
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)
 
+    # Attach the residual stats to the identifiers
+    replicate_identifiers <- cbind(
+        replicate_identifiers,
+        residual_stats(
+            replicate_exdf[, paste0(a_column_name, '_residuals')],
+            replicate_exdf$units[[a_column_name]],
+            length(which(is.na(fixed)))
+        )
+    )
+
     # Attach the best-fit parameters to the identifiers
     replicate_identifiers[, 'TPU'] <- best_X[1]
     replicate_identifiers[, 'J_at_25'] <- best_X[2]
