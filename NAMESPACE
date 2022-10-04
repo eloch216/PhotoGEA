@@ -42,6 +42,7 @@ export(fit_variable_j)
 export(get_sample_valve_from_licor_filename)
 export(initial_guess_c3_aci)
 export(photosynthesis_TRF)
+export(residual_stats)
 
 # Basic methods for `exdf` class
 export(as.data.frame.exdf)
