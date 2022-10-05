@@ -296,7 +296,10 @@ developing custom processing functions:
   fit.
 
 These functions are used extensively within the `PhotoGEA` package's built-in
-processing tools.
+processing tools. There are also two vignettes discussing how to use them:
+[Creating Your Own Processing Tools](creating_your_own_processing_tools.html)
+and
+[Combining PhotoGEA With Other Packages](combining_with_other_packages.html).
 
 ## Synthesis
 

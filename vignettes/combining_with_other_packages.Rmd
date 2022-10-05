@@ -54,7 +54,11 @@ As an example, this vignette will demonstrate how to create two wrappers of
 varying complexity for the `fitaci` function from the `plantecophys` package.
 The general ideas introduced here can also be used to create wrappers for other
 functions, although the details of creating a wrapper are heavily dependent on
-the details of the function to be wrapped.
+the details of the function to be wrapped. Note that creating a wrapper for a
+fitting function from another package is essentially a special case of
+designing a customized processing function, a topic that is also covered in the
+[Creating Your Own Processing Tools](creating_your_own_processing_tools.html)
+vignette.
 
 # Loading Packages
 
