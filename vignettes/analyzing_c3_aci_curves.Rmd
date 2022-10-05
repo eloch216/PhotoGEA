@@ -743,6 +743,7 @@ output from `fit_c3_aci` includes the residuals (calculated as `A - A_fit`) in
 its output, so it is easy to plot them:
 
 ```{r plot_residuals}
+# Plot the residuals
 lattice::xyplot(
   A_residuals ~ Ci | curve_id,
   data = aci_results$fits$main_data,

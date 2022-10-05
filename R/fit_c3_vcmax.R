@@ -23,7 +23,7 @@ fit_c3_vcmax <- function(
     check_required_variables(replicate_exdf, required_variables)
 
     # Get the replicate identifier columns
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Do the fitting
     linear_fit <-

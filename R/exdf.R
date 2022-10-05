@@ -241,15 +241,15 @@ dimnames.exdf <- function(x) {
         )
 
         essential_element_list <- list(
-            x$main_data[i,j],
-            x$units[1,j],
-            x$categories[1,j]
+            x$main_data[i, j],
+            x$units[1, j],
+            x$categories[1, j]
         )
 
         return(do.call(exdf, c(essential_element_list, extra_element_list)))
     }
     else {
-        return(x$main_data[i,j])
+        return(x$main_data[i, j])
     }
 }
 
@@ -260,11 +260,16 @@ dimnames.exdf <- function(x) {
     }
 
     if (!j %in% colnames(x)) {
-        x$units[1,j] <- "NA"
-        x$categories[1,j] <- "NA"
+        x$units[ ,j] <- "NA"
+        x$categories[ ,j] <- "NA"
     }
 
-    x$main_data[i,j] <- value
+    if (is.null(value)) {
+        x$units[ , j] <- NULL
+        x$categories[ , j] <- NULL
+    }
+
+    x$main_data[i, j] <- value
     return(x)
 }
 
@@ -288,12 +293,6 @@ cbind.exdf <- function(..., deparse.level = 1) {
     main_data_list <- lapply(exdf_list, function(x) {x$main_data})
     units_list <- lapply(exdf_list, function(x) {x$units})
     categories_list <- lapply(exdf_list, function(x) {x$categories})
-
-    # Make sure all the main_data data frames have the same number of rows
-    nrow_check <- lapply(main_data_list, nrow)
-    if (length(unique(nrow_check)) != 1) {
-        stop("exdf objects must have the same number of rows when using cbind")
-    }
 
     # Make a new exdf object by combining them all with cbind
     return(exdf(

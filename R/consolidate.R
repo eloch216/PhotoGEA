@@ -24,7 +24,9 @@ consolidate.data.frame <- function(x) {
             element[ , common_columns]
         })
 
-        do.call(rbind, list_of_elements)
+        consolidated_list_element <- do.call(rbind, list_of_elements)
+        rownames(consolidated_list_element) <- NULL
+        consolidated_list_element
     })
 
     return(stats::setNames(consolidated_list, element_names))
@@ -42,7 +44,9 @@ consolidate.exdf <- function(x) {
             element[ , common_columns, return_exdf = TRUE]
         })
 
-        do.call(rbind, list_of_elements)
+        consolidated_list_element <- do.call(rbind, list_of_elements)
+        rownames(consolidated_list_element$main_data) <- NULL
+        consolidated_list_element
     })
 
     return(stats::setNames(consolidated_list, element_names))
