@@ -130,7 +130,7 @@ xyplot(
   )
 )
 
-curvature <- 0.97
+curvature <- 0.99
 ```
 
 (Note: this figure was generated using the `c3_assimilation` function from
@@ -706,14 +706,11 @@ determined by the `TPU` parameter; for some of the curves, the assimilation rate
 is never limited by `Ap`, so the resulting "best-fit" values of `TPU` may not be
 meaningful for these curves.
 
-There are also two curves (`ripe2 - soybean - 1` and `ripe2 - tobacco - 4`) that
-do not follow the expected progression from rubisco-limited assimilation to
-electron-transport-limited assimilation as `Cc` increases; this entire fit may
-be unreliable, even if `A_fit` closely matches `A`. In fact, it seems that the
-optimizer is overestimating `J`, so `Aj` is never the limiting factor in these
-curves. To address this, it is possible to force the optimizer to only allow
-fits where `Aj` is less than `Ac` above a certain threshold value of `Cc`;
-adding this restriction can sometimes produce more reasonable fits.
+There is also one curve (`ripe2 - soybean - 1`) where the optimizer is possibly
+overestimating `J`, so `Aj` is never the limiting factor. To address this, it is
+possible to force the optimizer to only allow fits where `Aj` is less than `Ac`
+above a certain threshold value of `Cc`; adding this restriction can sometimes
+produce more reasonable fits.
 
 ```{r fit_c3_aci}
 # Fit the C3 A-Ci curves
@@ -729,14 +726,18 @@ c3_aci_results <- consolidate(by(
 <<fit_aci_limiting>>
 ```
 
-Here we can see improvements in the fits for `ripe2 - soybean - 1` and
-`ripe2 - tobacco - 4`. The fit for `ripe1 - soybean - 5a` is a little strange,
-but based on the values of `Ci` and `Cc`, it seems that this plant's stomata did
-not fully open during the measurement, almost fully restricting the measured
-assimilation values to the rubisco-limited range; there is nothing that can be
-done about this. It is also apparent that the `TPU` issue remains, and some
-curves are never phosphate-limited; again, there is nothing that can really
-be done to address it besides measuring more A-Ci curves.
+Here we can see that `Aj` is now significantly lower in the fit for
+`ripe2 - soybean - 1`; however, the fitted assimilation values are still never
+limited by `Aj`. There may be something pathological about this curve that will
+prevent us from ever getting a reasonable value for `J`. In other situations,
+this approach may be more successful. We can also notice that the fit for
+`ripe1 - soybean - 5a` is a little strange. Based on the values of `Ci` and
+`Cc`, it seems that this plant's stomata did not fully open during the
+measurement, almost fully restricting the measured assimilation values to the
+rubisco-limited range; there is nothing that can be done about this. It is also
+apparent that the `TPU` issue remains, and some curves are never
+phosphate-limited; again, there is nothing that can really be done to address it
+besides measuring more A-Ci curves.
 
 Checking the residuals is also a powerful way to gauge the quality of a fit. The
 output from `fit_c3_aci` includes the residuals (calculated as `A - A_fit`) in
