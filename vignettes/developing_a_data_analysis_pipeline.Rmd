@@ -283,6 +283,24 @@ As with the fitting functions above, these functions generally assume that the
 input `exdf` object represents data from a single TDL cycle, and must be used
 along with `by` and `consolidate` when processing a full TDL data set.
 
+### Developing Custom Processing Functions
+
+The `PhotoGEA` package also includes several tools that can be helpful when
+developing custom processing functions:
+
+- `check_required_variables`: Can be used to make sure that an `exdf` object
+  contains certain columns and that those columns have the expected units.
+- `identifier_columns`: Can be used to identify columns from an `exdf` object
+  whose values are constant.
+- `residual_stats`: Calculates several key statistics from the residuals of a
+  fit.
+
+These functions are used extensively within the `PhotoGEA` package's built-in
+processing tools. There are also two vignettes discussing how to use them:
+[Creating Your Own Processing Tools](creating_your_own_processing_tools.html)
+and
+[Combining PhotoGEA With Other Packages](combining_with_other_packages.html).
+
 ## Synthesis
 
 In the synthesis step, statistical operations are used to draw conclusions about

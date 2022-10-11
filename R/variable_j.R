@@ -216,7 +216,7 @@ fit_variable_j <- function(
     check_required_variables(replicate_exdf, required_variables)
 
     # Get the identifiers
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Let the user know which rep is being fit
     cat(paste(

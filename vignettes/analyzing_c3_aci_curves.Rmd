@@ -129,6 +129,8 @@ xyplot(
     superpose.symbol = list(col = c3_col, pch = 16)
   )
 )
+
+curvature <- 0.97
 ```
 
 (Note: this figure was generated using the `c3_assimilation` function from
@@ -144,6 +146,42 @@ in the context of this model. In other words, by fitting the model's equations
 to a measured curve, it is possible to estimate values for `TPU`, `J`, `Rd`, and
 `Vcmax`. See the documentation for `calculate_c3_assimilation` for more
 information about these important quantities.
+
+One complication related to fitting is that the FvCB model calculates
+assimilation at the level of a single chloroplast; however, experimental gas
+exchange measurements are made by averaging the behavior of many different
+chloroplasts across a piece of leaf, which may each have different
+concentrations of CO~2~. Thus, the sharp transitions between rubisco-limited,
+RuBP-regeneration-limited, and phosphate-limited assimilation predicted by the
+model are rarely observed in practice, and there are instead regions of
+co-limited assimilation. This can be accomodated by an empirical "curvature"
+parameter, as discussed in the documentation for `calculate_c3_assimilation`.
+The following figure shows a CO~2~ response curve calculated with the curvature
+set to `r curvature` and other parameters identical to the ones used to generate
+the previous figure.
+
+```{r, echo = FALSE}
+assim_curvature <-
+  calculate_c3_assimilation(inputs, TPU, J, Rd, Vcmax, curvature = curvature)
+
+xyplot(
+  Ac + Aj + Ap + An ~ Cc,
+  data = cbind(inputs, assim_curvature)$main_data,
+  type = 'l',
+  grid = TRUE,
+  auto = TRUE,
+  xlab = paste('Chloroplast CO2 concentration [', inputs$units$Cc, ']'),
+  ylab = paste('Assimilation rate [', assim_curvature$units$An, ']'),
+  par.settings = list(
+    superpose.line = list(col = c3_col),
+    superpose.symbol = list(col = c3_col, pch = 16)
+  )
+)
+```
+
+Note that `An` calculated with `curvature < 1` is generally lower than `An` with
+`curvature = 1` due to the presence of co-limitation; this can be seen by
+comparing this figure to the previous one (where `curvature = 1`).
 
 ## Practicalities
 
@@ -606,9 +644,17 @@ return the resulting parameters and fits:
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c3_aci                        # The function to apply to each chunk of `licor_data`
+  fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
+  fixed = c(NA, NA, NA, NA)         # Additional argument passed to `fit_c3_aci`
 ))
 ```
+
+Note that in this command, we specified `fixed = c(NA, NA, NA, NA)` when calling
+`fit_c3_aci`. By doing this, we are choosing to vary all four key photosynthetic
+parameters: `TPU`, `J`, `Rd`, and `Vcmax`. If `fixed` is not specified, it will
+take its default value: `c(Inf, NA, NA, NA)`. In that case, `TPU` would be fixed
+to a high value that essentially disables phosphate limited assimilation, and
+only `J`, `Rd`, and `Vcmax` would be varied.
 
 ## Viewing the Fitted Curves
 
@@ -641,15 +687,14 @@ plot assimilation against `Cc` rather than `Ci`:
 xyplot(
   A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
   data = c3_aci_results$fits$main_data,
-  type = 'b',
-  pch = 16,
+  type = 'l',
   auto.key = list(space = 'right'),
   grid = TRUE,
   xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
   ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
   par.settings = list(
     superpose.line = list(col = multi_curve_colors()),
-    superpose.symbol = list(col = multi_curve_colors(), pch = 16)
+    superpose.symbol = list(col = multi_curve_colors())
   )
 )
 ```
@@ -661,13 +706,14 @@ determined by the `TPU` parameter; for some of the curves, the assimilation rate
 is never limited by `Ap`, so the resulting "best-fit" values of `TPU` may not be
 meaningful for these curves.
 
-There is also one curve (`ripe2 - tobacco - 4`) that does not follow the
-expected progression from rubisco-limited assimilation to
+There are also two curves (`ripe2 - soybean - 1` and `ripe2 - tobacco - 4`) that
+do not follow the expected progression from rubisco-limited assimilation to
 electron-transport-limited assimilation as `Cc` increases; this entire fit may
-be unreliable, even if `A_fit` closely matches `A`. It is possible to force the
-optimizer to only allow fits where `Ac` is less than `Ap` below a certain
-threshold value of `Cc`; adding this restriction can sometimes produce more
-reasonable fits.
+be unreliable, even if `A_fit` closely matches `A`. In fact, it seems that the
+optimizer is overestimating `J`, so `Aj` is never the limiting factor in these
+curves. To address this, it is possible to force the optimizer to only allow
+fits where `Aj` is less than `Ac` above a certain threshold value of `Cc`;
+adding this restriction can sometimes produce more reasonable fits.
 
 ```{r fit_c3_aci}
 # Fit the C3 A-Ci curves
@@ -675,6 +721,7 @@ c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
+  fixed = c(NA, NA, NA, NA),        # Additional argument passed to `fit_c3_aci`
   min_aj_cutoff = 100,              # Aj must be > Ac when Cc < 100 ppm
   max_aj_cutoff = 550               # Aj must be < Ac when Cc > 550 ppm
 ))
@@ -682,13 +729,35 @@ c3_aci_results <- consolidate(by(
 <<fit_aci_limiting>>
 ```
 
-Here we can see an improvement in the fit for `ripe2 - tobacco - 4`. The fit for
-`ripe1 - soybean - 5a` is a little strange, but based on the values of `Ci` and
-`Cc`, it seems that this plant's stomata did not fully open during the
-measurement, almost fully restricting the measured assimilation values to the
-rubisco-limited range; there is nothing that can be done about this. It is also
-apparent that the `TPU` issue remains; again, there is nothing that can really
+Here we can see improvements in the fits for `ripe2 - soybean - 1` and
+`ripe2 - tobacco - 4`. The fit for `ripe1 - soybean - 5a` is a little strange,
+but based on the values of `Ci` and `Cc`, it seems that this plant's stomata did
+not fully open during the measurement, almost fully restricting the measured
+assimilation values to the rubisco-limited range; there is nothing that can be
+done about this. It is also apparent that the `TPU` issue remains, and some
+curves are never phosphate-limited; again, there is nothing that can really
 be done to address it besides measuring more A-Ci curves.
+
+Checking the residuals is also a powerful way to gauge the quality of a fit. The
+output from `fit_c3_aci` includes the residuals (calculated as `A - A_fit`) in
+its output, so it is easy to plot them:
+
+```{r plot_residuals}
+# Plot the residuals
+lattice::xyplot(
+  A_residuals ~ Ci | curve_id,
+  data = aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  grid = TRUE,
+  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', aci_results$fits$units$A, ')')
+)
+```
+
+A good fit should produce small and randomly-distributed residuals; here there
+is no clear pattern to the residuals, so this model is able to reproduce the
+measured values well.
 
 # Examining the Results
 
@@ -717,7 +786,7 @@ the `lattice` package. Here we use this function to show values of `J`:
 bwplot(
   J_at_25 ~ species,
   data = c3_aci_results$parameters$main_data,
-  ylim = c(0, 250),
+  ylim = c(0, 300),
   xlab = 'Species',
   ylab = paste0('J at 25 degrees C (', c3_aci_results$parameters$units$J_at_25, ')')
 )
@@ -805,6 +874,15 @@ unstable points before performing the fits. Often, it is helpful to not perform
 any data cleaning at first, and then remove problematic points if they seem to
 cause problems with the fits.
 
+## TPU Limitations
+
+In this example, we consider phosphate utilization as a factor that may possibly
+limit assimilation. However, as discussed in [Fitting Licor Data], it is also
+possible to remove phosphate-limited assimilation from the model by fixing `TPU`
+to a high value and only fitting `J`, `Rd`, and `Vcmax`. Often it is wise to
+first try fitting a set of curves without `TPU` limitations, and only consider
+allowing `TPU` limitations if the resulting fits are not good.
+
 ## Averages and Standard Errors
 
 Depending on how your data is organized, you may want to change the column used
@@ -891,6 +969,8 @@ vignette.
 <<fit_c3_aci>>
 
 <<plot_fits>>
+
+<<plot_residuals>>
 
 ###
 ### SYNTHESIS:

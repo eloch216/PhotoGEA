@@ -40,7 +40,9 @@ export(fit_c3_vcmax)
 export(fit_c4_aci)
 export(fit_variable_j)
 export(get_sample_valve_from_licor_filename)
+export(initial_guess_c3_aci)
 export(photosynthesis_TRF)
+export(residual_stats)
 
 # Basic methods for `exdf` class
 export(as.data.frame.exdf)
@@ -71,6 +73,20 @@ S3method(str, exdf)
 S3method(`dimnames<-`, exdf)
 S3method(`[<-`, exdf)
 S3method(`[`, exdf)
+
+# Functions for checking required columns
+export(check_required_variables)
+export(check_required_variables.data.frame)
+export(check_required_variables.exdf)
+S3method(check_required_variables, data.frame)
+S3method(check_required_variables, exdf)
+
+# Functions for getting identifier columns
+export(identifier_columns)
+export(identifier_columns.data.frame)
+export(identifier_columns.exdf)
+S3method(identifier_columns, data.frame)
+S3method(identifier_columns, exdf)
 
 # Convenience functions for identifying common columns
 export(identify_common_columns)
