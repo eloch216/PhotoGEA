@@ -67,7 +67,7 @@ if (PERFORM_CALCULATIONS) {
 # points along the time sequence of measurements.
 #
 #
-NUM_OBS_IN_SEQ <- 390
+NUM_OBS_IN_SEQ <- 360
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
@@ -130,8 +130,8 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- organize_response_curve_data(
         combined_info,
         UNIQUE_ID_COLUMN_NAME,
-        MEASUREMENT_NUMBERS_TO_REMOVE,
-        'Obs', # Order the induction curves according to their `Obs` values
+       MEASUREMENT_NUMBERS_TO_REMOVE,
+       'obs',  # Order the induction curves according to their `Obs` values
         Inf    # Do not require the curves to follow the same sequence of `Obs` values
     )
 
@@ -148,10 +148,11 @@ if (PERFORM_CALCULATIONS) {
     all_samples <- combined_info[['main_data']]
 }
 
+
 # Convert event columns to factors to control the order of events in subsequent
 # plots
 all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
-all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
+#all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {

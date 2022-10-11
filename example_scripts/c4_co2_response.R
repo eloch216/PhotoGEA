@@ -48,6 +48,8 @@
 library(PhotoGEA)
 library(lattice)
 library(RColorBrewer)
+library(onewaytests)  # for bf.test, shapiro.test, A.aov
+library(DescTools)    # for DunnettTest
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -87,15 +89,21 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
-NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9)
-POINT_FOR_BOX_PLOTS <- 1
+NUM_OBS_IN_SEQ <- 13
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1)
+POINT_FOR_BOX_PLOTS <- 2
 
 # Specify a Ci upper limit to use for fitting
 CI_UPPER_LIMIT <- Inf # ppm
 
+# Decide whether to remove a few specific points from the data before fitting
+REMOVE_SPECIFIC_POINTS <- TRUE
+
 # Decide whether to remove statistical outliers
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
+
+# Decide whether to perform stats tests
+PERFORM_STATS_TESTS <- TRUE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -182,6 +190,7 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
+    
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
@@ -189,12 +198,24 @@ if (PERFORM_CALCULATIONS) {
         MEASUREMENT_NUMBERS_TO_REMOVE,
         'CO2_r_sp'
     )
+    
+    
+    # Remove specific problematic points
+    if (REMOVE_SPECIFIC_POINTS) {
+      # Specify the points to remove
+      combined_info <- remove_points(
+        combined_info,
+        list(event = 'WT', replicate = '2a-1', obs = 29)
+      )
+    }
+    
 
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
 
-    EVENTS_TO_EXCLUDE <- c("11", "32", "36", "7", "14", "4", "10", "15", "30")
+    EVENTS_TO_EXCLUDE <- c("11", "30")
+    
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
     # Calculate basic stats for each event
@@ -256,6 +277,35 @@ if (PERFORM_CALCULATIONS) {
         )
     )
 
+    if (PERFORM_STATS_TESTS) {
+      # Convert the "event" column to a factor or onewaytests will yell at us
+      all_fit_parameters$event <- as.factor(all_fit_parameters$event)
+      
+      # Perform Brown-Forsythe test to check for equal variance
+      # This test automatically prints its results to the R terminal
+      bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = all_fit_parameters)
+      
+      # If p > 0.05 variances among populations is equal and proceed with anova
+      # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+      
+      # Check normality of data with Shapiro-Wilks test
+      shapiro_test_result <- shapiro.test(all_fit_parameters$Vcmax_at_25)
+      print(shapiro_test_result)
+      
+      # If p > 0.05 data has normal distribution and proceed with anova
+      
+      # Perform one way analysis of variance
+      anova_result <- aov(Vcmax_at_25 ~ event, data = all_fit_parameters)
+      cat("    ANOVA result\n\n")
+      print(summary(anova_result))
+      
+      # If p < 0.05 perform Dunnett's posthoc test
+      
+      # Perform Dunnett's Test
+      dunnett_test_result <- DunnettTest(x = all_fit_parameters$Vcmax_at_25, g = all_fit_parameters$event, control = "WT")
+      print(dunnett_test_result)
+    }  
+    
     all_samples <- combined_info[['main_data']]
 }
 
@@ -353,7 +403,7 @@ multi_aci_curves <- xyplot(
     main = ind_caption,
     xlab = "Intercellular [CO2] (ppm)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(-5, 65),
+    ylim = c(-5, 70),
     xlim = c(-100, 1600),
     par.settings = list(
         superpose.line = list(col = multi_curve_colors()),
@@ -399,7 +449,7 @@ aci_fit_plot <- xyplot(
     grid = TRUE,
     xlab = "Intercellular [CO2] (ppm)",
     ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",
-    ylim = c(-5, 65)
+    ylim = c(-5, 70)
 )
 
 x11(width = 8, height = 6)

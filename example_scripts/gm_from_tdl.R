@@ -54,7 +54,7 @@ MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
 # we assume this is data from the ERML TDL
-IGB_TDL <- FALSE
+IGB_TDL <- TRUE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -380,12 +380,6 @@ if (PERFORM_CALCULATIONS) {
         cat(paste("Number of Licor measurements after removing statistical outliers:", nrow(licor_files_no_outliers), "\n"))
     }
 
-    # Get stats for each event by averaging over all corresponding reps
-    event_stats <- basic_stats(
-        licor_files_no_outliers,
-        'event'
-    )$main_data
-
     # Get stats for each rep by averaging over all corresponding observations
     rep_stats <- basic_stats(
         licor_files_no_outliers,
@@ -456,7 +450,6 @@ if (SAVE_RESULTS) {
 
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
-    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
     write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }
 
