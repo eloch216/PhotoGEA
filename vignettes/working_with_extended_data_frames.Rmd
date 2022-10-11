@@ -16,8 +16,15 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.width = 7,
   fig.height = 5,
-  fig.align = "center"
+  fig.align = "center",
+  eval.after = "fig.cap"
 )
+```
+
+```{css, echo = FALSE}
+p.caption {
+  font-size: 0.8em;
+}
 ```
 
 # Overview
@@ -31,6 +38,13 @@ an R structure. In Licor Excel files, the data is arranged in a table where each
 column has a name, units, and a category; for example, the column for values of
 net assimilation rate is called `A`, has units of `micromol / m^2 / s`, and is
 categorized as a `GasEx` variable.
+
+```{r, fig.cap = exdf_caption, out.width = '95%', echo = FALSE}
+exdf_caption <-
+  'Illustration comparing data frames (left) to extended data frames (right).'
+
+knitr::include_graphics('images/exdf_illustration.png')
+```
 
 Because `exdf` objects keep track of the units for each column, functions acting
 on `exdf` objects are able to check that important variables have the correct
@@ -395,7 +409,17 @@ be visualized as stacking tables on top of each other vertically, and it only
 makes sense if they all have the same columns. It is common for Licor files to
 have some differences between their columns, so these steps are usually
 necessary. Even if all the files *do* have the same columns, taking these steps
-will not cause any issues, so there's no harm in always doing this.
+will not cause any issues, so there's no harm in always doing this. The
+following image illustrates this process visually for a set of three files.
+
+```{r, fig.cap = loading_caption, out.width = '95%', echo = FALSE}
+loading_caption <-
+  'Illustration of combining multiple tables using `identify_common_columns` and
+  `rbind`. In this example, the `YY` and `ZZ` columns are not present in all of
+  the tables, so they are removed before the tables are vertically stacked.'
+
+knitr::include_graphics('images/file_loading_illustration.png')
+```
 
 The following is an example of code that accomplishes these steps:
 
@@ -523,7 +547,18 @@ ball_berry_parameters <- ball_berry_result$parameters
 
 This pattern (where a function is applied to multiple curves using `consolidate`
 and `by`) is found in most analysis scripts, such as the one in the
-[Analyzing Ball-Berry Data](analyzing_ball_berry_data.html) vignette.
+[Analyzing Ball-Berry Data](analyzing_ball_berry_data.html) vignette. The
+following image illustrates this process visually.
+
+
+```{r, fig.cap = processing_caption, out.width = '95%', echo = FALSE}
+processing_caption <-
+  'Illustration of processing multiple parts of a table using `by` and
+  `consolidate`. Here the `id` column is either `1` or `2`, and the processing
+  function returns a list of two tables called `fits` and `parameters`.'
+
+knitr::include_graphics('images/table_processing_illustration.png')
+```
 
 ## Plotting Data From an Extended Data Frame
 

@@ -28,7 +28,7 @@ fit_c3_aci <- function(
     fixed = c(40, NA,   NA,  NA),   # TPU, J, Rd, Vcmax
     min_aj_cutoff = NA,
     max_aj_cutoff = NA,
-    curvature = 0.97
+    curvature = 0.99
 )
 {
     if (!is.exdf(replicate_exdf)) {
