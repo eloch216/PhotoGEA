@@ -59,6 +59,9 @@ library(RColorBrewer)
 # to TRUE.
 PERFORM_CALCULATIONS <- TRUE
 
+# Decide whether to remove statistical outliersar4 5
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
+
 # Decide whether to calculate stats
 CALCULATE_STATS <- TRUE
 
@@ -203,7 +206,7 @@ all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
     if (CALCULATE_STATS) {
-      View(all_stats)
+      View(all_stats$main_data)
     }
 }
 
@@ -321,6 +324,22 @@ print(multi_gsci_curves)
 ### MAKE BOX-WHISKER PLOTS AND BAR CHARTS  ###
 ###                                        ###
 
+
+all_samples_one_point_no_a_outliers <- all_samples_one_point
+
+if (REMOVE_STATISTICAL_OUTLIERS) {
+  print(paste("Number of rows before removing A outliers:", nrow(all_samples_one_point_no_a_outliers)))
+  
+  all_samples_one_point_no_a_outliers <- exclude_outliers(
+    all_samples_one_point_no_a_outliers,
+    'A',
+    all_samples_one_point_no_a_outliers[, EVENT_COLUMN_NAME]
+  )
+  
+  print(paste("Number of rows after removing A outliers:", nrow(all_samples_one_point_no_a_outliers)))
+}
+
+
 # Define a caption
 boxplot_caption <- paste0(
     "Quartiles for measurement point ",
@@ -332,11 +351,12 @@ boxplot_caption <- paste0(
 
 # Define plotting parameters
 x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
+x_s_a <- all_samples_one_point_no_a_outliers[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 
 plot_param <- list(
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption)
+  list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 40),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -357,3 +377,30 @@ invisible(lapply(plot_param, function(x) {
   dev.new()
   print(do.call(barchart_with_errorbars, x))
 }))
+
+
+### Stats on A
+
+# Perform Brown-Forsythe test to check for equal variance
+# This test automatically prints its results to the R terminal
+bf_test_result <- bf.test(A ~ event, data = all_samples_one_point_no_a_outliers)
+
+# If p > 0.05 variances among populations is equal and proceed with anova
+# If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+
+# Check normality of data with Shapiro-Wilks test
+shapiro_test_result <- shapiro.test(all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]])
+print(shapiro_test_result)
+
+# If p > 0.05 data has normal distribution and proceed with anova
+
+# Perform one way analysis of variance
+anova_result <- aov(A ~ event, data = all_samples_one_point_no_a_outliers)
+cat("    ANOVA result\n\n")
+print(summary(anova_result))
+
+# If p < 0.05 perform Dunnett's posthoc test
+
+# Perform Dunnett's Test
+dunnett_test_result <- DunnettTest(x = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], g = all_samples_one_point_no_a_outliers$event, control = "WT")
+print(dunnett_test_result)

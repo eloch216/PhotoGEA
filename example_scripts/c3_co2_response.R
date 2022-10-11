@@ -86,7 +86,7 @@ GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list()
 
 # Indicate whether a `plot` column is present
-HAS_PLOT_INFO <- FALSE
+HAS_PLOT_INFO <- TRUE
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
@@ -104,8 +104,8 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
-POINT_FOR_BOX_PLOTS <- 1
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,9)
+POINT_FOR_BOX_PLOTS <- 10
 
 # Decide which temperature response parameters to use
 PTR_FUN <- photosynthesis_TRF(c3_arrhenius_bernacchi)
@@ -355,36 +355,6 @@ if (PERFORM_CALCULATIONS) {
     vcmax_parameters <- vcmax_parameters$main_data
     vcmax_fits <- vcmax_fits$main_data
 
-    if (PERFORM_STATS_TESTS) {
-        # Convert the "event" column to a factor or onewaytests will yell at us
-        vcmax_parameters$event <- as.factor(vcmax_parameters$event)
-
-        # Perform Brown-Forsythe test to check for equal variance
-        # This test automatically prints its results to the R terminal
-        bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = vcmax_parameters)
-
-        # If p > 0.05 variances among populations is equal and proceed with anova
-        # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
-
-        # Check normality of data with Shapiro-Wilks test
-        shapiro_test_result <- shapiro.test(vcmax_parameters$Vcmax_at_25)
-        print(shapiro_test_result)
-
-        # If p > 0.05 data has normal distribution and proceed with anova
-
-        # Perform one way analysis of variance
-        anova_result <- aov(Vcmax_at_25 ~ event, data = vcmax_parameters)
-        cat("    ANOVA result\n\n")
-        print(summary(anova_result))
-
-        # If p < 0.05 perform Dunnett's posthoc test
-
-        # Perform Dunnett's Test
-        dunnett_test_result <- DunnettTest(x = vcmax_parameters$Vcmax_at_25, g = vcmax_parameters$event, control = "WT")
-        print(dunnett_test_result)
-        
-    }
-
     all_samples <- combined_info[['main_data']]
 }
 
@@ -404,7 +374,7 @@ if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats$main_data)
     View(vcmax_parameters[, c(EVENT_COLUMN_NAME, REP_COLUMN_NAME, "Vcmax", "Vcmax_at_25", "Vcmax_stderr")])
-    View(vcmax_parameter_stats[, c(EVENT_COLUMN_NAME, "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr"), TRUE])
+    View(vcmax_parameter_stats[, c(EVENT_COLUMN_NAME, "Vcmax_at_25_avg", "Vcmax_at_25_stderr", "Rd_at_25_avg", "Rd_at_25_stderr")])
 }
 
 # Determine if there is fluorescence data
@@ -536,6 +506,20 @@ print(vcmax_fitting_plot)
 ### MAKE BOX-WHISKER PLOTS AND BAR CHARTS  ###
 ###                                        ###
 
+all_samples_one_point_no_a_outliers <- all_samples_one_point
+
+if (REMOVE_STATISTICAL_OUTLIERS) {
+  print(paste("Number of rows before removing A outliers:", nrow(all_samples_one_point_no_a_outliers)))
+  
+  all_samples_one_point_no_a_outliers <- exclude_outliers(
+    all_samples_one_point_no_a_outliers,
+    'A',
+    all_samples_one_point_no_a_outliers[, EVENT_COLUMN_NAME]
+  )
+  
+  print(paste("Number of rows after removing A outliers:", nrow(all_samples_one_point_no_a_outliers)))
+}
+
 # Define a caption
 boxplot_caption <- paste0(
     "Quartiles for measurement point ",
@@ -553,14 +537,15 @@ fitting_caption <- paste(
 
 # Define plotting parameters
 x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
+x_s_a <- all_samples_one_point_no_a_outliers[[EVENT_COLUMN_NAME]]
 x_v <- vcmax_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 
 plot_param <- list(
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 40),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption),
-  list(Y = vcmax_parameters[['Vcmax_at_25']],         X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 175), main = fitting_caption),
-  list(Y = vcmax_parameters[['Rd_at_25']],            X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 1.2), main = fitting_caption)
+  list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 40),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption),
+  list(Y = vcmax_parameters[['Vcmax_at_25']],                    X = x_v,   xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 175), main = fitting_caption),
+  list(Y = vcmax_parameters[['Rd_at_25']],                       X = x_v,   xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 1.2), main = fitting_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -581,3 +566,59 @@ invisible(lapply(plot_param, function(x) {
   dev.new()
   print(do.call(barchart_with_errorbars, x))
 }))
+
+# Do stats tests
+if (PERFORM_STATS_TESTS) {
+  # Convert the "event" column to a factor or onewaytests will yell at us
+  vcmax_parameters$event <- as.factor(vcmax_parameters$event)
+  
+  # Perform Brown-Forsythe test to check for equal variance
+  # This test automatically prints its results to the R terminal
+  bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = vcmax_parameters)
+  
+  # If p > 0.05 variances among populations is equal and proceed with anova
+  # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+  
+  # Check normality of data with Shapiro-Wilks test
+  shapiro_test_result <- shapiro.test(vcmax_parameters$Vcmax_at_25)
+  print(shapiro_test_result)
+  
+  # If p > 0.05 data has normal distribution and proceed with anova
+  
+  # Perform one way analysis of variance
+  anova_result <- aov(Vcmax_at_25 ~ event, data = vcmax_parameters)
+  cat("    ANOVA result\n\n")
+  print(summary(anova_result))
+  
+  # If p < 0.05 perform Dunnett's posthoc test
+  
+  # Perform Dunnett's Test
+  dunnett_test_result <- DunnettTest(x = vcmax_parameters$Vcmax_at_25, g = vcmax_parameters$event, control = "WT")
+  print(dunnett_test_result)
+  
+  ### Stats on A
+  
+  # Perform Brown-Forsythe test to check for equal variance
+  # This test automatically prints its results to the R terminal
+  bf_test_result <- bf.test(A ~ event, data = all_samples_one_point_no_a_outliers)
+  
+  # If p > 0.05 variances among populations is equal and proceed with anova
+  # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+  
+  # Check normality of data with Shapiro-Wilks test
+  shapiro_test_result <- shapiro.test(all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]])
+  print(shapiro_test_result)
+  
+  # If p > 0.05 data has normal distribution and proceed with anova
+  
+  # Perform one way analysis of variance
+  anova_result <- aov(A ~ event, data = all_samples_one_point_no_a_outliers)
+  cat("    ANOVA result\n\n")
+  print(summary(anova_result))
+  
+  # If p < 0.05 perform Dunnett's posthoc test
+  
+  # Perform Dunnett's Test
+  dunnett_test_result <- DunnettTest(x = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], g = all_samples_one_point_no_a_outliers$event, control = "WT")
+  print(dunnett_test_result)
+}
