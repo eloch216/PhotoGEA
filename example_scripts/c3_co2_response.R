@@ -382,6 +382,7 @@ if (PERFORM_CALCULATIONS) {
         # Perform Dunnett's Test
         dunnett_test_result <- DunnettTest(x = vcmax_parameters$Vcmax_at_25, g = vcmax_parameters$event, control = "WT")
         print(dunnett_test_result)
+        
     }
 
     all_samples <- combined_info[['main_data']]

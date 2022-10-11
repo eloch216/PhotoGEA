@@ -60,7 +60,10 @@ library(RColorBrewer)
 PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to calculate stats
-CALCULATE_STATS <- FALSE
+CALCULATE_STATS <- TRUE
+
+# Indicate whether a `plot` column is present
+HAS_PLOT_INFO <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -99,7 +102,7 @@ QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
 ETR_COLUMN_NAME <- "ETR"
 
-UNIQUE_ID_COLUMN_NAME <- "event_replicate"
+UNIQUE_ID_COLUMN_NAME <- "event_replicate_plot"
 
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
@@ -127,9 +130,18 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
     
-    has_plot_info <- TRUE
-    if (has_plot_info) {
-      # This might not be required for most data sets
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+    
+    # Set the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+      "plot_replicate"
+    } else {
+      "replicate"
+    }
+    
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
       combined_info <- process_id_columns(
         combined_info,
         "plot",
