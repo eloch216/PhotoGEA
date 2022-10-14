@@ -16,7 +16,7 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# UNRELEASED
+# PhotoGEA VERSION 0.6.0 (Unreleased)
 
 - Moved the `dfoptim` package from `Suggests` to `Imports` because it is used by
   an essential part of `PhotoGEA`.
@@ -33,6 +33,8 @@ for the next release.
   - `cbind.exdf` no longer requires all objects to have the same number of rows.
   - `[<-.exdf` now allows users to remove columns by setting their values to
     `NULL`.
+  - The conversion of the timestamp column to `POSIXlt` in `read_tdl_file` and
+    `read_licor_file` can now be skipped by setting `timestamp_colname` to `NA`.
 - Significant changes have been made to `fit_c3_aci`:
   - It now has an option to set a `curvature` value that can be used to allow
     co-limitation of the net assimilation rate.
