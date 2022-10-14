@@ -18,7 +18,7 @@
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname
+    timestamp_colname = NA
   )
 }
 
@@ -79,7 +79,8 @@
   be found in the source code (\code{R/unicode_replacements.R}).
 
   When reading a Licor Excel file, it is useful to identify the timestamp column
-  so its values can be properly interpreted as \code{\link{POSIXlt}} objects.
+  so its values can be properly interpreted as \code{\link{POSIXlt}} objects. If
+  \code{timestamp_colname} is \code{NA}, this conversion will be skipped.
 
   \strong{IMPORTANT NOTE ABOUT LICOR EXCEL FILES}: by default, Licor Excel files
   do not "calculate" formula values. This causes a problem when reading them in

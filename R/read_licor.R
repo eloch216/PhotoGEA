@@ -5,7 +5,7 @@ read_licor_file <- function(
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname
+    timestamp_colname = NA
 )
 {
     # Define a helping function for reading one row (with column names) from an
@@ -86,8 +86,10 @@ read_licor_file <- function(
     colnames(licor_variable_units) <- licor_variable_names[1,]
 
     # Make sure the timestamp column is properly interpreted
-    licor_data[[timestamp_colname]] <-
-        as.POSIXlt(licor_data[[timestamp_colname]], origin = "1970-01-01")
+    if (!is.na(timestamp_colname)) {
+        licor_data[[timestamp_colname]] <-
+            as.POSIXlt(licor_data[[timestamp_colname]], origin = "1970-01-01")
+    }
 
     return(
         exdf(

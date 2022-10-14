@@ -50,7 +50,7 @@
     fixed = c(40, NA,   NA,  NA),
     min_aj_cutoff = NA,
     max_aj_cutoff = NA,
-    curvature = 0.97
+    curvature = 0.99
   )
 }
 
