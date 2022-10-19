@@ -404,7 +404,7 @@ dpmn_error_jrvtt <- function(
             X[2], # Rd
             X[3], # Vcmax
             X[4], # tau
-            x[5]  # TPU
+            X[5]  # TPU
         )
     }
 }
