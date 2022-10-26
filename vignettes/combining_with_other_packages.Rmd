@@ -24,9 +24,9 @@ knitr::opts_chunk$set(
 
 There are many approaches to fitting or otherwise processing pieces of gas
 exchange data, and several R packages (such as
-[`plantecophys`](https://cran.r-project.org/web/packages/plantecophys/),
-[`plantecowrap`](https://cran.r-project.org/web/packages/plantecowrap/),
-and [`photosynthesis`](https://cran.r-project.org/web/packages/photosynthesis/))
+[`plantecophys`](https://cran.r-project.org/package=plantecophys),
+[`plantecowrap`](https://cran.r-project.org/package=plantecowrap),
+and [`photosynthesis`](https://cran.r-project.org/package=photosynthesis))
 have been written to implement some of these methods.
 These R packages are excellent resources that provide access to well-tested and
 peer-reviewed fitting methods. On the other hand, they generally do not provide
