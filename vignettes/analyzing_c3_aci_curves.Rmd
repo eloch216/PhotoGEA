@@ -746,7 +746,7 @@ its output, so it is easy to plot them:
 ```{r plot_residuals}
 # Plot the residuals
 lattice::xyplot(
-  A_residuals ~ Ci | curve_id,
+  A_residuals ~ Ci | curve_identifier,
   data = c3_aci_results$fits$main_data,
   type = 'b',
   pch = 16,
