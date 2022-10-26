@@ -747,12 +747,12 @@ its output, so it is easy to plot them:
 # Plot the residuals
 lattice::xyplot(
   A_residuals ~ Ci | curve_id,
-  data = aci_results$fits$main_data,
+  data = c3_aci_results$fits$main_data,
   type = 'b',
   pch = 16,
   grid = TRUE,
-  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', aci_results$fits$units$A, ')')
+  xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', c3_aci_results$fits$units$A, ')')
 )
 ```
 
