@@ -14,7 +14,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,8 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
+    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
@@ -77,7 +79,7 @@
 <span>    <span class="va">variable_name_row</span>,</span>
 <span>    <span class="va">variable_unit_row</span>,</span>
 <span>    <span class="va">data_start_row</span>,</span>
-<span>    <span class="va">timestamp_colname</span></span>
+<span>    timestamp_colname <span class="op">=</span> <span class="cn">NA</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -136,7 +138,8 @@
   accessed via <code>PhotoGEA:::UNICODE_REPLACEMENTS</code>, and more information can
   be found in the source code (<code>R/unicode_replacements.R</code>).</p>
 <p>When reading a Licor Excel file, it is useful to identify the timestamp column
-  so its values can be properly interpreted as <code><a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">POSIXlt</a></code> objects.</p>
+  so its values can be properly interpreted as <code><a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">POSIXlt</a></code> objects. If
+  <code>timestamp_colname</code> is <code>NA</code>, this conversion will be skipped.</p>
 <p><strong>IMPORTANT NOTE ABOUT LICOR EXCEL FILES</strong>: by default, Licor Excel files
   do not "calculate" formula values. This causes a problem when reading them in
   R, since any data entry determined from a formula will be read as 0. To fix

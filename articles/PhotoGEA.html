@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,8 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
+    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
@@ -90,24 +92,36 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>PhotoGEA</strong> (short for <strong>photo</strong>synthetic <strong>g</strong>as <strong>e</strong>xchange <strong>a</strong>nalysis) is an R package that provides a suite of tools for loading, processing, and analyzing photosynthetic gas exchange data.</p>
+<p><strong>PhotoGEA</strong> (short for <strong>photo</strong>synthetic
+<strong>g</strong>as <strong>e</strong>xchange
+<strong>a</strong>nalysis) is an R package that provides a suite of
+tools for loading, processing, and analyzing photosynthetic gas exchange
+data.</p>
 </div>
 <div class="section level2">
 <h2 id="installing-photogea">Installing PhotoGEA<a class="anchor" aria-label="anchor" href="#installing-photogea"></a>
 </h2>
-<p>The easiest way to install <code>PhotoGEA</code> is to type the following from within the R terminal:</p>
+<p>The easiest way to install <code>PhotoGEA</code> is to type the
+following from within the R terminal:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'eloch216/PhotoGEA'</span><span class="op">)</span></span></code></pre></div>
-<p>Note that this method requires the <code>remotes</code> package, which can be installed from within R by typing <code>install.packages('remotes')</code>.</p>
+<p>Note that this method requires the <code>remotes</code> package,
+which can be installed from within R by typing
+<code>install.packages('remotes')</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="an-example-c3-co2-response-curves">An Example: C<sub>3</sub> CO<sub>2</sub> Response Curves<a class="anchor" aria-label="anchor" href="#an-example-c3-co2-response-curves"></a>
 </h2>
-<p>As an example, we will read data from two Licor Li-6800 log files that contain several A-Ci curves measured from tobacco and soybean plants, fit a model to each response curve, and then plot some of the results. This is a basic example that just scratches the surface of what is possible with <code>PhotoGEA</code>.</p>
+<p>As an example, we will read data from two Licor Li-6800 log files
+that contain several A-Ci curves measured from tobacco and soybean
+plants, fit a model to each response curve, and then plot some of the
+results. This is a basic example that just scratches the surface of what
+is possible with <code>PhotoGEA</code>.</p>
 <div class="section level3">
 <h3 id="fitting-the-curves">Fitting the Curves<a class="anchor" aria-label="anchor" href="#fitting-the-curves"></a>
 </h3>
-<p>The following code can be used to read the data and fit each curve:</p>
+<p>The following code can be used to read the data and fit each
+curve:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
@@ -166,33 +180,64 @@
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span>,</span>
 <span>  <span class="va">fit_c3_aci</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>When this document was generated, evaluating this code required the following amount of time:</p>
+<p>When this document was generated, evaluating this code required the
+following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.289   0.040   1.329</span></span></code></pre>
-<p>The timing results may vary depending on the particular machine used to run the code. Nevertheless: <em>Do you think you could fit six A-Ci curves in less than 2 seconds using any other method?</em></p>
-<p>This example contains 11 commands, so it certainly isn’t short; however, a close look reveals that much of the commands are general and would apply to <em>any</em> set of C<sub>3</sub> response curves. In fact, only a few parts would need to be modified, such as the list of files to read, the curve identifier, and the value of mesophyll conductance. While using <code>PhotoGEA</code>, you are encouraged to copy this example and any others to use as the base of your own scripts; work smarter, not harder!</p>
+<span><span class="co">#&gt;   1.099   0.068   1.166</span></span></code></pre>
+<p>The timing results may vary depending on the particular machine used
+to run the code. Nevertheless: <em>Do you think you could fit six A-Ci
+curves in less than 2 seconds using any other method?</em></p>
+<p>This example contains 11 commands, so it certainly isn’t short;
+however, a close look reveals that much of the commands are general and
+would apply to <em>any</em> set of C<sub>3</sub> response curves. In
+fact, only a few parts would need to be modified, such as the list of
+files to read, the curve identifier, and the value of mesophyll
+conductance. While using <code>PhotoGEA</code>, you are encouraged to
+copy this example and any others to use as the base of your own scripts;
+work smarter, not harder!</p>
 </div>
 <div class="section level3">
 <h3 id="viewing-the-results">Viewing the Results<a class="anchor" aria-label="anchor" href="#viewing-the-results"></a>
 </h3>
-<p>Having fit the response curves, it is also possible to view the fits and the extracted parameters. For example, we can plot the measured values of net assimilation (<code>A</code>), the fitted values of net assimilation (<code>A_fit</code>), and each of the limiting assimilation rates calculated during the fitting procedure: the rubisco-limited rate (<code>Ac</code>), the electron-transport-limited rate (<code>Aj</code>), and the phosphate-limited rate (<code>Ap</code>).</p>
+<p>Having fit the response curves, it is also possible to view the fits
+and the extracted parameters. For example, we can plot the measured
+values of net assimilation (<code>A</code>), the fitted values of net
+assimilation (<code>A_fit</code>), and each of the limiting assimilation
+rates calculated during the fitting procedure: the rubisco-limited rate
+(<code>Ac</code>) and the electron-transport-limited rate
+(<code>Aj</code>).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_id</span>,</span>
+<span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_id</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">'l'</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  par.settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
+<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="PhotoGEA_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Another possibility is to plot one or more of the fitting parameters averaged across species in a bar chart with error bars; here we plot values of <code>Vcmax</code> at 25 degrees C.</p>
+<p>Another way to check the quality of the fits is to plot the
+residuals, which should be randomly distributed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
+<span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_id</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
+<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
+<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate residual (measured - fitted)\n('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>It is also possible to plot one or more of the fitting parameters
+averaged across species in a bar chart with error bars; here we plot
+values of <code>Vcmax</code> at 25 degrees C.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
 <span>  <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
 <span>  <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
@@ -200,24 +245,47 @@
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="learning-more">Learning More<a class="anchor" aria-label="anchor" href="#learning-more"></a>
 </h2>
-<p>The <code>PhotoGEA</code> package includes extensive documentation, and more articles are being added all the time:</p>
+<p>The <code>PhotoGEA</code> package includes extensive documentation,
+and more articles are being added all the time:</p>
 <ul>
 <li>
-<a href="developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>: Discusses how <code>PhotoGEA</code> provides functionality for all parts of a data analysis pipeline, including loading and validating the data – and how it can help save your time and improve the reproducibility of your data analysis!</li>
+<a href="developing_a_data_analysis_pipeline.html">Developing a Data
+Analysis Pipeline</a>: Discusses how <code>PhotoGEA</code> provides
+functionality for all parts of a data analysis pipeline, including
+loading and validating the data – and how it can help save your time and
+improve the reproducibility of your data analysis!</li>
 <li>
-<a href="working_with_extended_data_frames.html">Working With Extended Data Frames</a>: Discusses how to work with extended data frames, which are a critical part of <code>PhotoGEA</code>.</li>
+<a href="working_with_extended_data_frames.html">Working With
+Extended Data Frames</a>: Discusses how to work with extended data
+frames, which are a critical part of <code>PhotoGEA</code>.</li>
 <li>Analysis case studies:
 <ul>
 <li>
-<a href="analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a> (This example is more detailed than the analysis demonstrated here.)</li>
-<li><a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+<a href="analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
+(This example is more detailed than the analysis demonstrated
+here.)</li>
+<li><a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry
+Data</a></li>
 <li><a href="analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+</ul>
+</li>
+<li>More advanced topics:
+<ul>
+<li>
+<a href="creating_your_own_processing_tools.html">Creating Your Own
+Processing Tools</a>: Discusses how to create functions compatible with
+<code>PhotoGEA</code> that apply new types of processing.</li>
+<li>
+<a href="combining_with_other_packages.html">Combining PhotoGEA With
+Other Packages</a>: Discusses how to create wrappers for functions from
+other packages to extend the processing capabilities of
+<code>PhotoGEA</code>.</li>
 </ul>
 </li>
 </ul>

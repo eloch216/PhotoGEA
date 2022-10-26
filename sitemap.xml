@@ -22,6 +22,12 @@
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/combining_with_other_packages.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/creating_your_own_processing_tools.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/developing_a_data_analysis_pipeline.html</loc>
   </url>
   <url>
@@ -82,10 +88,16 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/check_licor_data.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/check_required_variables.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/choose_input_files.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/consolidate.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/default_optimizer.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/dim.exdf.html</loc>
@@ -115,6 +127,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/fit_c3_aci.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/identifier_columns.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/identify_common_columns.html</loc>
   </url>
   <url>
@@ -122,6 +137,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/initial_guess_c3_aci.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/is.exdf.html</loc>
@@ -152,6 +170,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/remove_points.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/residual_stats.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/set_variable.html</loc>

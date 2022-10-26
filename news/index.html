@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,8 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
+    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
@@ -58,6 +60,50 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.6.0" id="photogea-version-060-2022-10-06">PhotoGEA VERSION 0.6.0 (2022-10-06)<a class="anchor" aria-label="anchor" href="#photogea-version-060-2022-10-06"></a></h2>
+<ul><li>Moved the <code>dfoptim</code> package from <code>Suggests</code> to <code>Imports</code> because it is used by an essential part of <code>PhotoGEA</code>.</li>
+<li>The <code>check_required_variables</code> function was moved to the package namespace.</li>
+<li>Added and/or documented several functions:
+<ul><li>A default optimizer function (<code>default_optimizer</code>).</li>
+<li>A function for guessing for C3 parameter values (<code>initial_guess_c3_aci</code>).</li>
+<li>A function for identifying columns that take a single unique value (<code>identifier_columns</code>).</li>
+<li>A function that calculates error metrics from the values of residuals, including the root mean squared error (RMSE) and several others (<code>residual_stats</code>).</li>
+</ul></li>
+<li>Small changes were made to several functions:
+<ul><li>
+<code>cbind.exdf</code> no longer requires all objects to have the same number of rows.</li>
+<li>
+<code>[&lt;-.exdf</code> now allows users to remove columns by setting their values to <code>NULL</code>.</li>
+<li>The conversion of the timestamp column to <code>POSIXlt</code> in <code>read_tdl_file</code> and <code>read_licor_file</code> can now be skipped by setting <code>timestamp_colname</code> to <code>NA</code>.</li>
+</ul></li>
+<li>Significant changes have been made to <code>fit_c3_aci</code>:
+<ul><li>It now has an option to set a <code>curvature</code> value that can be used to allow co-limitation of the net assimilation rate.</li>
+<li>It now uses <code>initial_guess_c3_aci</code> to generate initial guesses by default.</li>
+<li>It now has an option to fix certain parameter values (such as <code>TPU</code>) and exclude them from the fitting process via a new input argument called <code>fixed</code>.</li>
+<li>Its output now includes residuals and error metrics such as the RMSE.</li>
+</ul></li>
+<li>
+<code>fit_ball_berry</code> also returns residuals and error metrics in its output.</li>
+<li>Two new vignettes were added:
+<ul><li>“Creating Your Own Processing Tools” discusses the best practices for writing custom functions for processing. As an example, a function for fitting a rectangular hyperbola to an A-Ci curve is developed.</li>
+<li>“Combining PhotoGEA With Other Packages” discusses best practices for writing wrappers for processing tools from other packages. As an example, a wrapper for <code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> is developed.</li>
+</ul></li>
+<li>Several other vignettes were modified:
+<ul><li>The “Analyzing C3 A-Ci Curves” vignette has been updated to include the new features of <code>fit_c3_aci</code>.</li>
+<li>The “Developing a Data Analysis Pipeline” vignette has been updated to include the new functions added in this version.</li>
+<li>The “Working With Extended Data Frames” vignette has been updated to include some new diagrams.</li>
+<li>The “Getting Started With PhotoGEA” vignette has been updated to include links to the new vignettes.</li>
+</ul></li>
+<li>PRs related to creating this version:
+<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/50" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/50</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/52" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/52</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/53" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/53</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/54" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/54</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/55" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/55</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/56" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/56</a></li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="photogea-version-050-2022-09-16">PhotoGEA VERSION 0.5.0 (2022-09-16)<a class="anchor" aria-label="anchor" href="#photogea-version-050-2022-09-16"></a></h2>
 <ul><li>Added a new vignette demonstrating how to analyze C3 A-Ci curve data.</li>
 <li>Included <code>TPU</code> in the output from <code>calculate_c3_assimilation</code>.</li>
@@ -68,7 +114,8 @@
 <li>Fixed an issue with <code>calculate_c3_assimilation</code> that was causing it to report incorrect <code>An</code> values at low <code>Cc</code>.</li>
 <li>Fixed several typos where <code>Ac</code> was misidentified as the “RuBP-limited” rate; in fact, it is the RuBP-saturated rate but is more commonly referred to as the rubisco-limited rate.</li>
 <li>Added a new example script that uses <code>fit_c3_aci</code>.</li>
-<li>PRs related to creating this version:<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/44" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/44</a></li>
+<li>PRs related to creating this version:
+<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/44" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/44</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/46" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/46</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/47" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/47</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/48" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/48</a></li>
@@ -76,25 +123,30 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="photogea-version-040-2022-09-07">PhotoGEA VERSION 0.4.0 (2022-09-07)<a class="anchor" aria-label="anchor" href="#photogea-version-040-2022-09-07"></a></h2>
-<ul><li>Made several improvements to accessibility:<ul><li>Renamed GitHub repository from <code>licor-processing-and-analysis</code> to <code>PhotoGEA</code>.</li>
+<ul><li>Made several improvements to accessibility:
+<ul><li>Renamed GitHub repository from <code>licor-processing-and-analysis</code> to <code>PhotoGEA</code>.</li>
 <li>Made GitHub repository public, which allows for a simpler installation via <code>remotes::install_github</code>.</li>
 <li>Initialized website using <code>pkgdown</code> and GitHub Pages by using <code>usethis::use_pkgdown_github_pages</code>; website is now available at <a href="https://eloch216.github.io/PhotoGEA/index.html">https://eloch216.github.io/PhotoGEA/index.html</a>.</li>
 </ul></li>
-<li>Made minor improvements to the Ball-Berry vignette:<ul><li>Added a stability check.</li>
+<li>Made minor improvements to the Ball-Berry vignette:
+<ul><li>Added a stability check.</li>
 <li>Made the stats calculations more clear.</li>
 </ul></li>
-<li>Added new functions to the package namespace:<ul><li>A function for excluding data points (<code>remove_points</code>).</li>
+<li>Added new functions to the package namespace:
+<ul><li>A function for excluding data points (<code>remove_points</code>).</li>
 <li>A cross-platform file selection tool (<code>choose_input_files</code>).</li>
 <li>A function for calculating C3 assimilation rates (<code>calculate_c3_assimilation</code>).</li>
 <li>A function for fitting C3 CO2 response curves (<code>fit_c3_aci</code>).</li>
 <li>A function for setting <code>exdf</code> column values (<code>set_variable</code>).</li>
 <li>A function for calculating Arrhenius exponents (<code>calculate_arrhenius</code>).</li>
 </ul></li>
-<li>Modified the behavior of several functions:<ul><li>Added an option for a more thorough check in <code>is.exdf</code>.</li>
+<li>Modified the behavior of several functions:
+<ul><li>Added an option for a more thorough check in <code>is.exdf</code>.</li>
 <li>
 <code>organize_response_curve_data</code> now has a specification for points to remove rather than points to keep, because this is usually easier to do.</li>
 </ul></li>
-<li>Added documentation for several code objects:<ul><li>
+<li>Added documentation for several code objects:
+<ul><li>
 <code>document_variables</code> (formerly <code>specify_variables</code>)</li>
 <li><code>exclude_outliers</code></li>
 <li>
@@ -114,7 +166,8 @@
 <code>c3_arrhenius_bernacchi</code>, <code>c3_arrhenius_sharkey</code>, and <code>c4_arrhenius_von_caemmerer</code>
 </li>
 </ul></li>
-<li>Removed several limited-use functions from the package namespace:<ul><li><code>add_gm_to_licor_data_from_table</code></li>
+<li>Removed several limited-use functions from the package namespace:
+<ul><li><code>add_gm_to_licor_data_from_table</code></li>
 <li><code>add_gm_to_licor_data_from_value</code></li>
 <li><code>batch_specify_oxygen</code></li>
 <li><code>batch_specify_respiration</code></li>
@@ -122,11 +175,13 @@
 <li><code>read_gm_table</code></li>
 <li>(All of these functions can be replicated with <code>set_variable</code>)</li>
 </ul></li>
-<li>Added new vignettes:<ul><li>A vignette describing how to work with extended data frames.</li>
+<li>Added new vignettes:
+<ul><li>A vignette describing how to work with extended data frames.</li>
 <li>A vignette describing how to develop a data analysis pipeline.</li>
 <li>A vignette introducing new users to PhotoGEA.</li>
 </ul></li>
-<li>Started supplying default column names in several functions to make code shorter:<ul><li><code>fit_c3_aci</code></li>
+<li>Started supplying default column names in several functions to make code shorter:
+<ul><li><code>fit_c3_aci</code></li>
 <li><code>calculate_c3_assimilation</code></li>
 <li><code>calculate_cc</code></li>
 <li><code>calculate_gas_properties</code></li>
@@ -134,7 +189,8 @@
 <li><code>calculate_ball_berry_index</code></li>
 <li><code>fit_ball_berry</code></li>
 </ul></li>
-<li>PRs related to creating this version:<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/33" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/33</a></li>
+<li>PRs related to creating this version:
+<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/33" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/33</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/34" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/34</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/35" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/35</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/37" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/37</a></li>
@@ -146,7 +202,8 @@
 <h2 class="pkg-version" data-toc-text="0.3.0" id="photogea-version-030-2022-08-15">PhotoGEA VERSION 0.3.0 (2022-08-15)<a class="anchor" aria-label="anchor" href="#photogea-version-030-2022-08-15"></a></h2>
 <ul><li>This version adds a substantial amount of documentation, including a vignette describing how to use PhotoGEA to analyze TDL data.</li>
 <li>While working on documentation, several changes were made to key functions so they behaved more reasonably and became easier to document.</li>
-<li>Changes to functions and their documentation includes:<ul><li>
+<li>Changes to functions and their documentation includes:
+<ul><li>
 <code>exdf</code> objects can now be initialized from just a data frame; in this case, units and categories will all be <code>NA</code>.</li>
 <li>
 <code>apply_fit_across_reps</code> and <code>process_tdl_cycles</code> have been replaced by two new lower-level functions that offer more generality: <code>by.exdf</code> and <code>consolidate</code>.</li>

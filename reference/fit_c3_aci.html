@@ -30,7 +30,7 @@ Fits a model to an experimentally measured CO2 response curve using the data
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,8 @@ Fits a model to an experimentally measured CO2 response curve using the data
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
+    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
@@ -107,18 +109,24 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
 <span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
 <span>    POc <span class="op">=</span> <span class="fl">210000</span>,</span>
-<span>    OPTIM_FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">guess</span>, <span class="va">fun</span>, <span class="va">lower</span>, <span class="va">upper</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="fu">dfoptim</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></span><span class="op">(</span><span class="va">guess</span>, <span class="va">fun</span>, <span class="va">lower</span>, <span class="va">upper</span>, control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        tol <span class="op">=</span> <span class="fl">1e-7</span>,</span>
-<span>        maxfeval <span class="op">=</span> <span class="fl">2000</span>,</span>
-<span>        restarts.max <span class="op">=</span> <span class="fl">10</span></span>
-<span>      <span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="op">}</span>,</span>
-<span>    initial_guess <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">100</span>,  <span class="fl">0.5</span>, <span class="fl">90</span><span class="op">)</span>,</span>
-<span>    lower <span class="op">=</span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,  <span class="fl">0</span>,    <span class="fl">0</span>,   <span class="fl">0</span><span class="op">)</span>,</span>
-<span>    upper <span class="op">=</span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">1000</span>, <span class="fl">100</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
+<span>    OPTIM_FUN <span class="op">=</span> <span class="fu"><a href="default_optimizer.html">default_optimizer</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    initial_guess_fun <span class="op">=</span> <span class="fu"><a href="initial_guess_c3_aci.html">initial_guess_c3_aci</a></span><span class="op">(</span></span>
+<span>        Oc <span class="op">=</span> <span class="va">POc</span>,</span>
+<span>        a_column_name <span class="op">=</span> <span class="va">a_column_name</span>,</span>
+<span>        cc_column_name <span class="op">=</span> <span class="va">cc_column_name</span>,</span>
+<span>        kc_column_name <span class="op">=</span> <span class="va">kc_column_name</span>,</span>
+<span>        ko_column_name <span class="op">=</span> <span class="va">ko_column_name</span>,</span>
+<span>        gamma_star_column_name <span class="op">=</span> <span class="va">gamma_star_column_name</span>,</span>
+<span>        vcmax_norm_column_name <span class="op">=</span> <span class="va">vcmax_norm_column_name</span>,</span>
+<span>        rd_norm_column_name <span class="op">=</span> <span class="va">rd_norm_column_name</span>,</span>
+<span>        j_norm_column_name <span class="op">=</span> <span class="va">j_norm_column_name</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,  <span class="fl">0</span>,    <span class="fl">0</span>,   <span class="fl">0</span><span class="op">)</span>,</span>
+<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">1000</span>, <span class="fl">100</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
+<span>    fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="cn">NA</span>,   <span class="cn">NA</span>,  <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>    min_aj_cutoff <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>    max_aj_cutoff <span class="op">=</span> <span class="cn">NA</span></span>
+<span>    max_aj_cutoff <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    curvature <span class="op">=</span> <span class="fl">0.99</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -198,9 +206,11 @@ Fits a model to an experimentally measured CO2 response curve using the data
     <code>optim</code> with the <code>L-BFGS-B</code> method can also be used.</p></dd>
 
 
-  <dt>initial_guess</dt>
-<dd><p>A numeric vector containing initial guesses for the values of <code>TPU</code>,
-    <code>J</code>, <code>Rd</code>, and <code>Vcmax</code>, in that order.</p></dd>
+  <dt>initial_guess_fun</dt>
+<dd><p>A function that estimates values of <code>TPU</code>, <code>J</code>, <code>Rd</code>, and
+    <code>Vcmax</code>; <code>initial_guess_fun</code> should have one input argument (an
+    <code>exdf</code> object representing a single response curve and should return a
+    vector of the estimated values (at 25 degrees C) in the order above.</p></dd>
 
 
   <dt>lower</dt>
@@ -213,6 +223,16 @@ Fits a model to an experimentally measured CO2 response curve using the data
     <code>J</code>, <code>Rd</code>, and <code>Vcmax</code>, in that order.</p></dd>
 
 
+  <dt>fixed</dt>
+<dd><p>A numeric vector specifying fixed values of <code>TPU</code>, <code>J</code>, <code>Rd</code>,
+    and <code>Vcmax</code>, in that order. Values of <code>NA</code> indicate that the
+    corresponding parameter is not fixed and should be varied during the
+    optimization procedure. The default value of this argument fixes <code>TPU</code>
+    to its upper limit (so net assimilation is never limited by phosphate
+    utilization) and allows the other parameters to vary. To vary all of the
+    parameters, set <code>fixed</code> to <code>c(NA, NA, NA, NA)</code>.</p></dd>
+
+
   <dt>min_aj_cutoff</dt>
 <dd><p>The minimum value of <code>Cc</code> (in ppm) where <code>Aj</code> is allowed to become
     the overall rate-limiting factor. If <code>min_aj_cutoff</code> is set to
@@ -223,6 +243,12 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <dd><p>The maximum value of <code>Cc</code> (in ppm) where <code>Aj</code> is allowed to be
     smaller than <code>Ac</code>. If <code>max_aj_cutoff</code> is set to <code>NA</code>, this
     restriction will not be applied.</p></dd>
+
+
+  <dt>curvature</dt>
+<dd><p>A dimensionless quadratic curvature parameter to be passed to
+    <code><a href="calculate_c3_assimilation.html">calculate_c3_assimilation</a></code> as the input argument with the same
+    name.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -251,6 +277,17 @@ Fits a model to an experimentally measured CO2 response curve using the data
   (in ppm) where <code>Aj</code> is allowed to be the overall rate limiting factor.
   See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
   arguments can be used to improve the quality of a fit.</p>
+<p>By default, this function will use <code>initial_guess_c3_aci</code> to make rough
+  estimates of the parameters to use as an initial guess. However, it is
+  possible to also use a fixed initial guess by using something like the
+  following for the <code>initial_guess_fun</code>:
+  <code>function(x){c(10, 100,  0.5, 90)}</code>, which would set the initial guess to
+  <code>TPU = 10</code>, <code>J = 100</code>, <code>Rd = 0.5</code>, and <code>Vcmax = 90</code>.</p>
+<p>By default, this function fixes <code>TPU</code> to a high value (<code>40 micromol
+  m^(-2) s^(-1)</code>) and allows the other parameters to be fitted. This behavior
+  is determined by the value of the <code>fixed</code> input argument, and the value
+  of <code>TPU</code> specified in this way will override any value returned by
+  <code>initial_guess_fun</code>.</p>
 <p>This function assumes that <code>replicate_exdf</code> represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used
   along with <code><a href="by.exdf.html">by.exdf</a></code> and <code><a href="consolidate.html">consolidate</a></code>.</p>
@@ -264,8 +301,11 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <ul><li><p><code>fits</code>: An <code>exdf</code> object including the measured values and
           the fitted values of net assimilation. The fitted values will be
           stored in a column whose name is determined by appending
-          <code>'_fits'</code> to the end of <code>a_column_name</code>; typically, this
-          will be <code>'A_fits'</code>.</p></li>
+          <code>'_fit'</code> to the end of <code>a_column_name</code>; typically, this
+          will be <code>'A_fit'</code>. Residuals (measured - fitted) will be
+          stored in a column whose name is determined by appending
+          <code>'_residuals'</code> to the end of <code>a_column_name</code>; typically,
+          this will be <code>'A_residuals'</code>.</p></li>
 <li><p><code>parameters</code>: An <code>exdf</code> object including the fitting
           parameters and convergence information for each A-Ci curve. The
           best-fit values are stored in the <code>TPU</code>, <code>J_at_25</code>,
@@ -325,34 +365,34 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">col_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    species [UserDefCon] (NA) plot [UserDefCon] (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    soybean                     5a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                   tobacco                      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                   tobacco                      2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   25.58415</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                  29.32262</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                  20.03634</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       190.8857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                      232.8343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                     1000.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    5.769933e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                   3.554089e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                   6.369200e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           144.6398</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                          145.4359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                          116.7613</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    convergence [fit_c3_aci] () convergence_msg [fit_c3_aci] ()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                            0          Successful convergence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                           0          Successful convergence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                           0          Successful convergence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    feval [fit_c3_aci] () optimum_val [fit_c3_aci] ()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    195                   149.01374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                   203                    38.87372</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                   295                   114.27896</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   species [UserDefCon] (NA) plot [UserDefCon] (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   soybean                     5a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                   tobacco                      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                   tobacco                      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                        40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                        40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                        40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      213.0796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      242.6510</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      216.3656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   5.553535e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                   4.331236e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   3.870552e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1)) convergence [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          128.6820                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          153.9019                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          128.8535                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   convergence_msg [fit_c3_aci] () feval [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          Successful convergence                   247</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          Successful convergence                   141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Successful convergence                   156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   optimum_val [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   122.00961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    21.65115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    37.62479</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># View the fits for each species / plot</span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
@@ -366,6 +406,19 @@ Fits a model to an experimentally measured CO2 response curve using the data
 <span class="r-in"><span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="fit_c3_aci-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># View the residuals for each species / plot</span></span></span>
+<span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">species_plot</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">'b'</span>,</span></span>
+<span class="r-in"><span>  pch <span class="op">=</span> <span class="fl">16</span>,</span></span>
+<span class="r-in"><span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate residuals ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A_residuals</span>, <span class="st">')'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="fit_c3_aci-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

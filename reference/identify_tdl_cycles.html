@@ -12,7 +12,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,8 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
+    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
+    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
     <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
     <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
   </div>
@@ -162,105 +164,105 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tdl_file</span><span class="op">)</span> <span class="co"># Notice the two new columns: `cycle_num` and `elapsed_time`</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	918 obs. of  99 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TIMESTAMP [Raw TDL] (TS)            : POSIXlt, format: "2022-07-12 06:12:43" "2022-07-12 06:13:03" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RECORD [Raw TDL] (RN)               : num  0 1 2 3 4 5 6 7 8 9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ valve_number [Raw TDL] ()           : num  20 21 23 26 2 10 11 12 13 20 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ diag_system_Avg [Raw TDL] ()        : num  128 128 128 132 128 128 128 128 128 128 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ NumSamples [Raw TDL] ()             : num  100 100 100 100 100 100 100 100 100 100 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc12C_Avg [Raw TDL] (ppm)         : num  2.9 68.8 311.9 1022.5 294.3 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc13C_Avg [Raw TDL] (ppm)         : num  0.132 0.847 3.481 11.114 3.299 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAStatus_Avg [Raw TDL] ()          : num  96 96 96 96 96 96 96 96 96 96 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPressure_Avg [Raw TDL] (mb)      : num  30 30 30 30 30 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserTemp_Avg [Raw TDL] (degC)      : num  -4 -4 -4 -4 -4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentA_Avg [Raw TDL] (mA)       : num  50.4 50.4 50.4 50.4 50.4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentB_Avg [Raw TDL] (mA)       : num  38.9 38.9 38.9 38.9 38.9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAAnalog1_Avg [Raw TDL] (V)        : num  0.0244 0.0244 0.0244 0.0244 0.0244 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1_Avg [Raw TDL] (degC)       : num  30 30 30 30 30 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2_Avg [Raw TDL] (degC)       : num  30 30 30 30 30 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserCooler_Avg [Raw TDL] (V)       : num  2.02 2.02 2.02 2.02 2.02 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigA_Avg [Raw TDL] (mV)       : num  2.48 2.48 2.48 2.48 2.48 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigB_Avg [Raw TDL] (mV)       : num  0.503 0.503 0.502 0.502 0.502 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransA_Avg [Raw TDL] (%)      : num  41.2 41.2 41.1 41.1 41.1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransB_Avg [Raw TDL] (%)      : num  54.8 54.8 54.7 54.7 54.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTemp_Avg [Raw TDL] (degC)     : num  -35 -35 -35 -35 -35 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetCooler_Avg [Raw TDL] ()       : num  1461 1461 1461 1461 1461 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetGainOffset_Avg [Raw TDL] ()   : num  8217 8217 8217 8217 8217 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigA_Avg [Raw TDL] (mV)       : num  57.8 56.5 51.6 39.8 52 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigB_Avg [Raw TDL] (mV)       : num  10.08 9.88 9.17 7.38 9.22 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransA_Avg [Raw TDL] (%)      : num  99.8 97.4 89.2 68.8 89.8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransB_Avg [Raw TDL] (%)      : num  114.4 112.2 104.2 84.2 104.8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTemp_Avg [Raw TDL] (degC)     : num  -39 -39 -39 -39 -39 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetCooler_Avg [Raw TDL] ()       : num  1449 1449 1449 1449 1449 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetGainOffset_Avg [Raw TDL] ()   : num  8456 8456 8456 8456 8456 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1DutyCycle_Avg [Raw TDL] ()  : num  0.13 0.121 0.132 0.129 0.138 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2DutyCycle_Avg [Raw TDL] ()  : num  0.0601 0.077 0.0677 0.0676 0.0649 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleFlow_Avg [Raw TDL] (ml_min)   : num  167 167 167 164 162 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ExcessFlow_Avg [Raw TDL] (ml_min)   : num  95.77 105.457 140.852 0.123 53.341 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SamplePress_Avg [Raw TDL] (mb)      : num  400 400 400 396 400 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassPress_Avg [Raw TDL] (mb)      : num  400 400 400 400 400 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleP_control_Avg [Raw TDL] ()    : num  0.4 0.404 0.414 0.2 0.385 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassP_control_Avg [Raw TDL] ()    : num  0.477 0.475 0.471 0.484 0.496 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPress_control_Avg [Raw TDL] ()   : num  0.528 0.529 0.53 0.53 0.53 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ panel_tmpr_Avg [Raw TDL] (degC)     : num  24.7 24.7 24.7 24.7 24.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ batt_volt_Avg [Raw TDL] (V)         : num  11.8 11.8 11.8 11.8 11.8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ buff_depth_Max [Raw TDL] ()         : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc12C_Std [Raw TDL] (ppm)         : num  0.5244 0.0946 0.2025 1.1064 1.5535 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc13C_Std [Raw TDL] (ppm)         : num  0.00797 0.00637 0.00849 0.02317 0.018 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAStatus_Std [Raw TDL] ()          : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPressure_Std [Raw TDL] (mb)      : num  0.0101 0.0105 0.0115 0.0102 0.0112 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserTemp_Std [Raw TDL] (degC)      : num  0.000244 0.000289 0.000272 0.000287 0.00025 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentA_Std [Raw TDL] (mA)       : num  0.000454 0.0006 0.000338 0.000492 0.000503 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentB_Std [Raw TDL] (mA)       : num  0.000677 0.000844 0.00061 0.000753 0.000625 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAAnalog1_Std [Raw TDL] (V)        : num  1.56e-05 1.39e-05 1.31e-05 1.30e-05 1.31e-05 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1_Std [Raw TDL] (degC)       : num  0.000994 0.00121 0.003558 0.001737 0.001128 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2_Std [Raw TDL] (degC)       : num  0.00215 0.00137 0.00141 0.00126 0.00227 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserCooler_Std [Raw TDL] (V)       : num  0.000293 0.000347 0.000326 0.000345 0.000301 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigA_Std [Raw TDL] (mV)       : num  0.00155 0.00185 0.00155 0.00199 0.00154 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigB_Std [Raw TDL] (mV)       : num  0.00169 0.00148 0.00145 0.0015 0.00188 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransA_Std [Raw TDL] (%)      : num  0.0298 0.0354 0.0268 0.0366 0.0293 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransB_Std [Raw TDL] (%)      : num  0.255 0.233 0.223 0.226 0.258 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTemp_Std [Raw TDL] (degC)     : num  0.00364 0.0032 0.00361 0.00365 0.00315 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetCooler_Std [Raw TDL] ()       : num  0.354 0.316 0.356 0.357 0.299 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetGainOffset_Std [Raw TDL] ()   : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigA_Std [Raw TDL] (mV)       : num  0.01137 0.00519 0.00502 0.01354 0.02786 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigB_Std [Raw TDL] (mV)       : num  0.00497 0.00576 0.00366 0.00388 0.00501 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransA_Std [Raw TDL] (%)      : num  0.0214 0.00781 0.00875 0.02549 0.05127 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransB_Std [Raw TDL] (%)      : num  0.0631 0.0441 0.0564 0.0485 0.0763 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTemp_Std [Raw TDL] (degC)     : num  0.00136 0.00128 0.00116 0.00148 0.00128 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetCooler_Std [Raw TDL] ()       : num  0.1147 0.1077 0.1009 0.1203 0.0931 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetGainOffset_Std [Raw TDL] ()   : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1DutyCycle_Std [Raw TDL] ()  : num  0.00923 0.00826 0.0119 0.00883 0.00886 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2DutyCycle_Std [Raw TDL] ()  : num  0.00837 0.00978 0.00828 0.00849 0.00862 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleFlow_Std [Raw TDL] (ml_min)   : num  0.1467 0.2004 0.1747 0.0871 0.1594 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ExcessFlow_Std [Raw TDL] (ml_min)   : num  0.10026 0.11171 0.1207 0.00958 0.08248 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SamplePress_Std [Raw TDL] (mb)      : num  0.0214 0.0234 0.0199 0.0935 0.0242 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassPress_Std [Raw TDL] (mb)      : num  0.1431 0.0428 0.1358 0.4229 0.3114 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleP_control_Std [Raw TDL] ()    : num  9.05e-05 8.99e-05 7.08e-05 0.00 2.21e-04 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassP_control_Std [Raw TDL] ()    : num  1.85e-04 5.47e-05 1.52e-04 4.63e-04 3.60e-04 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPress_control_Std [Raw TDL] ()   : num  0.000536 0.000541 0.000592 0.000525 0.000577 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ panel_tmpr_Std [Raw TDL] (degC)     : num  0.00641 0.00222 0.00214 0.0023 0.00224 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ batt_volt_Std [Raw TDL] (V)         : num  0.00241 0.00235 0.00224 0.00218 0.00232 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Match_Avg(1) [Raw TDL] ()       : num  1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Match_Avg(2) [Raw TDL] ()       : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Tmpr_Avg(1) [Raw TDL] (degC)    : num  -79.2 -77.6 -81.6 -79.4 -79.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Tmpr_Avg(2) [Raw TDL] (degC)    : num  NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Heat_Avg(1) [Raw TDL] ()        : num  1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Heat_Avg(2) [Raw TDL] ()        : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_diag_system_Avg [Raw TDL] ()   : num  NaN 960 960 960 960 960 960 960 960 960 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ExcessZeroFlow_Avg [Raw TDL] (): num  NaN 0.42 0.379 0.441 0.411 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ExcessMixFlow_Avg [Raw TDL] () : num  NaN 159 158 158 158 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_CO2Press_Avg [Raw TDL] ()      : num  NaN 11.4 11.4 11.4 11.4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ZeroPress_Avg [Raw TDL] ()     : num  NaN 16.5 16.5 16.5 16.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_CO2P_control_Avg [Raw TDL] ()  : num  NaN 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ZeroP_control_Avg [Raw TDL] () : num  NaN 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixTmpr1_Avg [Raw TDL] ()      : num  NaN 32 32 32 32 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixTmpr2_Avg [Raw TDL] ()      : num  NaN 31.7 31.7 31.7 31.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixHeat1_Avg [Raw TDL] ()      : num  NaN 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixHeat2_Avg [Raw TDL] ()      : num  NaN 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_panel_tmpr_Avg [Raw TDL] ()    : num  NaN 24.1 24.1 24.1 24.1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_batt_volt_Avg [Raw TDL] ()     : num  NaN 9.62 9.62 9.62 9.62 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cycle_num [calculated] (NA)         : num  1 1 1 1 1 1 1 1 1 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ elapsed_time [calculated] (minutes) : num  0 0 0 0 0 0 0 0 0 3 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TIMESTAMP [read_tdl_file] (TS)            : POSIXlt, format: "2022-07-12 06:12:43" "2022-07-12 06:13:03" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RECORD [read_tdl_file] (RN)               : num  0 1 2 3 4 5 6 7 8 9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ valve_number [read_tdl_file] ()           : num  20 21 23 26 2 10 11 12 13 20 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ diag_system_Avg [read_tdl_file] ()        : num  128 128 128 132 128 128 128 128 128 128 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ NumSamples [read_tdl_file] ()             : num  100 100 100 100 100 100 100 100 100 100 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc12C_Avg [read_tdl_file] (ppm)         : num  2.9 68.8 311.9 1022.5 294.3 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc13C_Avg [read_tdl_file] (ppm)         : num  0.132 0.847 3.481 11.114 3.299 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAStatus_Avg [read_tdl_file] ()          : num  96 96 96 96 96 96 96 96 96 96 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPressure_Avg [read_tdl_file] (mb)      : num  30 30 30 30 30 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserTemp_Avg [read_tdl_file] (degC)      : num  -4 -4 -4 -4 -4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentA_Avg [read_tdl_file] (mA)       : num  50.4 50.4 50.4 50.4 50.4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentB_Avg [read_tdl_file] (mA)       : num  38.9 38.9 38.9 38.9 38.9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAAnalog1_Avg [read_tdl_file] (V)        : num  0.0244 0.0244 0.0244 0.0244 0.0244 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1_Avg [read_tdl_file] (degC)       : num  30 30 30 30 30 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2_Avg [read_tdl_file] (degC)       : num  30 30 30 30 30 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserCooler_Avg [read_tdl_file] (V)       : num  2.02 2.02 2.02 2.02 2.02 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigA_Avg [read_tdl_file] (mV)       : num  2.48 2.48 2.48 2.48 2.48 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigB_Avg [read_tdl_file] (mV)       : num  0.503 0.503 0.502 0.502 0.502 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransA_Avg [read_tdl_file] (%)      : num  41.2 41.2 41.1 41.1 41.1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransB_Avg [read_tdl_file] (%)      : num  54.8 54.8 54.7 54.7 54.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTemp_Avg [read_tdl_file] (degC)     : num  -35 -35 -35 -35 -35 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetCooler_Avg [read_tdl_file] ()       : num  1461 1461 1461 1461 1461 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetGainOffset_Avg [read_tdl_file] ()   : num  8217 8217 8217 8217 8217 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigA_Avg [read_tdl_file] (mV)       : num  57.8 56.5 51.6 39.8 52 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigB_Avg [read_tdl_file] (mV)       : num  10.08 9.88 9.17 7.38 9.22 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransA_Avg [read_tdl_file] (%)      : num  99.8 97.4 89.2 68.8 89.8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransB_Avg [read_tdl_file] (%)      : num  114.4 112.2 104.2 84.2 104.8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTemp_Avg [read_tdl_file] (degC)     : num  -39 -39 -39 -39 -39 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetCooler_Avg [read_tdl_file] ()       : num  1449 1449 1449 1449 1449 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetGainOffset_Avg [read_tdl_file] ()   : num  8456 8456 8456 8456 8456 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1DutyCycle_Avg [read_tdl_file] ()  : num  0.13 0.121 0.132 0.129 0.138 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2DutyCycle_Avg [read_tdl_file] ()  : num  0.0601 0.077 0.0677 0.0676 0.0649 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleFlow_Avg [read_tdl_file] (ml_min)   : num  167 167 167 164 162 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ExcessFlow_Avg [read_tdl_file] (ml_min)   : num  95.77 105.457 140.852 0.123 53.341 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SamplePress_Avg [read_tdl_file] (mb)      : num  400 400 400 396 400 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassPress_Avg [read_tdl_file] (mb)      : num  400 400 400 400 400 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleP_control_Avg [read_tdl_file] ()    : num  0.4 0.404 0.414 0.2 0.385 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassP_control_Avg [read_tdl_file] ()    : num  0.477 0.475 0.471 0.484 0.496 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPress_control_Avg [read_tdl_file] ()   : num  0.528 0.529 0.53 0.53 0.53 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ panel_tmpr_Avg [read_tdl_file] (degC)     : num  24.7 24.7 24.7 24.7 24.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ batt_volt_Avg [read_tdl_file] (V)         : num  11.8 11.8 11.8 11.8 11.8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ buff_depth_Max [read_tdl_file] ()         : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc12C_Std [read_tdl_file] (ppm)         : num  0.5244 0.0946 0.2025 1.1064 1.5535 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Conc13C_Std [read_tdl_file] (ppm)         : num  0.00797 0.00637 0.00849 0.02317 0.018 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAStatus_Std [read_tdl_file] ()          : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPressure_Std [read_tdl_file] (mb)      : num  0.0101 0.0105 0.0115 0.0102 0.0112 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserTemp_Std [read_tdl_file] (degC)      : num  0.000244 0.000289 0.000272 0.000287 0.00025 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentA_Std [read_tdl_file] (mA)       : num  0.000454 0.0006 0.000338 0.000492 0.000503 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ DCCurrentB_Std [read_tdl_file] (mA)       : num  0.000677 0.000844 0.00061 0.000753 0.000625 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAAnalog1_Std [read_tdl_file] (V)        : num  1.56e-05 1.39e-05 1.31e-05 1.30e-05 1.31e-05 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1_Std [read_tdl_file] (degC)       : num  0.000994 0.00121 0.003558 0.001737 0.001128 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2_Std [read_tdl_file] (degC)       : num  0.00215 0.00137 0.00141 0.00126 0.00227 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LaserCooler_Std [read_tdl_file] (V)       : num  0.000293 0.000347 0.000326 0.000345 0.000301 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigA_Std [read_tdl_file] (mV)       : num  0.00155 0.00185 0.00155 0.00199 0.00154 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetSigB_Std [read_tdl_file] (mV)       : num  0.00169 0.00148 0.00145 0.0015 0.00188 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransA_Std [read_tdl_file] (%)      : num  0.0298 0.0354 0.0268 0.0366 0.0293 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTransB_Std [read_tdl_file] (%)      : num  0.255 0.233 0.223 0.226 0.258 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetTemp_Std [read_tdl_file] (degC)     : num  0.00364 0.0032 0.00361 0.00365 0.00315 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetCooler_Std [read_tdl_file] ()       : num  0.354 0.316 0.356 0.357 0.299 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RefDetGainOffset_Std [read_tdl_file] ()   : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigA_Std [read_tdl_file] (mV)       : num  0.01137 0.00519 0.00502 0.01354 0.02786 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetSigB_Std [read_tdl_file] (mV)       : num  0.00497 0.00576 0.00366 0.00388 0.00501 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransA_Std [read_tdl_file] (%)      : num  0.0214 0.00781 0.00875 0.02549 0.05127 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTransB_Std [read_tdl_file] (%)      : num  0.0631 0.0441 0.0564 0.0485 0.0763 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetTemp_Std [read_tdl_file] (degC)     : num  0.00136 0.00128 0.00116 0.00148 0.00128 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetCooler_Std [read_tdl_file] ()       : num  0.1147 0.1077 0.1009 0.1203 0.0931 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SmpDetGainOffset_Std [read_tdl_file] ()   : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp1DutyCycle_Std [read_tdl_file] ()  : num  0.00923 0.00826 0.0119 0.00883 0.00886 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGATemp2DutyCycle_Std [read_tdl_file] ()  : num  0.00837 0.00978 0.00828 0.00849 0.00862 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleFlow_Std [read_tdl_file] (ml_min)   : num  0.1467 0.2004 0.1747 0.0871 0.1594 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ExcessFlow_Std [read_tdl_file] (ml_min)   : num  0.10026 0.11171 0.1207 0.00958 0.08248 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SamplePress_Std [read_tdl_file] (mb)      : num  0.0214 0.0234 0.0199 0.0935 0.0242 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassPress_Std [read_tdl_file] (mb)      : num  0.1431 0.0428 0.1358 0.4229 0.3114 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SampleP_control_Std [read_tdl_file] ()    : num  9.05e-05 8.99e-05 7.08e-05 0.00 2.21e-04 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ BypassP_control_Std [read_tdl_file] ()    : num  1.85e-04 5.47e-05 1.52e-04 4.63e-04 3.60e-04 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TGAPress_control_Std [read_tdl_file] ()   : num  0.000536 0.000541 0.000592 0.000525 0.000577 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ panel_tmpr_Std [read_tdl_file] (degC)     : num  0.00641 0.00222 0.00214 0.0023 0.00224 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ batt_volt_Std [read_tdl_file] (V)         : num  0.00241 0.00235 0.00224 0.00218 0.00232 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Match_Avg(1) [read_tdl_file] ()       : num  1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Match_Avg(2) [read_tdl_file] ()       : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Tmpr_Avg(1) [read_tdl_file] (degC)    : num  -79.2 -77.6 -81.6 -79.4 -79.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Tmpr_Avg(2) [read_tdl_file] (degC)    : num  NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Heat_Avg(1) [read_tdl_file] ()        : num  1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Li64Heat_Avg(2) [read_tdl_file] ()        : num  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_diag_system_Avg [read_tdl_file] ()   : num  NaN 960 960 960 960 960 960 960 960 960 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ExcessZeroFlow_Avg [read_tdl_file] (): num  NaN 0.42 0.379 0.441 0.411 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ExcessMixFlow_Avg [read_tdl_file] () : num  NaN 159 158 158 158 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_CO2Press_Avg [read_tdl_file] ()      : num  NaN 11.4 11.4 11.4 11.4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ZeroPress_Avg [read_tdl_file] ()     : num  NaN 16.5 16.5 16.5 16.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_CO2P_control_Avg [read_tdl_file] ()  : num  NaN 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_ZeroP_control_Avg [read_tdl_file] () : num  NaN 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixTmpr1_Avg [read_tdl_file] ()      : num  NaN 32 32 32 32 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixTmpr2_Avg [read_tdl_file] ()      : num  NaN 31.7 31.7 31.7 31.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixHeat1_Avg [read_tdl_file] ()      : num  NaN 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_MixHeat2_Avg [read_tdl_file] ()      : num  NaN 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_panel_tmpr_Avg [read_tdl_file] ()    : num  NaN 24.1 24.1 24.1 24.1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ _Mix_batt_volt_Avg [read_tdl_file] ()     : num  NaN 9.62 9.62 9.62 9.62 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cycle_num [calculated] (NA)               : num  1 1 1 1 1 1 1 1 1 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ elapsed_time [calculated] (minutes)       : num  0 0 0 0 0 0 0 0 0 3 ...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
