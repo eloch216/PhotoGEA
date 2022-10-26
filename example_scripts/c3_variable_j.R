@@ -56,7 +56,7 @@ library(dfoptim)
 # set PERFORM_CALCULATIONS to FALSE to save time. If this is the first time
 # running the script in a particular R session or for a particular data set, the
 # data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS to TRUE.
-PERFORM_CALCULATIONS <- TRUE
+PERFORM_CALCULATIONS <- FALSE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -74,7 +74,7 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
 POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
@@ -97,7 +97,7 @@ TIME_COLUMN_NAME <- "time"
 UNIQUE_ID_COLUMN_NAME <- "event_replicate"
 
 # Choose a Ci cutoff value for fitting
-CI_THRESHOLD_UPPER <- 700
+CI_THRESHOLD_UPPER <- Inf
 CI_THRESHOLD_LOWER <- 0
 
 ###                                                                   ###
@@ -127,6 +127,26 @@ if (PERFORM_CALCULATIONS) {
 
     # Combine the Licor files into one table
     combined_info <- do.call(rbind, extracted_multi_file_info)
+    
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+    
+    # Set the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+      "plot_replicate"
+    } else {
+      "replicate"
+    }
+    
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        "replicate",
+        "plot_replicate"
+      )
+    }
 
     combined_info <- process_id_columns(
         combined_info,
@@ -153,8 +173,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
-        #"10", # T1
-        #"14"  # T1
+        "15", # T1
+        "37"  # T1
     )
 
     combined_info <-
@@ -187,8 +207,10 @@ if (PERFORM_CALCULATIONS) {
     exdf_for_fitting <-
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD_UPPER &
             combined_info[, CI_COLUMN_NAME] >= CI_THRESHOLD_LOWER, , return_exdf = TRUE]
-
-    variable_j_results <- consolidate(by(
+    
+    FIT_TPU <- TRUE
+    variable_j_results <- if (FIT_TPU) {
+      consolidate(by(
         exdf_for_fitting,
         exdf_for_fitting[, UNIQUE_ID_COLUMN_NAME],
         fit_variable_j,
@@ -197,19 +219,43 @@ if (PERFORM_CALCULATIONS) {
         PHIPS2_COLUMN_NAME,
         QIN_COLUMN_NAME,
         TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(temperature_response_parameters_Sharkey),
+        photosynthesis_TRF(c3_arrhenius_sharkey),
         function(guess, fun, lower, upper) {
-            dfoptim::nmkb(guess, fun, lower, upper, control = list(
-                tol = 1e-7,
-                maxfeval = 2000,
-                restarts.max = 10
-            ))
+          dfoptim::nmkb(guess, fun, lower, upper, control = list(
+            tol = 1e-7,
+            maxfeval = 2000,
+            restarts.max = 10
+          ))
         },
-        dpmn_error_jrv_tau(O = 210, TPU = 1000),           # Fix O and TPU, leaving J_high, Rd, Vcmax, and tau as variables
+        dpmn_error_jrvtt(O = 210),                                   # Fix O, leaving J_high, Rd, Vcmax, tau, and TPU as variables
+        c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42, TPU = 20), # Initial guess
+        c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2,  TPU = 0),  # Lower limit
+        c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6,  TPU = 40)  # Upper limit
+      ))
+    } else {
+      consolidate(by(
+        exdf_for_fitting,
+        exdf_for_fitting[, UNIQUE_ID_COLUMN_NAME],
+        fit_variable_j,
+        A_COLUMN_NAME,
+        CI_COLUMN_NAME,
+        PHIPS2_COLUMN_NAME,
+        QIN_COLUMN_NAME,
+        TLEAF_COLUMN_NAME,
+        photosynthesis_TRF(c3_arrhenius_sharkey),
+        function(guess, fun, lower, upper) {
+          dfoptim::nmkb(guess, fun, lower, upper, control = list(
+            tol = 1e-7,
+            maxfeval = 2000,
+            restarts.max = 10
+          ))
+        },
+        dpmn_error_jrv_tau(O = 210, TPU = 1000),          # Fix O and TPU, leaving J_high, Rd, Vcmax, and tau as variables
         c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42), # Initial guess
         c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2),  # Lower limit
         c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6)   # Upper limit
-    ))
+      ))
+    }
 
     # Separate the parameters and the fitted curves (without units)
     variable_j_parameters <- variable_j_results$parameters$main_data
@@ -243,23 +289,35 @@ if (VIEW_DATA_FRAMES) {
 ###                                   ###
 
 # Ignore particular replicates
-REPS_TO_IGNORE <- c(
-    #"11 16", # T1
-    #"8 14"   # T1
+IDS_TO_IGNORE <- c(
+  "WT 2 2",
+  "WT 1 4",
+  "WT 4 10",
+  "23 3 8",
+  "23 3 5",
+  "23 2 5",
+  "31 3 5",
+  "31 2 1",
+  "31 4 3",
+  "35 1 5",
+  "35 4 9",
+  "35 3 2"
 )
+#IDS_TO_IGNORE <- c()
 
-fits_for_plotting <- variable_j_fits[!variable_j_fits[[UNIQUE_ID_COLUMN_NAME]] %in% REPS_TO_IGNORE,]
-fits_one_point_for_plotting <- variable_j_fits_one_point[!variable_j_fits_one_point[[UNIQUE_ID_COLUMN_NAME]] %in% REPS_TO_IGNORE,]
-parameters_for_plotting <- variable_j_parameters[!variable_j_parameters[[UNIQUE_ID_COLUMN_NAME]] %in% REPS_TO_IGNORE,]
+fits_for_plotting <- variable_j_fits[!variable_j_fits[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
+fits_one_point_for_plotting <- variable_j_fits_one_point[!variable_j_fits_one_point[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
+parameters_for_plotting <- variable_j_parameters[!variable_j_parameters[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
 
 # Remove points at low Ci for plotting gm curves
-fits_for_plotting_gm <- fits_for_plotting[fits_for_plotting[[CI_COLUMN_NAME]] > 80,]
+seq_num_to_remove <- c(7, 8, 16, 17)
+fits_for_plotting_gm <- fits_for_plotting[!fits_for_plotting$seq_num %in% seq_num_to_remove, ]
 
 # Define some common axis limits
-ci_range <- c(0, 850)
-cc_range <- c(0, 300)
-a_range <- c(-10, 60)
-gm_range <- c(0, 0.5)
+ci_range <- c(0, 1000)
+cc_range <- c(0, 600)
+a_range <- c(-10, 75)
+gm_range <- c(0, 0.3)
 ps2_range <- c(0, 0.4)
 
 # Define some legend labels
@@ -356,6 +414,21 @@ gm_ci_fitting_plot <- xyplot(
 x11(width = 12, height = 6)
 print(gm_ci_fitting_plot)
 
+# Plot the estimated gm-Ci curves using a different organization scheme
+gm_ci_fitting_plot2 <- xyplot(
+  variable_j_fits$gm  ~ variable_j_fits$Ci | variable_j_fits[[UNIQUE_ID_COLUMN_NAME]],
+  type = 'b',
+  pch = 20,
+  auto.key = list(space = 'right'),
+  grid = TRUE,
+  xlim = ci_range,
+  ylim = gm_range,
+  xlab = "Chloroplast CO2 concentration (ppm)",
+  ylab = "Mesophyll conductance (mol / m^2 / s)"
+)
+x11(width = 12, height = 6)
+print(gm_ci_fitting_plot2)
+
 # Plot the estimated gm-Cc curves
 gm_cc_fitting_plot <- xyplot(
     fits_for_plotting_gm$gm ~ fits_for_plotting_gm$Cc |
@@ -375,10 +448,10 @@ print(gm_cc_fitting_plot)
 
 # Plot the average estimated gm-Ci curves
 gm_ci_avg_plot <- xyplot_avg_rc(
-    fits_for_plotting$gm,
-    fits_for_plotting$Ci,
-    fits_for_plotting$seq_num,
-    fits_for_plotting[[EVENT_COLUMN_NAME]],
+    fits_for_plotting_gm$gm,
+    fits_for_plotting_gm$Ci,
+    fits_for_plotting_gm$seq_num,
+    fits_for_plotting_gm[[EVENT_COLUMN_NAME]],
     type = 'b',
     pch = 20,
     auto = TRUE,
@@ -432,10 +505,10 @@ x <- fits_one_point_for_plotting[[EVENT_COLUMN_NAME]]
 xl <- "Event"
 plot_param <- list(
   list(Y = fits_one_point_for_plotting$gm, X = x, xlab = xl, ylab = "Mesophyll conductance (mol / m^2 / s)", ylim = c(0, max(gm_range)), main = one_point_caption),
-  list(Y = parameters_for_plotting$Vcmax,  X = x, xlab = xl, ylab = "Vcmax (micromol / m^2 / s)",            ylim = c(0, 350),           main = fitting_caption),
-  list(Y = parameters_for_plotting$J_high, X = x, xlab = xl, ylab = "Jhigh (micromol / m^2 / s)",            ylim = c(0, 350),           main = fitting_caption),
+  list(Y = parameters_for_plotting$Vcmax,  X = x, xlab = xl, ylab = "Vcmax (micromol / m^2 / s)",            ylim = c(0, 450),           main = fitting_caption),
+  list(Y = parameters_for_plotting$J_high, X = x, xlab = xl, ylab = "Jhigh (micromol / m^2 / s)",            ylim = c(0, 450),           main = fitting_caption),
   list(Y = parameters_for_plotting$Rd,     X = x, xlab = xl, ylab = "Rd (micromol / m^2 / s)",               ylim = c(0, 5),             main = fitting_caption),
-  list(Y = parameters_for_plotting$tau,    X = x, xlab = xl, ylab = "tau (dimensionless)",                   ylim = c(0.2, 0.6),         main = tau_caption)
+  list(Y = parameters_for_plotting$tau,    X = x, xlab = xl, ylab = "tau (dimensionless)",                   ylim = c(0, 0.7),         main = tau_caption)
 )
 
 # Make all the plots
@@ -446,3 +519,28 @@ invisible(lapply(plot_param, function(x) {
   dev.new()
   print(do.call(barchart_with_errorbars, x))
 }))
+
+# Save the gm info
+SAVE_GM_VALUES <- TRUE
+if (SAVE_GM_VALUES) {
+  tmp <- by(
+    fits_for_plotting,
+    fits_for_plotting$event_replicate, function(x) {
+      gm_val_df <- as.data.frame(t(data.frame(gm = x$gm)))
+      colnames(gm_val_df) <- as.character(x$CO2_r_sp)
+      gm_val_df$event <- x$event[1]
+      gm_val_df$plot <- x$plot[1]
+      gm_val_df$replicate <- x$replicate[1]
+      gm_val_df$event_replicate <- x$event_replicate[1]
+      gm_val_df
+    }
+  )
+  
+  tmp <- tmp[!sapply(tmp, is.null)]
+  
+  tmp <- do.call(rbind, tmp)
+  
+  rownames(tmp) <- NULL
+  
+  write.csv(tmp, file = file.choose(), row.names = FALSE)
+}

@@ -40,16 +40,15 @@ PERFORM_CALCULATIONS <- TRUE
 PERFORM_STATS_TESTS <- TRUE
 
 SAVE_RESULTS <- FALSE
-
 MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- -2.2
+RESPIRATION <- NA
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 MIN_GM <- 0
-MAX_GM <- Inf
+MAX_GM <- 5
 MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
@@ -261,9 +260,10 @@ if (PERFORM_CALCULATIONS) {
         abs(RESPIRATION),    # this is the default value of respiration
         id_column = 'event', # the default value can be overridden for certain events
         value_table = list(
-          '22' = 2.24,
-          '30' = 1.95,
-          '34' = 2.38
+          'WT' = 2.37,
+          '23' = 2.24,
+          '31' = 2.38,
+          '35' = 1.95
         )
     )})
 
@@ -361,7 +361,8 @@ if (PERFORM_CALCULATIONS) {
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
             licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC,]
     cat(paste("Number of Licor measurements after removing unacceptable gm and Cc:", nrow(licor_files_no_outliers), "\n"))
-
+    
+    # First, we remove outliers from each replicate
     if (REMOVE_STATISTICAL_OUTLIERS) {
       
       old_nrow <- nrow(licor_files_no_outliers)
@@ -393,6 +394,7 @@ if (PERFORM_CALCULATIONS) {
     
     rep_stats_no_outliers <- rep_stats
     
+    # Now, we remove outliers from each event
     if (REMOVE_STATISTICAL_OUTLIERS) {
       
       old_nrow <- nrow(rep_stats_no_outliers)
@@ -485,6 +487,8 @@ if (SAVE_RESULTS) {
 
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(rep_stats$main_data, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
 }
 
 ###                            ###
@@ -709,14 +713,9 @@ if (MAKE_GM_PLOTS) {
     # Convert some columns to factors so we can control the order of boxes and
     # bars when plotting
     licor_files_no_outliers_data <- licor_files_no_outliers[['main_data']]
-
-    rep_stats_no_outliers[['event_replicate']] <- factor(
-      rep_stats_no_outliers[['event_replicate']],
-        levels = sort(
-            unique(rep_stats_no_outliers[['event_replicate']]),
-            decreasing = TRUE
-        )
-    )
+    
+    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event')
+    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event_replicate')
 
     # Define plotting parameters
     x_e <- rep_stats_no_outliers[['event']]
@@ -731,9 +730,9 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 3)
+    gmc_lim <- c(0, 2)
     cc_lim <- c(0, 275)
-    drawdown_lim <- c(0, 150)
+    drawdown_lim <- c(0, 75)
     a_lim <- c(0, 50)
     iwue_lim <- c(0, 120)
     g_ratio_lim <- c(0, 1)

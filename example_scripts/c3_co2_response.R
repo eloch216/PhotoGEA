@@ -104,8 +104,8 @@ if (PERFORM_CALCULATIONS) {
 # 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 9 and 10.
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,9)
-POINT_FOR_BOX_PLOTS <- 10
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
+POINT_FOR_BOX_PLOTS <- 1
 
 # Decide which temperature response parameters to use
 PTR_FUN <- photosynthesis_TRF(c3_arrhenius_bernacchi)
@@ -195,6 +195,9 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         UNIQUE_ID_COLUMN_NAME
     )
+    
+    # Remove certain events
+    combined_info <- remove_points(combined_info, list(event = c('15', '37')))
 
     # Include gm values (required for calculating Cc)
     combined_info <- if (USE_GM_TABLE) {
@@ -402,8 +405,8 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(-50, 1500)
-a_lim <- c(-10, 65)
+ci_lim <- c(-50, 600)
+a_lim <- c(-10, 50)
 etr_lim <- c(0, 325)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
@@ -542,9 +545,9 @@ x_v <- vcmax_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 
 plot_param <- list(
-  list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 40),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption),
-  list(Y = vcmax_parameters[['Vcmax_at_25']],                    X = x_v,   xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 175), main = fitting_caption),
+  list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 35),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 80), main = boxplot_caption),
+  list(Y = vcmax_parameters[['Vcmax_at_25']],                    X = x_v,   xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 150), main = fitting_caption),
   list(Y = vcmax_parameters[['Rd_at_25']],                       X = x_v,   xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 1.2), main = fitting_caption)
 )
 
