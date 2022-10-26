@@ -41,7 +41,7 @@ maintainer about adding your function to the package.
 As always, the first step is to load the packages we will be using. In addition
 to `PhotoGEA`, we will also use the `lattice` package.
 
-```{r setup, eval = FALSE}
+```{r setup}
 # Load required packages
 library(PhotoGEA)
 library(lattice)
