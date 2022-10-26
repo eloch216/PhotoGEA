@@ -644,6 +644,8 @@ vignette.
 
 <<plot_co2>>
 
+<<plot_stability>>
+
 <<plot_assimilation>>
 
 <<remove_unstable_points>>

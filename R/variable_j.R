@@ -216,7 +216,7 @@ fit_variable_j <- function(
     check_required_variables(replicate_exdf, required_variables)
 
     # Get the identifiers
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Let the user know which rep is being fit
     cat(paste(
@@ -404,7 +404,7 @@ dpmn_error_jrvtt <- function(
             X[2], # Rd
             X[3], # Vcmax
             X[4], # tau
-            x[5]  # TPU
+            X[5]  # TPU
         )
     }
 }

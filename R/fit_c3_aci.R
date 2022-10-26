@@ -11,18 +11,24 @@ fit_c3_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
     POc = 210000,
-    OPTIM_FUN = function(guess, fun, lower, upper) {
-        dfoptim::nmkb(guess, fun, lower, upper, control = list(
-            tol = 1e-7,
-            maxfeval = 2000,
-            restarts.max = 10
-        ))
-    },
-    initial_guess = c(10, 100,  0.5, 90),   # TPU, J, Rd, Vcmax
-    lower =         c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
-    upper =         c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
+    OPTIM_FUN = default_optimizer(),
+    initial_guess_fun = initial_guess_c3_aci(
+        Oc = POc,
+        a_column_name = a_column_name,
+        cc_column_name = cc_column_name,
+        kc_column_name = kc_column_name,
+        ko_column_name = ko_column_name,
+        gamma_star_column_name = gamma_star_column_name,
+        vcmax_norm_column_name = vcmax_norm_column_name,
+        rd_norm_column_name = rd_norm_column_name,
+        j_norm_column_name = j_norm_column_name
+    ),
+    lower = c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
+    upper = c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
+    fixed = c(40, NA,   NA,  NA),   # TPU, J, Rd, Vcmax
     min_aj_cutoff = NA,
-    max_aj_cutoff = NA
+    max_aj_cutoff = NA,
+    curvature = 0.99
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -44,10 +50,22 @@ fit_c3_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
+    # Make sure the curvature value is acceptable
+    if (curvature < 0 || curvature > 1) {
+        stop('curvature must be between 0 and 1')
+    }
+
+    # Make sure at least one parameter will be fit
+    if (!any(is.na(fixed))) {
+        stop('no element of `fixed` is NA, so there are no parameters to fit')
+    }
+
     # Define the total error function. If `min_aj_cutoff` is not NA, apply a
     # penalty when Aj < Ac and Cc < min_aj_cutoff. If `max_aj_cutoff` is not NA,
     # apply a penalty when Aj > Ac and Cc > max_aj_cutoff.
-    total_error_fcn <- function(X) {
+    total_error_fcn <- function(guess) {
+        X <- fixed
+        X[is.na(fixed)] <- guess
         assim <- calculate_c3_assimilation(
             replicate_exdf,
             X[1], # TPU
@@ -55,6 +73,7 @@ fit_c3_aci <- function(
             X[3], # Rd
             X[4], # Vcmax
             POc,
+            curvature,
             cc_column_name,
             pa_column_name,
             deltapcham_column_name,
@@ -91,15 +110,24 @@ fit_c3_aci <- function(
         sum((replicate_exdf[, 'A'] - assim$An)^2)
     }
 
-    # Find the best value for X
+    # Get an initial guess for all the parameter values
+    initial_guess <- initial_guess_fun(replicate_exdf)
+
+    # Make sure the initial guess is acceptable
+    initial_guess <- pmax(initial_guess, lower)
+    initial_guess <- pmin(initial_guess, upper)
+
+    # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
-        initial_guess,
+        initial_guess[is.na(fixed)],
         total_error_fcn,
-        lower = lower,
-        upper = upper
+        lower = lower[is.na(fixed)],
+        upper = upper[is.na(fixed)]
     )
 
-    best_X <- optim_result[['par']]
+    # Get the values of all parameters following the optimization
+    best_X <- fixed
+    best_X[is.na(fixed)] <- optim_result[['par']]
 
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(
@@ -109,6 +137,7 @@ fit_c3_aci <- function(
         best_X[3], # Rd
         best_X[4], # Vcmax
         POc,
+        curvature,
         cc_column_name,
         pa_column_name,
         deltapcham_column_name,
@@ -129,8 +158,27 @@ fit_c3_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Add a column for the residuals
+    replicate_exdf <- set_variable(
+        replicate_exdf,
+        paste0(a_column_name, '_residuals'),
+        replicate_exdf$units[[a_column_name]],
+        'fit_c3_aci',
+        replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
+
     # Get the replicate identifier columns
-    replicate_identifiers <- find_identifier_columns(replicate_exdf)
+    replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach the residual stats to the identifiers
+    replicate_identifiers <- cbind(
+        replicate_identifiers,
+        residual_stats(
+            replicate_exdf[, paste0(a_column_name, '_residuals')],
+            replicate_exdf$units[[a_column_name]],
+            length(which(is.na(fixed)))
+        )
+    )
 
     # Attach the best-fit parameters to the identifiers
     replicate_identifiers[, 'TPU'] <- best_X[1]

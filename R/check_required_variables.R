@@ -1,12 +1,12 @@
 # Checks whether the required variables are in the object. This function is not
 # exported to the package namespace since it is intended for internal use only.
-check_required_variables <- function(x, required_variables, ...) {
+check_required_variables <- function(x, required_variables) {
     UseMethod("check_required_variables", x)
 }
 
 # For a data frame, `required_variables` should just be a character vector of
 # column names that should be included in `colnames(x)`.
-check_required_variables.data.frame <- function(x, required_variables, ...) {
+check_required_variables.data.frame <- function(x, required_variables) {
     missing_columns <-
         required_variables[!required_variables %in% colnames(x)]
 
@@ -35,10 +35,10 @@ check_required_variables.data.frame <- function(x, required_variables, ...) {
 # where the name of each element is the name of a column that should be included
 # in `x$main_data` and the value of each element is the corresponding unit for
 # that column. If the required unit is NA, no check will be performed.
-check_required_variables.exdf <- function(x, required_variables, ...) {
+check_required_variables.exdf <- function(x, required_variables) {
     # Use the method for data frames to check that the required variables are
     # present in `x$main_data`
-    check_required_variables(x$main_data, names(required_variables), ...)
+    check_required_variables(x$main_data, names(required_variables))
 
     # Now make sure the units are correct
     error_msg <- character(0)

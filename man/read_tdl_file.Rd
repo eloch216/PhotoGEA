@@ -17,7 +17,7 @@
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname
+    timestamp_colname = NA
   )
 }
 
@@ -54,7 +54,8 @@
 
 \details{
   When reading a TDL data file, it is useful to identify the timestamp column
-  so its values can be properly interpreted as \code{\link{POSIXlt}} objects.
+  so its values can be properly interpreted as \code{\link{POSIXlt}} objects. If
+  \code{timestamp_colname} is \code{NA}, this conversion will be skipped.
 }
 
 \value{

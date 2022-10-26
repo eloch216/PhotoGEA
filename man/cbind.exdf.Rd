@@ -9,8 +9,7 @@
   Combines one or more \code{exdf} objects by the columns or rows of their
   \code{main_data}. For \code{rbind}, errors will occur if column names are not
   the same in all of the \code{exdf} objects, and if all units and categories
-  are not identical. For \code{cbind}, errors will occur if the number of rows
-  is not the same in all of the \code{exdf} objects.
+  are not identical.
 }
 
 \usage{

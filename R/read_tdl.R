@@ -4,7 +4,7 @@ read_tdl_file <- function(
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname
+    timestamp_colname = NA
 )
 {
     raw_tdl <- utils::read.csv(
@@ -32,12 +32,14 @@ read_tdl_file <- function(
     row.names(tdl_variable_units) <- NULL
 
     # Make sure the timestamp column is properly interpreted
-    tdl_data[[timestamp_colname]] <-
-        as.POSIXlt(tdl_data[[timestamp_colname]], origin = "1970-01-01")
+    if (!is.na(timestamp_colname)) {
+        tdl_data[[timestamp_colname]] <-
+            as.POSIXlt(tdl_data[[timestamp_colname]], origin = "1970-01-01")
+    }
 
     # Make a "categories" data frame
     tdl_variable_categories <- tdl_variable_units
-    tdl_variable_categories[1,] <- "Raw TDL"
+    tdl_variable_categories[1,] <- "read_tdl_file"
 
     return(
         exdf(

@@ -16,6 +16,58 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.6.0 (2022-10-06)
+
+- Moved the `dfoptim` package from `Suggests` to `Imports` because it is used by
+  an essential part of `PhotoGEA`.
+- The `check_required_variables` function was moved to the package namespace.
+- Added and/or documented several functions:
+  - A default optimizer function (`default_optimizer`).
+  - A function for guessing for C3 parameter values (`initial_guess_c3_aci`).
+  - A function for identifying columns that take a single unique value
+    (`identifier_columns`).
+  - A function that calculates error metrics from the values of residuals,
+    including the root mean squared error (RMSE) and several others
+    (`residual_stats`).
+- Small changes were made to several functions:
+  - `cbind.exdf` no longer requires all objects to have the same number of rows.
+  - `[<-.exdf` now allows users to remove columns by setting their values to
+    `NULL`.
+  - The conversion of the timestamp column to `POSIXlt` in `read_tdl_file` and
+    `read_licor_file` can now be skipped by setting `timestamp_colname` to `NA`.
+- Significant changes have been made to `fit_c3_aci`:
+  - It now has an option to set a `curvature` value that can be used to allow
+    co-limitation of the net assimilation rate.
+  - It now uses `initial_guess_c3_aci` to generate initial guesses by default.
+  - It now has an option to fix certain parameter values (such as `TPU`) and
+    exclude them from the fitting process via a new input argument called
+    `fixed`.
+  - Its output now includes residuals and error metrics such as the RMSE.
+- `fit_ball_berry` also returns residuals and error metrics in its output.
+- Two new vignettes were added:
+  - "Creating Your Own Processing Tools" discusses the best practices for
+    writing custom functions for processing. As an example, a function for
+    fitting a rectangular hyperbola to an A-Ci curve is developed.
+  - "Combining PhotoGEA With Other Packages" discusses best practices for
+    writing wrappers for processing tools from other packages. As an example, a
+    wrapper for `plantecophys::fitaci` is developed.
+- Several other vignettes were modified:
+  - The "Analyzing C3 A-Ci Curves" vignette has been updated to include the new
+    features of `fit_c3_aci`.
+  - The "Developing a Data Analysis Pipeline" vignette has been updated to
+    include the new functions added in this version.
+  - The "Working With Extended Data Frames" vignette has been updated to include
+    some new diagrams.
+  - The "Getting Started With PhotoGEA" vignette has been updated to include
+    links to the new vignettes.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/50
+  - https://github.com/eloch216/PhotoGEA/pull/52
+  - https://github.com/eloch216/PhotoGEA/pull/53
+  - https://github.com/eloch216/PhotoGEA/pull/54
+  - https://github.com/eloch216/PhotoGEA/pull/55
+  - https://github.com/eloch216/PhotoGEA/pull/56
+
 # PhotoGEA VERSION 0.5.0 (2022-09-16)
 
 - Added a new vignette demonstrating how to analyze C3 A-Ci curve data.

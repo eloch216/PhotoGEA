@@ -5,12 +5,11 @@
 \title{calculate_c3_assimilation}
 
 \description{
-  Calculates C3 assimilation rates using equations from S. von Caemmerer,
-  "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing, 2000)
-  [\doi{10.1071/9780643103405}]. This function can accomodate alternative column
-  names for the variables taken from Licor files in case they change at some
-  point in the future. This function also checks the units of each required
-  column and will produce an error if any units are incorrect.
+  Calculates C3 assimilation rates based on the Farquhar-von-Caemmerer-Berry
+  model. This function can accomodate alternative colum names for the variables
+  taken from Licor files in case they change at some point in the future. This
+  function also checks the units of each required column and will produce an
+  error if any units are incorrect.
 }
 
 \usage{
@@ -21,6 +20,7 @@
     Rd,
     Vcmax,
     POc = 210000,
+    curvature = 1,
     cc_column_name = 'Cc',
     pa_column_name = 'Pa',
     deltapcham_column_name = 'DeltaPcham',
@@ -65,6 +65,12 @@
     would be 21 percent O2, which is about 210000 microbar at standard
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
+  }
+
+  \item{curvature}{
+    A dimensionless quadratic curvature parameter greater than 0 and less than
+    or equal to 1 that sets the degree of co-limitation between \code{Ac},
+    \code{Aj}, and \code{Ap}. A value of 1 indicates no co-limitation.
   }
 
   \item{cc_column_name}{
@@ -133,13 +139,10 @@
 }
 
 \details{
-  This function follows Chapter 2 from S. von Caemmerer's textbook, referenced
-  above. In this model, the net CO2 assimilation rate \code{An} is given by the
-  smaller of the rubisco-limited rate \code{Ac}, the electron-transport-limited
-  rate \code{Aj}, and the phosphate-limited rate \code{Ap}, as expressed by
-  Equation 2.27:
-
-  \code{An = min(Ac, Aj, Ap)}
+  This function generally follows Chapter 2 from S. von Caemmerer (2000), which
+  provides equations for calculating the rubisco-limited assimilation rate
+  \code{Ac}, the electron-transport-limited assimilation rate \code{Aj}, and the
+  phosphate-limited assimilation rate \code{Ap}.
 
   The rubisco-regeneration-limited rate is calculated using Equation 2.20:
 
@@ -169,6 +172,47 @@
 
   where \code{alpha} is the fraction of glycolate carbon _not_ returned to the
   chloroplast; here, as in many places, \code{alpha} is fixed to be 0.
+
+  In the textbook, the net CO2 assimilation rate \code{An} is given by the
+  smaller of the rubisco-limited rate \code{Ac}, the electron-transport-limited
+  rate \code{Aj}, and the phosphate-limited rate \code{Ap}, as expressed by
+  Equation 2.27:
+
+  \code{An = min(Ac, Aj, Ap)}
+
+  This equation determines the assimilation rate for a single chloroplast;
+  however, we often wish to calculate assimilation values at the leaf level. In
+  this case, some degree of co-limitation between \code{Ac}, \code{Aj}, and
+  \code{Ap} should be allowed because chloroplast CO2 concentrations are
+  typically not uniform across the leaf. Here we accomplish this co-limitation
+  via a quadratic curvature parameter, as discussed in Collatz et al. (1990)
+  and Collatz et al. (1991). In particular, we solve the following equation for
+  \code{Acj}, the assimilation rate co-limited by rubisco and RuBP saturation:
+
+  \code{curvature^2 * Acj - Acj * (Ac + Aj) + Ac * Aj}
+
+  Then we solve a second equation for \code{An}, the assimilation rate
+  co-limited by rubisco, RuBP regeneration, and phosphate utilization:
+
+  \code{curvature^2 * An - An * (Acj + Ap) + Acj * Ap}
+
+  Note that when \code{curvature} is 1, \code{An} will be equal to \code{min(Ac,
+  Aj, Ap)} as in the version that applies for a single chloroplast.
+
+  References:
+  \itemize{
+    \item von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
+          Publishing, 2000) [\doi{10.1071/9780643103405}].
+    \item Collatz, G. J., Ball, J. T., Grivet, C. & Berry, J. A. "Physiological
+          and environmental regulation of stomatal conductance, photosynthesis
+          and transpiration: a model that includes a laminar boundary layer."
+          Agricultural and Forest Meteorology 54, 107–136 (1991)
+          [doi:10.1016/0168-1923(91)90002-8].
+    \item Collatz, G. J., Berry, J. A., Farquhar, G. D. & Pierce, J. "The
+          relationship between the Rubisco reaction mechanism and models of
+          photosynthesis." Plant, Cell & Environment 13, 219–225 (1990)
+          [doi:10.1111/j.1365-3040.1990.tb01306.x].
+  }
 }
 
 \value{

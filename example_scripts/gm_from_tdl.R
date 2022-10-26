@@ -40,12 +40,11 @@ PERFORM_CALCULATIONS <- TRUE
 PERFORM_STATS_TESTS <- TRUE
 
 SAVE_RESULTS <- FALSE
-
 MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- -2.2
+RESPIRATION <- NA
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 MIN_GM <- 0
@@ -54,7 +53,7 @@ MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
 # we assume this is data from the ERML TDL
-IGB_TDL <- FALSE
+IGB_TDL <- TRUE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -258,7 +257,14 @@ if (PERFORM_CALCULATIONS) {
         'respiration',
         'micromol m^(-2) s^(-1)',
         'gm_from_tdl',
-        abs(RESPIRATION)
+        abs(RESPIRATION),    # this is the default value of respiration
+        id_column = 'event', # the default value can be overridden for certain events
+        value_table = list(
+          'WT' = 2.37,
+          '23' = 2.24,
+          '31' = 2.38,
+          '35' = 1.95
+        )
     )})
 
     licor_files <- lapply(licor_files, function(x) {
@@ -355,15 +361,16 @@ if (PERFORM_CALCULATIONS) {
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
             licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC,]
     cat(paste("Number of Licor measurements after removing unacceptable gm and Cc:", nrow(licor_files_no_outliers), "\n"))
-
+    
+    # First, we remove outliers from each replicate
     if (REMOVE_STATISTICAL_OUTLIERS) {
       
       old_nrow <- nrow(licor_files_no_outliers)
       
       licor_files_no_outliers <- exclude_outliers(
-        licor_files_no_outliers,
-        'A',
-        licor_files_no_outliers[,'event_replicate']
+      licor_files_no_outliers,
+      'A',
+       licor_files_no_outliers[,'event_replicate']
       )
       
         pt_diff <- Inf
@@ -375,69 +382,93 @@ if (PERFORM_CALCULATIONS) {
             )
             pt_diff <- old_nrow - nrow(licor_files_no_outliers)
             old_nrow <- nrow(licor_files_no_outliers)
-            #pt_diff <- 0
         }
-        cat(paste("Number of Licor measurements after removing statistical outliers:", nrow(licor_files_no_outliers), "\n"))
+        cat(paste("Number of Licor measurements after removing statistical outliers from each rep:", nrow(licor_files_no_outliers), "\n"))
     }
-
-    # Get stats for each event by averaging over all corresponding reps
-    event_stats <- basic_stats(
-        licor_files_no_outliers,
-        'event'
-    )$main_data
 
     # Get stats for each rep by averaging over all corresponding observations
     rep_stats <- basic_stats(
         licor_files_no_outliers,
         'event_replicate'
+    )
+    
+    rep_stats_no_outliers <- rep_stats
+    
+    # Now, we remove outliers from each event
+    if (REMOVE_STATISTICAL_OUTLIERS) {
+      
+      old_nrow <- nrow(rep_stats_no_outliers)
+      
+      cat(paste("Number of reps before removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
+      
+      pt_diff <- Inf
+      while (pt_diff > 0) {
+        rep_stats_no_outliers <- exclude_outliers(
+          rep_stats_no_outliers,
+          'gmc_avg',
+          rep_stats_no_outliers[,'event']
+        )
+        pt_diff <- old_nrow - nrow(rep_stats_no_outliers)
+        old_nrow <- nrow(rep_stats_no_outliers)
+      }
+      cat(paste("Number of reps after removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
+    }
+    
+    # Get stats for each event by averaging over all corresponding reps
+    event_stats <- basic_stats(
+      rep_stats_no_outliers,
+      'event'
     )$main_data
+    
+    # Extract data frame from rep stats
+    rep_stats_no_outliers <- rep_stats_no_outliers$main_data
 
     if (PERFORM_STATS_TESTS) {
         # Convert the "event" column to a group or onewaytests will yell at us
-        rep_stats[['event']] <- as.factor(rep_stats[['event']])
+        rep_stats_no_outliers[['event']] <- as.factor(rep_stats_no_outliers[['event']])
 
         # Perform Brown-Forsythe test to check for equal variance
         # This test automatically prints its results to the R terminal
-        bf_test_result <- bf.test(gmc_avg ~ event, data = rep_stats)
+        bf_test_result <- bf.test(gmc_avg ~ event, data = rep_stats_no_outliers)
 
         # If p > 0.05 variances among populations is equal and proceed with anova
         # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
 
         # Check normality of data with Shapiro-Wilks test
-        shapiro_test_result <- shapiro.test(rep_stats[['gmc_avg']])
+        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['gmc_avg']])
         print(shapiro_test_result)
 
         # If p > 0.05 data has normal distribution and proceed with anova
 
         # Perform one way analysis of variance
-        anova_result <- aov(gmc_avg ~ event, data = rep_stats)
+        anova_result <- aov(gmc_avg ~ event, data = rep_stats_no_outliers)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
 
         # If p < 0.05 perform Dunnett's posthoc test
 
         # Perform Dunnett's Test
-        dunnett_test_result <- DunnettTest(x = rep_stats[['gmc_avg']], g = rep_stats[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['gmc_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
         print(dunnett_test_result)
 
         # Do more stats on drawdown
-        bf_test_result <- bf.test(drawdown_m_avg ~ event, data = rep_stats)
-        shapiro_test_result <- shapiro.test(rep_stats[['drawdown_m_avg']])
+        bf_test_result <- bf.test(drawdown_m_avg ~ event, data = rep_stats_no_outliers)
+        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['drawdown_m_avg']])
         print(shapiro_test_result)
-        anova_result <- aov(drawdown_m_avg ~ event, data = rep_stats)
+        anova_result <- aov(drawdown_m_avg ~ event, data = rep_stats_no_outliers)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats[['drawdown_m_avg']], g = rep_stats[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['drawdown_m_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
         print(dunnett_test_result)
 
         # Do more stats on assimilation
-        bf_test_result <- bf.test(A_avg ~ event, data = rep_stats)
-        shapiro_test_result <- shapiro.test(rep_stats[['A_avg']])
+        bf_test_result <- bf.test(A_avg ~ event, data = rep_stats_no_outliers)
+        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['A_avg']])
         print(shapiro_test_result)
-        anova_result <- aov(A_avg ~ event, data = rep_stats)
+        anova_result <- aov(A_avg ~ event, data = rep_stats_no_outliers)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats[['A_avg']], g = rep_stats[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['A_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
         print(dunnett_test_result)
     }
 }
@@ -456,8 +487,8 @@ if (SAVE_RESULTS) {
 
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
+    write.csv(rep_stats$main_data, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
     write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
-    write.csv(rep_stats, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
 }
 
 ###                            ###
@@ -682,27 +713,14 @@ if (MAKE_GM_PLOTS) {
     # Convert some columns to factors so we can control the order of boxes and
     # bars when plotting
     licor_files_no_outliers_data <- licor_files_no_outliers[['main_data']]
-
-    rep_stats[['event']] <- factor(
-        rep_stats[['event']],
-        levels = sort(
-            unique(rep_stats[['event']]),
-            decreasing = TRUE
-        )
-    )
-
-    rep_stats[['event_replicate']] <- factor(
-        rep_stats[['event_replicate']],
-        levels = sort(
-            unique(rep_stats[['event_replicate']]),
-            decreasing = TRUE
-        )
-    )
+    
+    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event')
+    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event_replicate')
 
     # Define plotting parameters
-    x_e <- rep_stats[['event']]
-    x_g <- rep_stats[['genotype']]
-    x_er <- rep_stats[['event_replicate']]
+    x_e <- rep_stats_no_outliers[['event']]
+    x_g <- rep_stats_no_outliers[['genotype']]
+    x_er <- rep_stats_no_outliers[['event_replicate']]
 
     gmc_lab <- "Mesophyll conductance to CO2 (mol / m^2 / s / bar)"
     cc_lab <- "CO2 concentration in chloroplast (micromol / mol)"
@@ -712,32 +730,32 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 3)
+    gmc_lim <- c(0, 2)
     cc_lim <- c(0, 275)
-    drawdown_lim <- c(0, 150)
+    drawdown_lim <- c(0, 75)
     a_lim <- c(0, 50)
     iwue_lim <- c(0, 120)
     g_ratio_lim <- c(0, 1)
     dtdl_lim <- c(0, 25)
 
     box_plot_param <- list(
-      list(Y = rep_stats[['gmc_avg']],        X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = rep_stats[['Cc_avg']],         X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats[['drawdown_m_avg']], X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = rep_stats[['A_avg']],          X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = rep_stats[['iWUE_avg']],       X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = rep_stats[['g_ratio_avg']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
-      list(Y = rep_stats[['delta_tdl_avg']],  X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
+      list(Y = rep_stats_no_outliers[['gmc_avg']],        X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = rep_stats_no_outliers[['Cc_avg']],         X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_m_avg']], X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['A_avg']],          X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = rep_stats_no_outliers[['iWUE_avg']],       X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = rep_stats_no_outliers[['g_ratio_avg']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = rep_stats_no_outliers[['delta_tdl_avg']],  X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     box_bar_plot_param <- list(
-      list(Y = rep_stats[['gmc_avg']],        X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = rep_stats[['Cc_avg']],         X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats[['drawdown_m_avg']], X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = rep_stats[['A_avg']],          X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = rep_stats[['iWUE_avg']],       X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = rep_stats[['g_ratio_avg']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
-      list(Y = rep_stats[['delta_tdl_avg']],  X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
+      list(Y = rep_stats_no_outliers[['gmc_avg']],        X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = rep_stats_no_outliers[['Cc_avg']],         X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_m_avg']], X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['A_avg']],          X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = rep_stats_no_outliers[['iWUE_avg']],       X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = rep_stats_no_outliers[['g_ratio_avg']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = rep_stats_no_outliers[['delta_tdl_avg']],  X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     # Make all the box and bar charts

@@ -141,26 +141,40 @@ Having fit the response curves, it is also possible to view the fits and the
 extracted parameters. For example, we can plot the measured values of net
 assimilation (`A`), the fitted values of net assimilation (`A_fit`), and each of
 the limiting assimilation rates calculated during the fitting procedure: the
-rubisco-limited rate (`Ac`), the electron-transport-limited rate (`Aj`), and the
-phosphate-limited rate (`Ap`).
+rubisco-limited rate (`Ac`) and the electron-transport-limited rate (`Aj`).
 
 ```{r}
 lattice::xyplot(
-  A + Ac + Aj + Ap + A_fit ~ Ci | curve_id,
+  A + Ac + Aj + A_fit ~ Ci | curve_id,
   data = aci_results$fits$main_data,
-  type = 'b',
+  type = 'l',
   auto.key = list(space = 'right'),
   grid = TRUE,
   xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
   ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')'),
   par.settings = list(
     superpose.line = list(col = multi_curve_colors()),
-    superpose.symbol = list(col = multi_curve_colors(), pch = 16)
+    superpose.symbol = list(col = multi_curve_colors())
   )
 )
 ```
 
-Another possibility is to plot one or more of the fitting parameters averaged
+Another way to check the quality of the fits is to plot the residuals, which
+should be randomly distributed:
+
+```{r}
+lattice::xyplot(
+  A_residuals ~ Ci | curve_id,
+  data = aci_results$fits$main_data,
+  type = 'b',
+  pch = 16,
+  grid = TRUE,
+  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Assimilation rate residual (measured - fitted)\n(', aci_results$fits$units$A, ')'),
+)
+```
+
+It is also possible to plot one or more of the fitting parameters averaged
 across species in a bar chart with error bars; here we plot values of `Vcmax` at
 25 degrees C.
 
@@ -191,3 +205,10 @@ being added all the time:
     more detailed than the analysis demonstrated here.)
   - [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html)
   - [Analyzing TDL Data](analyzing_tdl_data.html)
+- More advanced topics:
+  - [Creating Your Own Processing Tools](creating_your_own_processing_tools.html):
+    Discusses how to create functions compatible with `PhotoGEA` that apply new
+    types of processing.
+  - [Combining PhotoGEA With Other Packages](combining_with_other_packages.html):
+    Discusses how to create wrappers for functions from other packages to extend
+    the processing capabilities of `PhotoGEA`.

@@ -20,6 +20,7 @@ calculate_c3_assimilation <- function(
     Rd,           # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vcmax,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     POc = 210000, # microbar             (typically this value is known from the experimental setup)
+    curvature = 1,
     cc_column_name = 'Cc',
     pa_column_name = 'Pa',
     deltapcham_column_name = 'DeltaPcham',
@@ -51,6 +52,11 @@ calculate_c3_assimilation <- function(
         required_variables[[j_norm_column_name]] <- 'normalized to J at 25 degrees C'
 
         check_required_variables(exdf_obj, required_variables)
+
+        # Make sure the curvature value is acceptable
+        if (curvature <= 0 || curvature > 1) {
+            stop('curvature must be > 0 and <= 1')
+        }
     }
 
     # Extract a few columns from the exdf object to make the equations easier to
@@ -79,22 +85,47 @@ calculate_c3_assimilation <- function(
     # assimilation rate (micromol / m^2 / s)
     Aj <- CG * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl
 
+    # This is not explicitly discussed in the text, but Equation 2.23 is only
+    # valid when Cc is sufficiently high that rubisco is no longer the main
+    # limiting factor. See, for example, Figure 2.6, where Ac is the limiting
+    # rate at very low Cc even though Aj < Ac. To address this, we create a
+    # "modified" version of Aj whose value is set to Ac whenever Aj is negative.
+    # The modified Aj is used when determining the overall assimilation rate.
+    Aj_mod <- Aj
+    Aj_mod[Aj_mod < 0] <- Ac[Aj_mod < 0]
+
     # Assume that all glycolate carbon is returned to the choloroplast
     alpha <- 0 # dimensionless
 
     # Equation 2.26: phosphate-limited assimilation rate (micromol / m^2 / s)
     Ap <- CG * (3 * TPU) / (PCc - (1 + 3 * alpha / 2) * Gamma_star) - Rd_tl
 
-    # Equation 2.27: net assimilation rate (micromol / m^2 / s). This is not
-    # discussed in the text, but Equation 2.27 is not quite right. See, for
-    # example, Figure 2.6, where Ac is the limiting rate at very low Cc even
-    # though Aj < Ac. This is probably due to Equation 2.23 (for Aj) only being
-    # valid at higher values of Cc. To address this, we apply Equation 2.27
-    # using Aj_mod instead of Aj, which is determined by setting Aj_mod to
-    # infinity when Aj < 0 and Aj otherwise.
-    Aj_mod <- Aj
-    Aj_mod[Aj_mod < 0] <- Inf
-    An <- pmin(Ac, Aj_mod, Ap)
+    # In the textbook, Equation 2.27 is used to determine the overall
+    # assimilation rate from the individual rates. However, here we use
+    # quadratic equations to allow co-limitation between the rates.
+
+    # Co-limitation between Ac and Aj (Acj)
+    b0 <- Ac * Aj_mod
+    b1 <- Ac + Aj_mod
+
+    b_root_term <- b1^2 - 4 * b0 * curvature
+
+    # If the root term is negative, we can't use sqrt; in this case, replace the
+    # negative value by a very high one. Using Inf may cause problems with
+    # optimizers, so we choose a finite value.
+    high_value <- 1e10
+    b_root_term[b_root_term < 0] <- high_value
+
+    Acj <- (b1 - sqrt(b_root_term)) / (2 * curvature)
+
+    # Co-limitation between Ap and Acj (An)
+    c0 <- Ap * Acj
+    c1 <- Ap + Acj
+
+    c_root_term <- c1^2 - 4 * c0 * curvature
+    c_root_term[c_root_term < 0] <- high_value
+
+    An <- (c1 - sqrt(c_root_term)) / (2 * curvature)
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units
