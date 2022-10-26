@@ -65,7 +65,7 @@ vignette.
 As always, the first step is to load the packages we will be using. In addition
 to `PhotoGEA`, we will also use the `plantecophys` and `lattice` packages.
 
-```{r setup, eval = FALSE}
+```{r setup}
 # Load required packages
 library(PhotoGEA)
 library(plantecophys)
