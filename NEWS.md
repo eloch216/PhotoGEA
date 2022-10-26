@@ -16,7 +16,7 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# PhotoGEA VERSION 0.6.0 (Unreleased)
+# PhotoGEA VERSION 0.6.0 (2022-10-06)
 
 - Moved the `dfoptim` package from `Suggests` to `Imports` because it is used by
   an essential part of `PhotoGEA`.
