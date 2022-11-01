@@ -16,6 +16,14 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.6.1 (2022-11-01)
+
+- Modified `fit_c3_aci` so it now ensures that the initial guess lies within
+  (and not on) the bounds. This is a requirement for the `dfoptim::nmkb` solver
+  and presumably other bounded optimizers as well.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/57
+
 # PhotoGEA VERSION 0.6.0 (2022-10-06)
 
 - Moved the `dfoptim` package from `Suggests` to `Imports` because it is used by

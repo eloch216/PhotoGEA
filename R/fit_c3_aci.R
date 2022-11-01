@@ -113,9 +113,12 @@ fit_c3_aci <- function(
     # Get an initial guess for all the parameter values
     initial_guess <- initial_guess_fun(replicate_exdf)
 
-    # Make sure the initial guess is acceptable
-    initial_guess <- pmax(initial_guess, lower)
-    initial_guess <- pmin(initial_guess, upper)
+    # Make sure the initial guess lies within (and not on) the bounds
+    lower_temp <- lower + 0.01 * (upper - lower)
+    upper_temp <- upper - 0.01 * (upper - lower)
+    
+    initial_guess <- pmax(initial_guess, lower_temp)
+    initial_guess <- pmin(initial_guess, upper_temp)
 
     # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
