@@ -160,9 +160,9 @@ if (VIEW_DATA_FRAMES) {
     View(all_stats)
 }
 
-###                            ###
-### PLOT RESPONSE CURVES TO CI ###
-###                            ###
+###                              ###
+### PLOT RESPONSE CURVES TO TIME ###
+###                              ###
 
 rc_caption <- "Average response curves for each event"
 
@@ -180,7 +180,7 @@ avg_plot_param <- list(
 )
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = FALSE, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
