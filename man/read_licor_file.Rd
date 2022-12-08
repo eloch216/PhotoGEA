@@ -18,7 +18,9 @@
     variable_name_row,
     variable_unit_row,
     data_start_row,
-    timestamp_colname = NA
+    timestamp_colname = NA,
+    instrument_type = 'Licor LI-6800',
+    file_type = 'AUTO'
   )
 }
 
@@ -54,6 +56,18 @@
   \item{timestamp_colname}{
     The name of the column that contains the timestamp of each measurement;
     typically, this is \code{'time'}.
+  }
+
+  \item{instrument_type}{
+    The type of measurement instrument that produced the log file. The only
+    currently available option is \code{'Licor LI-6800'}.
+  }
+
+  \item{file_type}{
+    The type of file to be loaded. If \code{file_type} is \code{'AUTO'}, then
+    the file type will be automatically determined from the extension of
+    \code{file_name}. The other supported options are \code{'plaintext'} and
+    \code{'Excel'}.
   }
 }
 
@@ -117,9 +131,9 @@
 }
 
 \examples{
-# Example: reading a Licor file that is included with the PhotoGEA package. Note
-# that although named input arguments are not required, here we supply them for
-# clarity.
+# Example 1: reading a Licor Excel file that is included with the PhotoGEA
+# package. Note that although named input arguments are not required, here we
+# supply them for clarity.
 licor_file <- read_licor_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
   preamble_data_rows = c(3, 5, 7, 9, 11, 13),
@@ -133,6 +147,15 @@ licor_file <- read_licor_file(
 licor_file$file_name     # A record of where the data came from
 str(licor_file)          # View the contents of the exdf object's main_data
 str(licor_file$preamble) # View the Licor file's preamble data
+
+# Example 2: Reading a Licor plaintext file that is included with the PhotoGEA
+# package.
+licor_file_pt <- read_licor_file(
+  system.file("extdata", "plaintext_licor_file", package = "PhotoGEA"),
+  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
+)
+
+str(licor_file_pt)
 }
 
 \concept{exdf}
