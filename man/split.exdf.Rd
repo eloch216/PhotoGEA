@@ -41,8 +41,7 @@
 # Read a Licor file, select just a few columns, and then split it by the value
 # of the `plot` column
 licor_file <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 
 licor_file <- licor_file[, c('plot', 'species', 'Qin', 'A', 'gsw'), TRUE]

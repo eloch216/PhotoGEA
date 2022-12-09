@@ -188,13 +188,7 @@ Microsoft Excel file containing Licor measurements.
 
 ```{r}
 exdf_3 <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-  variable_category_row = 14,
-  variable_name_row = 15,
-  variable_unit_row = 16,
-  data_start_row = 17,
-  timestamp_colname = 'time'
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 ```
 
@@ -431,9 +425,7 @@ file_paths <- c(
 )
 
 # Load each file, storing the result in a list
-licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
-})
+licor_exdf_list <- lapply(file_paths, function(fpath) {read_licor_file(fpath)})
 
 # Get the names of all columns that are present in all of the Licor files
 columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)

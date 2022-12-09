@@ -161,11 +161,6 @@ read_licor_6800_Excel <- function(
 
 read_licor_file <- function(
     file_name,
-    preamble_data_rows,
-    variable_category_row,
-    variable_name_row,
-    variable_unit_row,
-    data_start_row,
     timestamp_colname = NA,
     instrument_type = 'Licor LI-6800',
     file_type = 'AUTO'
@@ -189,14 +184,7 @@ read_licor_file <- function(
     licor_exdf <- if (instrument_type == 'Licor LI-6800' && file_type == 'plaintext') {
         read_licor_6800_plaintext(file_name)
     } else if (instrument_type == 'Licor LI-6800' && file_type == 'Excel') {
-        read_licor_6800_Excel(
-            file_name,
-            preamble_data_rows,
-            variable_category_row,
-            variable_name_row,
-            variable_unit_row,
-            data_start_row
-        )
+        read_licor_6800_Excel(file_name)
     } else {
         stop(paste('Unsupported (instrument_type file_type) option:', instrument_type, file_type))
     }
@@ -208,6 +196,7 @@ read_licor_file <- function(
             origin = "1970-01-01"
         )
     }
+    licor_exdf$timestamp_colname <- timestamp_colname
 
     return(licor_exdf)
 }

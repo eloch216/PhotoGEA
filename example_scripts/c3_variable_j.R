@@ -107,15 +107,7 @@ CI_THRESHOLD_LOWER <- 0
 if (PERFORM_CALCULATIONS) {
     # Load the data
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_licor_file(
-            fname,
-            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-            variable_category_row = 14,
-            variable_name_row = 15,
-            variable_unit_row = 16,
-            data_start_row = 17,
-            timestamp_colname = TIME_COLUMN_NAME
-        )
+        read_licor_file(fname, TIME_COLUMN_NAME)
     })
 
     # Extract the common columns
@@ -127,17 +119,17 @@ if (PERFORM_CALCULATIONS) {
 
     # Combine the Licor files into one table
     combined_info <- do.call(rbind, extracted_multi_file_info)
-    
+
     # Determine if there is a `plot` column
     HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
-    
+
     # Set the rep column name depending on whether there is plot information
     REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
       "plot_replicate"
     } else {
       "replicate"
     }
-    
+
     # Add a column that combines `plot` and `replicate` if necessary
     if (HAS_PLOT_INFO) {
       combined_info <- process_id_columns(
@@ -207,7 +199,7 @@ if (PERFORM_CALCULATIONS) {
     exdf_for_fitting <-
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD_UPPER &
             combined_info[, CI_COLUMN_NAME] >= CI_THRESHOLD_LOWER, , return_exdf = TRUE]
-    
+
     FIT_TPU <- TRUE
     variable_j_results <- if (FIT_TPU) {
       consolidate(by(
@@ -535,12 +527,12 @@ if (SAVE_GM_VALUES) {
       gm_val_df
     }
   )
-  
+
   tmp <- tmp[!sapply(tmp, is.null)]
-  
+
   tmp <- do.call(rbind, tmp)
-  
+
   rownames(tmp) <- NULL
-  
+
   write.csv(tmp, file = file.choose(), row.names = FALSE)
 }

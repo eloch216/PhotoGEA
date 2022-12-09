@@ -53,7 +53,7 @@ file_paths <- choose_input_licor_files()
 
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+  read_licor_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files

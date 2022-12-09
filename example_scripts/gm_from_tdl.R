@@ -160,7 +160,7 @@ if (PERFORM_CALCULATIONS) {
     })
 
     tdl_files <- do.call(rbind, tdl_files)
-    
+
     tdl_files <- if (IGB_TDL) {
       identify_tdl_cycles(
         tdl_files,
@@ -231,15 +231,7 @@ if (PERFORM_CALCULATIONS) {
     # Get all the Licor information and process it
 
     licor_files <- lapply(choose_input_licor_files(), function(fname) {
-        read_licor_file(
-            fname,
-            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-            variable_category_row = 14,
-            variable_name_row = 15,
-            variable_unit_row = 16,
-            data_start_row = 17,
-            timestamp_colname = LICOR_TIMESTAMP_COLUMN_NAME
-        )
+        read_licor_file(fname, LICOR_TIMESTAMP_COLUMN_NAME)
     })
 
     common_columns <- do.call(identify_common_columns, licor_files)
@@ -361,18 +353,18 @@ if (PERFORM_CALCULATIONS) {
             licor_files_no_outliers[['main_data']][['gmc']] < MAX_GM &
             licor_files_no_outliers[['main_data']][['Cc']] > MIN_CC,]
     cat(paste("Number of Licor measurements after removing unacceptable gm and Cc:", nrow(licor_files_no_outliers), "\n"))
-    
+
     # First, we remove outliers from each replicate
     if (REMOVE_STATISTICAL_OUTLIERS) {
-      
+
       old_nrow <- nrow(licor_files_no_outliers)
-      
+
       licor_files_no_outliers <- exclude_outliers(
       licor_files_no_outliers,
       'A',
        licor_files_no_outliers[,'event_replicate']
       )
-      
+
         pt_diff <- Inf
         while (pt_diff > 0) {
             licor_files_no_outliers <- exclude_outliers(
@@ -391,16 +383,16 @@ if (PERFORM_CALCULATIONS) {
         licor_files_no_outliers,
         'event_replicate'
     )
-    
+
     rep_stats_no_outliers <- rep_stats
-    
+
     # Now, we remove outliers from each event
     if (REMOVE_STATISTICAL_OUTLIERS) {
-      
+
       old_nrow <- nrow(rep_stats_no_outliers)
-      
+
       cat(paste("Number of reps before removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
-      
+
       pt_diff <- Inf
       while (pt_diff > 0) {
         rep_stats_no_outliers <- exclude_outliers(
@@ -413,13 +405,13 @@ if (PERFORM_CALCULATIONS) {
       }
       cat(paste("Number of reps after removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
     }
-    
+
     # Get stats for each event by averaging over all corresponding reps
     event_stats <- basic_stats(
       rep_stats_no_outliers,
       'event'
     )$main_data
-    
+
     # Extract data frame from rep stats
     rep_stats_no_outliers <- rep_stats_no_outliers$main_data
 
@@ -713,7 +705,7 @@ if (MAKE_GM_PLOTS) {
     # Convert some columns to factors so we can control the order of boxes and
     # bars when plotting
     licor_files_no_outliers_data <- licor_files_no_outliers[['main_data']]
-    
+
     rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event')
     rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event_replicate')
 
