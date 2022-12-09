@@ -20,7 +20,7 @@ for the next release.
 
 - Added a new input argument to `xyplot_avg_rc` so that y-axis error bars can be
   disabled.
-- Added a new example file (`plaintext_licor_file`) representing a plantext
+- Added a new example file (`plaintext_licor_file`) representing a plaintext
   Licor LI-6800 log file.
 - Made several significant changes to functions that read data from log files:
   - Added the ability to read plaintext Licor LI-6800 log files.
