@@ -81,6 +81,11 @@
     \item \code{file_name}: A copy of the input argument with the same name.
     \item \code{preamble}: A data frame containing the "preamble" (or "header")
           information from the file.
+    \item \code{instrument_type}: A copy of the input argument with the same
+          name.
+    \item \code{file_type}: A copy of the input argument with the same name,
+          unless it was set to \code{'AUTO'}; in that case, the file type that
+          was determined from the file's extension.
     \item \code{timestamp_colname}: A copy of the input argument with the same
           name.
   }
