@@ -202,9 +202,8 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package and calculate
 # additional gas properties.
-licor_file <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
+licor_file <- read_gasex_file(
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 
 licor_file <- calculate_gas_properties(licor_file)

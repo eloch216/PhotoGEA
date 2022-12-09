@@ -114,15 +114,7 @@ UNIQUE_ID_COLUMN_NAME <- "event_replicate_plot"
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_licor_file(
-            fname,
-            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-            variable_category_row = 14,
-            variable_name_row = 15,
-            variable_unit_row = 16,
-            data_start_row = 17,
-            timestamp_colname = TIME_COLUMN_NAME
-        )
+        read_gasex_file(fname, TIME_COLUMN_NAME)
     })
 
     common_columns <- do.call(identify_common_columns, multi_file_info)
@@ -132,17 +124,17 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
-    
+
     # Determine if there is a `plot` column
     HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
-    
+
     # Set the rep column name depending on whether there is plot information
     REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
       "plot_replicate"
     } else {
       "replicate"
     }
-    
+
     # Add a column that combines `plot` and `replicate` if necessary
     if (HAS_PLOT_INFO) {
       combined_info <- process_id_columns(
@@ -329,13 +321,13 @@ all_samples_one_point_no_a_outliers <- all_samples_one_point
 
 if (REMOVE_STATISTICAL_OUTLIERS) {
   print(paste("Number of rows before removing A outliers:", nrow(all_samples_one_point_no_a_outliers)))
-  
+
   all_samples_one_point_no_a_outliers <- exclude_outliers(
     all_samples_one_point_no_a_outliers,
     'A',
     all_samples_one_point_no_a_outliers[, EVENT_COLUMN_NAME]
   )
-  
+
   print(paste("Number of rows after removing A outliers:", nrow(all_samples_one_point_no_a_outliers)))
 }
 

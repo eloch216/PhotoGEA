@@ -93,15 +93,7 @@ UNIQUE_ID_COLUMN_NAME <- "line_sample"
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_licor_file(
-            fname,
-            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-            variable_category_row = 14,
-            variable_name_row = 15,
-            variable_unit_row = 16,
-            data_start_row = 17,
-            timestamp_colname = TIME_COLUMN_NAME
-        )
+        read_gasex_file(fname, TIME_COLUMN_NAME)
     })
 
     common_columns <- do.call(identify_common_columns, multi_file_info)

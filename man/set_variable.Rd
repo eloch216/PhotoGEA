@@ -102,9 +102,8 @@ print(simple_exdf)
 
 # As a more realistic example, load a Licor file and set different values of
 # mesophyll conductance for each species in the data set.
-licor_file <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
+licor_file <- read_gasex_file(
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 
 licor_file <- set_variable(

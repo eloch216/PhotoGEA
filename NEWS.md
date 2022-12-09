@@ -16,6 +16,27 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# UNRELEASED
+
+- Added a new input argument to `xyplot_avg_rc` so that y-axis error bars can be
+  disabled.
+- Added a new example file (`plaintext_licor_file`) representing a plantext
+  Licor LI-6800 log file.
+- Made several significant changes to functions that read data from log files:
+  - Added the ability to read plaintext Licor LI-6800 log files.
+  - Consolidated all file-reading functions into a single one called
+    `read_gasex_file`.
+  - Depending on user-supplied inputs that specify the instrument and file type,
+    `read_gasex_file` internally calls either `read_licor_6800_Excel`,
+    `read_licor_6800_plaintext`, or `read_CR3000` to actually read the data from
+    the file.
+  - When loading LI-6800 Excel log files, it is no longer necessary to provide
+    information about the preamble and data rows.
+  - The previous reading functions `read_licor_file` and `read_tdl_file` are now
+    deprecated. Since these functions are commonly used in scripts, a message
+    will be sent to any users who attempt to call these functions. Eventually
+    they will be completely removed from the package namespace.
+
 # PhotoGEA VERSION 0.6.1 (2022-11-01)
 
 - Modified `fit_c3_aci` so it now ensures that the initial guess lies within

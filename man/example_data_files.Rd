@@ -10,6 +10,7 @@
 \alias{c3_aci_2}
 \alias{tdl_sampling_1}
 \alias{tdl_sampling_2}
+\alias{plaintext_licor_file}
 
 \alias{ball_berry_1.xlsx}
 \alias{ball_berry_2.xlsx}
@@ -46,6 +47,11 @@
           created by a Campbell Scientific CR3000 data logger, representing data
           from a tunable diode laser (TDL) system. These files are used in the
           "Analyzing TDL Data" vignette and in other examples.
+    \item \code{plaintext_licor_file}: A log file created by a Licor Li-6800
+          portable gas exchange measurement system. This file contains several
+          CO2 response (or A-Ci) curves. Several user constants were defined in
+          this log that can be used to identify individual curves or subsets of
+          curves: \code{species}, \code{plot}, and \code{instrument}.
   }
 
   Since none of these data files have been published, noise has been added to
@@ -66,6 +72,7 @@ system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA')
 system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
 system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA')
 system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA')
+system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA')
 }
 
 \keyword{datasets}
