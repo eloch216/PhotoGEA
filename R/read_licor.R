@@ -2,7 +2,8 @@ read_licor_file <- function(
     file_name,
     timestamp_colname = NA,
     instrument_type = 'Licor LI-6800',
-    file_type = 'AUTO'
+    file_type = 'AUTO',
+    ...
 )
 {
     # Try to determine the file type from its name, if necessary
@@ -21,9 +22,9 @@ read_licor_file <- function(
 
     # Try to load the file using the appropriate method
     licor_exdf <- if (instrument_type == 'Licor LI-6800' && file_type == 'plaintext') {
-        read_licor_6800_plaintext(file_name)
+        read_licor_6800_plaintext(file_name, ...)
     } else if (instrument_type == 'Licor LI-6800' && file_type == 'Excel') {
-        read_licor_6800_Excel(file_name)
+        read_licor_6800_Excel(file_name, ...)
     } else {
         stop(paste('Unsupported (instrument_type file_type) option:', instrument_type, file_type))
     }

@@ -1,4 +1,4 @@
-read_licor_6800_plaintext <- function(file_name) {
+read_licor_6800_plaintext <- function(file_name, ...) {
     # First read the file as a set of lines. This will allow us to find the rows
     # where the [Header] and [Data] sections begin.
     fconn <- file(file_name)

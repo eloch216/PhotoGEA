@@ -1,4 +1,4 @@
-read_licor_6800_Excel <- function(file_name) {
+read_licor_6800_Excel <- function(file_name, column_name = 'obs', ...) {
     # Read the entire workbook into a single data frame
     rawdata <- openxlsx::readWorkbook(
         file_name,
@@ -7,11 +7,20 @@ read_licor_6800_Excel <- function(file_name) {
         skipEmptyCols = FALSE
     )
 
-    # Search for the column and row indices that match 'obs'
-    column_name <- 'obs'
+    # Search for the column and row indices that match the column name
     data_search <- sapply(rawdata, function(x) {match(column_name, x)})
     data_col <- which(!is.na(data_search))
     data_row <- data_search[data_col]
+
+    if (length(data_row) < 1) {
+        stop(paste0(
+            'A column named `',
+            column_name,
+            '` could not be found in file `',
+            file_name,
+            '`'
+        ))
+    }
 
     # Get variable names, units, and categories
     licor_variable_names <- replace_unicode(rawdata[data_row, ])

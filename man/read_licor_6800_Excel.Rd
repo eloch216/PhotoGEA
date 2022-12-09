@@ -10,12 +10,21 @@
 }
 
 \usage{
-  read_licor_6800_Excel(file_name)
+  read_licor_6800_Excel(file_name, column_name = 'obs', \dots)
 }
 
 \arguments{
   \item{file_name}{
     A relative or absolute path to an Excel file containing Licor data.
+  }
+
+  \item{column_name}{
+    A column name that should be present in the log file; used to identify the
+    beginning of the data block in the file.
+  }
+
+  \item{\dots}{
+    Additional arguments; currently unused.
   }
 }
 
@@ -41,17 +50,23 @@
   \code{\link{read_licor_file}}, the following "extra" elements are also
   included:
   \itemize{
-    \item \code{header_indx}: The line of the file where \code{[Head]} was
-          found.
-    \item \code{data_indx}: The line of the file where \code{[Data]} was found.
+    \item \code{data_row}: The line of the file where the column name was found.
   }
 }
 
 \examples{
-# Example: Reading a Licor Excel file that is included with the PhotoGEA
+# Example 1: Reading a Licor Excel file that is included with the PhotoGEA
 # package.
 licor_file <- PhotoGEA:::read_licor_6800_Excel(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
+)
+
+# Example 2: Reading a Licor Excel file that is included with the PhotoGEA
+# package; here we use a different column name to identify the data block within
+# the file's contents.
+licor_file <- PhotoGEA:::read_licor_6800_Excel(
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
+  column_name = 'A'
 )
 }
 

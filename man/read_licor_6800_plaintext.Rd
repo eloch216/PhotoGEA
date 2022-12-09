@@ -10,12 +10,16 @@
 }
 
 \usage{
-  read_licor_6800_plaintext(file_name)
+  read_licor_6800_plaintext(file_name, \dots)
 }
 
 \arguments{
   \item{file_name}{
     A relative or absolute path to a plaintext file containing Licor data.
+  }
+
+  \item{\dots}{
+    Additional arguments; currently unused.
   }
 }
 

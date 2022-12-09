@@ -14,7 +14,8 @@
     file_name,
     timestamp_colname = NA,
     instrument_type = 'Licor LI-6800',
-    file_type = 'AUTO'
+    file_type = 'AUTO',
+    \dots
   )
 }
 
@@ -38,6 +39,11 @@
     the file type will be automatically determined from the extension of
     \code{file_name}. The other supported options are \code{'plaintext'} and
     \code{'Excel'}.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to specialized reading functions; see
+    below for more details.
   }
 }
 
@@ -70,6 +76,8 @@
     \item \code{\link{read_licor_6800_Excel}} (for \code{instrument_type =
           'LI-6800'} and \code{file_type = 'Excel'})
   }
+  Any additional arguments specified via \code{\dots} will be passed to these
+  functions.
 
   \strong{IMPORTANT NOTE ABOUT LICOR EXCEL FILES}: by default, Licor Excel files
   do not "calculate" formula values. This causes a problem when reading them in
