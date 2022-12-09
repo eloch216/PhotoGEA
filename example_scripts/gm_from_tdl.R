@@ -138,7 +138,7 @@ if (PERFORM_CALCULATIONS) {
     # Get all the TDL information and process it
 
     tdl_files <- lapply(choose_input_tdl_files(), function(fname) {
-        read_tdl_file(
+        read_licor_file(
             fname,
             rows_to_skip = 1,
             variable_name_row = 2,

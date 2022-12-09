@@ -24,10 +24,16 @@
 }
 
 \details{
-  This function looks for two special lines in the Licor log file: the
-  \code{[Head]} line indicates the beginning of the header (or preamble), and
-  the \code{[Data]} line indicates the beginning of the data table. If these
-  lines are missing from the file, it will not be loaded properly.
+  Licor LI-6800 instruments create two types of log files: a plaintext file and
+  an Excel file, each containing the same information. The plaintext files are
+  the only ones guaranteed to be created, since the Excel files require the user
+  to select an option to create them.
+
+  \code{read_licor_6800_plaintext} looks for two special lines in the Licor log
+  file: the \code{[Head]} line indicates the beginning of the header (or
+  preamble), and the \code{[Data]} line indicates the beginning of the data
+  table. If these lines are missing from the file, it will not be loaded
+  properly.
 }
 
 \value{
@@ -36,6 +42,8 @@
   \code{\link{read_licor_file}}, the following "extra" elements are also
   included:
   \itemize{
+    \item \code{preamble}: A data frame containing the "preamble" (or "header")
+          information from the file.
     \item \code{header_indx}: The line of the file where \code{[Head]} was
           found.
     \item \code{data_indx}: The line of the file where \code{[Data]} was found.

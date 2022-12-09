@@ -75,19 +75,18 @@ function, type `?read_licor_file` in the R terminal.
 ## Translation
 
 Since we are working exclusively in R, translation refers to the process of
-creating R objects from instrument log files. `PhotoGEA` currently includes two
-core functions related to translation:
+creating R objects from instrument log files. `PhotoGEA` currently includes one
+core function related to translation:
 
-- `read_licor_file`: Creates an R data object from a Microsoft Excel file
-  created by a Licor LI-6800 portable gas exchange measurement system.
-- `read_tdl_file`: Creates an R data object from a data file created by a
-  tunable diode laser measurement system.
+- `read_licor_file`: Creates an R data object from a log file created by a Licor
+  LI-6800 portable gas exchange measurement system or a tunable diode laser
+  measurement system.
 
-Both of these functions produce "extended data frame" (`exdf`) objects in R. The
-`exdf` class is very similar to a regular data frame, with the main difference
-being that an `exdf` object keeps track of the units associated with each
-column. This data structure provides several key benefits when analyzing gas
-exchange data, and more information is available in the
+This function produces "extended data frame" (`exdf`) objects in R. The `exdf`
+class is very similar to a regular data frame, with the main difference being
+that an `exdf` object keeps track of the units associated with each column. This
+data structure provides several key benefits when analyzing gas exchange data,
+and more information is available in the
 [Working with Extended Data Frames](working_with_extended_data_frames.html)
 vignette.
 

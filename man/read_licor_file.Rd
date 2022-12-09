@@ -2,10 +2,10 @@
 
 \alias{read_licor_file}
 
-\title{Reading a Licor Excel file}
+\title{Reading a gas exchange log file}
 
 \description{
-  Tool for reading log files created by Licor LI-6800 instruments and storing
+  Tool for reading log files created by measurement instruments and storing
   their contents in \code{\link{exdf}} objects.
 }
 
@@ -13,15 +13,15 @@
   read_licor_file(
     file_name,
     timestamp_colname = NA,
-    instrument_type = 'Licor LI-6800',
     file_type = 'AUTO',
+    instrument_type = 'AUTO',
     \dots
   )
 }
 
 \arguments{
   \item{file_name}{
-    A relative or absolute path to a log file containing Licor data.
+    A relative or absolute path to a log file containing gas exchange data.
   }
 
   \item{timestamp_colname}{
@@ -29,16 +29,18 @@
     typically, this is \code{'time'}.
   }
 
-  \item{instrument_type}{
-    The type of measurement instrument that produced the log file. The only
-    currently available option is \code{'Licor LI-6800'}.
-  }
-
   \item{file_type}{
     The type of file to be loaded. If \code{file_type} is \code{'AUTO'}, then
     the file type will be automatically determined from the extension of
-    \code{file_name}. The other supported options are \code{'plaintext'} and
-    \code{'Excel'}.
+    \code{file_name}. The other supported options are \code{'plaintext'},
+    \code{'Excel'}, and \code{'data'}.
+  }
+
+  \item{instrument_type}{
+    The type of measurement instrument that produced the log file. If
+    \code{instrument_type} is \code{'AUTO'}, then the instrument type will be
+    determined from the \code{file_type}. The other supported options are
+    \code{'Licor LI-6800'} and \code{'CR3000'}.
   }
 
   \item{\dots}{
@@ -48,14 +50,7 @@
 }
 
 \details{
-  Licor LI-6800 instruments create two types of log files: a plain-text file and
-  an Excel file, each containing the same information. In general, the Excel
-  files are much easier to modify, for example, deleting rows or adding new
-  columns. For this reason, it is helpful to be able to read these files in R.
-  Unfortunately, base R does not have any functionality for reading Excel files,
-  so here the \code{openxlsx} package is used.
-
-  Licor log files contain Unicode characters in some column names and units, but
+  Some log files contain Unicode characters in some column names and units, but
   these characters cannot be represented properly in R. To address this, Unicode
   characters are replaced with reasonable alternatives; for example, the
   character for the capital Greek letter delta is replaced with the word
@@ -63,10 +58,27 @@
   accessed via \code{PhotoGEA:::UNICODE_REPLACEMENTS}, and more information can
   be found in the source code (\code{R/unicode_replacements.R}).
 
-  When reading a Licor log file, it can be useful to identify the timestamp
-  column so its values can be properly interpreted as \code{\link{POSIXlt}}
-  objects. If \code{timestamp_colname} is \code{NA}, this conversion will be
-  skipped.
+  When reading a log file, it can be useful to identify the timestamp column so
+  its values can be properly interpreted as \code{\link{POSIXlt}} objects. If
+  \code{timestamp_colname} is \code{NA}, this conversion will be skipped.
+
+  When automatically determining the file type from its extension, the following
+  rules are used:
+  \itemize{
+    \item A \code{.xlsx} extension corresponds to \code{file_type = 'Excel'}.
+    \item A \code{.dat} extension corresponds to \code{file_type = 'data'}.
+    \item A file with no extension corresponds to \code{file_type =
+          'plaintext'}.
+  }
+
+  When automatically determining the instrument type from the file type, the
+  following rules are used:
+  \itemize{
+    \item File types of \code{'Excel'} and \code{'plaintext'} correspond to
+          \code{instrument_type = 'Licor LI-6800'}.
+    \item A file type of \code{'data'} corresponds to \code{instrument_type =
+          'CR3000'}.
+  }
 
   Internally, this function calls one of several other (non-exported) functions
   depending on the values of \code{instrument_type} and \code{file_type}:
@@ -75,6 +87,8 @@
           'LI-6800'} and \code{file_type = 'plaintext'})
     \item \code{\link{read_licor_6800_Excel}} (for \code{instrument_type =
           'LI-6800'} and \code{file_type = 'Excel'})
+    \item \code{\link{read_cr3000}} (for \code{instrument_type =
+          'CR3000'} and \code{file_type = 'data'})
   }
   Any additional arguments specified via \code{\dots} will be passed to these
   functions.
@@ -90,20 +104,19 @@
 }
 
 \value{
-  An \code{exdf} object that fully includes all the data from the Licor Excel
-  file. In addition to the required elements of an \code{exdf} object, the
-  following "extra" elements are also included:
+  An \code{exdf} object that fully includes all the data from the log file. In
+  addition to the required elements of an \code{exdf} object, the following
+  "extra" elements are also included:
   \itemize{
     \item \code{file_name}: A copy of the input argument with the same name.
-    \item \code{preamble}: A data frame containing the "preamble" (or "header")
-          information from the file.
     \item \code{instrument_type}: A copy of the input argument with the same
           name.
     \item \code{file_type}: A copy of the input argument with the same name,
           unless it was set to \code{'AUTO'}; in that case, the file type that
           was determined from the file's extension.
     \item \code{timestamp_colname}: A copy of the input argument with the same
-          name.
+          name, unless it was set to \code{'AUTO'}; in that case, the instrument
+          type that was determined from the file type.
   }
 }
 

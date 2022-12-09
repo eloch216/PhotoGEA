@@ -29,10 +29,17 @@
 }
 
 \details{
-  This function looks for a particular data column in order to identify the
-  start of the data table within the contents of the Licor file. Rows above the
-  main data table are assumed to be part of the preamble (or header), which are
-  broken into pairs of rows representing names and values.
+  Licor LI-6800 instruments create two types of log files: a plain-text file and
+  an Excel file, each containing the same information. In general, the Excel
+  files are much easier to modify, for example, deleting rows or adding new
+  columns. For this reason, it is helpful to be able to read these files in R.
+  Unfortunately, base R does not have any functionality for reading Excel files,
+  so here the \code{openxlsx} package is used.
+
+  \code{read_licor_6800_Excel} looks for a particular data column in order to
+  identify the start of the data table within the contents of the Licor file.
+  Rows above the main data table are assumed to be part of the preamble (or
+  header), which are broken into pairs of rows representing names and values.
 
   \strong{IMPORTANT NOTE ABOUT LICOR EXCEL FILES}: by default, Licor Excel files
   do not "calculate" formula values. This causes a problem when reading them in
@@ -50,6 +57,8 @@
   \code{\link{read_licor_file}}, the following "extra" elements are also
   included:
   \itemize{
+    \item \code{preamble}: A data frame containing the "preamble" (or "header")
+          information from the file.
     \item \code{data_row}: The line of the file where the column name was found.
   }
 }

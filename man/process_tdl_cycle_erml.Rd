@@ -151,9 +151,9 @@
 \examples{
 # Example: reading a TDL file that is included with the PhotoGEA package,
 # identifying its measurement cycles, and then process them.
-tdl_file <- read_tdl_file(
+tdl_file <- read_licor_file(
   system.file("extdata", "tdl_sampling_1.dat", package = "PhotoGEA"),
-  1, 2, 3, 5, 'TIMESTAMP'
+  'TIMESTAMP'
 )
 
 tdl_file <- identify_tdl_cycles(
