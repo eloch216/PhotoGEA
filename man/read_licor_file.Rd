@@ -5,9 +5,8 @@
 \title{Reading a Licor Excel file}
 
 \description{
-  Tool for reading Excel output files created by Licor LI-6800 instruments and
-  storing their contents in \code{\link{exdf}} objects. This function has not
-  yet been tested with files from a Licor LI-6400.
+  Tool for reading log files created by Licor LI-6800 instruments and storing
+  their contents in \code{\link{exdf}} objects.
 }
 
 \usage{
@@ -21,7 +20,7 @@
 
 \arguments{
   \item{file_name}{
-    A relative or absolute path to an Excel file containing Licor data.
+    A relative or absolute path to a log file containing Licor data.
   }
 
   \item{timestamp_colname}{
@@ -62,6 +61,15 @@
   column so its values can be properly interpreted as \code{\link{POSIXlt}}
   objects. If \code{timestamp_colname} is \code{NA}, this conversion will be
   skipped.
+
+  Internally, this function calls one of several other (non-exported) functions
+  depending on the values of \code{instrument_type} and \code{file_type}:
+  \itemize{
+    \item \code{\link{read_licor_6800_plaintext}} (for \code{instrument_type =
+          'LI-6800'} and \code{file_type = 'plaintext'})
+    \item \code{\link{read_licor_6800_Excel}} (for \code{instrument_type =
+          'LI-6800'} and \code{file_type = 'Excel'})
+  }
 
   \strong{IMPORTANT NOTE ABOUT LICOR EXCEL FILES}: by default, Licor Excel files
   do not "calculate" formula values. This causes a problem when reading them in
