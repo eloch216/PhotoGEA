@@ -107,7 +107,7 @@ CI_THRESHOLD_LOWER <- 0
 if (PERFORM_CALCULATIONS) {
     # Load the data
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_licor_file(fname, TIME_COLUMN_NAME)
+        read_gasex_file(fname, TIME_COLUMN_NAME)
     })
 
     # Extract the common columns

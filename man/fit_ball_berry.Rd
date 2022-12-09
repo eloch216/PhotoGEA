@@ -112,7 +112,7 @@
 # additional gas properties, calculate the Ball-Berry index, define a new column
 # that uniquely identifies each curve, and then perform a fit to extract the
 # Ball-Berry parameters from each curve.
-licor_file <- read_licor_file(
+licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 

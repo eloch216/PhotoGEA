@@ -1,4 +1,4 @@
-read_licor_file <- function(
+read_gasex_file <- function(
     file_name,
     timestamp_colname = NA,
     file_type = 'AUTO',
@@ -36,7 +36,7 @@ read_licor_file <- function(
     }
 
     # Try to load the file using the appropriate method
-    licor_exdf <- if (instrument_type == 'Licor LI-6800' && file_type == 'plaintext') {
+    gasex_exdf <- if (instrument_type == 'Licor LI-6800' && file_type == 'plaintext') {
         read_licor_6800_plaintext(file_name, ...)
     } else if (instrument_type == 'Licor LI-6800' && file_type == 'Excel') {
         read_licor_6800_Excel(file_name, ...)
@@ -48,12 +48,17 @@ read_licor_file <- function(
 
     # Make sure the timestamp column is properly interpreted
     if (!is.na(timestamp_colname)) {
-        licor_exdf$main_data[[timestamp_colname]] <- as.POSIXlt(
-            licor_exdf$main_data[[timestamp_colname]],
+        gasex_exdf$main_data[[timestamp_colname]] <- as.POSIXlt(
+            gasex_exdf$main_data[[timestamp_colname]],
             origin = "1970-01-01"
         )
     }
-    licor_exdf$timestamp_colname <- timestamp_colname
 
-    return(licor_exdf)
+    # Add "extras" to the exdf
+    gasex_exdf$file_name <- file_name
+    gasex_exdf$file_type <- file_type
+    gasex_exdf$instrument_type <- instrument_type
+    gasex_exdf$timestamp_colname <- timestamp_colname
+
+    return(gasex_exdf)
 }

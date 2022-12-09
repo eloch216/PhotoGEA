@@ -53,7 +53,7 @@ file_paths <- choose_input_licor_files()
 
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, 'time')
+  read_gasex_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files

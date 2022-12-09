@@ -22,19 +22,18 @@
   These functions are only available in interactive sessions; moreover,
   \code{choose_input_licor_files} and \code{choose_input_tdl_files} are only
   available in Microsoft Windows.
-
-  \code{choose_input_files} will prompt the user to select a single file, and
-  will return full file paths for all files in the same directory that have the
-  same extension. The output from this function is typically passed to
-  \code{\link{read_licor_file}} via \code{\link{lapply}}.
-
-  \code{choose_input_licor_files} can be used to select one or more Microsoft
-  Excel files (with extension \code{*.xlsx}). The output from this function is
-  typically passed to \code{\link{read_licor_file}} via \code{\link{lapply}}.
-
-  \code{choose_input_tdl_files} can be used to select one or more TDL data files
-  (with extension \code{*.dat}). The output from this function is typically
-  passed to \code{\link{read_licor_file}} via \code{\link{lapply}}.
+  \itemize{
+    \item \code{choose_input_files} will prompt the user to select a single
+          file, and will return full file paths for all files in the same
+          directory that have the same extension.
+    \item \code{choose_input_licor_files} can be used to select one or more
+          Microsoft Excel files (with extension \code{*.xlsx}) or plaintext
+          files (with no extension).
+    \item \code{choose_input_tdl_files} can be used to select one or more TDL
+          data files (with extension \code{*.dat}).
+  }
+  The outputs from these functions are typically passed to
+  \code{\link{read_gasex_file}} via \code{\link{lapply}}.
 }
 
 \value{
@@ -57,7 +56,7 @@ file_paths <- choose_input_files()
 \dontrun{
 
 lapply(choose_input_licor_files(), function(fname) {
-  read_licor_file(fname, 'time')
+  read_gasex_file(fname, 'time')
 })
 }
 
@@ -67,7 +66,7 @@ lapply(choose_input_licor_files(), function(fname) {
 \dontrun{
 
 lapply(choose_input_tdl_files(), function(fname) {
-  read_licor_file(fname, 'TIMESTAMP')
+  read_gasex_file(fname, 'TIMESTAMP')
 })
 }
 }

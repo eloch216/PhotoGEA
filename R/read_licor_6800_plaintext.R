@@ -69,9 +69,6 @@ read_licor_6800_plaintext <- function(file_name, ...) {
             licor_data,
             licor_variable_units,
             licor_variable_categories,
-            file_name = file_name,
-            instrument_type = 'Licor LI-6800',
-            file_type = 'plaintext',
             preamble = licor_preamble,
             header_indx = header_indx,
             data_indx = data_indx

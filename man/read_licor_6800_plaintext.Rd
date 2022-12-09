@@ -39,7 +39,7 @@
 \value{
   An \code{exdf} object that fully includes all the data from the Licor Excel
   file. In addition to the elements described in the documentation for
-  \code{\link{read_licor_file}}, the following "extra" elements are also
+  \code{\link{read_gasex_file}}, the following "extra" elements are also
   included:
   \itemize{
     \item \code{preamble}: A data frame containing the "preamble" (or "header")
@@ -58,6 +58,6 @@ licor_file <- PhotoGEA:::read_licor_6800_plaintext(
 )
 }
 
-\seealso{\code{\link{read_licor_file}}}
+\seealso{\code{\link{read_gasex_file}}}
 
 \concept{exdf}

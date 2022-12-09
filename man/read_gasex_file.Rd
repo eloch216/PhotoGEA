@@ -1,16 +1,16 @@
-\name{read_licor_file}
+\name{read_gasex_file}
 
-\alias{read_licor_file}
+\alias{read_gasex_file}
 
 \title{Reading a gas exchange log file}
 
 \description{
-  Tool for reading log files created by measurement instruments and storing
-  their contents in \code{\link{exdf}} objects.
+  Tool for reading log files created by gas exchange measurement instruments and
+  storing their contents in \code{\link{exdf}} objects.
 }
 
 \usage{
-  read_licor_file(
+  read_gasex_file(
     file_name,
     timestamp_colname = NA,
     file_type = 'AUTO',
@@ -121,9 +121,9 @@
 }
 
 \examples{
-# Example 1: reading a Licor Excel file that is included with the PhotoGEA
-# package.
-licor_file <- read_licor_file(
+# Example: Eeading a Licor Excel file that is included with the PhotoGEA
+# package. Here we specify 'time' as the name of the timestamp column.
+licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
   'time'
 )
@@ -131,14 +131,6 @@ licor_file <- read_licor_file(
 licor_file$file_name     # A record of where the data came from
 str(licor_file)          # View the contents of the exdf object's main_data
 str(licor_file$preamble) # View the Licor file's preamble data
-
-# Example 2: Reading a Licor plaintext file that is included with the PhotoGEA
-# package.
-licor_file_pt <- read_licor_file(
-  system.file("extdata", "plaintext_licor_file", package = "PhotoGEA")
-)
-
-str(licor_file_pt)
 }
 
 \concept{exdf}

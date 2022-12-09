@@ -69,8 +69,8 @@ popular packages, can be used to accomplish each of these steps.
 
 **Note**: Documentation for any function mentioned in this vignette can be
 obtained through R's built-in help system, which can be accessed using the `?`
-command. For example, to get more information about the `read_licor_file`
-function, type `?read_licor_file` in the R terminal.
+command. For example, to get more information about the `read_gasex_file`
+function, type `?read_gasex_file` in the R terminal.
 
 ## Translation
 
@@ -78,9 +78,8 @@ Since we are working exclusively in R, translation refers to the process of
 creating R objects from instrument log files. `PhotoGEA` currently includes one
 core function related to translation:
 
-- `read_licor_file`: Creates an R data object from a log file created by a Licor
-  LI-6800 portable gas exchange measurement system or a tunable diode laser
-  measurement system.
+- `read_gasex_file`: Creates an R data object from a log file created by a gas
+  exchange measurement system such as a Licor LI-6800 or a tunable diode laser.
 
 This function produces "extended data frame" (`exdf`) objects in R. The `exdf`
 class is very similar to a regular data frame, with the main difference being

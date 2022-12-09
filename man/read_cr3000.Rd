@@ -53,7 +53,7 @@
 \value{
   An \code{exdf} object that fully includes all the data from the CR3000 output
   file. In addition to the elements described in the documentation for
-  \code{\link{read_licor_file}}, the following "extra" elements are also
+  \code{\link{read_gasex_file}}, the following "extra" elements are also
   included:
   \itemize{
     \item \code{rows_to_skip}: A copy of the input argument with the same name
@@ -62,8 +62,6 @@
     \item \code{variable_unit_row}: A copy of the input argument with the same
           name.
     \item \code{data_start_row}: A copy of the input argument with the same
-          name.
-    \item \code{timestamp_colname}: A copy of the input argument with the same
           name.
   }
 }
@@ -78,6 +76,6 @@ tdl_file$file_name # A record of where the data came from
 str(tdl_file)      # View the contents of the exdf object's main_data
 }
 
-\seealso{\code{\link{read_licor_file}}}
+\seealso{\code{\link{read_gasex_file}}}
 
 \concept{exdf}

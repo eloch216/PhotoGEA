@@ -52,7 +52,7 @@
 # Read a Licor file included with the PhotoGEA package; this file includes
 # several light response curves that can be identified by the 'species' and
 # 'plot' columns.
-licor_file <- read_licor_file(
+licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 

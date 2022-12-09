@@ -138,7 +138,7 @@ if (PERFORM_CALCULATIONS) {
     # Get all the TDL information and process it
 
     tdl_files <- lapply(choose_input_tdl_files(), function(fname) {
-        read_licor_file(
+        read_gasex_file(
             fname,
             rows_to_skip = 1,
             variable_name_row = 2,
@@ -231,7 +231,7 @@ if (PERFORM_CALCULATIONS) {
     # Get all the Licor information and process it
 
     licor_files <- lapply(choose_input_licor_files(), function(fname) {
-        read_licor_file(fname, LICOR_TIMESTAMP_COLUMN_NAME)
+        read_gasex_file(fname, LICOR_TIMESTAMP_COLUMN_NAME)
     })
 
     common_columns <- do.call(identify_common_columns, licor_files)

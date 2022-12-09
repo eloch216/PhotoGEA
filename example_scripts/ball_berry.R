@@ -20,7 +20,7 @@ TLEAF_COLUMN_NAME <- 'TleafCnd'
 # Read Licor files, extract important columns, and combine the results into one
 # exdf object
 multi_file_info <- lapply(choose_input_licor_files(), function(fname) {
-    read_licor_file(fname, 'time')
+    read_gasex_file(fname, 'time')
 })
 
 common_columns <- do.call(identify_common_columns, multi_file_info)

@@ -243,7 +243,7 @@
 
 \examples{
 # Read an example Licor file included in the PhotoGEA package
-licor_file <- read_licor_file(
+licor_file <- read_gasex_file(
   system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA')
 )
 

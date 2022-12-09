@@ -69,9 +69,6 @@ read_licor_6800_Excel <- function(file_name, column_name = 'obs', ...) {
             licor_data,
             licor_variable_units,
             licor_variable_categories,
-            file_name = file_name,
-            instrument_type = 'Licor LI-6800',
-            file_type = 'plaintext',
             preamble = licor_preamble,
             data_row = data_row
         )

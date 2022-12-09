@@ -95,7 +95,7 @@
 # This file includes several 7-point light-response curves that can be uniquely
 # identified by the values of its 'species' and 'plot' columns. Since these are
 # light-response curves, each one follows a pre-set sequence of `Qin` values.
-licor_file <- read_licor_file(
+licor_file <- read_gasex_file(
   system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA')
 )
 
