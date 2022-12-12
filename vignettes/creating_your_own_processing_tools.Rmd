@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 # Overview
 
 The `PhotoGEA` package contains many functions for processing gas exchange data,
-such as `calculate_cc` and `fit_c3_aci`. (A complete list is available in the
+such as `apply_gm` and `fit_c3_aci`. (A complete list is available in the
 [Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html)
 vignette.) However, you may wish to perform some kind of processing that is not
 already available from `PhotoGEA`. In this case, it is possible to create your

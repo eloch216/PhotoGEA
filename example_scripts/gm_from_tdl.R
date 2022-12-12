@@ -296,7 +296,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- calculate_gm_ubierna(licor_files)
 
-    licor_files <- calculate_cc(
+    licor_files <- apply_gm(
         licor_files,
         LICOR_A_COLUMN_NAME,
         LICOR_CA_COLUMN_NAME,

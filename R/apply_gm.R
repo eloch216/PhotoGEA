@@ -1,4 +1,4 @@
-calculate_cc <- function(
+apply_gm <- function(
     licor_exdf,
     a_column_name = 'A',
     ca_column_name = 'Ca',
@@ -9,7 +9,7 @@ calculate_cc <- function(
 )
 {
     if (!is.exdf(licor_exdf)) {
-        stop("calculate_cc requires an exdf object")
+        stop("apply_gm requires an exdf object")
     }
 
     # Make sure the required variables are defined and have the correct units
@@ -42,9 +42,9 @@ calculate_cc <- function(
     # Document the columns that were added
     licor_exdf <- document_variables(
         licor_exdf,
-        c("calculate_cc", cc_column_name,         "micromol mol^(-1)"),
-        c("calculate_cc", drawdown_m_column_name, "micromol mol^(-1)"),
-        c("calculate_cc", drawdown_s_column_name, "micromol mol^(-1)")
+        c("apply_gm", cc_column_name,         "micromol mol^(-1)"),
+        c("apply_gm", drawdown_m_column_name, "micromol mol^(-1)"),
+        c("apply_gm", drawdown_s_column_name, "micromol mol^(-1)")
     )
 
     return(licor_exdf)

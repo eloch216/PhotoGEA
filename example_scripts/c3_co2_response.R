@@ -213,7 +213,7 @@ if (PERFORM_CALCULATIONS) {
     }
 
     # Calculate Cc (required for calculating f_prime)
-    combined_info <- calculate_cc(
+    combined_info <- apply_gm(
         combined_info,
         A_COLUMN_NAME,
         CA_COLUMN_NAME,

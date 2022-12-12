@@ -266,7 +266,7 @@ licor_file <- set_variable(
 )
 
 # Calculate Cc
-licor_file <- calculate_cc(licor_file)
+licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)

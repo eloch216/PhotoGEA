@@ -227,7 +227,7 @@ data set:
   concentration at the leaf surface.
 - `calculate_c3_assimilation`: Calculates assimilation rates using the
   Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.
-- `calculate_cc`: Calculates values of the chloroplast CO~2~ concentration.
+- `apply_gm`: Calculates values of the chloroplast CO~2~ concentration.
 - `calculate_gas_properties`: Calculates gas properties that are not included in
   the default Licor log files, such as the H~2~O concentration at the leaf
   surface and the stomatal conductance to CO~2~.

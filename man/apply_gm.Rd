@@ -1,8 +1,8 @@
-\name{calculate_cc}
+\name{apply_gm}
 
-\alias{calculate_cc}
+\alias{apply_gm}
 
-\title{calculate_cc}
+\title{apply_gm}
 
 \description{
   Calculates CO2 concentration in the chloroplast, the CO2 drawdown across the
@@ -14,7 +14,7 @@
 }
 
 \usage{
-  calculate_cc(
+  apply_gm(
     licor_exdf,
     a_column_name = 'A',
     ca_column_name = 'Ca',
@@ -119,14 +119,14 @@
 
   _Note_: mesophyll conductance is not specified in typical Licor files, so it
   usually must be added using \code{\link{set_variable}} before calling
-  \code{calculate_cc}.
+  \code{apply_gm}.
 }
 
 \value{
   An \code{exdf} object based on \code{licor_exdf} that includes the following
   additional columns, calculated as described above: \code{Ci},
   \code{drawndown_s}, and \code{drawdown_m}. The category for each of these new
-  columns is \code{calculate_cc} to indicate that they were created using this
+  columns is \code{apply_gm} to indicate that they were created using this
   function.
 }
 
@@ -141,7 +141,7 @@ licor_file <-
   set_variable(licor_file, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0)
 
 # Calculate Cc and drawdowns
-licor_file <- calculate_cc(licor_file)
+licor_file <- apply_gm(licor_file)
 
 licor_file$units$Cc      # View the units of the new `Cc` column
 licor_file$categories$Cc # View the category of the new `Cc` column
