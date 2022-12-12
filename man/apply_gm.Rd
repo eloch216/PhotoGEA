@@ -135,10 +135,11 @@
 
 \value{
   An \code{exdf} object based on \code{licor_exdf} that includes the following
-  additional columns, calculated as described above: \code{Ci} (for C3 plants)
-  or \code{Cm} (for C4 plants), \code{drawndown_s}, and \code{drawdown_m}. The
-  category for each of these new columns is \code{apply_gm} to indicate that
-  they were created using this function.
+  additional columns, calculated as described above: \code{Pci} and \code{Ci}
+  (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
+  \code{drawndown_s}, and \code{drawdown_m}. The category for each of these new
+  columns is \code{apply_gm} to indicate that they were created using this
+  function.
 }
 
 \examples{

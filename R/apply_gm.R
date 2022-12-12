@@ -36,6 +36,8 @@ apply_gm <- function(
         stop(paste('Unsupported photosynthesis_type:', photosynthesis_type))
     }
 
+    pc_column_name <- paste0('P', c_column_name)
+
     # Make calculations
     licor_exdf[,c_column_name] <-
         licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] /
@@ -47,12 +49,15 @@ apply_gm <- function(
     licor_exdf[,drawdown_s_column_name] <-
         licor_exdf[,ca_column_name] - licor_exdf[,ci_column_name]
 
+    licor_exdf[,pc_column_name] <- licor_exdf[,c_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100
+
     # Document the columns that were added
     licor_exdf <- document_variables(
         licor_exdf,
         c('apply_gm', c_column_name,          'micromol mol^(-1)'),
         c('apply_gm', drawdown_m_column_name, 'micromol mol^(-1)'),
-        c('apply_gm', drawdown_s_column_name, 'micromol mol^(-1)')
+        c('apply_gm', drawdown_s_column_name, 'micromol mol^(-1)'),
+        c('apply_gm', pc_column_name,         'microbar')
     )
 
     return(licor_exdf)
