@@ -240,7 +240,7 @@ npts <- 101
 
 inputs <- exdf(data.frame(
   PCm = seq(0, 500, length.out = npts),
-  Tleaf = 30
+  Tleaf = 25
 ))
 
 inputs <- document_variables(
@@ -251,7 +251,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
-assim <- calculate_c4_assimilation(inputs, 20, 60, 80)
+assim <- calculate_c4_assimilation(inputs, 40, 200, 80)
 
 # Now we can plot An, Apr, Apc, and Ar. From this plot, we can see that
 # replacing the complicated quadratic equation with a simple minimum yields
