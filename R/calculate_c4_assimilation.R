@@ -1,10 +1,12 @@
 calculate_c4_assimilation <- function(
     exdf_obj,
+    Rd,                        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vcmax,                     # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpmax,                     # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpr,                       # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     POm = 210000,              # microbar             (typically this value is known from the experimental setup)
     gbs = 0.003,               # mol / m^2 / s / bar  (typically this value is fixed)
+    Rm_frac = 0.5,             # dimensionless        (typically this value is fixed)
     alpha = 0,                 # dimensionless        (typically this value is fixed)
     pcm_column_name = 'PCm',
     kc_column_name = 'Kc',
@@ -34,7 +36,7 @@ calculate_c4_assimilation <- function(
         required_variables[[ao_column_name]] <- 'dimensionless'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
-        required_variables[[rd_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
+        required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
 
         check_required_variables(exdf_obj, required_variables)
     }
@@ -52,8 +54,8 @@ calculate_c4_assimilation <- function(
     # Table 4.1
     Vcmax_tl <- Vcmax * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
     Vpmax_tl <- Vpmax * exdf_obj[, vpmax_norm_column_name] # micromol / m^2 / s
-    Rd_tl <- Vcmax * exdf_obj[, rd_norm_column_name]       # micromol / m^2 / s
-    Rm_tl <- 0.5 * Rd_tl                                   # micromol / m^2 / s
+    Rd_tl <- Rd * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
+    Rm_tl <- Rm_frac * Rd_tl                               # micromol / m^2 / s
 
     # Equations 4.17 and 4.19
     Vpc <- Cm * Vpmax_tl / (Cm + Kp)  # micromol / m^2 / s

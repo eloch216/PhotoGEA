@@ -15,11 +15,13 @@
 \usage{
   calculate_c4_assimilation(
     exdf_obj,
+    Rd,
     Vcmax,
     Vpmax,
     Vpr,
     POm = 210000,
     gbs = 0.003,
+    Rm_frac = 0.5,
     alpha = 0,
     pcm_column_name = 'PCm',
     kc_column_name = 'Kc',
@@ -37,6 +39,11 @@
 
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
+
+  \item{Rd}{
+    The total rate of mitochondrial respiration across the mesophyll and bundle
+    sheath at 25 degrees C, expressed in \code{micromol m^(-2) s^(-1)}.
+  }
 
   \item{Vpmax}{
     The maximum rate of PEP carboxylase activity at 25 degrees C, expressed in
@@ -63,6 +70,11 @@
 
   \item{gbs}{
     The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
+  }
+
+  \item{Rm_frac}{
+    The fraction of the total mitochondrial respiration that occurs in the
+    mesophyll.
   }
 
   \item{alpha}{
@@ -113,7 +125,7 @@
 
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Vcmax at 25 degrees C}).
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{perform_checks}{
@@ -134,6 +146,8 @@
 }
 
 \details{
+  \strong{General Description of the Model}
+
   This function generally follows Section 4.2.1 from S. von Caemmerer (2000),
   which provides equations for calculating the enzyme-limited net assimilation
   rate \code{An} in a C4 leaf. (These equations are also reproduced in S. von
@@ -155,8 +169,7 @@
   mesophyll, \code{Rm} is the rate of mitochondrial respiration occuring in the
   mesophyll, \code{Vcmax} is the maximum rate of Rubisco carboxylation, and
   \code{Rd} is the rate of mitochondrial respiration occurring in the bundle
-  sheath and mesophyll. (See the example below for a discussion of the validity
-  of this approximation.) Essentially, the first term in the equation above
+  sheath and mesophyll. Essentially, the first term in the equation above
   (\code{Vp + gbs * PCm - Rm}) can be thought of as a PEP-carboxylase-limited
   assimilation rate \code{Ap}, while the second term (\code{Vcmax - Rd}) is a
   Rubisco-limited rate \code{Ar}.
@@ -179,22 +192,40 @@
   rate due to regeneration-limited PEP carboxylation, and \code{Ar = Vcmax - Rd}
   is the rate due to Rubisco-limited assimilation.
 
-  The bundle sheath conductance is generally very small and can be ignored in a
-  simple analysis of the above equations. In that case, when \code{Pcm} is very
-  high, the approximate equation for \code{An} simplifies further to:
+  In the example at the end of this documentation page, we compare \code{Apc},
+  \code{Apr}, and \code{Ar} to \code{An} as calculated by Equation 4.21. From
+  this example, it is clear that the approximation \code{An = min(Apc, Apr, Ar)}
+  is quite accurate for low values of \code{PCm}, but introduces significant
+  errors as \code{PCm} increases. Thus, while the approximation can be helpful
+  for gaining an intuitive understanding of C4 photosynthesis, it should not be
+  used for realistic calculations.
+
+  Table 4.1 from von Caemmerer (2000) suggests that \code{Rd = 0.01 * Vcmax} and
+  \code{Rm = 0.5 * Rd}. To allow more flexibility, we allow \code{Rd} to be
+  specified independently of \code{Vcmax}, and we also consider the ratio of
+  \code{Rm / Rd = Rm_frac} to be a variable (so that \code{Rm} is calculated
+  from \code{Rd} according to \code{Rm = Rm_frac * Rd}).
+
+  \strong{Limiting Cases}
+
+  The bundle sheath conductance \code{gbs} is generally very small and can be
+  ignored in a simple analysis of the above equations. In that case, when
+  \code{Pcm} is very high, the approximate equation for \code{An} simplifies
+  further to:
 
   \code{An = min(Vpmax - Rm, Vpr - Rm, Vcmax - Rd)}
 
-  Since respiration costs are also generally small, the assimilation rate at
-  high levels of CO2 is therefore determined by the smaller of \code{Vpmax},
-  \code{Vpr}, and \code{Vcmax}. As shown in Table 4.1 of the textbook,
-  \code{Vpmax} is typically much larger than the other two rates, so high CO2
-  assimilation in C4 leaves is usually limited by either \code{Vpr} or
-  \code{Vcmax}. The exact limiting factor can depend on many possible variables,
-  such as the temperature. For example, see Wang (2008).
+  Since respiration costs are also generally much smaller than the maximum
+  enzyme activity and regeneration rates, the assimilation rate at high levels
+  of CO2 is therefore determined by the smaller of \code{Vpmax}, \code{Vpr}, and
+  \code{Vcmax}. As shown in Table 4.1 of the textbook, \code{Vpmax} is typically
+  much larger than the other two rates, so high CO2 assimilation in C4 leaves is
+  usually limited by either \code{Vpr} or \code{Vcmax}. The exact limiting
+  factor can depend on many possible variables, such as the temperature. For
+  example, see Wang (2008).
 
-  Conversely, at lower values of \code{PCm}, net assimilation is determined by
-  PEP carboxylase according to:
+  At lower values of \code{PCm}, net assimilation is determined by CO2-limited
+  PEP carboxylation according to:
 
   \code{An = PCm * Vpmax / Kp - Rm}
 
@@ -203,7 +234,8 @@
   levels, assimilation is linearly related to \code{PCm} with a slope of
   \code{Vpmax / Kp} and intercept of \code{-Rm}.
 
-  References:
+  \strong{References}
+
   \itemize{
     \item von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
           Publishing, 2000) [\doi{10.1071/9780643103405}].
@@ -251,7 +283,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
-assim <- calculate_c4_assimilation(inputs, 40, 200, 80)
+assim <- calculate_c4_assimilation(inputs, 1, 40, 200, 80)
 
 # Now we can plot An, Apr, Apc, and Ar. From this plot, we can see that
 # replacing the complicated quadratic equation with a simple minimum yields

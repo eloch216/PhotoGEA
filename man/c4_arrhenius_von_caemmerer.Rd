@@ -41,10 +41,9 @@
 }
 
 \source{
-  Some of these parameters (\code{Vcmax} and \code{Vpmax}) are normalized to
-  their values at 25 degrees C. \code{Rd} is normalized to the value of
-  \code{Vcmax} at 25 degrees C. These variables include \code{_norm} in their
-  names to indicate this.
+  Some of these parameters (\code{Vcmax}, \code{Vpmax}, and \code{Rd}) are
+  normalized to their values at 25 degrees C. These variables include
+  \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Kc}, \code{Ko}, \code{Kp}, \code{gamma_star},
   \code{ao}, and \code{gmc}) are not normalized because they are assumed to not

@@ -47,7 +47,7 @@ initial_guess_c3_aci <- function(
 
             -(rd_fit$coefficients[1] + rd_fit$coefficients[2] * mean_gstar_rd) / mean_rd_norm
         } else {
-            0.5
+            1.0
         }
 
         # Calculate gross assimilation, which is used in several of the next
@@ -93,7 +93,7 @@ initial_guess_c3_aci <- function(
         c(
             max(tpu_estimates),
             max(j_estimates),
-            as.numeric(rd_estimate),
+            as.numeric(rd_estimate), # remove names
             max(vcmax_estimates)
         )
     }
