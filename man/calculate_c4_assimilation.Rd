@@ -277,8 +277,8 @@ inputs <- exdf(data.frame(
 
 inputs <- document_variables(
   inputs,
-  c('', 'PCm',        'microbar'),
-  c('', 'Tleaf',      'degrees C')
+  c('', 'PCm',   'microbar'),
+  c('', 'Tleaf', 'degrees C')
 )
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')

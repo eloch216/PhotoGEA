@@ -5,18 +5,12 @@
 \title{fit_c3_aci}
 
 \description{
-  Calculates a linear fit of stomatal conductance vs. the Ball-Berry index using
-  the data in the \code{exdf} object. This function can accomodate alternative
-  column names for the variables taken from the Licor file in case they change
-  at some point in the future. This function also checks the units of each
-  required column and will produce an error if any units are incorrect.
-
-  Fits a model to an experimentally measured CO2 response curve using the data
-  in the \code{exdf} object along with a few other user-supplied parameters.
-  This function can accomodate alternative column names for the variables taken
-  from the Licor file in case they change at some point in the future. This
-  function also checks the units of each required column and will produce an
-  error if any units are incorrect.
+  Fits a model to an experimentally measured C3 CO2 response curve using the
+  data in the \code{exdf} object along with a few other user-supplied
+  parameters. This function can accomodate alternative column names for the
+  variables taken from the Licor file in case they change at some point in the
+  future. This function also checks the units of each required column and will
+  produce an error if any units are incorrect.
 }
 
 \usage{
@@ -56,7 +50,7 @@
 
 \arguments{
   \item{replicate_exdf}{
-    An \code{exdf} object representing one Ball-Berry curve.
+    An \code{exdf} object representing one CO2 response curve.
   }
 
   \item{a_column_name}{
@@ -207,7 +201,7 @@
   estimates of the parameters to use as an initial guess. However, it is
   possible to also use a fixed initial guess by using something like the
   following for the \code{initial_guess_fun}:
-  \code{function(x){c(10, 100,  0.5, 90)}}, which would set the initial guess to
+  \code{function(x){c(10, 100, 0.5, 90)}}, which would set the initial guess to
   \code{TPU = 10}, \code{J = 100}, \code{Rd = 0.5}, and \code{Vcmax = 90}.
 
   By default, this function fixes \code{TPU} to a high value (\code{40 micromol
