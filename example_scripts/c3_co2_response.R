@@ -213,15 +213,7 @@ if (PERFORM_CALCULATIONS) {
     }
 
     # Calculate Cc (required for calculating f_prime)
-    combined_info <- apply_gm(
-        combined_info,
-        A_COLUMN_NAME,
-        CA_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        GM_COLUMN_NAME,
-        PA_COLUMN_NAME,
-        DELTAPCHAM_COLUMN_NAME
-    )
+    combined_info <- apply_gm(combined_info)
 
     # Calculate f_prime (required for the Vcmax fitting procedure)
     combined_info <- calculate_fprime(

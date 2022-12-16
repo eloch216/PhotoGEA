@@ -209,7 +209,7 @@ fit_variable_j <- function(
     required_variables <- list()
     required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
     required_variables[[ci_column_name]] <- "micromol mol^(-1)"
-    required_variables[[phips2_column_name]] <- "NA"
+    required_variables[[phips2_column_name]] <- NA
     required_variables[[qin_column_name]] <- "micromol m^(-2) s^(-1)"
     required_variables[[tleaf_column_name]] <- "degrees C"
 

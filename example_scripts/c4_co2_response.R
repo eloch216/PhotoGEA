@@ -150,6 +150,10 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
+    # Calculate temperature-dependent values of C4 parameters
+    combined_info <-
+        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
+
     # Include gm values
     combined_info <- if (USE_GM_TABLE) {
         set_variable(
@@ -171,9 +175,8 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
-    # Calculate temperature-dependent values of C4 parameters
-    combined_info <-
-        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
+    # Calculate PCm
+    combined_info <- apply_gm(combined_info, 'C4')
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -220,20 +223,7 @@ if (PERFORM_CALCULATIONS) {
     fit_result <- consolidate(by(
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
-        fit_c4_aci,
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PRESSURE_COLUMN_NAME,
-        DELTA_PRESSURE_COLUMN_NAME,
-        'Kc',
-        'Ko',
-        'Kp',
-        'gamma_star',
-        'ao',
-        'gmc',
-        'Vcmax_norm',
-        'Vpmax_norm',
-        'Rd_norm',
+        fit_c4_aci
     ))
 
     all_fit_parameters <- fit_result$parameters
