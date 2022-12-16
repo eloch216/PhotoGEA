@@ -18,10 +18,10 @@ for the next release.
 
 # UNRELEASED
 
-- Added a new input argument to `xyplot_avg_rc` so that y-axis error bars can be
-  disabled.
-- Added a new example file (`plaintext_licor_file`) representing a plaintext
-  Licor LI-6800 log file.
+- Added new example files:
+  - `plaintext_licor_file` represents a plaintext Licor LI-6800 log file.
+  - `c4_aci_1.xlsx` and `c4_aci_2.xlsx` contain examples of C4 A-Ci curves
+    measured with Licor LI-6800 instruments.
 - Made several significant changes to functions that read data from log files:
   - Added the ability to read plaintext Licor LI-6800 log files.
   - Consolidated all file-reading functions into a single one called
@@ -36,6 +36,19 @@ for the next release.
     deprecated. Since these functions are commonly used in scripts, a message
     will be sent to any users who attempt to call these functions. Eventually
     they will be completely removed from the package namespace.
+- Renamed or modified several other functions:
+  - `calculate_cc` is now `apply_gm` so it can be used for C3 and C4
+    photosynthesis calculations.
+  - `apply_gm` was modified to include partial pressures in its outputs.
+  - `fit_c4_aci` was modified to make it more like `fit_c3_aci`.
+  - Added a new input argument to `xyplot_avg_rc` so that y-axis error bars can
+    be disabled.
+- Added several other new functions:
+  - `initial_guess_c4_aci` makes initial guesses for C4 photosynthetic
+    parameters.
+  - `calculate_c4_assimilation` calculates assimilation values using S. von
+    Caemmerer's model for C4 photosynthesis.
+- Added a new vignette demonstrating how to analyze C4 A-Ci curve data.
 
 # PhotoGEA VERSION 0.6.1 (2022-11-01)
 
