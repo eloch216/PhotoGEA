@@ -203,6 +203,7 @@ being added all the time:
 - Analysis case studies:
   - [Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html) (This example is
     more detailed than the analysis demonstrated here.)
+  - [Analyzing C4 A-Ci Curves](analyzing_c4_aci_curves.html)
   - [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html)
   - [Analyzing TDL Data](analyzing_tdl_data.html)
 - More advanced topics:
