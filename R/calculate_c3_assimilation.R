@@ -1,18 +1,3 @@
-# This function calculates a value of enzyme-limited net assimilation using
-# equations from s. von Caemmerer, Biochemical Models of Leaf Photosynthesis.
-# (CSIRO Publishing, 2000). doi:10.1071/9780643103405.
-#
-# Meaning of symbols:
-# -------------------
-# alpha:      fraction of glycolate carbon _not_ returned to the chloroplast
-# POc:        chloroplast O2 partial pressure
-# Gamma_star: the value of Cc at which no assimilation occurs in the absence of respiration
-# Kc:         Michaelis constant of rubisco for CO2
-# Ko:         Michaelis constant of rubisco for O2
-# gmc:        mesophyll conductance to CO2
-# Vcmax:      maximum rubisco activity
-# -------------------
-#
 calculate_c3_assimilation <- function(
     exdf_obj,
     TPU,          # micromol / m^2 / s   (typically this value is being fitted)

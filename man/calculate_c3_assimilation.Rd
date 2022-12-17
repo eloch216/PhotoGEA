@@ -133,7 +133,7 @@
     A logical value indicating whether to return an \code{exdf} object. This
     should almost always be \code{TRUE}. The option to return a vector is mainly
     intended to be used when  \code{\link{fit_c3_aci}} calls this function,
-    since creating an \code{exdf} object to return will slows down the fitting
+    since creating an \code{exdf} object to return will slow down the fitting
     procedure.
   }
 }
@@ -224,8 +224,9 @@
           \code{Ac}, \code{Aj}, \code{Ap}, and \code{An}. The category for each
           of these new columns is \code{calculate_c3_assimilation} to indicate
           that they were created using this function.
-    \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
-          vector containing the calculated values of \code{An}.
+    \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
+          the following named elements: \code{An}, \code{Ac}, \code{Aj}, and
+          \code{Ap}. Each element is a numeric vector.
   }
 }
 

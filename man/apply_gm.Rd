@@ -1,21 +1,22 @@
-\name{calculate_cc}
+\name{apply_gm}
 
-\alias{calculate_cc}
+\alias{apply_gm}
 
-\title{calculate_cc}
+\title{apply_gm}
 
 \description{
-  Calculates CO2 concentration in the chloroplast, the CO2 drawdown across the
-  stomata, and the CO2 drawdown across the mesophyll. This function can
-  accomodate alternative column names for the variables taken from the Licor
+  Calculates CO2 concentration in the chloroplast or mesophyll, the CO2 drawdown
+  across the stomata, and the CO2 drawdown across the mesophyll. This function
+  can accomodate alternative column names for the variables taken from the Licor
   file in case they change at some point in the future. This function also
   checks the units of each required column and will produce an error if any
   units are incorrect.
 }
 
 \usage{
-  calculate_cc(
+  apply_gm(
     licor_exdf,
+    photosynthesis_type = 'C3',
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -29,6 +30,11 @@
   \item{licor_exdf}{
     An \code{exdf} object representing data from a Licor gas exchange
     measurement system.
+  }
+
+  \item{photosynthesis_type}{
+    A string indicating the type of photosynthesis being considered (either
+    \code{'C3'} or \code{'C4'}).
   }
 
   \item{a_column_name}{
@@ -71,11 +77,9 @@
 
   where \code{An} is the net CO2 assimilation rate, \code{PCi} is the partial
   pressure of CO2 in the intercellular spaces, and \code{PCc} is the partial
-  pressure of CO2 in the chloroplast. (For a C4 plant, \code{Pcc} would be
-  replaced by \code{PCm}, the partial pressure of CO2 in the mesophyll.) A key
-  underlying assumption for this equation is that the flow of CO2 has reached a
-  steady state; in this case, the flow across the stomata is equal to the flow
-  across the mesophyll.
+  pressure of CO2 in the chloroplast.  A key underlying assumption for this
+  equation is that the flow of CO2 has reached a steady state; in this case, the
+  flow across the stomata is equal to the flow across the mesophyll.
 
   This equation can be rearranged to calculate \code{PCc}:
 
@@ -119,14 +123,22 @@
 
   _Note_: mesophyll conductance is not specified in typical Licor files, so it
   usually must be added using \code{\link{set_variable}} before calling
-  \code{calculate_cc}.
+  \code{apply_gm}.
+
+  For a C4 plant, mesophyll conductance instead refers to the conductance
+  associated with the flow of CO2 from the intercellular spaces into the
+  mesophyll (rather than into the chloroplast). In this case, the equations
+  above just require a small modification where \code{Pcc} and \code{Cc} are
+  replaced by \code{PCm} and \code{Cm}, the partial pressure and concentration
+  of CO2 in the mesophyll.
 }
 
 \value{
   An \code{exdf} object based on \code{licor_exdf} that includes the following
-  additional columns, calculated as described above: \code{Ci},
+  additional columns, calculated as described above: \code{Pci} and \code{Ci}
+  (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
   \code{drawndown_s}, and \code{drawdown_m}. The category for each of these new
-  columns is \code{calculate_cc} to indicate that they were created using this
+  columns is \code{apply_gm} to indicate that they were created using this
   function.
 }
 
@@ -141,7 +153,7 @@ licor_file <-
   set_variable(licor_file, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0)
 
 # Calculate Cc and drawdowns
-licor_file <- calculate_cc(licor_file)
+licor_file <- apply_gm(licor_file)
 
 licor_file$units$Cc      # View the units of the new `Cc` column
 licor_file$categories$Cc # View the category of the new `Cc` column

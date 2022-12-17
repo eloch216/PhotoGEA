@@ -227,7 +227,10 @@ data set:
   concentration at the leaf surface.
 - `calculate_c3_assimilation`: Calculates assimilation rates using the
   Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.
-- `calculate_cc`: Calculates values of the chloroplast CO~2~ concentration.
+- `calculate_c4_assimilation`: Calculate assimilation rates using S. von
+  Caemmerer's model for C4 photosynthesis.
+- `apply_gm`: Calculates values of the chloroplast or mesophyll CO~2~
+  concentration.
 - `calculate_gas_properties`: Calculates gas properties that are not included in
   the default Licor log files, such as the H~2~O concentration at the leaf
   surface and the stomatal conductance to CO~2~.
@@ -248,6 +251,8 @@ response curves:
   the Ball-Berry index.
 - `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.
   chloroplastic CO~2~ concentration.
+- `fit_c4_aci`: Calculates a nonlinear fit of net CO2 assimilation vs. the
+  partial pressure of CO~2~ in the mesophyll.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)
