@@ -234,6 +234,8 @@ data set:
 - `calculate_gas_properties`: Calculates gas properties that are not included in
   the default Licor log files, such as the H~2~O concentration at the leaf
   surface and the stomatal conductance to CO~2~.
+- `calculate_total_pressure`: Calculates the total pressure in the Licor
+  measurement chamber.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)
