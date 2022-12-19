@@ -41,9 +41,9 @@
       vcmax_norm_column_name = vcmax_norm_column_name,
       vpmax_norm_column_name = vpmax_norm_column_name
     ),
-    lower = c(0,   0,    0,    0),
-    upper = c(100, 1000, 1000, 1000),
-    fixed = c(NA, NA,   NA,    800)
+    lower = c(0,   0,   0,    0),
+    upper = c(100, 100, 1000, 1000),
+    fixed = c(NA,  NA,  NA,   1000)
   )
 }
 
@@ -238,6 +238,9 @@ licor_file <- organize_response_curve_data(
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate PCm
 licor_file <- apply_gm(licor_file, 'C4')

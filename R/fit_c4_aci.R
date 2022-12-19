@@ -25,9 +25,9 @@ fit_c4_aci <- function(
         vcmax_norm_column_name = vcmax_norm_column_name,
         vpmax_norm_column_name = vpmax_norm_column_name
     ),
-    lower = c(0,   0,    0,    0),    # Rd, Vcmax, Vpmax, Vpr
-    upper = c(100, 1000, 1000, 1000), # Rd, Vcmax, Vpmax, Vpr
-    fixed = c(NA, NA,   NA,    800)   # Rd, Vcmax, Vpmax, Vpr
+    lower = c(0,   0,    0,    0),   # Rd, Vcmax, Vpmax, Vpr
+    upper = c(100, 100, 1000, 1000), # Rd, Vcmax, Vpmax, Vpr
+    fixed = c(NA, NA,   NA,   1000)  # Rd, Vcmax, Vpmax, Vpr
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -81,7 +81,11 @@ fit_c4_aci <- function(
             return_exdf = FALSE
         )
 
-        sum((replicate_exdf[, 'A'] - assim)^2)
+        if (any(is.na(assim))) {
+            1e10 # return a huge value to penalize this set of parameter values
+        } else {
+            sum((replicate_exdf[, 'A'] - assim)^2)
+        }
     }
 
     # Get an initial guess for all the parameter values

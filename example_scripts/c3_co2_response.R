@@ -212,6 +212,9 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
+    # Calculate total pressure (required for apply_gm)
+    combined_info <- calculate_total_pressure(combined_info)
+
     # Calculate Cc (required for calculating f_prime)
     combined_info <- apply_gm(combined_info)
 

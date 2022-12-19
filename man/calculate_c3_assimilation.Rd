@@ -20,10 +20,11 @@
     Rd,
     Vcmax,
     POc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     curvature = 1,
     cc_column_name = 'Cc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     gamma_star_column_name = 'Gamma_star',
@@ -67,6 +68,14 @@
     O2, which is about 20000 microbar.
   }
 
+  \item{atp_use}{
+    The number of ATP molecules used per C3 cycle.
+  }
+
+  \item{nadph_use}{
+    The number of NADPH molecules used per C3 cycle.
+  }
+
   \item{curvature}{
     A dimensionless quadratic curvature parameter greater than 0 and less than
     or equal to 1 that sets the degree of co-limitation between \code{Ac},
@@ -78,14 +87,9 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{pa_column_name}{
-    The name of the column in \code{exdf_obj} that contains the atmospheric
-    pressure in \code{kPa}.
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{exdf_obj} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{kc_column_name}{
@@ -161,10 +165,13 @@
 
   The electron-transport-limited rate is calculated using Equation 2.23:
 
-  \code{Aj = (PCc - Gamma_star) * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl}
+  \code{Aj = (PCc - Gamma_star) * J_tl / (atp_use * PCc + nadph_use * Gamma_star) - Rd_tl}
 
   where \code{J_tl} is the leaf-temperature-adjusted value of \code{J},
-  determined from the normalized value \code{J_norm}.
+  determined from the normalized value \code{J_norm}. Here we have also allowed
+  \code{atp_use} and \code{nadph_use} to be variables rather than taking fixed
+  values (as they do in Equation 2.23). This is necessary because not all
+  descriptions of the FvCB model use the same values.
 
   The phosphate-limited rate is calculated using Equation 2.26:
 
@@ -189,12 +196,12 @@
   and Collatz et al. (1991). In particular, we solve the following equation for
   \code{Acj}, the assimilation rate co-limited by rubisco and RuBP saturation:
 
-  \code{curvature^2 * Acj - Acj * (Ac + Aj) + Ac * Aj}
+  \code{curvature * Acj^2 - Acj * (Ac + Aj) + Ac * Aj}
 
   Then we solve a second equation for \code{An}, the assimilation rate
   co-limited by rubisco, RuBP regeneration, and phosphate utilization:
 
-  \code{curvature^2 * An - An * (Acj + Ap) + Acj * Ap}
+  \code{curvature * An^2 - An * (Acj + Ap) + Acj * Ap}
 
   Note that when \code{curvature} is 1, \code{An} will be equal to \code{min(Ac,
   Aj, Ap)} as in the version that applies for a single chloroplast.
@@ -207,11 +214,11 @@
           and environmental regulation of stomatal conductance, photosynthesis
           and transpiration: a model that includes a laminar boundary layer."
           Agricultural and Forest Meteorology 54, 107–136 (1991)
-          [doi:10.1016/0168-1923(91)90002-8].
+          [\doi{10.1016/0168-1923(91)90002-8}].
     \item Collatz, G. J., Berry, J. A., Farquhar, G. D. & Pierce, J. "The
           relationship between the Rubisco reaction mechanism and models of
           photosynthesis." Plant, Cell & Environment 13, 219–225 (1990)
-          [doi:10.1111/j.1365-3040.1990.tb01306.x].
+          [\doi{10.1111/j.1365-3040.1990.tb01306.x}].
   }
 }
 
@@ -239,16 +246,14 @@ npts <- 101
 inputs <- exdf(data.frame(
   Cc = seq(0, 600, length.out = npts),
   Tleaf = 30,
-  Pa = 100,
-  DeltaPcham = 0.1
+  total_pressure = 1
 ))
 
 inputs <- document_variables(
   inputs,
-  c('', 'Cc',         'micromol mol^(-1)'),
-  c('', 'Tleaf',      'degrees C'),
-  c('', 'Pa',         'kPa'),
-  c('', 'DeltaPcham', 'kPa')
+  c('', 'Cc',             'micromol mol^(-1)'),
+  c('', 'Tleaf',          'degrees C'),
+  c('', 'total_pressure', 'bar')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')

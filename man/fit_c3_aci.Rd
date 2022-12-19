@@ -18,8 +18,7 @@
     replicate_exdf,
     a_column_name = 'A',
     cc_column_name = 'Cc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     gamma_star_column_name = 'Gamma_star',
@@ -27,9 +26,13 @@
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
     POc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     OPTIM_FUN = default_optimizer(),
     initial_guess_fun = initial_guess_c3_aci(
         Oc = POc,
+        atp_use = atp_use,
+        nadph_use = nadph_use,
         a_column_name = a_column_name,
         cc_column_name = cc_column_name,
         kc_column_name = kc_column_name,
@@ -63,14 +66,9 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{pa_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    atmospheric pressure in \code{kPa}.
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{kc_column_name}{
@@ -112,6 +110,14 @@
     would be 21 percent O2, which is about 210000 microbar at standard
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
+  }
+
+  \item{atp_use}{
+    The number of ATP molecules used per C3 cycle.
+  }
+
+  \item{nadph_use}{
+    The number of NADPH molecules used per C3 cycle.
   }
 
   \item{OPTIM_FUN}{
@@ -258,6 +264,9 @@ licor_file <- set_variable(
   licor_file,
   'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
 )
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate Cc
 licor_file <- apply_gm(licor_file)

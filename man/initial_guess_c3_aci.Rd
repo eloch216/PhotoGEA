@@ -17,6 +17,8 @@
   initial_guess_c3_aci(
     cc_threshold_rd = 100,
     Oc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     kc_column_name = 'Kc',
@@ -39,6 +41,14 @@
     \code{micromol mol^(-1)}. This is often assumed to be the ambient value. For
     air measurements, this would be 21 percent O2, which is 210000 ppm. For low
     oxygen measurements, this would be 2 percent O2, which is about 20000 ppm.
+  }
+
+  \item{atp_use}{
+    The number of ATP molecules used per C3 cycle.
+  }
+
+  \item{nadph_use}{
+    The number of NADPH molecules used per C3 cycle.
   }
 
   \item{a_column_name}{
@@ -161,6 +171,9 @@ licor_file <- set_variable(
   licor_file,
   'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
 )
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate Cc
 licor_file <- apply_gm(licor_file)

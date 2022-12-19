@@ -561,7 +561,7 @@ It's also easy to plot the residuals now:
 
 ```{r plot_residuals}
 # Plot the residuals
-lattice::xyplot(
+xyplot(
   A_residuals ~ Ci_original | curve_identifier,
   data = c3_aci_results$fits$main_data,
   type = 'b',

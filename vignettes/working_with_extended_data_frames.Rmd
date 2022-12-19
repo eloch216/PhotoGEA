@@ -445,9 +445,12 @@ combined) is found in most analysis scripts, such as the one in the
 
 Now that the data from the files has been combined into one `exdf` object, it's
 easy to perform calculations on all of it at once. For example, we can calculate
-additional gas properties and the Ball-Berry index:
+total pressure, additional gas properties, and the Ball-Berry index:
 
 ```{r}
+# Calculate the total pressure in the Licor chamber
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
 licor_data <- calculate_gas_properties(licor_data)
 

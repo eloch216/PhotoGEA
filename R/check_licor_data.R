@@ -84,20 +84,26 @@ check_licor_data <- function(
             lapply(split_exdf, function(x) {x[ , driving_column]})
         )
 
+        msg <- character()
+
         for (i in seq_len(ncol(driving_df))) {
-            col_mean <- mean(driving_df[ , i])
-            col_diff <- driving_df[ , i] - col_mean
-            if (!all(abs(col_diff) < driving_column_tolerance)) {
-                print(driving_df[ , i])
-                stop(paste0(
-                    'Values of the `',
-                    driving_column,
-                    '` column are not identical (within the tolerance of ',
-                    driving_column_tolerance,
-                    ') for point ',
-                    i,
-                    ' within the curve sequence.'
+            col_vals <- driving_df[ , i]
+            col_mean <- mean(col_vals)
+            col_diff <- col_vals - col_mean
+            col_diff_large <- col_diff[col_diff > driving_column_tolerance]
+
+            for (j in seq_along(col_diff_large)) {
+                curve_name <- names(col_diff_large)[j]
+                msg <- append(msg, paste0(
+                    'Point ', i, ' from curve `', curve_name, '` has value `',
+                    driving_column, ' = ', col_vals[curve_name],
+                    '`, but the average value for this point across all curves is `',
+                    driving_column, ' = ', col_mean, '`'
                 ))
+            }
+
+            if (length(msg) > 0) {
+                stop(paste(msg, collapse='\n  '))
             }
         }
     }

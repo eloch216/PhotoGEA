@@ -280,31 +280,15 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- do.call(rbind, licor_files)
 
+    # Calculate total pressure (needed for `calculate_gas_properties`)
+    licor_files <- calculate_total_pressure(licor_files)
+
     # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
-    licor_files <- calculate_gas_properties(
-        licor_files,
-        LICOR_A_COLUMN_NAME,
-        LICOR_CA_COLUMN_NAME,
-        LICOR_DELTAPCHAM_COLUMN_NAME,
-        LICOR_E_COLUMN_NAME,
-        LICOR_GBW_COLUMN_NAME,
-        LICOR_GSW_COLUMN_NAME,
-        LICOR_H2O_S_COLUMN_NAME,
-        LICOR_PA_COLUMN_NAME,
-        LICOR_TLEAF_COLUMN_NAME
-    )
+    licor_files <- calculate_gas_properties(licor_files)
 
     licor_files <- calculate_gm_ubierna(licor_files)
 
-    licor_files <- apply_gm(
-        licor_files,
-        LICOR_A_COLUMN_NAME,
-        LICOR_CA_COLUMN_NAME,
-        LICOR_CI_COLUMN_NAME,
-        LICOR_GM_COLUMN_NAME,
-        LICOR_PA_COLUMN_NAME,
-        LICOR_DELTAPCHAM_COLUMN_NAME
-    )
+    licor_files <- apply_gm(licor_files)
 
     licor_files <- calculate_iwue(
         licor_files,
@@ -313,14 +297,7 @@ if (PERFORM_CALCULATIONS) {
         LICOR_IWUE_COLUMN_NAME
     )
 
-    licor_files <- calculate_g_ratio(
-        licor_files,
-        'Pa',
-        'DeltaPcham',
-        'gsc',  # from calculate_gas_properties
-        LICOR_GM_COLUMN_NAME,
-        LICOR_G_RATIO_COLUMN_NAME
-    )
+    licor_files <- calculate_g_ratio(licor_files)
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(

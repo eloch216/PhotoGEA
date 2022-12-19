@@ -159,8 +159,12 @@
 
   where the parameters \code{a}, \code{b}, and \code{c} are determined by
   Equations 4.22, 4.23, and 4.24, respectively. These equations are fairly long,
-  so we do not reproduce them here. However, the complicated equations above can
-  be approximiated by a simpler one (Equation 4.25):
+  so we do not reproduce them here.
+
+  \strong{An Approximation to the Full Equations}
+
+  The complicated equations above can be approximiated by a simpler one
+  (Equation 4.25):
 
   \code{An = min(Vp + gbs * PCm - Rm, Vcmax - Rd)}
 
@@ -200,13 +204,13 @@
   for gaining an intuitive understanding of C4 photosynthesis, it should not be
   used for realistic calculations.
 
-  Table 4.1 from von Caemmerer (2000) suggests that \code{Rd = 0.01 * Vcmax} and
-  \code{Rm = 0.5 * Rd}. To allow more flexibility, we allow \code{Rd} to be
-  specified independently of \code{Vcmax}, and we also consider the ratio of
-  \code{Rm / Rd = Rm_frac} to be a variable (so that \code{Rm} is calculated
-  from \code{Rd} according to \code{Rm = Rm_frac * Rd}).
+  To be more precise, the approximation is only reliable when \code{Vcmax} is
+  much larger than \code{gbs * Kc * (1 + POm / Ko)}, which is rarely the case;
+  otherwise, the limiting value of \code{An} at high \code{PCm} will be smaller
+  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha} are
+  both set to zero, then the approximation is exact.
 
-  \strong{Limiting Cases}
+  \strong{Limiting Cases of the Approximate Equation}
 
   The bundle sheath conductance \code{gbs} is generally very small and can be
   ignored in a simple analysis of the above equations. In that case, when
@@ -233,6 +237,15 @@
   appropriate for small values of \code{Pcm}. Thus, we can see that for low CO2
   levels, assimilation is linearly related to \code{PCm} with a slope of
   \code{Vpmax / Kp} and intercept of \code{-Rm}.
+
+  \strong{Respiration}
+
+  Table 4.1 from von Caemmerer (2000) suggests that \code{Rd = 0.01 * Vcmax} and
+  \code{Rm = 0.5 * Rd}. To allow more flexibility, we allow \code{Rd} to be
+  specified independently of \code{Vcmax}, and we also consider the ratio of
+  \code{Rm / Rd = Rm_frac} to be a variable (so that \code{Rm} is calculated
+  from \code{Rd} according to \code{Rm = Rm_frac * Rd}). If \code{Rm_frac} is
+  set to 1, then there is no distinction between \code{Rd} and \code{Rm}.
 
   \strong{References}
 

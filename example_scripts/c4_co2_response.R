@@ -175,6 +175,9 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
+    # Calculate the total pressure
+    combined_info <- calculate_total_pressure(combined_info)
+
     # Calculate PCm
     combined_info <- apply_gm(combined_info, 'C4')
 

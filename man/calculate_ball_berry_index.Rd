@@ -69,11 +69,14 @@
 }
 
 \examples{
-# Read an example Licor file included in the PhotoGEA package, calculate
-# additional gas properties, and then calculate the Ball-Berry index.
+# Read an example Licor file included in the PhotoGEA package, calculate the
+# total pressure, calculate additional gas properties, and finally calculate the
+# Ball-Berry index.
 licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
+
+licor_file <- calculate_total_pressure(licor_file)
 
 licor_file <- calculate_gas_properties(licor_file)
 

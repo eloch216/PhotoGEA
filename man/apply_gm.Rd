@@ -17,12 +17,12 @@
   apply_gm(
     licor_exdf,
     photosynthesis_type = 'C3',
+    calculate_drawdown = TRUE,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gmc_column_name = 'gmc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham'
+    total_pressure_column_name = 'total_pressure'
   )
 }
 
@@ -35,6 +35,10 @@
   \item{photosynthesis_type}{
     A string indicating the type of photosynthesis being considered (either
     \code{'C3'} or \code{'C4'}).
+  }
+
+  \item{calculate_drawdown}{
+    A logical value indicating whether to calculate drawdown values.
   }
 
   \item{a_column_name}{
@@ -57,14 +61,9 @@
     conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
   }
 
-  \item{pa_column_name}{
-    The name of the column in \code{licor_exdf} that contains the atmospheric
-    pressure in \code{kPa}.
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{licor_exdf} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{licor_exdf} that contains the total pressure
+    in \code{bar}.
   }
 }
 
@@ -117,8 +116,8 @@
   across the mesophyll into the chloroplast, there is a decrease in CO2
   concentration at each step. Sometimes it is useful to calculate these changes,
   which are usually referred to as "CO2 drawdown" values. So, in addition to
-  \code{Ci}, this function also calculates the drawdown across the stomata
-  (\code{drawndown_s = Ca - Ci}) and the drawdown across the mesophyll
+  \code{Ci}, this function (optionally) calculates the drawdown across the
+  stomata (\code{drawndown_s = Ca - Ci}) and the drawdown across the mesophyll
   (\code{drawdown_m = Ci - Cc}).
 
   _Note_: mesophyll conductance is not specified in typical Licor files, so it
@@ -147,6 +146,9 @@
 licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
 
 # Set the mesophyll conductance to 1 mol / m^2 / s / bar
 licor_file <-

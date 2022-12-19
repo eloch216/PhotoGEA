@@ -1,12 +1,12 @@
 apply_gm <- function(
     licor_exdf,
     photosynthesis_type = 'C3',
+    calculate_drawdown = TRUE,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gmc_column_name = 'gmc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham'
+    total_pressure_column_name = 'total_pressure'
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -16,11 +16,13 @@ apply_gm <- function(
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
     required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
     required_variables[[gmc_column_name]] <- 'mol m^(-2) s^(-1) bar^(-1)'
-    required_variables[[pa_column_name]] <- 'kPa'
-    required_variables[[deltapcham_column_name]] <- 'kPa'
+    required_variables[[total_pressure_column_name]] <- 'bar'
+
+    if (calculate_drawdown) {
+        required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    }
 
     check_required_variables(licor_exdf, required_variables)
 
@@ -38,27 +40,33 @@ apply_gm <- function(
 
     pc_column_name <- paste0('P', c_column_name)
 
-    # Make calculations
-    licor_exdf[,c_column_name] <-
-        licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] /
-            (licor_exdf[,gmc_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100)
+    # Make calculations and document the columns that were added
+    licor_exdf[, c_column_name] <-
+        licor_exdf[, ci_column_name] - licor_exdf[, a_column_name] /
+            (licor_exdf[, gmc_column_name] * licor_exdf[, total_pressure_column_name])
 
-    licor_exdf[,drawdown_m_column_name] <-
-        licor_exdf[,ci_column_name] - licor_exdf[,c_column_name]
+    licor_exdf[, pc_column_name] <-
+        licor_exdf[, c_column_name] * licor_exdf[, total_pressure_column_name]
 
-    licor_exdf[,drawdown_s_column_name] <-
-        licor_exdf[,ca_column_name] - licor_exdf[,ci_column_name]
-
-    licor_exdf[,pc_column_name] <- licor_exdf[,c_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100
-
-    # Document the columns that were added
     licor_exdf <- document_variables(
         licor_exdf,
         c('apply_gm', c_column_name,          'micromol mol^(-1)'),
-        c('apply_gm', drawdown_m_column_name, 'micromol mol^(-1)'),
-        c('apply_gm', drawdown_s_column_name, 'micromol mol^(-1)'),
         c('apply_gm', pc_column_name,         'microbar')
     )
+
+    if (calculate_drawdown) {
+        licor_exdf[,drawdown_m_column_name] <-
+            licor_exdf[, ci_column_name] - licor_exdf[, c_column_name]
+
+        licor_exdf[,drawdown_s_column_name] <-
+            licor_exdf[, ca_column_name] - licor_exdf[, ci_column_name]
+
+        licor_exdf <- document_variables(
+            licor_exdf,
+            c('apply_gm', drawdown_m_column_name, 'micromol mol^(-1)'),
+            c('apply_gm', drawdown_s_column_name, 'micromol mol^(-1)')
+        )
+    }
 
     return(licor_exdf)
 }
