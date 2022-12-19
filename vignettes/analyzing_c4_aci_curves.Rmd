@@ -568,13 +568,14 @@ Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
 temperature-dependent values of important photosynthetic parameters such as
-$\gamma^*$ and values of the partial pressure of CO~2~ in the mesophyll
-$P_{cm}$. However, the `PhotoGEA` package includes two functions to help with
-these calculations: `calculate_arrhenius` and `apply_gm`. Each of these requires
-an `exdf` object containing Licor data. The units for each required column will
-be checked in an attempt to avoid unit-related errors. More information about
-these functions can be obtained from the built-in help system by typing
-`?calculate_arrhenius` or `?apply_gm`.
+$\gamma^*$, values of the total pressure, and values of the partial pressure of
+CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes three
+functions to help with these calculations: `calculate_arrhenius`,
+`calculate_total_pressure`, and `apply_gm`. Each of these requires an `exdf`
+object containing Licor data. The units for each required column will be checked
+in an attempt to avoid unit-related errors. More information about these
+functions can be obtained from the built-in help system by typing
+`?calculate_arrhenius`, `?calculate_total_pressure`, or `?apply_gm`.
 
 First, we can use `calculate_arrhenius`:
 
@@ -605,9 +606,12 @@ licor_data <- set_variable(
 )
 ```
 
-Now we can use `apply_gm` to calculate `PCm`:
+Now we can use `calculate_total_pressure` and `apply_gm` to calculate `PCm`:
 
 ```{r apply_gm}
+# Calculate the total pressure in the Licor chamber
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate PCm
 licor_data <- apply_gm(
   licor_data,

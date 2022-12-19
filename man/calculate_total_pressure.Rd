@@ -19,8 +19,7 @@
   calculate_total_pressure(
     exdf_obj,
     pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
-    total_pressure_column_name = 'total_pressure'
+    deltapcham_column_name = 'DeltaPcham'
   )
 }
 

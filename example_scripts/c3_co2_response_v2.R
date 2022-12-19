@@ -232,6 +232,9 @@ licor_data <- set_variable(
     'gmc', 'mol m^(-2) s^(-1) bar^(-1)', '', Inf
 )
 
+# Calculate total pressure (required for apply_gm)
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate Cc
 licor_data <- apply_gm(licor_data)
 

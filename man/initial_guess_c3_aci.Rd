@@ -162,6 +162,9 @@ licor_file <- set_variable(
   'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
 )
 
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
+
 # Calculate Cc
 licor_file <- apply_gm(licor_file)
 

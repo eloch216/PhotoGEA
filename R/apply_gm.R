@@ -5,8 +5,7 @@ apply_gm <- function(
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gmc_column_name = 'gmc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham'
+    total_pressure_column_name = 'total_pressure'
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -19,8 +18,7 @@ apply_gm <- function(
     required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
     required_variables[[gmc_column_name]] <- 'mol m^(-2) s^(-1) bar^(-1)'
-    required_variables[[pa_column_name]] <- 'kPa'
-    required_variables[[deltapcham_column_name]] <- 'kPa'
+    required_variables[[total_pressure_column_name]] <- 'bar'
 
     check_required_variables(licor_exdf, required_variables)
 
@@ -39,17 +37,18 @@ apply_gm <- function(
     pc_column_name <- paste0('P', c_column_name)
 
     # Make calculations
-    licor_exdf[,c_column_name] <-
-        licor_exdf[,ci_column_name] - licor_exdf[,a_column_name] /
-            (licor_exdf[,gmc_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100)
+    licor_exdf[, c_column_name] <-
+        licor_exdf[, ci_column_name] - licor_exdf[, a_column_name] /
+            (licor_exdf[, gmc_column_name] * licor_exdf[, total_pressure_column_name])
 
     licor_exdf[,drawdown_m_column_name] <-
-        licor_exdf[,ci_column_name] - licor_exdf[,c_column_name]
+        licor_exdf[, ci_column_name] - licor_exdf[, c_column_name]
 
     licor_exdf[,drawdown_s_column_name] <-
-        licor_exdf[,ca_column_name] - licor_exdf[,ci_column_name]
+        licor_exdf[, ca_column_name] - licor_exdf[, ci_column_name]
 
-    licor_exdf[,pc_column_name] <- licor_exdf[,c_column_name] * (licor_exdf[,pa_column_name] + licor_exdf[,deltapcham_column_name]) / 100
+    licor_exdf[, pc_column_name] <-
+        licor_exdf[, c_column_name] * licor_exdf[, total_pressure_column_name]
 
     # Document the columns that were added
     licor_exdf <- document_variables(

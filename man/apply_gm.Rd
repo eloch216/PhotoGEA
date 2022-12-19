@@ -21,8 +21,7 @@
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gmc_column_name = 'gmc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham'
+    total_pressure_column_name = 'total_pressure'
   )
 }
 
@@ -57,14 +56,9 @@
     conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
   }
 
-  \item{pa_column_name}{
-    The name of the column in \code{licor_exdf} that contains the atmospheric
-    pressure in \code{kPa}.
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{licor_exdf} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{licor_exdf} that contains the total pressure
+    in \code{bar}.
   }
 }
 
@@ -147,6 +141,9 @@
 licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
 
 # Set the mesophyll conductance to 1 mol / m^2 / s / bar
 licor_file <-

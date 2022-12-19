@@ -2,8 +2,7 @@ fit_c3_aci <- function(
     replicate_exdf,
     a_column_name = 'A',
     cc_column_name = 'Cc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     gamma_star_column_name = 'Gamma_star',
@@ -39,8 +38,7 @@ fit_c3_aci <- function(
     required_variables <- list()
     required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
     required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[pa_column_name]] <- 'kPa'
-    required_variables[[deltapcham_column_name]] <- 'kPa'
+    required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
     required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
@@ -75,8 +73,7 @@ fit_c3_aci <- function(
             POc,
             curvature,
             cc_column_name,
-            pa_column_name,
-            deltapcham_column_name,
+            total_pressure_column_name,
             kc_column_name,
             ko_column_name,
             gamma_star_column_name,
@@ -116,7 +113,7 @@ fit_c3_aci <- function(
     # Make sure the initial guess lies within (and not on) the bounds
     lower_temp <- lower + 0.01 * (upper - lower)
     upper_temp <- upper - 0.01 * (upper - lower)
-    
+
     initial_guess <- pmax(initial_guess, lower_temp)
     initial_guess <- pmin(initial_guess, upper_temp)
 
@@ -142,8 +139,7 @@ fit_c3_aci <- function(
         POc,
         curvature,
         cc_column_name,
-        pa_column_name,
-        deltapcham_column_name,
+        total_pressure_column_name,
         kc_column_name,
         ko_column_name,
         gamma_star_column_name,

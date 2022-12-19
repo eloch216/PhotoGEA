@@ -22,8 +22,7 @@
     POc = 210000,
     curvature = 1,
     cc_column_name = 'Cc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     gamma_star_column_name = 'Gamma_star',
@@ -78,14 +77,9 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{pa_column_name}{
-    The name of the column in \code{exdf_obj} that contains the atmospheric
-    pressure in \code{kPa}.
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{exdf_obj} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{kc_column_name}{
@@ -239,16 +233,14 @@ npts <- 101
 inputs <- exdf(data.frame(
   Cc = seq(0, 600, length.out = npts),
   Tleaf = 30,
-  Pa = 100,
-  DeltaPcham = 0.1
+  total_pressure = 1
 ))
 
 inputs <- document_variables(
   inputs,
-  c('', 'Cc',         'micromol mol^(-1)'),
-  c('', 'Tleaf',      'degrees C'),
-  c('', 'Pa',         'kPa'),
-  c('', 'DeltaPcham', 'kPa')
+  c('', 'Cc',             'micromol mol^(-1)'),
+  c('', 'Tleaf',          'degrees C'),
+  c('', 'total_pressure', 'bar')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')

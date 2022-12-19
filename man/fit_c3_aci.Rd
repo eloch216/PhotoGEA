@@ -18,8 +18,7 @@
     replicate_exdf,
     a_column_name = 'A',
     cc_column_name = 'Cc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     gamma_star_column_name = 'Gamma_star',
@@ -63,14 +62,9 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{pa_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    atmospheric pressure in \code{kPa}.
-  }
-
-  \item{deltapcham_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{kc_column_name}{
@@ -258,6 +252,9 @@ licor_file <- set_variable(
   licor_file,
   'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
 )
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate Cc
 licor_file <- apply_gm(licor_file)

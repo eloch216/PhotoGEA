@@ -116,6 +116,8 @@ licor_file <- read_gasex_file(
   system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 
+licor_file <- calculate_total_pressure(licor_file)
+
 licor_file <- calculate_gas_properties(licor_file)
 
 licor_file[,'species_plot'] <-

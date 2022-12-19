@@ -280,6 +280,9 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- do.call(rbind, licor_files)
 
+    # Calculate total pressure (needed for `calculate_gas_properties`)
+    licor_files <- calculate_total_pressure(licor_files)
+
     # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
     licor_files <- calculate_gas_properties(
         licor_files,

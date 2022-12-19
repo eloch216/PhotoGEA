@@ -31,7 +31,11 @@ extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
 
 combined_info <- do.call(rbind, extracted_multi_file_info)
 
+# Calculate the total pressure
+combined_info <- calculate_total_pressure(combined_info)
+
 # Calculate gas properties and use the result to determine the Ball-Berry index
+
 combined_info <- calculate_gas_properties(
     combined_info,
     A_COLUMN_NAME,

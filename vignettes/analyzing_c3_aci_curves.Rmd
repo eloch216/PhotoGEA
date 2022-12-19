@@ -93,16 +93,14 @@ Tleaf <- 30
 inputs <- exdf(data.frame(
   Cc = seq(0, 1000, length.out = npts),
   Tleaf = Tleaf,
-  Pa = 100,
-  DeltaPcham = 0.1
+  total_pressure = 1
 ))
 
 inputs <- document_variables(
   inputs,
-  c('', 'Cc',         'micromol mol^(-1)'),
-  c('', 'Tleaf',      'degrees C'),
-  c('', 'Pa',         'kPa'),
-  c('', 'DeltaPcham', 'kPa')
+  c('', 'Cc',             'micromol mol^(-1)'),
+  c('', 'Tleaf',          'degrees C'),
+  c('', 'total_pressure', 'bar')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
@@ -590,14 +588,15 @@ licor_data <- remove_points(
 Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
-values of the chloroplast CO~2~ concentration $C_c$ and temperature-dependent
-values of important photosynthetic parameters such as $\Gamma^*$. However, the
-`PhotoGEA` package includes two functions to help with these calculations:
-`apply_gm` and `calculate_arrhenius`. Each of these requires an `exdf`
-object containing Licor data. The units for each required column will be checked
-in an attempt to avoid unit-related errors. More information about these
-functions can be obtained from the built-in help system by typing
-`?apply_gm` or `?calculate_arrhenius`.
+values of the total pressure, values of the chloroplast CO~2~ concentration
+$C_c$, and temperature-dependent values of important photosynthetic parameters
+such as $\Gamma^*$. However, the `PhotoGEA` package includes three functions to
+help with these calculations: `calculate_total_pressure`, `apply_gm`, and
+`calculate_arrhenius`. Each of these requires an `exdf` object containing Licor
+data. The units for each required column will be checked in an attempt to avoid
+unit-related errors. More information about these functions can be obtained from
+the built-in help system by typing `?calculate_total_pressure`, `?apply_gm`, or
+`?calculate_arrhenius`.
 
 Another important consideration is that `apply_gm` requires values of the
 mesophyll conductance to CO~2~. Values of mesophyll conductance can be specified
@@ -609,6 +608,9 @@ Arrhenius parameters from @sharkey_fitting_2007 to calculate the
 temperature-dependent inputs:
 
 ```{r prepare_for_fitting}
+# Calculate total pressure in the Licor chamber
+licor_data <- calculate_total_pressure(licor_data)
+
 # Specify separate mesophyll conductance values for each species
 licor_data <- set_variable(
   licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
