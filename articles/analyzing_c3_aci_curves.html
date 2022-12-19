@@ -8,10 +8,10 @@
 <meta name="description" content="PhotoGEA">
 <title>Analyzing C3 A-Ci Curves • PhotoGEA</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C3 A-Ci Curves">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C3 A-Ci Curves">
 <meta property="og:description" content="PhotoGEA">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -162,13 +163,14 @@ that compose this model, it is possible to calculate plots like the one
 below, which illustrates the three different assimilation ranges.</p>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-2-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>(Note: this figure was generated using the
-<code>c3_assimilation</code> function from the <code>PhotoGEA</code>
-package, and it represents the photosynethetic response of a
-C<sub>3</sub> plant according to the FvCB model with <code>TPU</code> =
-18 micromol m^(-2) s^(-1), <code>J</code> = 200 micromol m^(-2) s^(-1),
-<code>Rd</code> = 1.8 micromol m^(-2) s^(-1), <code>Vcmax</code> = 125
-micromol m^(-2) s^(-1), and a leaf temperature of 30 degrees C.
-Arrhenius temperature response parameters were taken from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007" role="doc-biblioref">2007</a>)</span>.)</p>
+<code>calculate_c3_assimilation</code> function from the
+<code>PhotoGEA</code> package, and it represents the photosynethetic
+response of a C<sub>3</sub> leaf according to the FvCB model with
+<code>TPU</code> = 18 micromol m^(-2) s^(-1), <code>J</code> = 200
+micromol m^(-2) s^(-1), <code>Rd</code> = 1.8 micromol m^(-2) s^(-1),
+<code>Vcmax</code> = 125 micromol m^(-2) s^(-1), and a leaf temperature
+of 30 degrees C. Arrhenius temperature response parameters were taken
+from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007" role="doc-biblioref">2007</a>)</span>.)</p>
 <p>Thus, one of the most common reasons to measure an A-Ci curve is to
 interpret it in the context of this model. In other words, by fitting
 the model’s equations to a measured curve, it is possible to estimate
@@ -286,13 +288,13 @@ with <code>system.file</code>:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>To actually read the data in the files and store them in R objects,
-we will use the <code>read_licor_file</code> function from
+we will use the <code>read_gasex_file</code> function from
 <code>PhotoGEA</code>. Since there are multiple files to read, we will
 call this function once for each file using <code>lapply</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load each file, storing the result in a list</span></span>
 <span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/read_licor_file.html">read_licor_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">17</span>, <span class="st">'time'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>The result from this command is an R list of “extended data frames”
 (abbreviated as <code>exdf</code> objects). The <code>exdf</code> class
@@ -389,11 +391,9 @@ would get error messages:</p>
 <span><span class="co">#&gt; Error in check_licor_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/check_licor_data.html">check_licor_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'Ci'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ripe1 - soybean - 5a  ripe1 - tobacco - 1  ripe1 - tobacco - 2 </span></span>
-<span><span class="co">#&gt;             205.8976             251.5260             261.4208 </span></span>
-<span><span class="co">#&gt;  ripe2 - soybean - 1 ripe2 - soybean - 5b  ripe2 - tobacco - 4 </span></span>
-<span><span class="co">#&gt;             231.9173             207.6672             268.0231</span></span>
-<span><span class="co">#&gt; Error in check_licor_data(licor_data, "curve_identifier", 16, "Ci"): Values of the `Ci` column are not identical (within the tolerance of 1) for point 1 within the curve sequence.</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in check_licor_data(licor_data, "curve_identifier", 16, "Ci"): Point 1 from curve `ripe1 - tobacco - 1` has value `Ci = 251.525996944688`, but the average value for this point across all curves is `Ci = 237.742020686325`</span></span>
+<span><span class="co">#&gt;   Point 1 from curve `ripe1 - tobacco - 2` has value `Ci = 261.420818849899`, but the average value for this point across all curves is `Ci = 237.742020686325`</span></span>
+<span><span class="co">#&gt;   Point 1 from curve `ripe2 - tobacco - 4` has value `Ci = 268.023119478639`, but the average value for this point across all curves is `Ci = 237.742020686325`</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plotting-the-a-ci-curves">Plotting the A-Ci Curves<a class="anchor" aria-label="anchor" href="#plotting-the-a-ci-curves"></a>
@@ -642,19 +642,19 @@ all at once:</p>
 <p>Now that we have checked the data quality, we are ready to perform
 the fitting. In order to fit the curves, there are several required
 pieces of information that are not included in the Licor data files as
-produced by the instrument: values of the chloroplast CO<sub>2</sub>
-concentration <span class="math inline">\(C_c\)</span> and
-temperature-dependent values of important photosynthetic parameters such
-as <span class="math inline">\(\Gamma^*\)</span>. However, the
-<code>PhotoGEA</code> package includes two functions to help with these
-calculations: <code>calculate_cc</code> and
-<code>calculate_arrhenius</code>. Each of these requires an
-<code>exdf</code> object containing Licor data. The units for each
-required column will be checked in an attempt to avoid unit-related
-errors. More information about these functions can be obtained from the
-built-in help system by typing <code><a href="../reference/calculate_cc.html">?calculate_cc</a></code> or
+produced by the instrument: values of the total pressure, values of the
+chloroplast CO<sub>2</sub> concentration <span class="math inline">\(C_c\)</span>, and temperature-dependent values of
+important photosynthetic parameters such as <span class="math inline">\(\Gamma^*\)</span>. However, the
+<code>PhotoGEA</code> package includes three functions to help with
+these calculations: <code>calculate_total_pressure</code>,
+<code>apply_gm</code>, and <code>calculate_arrhenius</code>. Each of
+these requires an <code>exdf</code> object containing Licor data. The
+units for each required column will be checked in an attempt to avoid
+unit-related errors. More information about these functions can be
+obtained from the built-in help system by typing
+<code><a href="../reference/calculate_total_pressure.html">?calculate_total_pressure</a></code>, <code><a href="../reference/apply_gm.html">?apply_gm</a></code>, or
 <code><a href="../reference/calculate_arrhenius.html">?calculate_arrhenius</a></code>.</p>
-<p>Another important consideration is that <code>calculate_cc</code>
+<p>Another important consideration is that <code>apply_gm</code>
 requires values of the mesophyll conductance to CO<sub>2</sub>. Values
 of mesophyll conductance can be specified using the
 <code>set_variable</code> function from <code>PhotoGEA</code>. Here we
@@ -666,7 +666,10 @@ and use Arrhenius parameters from <span class="citation">Sharkey et al.
 (<a href="#ref-sharkey_fitting_2007" role="doc-biblioref">2007</a>)</span> to calculate the
 temperature-dependent inputs:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Specify separate mesophyll conductance values for each species</span></span>
+<code class="sourceCode R"><span><span class="co"># Calculate total pressure in the Licor chamber</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Specify separate mesophyll conductance values for each species</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>, <span class="st">'mol m^(-2) s^(-1) bar^(-1)'</span>,</span>
 <span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
@@ -674,7 +677,7 @@ temperature-dependent inputs:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate Cc</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_cc.html">calculate_cc</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_sharkey</span><span class="op">)</span></span></code></pre></div>
@@ -732,8 +735,8 @@ make plots of all the fits, which are stored in
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO~2~ concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO~2~ assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Note that in addition to the fitted values of <code>A</code>, the
@@ -743,7 +746,7 @@ a look at these, although they make the plots a bit busy. We can also
 choose to plot assimilation against <code>Cc</code> rather than
 <code>Ci</code>:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the C3 A-Ci fits (including limiting rates)</span></span>
+<code class="sourceCode R"><span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
@@ -782,7 +785,7 @@ adding this restriction can sometimes produce more reasonable fits.</p>
 <span>  max_aj_cutoff <span class="op">=</span> <span class="fl">550</span>               <span class="co"># Aj must be &lt; Ac when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot the C3 A-Ci fits (including limiting rates)</span></span>
+<span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
@@ -817,7 +820,7 @@ a fit. The output from <code>fit_c3_aci</code> includes the residuals
 plot them:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the residuals</span></span>
-<span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
@@ -846,7 +849,8 @@ object. One way to do this is by using the
 to create barcharts of the average values for each species, such as the
 following example showing the fitted values of <code>Vcmax</code>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Make a barchart showing average Vcmax values</span></span>
+<span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">180</span><span class="op">)</span>,</span>
@@ -858,7 +862,8 @@ following example showing the fitted values of <code>Vcmax</code>:</p>
 <code>bwplot</code> function from the <code>lattice</code> package. Here
 we use this function to show values of <code>J</code>:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Make a boxplot showing the distribution of J values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">J_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>,</span>
@@ -985,7 +990,7 @@ specifically mentioned here.</p>
 modified so they point to your Licor files. In your own script, you may
 want to consider using the <code>choose_input_licor_files</code>
 function from <code>PhotoGEA</code>; this function will create a pop-up
-browser window where you can interactively select a set of Excel files.
+browser window where you can interactively select a set of Licor files.
 Sometimes this is more convenient than writing out full file paths. For
 example, you could replace the previous definition of
 <code>file_paths</code> with this one:</p>
@@ -1087,7 +1092,7 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>
 <span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/read_licor_file.html">read_licor_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">17</span>, <span class="st">'time'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
@@ -1200,6 +1205,9 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">### Extracting new pieces of information from the data</span></span>
 <span><span class="co">###</span></span>
 <span></span>
+<span><span class="co"># Calculate total pressure in the Licor chamber</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Specify separate mesophyll conductance values for each species</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>, <span class="st">'mol m^(-2) s^(-1) bar^(-1)'</span>,</span>
@@ -1208,7 +1216,7 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate Cc</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_cc.html">calculate_cc</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_sharkey</span><span class="op">)</span></span>
@@ -1223,7 +1231,7 @@ Analysis Pipeline</a> vignette.</p>
 <span>  max_aj_cutoff <span class="op">=</span> <span class="fl">550</span>               <span class="co"># Aj must be &lt; Ac when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot the C3 A-Ci fits (including limiting rates)</span></span>
+<span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
@@ -1246,12 +1254,12 @@ Analysis Pipeline</a> vignette.</p>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO~2~ concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO~2~ assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the residuals</span></span>
-<span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
@@ -1266,6 +1274,7 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">### Using plots and statistics to help draw conclusions from the data</span></span>
 <span><span class="co">###</span></span>
 <span></span>
+<span><span class="co"># Make a barchart showing average Vcmax values</span></span>
 <span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
@@ -1274,6 +1283,7 @@ Analysis Pipeline</a> vignette.</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Make a boxplot showing the distribution of J values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">J_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
@@ -1333,7 +1343,7 @@ Environment</em> 30 (9): 1035–40. <a href="https://doi.org/10.1111/j.1365-3040
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>

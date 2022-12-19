@@ -1,16 +1,17 @@
 pandoc: 2.19.2
-pkgdown: 2.0.6
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   PhotoGEA: PhotoGEA.html
   analyzing_ball_berry_data: analyzing_ball_berry_data.html
   analyzing_c3_aci_curves: analyzing_c3_aci_curves.html
+  analyzing_c4_aci_curves: analyzing_c4_aci_curves.html
   analyzing_tdl_data: analyzing_tdl_data.html
   combining_with_other_packages: combining_with_other_packages.html
   creating_your_own_processing_tools: creating_your_own_processing_tools.html
   developing_a_data_analysis_pipeline: developing_a_data_analysis_pipeline.html
   working_with_extended_data_frames: working_with_extended_data_frames.html
-last_built: 2022-11-01T15:20Z
+last_built: 2022-12-19T22:09Z
 urls:
   reference: https://eloch216.github.io/PhotoGEA/reference
   article: https://eloch216.github.io/PhotoGEA/articles

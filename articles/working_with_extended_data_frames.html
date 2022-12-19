@@ -8,10 +8,10 @@
 <meta name="description" content="PhotoGEA">
 <title>Working With Extended Data Frames • PhotoGEA</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Working With Extended Data Frames">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Working With Extended Data Frames">
 <meta property="og:description" content="PhotoGEA">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -263,14 +264,8 @@ and <code>B</code>, but we won’t specify their units or categories.</p>
 <p>As an example of the third method, we will create an extended data
 frame from a Microsoft Excel file containing Licor measurements.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exdf_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_licor_file.html">read_licor_file</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"ball_berry_1.xlsx"</span>, package <span class="op">=</span> <span class="st">"PhotoGEA"</span><span class="op">)</span>,</span>
-<span>  preamble_data_rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>,</span>
-<span>  variable_category_row <span class="op">=</span> <span class="fl">14</span>,</span>
-<span>  variable_name_row <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  variable_unit_row <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  data_start_row <span class="op">=</span> <span class="fl">17</span>,</span>
-<span>  timestamp_colname <span class="op">=</span> <span class="st">'time'</span></span>
+<code class="sourceCode R"><span><span class="va">exdf_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"ball_berry_1.xlsx"</span>, package <span class="op">=</span> <span class="st">"PhotoGEA"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This new object has many columns and rows, so we won’t print it here.
 However, we can confirm that it is indeed a properly-defined
@@ -308,14 +303,13 @@ elements can be retrieved using <code>names</code>:</p>
 <span><span class="co">#&gt; [1] "main_data"  "units"      "categories"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">exdf_3</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "main_data"             "units"                 "categories"           </span></span>
-<span><span class="co">#&gt;  [4] "file_name"             "preamble"              "preamble_data_rows"   </span></span>
-<span><span class="co">#&gt;  [7] "variable_category_row" "variable_name_row"     "variable_unit_row"    </span></span>
-<span><span class="co">#&gt; [10] "data_start_row"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "main_data"         "units"             "categories"       </span></span>
+<span><span class="co">#&gt; [4] "preamble"          "data_row"          "file_name"        </span></span>
+<span><span class="co">#&gt; [7] "file_type"         "instrument_type"   "timestamp_colname"</span></span></code></pre></div>
 <p>Here we see that both <code>exdf</code> objects have the three
 required elements: <code>main_data</code>, <code>units</code>, and
 <code>categories</code>. <code>exdf_3</code> has a few “extra” elements
-that were automatically created by the <code>read_licor_file</code>
+that were automatically created by the <code>read_gasex_file</code>
 function. Any of these top-level elements be accessed by name using the
 <code>$</code> and <code>[[</code> operators:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -498,7 +492,7 @@ is common to take the following steps in a script:</p>
 <ol style="list-style-type: decimal">
 <li>Define a vector of file names that identify the files to be
 loaded.</li>
-<li>Use <code>lapply</code> and <code>read_licor_file</code> to load
+<li>Use <code>lapply</code> and <code>read_gasex_file</code> to load
 each file, producing a <code>list</code> of <code>exdf</code>
 objects.</li>
 <li>Identify common columns using <code>identify_common_columns</code>;
@@ -542,9 +536,7 @@ steps:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/read_licor_file.html">read_licor_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">)</span>, <span class="fl">14</span>, <span class="fl">15</span>, <span class="fl">16</span>, <span class="fl">17</span>, <span class="st">'time'</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span><span class="fu"><a href="../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
 <span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
@@ -562,10 +554,13 @@ the <a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry
 Data</a> vignette.</p>
 <p>Now that the data from the files has been combined into one
 <code>exdf</code> object, it’s easy to perform calculations on all of it
-at once. For example, we can calculate additional gas properties and the
-Ball-Berry index:</p>
+at once. For example, we can calculate total pressure, additional gas
+properties, and the Ball-Berry index:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Calculate additional gas properties, including `RHleaf` and `Csurface`</span></span>
+<code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate additional gas properties, including `RHleaf` and `Csurface`</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate the Ball-Berry index</span></span>
@@ -624,28 +619,28 @@ words, a nested list. We can see this structure as follows:</p>
 <span><span class="co">#&gt; List of 8</span></span>
 <span><span class="co">#&gt;  $ soybean.1 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  74 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1a:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1b:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  71 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.2 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  71 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  71 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.5 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5a:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5c:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  249 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  250 variables:</span></span></code></pre></div>
 <p>It would be much easier to work with this information if it were
 reorganized by separately combining all of the <code>fits</code> and
 <code>parameters</code> elements. Fortunately, this can be easily done
@@ -660,7 +655,7 @@ using <code>rbind</code>:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">consolidate_by_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
 <span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  70 variables:</span></span>
-<span><span class="co">#&gt;  $ fits      :'data.frame':  56 obs. of  249 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ fits      :'data.frame':  56 obs. of  250 variables:</span></span></code></pre></div>
 <p>It is common to apply the <code>consolidate</code> and
 <code>by</code> functions in the same line to make the code more
 concise. Afterwards, the elements from the resulting list can be
@@ -776,7 +771,7 @@ and used while analyzing photosynthetic gas exchange data.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>

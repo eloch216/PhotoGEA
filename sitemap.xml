@@ -19,6 +19,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_c3_aci_curves.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_c4_aci_curves.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html</loc>
   </url>
   <url>
@@ -44,6 +47,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/news/index.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/apply_gm.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/as.data.frame.exdf.html</loc>
@@ -76,10 +82,13 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_c3_assimilation.html</loc>
   </url>
   <url>
-    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_cc.html</loc>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_c4_assimilation.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gas_properties.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_total_pressure.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/cbind.exdf.html</loc>
@@ -98,6 +107,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/default_optimizer.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/deprecated.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/dim.exdf.html</loc>
@@ -127,6 +139,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/fit_c3_aci.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/fit_c4_aci.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/identifier_columns.html</loc>
   </url>
   <url>
@@ -140,6 +155,9 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/initial_guess_c3_aci.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/initial_guess_c4_aci.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/is.exdf.html</loc>
@@ -163,10 +181,16 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/process_tdl_cycle_polynomial.html</loc>
   </url>
   <url>
-    <loc>https://eloch216.github.io/PhotoGEA/reference/read_licor_file.html</loc>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/read_cr3000.html</loc>
   </url>
   <url>
-    <loc>https://eloch216.github.io/PhotoGEA/reference/read_tdl_file.html</loc>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/read_gasex_file.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/read_licor_6800_Excel.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/read_licor_6800_plaintext.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/remove_points.html</loc>
