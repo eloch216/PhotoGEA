@@ -17,6 +17,7 @@
   apply_gm(
     licor_exdf,
     photosynthesis_type = 'C3',
+    calculate_drawdown = TRUE,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -34,6 +35,10 @@
   \item{photosynthesis_type}{
     A string indicating the type of photosynthesis being considered (either
     \code{'C3'} or \code{'C4'}).
+  }
+
+  \item{calculate_drawdown}{
+    A logical value indicating whether to calculate drawdown values.
   }
 
   \item{a_column_name}{
@@ -111,8 +116,8 @@
   across the mesophyll into the chloroplast, there is a decrease in CO2
   concentration at each step. Sometimes it is useful to calculate these changes,
   which are usually referred to as "CO2 drawdown" values. So, in addition to
-  \code{Ci}, this function also calculates the drawdown across the stomata
-  (\code{drawndown_s = Ca - Ci}) and the drawdown across the mesophyll
+  \code{Ci}, this function (optionally) calculates the drawdown across the
+  stomata (\code{drawndown_s = Ca - Ci}) and the drawdown across the mesophyll
   (\code{drawdown_m = Ci - Cc}).
 
   _Note_: mesophyll conductance is not specified in typical Licor files, so it
