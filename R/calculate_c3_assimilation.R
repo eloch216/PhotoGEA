@@ -5,6 +5,8 @@ calculate_c3_assimilation <- function(
     Rd,           # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vcmax,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     POc = 210000, # microbar             (typically this value is known from the experimental setup)
+    atp_use = 4.0,
+    nadph_use = 8.0,
     curvature = 1,
     cc_column_name = 'Cc',
     total_pressure_column_name = 'total_pressure',
@@ -65,7 +67,7 @@ calculate_c3_assimilation <- function(
 
     # Equation 2.23: electron-transport-limited (RuBP-regeneration-limited)
     # assimilation rate (micromol / m^2 / s)
-    Aj <- CG * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl
+    Aj <- CG * J_tl / (atp_use * PCc + nadph_use * Gamma_star) - Rd_tl
 
     # This is not explicitly discussed in the text, but Equation 2.23 is only
     # valid when Cc is sufficiently high that rubisco is no longer the main

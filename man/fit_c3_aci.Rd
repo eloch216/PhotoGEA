@@ -26,9 +26,13 @@
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
     POc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     OPTIM_FUN = default_optimizer(),
     initial_guess_fun = initial_guess_c3_aci(
         Oc = POc,
+        atp_use = atp_use,
+        nadph_use = nadph_use,
         a_column_name = a_column_name,
         cc_column_name = cc_column_name,
         kc_column_name = kc_column_name,
@@ -106,6 +110,14 @@
     would be 21 percent O2, which is about 210000 microbar at standard
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
+  }
+
+  \item{atp_use}{
+    The number of ATP molecules used per C3 cycle.
+  }
+
+  \item{nadph_use}{
+    The number of NADPH molecules used per C3 cycle.
   }
 
   \item{OPTIM_FUN}{

@@ -20,6 +20,8 @@
     Rd,
     Vcmax,
     POc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     curvature = 1,
     cc_column_name = 'Cc',
     total_pressure_column_name = 'total_pressure',
@@ -64,6 +66,14 @@
     would be 21 percent O2, which is about 210000 microbar at standard
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
+  }
+
+  \item{atp_use}{
+    The number of ATP molecules used per C3 cycle.
+  }
+
+  \item{nadph_use}{
+    The number of NADPH molecules used per C3 cycle.
   }
 
   \item{curvature}{
@@ -155,10 +165,13 @@
 
   The electron-transport-limited rate is calculated using Equation 2.23:
 
-  \code{Aj = (PCc - Gamma_star) * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl}
+  \code{Aj = (PCc - Gamma_star) * J_tl / (atp_use * PCc + nadph_use * Gamma_star) - Rd_tl}
 
   where \code{J_tl} is the leaf-temperature-adjusted value of \code{J},
-  determined from the normalized value \code{J_norm}.
+  determined from the normalized value \code{J_norm}. Here we have also allowed
+  \code{atp_use} and \code{nadph_use} to be variables rather than taking fixed
+  values (as they do in Equation 2.23). This is necessary because not all
+  descriptions of the FvCB model use the same values.
 
   The phosphate-limited rate is calculated using Equation 2.26:
 
@@ -183,12 +196,12 @@
   and Collatz et al. (1991). In particular, we solve the following equation for
   \code{Acj}, the assimilation rate co-limited by rubisco and RuBP saturation:
 
-  \code{curvature^2 * Acj - Acj * (Ac + Aj) + Ac * Aj}
+  \code{curvature * Acj^2 - Acj * (Ac + Aj) + Ac * Aj}
 
   Then we solve a second equation for \code{An}, the assimilation rate
   co-limited by rubisco, RuBP regeneration, and phosphate utilization:
 
-  \code{curvature^2 * An - An * (Acj + Ap) + Acj * Ap}
+  \code{curvature * An^2 - An * (Acj + Ap) + Acj * Ap}
 
   Note that when \code{curvature} is 1, \code{An} will be equal to \code{min(Ac,
   Aj, Ap)} as in the version that applies for a single chloroplast.
@@ -201,11 +214,11 @@
           and environmental regulation of stomatal conductance, photosynthesis
           and transpiration: a model that includes a laminar boundary layer."
           Agricultural and Forest Meteorology 54, 107–136 (1991)
-          [doi:10.1016/0168-1923(91)90002-8].
+          [\doi{10.1016/0168-1923(91)90002-8}].
     \item Collatz, G. J., Berry, J. A., Farquhar, G. D. & Pierce, J. "The
           relationship between the Rubisco reaction mechanism and models of
           photosynthesis." Plant, Cell & Environment 13, 219–225 (1990)
-          [doi:10.1111/j.1365-3040.1990.tb01306.x].
+          [\doi{10.1111/j.1365-3040.1990.tb01306.x}].
   }
 }
 

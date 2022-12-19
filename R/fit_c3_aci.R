@@ -10,9 +10,13 @@ fit_c3_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
     POc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     OPTIM_FUN = default_optimizer(),
     initial_guess_fun = initial_guess_c3_aci(
         Oc = POc,
+        atp_use = atp_use,
+        nadph_use = nadph_use,
         a_column_name = a_column_name,
         cc_column_name = cc_column_name,
         kc_column_name = kc_column_name,
@@ -71,6 +75,8 @@ fit_c3_aci <- function(
             X[3], # Rd
             X[4], # Vcmax
             POc,
+            atp_use,
+            nadph_use,
             curvature,
             cc_column_name,
             total_pressure_column_name,
@@ -137,6 +143,8 @@ fit_c3_aci <- function(
         best_X[3], # Rd
         best_X[4], # Vcmax
         POc,
+        atp_use,
+        nadph_use,
         curvature,
         cc_column_name,
         total_pressure_column_name,

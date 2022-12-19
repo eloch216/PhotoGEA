@@ -1,6 +1,8 @@
 initial_guess_c3_aci <- function(
     cc_threshold_rd = 100,
     Oc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     kc_column_name = 'Kc',
@@ -74,7 +76,7 @@ initial_guess_c3_aci <- function(
         # point in the response curve. Then we choose the largest value as the
         # best estimate.
         j_estimates <- Ag *
-            (4 * rc_exdf[, cc_column_name] + 8 * rc_exdf[, gamma_star_column_name]) /
+            (atp_use * rc_exdf[, cc_column_name] + nadph_use * rc_exdf[, gamma_star_column_name]) /
             (rc_exdf[, cc_column_name] - rc_exdf[, gamma_star_column_name])
 
         j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]
