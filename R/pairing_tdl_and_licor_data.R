@@ -7,19 +7,12 @@ get_oxygen_info_from_preamble <- function(licor_exdf) {
     )
 
     # Try to get the oxygen information from the Licor file's preamble
-    oxygen <- c()
     preamble <- licor_exdf[['preamble']]
-    for (pe in preamble) {
-        if ("Oxygen" %in% colnames(pe)) {
-            # Convert the value to numeric form, if possible, and stop going
-            # through the preamble
-            oxygen <- try_as_numeric(pe[['Oxygen']])
-            break
-        }
-    }
-
-    # Make sure we actually got the info
-    if (length(oxygen) == 0) {
+    oxygen <- if ('Oxygen' %in% colnames(preamble)) {
+        try_as_numeric(preamble[['Oxygen']])
+    } else if ('SysConst:Oxygen' %in% colnames(preamble)) {
+        try_as_numeric(preamble[['SysConst:Oxygen']])
+    } else {
         msg <- paste0(
             "Could not automatically get oxygen information from Licor file:\n'",
             licor_exdf[['file_name']],
