@@ -147,7 +147,7 @@ the limiting assimilation rates calculated during the fitting procedure: the
 rubisco-limited rate (`Ac`) and the electron-transport-limited rate (`Aj`).
 
 ```{r}
-lattice::xyplot(
+xyplot(
   A + Ac + Aj + A_fit ~ Ci | curve_id,
   data = aci_results$fits$main_data,
   type = 'l',
@@ -166,7 +166,7 @@ Another way to check the quality of the fits is to plot the residuals, which
 should be randomly distributed:
 
 ```{r}
-lattice::xyplot(
+xyplot(
   A_residuals ~ Ci | curve_id,
   data = aci_results$fits$main_data,
   type = 'b',
