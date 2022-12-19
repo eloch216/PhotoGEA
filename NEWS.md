@@ -16,7 +16,7 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# UNRELEASED
+# PhotoGEA VERSION 0.7.0 (2022-12-19)
 
 - Added new example files:
   - `plaintext_licor_file` represents a plaintext Licor LI-6800 log file.
@@ -65,6 +65,12 @@ for the next release.
   - `calculate_c4_assimilation` calculates assimilation values using S. von
     Caemmerer's model for C4 photosynthesis.
 - Added a new vignette demonstrating how to analyze C4 A-Ci curve data.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/58
+  - https://github.com/eloch216/PhotoGEA/pull/59
+  - https://github.com/eloch216/PhotoGEA/pull/60
+  - https://github.com/eloch216/PhotoGEA/pull/61
+  - https://github.com/eloch216/PhotoGEA/pull/62
 
 # PhotoGEA VERSION 0.6.1 (2022-11-01)
 
