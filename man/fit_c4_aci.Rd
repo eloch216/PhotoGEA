@@ -41,9 +41,9 @@
       vcmax_norm_column_name = vcmax_norm_column_name,
       vpmax_norm_column_name = vpmax_norm_column_name
     ),
-    lower = c(0,   0,    0,    0),
-    upper = c(100, 1000, 1000, 1000),
-    fixed = c(NA, NA,   NA,    800)
+    lower = c(0,   0,   0,    0),
+    upper = c(100, 100, 1000, 1000),
+    fixed = c(NA,  NA,  NA,   1000)
   )
 }
 

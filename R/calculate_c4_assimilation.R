@@ -85,8 +85,20 @@ calculate_c4_assimilation <- function(
     # Equation 4.24 (here we use `qc` rather than `c` as in Equation 4.22)
     qc <- Ar * Ap - (f3 * gbs * POm + Rd_tl * f2)  # (micromol / m^2 / s)^2
 
+    # Separately calculate the root term from Equation 4.21 so we can check its
+    # value
+    root_term <- qb^2 - 4 * qa * qc
+
     # Equation 4.21
-    An <- (-qb - sqrt(qb^2 - 4 * qa * qc)) / (2 * qa)  # micromol / m^2 / s
+    An <- if (any(root_term < 0)) {
+        # In this case, we can't take the root of this term. This probably means
+        # that a fitting procedure is running and some bad parameter values are
+        # being tried. In this case, return NA to indicate that the parameters
+        # were bad.
+        NA
+    } else {
+        (-qb - sqrt(root_term)) / (2 * qa)  # micromol / m^2 / s
+    }
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units
