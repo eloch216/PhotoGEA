@@ -69,25 +69,23 @@ popular packages, can be used to accomplish each of these steps.
 
 **Note**: Documentation for any function mentioned in this vignette can be
 obtained through R's built-in help system, which can be accessed using the `?`
-command. For example, to get more information about the `read_licor_file`
-function, type `?read_licor_file` in the R terminal.
+command. For example, to get more information about the `read_gasex_file`
+function, type `?read_gasex_file` in the R terminal.
 
 ## Translation
 
 Since we are working exclusively in R, translation refers to the process of
-creating R objects from instrument log files. `PhotoGEA` currently includes two
-core functions related to translation:
+creating R objects from instrument log files. `PhotoGEA` currently includes one
+core function related to translation:
 
-- `read_licor_file`: Creates an R data object from a Microsoft Excel file
-  created by a Licor LI-6800 portable gas exchange measurement system.
-- `read_tdl_file`: Creates an R data object from a data file created by a
-  tunable diode laser measurement system.
+- `read_gasex_file`: Creates an R data object from a log file created by a gas
+  exchange measurement system such as a Licor LI-6800 or a tunable diode laser.
 
-Both of these functions produce "extended data frame" (`exdf`) objects in R. The
-`exdf` class is very similar to a regular data frame, with the main difference
-being that an `exdf` object keeps track of the units associated with each
-column. This data structure provides several key benefits when analyzing gas
-exchange data, and more information is available in the
+This function produces "extended data frame" (`exdf`) objects in R. The `exdf`
+class is very similar to a regular data frame, with the main difference being
+that an `exdf` object keeps track of the units associated with each column. This
+data structure provides several key benefits when analyzing gas exchange data,
+and more information is available in the
 [Working with Extended Data Frames](working_with_extended_data_frames.html)
 vignette.
 
@@ -229,10 +227,15 @@ data set:
   concentration at the leaf surface.
 - `calculate_c3_assimilation`: Calculates assimilation rates using the
   Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.
-- `calculate_cc`: Calculates values of the chloroplast CO~2~ concentration.
+- `calculate_c4_assimilation`: Calculate assimilation rates using S. von
+  Caemmerer's model for C4 photosynthesis.
+- `apply_gm`: Calculates values of the chloroplast or mesophyll CO~2~
+  concentration.
 - `calculate_gas_properties`: Calculates gas properties that are not included in
   the default Licor log files, such as the H~2~O concentration at the leaf
   surface and the stomatal conductance to CO~2~.
+- `calculate_total_pressure`: Calculates the total pressure in the Licor
+  measurement chamber.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)
@@ -250,6 +253,8 @@ response curves:
   the Ball-Berry index.
 - `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.
   chloroplastic CO~2~ concentration.
+- `fit_c4_aci`: Calculates a nonlinear fit of net CO2 assimilation vs. the
+  partial pressure of CO~2~ in the mesophyll.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)

@@ -15,6 +15,7 @@
     X,
     point_identifier,
     group_identifier,
+    y_error_bars = TRUE,
     x_error_bars = FALSE,
     cols = multi_curve_colors(),
     eb_length = 0.05,
@@ -37,6 +38,10 @@
   \item{group_identifier}{
     A vector with the same length as \code{Y} that indicates the "group" of each
     response curve.
+  }
+
+  \item{y_error_bars}{
+    A logical value indicating whether to plot y-axis error bars.
   }
 
   \item{x_error_bars}{
@@ -67,9 +72,8 @@
 
 \examples{
 # Read an example Licor file included in the PhotoGEA package
-licor_file <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
+licor_file <- read_gasex_file(
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 
 # Organize the response curve data

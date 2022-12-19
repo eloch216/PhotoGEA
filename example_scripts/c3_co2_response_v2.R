@@ -53,7 +53,7 @@ file_paths <- choose_input_licor_files()
 
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+  read_gasex_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files
@@ -232,8 +232,11 @@ licor_data <- set_variable(
     'gmc', 'mol m^(-2) s^(-1) bar^(-1)', '', Inf
 )
 
+# Calculate total pressure (required for apply_gm)
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate Cc
-licor_data <- calculate_cc(licor_data)
+licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)

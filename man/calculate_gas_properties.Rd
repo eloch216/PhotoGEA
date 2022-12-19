@@ -17,12 +17,11 @@
     licor_exdf,
     a_column_name = 'A',
     ca_column_name = 'Ca',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     e_column_name = 'E',
     gbw_column_name = 'gbw',
     gsw_column_name = 'gsw',
     h2o_s_column_name = 'H2O_s',
-    pa_column_name = 'Pa',
     tleaf_column_name = 'TleafCnd'
   )
 }
@@ -43,9 +42,9 @@
     concentration in the chamber in \code{micromol mol^(-1)}.
   }
 
-  \item{deltapcham_column_name}{
-    The name of the column in \code{licor_exdf} that contains the chamber
-    overpressure in \code{kPa}.
+  \item{total_pressure_column_name}{
+    The name of the column in \code{licor_exdf} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{e_column_name}{
@@ -66,11 +65,6 @@
   \item{h2o_s_column_name}{
     The name of the column in \code{licor_exdf} that contains the sample cell
     H2O concentration in \code{mmol mol^(-1)}.
-  }
-
-  \item{pa_column_name}{
-    The name of the column in \code{licor_exdf} that contains the atmospheric
-    pressure in \code{kPa}.
   }
 
   \item{tleaf_column_name}{
@@ -200,12 +194,13 @@
 }
 
 \examples{
-# Read an example Licor file included in the PhotoGEA package and calculate
-# additional gas properties.
-licor_file <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time'
+# Read an example Licor file included in the PhotoGEA package, calculate the
+# total pressure, and calculate additional gas properties.
+licor_file <- read_gasex_file(
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
+
+licor_file <- calculate_total_pressure(licor_file)
 
 licor_file <- calculate_gas_properties(licor_file)
 

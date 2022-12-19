@@ -132,15 +132,7 @@ UNIQUE_ID_COLUMN_NAME <- "line_sample"
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_licor_file(
-            fname,
-            preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-            variable_category_row = 14,
-            variable_name_row = 15,
-            variable_unit_row = 16,
-            data_start_row = 17,
-            timestamp_colname = TIME_COLUMN_NAME
-        )
+        read_gasex_file(fname, TIME_COLUMN_NAME)
     })
 
     common_columns <- do.call(identify_common_columns, multi_file_info)
@@ -157,6 +149,10 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         UNIQUE_ID_COLUMN_NAME
     )
+
+    # Calculate temperature-dependent values of C4 parameters
+    combined_info <-
+        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
 
     # Include gm values
     combined_info <- if (USE_GM_TABLE) {
@@ -179,9 +175,11 @@ if (PERFORM_CALCULATIONS) {
         )
     }
 
-    # Calculate temperature-dependent values of C4 parameters
-    combined_info <-
-        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
+    # Calculate the total pressure
+    combined_info <- calculate_total_pressure(combined_info)
+
+    # Calculate PCm
+    combined_info <- apply_gm(combined_info, 'C4')
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -190,7 +188,7 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
-    
+
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
@@ -198,8 +196,8 @@ if (PERFORM_CALCULATIONS) {
         MEASUREMENT_NUMBERS_TO_REMOVE,
         'CO2_r_sp'
     )
-    
-    
+
+
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
@@ -208,14 +206,14 @@ if (PERFORM_CALCULATIONS) {
         list(event = 'WT', replicate = '2a-1', obs = 29)
       )
     }
-    
+
 
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
 
     EVENTS_TO_EXCLUDE <- c("11", "30")
-    
+
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
     # Calculate basic stats for each event
@@ -228,20 +226,7 @@ if (PERFORM_CALCULATIONS) {
     fit_result <- consolidate(by(
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
-        fit_c4_aci,
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PRESSURE_COLUMN_NAME,
-        DELTA_PRESSURE_COLUMN_NAME,
-        'Kc',
-        'Ko',
-        'Kp',
-        'gamma_star',
-        'ao',
-        'gmc',
-        'Vcmax_norm',
-        'Vpmax_norm',
-        'Rd_norm',
+        fit_c4_aci
     ))
 
     all_fit_parameters <- fit_result$parameters
@@ -280,32 +265,32 @@ if (PERFORM_CALCULATIONS) {
     if (PERFORM_STATS_TESTS) {
       # Convert the "event" column to a factor or onewaytests will yell at us
       all_fit_parameters$event <- as.factor(all_fit_parameters$event)
-      
+
       # Perform Brown-Forsythe test to check for equal variance
       # This test automatically prints its results to the R terminal
       bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = all_fit_parameters)
-      
+
       # If p > 0.05 variances among populations is equal and proceed with anova
       # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
-      
+
       # Check normality of data with Shapiro-Wilks test
       shapiro_test_result <- shapiro.test(all_fit_parameters$Vcmax_at_25)
       print(shapiro_test_result)
-      
+
       # If p > 0.05 data has normal distribution and proceed with anova
-      
+
       # Perform one way analysis of variance
       anova_result <- aov(Vcmax_at_25 ~ event, data = all_fit_parameters)
       cat("    ANOVA result\n\n")
       print(summary(anova_result))
-      
+
       # If p < 0.05 perform Dunnett's posthoc test
-      
+
       # Perform Dunnett's Test
       dunnett_test_result <- DunnettTest(x = all_fit_parameters$Vcmax_at_25, g = all_fit_parameters$event, control = "WT")
       print(dunnett_test_result)
-    }  
-    
+    }
+
     all_samples <- combined_info[['main_data']]
 }
 

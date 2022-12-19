@@ -93,16 +93,14 @@ Tleaf <- 30
 inputs <- exdf(data.frame(
   Cc = seq(0, 1000, length.out = npts),
   Tleaf = Tleaf,
-  Pa = 100,
-  DeltaPcham = 0.1
+  total_pressure = 1
 ))
 
 inputs <- document_variables(
   inputs,
-  c('', 'Cc',         'micromol mol^(-1)'),
-  c('', 'Tleaf',      'degrees C'),
-  c('', 'Pa',         'kPa'),
-  c('', 'DeltaPcham', 'kPa')
+  c('', 'Cc',             'micromol mol^(-1)'),
+  c('', 'Tleaf',          'degrees C'),
+  c('', 'total_pressure', 'bar')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
@@ -133,9 +131,9 @@ xyplot(
 curvature <- 0.99
 ```
 
-(Note: this figure was generated using the `c3_assimilation` function from
-the `PhotoGEA` package, and it represents the photosynethetic response of a C~3~
-plant according to the FvCB model with `TPU` = `r TPU` `r assim$units$TPU`,
+(Note: this figure was generated using the `calculate_c3_assimilation` function
+from the `PhotoGEA` package, and it represents the photosynethetic response of a
+C~3~ leaf according to the FvCB model with `TPU` = `r TPU` `r assim$units$TPU`,
 `J` = `r J` `r assim$units$J_tl`, `Rd` = `r Rd` `r assim$units$Rd_tl`,
 `Vcmax` = `r Vcmax` `r assim$units$Vcmax_tl`, and a leaf temperature of
 `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response parameters were
@@ -264,13 +262,13 @@ file_paths <- c(
 ```
 
 To actually read the data in the files and store them in R objects, we will use
-the `read_licor_file` function from `PhotoGEA`. Since there are multiple files
+the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
 to read, we will call this function once for each file using `lapply`:
 
 ```{r loading_licor_data}
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+  read_gasex_file(fpath, 'time')
 })
 ```
 
@@ -590,16 +588,17 @@ licor_data <- remove_points(
 Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
-values of the chloroplast CO~2~ concentration $C_c$ and temperature-dependent
-values of important photosynthetic parameters such as $\Gamma^*$. However, the
-`PhotoGEA` package includes two functions to help with these calculations:
-`calculate_cc` and `calculate_arrhenius`. Each of these requires an `exdf`
-object containing Licor data. The units for each required column will be checked
-in an attempt to avoid unit-related errors. More information about these
-functions can be obtained from the built-in help system by typing
-`?calculate_cc` or `?calculate_arrhenius`.
+values of the total pressure, values of the chloroplast CO~2~ concentration
+$C_c$, and temperature-dependent values of important photosynthetic parameters
+such as $\Gamma^*$. However, the `PhotoGEA` package includes three functions to
+help with these calculations: `calculate_total_pressure`, `apply_gm`, and
+`calculate_arrhenius`. Each of these requires an `exdf` object containing Licor
+data. The units for each required column will be checked in an attempt to avoid
+unit-related errors. More information about these functions can be obtained from
+the built-in help system by typing `?calculate_total_pressure`, `?apply_gm`, or
+`?calculate_arrhenius`.
 
-Another important consideration is that `calculate_cc` requires values of the
+Another important consideration is that `apply_gm` requires values of the
 mesophyll conductance to CO~2~. Values of mesophyll conductance can be specified
 using the `set_variable` function from `PhotoGEA`. Here we will set
 `gmc = 1.0 mol / m^2 / s / bar` for tobacco and `gmc = Inf` for soybean; in this
@@ -609,6 +608,9 @@ Arrhenius parameters from @sharkey_fitting_2007 to calculate the
 temperature-dependent inputs:
 
 ```{r prepare_for_fitting}
+# Calculate total pressure in the Licor chamber
+licor_data <- calculate_total_pressure(licor_data)
+
 # Specify separate mesophyll conductance values for each species
 licor_data <- set_variable(
   licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
@@ -617,7 +619,7 @@ licor_data <- set_variable(
 )
 
 # Calculate Cc
-licor_data <- calculate_cc(licor_data)
+licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)
@@ -672,8 +674,8 @@ xyplot(
   pch = 16,
   auto = TRUE,
   grid = TRUE,
-  xlab = paste0('Intercellular CO~2~ concentration (', c3_aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Net CO~2~ assimilation rate (', c3_aci_results$fits$units$A, ')')
+  xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+  ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')')
 )
 ```
 
@@ -683,7 +685,7 @@ look at these, although they make the plots a bit busy. We can also choose to
 plot assimilation against `Cc` rather than `Ci`:
 
 ```{r fit_aci_limiting}
-# Plot the C3 A-Ci fits (including limiting rates)
+# Plot the C3 A-Cc fits (including limiting rates)
 xyplot(
   A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
   data = c3_aci_results$fits$main_data,
@@ -745,7 +747,7 @@ its output, so it is easy to plot them:
 
 ```{r plot_residuals}
 # Plot the residuals
-lattice::xyplot(
+xyplot(
   A_residuals ~ Ci | curve_identifier,
   data = c3_aci_results$fits$main_data,
   type = 'b',
@@ -771,6 +773,7 @@ One way to do this is by using the `barchart_with_errorbars` function from
 the following example showing the fitted values of `Vcmax`:
 
 ```{r vcmax_barchart}
+# Make a barchart showing average Vcmax values
 barchart_with_errorbars(
   c3_aci_results$parameters[, 'Vcmax_at_25'],
   c3_aci_results$parameters[, 'species'],
@@ -784,6 +787,7 @@ Another option is to create box-whisper plots using the `bwplot` function from
 the `lattice` package. Here we use this function to show values of `J`:
 
 ```{r j_bwplot}
+# Make a boxplot showing the distribution of J values
 bwplot(
   J_at_25 ~ species,
   data = c3_aci_results$parameters$main_data,
@@ -847,7 +851,7 @@ specifically mentioned here.
 The file paths specified in `file_paths` will need to be modified so they point
 to your Licor files. In your own script, you may want to consider using the
 `choose_input_licor_files` function from `PhotoGEA`; this function will create a
-pop-up browser window where you can interactively select a set of Excel files.
+pop-up browser window where you can interactively select a set of Licor files.
 Sometimes this is more convenient than writing out full file paths. For example,
 you could replace the previous definition of `file_paths` with this one:
 

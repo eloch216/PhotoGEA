@@ -187,14 +187,8 @@ As an example of the third method, we will create an extended data frame from a
 Microsoft Excel file containing Licor measurements.
 
 ```{r}
-exdf_3 <- read_licor_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
-  preamble_data_rows = c(3, 5, 7, 9, 11, 13),
-  variable_category_row = 14,
-  variable_name_row = 15,
-  variable_unit_row = 16,
-  data_start_row = 17,
-  timestamp_colname = 'time'
+exdf_3 <- read_gasex_file(
+  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
 )
 ```
 
@@ -232,7 +226,7 @@ names(exdf_3)
 
 Here we see that both `exdf` objects have the three required elements:
 `main_data`, `units`, and `categories`. `exdf_3` has a few "extra" elements that
-were automatically created by the `read_licor_file` function. Any of these
+were automatically created by the `read_gasex_file` function. Any of these
 top-level elements be accessed by name using the `$` and `[[` operators:
 
 ```{r}
@@ -394,7 +388,7 @@ data is much easier to process and analyze if it is stored in a single `exdf`
 object. Thus, it is common to take the following steps in a script:
 
 1. Define a vector of file names that identify the files to be loaded.
-2. Use `lapply` and `read_licor_file` to load each file, producing a `list` of
+2. Use `lapply` and `read_gasex_file` to load each file, producing a `list` of
    `exdf` objects.
 3. Identify common columns using `identify_common_columns`; in other words,
    determine which columns are present in each of the `exdf` objects.
@@ -431,9 +425,7 @@ file_paths <- c(
 )
 
 # Load each file, storing the result in a list
-licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
-})
+licor_exdf_list <- lapply(file_paths, function(fpath) {read_gasex_file(fpath)})
 
 # Get the names of all columns that are present in all of the Licor files
 columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
@@ -453,9 +445,12 @@ combined) is found in most analysis scripts, such as the one in the
 
 Now that the data from the files has been combined into one `exdf` object, it's
 easy to perform calculations on all of it at once. For example, we can calculate
-additional gas properties and the Ball-Berry index:
+total pressure, additional gas properties, and the Ball-Berry index:
 
 ```{r}
+# Calculate the total pressure in the Licor chamber
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
 licor_data <- calculate_gas_properties(licor_data)
 

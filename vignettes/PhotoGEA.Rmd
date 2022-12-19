@@ -63,7 +63,7 @@ file_paths <- c(
 
 # Load the data from each file
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+  read_gasex_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files
@@ -96,8 +96,11 @@ licor_data <- set_variable(
   value_table = list(soybean = 0.9, tobacco = 1.1)
 )
 
+# Calculate the total pressure
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate Cc
-licor_data <- calculate_cc(licor_data)
+licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
@@ -127,7 +130,7 @@ The timing results may vary depending on the particular machine used to run the
 code. Nevertheless: _Do you think you could fit six A-Ci curves in less than
 `r ceiling(timing[['elapsed']])` seconds using any other method?_
 
-This example contains 11 commands, so it certainly isn't short; however, a close
+This example contains 12 commands, so it certainly isn't short; however, a close
 look reveals that much of the commands are general and would apply to _any_ set
 of C~3~ response curves. In fact, only a few parts would need to be modified,
 such as the list of files to read, the curve identifier, and the value of
@@ -144,7 +147,7 @@ the limiting assimilation rates calculated during the fitting procedure: the
 rubisco-limited rate (`Ac`) and the electron-transport-limited rate (`Aj`).
 
 ```{r}
-lattice::xyplot(
+xyplot(
   A + Ac + Aj + A_fit ~ Ci | curve_id,
   data = aci_results$fits$main_data,
   type = 'l',
@@ -163,7 +166,7 @@ Another way to check the quality of the fits is to plot the residuals, which
 should be randomly distributed:
 
 ```{r}
-lattice::xyplot(
+xyplot(
   A_residuals ~ Ci | curve_id,
   data = aci_results$fits$main_data,
   type = 'b',
@@ -203,6 +206,7 @@ being added all the time:
 - Analysis case studies:
   - [Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html) (This example is
     more detailed than the analysis demonstrated here.)
+  - [Analyzing C4 A-Ci Curves](analyzing_c4_aci_curves.html)
   - [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html)
   - [Analyzing TDL Data](analyzing_tdl_data.html)
 - More advanced topics:

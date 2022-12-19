@@ -120,13 +120,13 @@ file_paths <- c(
 ```
 
 To actually read the data in the files and store them in R objects, we will use
-the `read_licor_file` function from `PhotoGEA`. Since there are multiple files
+the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
 to read, we will call this function once for each file using `lapply`:
 
 ```{r loading_licor_data}
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+  read_gasex_file(fpath, 'time')
 })
 ```
 
@@ -434,15 +434,19 @@ Now that we have checked the data quality, we are ready to perform the fitting.
 As they are produced by the instruments, Licor data files do not include values
 of the Ball-Berry index; in fact, they do not even include values of $h_s$ and
 $C_s$ required to calculate the Ball-Berry index. However, the `PhotoGEA`
-package includes two functions to help with these calculations:
-`calculate_gas_properties` and `calculate_ball_berry_index`. Each of these
-requires an `exdf` object containing Licor data. The units for each required
-column will be checked in an attempt to avoid unit-related errors. More
-information about these functions can be obtained from the built-in help system
-by typing `?calculate_gas_properties` or `?calculate_ball_berry_index`. Here we
-will use them sequentially to calculate values of the Ball-Berry index:
+package includes three functions to help with these calculations:
+`calculate_total_pressure`, `calculate_gas_properties`, and
+`calculate_ball_berry_index`. Each of these requires an `exdf` object containing
+Licor data. The units for each required column will be checked in an attempt to
+avoid unit-related errors. More information about these functions can be
+obtained from the built-in help system by typing `?calculate_total_pressure`,
+`?calculate_gas_properties`, or `?calculate_ball_berry_index`. Here we will use
+them sequentially to calculate values of the Ball-Berry index:
 
 ```{r calculate_bb_index}
+# Calculate the total pressure in the Licor chamber
+licor_data <- calculate_total_pressure(licor_data)
+
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
 licor_data <- calculate_gas_properties(licor_data)
 

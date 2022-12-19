@@ -1,18 +1,3 @@
-# This function calculates a value of enzyme-limited net assimilation using
-# equations from s. von Caemmerer, Biochemical Models of Leaf Photosynthesis.
-# (CSIRO Publishing, 2000). doi:10.1071/9780643103405.
-#
-# Meaning of symbols:
-# -------------------
-# alpha:      fraction of glycolate carbon _not_ returned to the chloroplast
-# POc:        chloroplast O2 partial pressure
-# Gamma_star: the value of Cc at which no assimilation occurs in the absence of respiration
-# Kc:         Michaelis constant of rubisco for CO2
-# Ko:         Michaelis constant of rubisco for O2
-# gmc:        mesophyll conductance to CO2
-# Vcmax:      maximum rubisco activity
-# -------------------
-#
 calculate_c3_assimilation <- function(
     exdf_obj,
     TPU,          # micromol / m^2 / s   (typically this value is being fitted)
@@ -20,10 +5,11 @@ calculate_c3_assimilation <- function(
     Rd,           # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vcmax,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     POc = 210000, # microbar             (typically this value is known from the experimental setup)
+    atp_use = 4.0,
+    nadph_use = 8.0,
     curvature = 1,
     cc_column_name = 'Cc',
-    pa_column_name = 'Pa',
-    deltapcham_column_name = 'DeltaPcham',
+    total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     gamma_star_column_name = 'Gamma_star',
@@ -42,8 +28,7 @@ calculate_c3_assimilation <- function(
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
-        required_variables[[pa_column_name]] <- 'kPa'
-        required_variables[[deltapcham_column_name]] <- 'kPa'
+        required_variables[[total_pressure_column_name]] <- 'bar'
         required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
         required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
@@ -61,8 +46,7 @@ calculate_c3_assimilation <- function(
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
-    pressure <- 0.01 *
-        (exdf_obj[, pa_column_name] + exdf_obj[, deltapcham_column_name]) # bar
+    pressure <- exdf_obj[, total_pressure_column_name] # bar
 
     PCc <- exdf_obj[, cc_column_name] * pressure # microbar
 
@@ -83,7 +67,7 @@ calculate_c3_assimilation <- function(
 
     # Equation 2.23: electron-transport-limited (RuBP-regeneration-limited)
     # assimilation rate (micromol / m^2 / s)
-    Aj <- CG * J_tl / (4 * PCc + 8 * Gamma_star) - Rd_tl
+    Aj <- CG * J_tl / (atp_use * PCc + nadph_use * Gamma_star) - Rd_tl
 
     # This is not explicitly discussed in the text, but Equation 2.23 is only
     # valid when Cc is sufficiently high that rubisco is no longer the main

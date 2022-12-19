@@ -5,40 +5,35 @@
 # ratio is dimensionless.
 calculate_g_ratio <- function(
     licor_exdf,
-    pa_column_name,
-    deltapcham_column_name,
-    gsc_column_name,
-    gmc_column_name,
-    g_ratio_column_name
+    total_pressure_column_name = 'total_pressure',
+    gsc_column_name = 'gsc',
+    gmc_column_name = 'gmc',
+    g_ratio_column_name = 'g_ratio'
 )
 {
     if (!is.exdf(licor_exdf)) {
-        stop("calculate_g_ratio requires an exdf object")
+        stop('calculate_g_ratio requires an exdf object')
     }
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[pa_column_name]] <- "kPa"
-    required_variables[[deltapcham_column_name]] <- "kPa"
-    required_variables[[gsc_column_name]] <- "mol m^(-2) s^(-1)"
-    required_variables[[gmc_column_name]] <- "mol m^(-2) s^(-1) bar^(-1)"
+    required_variables[[total_pressure_column_name]] <- 'bar'
+    required_variables[[gsc_column_name]] <- 'mol m^(-2) s^(-1)'
+    required_variables[[gmc_column_name]] <- 'mol m^(-2) s^(-1) bar^(-1)'
 
     check_required_variables(licor_exdf, required_variables)
 
     # Extract some columns to make the calculations cleaner
-    Pa <- licor_exdf[,pa_column_name]                  # kPa
-    deltaPcham <- licor_exdf[,deltapcham_column_name]  # kPa
-    gsc <- licor_exdf[,gsc_column_name]                # mol m^(-2) s^(-1)
-    gmc <- licor_exdf[,gmc_column_name]                # mol m^(-2) s^(-1) bar^(-1)
+    total_pressure <- licor_exdf[,total_pressure_column_name] # bar
+    gsc <- licor_exdf[,gsc_column_name]                       # mol m^(-2) s^(-1)
+    gmc <- licor_exdf[,gmc_column_name]                       # mol m^(-2) s^(-1) bar^(-1)
 
-    pressure <- (Pa + deltaPcham) / 100  # bar; 1 bar = 100 kPa
-
-    licor_exdf[,g_ratio_column_name] <- gsc / (gmc * pressure)
+    licor_exdf[,g_ratio_column_name] <- gsc / (gmc * total_pressure)
 
     # Document the columns that were added
     licor_exdf <- document_variables(
         licor_exdf,
-        c("calculate_g_ratio", g_ratio_column_name, "dimensionless")
+        c('calculate_g_ratio', g_ratio_column_name, 'dimensionless')
     )
 
     return(licor_exdf)

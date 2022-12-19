@@ -95,7 +95,7 @@ file_paths <- c(
 
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_licor_file(fpath, c(3, 5, 7, 9, 11, 13), 14, 15, 16, 17, 'time')
+  read_gasex_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files
@@ -561,7 +561,7 @@ It's also easy to plot the residuals now:
 
 ```{r plot_residuals}
 # Plot the residuals
-lattice::xyplot(
+xyplot(
   A_residuals ~ Ci_original | curve_identifier,
   data = c3_aci_results$fits$main_data,
   type = 'b',

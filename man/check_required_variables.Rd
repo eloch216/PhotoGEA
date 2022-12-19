@@ -46,8 +46,8 @@
 
   This function is used internally by many other functions from the
   \code{PhotoGEA} package to check for important columns and make sure they have
-  the correct units. For example, see the code for \code{\link{calculate_cc}} by
-  typing \code{PhotoGEA::calculate_cc} in the R terminal.
+  the correct units. For example, see the code for \code{\link{apply_gm}} by
+  typing \code{PhotoGEA::apply_gm} in the R terminal.
 }
 
 \seealso{\code{\link{exdf}}}

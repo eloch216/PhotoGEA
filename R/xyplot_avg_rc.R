@@ -3,6 +3,7 @@ xyplot_avg_rc <- function(
     X,
     point_identifier,
     group_identifier,
+    y_error_bars = TRUE,
     x_error_bars = FALSE,
     cols = multi_curve_colors(),
     eb_length = 0.05,
@@ -95,8 +96,10 @@ xyplot_avg_rc <- function(
             superpose.symbol = list(col = rc_cols)
         ),
         panel = function(x, y, ...) {
-            lattice::panel.arrows(x, y, x, tdf_stats[['Y_upper']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
-            lattice::panel.arrows(x, y, x, tdf_stats[['Y_lower']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+            if (y_error_bars) {
+                lattice::panel.arrows(x, y, x, tdf_stats[['Y_upper']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+                lattice::panel.arrows(x, y, x, tdf_stats[['Y_lower']], length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
+            }
 
             if(x_error_bars) {
                 lattice::panel.arrows(x, y, tdf_stats[['X_upper']], y, length = eb_length, angle = 90, col = rc_error_cols, lwd = eb_lwd)
