@@ -2,7 +2,7 @@
 
 \alias{fit_ball_berry}
 
-\title{fit_ball_berry}
+\title{Fits the Ball-Berry model to an experimental curve}
 
 \description{
   Calculates a linear fit of stomatal conductance vs. the Ball-Berry index using

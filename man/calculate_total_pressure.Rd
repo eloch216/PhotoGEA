@@ -2,7 +2,7 @@
 
 \alias{calculate_total_pressure}
 
-\title{calculate_total_pressure}
+\title{Calculate the total pressure in bar}
 
 \description{
   Calculates the total pressure in \code{bar}. Licor gas exchange measurement

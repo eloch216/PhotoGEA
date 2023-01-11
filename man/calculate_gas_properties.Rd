@@ -2,7 +2,7 @@
 
 \alias{calculate_gas_properties}
 
-\title{calculate_gas_properties}
+\title{Calculate gas properties that are typically not included in Licor files}
 
 \description{
   Calculates gas properties that are typically not included in Licor files. This

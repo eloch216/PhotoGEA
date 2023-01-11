@@ -2,7 +2,7 @@
 
 \alias{xyplot_avg_rc}
 
-\title{xyplot_avg_rc}
+\title{Plot average response curves with error bars}
 
 \description{
   A wrapper for \code{lattice::xyplot} that plots average response curves with

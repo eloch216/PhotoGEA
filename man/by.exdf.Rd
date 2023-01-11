@@ -2,7 +2,7 @@
 
 \alias{by.exdf}
 
-\title{by.exdf}
+\title{Apply a function to an exdf object split by one or more factors}
 
 \description{
   Divides an \code{exdf} object into groups defined by one or more factors and

@@ -2,7 +2,7 @@
 
 \alias{print.exdf}
 
-\title{print.exdf}
+\title{Print the contents of an exdf object}
 
 \description{
   Prints the contents of an \code{exdf} object's \code{main_data}. Each column
