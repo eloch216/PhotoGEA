@@ -90,15 +90,14 @@ if (PERFORM_CALCULATIONS) {
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 13
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1)
-POINT_FOR_BOX_PLOTS <- 2
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
+POINT_FOR_BOX_PLOTS <- 1
 
 # Specify a Ci upper limit to use for fitting
 CI_UPPER_LIMIT <- Inf # ppm
 
 # Decide whether to remove a few specific points from the data before fitting
 REMOVE_SPECIFIC_POINTS <- TRUE
-
 # Decide whether to remove statistical outliers
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
@@ -180,6 +179,9 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate PCm
     combined_info <- apply_gm(combined_info, 'C4')
+    
+    # Calculate intrinsic water-use efficiency
+    combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -203,7 +205,8 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(event = 'WT', replicate = '2a-1', obs = 29)
+        list(event = 'WT', replicate = '2a-1', obs = 29),
+        list(event = '3', replicate = '1', seq_num = 5)
       )
     }
 
@@ -212,8 +215,8 @@ if (PERFORM_CALCULATIONS) {
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
 
-    EVENTS_TO_EXCLUDE <- c("11", "30")
-
+    EVENTS_TO_EXCLUDE <- c("28", "53")
+    
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
     # Calculate basic stats for each event
@@ -292,6 +295,9 @@ if (PERFORM_CALCULATIONS) {
     }
 
     all_samples <- combined_info[['main_data']]
+    
+    # Print average Vcmax values
+    print(tapply(all_fit_parameters$Vcmax_at_25, all_fit_parameters$event, mean))
 }
 
 # Make a subset of the full result for just the one measurement point
@@ -343,10 +349,12 @@ etr_lim <- c(0, 325)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+iWUE_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)\n(error bars: standard error of the mean for same CO2 setpoint)"
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-    list(all_samples[['A']], x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab, xlim = ci_lim, ylim = a_lim)
+  list(all_samples[['A']],    x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,    xlim = ci_lim, ylim = a_lim),
+  list(all_samples[['iWUE']], x_ci, x_s, x_e, xlab = ci_lab, ylab = iWUE_lab, xlim = ci_lim)
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -462,9 +470,10 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 35),   main = fitting_caption),
   list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 80),   main = boxplot_caption)
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 80),   main = boxplot_caption),
+  list(Y = all_samples_one_point[['iWUE']],        X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {

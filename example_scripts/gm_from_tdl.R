@@ -44,7 +44,7 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- NA
+RESPIRATION <- 2.5
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
@@ -54,7 +54,7 @@ MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
 # we assume this is data from the ERML TDL
-IGB_TDL <- TRUE
+IGB_TDL <- FALSE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -253,10 +253,10 @@ if (PERFORM_CALCULATIONS) {
         abs(RESPIRATION),    # this is the default value of respiration
         id_column = 'event', # the default value can be overridden for certain events
         value_table = list(
-          'WT' = 2.37,
-          '23' = 2.24,
-          '31' = 2.38,
-          '35' = 1.95
+          'WT' = 2.8,
+          '20' = 2.8,
+          '23' = 2.8,
+          '25' = 2.8
         )
     )})
 
@@ -708,7 +708,7 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 2)
+    gmc_lim <- c(0, 1)
     cc_lim <- c(0, 275)
     drawdown_lim <- c(0, 75)
     a_lim <- c(0, 50)

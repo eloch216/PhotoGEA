@@ -28,7 +28,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- TRUE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -128,7 +128,7 @@ licor_data <- process_id_columns(
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+# check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -190,17 +190,7 @@ if (MAKE_VALIDATION_PLOTS) {
       ylab = paste0('CO2 concentration (', licor_data$units$CO2_r, ')')
     ))
 
-    # Make a plot to check stability criteria
-    dev.new()
-    print(xyplot(
-      `A:OK` + `gsw:OK` + Stable ~ Ci | curve_identifier,
-      data = licor_data$main_data,
-      type = 'b',
-      pch = 16,
-      auto = TRUE,
-      grid = TRUE,
-      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
-    ))
+  #Make a plot to check stability criteria insert here
 }
 
 if (REQUIRE_STABILITY) {
@@ -217,7 +207,12 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(instrument = 'ripe1', CO2_r_sp = 1800)
+      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
+      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
+      list(curve_identifier = '20 3 6', seq_num = c(15)),
+      list(curve_identifier = '25 2 4', seq_num = c(3)),
+      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
+      list(curve_identifier = 'WT 3 10', seq_num = c(1, 2))
     )
 }
 

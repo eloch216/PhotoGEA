@@ -67,7 +67,7 @@ PERFORM_CALCULATIONS <- TRUE
 VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Decide whether to remove statistical outliers after fitting
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
@@ -392,7 +392,7 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(-50, 600)
+ci_lim <- c(-50, 1500)
 a_lim <- c(-10, 50)
 etr_lim <- c(0, 325)
 

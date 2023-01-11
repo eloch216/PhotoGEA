@@ -294,6 +294,7 @@ IDS_TO_IGNORE <- c(
   "35 1 5",
   "35 4 9",
   "35 3 2"
+
 )
 #IDS_TO_IGNORE <- c()
 
@@ -302,7 +303,7 @@ fits_one_point_for_plotting <- variable_j_fits_one_point[!variable_j_fits_one_po
 parameters_for_plotting <- variable_j_parameters[!variable_j_parameters[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
 
 # Remove points at low Ci for plotting gm curves
-seq_num_to_remove <- c(7, 8, 16, 17)
+seq_num_to_remove <- c(7, 8, 16:17)
 fits_for_plotting_gm <- fits_for_plotting[!fits_for_plotting$seq_num %in% seq_num_to_remove, ]
 
 # Define some common axis limits
@@ -451,8 +452,9 @@ gm_ci_avg_plot <- xyplot_avg_rc(
     xlim = ci_range,
     ylim = gm_range,
     xlab = "Intercellular CO2 concentration (ppm)",
-    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
-
+    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
+    eb_lwd = 2,
+    lwd = 2
 )
 x11(width = 12, height = 6)
 print(gm_ci_avg_plot)
