@@ -2,7 +2,7 @@
 
 \alias{length.exdf}
 
-\title{length.exdf}
+\title{Length of an exdf object}
 
 \description{
   Returns the length of an \code{exdf} object's \code{main_data}.

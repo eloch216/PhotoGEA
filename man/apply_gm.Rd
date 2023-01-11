@@ -2,7 +2,7 @@
 
 \alias{apply_gm}
 
-\title{apply_gm}
+\title{Calculate CO2 concentration in the chloroplast or mesophyll}
 
 \description{
   Calculates CO2 concentration in the chloroplast or mesophyll, the CO2 drawdown

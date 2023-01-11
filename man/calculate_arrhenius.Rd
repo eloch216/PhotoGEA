@@ -2,13 +2,13 @@
 
 \alias{calculate_arrhenius}
 
-\title{calculate_arrhenius}
+\title{Calculate temperature-dependent values using Arrhenius equations}
 
 \description{
-  Calculates the Ball-Berry index. This function can accomodate alternative
-  column names for the variables taken from the Licor file in case they change
-  at some point in the future. This function also checks the units of each
-  required column and will produce an error if any units are incorrect.
+  Calculate leaf-temperature-dependent values of various parameters using
+  Arrhenius equations. This function can accomodate alternative names for the
+  leaf temperature column. It also checks the units of the leaf temperature
+  column and will produce an error of the units are not correct.
 }
 
 \usage{

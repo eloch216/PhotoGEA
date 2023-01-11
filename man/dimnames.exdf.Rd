@@ -3,7 +3,7 @@
 \alias{dimnames.exdf}
 \alias{dimnames<-.exdf}
 
-\title{dimnames.exdf}
+\title{Retrieve or set the dimension names of an exdf object}
 
 \description{
   Returns or sets the dimension names of an \code{exdf} object's

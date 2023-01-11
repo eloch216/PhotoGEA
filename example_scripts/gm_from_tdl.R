@@ -47,6 +47,7 @@ MAKE_GM_PLOTS <- TRUE
 RESPIRATION <- NA
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
 MAX_GM <- 5
 MIN_CC <- 0.0
@@ -333,25 +334,33 @@ if (PERFORM_CALCULATIONS) {
 
     # First, we remove outliers from each replicate
     if (REMOVE_STATISTICAL_OUTLIERS) {
+        old_nrow <- nrow(licor_files_no_outliers)
 
-      old_nrow <- nrow(licor_files_no_outliers)
+        licor_files_no_outliers <- exclude_outliers(
+            licor_files_no_outliers,
+            'A',
+            licor_files_no_outliers[,'event_replicate']
+        )
 
-      licor_files_no_outliers <- exclude_outliers(
-      licor_files_no_outliers,
-      'A',
-       licor_files_no_outliers[,'event_replicate']
-      )
-
-        pt_diff <- Inf
-        while (pt_diff > 0) {
+        if (REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY) {
+            pt_diff <- Inf
+            while (pt_diff > 0) {
+                licor_files_no_outliers <- exclude_outliers(
+                    licor_files_no_outliers,
+                    'gmc',
+                    licor_files_no_outliers[,'event_replicate']
+                )
+                pt_diff <- old_nrow - nrow(licor_files_no_outliers)
+                old_nrow <- nrow(licor_files_no_outliers)
+            }
+        } else {
             licor_files_no_outliers <- exclude_outliers(
                 licor_files_no_outliers,
                 'gmc',
                 licor_files_no_outliers[,'event_replicate']
             )
-            pt_diff <- old_nrow - nrow(licor_files_no_outliers)
-            old_nrow <- nrow(licor_files_no_outliers)
         }
+
         cat(paste("Number of Licor measurements after removing statistical outliers from each rep:", nrow(licor_files_no_outliers), "\n"))
     }
 

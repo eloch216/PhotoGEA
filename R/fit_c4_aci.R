@@ -169,6 +169,11 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'Vpmax_at_25'] <- best_X[3]
     replicate_identifiers[, 'Vpr'] <- best_X[4]
 
+    # Attach the average leaf-temperature values of fitting parameters
+    replicate_identifiers[, 'Rd_tl_avg'] <- mean(replicate_exdf[, 'Rd_tl'])
+    replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
+    replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
+
     # Also add fitting details
     if (is.null(optim_result[['convergence_msg']])) {
         optim_result[['convergence_msg']] <- NA
@@ -190,6 +195,9 @@ fit_c4_aci <- function(
         c('fit_c4_aci', 'Vcmax_at_25',     'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci', 'Vpmax_at_25',     'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci', 'Vpr',             'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Rd_tl_avg',       'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vcmax_tl_avg',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpmax_tl_avg',    'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci', 'convergence',     ''),
         c('fit_c4_aci', 'convergence_msg', ''),
         c('fit_c4_aci', 'feval',           ''),

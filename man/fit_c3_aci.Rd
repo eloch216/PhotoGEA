@@ -2,7 +2,7 @@
 
 \alias{fit_c3_aci}
 
-\title{fit_c3_aci}
+\title{Fits a C3 assimilation model to an experimental curve}
 
 \description{
   Fits a model to an experimentally measured C3 CO2 response curve using the
@@ -67,8 +67,8 @@
   }
 
   \item{total_pressure_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the total pressure
-    in \code{bar}.
+    The name of the column in \code{replicate_exdf} that contains the total
+    pressure in \code{bar}.
   }
 
   \item{kc_column_name}{
@@ -224,20 +224,42 @@
 \value{
   A list with two elements:
   \itemize{
-    \item \code{fits}: An \code{exdf} object including the measured values and
-          the fitted values of net assimilation. The fitted values will be
-          stored in a column whose name is determined by appending
-          \code{'_fit'} to the end of \code{a_column_name}; typically, this
-          will be \code{'A_fit'}. Residuals (measured - fitted) will be
-          stored in a column whose name is determined by appending
-          \code{'_residuals'} to the end of \code{a_column_name}; typically,
-          this will be \code{'A_residuals'}.
-    \item \code{parameters}: An \code{exdf} object including the fitting
-          parameters and convergence information for each A-Ci curve. The
-          best-fit values are stored in the \code{TPU}, \code{J_at_25},
-          \code{Rd_at_25}, and \code{Vcmax_at_25} columns. The
-          \code{convergence} column indicates whether the fit was successful
-          (\code{==0}) or if the optimizer encountered a problem (\code{!=0}).
+    \item \code{fits}: An \code{exdf} object including the original contents of
+          \code{replicate_exdf} along with several new columns:
+          \itemize{
+            \item The fitted values of net assimilation will be stored in a
+                  column whose name is determined by appending \code{'_fit'} to
+                  the end of \code{a_column_name}; typically, this will be
+                  \code{'A_fit'}.
+            \item Residuals (measured - fitted) will be stored in a column whose
+                  name is determined by appending \code{'_residuals'} to the end
+                  of \code{a_column_name}; typically, this will be
+                  \code{'A_residuals'}.
+            \item The other outputs from \code{\link{calculate_c3_assimilation}}
+                  will be stored in columns with the usual names: \code{TPU},
+                  \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
+                  \code{Aj}, and \code{Ap}.
+          }
+    \item \code{parameters}: An \code{exdf} object including the identifiers,
+          fitting parameters, and convergence information for the A-Ci curve:
+          \itemize{
+            \item The best-fit values are stored in the \code{TPU},
+                  \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
+                  columns.
+            \item For parameters that depend on leaf temperature, the average
+                  leaf-temperature-dependent values are stored in
+                  \code{X_tl_avg} columns: \code{J_tl_avg}, \code{Rd_tl_avg},
+                  and \code{Vcmax_tl_avg}.
+            \item The \code{convergence} column indicates whether the fit was
+                  successful (\code{==0}) or if the optimizer encountered a
+                  problem (\code{!=0}).
+            \item The \code{feval} column indicates how many cost function
+                  evaluations were required while finding the optimal parameter
+                  values.
+            \item The residual stats as returned by \code{\link{residual_stats}}
+                  are included as columns with the default names: \code{dof},
+                  \code{RSS}, \code{RMSE}, etc.
+          }
   }
 }
 
@@ -288,8 +310,11 @@ aci_results <- consolidate(by(
 
 # View the fitting parameters for each species / plot
 col_to_keep <- c(
-  'species', 'plot', 'TPU', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25', 'convergence',
-  'convergence_msg', 'feval', 'optimum_val'
+  'species', 'plot',                                       # identifiers
+  'TPU', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25',             # parameters scaled to 25 degrees C
+  'J_tl_avg', 'Rd_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
+  'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats
+  'convergence', 'convergence_msg', 'feval', 'optimum_val' # convergence info
 )
 
 aci_results$parameters[ , col_to_keep, TRUE]
