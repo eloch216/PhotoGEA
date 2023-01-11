@@ -375,21 +375,30 @@ if (PERFORM_CALCULATIONS) {
     # Now, we remove outliers from each event
     if (REMOVE_STATISTICAL_OUTLIERS) {
 
-      old_nrow <- nrow(rep_stats_no_outliers)
-
-      cat(paste("Number of reps before removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
-
-      pt_diff <- Inf
-      while (pt_diff > 0) {
-        rep_stats_no_outliers <- exclude_outliers(
-          rep_stats_no_outliers,
-          'gmc_avg',
-          rep_stats_no_outliers[,'event']
-        )
-        pt_diff <- old_nrow - nrow(rep_stats_no_outliers)
         old_nrow <- nrow(rep_stats_no_outliers)
-      }
-      cat(paste("Number of reps after removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
+
+        cat(paste("Number of reps before removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
+
+        if (REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY) {
+            pt_diff <- Inf
+            while (pt_diff > 0) {
+                rep_stats_no_outliers <- exclude_outliers(
+                    rep_stats_no_outliers,
+                    'gmc_avg',
+                    rep_stats_no_outliers[,'event']
+                )
+                pt_diff <- old_nrow - nrow(rep_stats_no_outliers)
+                old_nrow <- nrow(rep_stats_no_outliers)
+            }
+        } else {
+            rep_stats_no_outliers <- exclude_outliers(
+                rep_stats_no_outliers,
+                'gmc_avg',
+                rep_stats_no_outliers[,'event']
+            )
+        }
+
+    cat(paste("Number of reps after removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
     }
 
     # Get stats for each event by averaging over all corresponding reps
