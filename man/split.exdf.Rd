@@ -2,7 +2,7 @@
 
 \alias{split.exdf}
 
-\title{split.exdf}
+\title{Divide an exdf object into groups}
 
 \description{
   Divides an \code{exdf} object into groups defined by one or more factors.

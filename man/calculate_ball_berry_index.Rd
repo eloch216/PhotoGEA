@@ -2,7 +2,7 @@
 
 \alias{calculate_ball_berry_index}
 
-\title{calculate_ball_berry_index}
+\title{Calculate the Ball-Berry index}
 
 \description{
   Calculates the Ball-Berry index. This function can accomodate alternative

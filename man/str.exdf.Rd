@@ -2,7 +2,7 @@
 
 \alias{str.exdf}
 
-\title{str.exdf}
+\title{Display the structure of an exdf object}
 
 \description{
   Displays the structure of an \code{exdf} object's \code{main_data}. Each

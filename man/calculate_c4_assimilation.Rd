@@ -2,7 +2,7 @@
 
 \alias{calculate_c4_assimilation}
 
-\title{calculate_c4_assimilation}
+\title{Calculate C4 assimilation rates}
 
 \description{
   Calculates C4 assimilation rates based on the Farquhar-von-Caemmerer-Berry

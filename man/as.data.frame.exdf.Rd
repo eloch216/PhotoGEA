@@ -2,7 +2,7 @@
 
 \alias{as.data.frame.exdf}
 
-\title{as.data.frame.exdf}
+\title{Convert an exdf object to a data frame}
 
 \description{
   Converts an \code{exdf} object to a data frame by appending the units and

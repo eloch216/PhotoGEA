@@ -2,7 +2,7 @@
 
 \alias{dim.exdf}
 
-\title{dim.exdf}
+\title{Retrieve the dimension of an exdf object}
 
 \description{
   Returns the dimensions of an \code{exdf} object's \code{main_data}. Also

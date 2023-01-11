@@ -2,7 +2,7 @@
 
 \alias{fit_c4_aci}
 
-\title{fit_c4_aci}
+\title{Fits a C4 assimilation model to an experimental curve}
 
 \description{
   Fits a model to an experimentally measured C4 CO2 response curve using the

@@ -2,7 +2,7 @@
 
 \alias{is.exdf}
 
-\title{is.exdf}
+\title{Is an object an exdf?}
 
 \description{
   Checks whether an object is an \code{exdf} object.

@@ -2,7 +2,7 @@
 
 \alias{basic_stats}
 
-\title{basic_stats}
+\title{Calculate basic stats (mean and standard error)}
 
 \description{
   Calculates basic stats (mean and standard error) for each applicable column in
