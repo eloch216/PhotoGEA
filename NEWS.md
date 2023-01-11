@@ -23,6 +23,9 @@ for the next release.
 - Added options for specifying a flat temperature response when fitting C3 or C4
   A-Ci curves; these are available via the two new data sets
   `c3_arrhenius_no_temp` and `c4_arrhenius_no_temp`.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/64
+  - https://github.com/eloch216/PhotoGEA/pull/65
 
 # PhotoGEA VERSION 0.7.0 (2022-12-19)
 
