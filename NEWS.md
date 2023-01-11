@@ -16,6 +16,14 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.7.1 (2023-01-11)
+
+- Added new outputs from `fit_c3_aci` and `fit_c4_aci` that include the average
+  values of leaf-temperature-dependent parameters like `Vcmax` and `Rd`.
+- Added options for specifying a flat temperature response when fitting C3 or C4
+  A-Ci curves; these are available via the two new data sets
+  `c3_arrhenius_no_temp` and `c4_arrhenius_no_temp`.
+
 # PhotoGEA VERSION 0.7.0 (2022-12-19)
 
 - Added new example files:
