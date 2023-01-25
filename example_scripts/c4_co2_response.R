@@ -89,9 +89,9 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
-NUM_OBS_IN_SEQ <- 13
-MEASUREMENT_NUMBERS_TO_REMOVE <- c()
-POINT_FOR_BOX_PLOTS <- 1
+NUM_OBS_IN_SEQ <- 14
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,8,13)
+POINT_FOR_BOX_PLOTS <- 10
 
 # Specify a Ci upper limit to use for fitting
 CI_UPPER_LIMIT <- Inf # ppm
@@ -99,7 +99,7 @@ CI_UPPER_LIMIT <- Inf # ppm
 # Decide whether to remove a few specific points from the data before fitting
 REMOVE_SPECIFIC_POINTS <- TRUE
 # Decide whether to remove statistical outliers
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
@@ -343,7 +343,7 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(0, 1200)
+ci_lim <- c(0, 1400)
 a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
 
@@ -470,9 +470,9 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 35),   main = fitting_caption),
-  list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 300),  main = fitting_caption),
-  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 80),   main = boxplot_caption),
+  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 70),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 200),  main = fitting_caption),
+  list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 70),   main = boxplot_caption),
   list(Y = all_samples_one_point[['iWUE']],        X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", main = boxplot_caption)
 )
 
