@@ -70,7 +70,7 @@ VIEW_DATA_FRAMES <- TRUE
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event
 USE_GM_TABLE <- FALSE
-GM_VALUE <- 3.0  # mol / m^2 / s / bar
+GM_VALUE <- 3  # mol / m^2 / s / bar
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list()
 
@@ -89,9 +89,13 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
-NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,8,13)
-POINT_FOR_BOX_PLOTS <- 10
+NUM_OBS_IN_SEQ <- 13
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1)
+POINT_FOR_BOX_PLOTS <- 2
+
+# Decide whether to remove points where the Licor stability criteria were not
+# fully met
+REMOVE_UNSTABLE_POINTS <- FALSE
 
 # Specify a Ci upper limit to use for fitting
 CI_UPPER_LIMIT <- Inf # ppm
@@ -103,6 +107,9 @@ REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
+
+# Decide whether to calculate basic stats
+CALCULATE_BASIC_STATS <- TRUE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -206,8 +213,19 @@ if (PERFORM_CALCULATIONS) {
       combined_info <- remove_points(
         combined_info,
         list(event = 'WT', replicate = '2a-1', obs = 29),
-        list(event = '3', replicate = '1', seq_num = 5)
+        list(event = '3', replicate = '7', seq_num = 5)
       )
+    }
+    
+    # Remove unstable points
+    if (REMOVE_UNSTABLE_POINTS) {
+      # Only keep points where stability was achieved
+      combined_info <- combined_info[combined_info[, 'Stable'] == 2, , TRUE]
+      
+      # Remove any curves that have fewer than three remaining points
+      npts <- by(combined_info, combined_info[, UNIQUE_ID_COLUMN_NAME], nrow)
+      ids_to_keep <- names(npts[npts > 2])
+      combined_info <- combined_info[combined_info[, UNIQUE_ID_COLUMN_NAME] %in% ids_to_keep, , TRUE]
     }
 
 
@@ -218,19 +236,27 @@ if (PERFORM_CALCULATIONS) {
     EVENTS_TO_EXCLUDE <- c("28", "53")
     
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
-
-    # Calculate basic stats for each event
-    all_stats <- basic_stats(
+    
+    if (CALCULATE_BASIC_STATS) {
+      # Calculate basic stats for each event
+      all_stats <- basic_stats(
         combined_info,
         c('seq_num', EVENT_COLUMN_NAME)
-    )$main_data
+      )$main_data
+    }
 
     # Perform A-Ci fits
     fit_result <- consolidate(by(
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
-        fit_c4_aci
+        fit_c4_aci,
+        alpha = 0,
+        gbs = 0,
+        Rm_frac = 1
     ))
+    
+    fit_result$parameters[, 'Vmax_at_25'] <- 
+      fit_result$parameters[, 'Vcmax_at_25'] - fit_result$parameters[, 'Rd_at_25']
 
     all_fit_parameters <- fit_result$parameters
     all_fits <- fit_result$fits
@@ -314,7 +340,9 @@ all_fit_parameters <- factorize_id_column(all_fit_parameters, EVENT_COLUMN_NAME)
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    if (CALCULATE_BASIC_STATS) {
+      View(all_stats)
+    }
     View(all_fit_parameters)
 }
 
@@ -471,7 +499,9 @@ x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
   list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 70),   main = fitting_caption),
-  list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 200),  main = fitting_caption),
+  list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 120),  main = fitting_caption),
+  list(Y = all_fit_parameters[['Vmax_at_25']],     X = x_p, xlab = xl, ylab = "Vmax at 25 C (micromol / m^2 / s)",                       ylim = c(0, 70),  main = fitting_caption),
+  list(Y = all_fit_parameters[['Rd_at_25']],       X = x_p, xlab = xl, ylab = "Rd at 25 C (micromol / m^2 / s)",                         ylim = c(0, 4),   main = fitting_caption),
   list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 70),   main = boxplot_caption),
   list(Y = all_samples_one_point[['iWUE']],        X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", main = boxplot_caption)
 )

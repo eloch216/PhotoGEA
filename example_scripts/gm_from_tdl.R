@@ -44,9 +44,10 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- 2.5
+RESPIRATION <- 2.69
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
 MAX_GM <- 5
@@ -253,10 +254,10 @@ if (PERFORM_CALCULATIONS) {
         abs(RESPIRATION),    # this is the default value of respiration
         id_column = 'event', # the default value can be overridden for certain events
         value_table = list(
-          'WT' = 2.8,
-          '20' = 2.8,
-          '23' = 2.8,
-          '25' = 2.8
+          'WT' = 2.18,
+          '8' = 2.02,
+          '10' = 1.94,
+          '14' = 2.08
         )
     )})
 
@@ -373,7 +374,7 @@ if (PERFORM_CALCULATIONS) {
     rep_stats_no_outliers <- rep_stats
 
     # Now, we remove outliers from each event
-    if (REMOVE_STATISTICAL_OUTLIERS) {
+    if (REMOVE_STATISTICAL_OUTLIERS_EVENT) {
 
         old_nrow <- nrow(rep_stats_no_outliers)
 

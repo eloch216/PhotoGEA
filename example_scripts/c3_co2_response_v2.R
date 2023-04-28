@@ -43,6 +43,21 @@ REMOVE_STATISTICAL_OUTLIERS <- TRUE
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
 
+# Decide whether to specify one gm value for all events or to use a table to
+# specify (possibly) different values for each event. If gm is set to infinity
+# (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
+# which is not solely a property of Rubisco and which may differ between plants
+# that have identical Vcmax but different gm.
+USE_GM_TABLE <- FALSE
+GM_VALUE <- Inf
+GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
+GM_TABLE <- list(
+  WT = 0.437,
+  `8` = 0.597, 
+  `10` = 0.504,
+  `14` = 0.541 
+)
+
 ###
 ### TRANSLATION:
 ### Creating convenient R objects from raw data files
@@ -221,11 +236,26 @@ if (REMOVE_SPECIFIC_POINTS) {
 ### Extracting new pieces of information from the data
 ###
 
-# Specify an infinite mesophyll conductance
-licor_data <- set_variable(
+# Include gm values (required for apply_gm)
+licor_data <- if (USE_GM_TABLE) {
+  set_variable(
     licor_data,
-    'gmc', 'mol m^(-2) s^(-1) bar^(-1)', '', Inf
-)
+    'gmc',
+    GM_UNITS,
+    'c3_co2_response_v2',
+    GM_VALUE,
+    EVENT_COLUMN_NAME,
+    GM_TABLE
+  )
+} else {
+  set_variable(
+    licor_data,
+    'gmc',
+    GM_UNITS,
+    'c3_co2_response_v2',
+    GM_VALUE
+  )
+}
 
 # Calculate total pressure (required for apply_gm)
 licor_data <- calculate_total_pressure(licor_data)
@@ -338,9 +368,9 @@ if (MAKE_ANALYSIS_PLOTS) {
     plot_param <- list(
       list(Y = all_samples_one_point[, 'A'],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption),
-      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 175), main = fitting_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 140), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],    X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                 ylim = c(0, 3), main = fitting_caption),
-      list(Y = aci_parameters[, 'J_at_25'],     X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                  ylim = c(0, 350), main = fitting_caption),
+      list(Y = aci_parameters[, 'J_at_25'],     X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                  ylim = c(0, 225), main = fitting_caption),
       list(Y = aci_parameters[, 'TPU'],         X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                ylim = c(0, 30),  main = fitting_caption)
     )
 
@@ -348,7 +378,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         plot_param <- c(
             plot_param,
             list(
-                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.6), main = boxplot_caption),
+                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.4), main = boxplot_caption),
                 list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 350), main = boxplot_caption)
             )
         )
@@ -371,7 +401,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     x_e <- all_samples[, EVENT_COLUMN_NAME]
 
     ci_lim <- c(-50, 1500)
-    a_lim <- c(-10, 70)
+    a_lim <- c(-10, 55)
     etr_lim <- c(0, 400)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
