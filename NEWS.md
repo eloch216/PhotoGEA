@@ -18,8 +18,8 @@ for the next release.
 
 # UNRELEASED
 
-- Modified `identify_tdl_cycles` so it can handle cycles where there may be more
-  than one measurement from each valve.
+- Modified `identify_tdl_cycles` and `process_tdl_cycle_polynomial` so they can
+  handle cycles where there are multiple measurement logs from each valve.
 
 # PhotoGEA VERSION 0.7.1 (2023-01-11)
 
