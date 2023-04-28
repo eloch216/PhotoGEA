@@ -15,7 +15,8 @@
     valve_column_name,
     cycle_start_valve,
     expected_cycle_length_minutes,
-    expected_cycle_num_pts,
+    expected_cycle_num_valves,
+    expected_cycle_num_time_pts = expected_cycle_num_valves,
     timestamp_colname
   )
 }
@@ -42,8 +43,17 @@
     cycle in minutes would be 8 * 20 / 60 = 2.7 minutes (approximately).
   }
 
-  \item{expected_cycle_num_pts}{
-    The total number of valves that are measured in each cycle.
+  \item{expected_cycle_num_valves}{
+    The total number of unique valves that are measured in each cycle. For
+    example, if a cycle consists of measuements from valves 1, 3, 13, 6, and 13,
+    then \code{expected_cycle_num_valves} should be 4.
+  }
+
+  \item{expected_cycle_num_time_pts}{
+    The total number of time points that are recorded in each cycle. For
+    example, if 10 measuements are logged per second and a cycle is 12 minutes
+    long, \code{expected_cycle_num_time_pts} should be
+    \code{12 * 60 * 10 = 7200}.
   }
 
   \item{timestamp_colname}{
@@ -66,7 +76,7 @@
   \itemize{
     \item A cycle is said to begin when the value of \code{valve_column_name} is
           \code{cycle_start_valve}.
-    \item A cycle ends after \code{expected_cycle_num_pts} valves have been
+    \item A cycle ends after \code{expected_cycle_num_valves} valves have been
           measured.
     \item The time difference between the first and last points of a cycle
           cannot deviate from \code{expected_cycle_length_minutes} by more than
@@ -100,7 +110,7 @@ tdl_file <- identify_tdl_cycles(
   valve_column_name = 'valve_number',
   cycle_start_valve = 20,
   expected_cycle_length_minutes = 2.7,
-  expected_cycle_num_pts = 9,
+  expected_cycle_num_valves = 9,
   timestamp_colname = 'TIMESTAMP'
 )
 

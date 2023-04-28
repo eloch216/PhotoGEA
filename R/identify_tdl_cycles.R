@@ -3,7 +3,8 @@ identify_tdl_cycles <- function(
     valve_column_name,
     cycle_start_valve,
     expected_cycle_length_minutes,
-    expected_cycle_num_pts,
+    expected_cycle_num_valves,
+    expected_cycle_num_time_pts = expected_cycle_num_valves,
     timestamp_colname
 )
 {
@@ -35,7 +36,18 @@ identify_tdl_cycles <- function(
 
     # Find all the row numbers in the TDL data where the site value is equal to
     # the cycle start site value
-    starting_indices <- which(tdl_exdf[,valve_column_name] == cycle_start_valve)
+    starting_valve_indices <- which(tdl_exdf[,valve_column_name] == cycle_start_valve)
+
+    # If the valve number is the same for sequential rows, this represents
+    # multiple measurements. When this happens, only the first instance of the
+    # start valve in a sequential group is potentially the start of a cycle.
+    # Here we find just these points, which are the potential starting indices.
+    starting_indices <- 1
+    for (i in seq(2, length(starting_valve_indices))) {
+        if (starting_valve_indices[i] - starting_valve_indices[i-1] > 1) {
+            starting_indices <- c(starting_indices, starting_valve_indices[i])
+        }
+    }
 
     # Check for problems
     if (length(starting_indices) < 1) {
@@ -51,8 +63,8 @@ identify_tdl_cycles <- function(
     # Make a helping function to check whether a possible cycle is valid
     check_cycle <- function(possible_cycle) {
         # Get info about the possible cycle
-        n_pts <- nrow(possible_cycle)
-        n_unique_pts <- length(unique(possible_cycle[[valve_column_name]]))
+        n_time_pts <- nrow(possible_cycle)
+        n_valves <- length(unique(possible_cycle[[valve_column_name]]))
         tdiff <- difftime(
             max(possible_cycle[[timestamp_colname]]),
             min(possible_cycle[[timestamp_colname]]),
@@ -60,10 +72,12 @@ identify_tdl_cycles <- function(
         )
 
         # Check for validity
-        if (n_pts != n_unique_pts) {
-            # The site values should be unique within a cycle
+        if (n_time_pts != expected_cycle_num_time_pts) {
+            # We have the wrong number of time points
             return(FALSE)
-        } else if (n_pts != expected_cycle_num_pts) {
+        }
+        else if (n_valves != expected_cycle_num_valves) {
+            # We have the wrong number of valves
             return(FALSE)
         } else if (abs(tdiff - expected_cycle_length_minutes) > 0.5) {
             # Allow a tolerance away from the expected length
@@ -99,16 +113,16 @@ identify_tdl_cycles <- function(
         if (check_cycle(possible_cycle)) {
             possible_cycle[['cycle_num']] <- n_cycles
 
-            possible_cycle[['elapsed_time']] <- as.double(difftime(
-                possible_cycle[1, timestamp_colname],
-                start_time,
-                units = "min"
-            ))
-
             new_main_data <- rbind(new_main_data, possible_cycle)
             n_cycles <- n_cycles + 1
         }
     }
+
+    new_main_data[['elapsed_time']] <- as.double(difftime(
+        new_main_data[[timestamp_colname]],
+        start_time,
+        units = "min"
+    ))
 
     # Clean up and return the result
     row.names(new_main_data) <- NULL

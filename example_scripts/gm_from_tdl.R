@@ -169,7 +169,7 @@ if (PERFORM_CALCULATIONS) {
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 2,
         expected_cycle_length_minutes = 2.5,
-        expected_cycle_num_pts = 6,
+        expected_cycle_num_valves = 6,
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
       )
     } else {
@@ -178,7 +178,7 @@ if (PERFORM_CALCULATIONS) {
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
         expected_cycle_length_minutes = 3,
-        expected_cycle_num_pts = 9,
+        expected_cycle_num_valves = 9,
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
       )
     }
