@@ -12,6 +12,9 @@ fit_c3_aci <- function(
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
+    alpha = 0.0,
+    curvature_cj = 1.0,
+    curvature_cjp = 1.0,
     OPTIM_FUN = default_optimizer(),
     initial_guess_fun = initial_guess_c3_aci(
         Oc = POc,
@@ -29,9 +32,8 @@ fit_c3_aci <- function(
     lower = c(0,  0,    0,   0),    # TPU, J, Rd, Vcmax
     upper = c(40, 1000, 100, 1000), # TPU, J, Rd, Vcmax
     fixed = c(40, NA,   NA,  NA),   # TPU, J, Rd, Vcmax
-    min_aj_cutoff = NA,
-    max_aj_cutoff = NA,
-    curvature = 0.99
+    cj_crossover_min = NA,
+    cj_crossover_max = NA
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -52,9 +54,22 @@ fit_c3_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
-    # Make sure the curvature value is acceptable
-    if (curvature < 0 || curvature > 1) {
-        stop('curvature must be between 0 and 1')
+    # Make sure certain inputs lie on [0,1]
+    check_zero_one <- list(
+        alpha = alpha,
+        curvature_cj = curvature_cj,
+        curvature_cjp = curvature_cjp
+    )
+
+    sapply(seq_along(check_zero_one), function(i) {
+        if (check_zero_one[[i]] < 0 || check_zero_one[[i]] > 1) {
+            stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
+        }
+    })
+
+    # Make sure the Cc values are all positive
+    if (any(replicate_exdf[, cc_column_name] <= 0)) {
+        stop('All Cc values must be positive')
     }
 
     # Make sure at least one parameter will be fit
@@ -62,9 +77,9 @@ fit_c3_aci <- function(
         stop('no element of `fixed` is NA, so there are no parameters to fit')
     }
 
-    # Define the total error function. If `min_aj_cutoff` is not NA, apply a
-    # penalty when Aj < Ac and Cc < min_aj_cutoff. If `max_aj_cutoff` is not NA,
-    # apply a penalty when Aj > Ac and Cc > max_aj_cutoff.
+    # Define the total error function. If `cj_crossover_min` is not NA, apply a
+    # penalty when Wj < Wc and Cc < cj_crossover_min. If `cj_crossover_max` is
+    # not NA, apply a penalty when Wj > Wc and Cc > cj_crossover_max.
     total_error_fcn <- function(guess) {
         X <- fixed
         X[is.na(fixed)] <- guess
@@ -77,7 +92,9 @@ fit_c3_aci <- function(
             POc,
             atp_use,
             nadph_use,
-            curvature,
+            alpha,
+            curvature_cj,
+            curvature_cjp,
             cc_column_name,
             total_pressure_column_name,
             kc_column_name,
@@ -90,27 +107,29 @@ fit_c3_aci <- function(
             return_exdf = FALSE
         )
 
-        if (!is.na(min_aj_cutoff)) {
+        if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
-                if (replicate_exdf[i, a_column_name] > 0 &&
-                        replicate_exdf[i, cc_column_name] < min_aj_cutoff &&
-                            assim$Aj[i] < assim$Ac[i]) {
+                if (replicate_exdf[i, cc_column_name] < cj_crossover_min &&
+                        assim$Wj[i] < assim$Wc[i]) {
                     assim$An[i] <- 1e10
                 }
             }
         }
 
-        if (!is.na(max_aj_cutoff)) {
+        if (!is.na(cj_crossover_max)) {
             for (i in seq_along(assim$An)) {
-                if (replicate_exdf[i, a_column_name] > 0 &&
-                        replicate_exdf[i, cc_column_name] > max_aj_cutoff &&
-                            assim$Aj[i] > assim$Ac[i]) {
+                if (replicate_exdf[i, cc_column_name] > cj_crossover_max &&
+                        assim$Wj[i] > assim$Wc[i]) {
                     assim$An[i] <- 1e10
                 }
             }
         }
 
-        sum((replicate_exdf[, 'A'] - assim$An)^2)
+        if (any(is.na(assim$An))) {
+            1e10 # return a huge value to penalize this set of parameter values
+        } else {
+            sum((replicate_exdf[, 'A'] - assim$An)^2)
+        }
     }
 
     # Get an initial guess for all the parameter values
@@ -145,7 +164,9 @@ fit_c3_aci <- function(
         POc,
         atp_use,
         nadph_use,
-        curvature,
+        alpha,
+        curvature_cj,
+        curvature_cjp,
         cc_column_name,
         total_pressure_column_name,
         kc_column_name,
