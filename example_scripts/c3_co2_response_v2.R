@@ -28,7 +28,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- TRUE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -42,6 +42,21 @@ REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
+
+# Decide whether to specify one gm value for all events or to use a table to
+# specify (possibly) different values for each event. If gm is set to infinity
+# (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
+# which is not solely a property of Rubisco and which may differ between plants
+# that have identical Vcmax but different gm.
+USE_GM_TABLE <- FALSE
+GM_VALUE <- Inf
+GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
+GM_TABLE <- list(
+  WT = 0.437,
+  `8` = 0.597,
+  `10` = 0.504,
+  `14` = 0.541
+)
 
 ###
 ### TRANSLATION:
@@ -128,7 +143,7 @@ licor_data <- process_id_columns(
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+# check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -190,17 +205,7 @@ if (MAKE_VALIDATION_PLOTS) {
       ylab = paste0('CO2 concentration (', licor_data$units$CO2_r, ')')
     ))
 
-    # Make a plot to check stability criteria
-    dev.new()
-    print(xyplot(
-      `A:OK` + `gsw:OK` + Stable ~ Ci | curve_identifier,
-      data = licor_data$main_data,
-      type = 'b',
-      pch = 16,
-      auto = TRUE,
-      grid = TRUE,
-      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
-    ))
+  #Make a plot to check stability criteria insert here
 }
 
 if (REQUIRE_STABILITY) {
@@ -217,7 +222,12 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(instrument = 'ripe1', CO2_r_sp = 1800)
+      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
+      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
+      list(curve_identifier = '20 3 6', seq_num = c(15)),
+      list(curve_identifier = '25 2 4', seq_num = c(3)),
+      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
+      list(curve_identifier = 'WT 3 10', seq_num = c(1, 2))
     )
 }
 
@@ -226,11 +236,26 @@ if (REMOVE_SPECIFIC_POINTS) {
 ### Extracting new pieces of information from the data
 ###
 
-# Specify an infinite mesophyll conductance
-licor_data <- set_variable(
+# Include gm values (required for apply_gm)
+licor_data <- if (USE_GM_TABLE) {
+  set_variable(
     licor_data,
-    'gmc', 'mol m^(-2) s^(-1) bar^(-1)', '', Inf
-)
+    'gmc',
+    GM_UNITS,
+    'c3_co2_response_v2',
+    GM_VALUE,
+    EVENT_COLUMN_NAME,
+    GM_TABLE
+  )
+} else {
+  set_variable(
+    licor_data,
+    'gmc',
+    GM_UNITS,
+    'c3_co2_response_v2',
+    GM_VALUE
+  )
+}
 
 # Calculate total pressure (required for apply_gm)
 licor_data <- calculate_total_pressure(licor_data)
@@ -252,10 +277,9 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
-  min_aj_cutoff = 20,                           # Aj must be > Ac when Cc < this value (ppm)
-  max_aj_cutoff = 800,                          # Aj must be < Ac when Cc > this value (ppm)
-  fixed = c(NA, NA, NA, NA),
-  curvature = 1
+  cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
+  cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
+  fixed = c(NA, NA, NA, NA)
 ))
 
 if (MAKE_ANALYSIS_PLOTS) {
@@ -343,9 +367,9 @@ if (MAKE_ANALYSIS_PLOTS) {
     plot_param <- list(
       list(Y = all_samples_one_point[, 'A'],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption),
-      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 175), main = fitting_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 140), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],    X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                 ylim = c(0, 3), main = fitting_caption),
-      list(Y = aci_parameters[, 'J_at_25'],     X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                  ylim = c(0, 350), main = fitting_caption),
+      list(Y = aci_parameters[, 'J_at_25'],     X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                  ylim = c(0, 225), main = fitting_caption),
       list(Y = aci_parameters[, 'TPU'],         X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                ylim = c(0, 30),  main = fitting_caption)
     )
 
@@ -353,7 +377,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         plot_param <- c(
             plot_param,
             list(
-                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.6), main = boxplot_caption),
+                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.4), main = boxplot_caption),
                 list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 350), main = boxplot_caption)
             )
         )
@@ -376,7 +400,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     x_e <- all_samples[, EVENT_COLUMN_NAME]
 
     ci_lim <- c(-50, 1500)
-    a_lim <- c(-10, 70)
+    a_lim <- c(-10, 55)
     etr_lim <- c(0, 400)
 
     ci_lab <- "Intercellular [CO2] (ppm)"

@@ -81,7 +81,7 @@ tdl_file <- identify_tdl_cycles(
   valve_column_name = 'valve_number',
   cycle_start_valve = 20,
   expected_cycle_length_minutes = 2.7,
-  expected_cycle_num_pts = 9,
+  expected_cycle_num_valves = 9,
   timestamp_colname = 'TIMESTAMP'
 )
 

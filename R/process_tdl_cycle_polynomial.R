@@ -2,6 +2,7 @@ process_tdl_cycle_polynomial <- function(
     tdl_cycle,
     poly_order,
     reference_tanks,
+    reference_tank_time_points = NA,
     f_other = 0.00474,
     R_VPDB = 0.0111797,
     valve_column_name = 'valve_number',
@@ -40,19 +41,71 @@ process_tdl_cycle_polynomial <- function(
         stop('each element of reference_tanks must be a list with elements named valve, conc12C, and conc13C')
     }
 
+    # Make sure the reference tank time points have been supplied properly
+    time_points_supplied <- !all(is.na(reference_tank_time_points))
+
+    if (time_points_supplied) {
+        if (!is.list(reference_tank_time_points)) {
+            stop('reference_tank_time_points must be a list if it is not NA')
+        }
+
+        if (length(reference_tank_time_points) != length(reference_tanks)) {
+            stop('reference_tank_time_points must have the same length as reference_tanks')
+        }
+
+        time_check <- sapply(reference_tank_time_points, function(x) {
+            is.list(x) && all(c('valve', 'start', 'end') %in% names(x))
+        })
+
+        if (!all(time_check)) {
+            stop('each element of reference_tank_time_points must be a list with elements named valve, start, and end')
+        }
+
+        valve_check <- sapply(seq_along(reference_tank_time_points), function(i) {
+            reference_tank_time_points[[i]]$valve == reference_tanks[[i]]$valve
+        })
+
+        if (!all(valve_check)) {
+            stop('valves must be specified in the same order in reference_tank_time_points and reference_tanks')
+        }
+    }
+
     ## PERFORMING CALIBRATIONS
 
-    # Get the expected and measured 12C and 13C concentrations from each of the
-    # reference tanks
+    # Get the expected 12C and 13C concentrations from each of the reference
+    # tanks
     expected_12C <- sapply(reference_tanks, function(x) {x$conc_12C})
-    measured_12C <- sapply(reference_tanks, function(x) {
-        tdl_cycle[tdl_cycle[, valve_column_name] == x$valve, raw_12c_colname]
-    })
-
     expected_13C <- sapply(reference_tanks, function(x) {x$conc_13C})
-    measured_13C <- sapply(reference_tanks, function(x) {
-        tdl_cycle[tdl_cycle[, valve_column_name] == x$valve, raw_13c_colname]
-    })
+
+    # Get the measured 12C and 13C concentrations from each of the reference
+    # tanks, averaging over time points as required
+    measured_12C <- if(!time_points_supplied) {
+        sapply(reference_tanks, function(x) {
+            tdl_cycle[tdl_cycle[, valve_column_name] == x$valve, raw_12c_colname]
+        })
+    } else {
+        sapply(seq_along(reference_tanks), function(i) {
+            valve_num <- reference_tanks[[i]]$valve
+            start_p <- reference_tank_time_points[[i]]$start
+            end_p <- reference_tank_time_points[[i]]$end
+            valve_seq <- tdl_cycle[tdl_cycle[, valve_column_name] == valve_num, raw_12c_colname]
+            mean(valve_seq[seq(start_p, end_p)])
+        })
+    }
+
+    measured_13C <- if(!time_points_supplied) {
+        sapply(reference_tanks, function(x) {
+            tdl_cycle[tdl_cycle[, valve_column_name] == x$valve, raw_13c_colname]
+        })
+    } else {
+        sapply(seq_along(reference_tanks), function(i) {
+            valve_num <- reference_tanks[[i]]$valve
+            start_p <- reference_tank_time_points[[i]]$start
+            end_p <- reference_tank_time_points[[i]]$end
+            valve_seq <- tdl_cycle[tdl_cycle[, valve_column_name] == valve_num, raw_13c_colname]
+            mean(valve_seq[seq(start_p, end_p)])
+        })
+    }
 
     # Make the fits
     fit_12C <- stats::lm(expected_12C ~ stats::poly(measured_12C, poly_order, raw = TRUE))

@@ -16,6 +16,7 @@
     tdl_cycle,
     poly_order,
     reference_tanks,
+    reference_tank_time_points = NA,
     f_other = 0.00474,
     R_VPDB = 0.0111797,
     valve_column_name = 'valve_number',
@@ -40,6 +41,15 @@
     \code{conc_12C}, and \code{conc_13C}. \code{valve} should indicate the valve
     number for the reference tank, and the other two elements should indicate
     the known concentrations of 12C and 13C in the tank.
+  }
+
+  \item{reference_tank_time_points}{
+    Either \code{NA} or a list where each element is a list with three named
+    elements: \code{valve}, \code{start}, and \code{end}. \code{valve} should
+    indicate the valve number for a reference tank, and the other two elements
+    should indicate the first and last time points where the measurements from
+    this valve should be averaged. The order of valves must be the same as in
+    the \code{reference_tanks} input argument.
   }
 
   \item{f_other}{
@@ -75,6 +85,12 @@
   estimate of the true concentration, otherwise referred to as a calibrated
   value.
 
+  When making dynamic TDL measurements, concentrations from some of the
+  reference valves may be logged at multiple time points. In this case, it is
+  typical to take an average value from a subset of them.
+  \code{process_tdl_cycle_polynomial} can handle this situation when its
+  \code{reference_tank_time_points} input argument is not \code{NA}.
+
   This function assumes that \code{tdl_cycle} represents a single TDL
   measurement cycle. To process multiple cycles at once, this function is often
   used along with \code{\link{by.exdf}} and \code{\link{consolidate}}.
@@ -93,8 +109,12 @@
 }
 
 \examples{
-# TODO: add an example
-
+# An example of a `reference_tank_time_points` list for a situation where there
+# are just two reference valves (1 and 3)
+reference_tank_time_points = list(
+  list(valve = 1, start = 101, end = 300), # Take an average of time points 101 - 300 for valve 1
+  list(valve = 3, start = 201, end = 300)  # Take an average of time points 201 - 300 for valve 3
+)
 }
 
 \concept{exdf}

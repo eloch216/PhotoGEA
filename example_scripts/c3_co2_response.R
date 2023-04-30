@@ -62,6 +62,10 @@ library(DescTools)    # for DunnettTest
 # to TRUE.
 PERFORM_CALCULATIONS <- TRUE
 
+# Decide whether to save Vcmax and A values in CSV files. This option will ask
+# you for file names; they should end with `.csv`.
+CREATE_CSV_FILES <- FALSE
+
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
@@ -83,10 +87,15 @@ PERFORM_STATS_TESTS <- TRUE
 USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
-GM_TABLE <- list()
+GM_TABLE <- list(
+  WT = 0.437,
+  `8` = 0.597, 
+  `10` = 0.504,
+  `14` = 0.541 
+  )
 
 # Indicate whether a `plot` column is present
-HAS_PLOT_INFO <- TRUE
+HAS_PLOT_INFO <- FALSE
 
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
@@ -189,7 +198,7 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Remove certain events
-    combined_info <- remove_points(combined_info, list(event = c('15', '37')))
+    combined_info <- remove_points(combined_info, list(event = c('18', '30')))
 
     # Include gm values (required for calculating Cc)
     combined_info <- if (USE_GM_TABLE) {
@@ -284,17 +293,17 @@ if (PERFORM_CALCULATIONS) {
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
       combined_info <- remove_points(
-        combined_info,
-        list(event = 25, replicate = 4, plot = 2, obs = 3),
-        list(event = 25, replicate = 8, plot = 6, obs = 118),
-        list(event = 25, replicate = 8, plot = 6, obs = 119),
-        list(event = 23, replicate = 9, plot = 6, obs = 118),
-        list(event = 23, replicate = 9, plot = 6, obs = 119),
-        list(event = 'WT', replicate = 9, plot = 2, obs = 30),
-        list(event = 20, replicate = 6, plot = 3, obs = 49),
-        list(event = 'WT', replicate = 10, plot = 3, obs = 35),
-        list(event = 'WT', replicate = 10, plot = 3, obs = 36),
-        list(event = 25, replicate = 6, plot = 4, obs = 62)
+        combined_info
+       # list(event = 25, replicate = 4, plot = 2, obs = 3),
+        #list(event = 25, replicate = 8, plot = 6, obs = 118),
+        #list(event = 25, replicate = 8, plot = 6, obs = 119),
+        #list(event = 23, replicate = 9, plot = 6, obs = 118),
+        #list(event = 23, replicate = 9, plot = 6, obs = 119),
+        #list(event = 'WT', replicate = 9, plot = 2, obs = 30),
+        #list(event = 20, replicate = 6, plot = 3, obs = 49),
+        #list(event = 'WT', replicate = 10, plot = 3, obs = 35),
+        #list(event = 'WT', replicate = 10, plot = 3, obs = 36),
+        #list(event = 25, replicate = 6, plot = 4, obs = 62)
       )
     }
 
@@ -392,7 +401,7 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-ci_lim <- c(-50, 600)
+ci_lim <- c(-50, 1500)
 a_lim <- c(-10, 50)
 etr_lim <- c(0, 325)
 
@@ -534,8 +543,8 @@ xl <- "Genotype"
 plot_param <- list(
   list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 35),  main = boxplot_caption),
   list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 80), main = boxplot_caption),
-  list(Y = vcmax_parameters[['Vcmax_at_25']],                    X = x_v,   xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 150), main = fitting_caption),
-  list(Y = vcmax_parameters[['Rd_at_25']],                       X = x_v,   xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 1.2), main = fitting_caption)
+  list(Y = vcmax_parameters[['Vcmax_at_25']],                    X = x_v,   xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 200), main = fitting_caption),
+  list(Y = vcmax_parameters[['Rd_at_25']],                       X = x_v,   xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 2.5), main = fitting_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -611,4 +620,17 @@ if (PERFORM_STATS_TESTS) {
   # Perform Dunnett's Test
   dunnett_test_result <- DunnettTest(x = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], g = all_samples_one_point_no_a_outliers$event, control = "WT")
   print(dunnett_test_result)
+  
+  # Print average A values for each event
+  cat('\n\n---\n\nAverage A values for each event:\n\n')
+  print(with(all_samples_one_point_no_a_outliers, tapply(A, event, mean)))
+  cat('\n\n---\n\n')
+}
+
+if (CREATE_CSV_FILES) {
+  cat('Saving Vcmax parameters to a csv file. Please choose the name and location. Name should end with `.csv`')
+  write.csv(vcmax_parameters, file = file.choose(), row.names = FALSE)
+  
+  cat('Saving A values to a csv file. Please choose the name and location. Name should end with `.csv`')
+  write.csv(all_samples_one_point_no_a_outliers, file = file.choose(), row.names = FALSE)
 }

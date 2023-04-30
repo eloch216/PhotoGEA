@@ -16,6 +16,26 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.8.0 (2023-04-30)
+
+- Modified `identify_tdl_cycles` and `process_tdl_cycle_polynomial` so they can
+  handle cycles where there are multiple measurement logs from each valve.
+- Added several functions for calculating quadratic roots; these are not
+  exported in the package namespace, but are now used in
+  `calculate_c3_assimilation` and `calculate_c4_assimilation` to make the code
+  cleaner and more robust.
+- Other updates to `calculate_c3_assimilation`:
+  - Choose a minimal RuBP carboxylation rate rather than a minimal net CO2
+    assimilation rate.
+  - Allow the user to specify a value of `alpha` (previously this value was
+    hard-coded to 0).
+  - Allow the user to specify two separate curvature values when including
+    co-limitation.
+  - Renamed `min_aj_cutoff` and `max_aj_cutoff` to `cj_crossover_min` and
+    `cj_crossover_max` to better reflect their purpose.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/68
+
 # PhotoGEA VERSION 0.7.1 (2023-01-11)
 
 - Added new outputs from `fit_c3_aci` and `fit_c4_aci` that include the average

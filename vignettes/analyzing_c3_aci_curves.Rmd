@@ -49,12 +49,14 @@ The full C~3~ photosynthetic pathway is quite complicated, consisting of at
 least two hundred individual reactions, each of which may have an impact on a
 measured A-Ci curve. However, simplified models for photosynthesis are available
 and are much easier to understand and work with. These models tend to be based
-around rubisco kinetics, describing how the net assimilation rate responds to
+around Rubisco kinetics, describing how the net assimilation rate responds to
 the amount of CO~2~ available in the chloroplast. The most widely-used model is
 typically referred to as the _Farquhar-von-Caemmerer-Berry_ model (often
-shortened to the _FvCB_ model or _Farquhar_ model) after the three scientists
+shortened to the _FvCB model_ or _Farquhar model_) after the three scientists
 who originally developed it. An excellent description of this model can be found
-in _Biochemical Models of Leaf Photosynthesis_ [@caemmerer_biochemical_2000].
+in _Biochemical Models of Leaf Photosynthesis_ [@caemmerer_biochemical_2000],
+subject to a few additional considerations discussed in Lochocki and McGrath (in
+preparation).
 
 This model provides a framework for understanding the changes in $A_n$ that
 occur as a C~3~ plant is exposed to successively higher concentrations of CO~2~.
@@ -62,36 +64,38 @@ Overall, the photosynthetic response to CO~2~ under high light conditions can be
 divided into three separate ranges:
 
 - At low levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
-  limited by rubisco activity.
+  limited by Rubisco activity.
 - At intermediate levels of CO~2~ in the chloroplast, CO~2~ assimilation is
-  primarily limited by the electron transport rate.
+  primarily limited by RuBP regeneration.
 - At high levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
-  limited by phosphate utilization.
+  limited by triose phosphate utilization.
 
-More specifically, the model provides equations that separately describe the
-responses of three separate assimilation rates to the chloroplastic CO~2~
-concentration:
+More specifically, the model provides equations for potential RuBP
+carboxylation rates that are each limited by one of three important processes:
 
-- The rubisco-limited net CO~2~ assimilation rate ($A_c$).
-- The electron-transport-limited rate ($A_j$).
-- The phosphate-limited rate ($A_p$).
+- The Rubisco-limited carboxylation rate ($W_c$).
+- The RuBP-regeneration-limited carboxylation rate ($W_j$).
+- The triose-phosphate-utilization-limited carboxylation rate ($W_p$).
 
-The overall net assimilation rate $A_n$ at a particular value of the
-chloroplastic CO~2~ concentration is then taken to be the smallest of the three
-individual limiting rates. Using the equations that compose this model, it is
+Each of these rates depend on the CO~2~ concentration in the chloroplast and
+other factors such as the incident light intensity. The actual RuBP
+carboxylation rate $V_c$ for a particular set of conditions is taken to be the
+smallest of the three potential rates. Then, the net CO~2~ assimilation rate
+$A_n$ can be calculated from $V_c$ by including carbon losses due to
+photorespiration and day respiration. It is also possible to calculate the
+potential assimilation rates corresponding to each potential carboxylation rate:
+$A_c$, $A_j$, and $A_p$. Using the equations that compose this model, it is
 possible to calculate plots like the one below, which illustrates the three
-different assimilation ranges.
+different assimilation ranges observed in a typical high-light A-Ci curve.
 
 ```{r, echo = FALSE}
 library(PhotoGEA)
 library(lattice)
 
-npts <- 101
-
 Tleaf <- 30
 
 inputs <- exdf(data.frame(
-  Cc = seq(0, 1000, length.out = npts),
+  Cc = seq(1, 1001, by = 10),
   Tleaf = Tleaf,
   total_pressure = 1
 ))
@@ -149,18 +153,25 @@ One complication related to fitting is that the FvCB model calculates
 assimilation at the level of a single chloroplast; however, experimental gas
 exchange measurements are made by averaging the behavior of many different
 chloroplasts across a piece of leaf, which may each have different
-concentrations of CO~2~. Thus, the sharp transitions between rubisco-limited,
-RuBP-regeneration-limited, and phosphate-limited assimilation predicted by the
-model are rarely observed in practice, and there are instead regions of
-co-limited assimilation. This can be accomodated by an empirical "curvature"
-parameter, as discussed in the documentation for `calculate_c3_assimilation`.
-The following figure shows a CO~2~ response curve calculated with the curvature
-set to `r curvature` and other parameters identical to the ones used to generate
-the previous figure.
+concentrations of CO~2~. Thus, the sharp transitions between Rubisco-limited,
+RuBP-regeneration-limited, and triose-phosphate-utilization-limited assimilation
+predicted by the model are rarely observed in practice, and there are instead
+regions of co-limited assimilation. This can be represented mathematically via
+two empirical "curvature" parameters, as discussed in the documentation for
+`calculate_c3_assimilation`. The following figure shows a CO~2~ response curve
+calculated with both curvatures set to `r curvature` and other parameters
+identical to the ones used to generate the previous figure.
 
 ```{r, echo = FALSE}
-assim_curvature <-
-  calculate_c3_assimilation(inputs, TPU, J, Rd, Vcmax, curvature = curvature)
+assim_curvature <- calculate_c3_assimilation(
+  inputs,
+  TPU,
+  J,
+  Rd,
+  Vcmax,
+  curvature_cj = curvature,
+  curvature_cjp = curvature
+)
 
 xyplot(
   Ac + Aj + Ap + An ~ Cc,
@@ -655,8 +666,8 @@ Note that in this command, we specified `fixed = c(NA, NA, NA, NA)` when calling
 `fit_c3_aci`. By doing this, we are choosing to vary all four key photosynthetic
 parameters: `TPU`, `J`, `Rd`, and `Vcmax`. If `fixed` is not specified, it will
 take its default value: `c(Inf, NA, NA, NA)`. In that case, `TPU` would be fixed
-to a high value that essentially disables phosphate limited assimilation, and
-only `J`, `Rd`, and `Vcmax` would be varied.
+to a high value that essentially disables triose-phosphate-utilization-limited
+assimilation, and only `J`, `Rd`, and `Vcmax` would be varied.
 
 ## Viewing the Fitted Curves
 
@@ -680,7 +691,7 @@ xyplot(
 ```
 
 Note that in addition to the fitted values of `A`, the output also includes
-values of the individual limiting rates `Ac`, `Aj`, and `Ap`. We can also take a
+values of the potential limiting rates `Ac`, `Aj`, and `Ap`. We can also take a
 look at these, although they make the plots a bit busy. We can also choose to
 plot assimilation against `Cc` rather than `Ci`:
 
@@ -703,16 +714,18 @@ xyplot(
 
 Considering these two plots, we can see that although the model is able to
 reproduce the observed `A` values fairly well, some output parameters may be
-less reliable than others. For example, the phosphate-limited rate `Ap` is
-determined by the `TPU` parameter; for some of the curves, the assimilation rate
-is never limited by `Ap`, so the resulting "best-fit" values of `TPU` may not be
-meaningful for these curves.
+less reliable than others. For example, the triose-phosphate-utilization-limited
+rate `Ap` is determined by the `TPU` parameter; for some of the curves, the
+assimilation rate is never limited by `Ap`, so the resulting "best-fit" values
+of `TPU` may not be meaningful for these curves.
 
 There is also one curve (`ripe2 - soybean - 1`) where the optimizer is possibly
 overestimating `J`, so `Aj` is never the limiting factor. To address this, it is
 possible to force the optimizer to only allow fits where `Aj` is less than `Ac`
-above a certain threshold value of `Cc`; adding this restriction can sometimes
-produce more reasonable fits.
+above a certain threshold value of `Cc`; essentially, this is a way to constrain
+the crossover from Rubisco-limited carboxylation to RuBP-regeneration-limited
+carboxylation to a limited range of `Cc` values. Adding this restriction can
+sometimes produce more reasonable fits.
 
 ```{r fit_c3_aci}
 # Fit the C3 A-Ci curves
@@ -721,8 +734,8 @@ c3_aci_results <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
   fixed = c(NA, NA, NA, NA),        # Additional argument passed to `fit_c3_aci`
-  min_aj_cutoff = 100,              # Aj must be > Ac when Cc < 100 ppm
-  max_aj_cutoff = 550               # Aj must be < Ac when Cc > 550 ppm
+  cj_crossover_min = 100,           # Wj must be > Wc when Cc < 100 ppm
+  cj_crossover_max = 550            # Wj must be < Wc when Cc > 550 ppm
 ))
 
 <<fit_aci_limiting>>
@@ -736,10 +749,10 @@ this approach may be more successful. We can also notice that the fit for
 `ripe1 - soybean - 5a` is a little strange. Based on the values of `Ci` and
 `Cc`, it seems that this plant's stomata did not fully open during the
 measurement, almost fully restricting the measured assimilation values to the
-rubisco-limited range; there is nothing that can be done about this. It is also
+Rubisco-limited range; there is nothing that can be done about this. It is also
 apparent that the `TPU` issue remains, and some curves are never
-phosphate-limited; again, there is nothing that can really be done to address it
-besides measuring more A-Ci curves.
+triose-phosphate-utilization-limited; again, there is nothing that can really be
+done to address it besides measuring more A-Ci curves.
 
 Checking the residuals is also a powerful way to gauge the quality of a fit. The
 output from `fit_c3_aci` includes the residuals (calculated as `A - A_fit`) in
@@ -881,12 +894,12 @@ cause problems with the fits.
 
 ## TPU Limitations
 
-In this example, we consider phosphate utilization as a factor that may possibly
-limit assimilation. However, as discussed in [Fitting Licor Data], it is also
-possible to remove phosphate-limited assimilation from the model by fixing `TPU`
-to a high value and only fitting `J`, `Rd`, and `Vcmax`. Often it is wise to
-first try fitting a set of curves without `TPU` limitations, and only consider
-allowing `TPU` limitations if the resulting fits are not good.
+In this example, we consider triose phosphate utilization as a factor that may
+possibly limit assimilation. However, as discussed in [Fitting Licor Data], it
+is also possible to remove this potential limitation from the model by fixing
+`TPU` to a high value and only fitting `J`, `Rd`, and `Vcmax`. Often it is wise
+to first try fitting a set of curves without `TPU` limitations, and only
+consider allowing `TPU` limitations if the resulting fits are not good.
 
 ## Averages and Standard Errors
 

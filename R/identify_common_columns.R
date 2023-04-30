@@ -76,8 +76,3 @@ identify_common_columns.exdf  <- function(...) {
 
     return(ordered_common_column_names)
 }
-
-simple_exdf_1 <- exdf(data.frame(A = 1), data.frame(A = 'u'), data.frame(A = 'c'))
-simple_exdf_2 <- exdf(data.frame(A = 2), data.frame(A = 'u'), data.frame(A = 'c'))
-
-identify_common_columns.exdf(simple_exdf_1, simple_exdf_2)

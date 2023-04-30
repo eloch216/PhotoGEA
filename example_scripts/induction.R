@@ -162,17 +162,17 @@ x_t <- all_samples[['elapsed_time']]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-a_lim <- c(-10, 50)
+a_lim <- c(-3, 50)
 
 t_lab <- "Elapsed time (minutes)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-    list(all_samples[[A_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim)
+    list(all_samples[[A_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim,  xlim = c(30, 65))
 )
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = FALSE, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = TRUE, list(
         type = 'b',
         pch = 20,
         auto = TRUE,

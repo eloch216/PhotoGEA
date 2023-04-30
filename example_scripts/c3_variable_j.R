@@ -56,7 +56,7 @@ library(dfoptim)
 # set PERFORM_CALCULATIONS to FALSE to save time. If this is the first time
 # running the script in a particular R session or for a particular data set, the
 # data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS to TRUE.
-PERFORM_CALCULATIONS <- FALSE
+PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -164,10 +164,7 @@ if (PERFORM_CALCULATIONS) {
     )
 
     # Exclude some events, if necessary
-    EVENTS_TO_IGNORE <- c(
-        "15", # T1
-        "37"  # T1
-    )
+    EVENTS_TO_IGNORE <- c()
 
     combined_info <-
         combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_IGNORE, return_exdf = TRUE]
@@ -281,20 +278,6 @@ if (VIEW_DATA_FRAMES) {
 ###                                   ###
 
 # Ignore particular replicates
-IDS_TO_IGNORE <- c(
-  "WT 2 2",
-  "WT 1 4",
-  "WT 4 10",
-  "23 3 8",
-  "23 3 5",
-  "23 2 5",
-  "31 3 5",
-  "31 2 1",
-  "31 4 3",
-  "35 1 5",
-  "35 4 9",
-  "35 3 2"
-)
 #IDS_TO_IGNORE <- c()
 
 fits_for_plotting <- variable_j_fits[!variable_j_fits[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
@@ -302,14 +285,14 @@ fits_one_point_for_plotting <- variable_j_fits_one_point[!variable_j_fits_one_po
 parameters_for_plotting <- variable_j_parameters[!variable_j_parameters[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
 
 # Remove points at low Ci for plotting gm curves
-seq_num_to_remove <- c(7, 8, 16, 17)
+seq_num_to_remove <- c(7, 8, 16:17)
 fits_for_plotting_gm <- fits_for_plotting[!fits_for_plotting$seq_num %in% seq_num_to_remove, ]
 
 # Define some common axis limits
-ci_range <- c(0, 1000)
+ci_range <- c(150, 1000)
 cc_range <- c(0, 600)
 a_range <- c(-10, 75)
-gm_range <- c(0, 0.3)
+gm_range <- c(0, 0.5)
 ps2_range <- c(0, 0.4)
 
 # Define some legend labels
@@ -451,8 +434,9 @@ gm_ci_avg_plot <- xyplot_avg_rc(
     xlim = ci_range,
     ylim = gm_range,
     xlab = "Intercellular CO2 concentration (ppm)",
-    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
-
+    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
+    eb_lwd = 2,
+    lwd = 2
 )
 x11(width = 12, height = 6)
 print(gm_ci_avg_plot)

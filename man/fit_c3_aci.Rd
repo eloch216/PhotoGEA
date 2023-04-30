@@ -28,6 +28,9 @@
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
+    alpha = 0.0,
+    curvature_cj = 1.0,
+    curvature_cjp = 1.0,
     OPTIM_FUN = default_optimizer(),
     initial_guess_fun = initial_guess_c3_aci(
         Oc = POc,
@@ -45,9 +48,8 @@
     lower = c(0,  0,    0,   0),
     upper = c(40, 1000, 100, 1000),
     fixed = c(40, NA,   NA,  NA),
-    min_aj_cutoff = NA,
-    max_aj_cutoff = NA,
-    curvature = 0.99
+    cj_crossover_min = NA,
+    cj_crossover_max = NA
   )
 }
 
@@ -120,6 +122,24 @@
     The number of NADPH molecules used per C3 cycle.
   }
 
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast.
+  }
+
+  \item{curvature_cj}{
+    A dimensionless quadratic curvature parameter greater than or equal to 0 and
+    less than or equal to 1 that sets the degree of co-limitation between
+    \code{Wc} and \code{Wj}. A value of 1 indicates no co-limitation.
+  }
+
+  \item{curvature_cjp}{
+    A dimensionless quadratic curvature parameter greater than or equal to 0 and
+    less than or equal to 1 that sets the degree of co-limitation between
+    \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
+  }
+
   \item{OPTIM_FUN}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
@@ -156,22 +176,16 @@
     parameters, set \code{fixed} to \code{c(NA, NA, NA, NA)}.
   }
 
-  \item{min_aj_cutoff}{
+  \item{cj_crossover_min}{
     The minimum value of \code{Cc} (in ppm) where \code{Aj} is allowed to become
-    the overall rate-limiting factor. If \code{min_aj_cutoff} is set to
+    the overall rate-limiting factor. If \code{cj_crossover_min} is set to
     \code{NA}, this restriction will not be applied.
   }
 
-  \item{max_aj_cutoff}{
+  \item{cj_crossover_max}{
     The maximum value of \code{Cc} (in ppm) where \code{Aj} is allowed to be
-    smaller than \code{Ac}. If \code{max_aj_cutoff} is set to \code{NA}, this
+    smaller than \code{Ac}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
-  }
-
-  \item{curvature}{
-    A dimensionless quadratic curvature parameter to be passed to
-    \code{\link{calculate_c3_assimilation}} as the input argument with the same
-    name.
   }
 }
 
@@ -197,8 +211,8 @@
   that nevertheless produce good fits to the supplied assimilation values. A
   common problem is that the fit result may not follow the expected progression
   of \code{Ac-limited -> Aj-limited -> Ap-limited} assimilation as \code{Cc}
-  increases. In this case, the optional \code{min_aj_cutoff} and
-  \code{max_aj_cutoff} can be used to constrain the range of \code{Cc} values
+  increases. In this case, the optional \code{cj_crossover_min} and
+  \code{cj_crossover_max} can be used to constrain the range of \code{Cc} values
   (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
   See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
   arguments can be used to improve the quality of a fit.

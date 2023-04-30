@@ -44,9 +44,10 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- NA
+RESPIRATION <- 2.69
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
 MAX_GM <- 5
@@ -54,7 +55,7 @@ MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
 # we assume this is data from the ERML TDL
-IGB_TDL <- TRUE
+IGB_TDL <- FALSE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -168,7 +169,7 @@ if (PERFORM_CALCULATIONS) {
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 2,
         expected_cycle_length_minutes = 2.5,
-        expected_cycle_num_pts = 6,
+        expected_cycle_num_valves = 6,
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
       )
     } else {
@@ -177,7 +178,7 @@ if (PERFORM_CALCULATIONS) {
         valve_column_name = TDL_VALVE_COLUMN_NAME,
         cycle_start_valve = 20,
         expected_cycle_length_minutes = 3,
-        expected_cycle_num_pts = 9,
+        expected_cycle_num_valves = 9,
         timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
       )
     }
@@ -253,10 +254,10 @@ if (PERFORM_CALCULATIONS) {
         abs(RESPIRATION),    # this is the default value of respiration
         id_column = 'event', # the default value can be overridden for certain events
         value_table = list(
-          'WT' = 2.37,
-          '23' = 2.24,
-          '31' = 2.38,
-          '35' = 1.95
+          'WT' = 2.18,
+          '8' = 2.02,
+          '10' = 1.94,
+          '14' = 2.08
         )
     )})
 
@@ -373,23 +374,32 @@ if (PERFORM_CALCULATIONS) {
     rep_stats_no_outliers <- rep_stats
 
     # Now, we remove outliers from each event
-    if (REMOVE_STATISTICAL_OUTLIERS) {
+    if (REMOVE_STATISTICAL_OUTLIERS_EVENT) {
 
-      old_nrow <- nrow(rep_stats_no_outliers)
-
-      cat(paste("Number of reps before removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
-
-      pt_diff <- Inf
-      while (pt_diff > 0) {
-        rep_stats_no_outliers <- exclude_outliers(
-          rep_stats_no_outliers,
-          'gmc_avg',
-          rep_stats_no_outliers[,'event']
-        )
-        pt_diff <- old_nrow - nrow(rep_stats_no_outliers)
         old_nrow <- nrow(rep_stats_no_outliers)
-      }
-      cat(paste("Number of reps after removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
+
+        cat(paste("Number of reps before removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
+
+        if (REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY) {
+            pt_diff <- Inf
+            while (pt_diff > 0) {
+                rep_stats_no_outliers <- exclude_outliers(
+                    rep_stats_no_outliers,
+                    'gmc_avg',
+                    rep_stats_no_outliers[,'event']
+                )
+                pt_diff <- old_nrow - nrow(rep_stats_no_outliers)
+                old_nrow <- nrow(rep_stats_no_outliers)
+            }
+        } else {
+            rep_stats_no_outliers <- exclude_outliers(
+                rep_stats_no_outliers,
+                'gmc_avg',
+                rep_stats_no_outliers[,'event']
+            )
+        }
+
+    cat(paste("Number of reps after removing statistical outliers from each event:", nrow(rep_stats_no_outliers), "\n"))
     }
 
     # Get stats for each event by averaging over all corresponding reps
@@ -708,7 +718,7 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 2)
+    gmc_lim <- c(0, 1)
     cc_lim <- c(0, 275)
     drawdown_lim <- c(0, 75)
     a_lim <- c(0, 50)

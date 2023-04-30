@@ -155,8 +155,8 @@ c3_aci_results <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
   fixed = c(NA, NA, NA, NA),        # Additional argument passed to `fit_c3_aci`
-  min_aj_cutoff = 100,              # Aj must be > Ac when Cc < 100 ppm
-  max_aj_cutoff = 550               # Aj must be < Ac when Cc > 550 ppm
+  cj_crossover_min = 100,           # Wj must be > Wc when Cc < 100 ppm
+  cj_crossover_max = 550            # Wj must be < Wc when Cc > 550 ppm
 ))
 ```
 
@@ -299,9 +299,8 @@ print(c3_aci_parameters)
 There are a few things to notice about these commands and the resulting outputs:
 
 - In the plotting command above, we subtract `Rd` from `Ac`, `Aj`, and
-  `Ap` because `plantecophys::fitaci` returns gross rates for these, but
-  `Amodel` and `Ameas` are net assimilation rates. Subtracting respiration
-  converts the gross rates to net rates.
+  `Ap` because `plantecophys::fitaci` uses different definitions of these rates
+  that are equivalent to `Ac + Rd`, `Aj + Rd`, and `Ap + Rd` in our notation.
 - In the results, `TPU` and `Ap` are both `NA` because the `fitTPU` argument of
   `plantecophys::fitaci` was left at its default value of `FALSE`. When we
   attempt to include `Ap` in the plot, `lattice::xyplot` simply does not plot
@@ -415,8 +414,8 @@ fit_c3_aci_plantecophys <- function(
   # NA.
   fits[fits[, 'Ap'] > 500, 'Ap'] <- NA
 
-  # `plantecophys::fitaci` returns gross rates for `Ac`, `Aj`, and `Ap`. For
-  # consistency with `fit_c3_aci`, we convert them to net rates.
+  # Convert `plantecophys::fitaci` outputs to net CO2 assimilation rates for
+  # consistency with `fit_c3_aci`.
   fits[, 'Ac'] <- fits[, 'Ac'] - fits[, 'Rd']
   fits[, 'Aj'] <- fits[, 'Aj'] - fits[, 'Rd']
   fits[, 'Ap'] <- fits[, 'Ap'] - fits[, 'Rd']
@@ -514,8 +513,7 @@ several new benefits to the user, such as the following:
 
 - The units of the input columns are checked.
 - The wrapper returns `exdf` objects that include units.
-- The assimilation rates have also all been standardized to net rates, whereas
-  `plantecophys::fitaci` returns some of them as gross rates by default.
+- The assimilation rates have also all been standardized to net rates.
 - The fit residuals are included with the output.
 
 If you are writing a wrapper that will be used often, it may be worth taking the
