@@ -53,9 +53,9 @@ GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list(
   WT = 0.437,
-  `8` = 0.597, 
+  `8` = 0.597,
   `10` = 0.504,
-  `14` = 0.541 
+  `14` = 0.541
 )
 
 ###
@@ -277,10 +277,9 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
-  min_aj_cutoff = 20,                           # Aj must be > Ac when Cc < this value (ppm)
-  max_aj_cutoff = 800,                          # Aj must be < Ac when Cc > this value (ppm)
-  fixed = c(NA, NA, NA, NA),
-  curvature = 1
+  cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
+  cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
+  fixed = c(NA, NA, NA, NA)
 ))
 
 if (MAKE_ANALYSIS_PLOTS) {

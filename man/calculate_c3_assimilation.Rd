@@ -22,7 +22,9 @@
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature = 1,
+    alpha = 0.0,
+    curvature_cj = 1.0,
+    curvature_cjp = 1.0,
     cc_column_name = 'Cc',
     total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
@@ -76,10 +78,22 @@
     The number of NADPH molecules used per C3 cycle.
   }
 
-  \item{curvature}{
-    A dimensionless quadratic curvature parameter greater than 0 and less than
-    or equal to 1 that sets the degree of co-limitation between \code{Ac},
-    \code{Aj}, and \code{Ap}. A value of 1 indicates no co-limitation.
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast.
+  }
+
+  \item{curvature_cj}{
+    A dimensionless quadratic curvature parameter greater than or equal to 0 and
+    less than or equal to 1 that sets the degree of co-limitation between
+    \code{Wc} and \code{Wj}. A value of 1 indicates no co-limitation.
+  }
+
+  \item{curvature_cjp}{
+    A dimensionless quadratic curvature parameter greater than or equal to 0 and
+    less than or equal to 1 that sets the degree of co-limitation between
+    \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
   }
 
   \item{cc_column_name}{
@@ -143,68 +157,93 @@
 }
 
 \details{
-  This function generally follows Chapter 2 from S. von Caemmerer (2000), which
-  provides equations for calculating the rubisco-limited assimilation rate
-  \code{Ac}, the electron-transport-limited assimilation rate \code{Aj}, and the
-  phosphate-limited assimilation rate \code{Ap}.
+  This function generally follows the Farquhar-von-Caemmerer-Berry model as
+  described in Lochocki and McGrath (in preparation). In this formulation, the
+  steady-state net CO2 assimilation rate \code{An} is calculated according to
 
-  The rubisco-regeneration-limited rate is calculated using Equation 2.20:
+  \code{An = (1 - Gamma_star / PCc) * Vc - Rd},
 
-  \code{Ac = (PCc - Gamma_star) * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko)) - Rd_tl}
+  where \code{Gamma_star} is the CO2 compensation point in the absence of day
+  respiration, \code{PCc} is the partial pressure of CO2 in the chloroplast,
+  \code{Vc} is the RuBP carboxylation rate, and \code{Rd} is the rate of day
+  respiration.
 
-  where \code{PCc} is the partial pressure of CO2 in the chloroplast,
-  \code{Gamma_star} is the value of \code{Pcc} at which no assimilation occurs
-  in the absence of respiration, \code{Vcmax_tl} is the
-  leaf-temperature-adjusted maximum rate of rubisco carboxylation, \code{Kc} is
+  The model considers three potential values of \code{Vc} that correspond to
+  limitations set by three different processes: Rubisco activity, RuBP
+  regeneration, and triose phopsphate utilization (TPU). The Rubisco-limited
+  carboxylation rate \code{Wc} is given by
+
+  \code{Wc = PCc * Vcmax / (PCc + Kc * (1.0 + POc / Ko))},
+
+  where \code{Vcmax} is the maximum rate of Rubisco carboxylation, \code{Kc} is
   the Michaelis-Menten constant for CO2, \code{Ko} is the Michaelis-Menten
-  constant for O2, and \code{Rd_tl} is the leaf-temperature-adjusted respiration
-  rate. Here, the temperature corrections are applied to \code{Vcmax} and
-  \code{Rd} using the normalized values \code{Vcmax_norm} and \code{Rd_norm}.
-  \code{PCc} is calculated from the chloroplastic CO2 concentration \code{Cc}
-  using the total pressure (ambient pressure + chamber overpressure).
+  constant for O2, and \code{POc} is the partial pressure of O2 in the
+  chloroplast.
 
-  The electron-transport-limited rate is calculated using Equation 2.23:
+  The RuBP-regeneration-limited carboxylation rate \code{Wj} is given by
 
-  \code{Aj = (PCc - Gamma_star) * J_tl / (atp_use * PCc + nadph_use * Gamma_star) - Rd_tl}
+  \code{Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)},
 
-  where \code{J_tl} is the leaf-temperature-adjusted value of \code{J},
-  determined from the normalized value \code{J_norm}. Here we have also allowed
+  where \code{J} is the RuBP regeneration rate. Here we have allowed
   \code{atp_use} and \code{nadph_use} to be variables rather than taking fixed
-  values (as they do in Equation 2.23). This is necessary because not all
+  values (as they do in many sources). This is necessary because not all
   descriptions of the FvCB model use the same values.
 
-  The phosphate-limited rate is calculated using Equation 2.26:
+  The TPU-limited carboxylation rate is given by
 
-  \code{Ap = (PCc - Gamma_star) * (3 * TPU) / (PCc - (1 + 3 * alpha / 2) * Gamma_star) - Rd_tl}
+  \code{Wp = PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha))},
 
-  where \code{alpha} is the fraction of glycolate carbon _not_ returned to the
-  chloroplast; here, as in many places, \code{alpha} is fixed to be 0.
+  where \code{TPU} is the maximum rate of triose phosphate utilization and
+  \code{0 <= alpha <= 1} is the fraction of glycolate carbon not returned to the
+  chloroplast. This equation only applies when
+  \code{PCc > Gamma_star * (1 + 3 * alpha)}; for smaller values of \code{PCc},
+  TPU cannot limit the RuBP carboxylation rate and \code{Wp = Inf}.
 
-  In the textbook, the net CO2 assimilation rate \code{An} is given by the
-  smaller of the rubisco-limited rate \code{Ac}, the electron-transport-limited
-  rate \code{Aj}, and the phosphate-limited rate \code{Ap}, as expressed by
-  Equation 2.27:
+  The actual carboxylation rate is often chosen to be the smallest of the three
+  potential rates:
 
-  \code{An = min(Ac, Aj, Ap)}
+  \code{Vc = min{Wc, Wj, Wp}}.
 
-  This equation determines the assimilation rate for a single chloroplast;
-  however, we often wish to calculate assimilation values at the leaf level. In
-  this case, some degree of co-limitation between \code{Ac}, \code{Aj}, and
-  \code{Ap} should be allowed because chloroplast CO2 concentrations are
-  typically not uniform across the leaf. Here we accomplish this co-limitation
-  via a quadratic curvature parameter, as discussed in Collatz et al. (1990)
-  and Collatz et al. (1991). In particular, we solve the following equation for
-  \code{Acj}, the assimilation rate co-limited by rubisco and RuBP saturation:
+  However, it is also possible to allow co-limitation between the processes by
+  using quadratic mixing equations. In other words, the carboxylation rate
+  co-limitated by Rubisco activity and RuBP regeneration \code{Wcj} is given by
+  the smaller root of the following quadratic equation:
 
-  \code{curvature * Acj^2 - Acj * (Ac + Aj) + Ac * Aj}
+  \code{curvature_cj * Wcj^2 - Wcj * (Wc + Wj) + Wc * Wj = 0},
 
-  Then we solve a second equation for \code{An}, the assimilation rate
-  co-limited by rubisco, RuBP regeneration, and phosphate utilization:
+  where \code{curvature_cj} described the "curvature" of the mixing; if
+  \code{curvature_cj} is 1, this is equivalent to \code{Wcj = min{Wc, Wj}}; if
+  \code{curvature_cj} is 0, then \code{Wcj} is the geometric mean of \code{Wc}
+  and \code{Wj}. Any value below 1 will produce a smooth curve rather than the
+  abrupt transitions that occur when choosing the simple minimum. Likewise, the
+  carboxylation rate co-limited by \code{Wcj} and \code{Wp} (called \code{Wcjp};
+  in other words, the rate co-limited by all three processes) is given by the
+  smaller root of
 
-  \code{curvature * An^2 - An * (Acj + Ap) + Acj * Ap}
+  \code{curvature_cjp * Wcjp^2 - Wcjp * (Wcj + Wp) + Wcj * Wp = 0}.
 
-  Note that when \code{curvature} is 1, \code{An} will be equal to \code{min(Ac,
-  Aj, Ap)} as in the version that applies for a single chloroplast.
+  Then, \code{Wcjp} is used in place of \code{Vc} when calculating the net CO2
+  assimilation rate. For more information about the quadratic mixing technique,
+  see Collatz et al. (1990) and Collatz et al. (1991).
+
+  In the equations above, several of the variables depend on the leaf
+  temperature. In particular, the leaf-temperature-adjusted values of
+  \code{Vcmax}, \code{J}, and \code{Rd} are determined from their base values
+  at 25 degrees C and a temperature-dependent multiplicative factor.
+
+  Also note that \code{PCc} is calculated from the chloroplastic CO2
+  concentration \code{Cc} using the total pressure (ambient pressure + chamber
+  overpressure).
+
+  In addition to the carboxylation and assimilation rates already mentioned, it
+  is also possible to calculate the net CO2 assimilation rates determined by
+  Rubisco activity, RuBP regeneration, and TPU as follows:
+
+  \code{Ac = (1 - Gamma_star / PCc) * Wc - Rd}
+
+  \code{Aj = (1 - Gamma_star / PCc) * Wj - Rd}
+
+  \code{Ap = (1 - Gamma_star / PCc) * Wp - Rd}
 
   References:
   \itemize{
@@ -228,9 +267,10 @@
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
           above: \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
-          \code{Ac}, \code{Aj}, \code{Ap}, and \code{An}. The category for each
-          of these new columns is \code{calculate_c3_assimilation} to indicate
-          that they were created using this function.
+          \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, and \code{Vc}. The
+          category for each of these new columns is
+          \code{calculate_c3_assimilation} to indicate that they were created
+          using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
           the following named elements: \code{An}, \code{Ac}, \code{Aj}, and
           \code{Ap}. Each element is a numeric vector.
@@ -241,10 +281,8 @@
 # Simulate a C3 A-Cc curve with specified leaf temperature and photosynthetic
 # parameters and plot the net assimilation rate along with the different
 # enzyme-limited rates
-npts <- 101
-
 inputs <- exdf(data.frame(
-  Cc = seq(0, 600, length.out = npts),
+  Cc = seq(1, 601, by = 6),
   Tleaf = 30,
   total_pressure = 1
 ))

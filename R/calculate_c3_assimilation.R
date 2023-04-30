@@ -7,7 +7,9 @@ calculate_c3_assimilation <- function(
     POc = 210000, # microbar             (typically this value is known from the experimental setup)
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature = 1,
+    alpha = 0.0,
+    curvature_cj = 1.0,
+    curvature_cjp = 1.0,
     cc_column_name = 'Cc',
     total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
@@ -38,9 +40,22 @@ calculate_c3_assimilation <- function(
 
         check_required_variables(exdf_obj, required_variables)
 
-        # Make sure the curvature value is acceptable
-        if (curvature <= 0 || curvature > 1) {
-            stop('curvature must be > 0 and <= 1')
+        # Make sure certain inputs lie on [0,1]
+        check_zero_one <- list(
+            alpha = alpha,
+            curvature_cj = curvature_cj,
+            curvature_cjp = curvature_cjp
+        )
+
+        sapply(seq_along(check_zero_one), function(i) {
+            if (check_zero_one[[i]] < 0 || check_zero_one[[i]] > 1) {
+                stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
+            }
+        })
+
+        # Make sure the Cc values are all positive
+        if (any(exdf_obj[, cc_column_name] <= 0)) {
+            stop('All Cc values must be positive')
         }
     }
 
@@ -58,58 +73,48 @@ calculate_c3_assimilation <- function(
     Rd_tl <- Rd * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
     J_tl <- J * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
 
-    # Calculate terms that appear in several of the next equations
-    CG <- PCc - Gamma_star # microbar
+    # Rubisco-limited carboxylation (micromol / m^2 / s)
+    Wc <- PCc * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko))
 
-    # Equation 2.20: rubisco-limited (RuBP-saturated) assimilation rate
-    # (micromol / m^2 / s)
-    Ac <- CG * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko)) - Rd_tl
+    # RuBP-regeneration-limited carboxylation (micromol / m^2 / s)
+    Wj <- PCc * J_tl / (atp_use * PCc + nadph_use * Gamma_star)
 
-    # Equation 2.23: electron-transport-limited (RuBP-regeneration-limited)
-    # assimilation rate (micromol / m^2 / s)
-    Aj <- CG * J_tl / (atp_use * PCc + nadph_use * Gamma_star) - Rd_tl
+    # TPU-limited carboxylation (micromol / m^2 / s)
+    Wp <- PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha))
+    Wp[PCc <= Gamma_star * (1 + 3 * alpha)] <- Inf
 
-    # This is not explicitly discussed in the text, but Equation 2.23 is only
-    # valid when Cc is sufficiently high that rubisco is no longer the main
-    # limiting factor. See, for example, Figure 2.6, where Ac is the limiting
-    # rate at very low Cc even though Aj < Ac. To address this, we create a
-    # "modified" version of Aj whose value is set to Ac whenever Aj is negative.
-    # The modified Aj is used when determining the overall assimilation rate.
-    Aj_mod <- Aj
-    Aj_mod[Aj_mod < 0] <- Ac[Aj_mod < 0]
+    # Co-limitation between Wc and Wj
+    a_cj <- curvature_cj
+    b_cj <- -(Wc + Wj)
+    c_cj <- Wc * Wj
 
-    # Assume that all glycolate carbon is returned to the choloroplast
-    alpha <- 0 # dimensionless
+    Wcj <- sapply(seq_along(b_cj), function(i) {
+        quadratic_root_min(a_cj, b_cj[i], c_cj[i]) # micromol / m^2 / s
+    })
 
-    # Equation 2.26: phosphate-limited assimilation rate (micromol / m^2 / s)
-    Ap <- CG * (3 * TPU) / (PCc - (1 + 3 * alpha / 2) * Gamma_star) - Rd_tl
+    # Co-limitation between Wcj and Wp. If Wp is infinite, then we have
+    # Wp >> Wcj and Wp >> curvature_cjp, so the quadratic coefficients become
+    # a_cjp = 0, b_cjp = -Wp, and c_cjp = Wcj * Wp. In that case, we have
+    # 0 = -Wp * Wcjp + Wcj * Wp, whose solution is simply Wcjp = Wcj.
+    a_cjp <- curvature_cjp
+    b_cjp <- -(Wcj + Wp)
+    c_cjp <- Wcj * Wp
 
-    # In the textbook, Equation 2.27 is used to determine the overall
-    # assimilation rate from the individual rates. However, here we use
-    # quadratic equations to allow co-limitation between the rates.
+    Wcjp <- sapply(seq_along(b_cjp), function(i) {
+        if (is.infinite(Wp[i])) {
+            Wcj[i] # micromol / m^2 / s
+        } else {
+            quadratic_root_min(a_cjp, b_cjp[i], c_cjp[i]) # micromol / m^2 / s
+        }
+    })
 
-    # Co-limitation between Ac and Aj (Acj)
-    b0 <- Ac * Aj_mod
-    b1 <- Ac + Aj_mod
-
-    b_root_term <- b1^2 - 4 * b0 * curvature
-
-    # If the root term is negative, we can't use sqrt; in this case, replace the
-    # negative value by a very high one. Using Inf may cause problems with
-    # optimizers, so we choose a finite value.
-    high_value <- 1e10
-    b_root_term[b_root_term < 0] <- high_value
-
-    Acj <- (b1 - sqrt(b_root_term)) / (2 * curvature)
-
-    # Co-limitation between Ap and Acj (An)
-    c0 <- Ap * Acj
-    c1 <- Ap + Acj
-
-    c_root_term <- c1^2 - 4 * c0 * curvature
-    c_root_term[c_root_term < 0] <- high_value
-
-    An <- (c1 - sqrt(c_root_term)) / (2 * curvature)
+    # Calculate corresponding net CO2 assimilations by accounting for
+    # photorespiration and day respiration
+    photo_resp_factor <- 1.0 - Gamma_star / PCc # dimensionless
+    Ac <- photo_resp_factor * Wc - Rd
+    Aj <- photo_resp_factor * Wj - Rd
+    Ap <- photo_resp_factor * Wp - Rd
+    An <- photo_resp_factor * Wcjp - Rd
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units
@@ -122,7 +127,11 @@ calculate_c3_assimilation <- function(
             Ac = Ac,
             Aj = Aj,
             Ap = Ap,
-            An = An
+            An = An,
+            Wc = Wc,
+            Wj = Wj,
+            Wp = Wp,
+            Vc = Wcjp
         ))
 
         document_variables(
@@ -134,9 +143,13 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'Ac',         'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Aj',         'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)')
+            c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Wc',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Wj',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Wp',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Vc',         'micromol m^(-2) s^(-1)')
         )
     } else {
-        return(list(An = An, Ac = Ac, Aj = Aj, Ap = Ap))
+        return(list(An = An, Ac = Ac, Aj = Aj, Ap = Ap, Wc = Wc, Wj = Wj))
     }
 }
