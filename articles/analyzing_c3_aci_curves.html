@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,15 +124,16 @@ plants.</p>
 consisting of at least two hundred individual reactions, each of which
 may have an impact on a measured A-Ci curve. However, simplified models
 for photosynthesis are available and are much easier to understand and
-work with. These models tend to be based around rubisco kinetics,
+work with. These models tend to be based around Rubisco kinetics,
 describing how the net assimilation rate responds to the amount of
 CO<sub>2</sub> available in the chloroplast. The most widely-used model
 is typically referred to as the <em>Farquhar-von-Caemmerer-Berry</em>
-model (often shortened to the <em>FvCB</em> model or <em>Farquhar</em>
-model) after the three scientists who originally developed it. An
+model (often shortened to the <em>FvCB model</em> or <em>Farquhar
+model</em>) after the three scientists who originally developed it. An
 excellent description of this model can be found in <em>Biochemical
 Models of Leaf Photosynthesis</em> <span class="citation">(<a href="#ref-caemmerer_biochemical_2000" role="doc-biblioref">Caemmerer
-2000</a>)</span>.</p>
+2000</a>)</span>, subject to a few additional considerations discussed
+in Lochocki and McGrath (in preparation).</p>
 <p>This model provides a framework for understanding the changes in
 <span class="math inline">\(A_n\)</span> that occur as a C<sub>3</sub>
 plant is exposed to successively higher concentrations of
@@ -141,26 +142,33 @@ under high light conditions can be divided into three separate
 ranges:</p>
 <ul>
 <li>At low levels of CO<sub>2</sub> in the chloroplast, CO<sub>2</sub>
-assimilation is primarily limited by rubisco activity.</li>
+assimilation is primarily limited by Rubisco activity.</li>
 <li>At intermediate levels of CO<sub>2</sub> in the chloroplast,
-CO<sub>2</sub> assimilation is primarily limited by the electron
-transport rate.</li>
+CO<sub>2</sub> assimilation is primarily limited by RuBP
+regeneration.</li>
 <li>At high levels of CO<sub>2</sub> in the chloroplast, CO<sub>2</sub>
-assimilation is primarily limited by phosphate utilization.</li>
+assimilation is primarily limited by triose phosphate utilization.</li>
 </ul>
-<p>More specifically, the model provides equations that separately
-describe the responses of three separate assimilation rates to the
-chloroplastic CO<sub>2</sub> concentration:</p>
+<p>More specifically, the model provides equations for potential RuBP
+carboxylation rates that are each limited by one of three important
+processes:</p>
 <ul>
-<li>The rubisco-limited net CO<sub>2</sub> assimilation rate (<span class="math inline">\(A_c\)</span>).</li>
-<li>The electron-transport-limited rate (<span class="math inline">\(A_j\)</span>).</li>
-<li>The phosphate-limited rate (<span class="math inline">\(A_p\)</span>).</li>
+<li>The Rubisco-limited carboxylation rate (<span class="math inline">\(W_c\)</span>).</li>
+<li>The RuBP-regeneration-limited carboxylation rate (<span class="math inline">\(W_j\)</span>).</li>
+<li>The triose-phosphate-utilization-limited carboxylation rate (<span class="math inline">\(W_p\)</span>).</li>
 </ul>
-<p>The overall net assimilation rate <span class="math inline">\(A_n\)</span> at a particular value of the
-chloroplastic CO<sub>2</sub> concentration is then taken to be the
-smallest of the three individual limiting rates. Using the equations
-that compose this model, it is possible to calculate plots like the one
-below, which illustrates the three different assimilation ranges.</p>
+<p>Each of these rates depend on the CO<sub>2</sub> concentration in the
+chloroplast and other factors such as the incident light intensity. The
+actual RuBP carboxylation rate <span class="math inline">\(V_c\)</span>
+for a particular set of conditions is taken to be the smallest of the
+three potential rates. Then, the net CO<sub>2</sub> assimilation rate
+<span class="math inline">\(A_n\)</span> can be calculated from <span class="math inline">\(V_c\)</span> by including carbon losses due to
+photorespiration and day respiration. It is also possible to calculate
+the potential assimilation rates corresponding to each potential
+carboxylation rate: <span class="math inline">\(A_c\)</span>, <span class="math inline">\(A_j\)</span>, and <span class="math inline">\(A_p\)</span>. Using the equations that compose
+this model, it is possible to calculate plots like the one below, which
+illustrates the three different assimilation ranges observed in a
+typical high-light A-Ci curve.</p>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-2-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>(Note: this figure was generated using the
 <code>calculate_c3_assimilation</code> function from the
@@ -183,15 +191,15 @@ assimilation at the level of a single chloroplast; however, experimental
 gas exchange measurements are made by averaging the behavior of many
 different chloroplasts across a piece of leaf, which may each have
 different concentrations of CO<sub>2</sub>. Thus, the sharp transitions
-between rubisco-limited, RuBP-regeneration-limited, and
-phosphate-limited assimilation predicted by the model are rarely
-observed in practice, and there are instead regions of co-limited
-assimilation. This can be accomodated by an empirical “curvature”
-parameter, as discussed in the documentation for
+between Rubisco-limited, RuBP-regeneration-limited, and
+triose-phosphate-utilization-limited assimilation predicted by the model
+are rarely observed in practice, and there are instead regions of
+co-limited assimilation. This can be represented mathematically via two
+empirical “curvature” parameters, as discussed in the documentation for
 <code>calculate_c3_assimilation</code>. The following figure shows a
-CO<sub>2</sub> response curve calculated with the curvature set to 0.99
-and other parameters identical to the ones used to generate the previous
-figure.</p>
+CO<sub>2</sub> response curve calculated with both curvatures set to
+0.99 and other parameters identical to the ones used to generate the
+previous figure.</p>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-3-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Note that <code>An</code> calculated with
 <code>curvature &lt; 1</code> is generally lower than <code>An</code>
@@ -260,7 +268,7 @@ In addition to <code>PhotoGEA</code>, we will also use the
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span></code></pre></div>
 <p>If the <code>lattice</code> package is not installed on your R setup,
 you can install it by typing
 <code>install.packages('lattice')</code>.</p>
@@ -715,9 +723,10 @@ key photosynthetic parameters: <code>TPU</code>, <code>J</code>,
 <code>Rd</code>, and <code>Vcmax</code>. If <code>fixed</code> is not
 specified, it will take its default value:
 <code>c(Inf, NA, NA, NA)</code>. In that case, <code>TPU</code> would be
-fixed to a high value that essentially disables phosphate limited
-assimilation, and only <code>J</code>, <code>Rd</code>, and
-<code>Vcmax</code> would be varied.</p>
+fixed to a high value that essentially disables
+triose-phosphate-utilization-limited assimilation, and only
+<code>J</code>, <code>Rd</code>, and <code>Vcmax</code> would be
+varied.</p>
 <div class="section level3">
 <h3 id="viewing-the-fitted-curves">Viewing the Fitted Curves<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-curves"></a>
 </h3>
@@ -740,7 +749,7 @@ make plots of all the fits, which are stored in
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Note that in addition to the fitted values of <code>A</code>, the
-output also includes values of the individual limiting rates
+output also includes values of the potential limiting rates
 <code>Ac</code>, <code>Aj</code>, and <code>Ap</code>. We can also take
 a look at these, although they make the plots a bit busy. We can also
 choose to plot assimilation against <code>Cc</code> rather than
@@ -764,16 +773,20 @@ choose to plot assimilation against <code>Cc</code> rather than
 <p>Considering these two plots, we can see that although the model is
 able to reproduce the observed <code>A</code> values fairly well, some
 output parameters may be less reliable than others. For example, the
-phosphate-limited rate <code>Ap</code> is determined by the
-<code>TPU</code> parameter; for some of the curves, the assimilation
-rate is never limited by <code>Ap</code>, so the resulting “best-fit”
-values of <code>TPU</code> may not be meaningful for these curves.</p>
+triose-phosphate-utilization-limited rate <code>Ap</code> is determined
+by the <code>TPU</code> parameter; for some of the curves, the
+assimilation rate is never limited by <code>Ap</code>, so the resulting
+“best-fit” values of <code>TPU</code> may not be meaningful for these
+curves.</p>
 <p>There is also one curve (<code>ripe2 - soybean - 1</code>) where the
 optimizer is possibly overestimating <code>J</code>, so <code>Aj</code>
 is never the limiting factor. To address this, it is possible to force
 the optimizer to only allow fits where <code>Aj</code> is less than
 <code>Ac</code> above a certain threshold value of <code>Cc</code>;
-adding this restriction can sometimes produce more reasonable fits.</p>
+essentially, this is a way to constrain the crossover from
+Rubisco-limited carboxylation to RuBP-regeneration-limited carboxylation
+to a limited range of <code>Cc</code> values. Adding this restriction
+can sometimes produce more reasonable fits.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit the C3 A-Ci curves</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
@@ -781,8 +794,8 @@ adding this restriction can sometimes produce more reasonable fits.</p>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  min_aj_cutoff <span class="op">=</span> <span class="fl">100</span>,              <span class="co"># Aj must be &gt; Ac when Cc &lt; 100 ppm</span></span>
-<span>  max_aj_cutoff <span class="op">=</span> <span class="fl">550</span>               <span class="co"># Aj must be &lt; Ac when Cc &gt; 550 ppm</span></span>
+<span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
+<span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
@@ -809,11 +822,11 @@ this approach may be more successful. We can also notice that the fit
 for <code>ripe1 - soybean - 5a</code> is a little strange. Based on the
 values of <code>Ci</code> and <code>Cc</code>, it seems that this
 plant’s stomata did not fully open during the measurement, almost fully
-restricting the measured assimilation values to the rubisco-limited
+restricting the measured assimilation values to the Rubisco-limited
 range; there is nothing that can be done about this. It is also apparent
 that the <code>TPU</code> issue remains, and some curves are never
-phosphate-limited; again, there is nothing that can really be done to
-address it besides measuring more A-Ci curves.</p>
+triose-phosphate-utilization-limited; again, there is nothing that can
+really be done to address it besides measuring more A-Ci curves.</p>
 <p>Checking the residuals is also a powerful way to gauge the quality of
 a fit. The output from <code>fit_c3_aci</code> includes the residuals
 (calculated as <code>A - A_fit</code>) in its output, so it is easy to
@@ -896,33 +909,33 @@ can view them as follows:</p>
 <span><span class="co">#&gt; 5                        ripe2                   soybean                     5b</span></span>
 <span><span class="co">#&gt; 6                        ripe2                   tobacco                      4</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                          110.3915</span></span>
-<span><span class="co">#&gt; 2                                          166.0306</span></span>
-<span><span class="co">#&gt; 3                                          132.2196</span></span>
-<span><span class="co">#&gt; 4                                          116.5519</span></span>
-<span><span class="co">#&gt; 5                                          118.2261</span></span>
-<span><span class="co">#&gt; 6                                          102.1176</span></span>
+<span><span class="co">#&gt; 1                                         131.07955</span></span>
+<span><span class="co">#&gt; 2                                         152.62464</span></span>
+<span><span class="co">#&gt; 3                                         127.00819</span></span>
+<span><span class="co">#&gt; 4                                         106.53575</span></span>
+<span><span class="co">#&gt; 5                                         121.02817</span></span>
+<span><span class="co">#&gt; 6                                          94.34416</span></span>
 <span><span class="co">#&gt;   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      225.6262</span></span>
-<span><span class="co">#&gt; 2                                      249.8623</span></span>
-<span><span class="co">#&gt; 3                                      220.8610</span></span>
-<span><span class="co">#&gt; 4                                      236.2229</span></span>
-<span><span class="co">#&gt; 5                                      163.1438</span></span>
-<span><span class="co">#&gt; 6                                      225.6142</span></span>
+<span><span class="co">#&gt; 1                                      189.7304</span></span>
+<span><span class="co">#&gt; 2                                      240.4423</span></span>
+<span><span class="co">#&gt; 3                                      211.5295</span></span>
+<span><span class="co">#&gt; 4                                      168.7631</span></span>
+<span><span class="co">#&gt; 5                                      160.3583</span></span>
+<span><span class="co">#&gt; 6                                      188.6700</span></span>
 <span><span class="co">#&gt;   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                       1.139935</span></span>
-<span><span class="co">#&gt; 2                                       2.786406</span></span>
-<span><span class="co">#&gt; 3                                       2.103207</span></span>
-<span><span class="co">#&gt; 4                                       2.382598</span></span>
-<span><span class="co">#&gt; 5                                       2.378318</span></span>
-<span><span class="co">#&gt; 6                                       1.934863</span></span>
+<span><span class="co">#&gt; 1                                       3.254662</span></span>
+<span><span class="co">#&gt; 2                                       3.216083</span></span>
+<span><span class="co">#&gt; 3                                       2.761860</span></span>
+<span><span class="co">#&gt; 4                                       2.775662</span></span>
+<span><span class="co">#&gt; 5                                       3.879665</span></span>
+<span><span class="co">#&gt; 6                                       2.252303</span></span>
 <span><span class="co">#&gt;   TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                  30.86450</span></span>
-<span><span class="co">#&gt; 2                                  40.00000</span></span>
-<span><span class="co">#&gt; 3                                  39.99999</span></span>
-<span><span class="co">#&gt; 4                                  13.63564</span></span>
-<span><span class="co">#&gt; 5                                  40.00000</span></span>
-<span><span class="co">#&gt; 6                                  15.96439</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                  22.41905</span></span>
+<span><span class="co">#&gt; 2                                  23.72679</span></span>
+<span><span class="co">#&gt; 3                                  21.88365</span></span>
+<span><span class="co">#&gt; 4                                  13.26002</span></span>
+<span><span class="co">#&gt; 5                                  24.86546</span></span>
+<span><span class="co">#&gt; 6                                  15.34649</span></span></code></pre></div>
 <p>Alternatively, we can extract average values of the parameters for
 each species using the <code>basic_stats</code> function from
 <code>PhotoGEA</code>:</p>
@@ -943,29 +956,29 @@ each species using the <code>basic_stats</code> function from
 <span><span class="co">#&gt; 1                   soybean</span></span>
 <span><span class="co">#&gt; 2                   tobacco</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              115.0565</span></span>
-<span><span class="co">#&gt; 2                                              133.4559</span></span>
+<span><span class="co">#&gt; 1                                              119.5478</span></span>
+<span><span class="co">#&gt; 2                                              124.6590</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                 2.382049</span></span>
-<span><span class="co">#&gt; 2                                                18.460439</span></span>
+<span><span class="co">#&gt; 1                                                 7.123745</span></span>
+<span><span class="co">#&gt; 2                                                16.865078</span></span>
 <span><span class="co">#&gt;   J_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                          208.3310</span></span>
-<span><span class="co">#&gt; 2                                          232.1125</span></span>
+<span><span class="co">#&gt; 1                                          172.9506</span></span>
+<span><span class="co">#&gt; 2                                          213.5473</span></span>
 <span><span class="co">#&gt;   J_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                            22.799710</span></span>
-<span><span class="co">#&gt; 2                                             8.980355</span></span>
+<span><span class="co">#&gt; 1                                             8.733683</span></span>
+<span><span class="co">#&gt; 2                                            14.979403</span></span>
 <span><span class="co">#&gt;   Rd_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                           1.966950</span></span>
-<span><span class="co">#&gt; 2                                           2.274825</span></span>
+<span><span class="co">#&gt; 1                                           3.303330</span></span>
+<span><span class="co">#&gt; 2                                           2.743415</span></span>
 <span><span class="co">#&gt;   Rd_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             0.4135096</span></span>
-<span><span class="co">#&gt; 2                                             0.2603659</span></span>
+<span><span class="co">#&gt; 1                                             0.3196257</span></span>
+<span><span class="co">#&gt; 2                                             0.2783724</span></span>
 <span><span class="co">#&gt;   TPU_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      28.16671</span></span>
-<span><span class="co">#&gt; 2                                      31.98813</span></span>
+<span><span class="co">#&gt; 1                                      20.18151</span></span>
+<span><span class="co">#&gt; 2                                      20.31897</span></span>
 <span><span class="co">#&gt;   TPU_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         7.729346</span></span>
-<span><span class="co">#&gt; 2                                         8.011870</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                         3.532067</span></span>
+<span><span class="co">#&gt; 2                                         2.542540</span></span></code></pre></div>
 <p>Of course, more advanced statistical tests to check for differences
 between groups can also be performed within R using other packages such
 as <code>onewaytests</code> or <code>DescTools</code>. Alternatively,
@@ -1024,9 +1037,9 @@ fits.</p>
 <div class="section level3">
 <h3 id="tpu-limitations">TPU Limitations<a class="anchor" aria-label="anchor" href="#tpu-limitations"></a>
 </h3>
-<p>In this example, we consider phosphate utilization as a factor that
-may possibly limit assimilation. However, as discussed in <a href="#fitting-licor-data">Fitting Licor Data</a>, it is also possible
-to remove phosphate-limited assimilation from the model by fixing
+<p>In this example, we consider triose phosphate utilization as a factor
+that may possibly limit assimilation. However, as discussed in <a href="#fitting-licor-data">Fitting Licor Data</a>, it is also possible
+to remove this potential limitation from the model by fixing
 <code>TPU</code> to a high value and only fitting <code>J</code>,
 <code>Rd</code>, and <code>Vcmax</code>. Often it is wise to first try
 fitting a set of curves without <code>TPU</code> limitations, and only
@@ -1077,7 +1090,7 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">###</span></span>
 <span><span class="co">### TRANSLATION:</span></span>
@@ -1227,8 +1240,8 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  min_aj_cutoff <span class="op">=</span> <span class="fl">100</span>,              <span class="co"># Aj must be &gt; Ac when Cc &lt; 100 ppm</span></span>
-<span>  max_aj_cutoff <span class="op">=</span> <span class="fl">550</span>               <span class="co"># Aj must be &lt; Ac when Cc &gt; 550 ppm</span></span>
+<span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
+<span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>

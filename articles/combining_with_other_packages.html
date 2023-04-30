@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -139,7 +139,7 @@ In addition to <code>PhotoGEA</code>, we will also use the
 <code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bitbucket.org/remkoduursma/plantecophys" class="external-link">plantecophys</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span></code></pre></div>
 <p>If the <code>plantecophys</code> or <code>lattice</code> packages are
 not installed on your R setup, you can install them by typing
 <code>install.packages('plantecophys')</code> and/or
@@ -171,8 +171,8 @@ results from each curve into a convenient list of tables:</p>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  min_aj_cutoff <span class="op">=</span> <span class="fl">100</span>,              <span class="co"># Aj must be &gt; Ac when Cc &lt; 100 ppm</span></span>
-<span>  max_aj_cutoff <span class="op">=</span> <span class="fl">550</span>               <span class="co"># Aj must be &lt; Ac when Cc &gt; 550 ppm</span></span>
+<span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
+<span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Ideally, we would like to be able to use a similar command to apply
 <code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> to all the curves. However,
@@ -321,9 +321,9 @@ resulting outputs:</p>
 <ul>
 <li>In the plotting command above, we subtract <code>Rd</code> from
 <code>Ac</code>, <code>Aj</code>, and <code>Ap</code> because
-<code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> returns gross rates for these, but
-<code>Amodel</code> and <code>Ameas</code> are net assimilation rates.
-Subtracting respiration converts the gross rates to net rates.</li>
+<code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> uses different definitions of these
+rates that are equivalent to <code>Ac + Rd</code>, <code>Aj + Rd</code>,
+and <code>Ap + Rd</code> in our notation.</li>
 <li>In the results, <code>TPU</code> and <code>Ap</code> are both
 <code>NA</code> because the <code>fitTPU</code> argument of
 <code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> was left at its default value of
@@ -443,8 +443,8 @@ break the code into several sections devoted to checking inputs, calling
 <span>  <span class="co"># NA.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">500</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
-<span>  <span class="co"># `plantecophys::fitaci` returns gross rates for `Ac`, `Aj`, and `Ap`. For</span></span>
-<span>  <span class="co"># consistency with `fit_c3_aci`, we convert them to net rates.</span></span>
+<span>  <span class="co"># Convert `plantecophys::fitaci` outputs to net CO2 assimilation rates for</span></span>
+<span>  <span class="co"># consistency with `fit_c3_aci`.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ac'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ac'</span><span class="op">]</span> <span class="op">-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Rd'</span><span class="op">]</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span>, <span class="st">'Aj'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Aj'</span><span class="op">]</span> <span class="op">-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Rd'</span><span class="op">]</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Rd'</span><span class="op">]</span></span>
@@ -541,9 +541,8 @@ there are several new benefits to the user, such as the following:</p>
 <li>The units of the input columns are checked.</li>
 <li>The wrapper returns <code>exdf</code> objects that include
 units.</li>
-<li>The assimilation rates have also all been standardized to net rates,
-whereas <code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> returns some of them as gross
-rates by default.</li>
+<li>The assimilation rates have also all been standardized to net
+rates.</li>
 <li>The fit residuals are included with the output.</li>
 </ul>
 <p>If you are writing a wrapper that will be used often, it may be worth
@@ -645,7 +644,7 @@ copy/paste into a text file to initialize your own script.</p>
 <code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bitbucket.org/remkoduursma/plantecophys" class="external-link">plantecophys</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -787,8 +786,8 @@ copy/paste into a text file to initialize your own script.</p>
 <span>  <span class="co"># NA.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">500</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
-<span>  <span class="co"># `plantecophys::fitaci` returns gross rates for `Ac`, `Aj`, and `Ap`. For</span></span>
-<span>  <span class="co"># consistency with `fit_c3_aci`, we convert them to net rates.</span></span>
+<span>  <span class="co"># Convert `plantecophys::fitaci` outputs to net CO2 assimilation rates for</span></span>
+<span>  <span class="co"># consistency with `fit_c3_aci`.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ac'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ac'</span><span class="op">]</span> <span class="op">-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Rd'</span><span class="op">]</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span>, <span class="st">'Aj'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Aj'</span><span class="op">]</span> <span class="op">-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Rd'</span><span class="op">]</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">-</span> <span class="va">fits</span><span class="op">[</span>, <span class="st">'Rd'</span><span class="op">]</span></span>
