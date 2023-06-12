@@ -50,7 +50,7 @@ library(ggplot2)
 # time running the script in a particular R session or for a particular data
 # set, the data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS
 # to TRUE.
-PERFORM_CALCULATIONS <- TRUE
+PERFORM_CALCULATIONS <- FALSE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -170,9 +170,9 @@ ggplot2_avg_rc <- function(
         fill = group_identifier,
         linetype = group_identifier
       )) +
+      coord_cartesian(ylim = ylimit) +
       geom_line() +
       geom_ribbon(alpha = 0.5) +
-      coord_cartesian(ylim = ylimit) + coord_cartesian(xlim = xlimit) +
       xlab(xlabel) +
       ylab(ylabel)
 }
@@ -255,12 +255,13 @@ if (PERFORM_CALCULATIONS) {
 # Convert event columns to factors to control the order of events in subsequent
 # plots
 all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
+all_samples <- factorize_id_column(all_samples, EVENT_COLUMN_NAME)
 #all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    View(all_stats$main_data)
 }
 
 ###                              ###
@@ -269,21 +270,27 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-x_t <- all_samples[['elapsed_time']]
-x_s <- all_samples[['seq_num']]
-x_e <- all_samples[[EVENT_COLUMN_NAME]]
+a_time_lim <- c(30, 65)
+
+all_samples_for_plots <- all_samples[all_samples[['elapsed_time']] >= a_time_lim[1] & all_samples[['elapsed_time']] <= a_time_lim[2], ]
+all_samples_for_plots[['elapsed_time']] <- all_samples_for_plots[['elapsed_time']] - min(all_samples_for_plots[['elapsed_time']])
+
+a_time_lim <- a_time_lim - min(a_time_lim)
+
+x_t <- all_samples_for_plots[['elapsed_time']]
+x_s <- all_samples_for_plots[['seq_num']]
+x_e <- all_samples_for_plots[[EVENT_COLUMN_NAME]]
 
 a_lim <- c(-3, 50)
 a_norm_lim <- c(-0.1, 1.1)
-a_time_lim <- c(30, 65)
 
 t_lab <- "Elapsed time (minutes)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for each time point)"
-a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)"
+a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)\n(error bars: standard error of the mean for each time point)"
 
 avg_plot_param <- list(
-  list(all_samples[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = a_time_lim),
-  list(all_samples[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = a_time_lim)
+  list(all_samples_for_plots[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = a_time_lim),
+  list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = a_time_lim)
 )
 
 invisible(lapply(avg_plot_param, function(x) {
