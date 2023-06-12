@@ -101,6 +101,7 @@ ggplot2_avg_rc <- function(
     X,
     point_identifier,
     group_identifier,
+    xlimit,
     ylimit,
     xlabel,
     ylabel
@@ -171,7 +172,7 @@ ggplot2_avg_rc <- function(
       )) +
       geom_line() +
       geom_ribbon(alpha = 0.5) +
-      coord_cartesian(ylim = ylimit) +
+      coord_cartesian(xlim = xlimit, ylim = ylimit) +
       xlab(xlabel) +
       ylab(ylabel)
 }
@@ -301,6 +302,7 @@ invisible(lapply(avg_plot_param, function(x) {
         x[[2]],
         x[[3]],
         x[[4]],
+        x[[8]],
         x[[7]],
         x[[5]],
         x[[6]]
