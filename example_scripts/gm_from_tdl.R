@@ -244,7 +244,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
 
-    licor_files <- batch_get_oxygen_info_from_preamble(licor_files)
+    licor_files <- lapply(licor_files, get_oxygen_info_from_preamble)
 
     licor_files <- lapply(licor_files, function(x) {set_variable(
         x,
@@ -271,21 +271,22 @@ if (PERFORM_CALCULATIONS) {
     })
 
     # Combine the Licor and TDL data
-
-    licor_files <- batch_pair_licor_and_tdl(
-        licor_files,
-        processed_tdl_data$tdl_data$main_data,
-        LICOR_TIMESTAMP_COLUMN_NAME,
-        TDL_TIMESTAMP_COLUMN_NAME,
-        max_allowed_time_difference = 1
-    )
+    licor_files <- lapply(licor_files, function(licor_exdf) {
+        pair_licor_and_tdl(
+            licor_exdf,
+            processed_tdl_data$tdl_data$main_data,
+            LICOR_TIMESTAMP_COLUMN_NAME,
+            TDL_TIMESTAMP_COLUMN_NAME,
+            max_allowed_time_difference = 1
+        )
+    })
 
     licor_files <- do.call(rbind, licor_files)
 
     # Calculate total pressure (needed for `calculate_gas_properties`)
     licor_files <- calculate_total_pressure(licor_files)
 
-    # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
+    # Calculates gbc, gsc, Csurface (needed for `calculate_gm_ubierna`)
     licor_files <- calculate_gas_properties(licor_files)
 
     licor_files <- calculate_gm_ubierna(licor_files)
