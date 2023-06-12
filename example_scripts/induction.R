@@ -172,7 +172,7 @@ ggplot2_avg_rc <- function(
       )) +
       geom_line() +
       geom_ribbon(alpha = 0.5) +
-      coord_cartesian(xlim = xlimit, ylim = ylimit) +
+      coord_cartesian(ylim = ylimit) + coord_cartesian(xlim = xlimit) +
       xlab(xlabel) +
       ylab(ylabel)
 }
