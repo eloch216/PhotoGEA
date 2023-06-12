@@ -91,7 +91,7 @@ if (PERFORM_CALCULATIONS) {
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 13
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(1)
-POINT_FOR_BOX_PLOTS <- 2
+POINT_FOR_BOX_PLOTS <- 7
 
 # Decide whether to remove points where the Licor stability criteria were not
 # fully met
@@ -213,7 +213,15 @@ if (PERFORM_CALCULATIONS) {
       combined_info <- remove_points(
         combined_info,
         list(event = 'WT', replicate = '2a-1', obs = 29),
-        list(event = '3', replicate = '7', seq_num = 5)
+        list(event = '3', replicate = '5', seq_num = c(2,3)),
+        list(event = '25', replicate = '9', seq_num = c(2,4)),
+        list(event = '25', replicate = '1'),
+        list(event = '9', replicate = '1'),
+        list(event = '25', replicate = '8', seq_num = 6),
+        list(event = '3', replicate = '7', seq_num = 5),
+        list(event = '3', replicate = '10', seq_num = 5),
+        list(event = 'WT', replicate = '9', seq_num = 5)
+        
       )
     }
     
@@ -323,6 +331,7 @@ if (PERFORM_CALCULATIONS) {
     all_samples <- combined_info[['main_data']]
     
     # Print average Vcmax values
+    print('average vcmax values')
     print(tapply(all_fit_parameters$Vcmax_at_25, all_fit_parameters$event, mean))
 }
 
@@ -354,6 +363,14 @@ PHIPS2_COLUMN_NAME <- if ("PhiPs2" %in% colnames(all_samples)) {
 } else {
     NULL
 }
+
+# Print average A values
+print('average A values')
+print(tapply(all_samples_one_point$A, all_samples_one_point$event, mean))
+
+# Print average PhiPS2 values
+print('average PhiPS2 values')
+print(tapply(all_samples_one_point[[PHIPS2_COLUMN_NAME]], all_samples_one_point$event, mean))
 
 INCLUDE_FLUORESCENCE <- if(is.null(PHIPS2_COLUMN_NAME)) {
     FALSE

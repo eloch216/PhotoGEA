@@ -72,6 +72,12 @@ MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 
+# Specify time range to use for normalization. This should be expressed as the
+# number of elapsed minutes. For each event, the average assimilation rate
+# across this interval will be calculated, and then used to normalize the A
+# values.
+TIME_RANGE_FOR_NORMALIZATION <- c(55, 60)
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -85,6 +91,8 @@ A_COLUMN_NAME <- "A"
 TIME_COLUMN_NAME <- "time"
 
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
+
+A_NORM_COLUMN_NAME <- paste0(A_COLUMN_NAME, '_norm')
 
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
@@ -130,7 +138,27 @@ if (PERFORM_CALCULATIONS) {
     # Add an "elapsed time" column
     combined_info[, 'elapsed_time'] <-
         (combined_info[, 'seq_num'] - 1) * TIME_INCREMENT
-
+    
+    # Normalize the data
+    combined_info <- do.call(
+      rbind,
+      by(combined_info, combined_info[, EVENT_COLUMN_NAME], function(x) {
+        subset <- x[x[, 'elapsed_time'] >= TIME_RANGE_FOR_NORMALIZATION[1] & 
+                      x[, 'elapsed_time'] <= TIME_RANGE_FOR_NORMALIZATION[2], ]
+        
+        norm_val <- mean(subset[[A_COLUMN_NAME]])
+        
+        x[, 'A_norm_val'] <- norm_val
+        x[, A_NORM_COLUMN_NAME] <- x[, A_COLUMN_NAME] / norm_val
+        
+        document_variables(
+          x,
+          c('', 'A_norm_val', x$units[[A_COLUMN_NAME]]),
+          c('', A_NORM_COLUMN_NAME, x$units[[A_COLUMN_NAME]])
+        )
+      })
+    )
+    
     # Calculate basic stats for each event
     all_stats <- basic_stats(
         combined_info,
@@ -163,16 +191,20 @@ x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 a_lim <- c(-3, 50)
+a_norm_lim <- c(-0.1, 1.1)
+a_time_lim <- c(30, 65)
 
 t_lab <- "Elapsed time (minutes)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)"
 
 avg_plot_param <- list(
-    list(all_samples[[A_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim,  xlim = c(30, 65))
+  list(all_samples[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = a_time_lim),
+  list(all_samples[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = a_time_lim)
 )
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = TRUE, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = FALSE, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
