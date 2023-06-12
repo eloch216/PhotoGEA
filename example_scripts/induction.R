@@ -38,6 +38,7 @@
 library(PhotoGEA)
 library(lattice)
 library(RColorBrewer)
+library(ggplot2)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -94,6 +95,87 @@ UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
 A_NORM_COLUMN_NAME <- paste0(A_COLUMN_NAME, '_norm')
 
+# Define a function that plots fancy error ranges using ggplot2
+ggplot2_avg_rc <- function(
+    Y,
+    X,
+    point_identifier,
+    group_identifier,
+    ylimit,
+    xlabel,
+    ylabel
+)
+{
+    # Combine inputs to make a data frame so we can use `by` more easily
+    tdf <- data.frame(
+        X = X,
+        Y = Y,
+        point_identifier = point_identifier,
+        group_identifier = group_identifier
+    )
+
+    # Get basic stats information
+    tdf_stats <- do.call(
+        rbind,
+        by(
+            tdf,
+            list(tdf$point_identifier, tdf$group_identifier),
+            function(chunk) {
+                # Get some basic info
+                X_mean <- mean(chunk$X)
+                X_sd <- stats::sd(chunk$X)
+
+                Y_mean <- mean(chunk$Y)
+                Y_sd <- stats::sd(chunk$Y)
+
+                num <- nrow(chunk)
+
+                # Calculate the standard errors and limits
+                X_stderr <- X_sd / sqrt(num)
+                X_upper <- X_mean + X_stderr
+                X_lower <- X_mean - X_stderr
+
+                Y_stderr <- Y_sd / sqrt(num)
+                Y_upper <- Y_mean + Y_stderr
+                Y_lower <- Y_mean - Y_stderr
+
+                # Return the essentials
+                data.frame(
+                    X_mean = X_mean,
+                    X_upper = X_upper,
+                    X_lower = X_lower,
+                    Y_mean = Y_mean,
+                    Y_upper = Y_upper,
+                    Y_lower = Y_lower,
+                    point_identifier = unique(chunk$point_identifier),
+                    group_identifier = unique(chunk$group_identifier)
+                )
+            }
+        )
+    )
+
+    # Sort to make sure the curves are plotted properly
+    tdf_stats <- tdf_stats[order(tdf_stats$X_mean),]
+    tdf_stats <- tdf_stats[order(tdf_stats$group_identifier),]
+
+    # Create a return the plot object
+    ggplot(
+      data = tdf_stats,
+      aes(
+        x = X_mean,
+        y = Y_mean,
+        ymin = Y_lower,
+        ymax = Y_upper,
+        fill = group_identifier,
+        linetype = group_identifier
+      )) +
+      geom_line() +
+      geom_ribbon(alpha = 0.5) +
+      coord_cartesian(ylim = ylimit) +
+      xlab(xlabel) +
+      ylab(ylabel)
+}
+
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -138,19 +220,19 @@ if (PERFORM_CALCULATIONS) {
     # Add an "elapsed time" column
     combined_info[, 'elapsed_time'] <-
         (combined_info[, 'seq_num'] - 1) * TIME_INCREMENT
-    
+
     # Normalize the data
     combined_info <- do.call(
       rbind,
       by(combined_info, combined_info[, EVENT_COLUMN_NAME], function(x) {
-        subset <- x[x[, 'elapsed_time'] >= TIME_RANGE_FOR_NORMALIZATION[1] & 
+        subset <- x[x[, 'elapsed_time'] >= TIME_RANGE_FOR_NORMALIZATION[1] &
                       x[, 'elapsed_time'] <= TIME_RANGE_FOR_NORMALIZATION[2], ]
-        
+
         norm_val <- mean(subset[[A_COLUMN_NAME]])
-        
+
         x[, 'A_norm_val'] <- norm_val
         x[, A_NORM_COLUMN_NAME] <- x[, A_COLUMN_NAME] / norm_val
-        
+
         document_variables(
           x,
           c('', 'A_norm_val', x$units[[A_COLUMN_NAME]]),
@@ -158,7 +240,7 @@ if (PERFORM_CALCULATIONS) {
         )
       })
     )
-    
+
     # Calculate basic stats for each event
     all_stats <- basic_stats(
         combined_info,
@@ -195,7 +277,7 @@ a_norm_lim <- c(-0.1, 1.1)
 a_time_lim <- c(30, 65)
 
 t_lab <- "Elapsed time (minutes)"
-a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for each time point)"
 a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)"
 
 avg_plot_param <- list(
@@ -211,6 +293,18 @@ invisible(lapply(avg_plot_param, function(x) {
         grid = TRUE,
         main = rc_caption
     )))
+    x11(width = 8, height = 6)
+    print(plot_obj)
+
+    plot_obj <- ggplot2_avg_rc(
+        x[[1]],
+        x[[2]],
+        x[[3]],
+        x[[4]],
+        x[[7]],
+        x[[5]],
+        x[[6]]
+    )
     x11(width = 8, height = 6)
     print(plot_obj)
 }))
