@@ -50,7 +50,7 @@ library(ggplot2)
 # time running the script in a particular R session or for a particular data
 # set, the data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS
 # to TRUE.
-PERFORM_CALCULATIONS <- FALSE
+PERFORM_CALCULATIONS <- TRUE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -59,7 +59,11 @@ VIEW_DATA_FRAMES <- TRUE
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the USE_GM_TABLE boolean
+# Decide whether to remove a few specific points from the data before subsequent
+# processing and plotting
+REMOVE_SPECIFIC_POINTS <- TRUE
+
+# Specify the filenames depending on the value of PERFORM_CALCULATIONS
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
 }
@@ -194,6 +198,26 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
+    
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+    
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        REP_COLUMN_NAME,
+        paste0('plot_', REP_COLUMN_NAME)
+      )
+    }
+    
+    # Reset the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+      paste0('plot_', REP_COLUMN_NAME)
+    } else {
+      REP_COLUMN_NAME
+    }
 
     combined_info <- process_id_columns(
         combined_info,
@@ -201,6 +225,11 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         UNIQUE_ID_COLUMN_NAME
     )
+    
+    # Extract just the induction curves, if necessary
+    if ('type' %in% colnames(combined_info)) {
+      combined_info <- combined_info[combined_info[, 'type'] == 'induction', , TRUE]
+    }
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -221,6 +250,15 @@ if (PERFORM_CALCULATIONS) {
     # Add an "elapsed time" column
     combined_info[, 'elapsed_time'] <-
         (combined_info[, 'seq_num'] - 1) * TIME_INCREMENT
+    
+    # Remove specific problematic points
+    if (REMOVE_SPECIFIC_POINTS) {
+      # Specify the points to remove
+      combined_info <- remove_points(
+        combined_info,
+        list(event = 'hn1a', plot_replicate = '5 1', obs = 714:720)
+      )
+    }
 
     # Normalize the data
     combined_info <- do.call(
@@ -270,7 +308,7 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-a_time_lim <- c(30, 65)
+a_time_lim <- c(30, 60)
 
 all_samples_for_plots <- all_samples[all_samples[['elapsed_time']] >= a_time_lim[1] & all_samples[['elapsed_time']] <= a_time_lim[2], ]
 all_samples_for_plots[['elapsed_time']] <- all_samples_for_plots[['elapsed_time']] - min(all_samples_for_plots[['elapsed_time']])
