@@ -115,6 +115,9 @@ PERFORM_STATS_TESTS <- TRUE
 # Decide whether to calculate basic stats
 CALCULATE_BASIC_STATS <- TRUE
 
+# Decide whether to average over plots
+AVERAGE_OVER_PLOTS <- TRUE
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -135,6 +138,26 @@ TLEAF_COLUMN_NAME <- "TleafCnd"
 
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
+# Define a function that averages across all non-identifier columns in an exdf
+# object
+avg_exdf <- function(exdf_obj) {
+    avg_obj <- identifier_columns(replicate_exdf)
+
+    for (cn in colnames(exdf_obj)) {
+        if (!cn %in% colnames(avg_obj) && is.numeric(exdf_obj[, cn])) {
+            set_variable(
+                avg_obj,
+                cn,
+                exdf_obj$units[[cn]],
+                exdf_obj$category[[cn]],
+                mean(exdf_obj[, cn])
+            )
+        }
+    }
+
+    return(avg_obj)
+}
+
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -152,10 +175,10 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
-    
+
     # Determine if there is a `plot` column
     HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
-    
+
     # Add a column that combines `plot` and `replicate` if necessary
     if (HAS_PLOT_INFO) {
       combined_info <- process_id_columns(
@@ -165,7 +188,7 @@ if (PERFORM_CALCULATIONS) {
         paste0('plot_', REP_COLUMN_NAME)
       )
     }
-    
+
     # Reset the rep column name depending on whether there is plot information
     REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
       paste0('plot_', REP_COLUMN_NAME)
@@ -179,7 +202,7 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         UNIQUE_ID_COLUMN_NAME
     )
-    
+
     # Extract just the A-Ci curves, if necessary
     if ('type' %in% colnames(combined_info)) {
       combined_info <- combined_info[combined_info[, 'type'] == 'aci', , TRUE]
@@ -215,7 +238,7 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate PCm
     combined_info <- apply_gm(combined_info, 'C4')
-    
+
     # Calculate intrinsic water-use efficiency
     combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
 
@@ -226,7 +249,6 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
-
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
@@ -236,6 +258,14 @@ if (PERFORM_CALCULATIONS) {
         #'CO2_r_sp'
     )
 
+    # Average over curves from the same event and plot, if necessary
+    combined_info <- if (AVERAGE_OVER_PLOTS) {
+        consolidate(by(
+            combined_info,
+            list(combined_info[, EVENT_COLUMN_NAME], combined_info[, 'plot'], combined_info[, 'CO2_r_sp']),
+            avg_exdf
+        ))
+    }
 
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
@@ -251,15 +281,15 @@ if (PERFORM_CALCULATIONS) {
         list(event = '3', replicate = '7', seq_num = 5),
         list(event = '3', replicate = '10', seq_num = 5),
         list(event = 'WT', replicate = '9', seq_num = 5)
-        
+
       )
     }
-    
+
     # Remove unstable points
     if (REMOVE_UNSTABLE_POINTS) {
       # Only keep points where stability was achieved
       combined_info <- combined_info[combined_info[, 'Stable'] == 2, , TRUE]
-      
+
       # Remove any curves that have fewer than three remaining points
       npts <- by(combined_info, combined_info[, UNIQUE_ID_COLUMN_NAME], nrow)
       ids_to_keep <- names(npts[npts > 2])
@@ -272,9 +302,9 @@ if (PERFORM_CALCULATIONS) {
     ###                     ###
 
     EVENTS_TO_EXCLUDE <- c("28", "53")
-    
+
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
-    
+
     if (CALCULATE_BASIC_STATS) {
       # Calculate basic stats for each event
       all_stats <- basic_stats(
@@ -292,8 +322,8 @@ if (PERFORM_CALCULATIONS) {
         gbs = 0,
         Rm_frac = 1
     ))
-    
-    fit_result$parameters[, 'Vmax_at_25'] <- 
+
+    fit_result$parameters[, 'Vmax_at_25'] <-
       fit_result$parameters[, 'Vcmax_at_25'] - fit_result$parameters[, 'Rd_at_25']
 
     all_fit_parameters <- fit_result$parameters
@@ -359,7 +389,7 @@ if (PERFORM_CALCULATIONS) {
     }
 
     all_samples <- combined_info[['main_data']]
-    
+
     # Print average Vcmax values
     print('average vcmax values')
     print(tapply(all_fit_parameters$Vcmax_at_25, all_fit_parameters$event, mean))
@@ -382,23 +412,23 @@ if (PERFORM_STATS_TESTS) {
   # Perform Brown-Forsythe test to check for equal variance
   # This test automatically prints its results to the R terminal
   bf_test_result <- bf.test(A ~ event, data = all_samples_one_point)
-  
+
   # If p > 0.05 variances among populations is equal and proceed with anova
   # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
-  
+
   # Check normality of data with Shapiro-Wilks test
   shapiro_test_result <- shapiro.test(all_samples_one_point$A)
   print(shapiro_test_result)
-  
+
   # If p > 0.05 data has normal distribution and proceed with anova
-  
+
   # Perform one way analysis of variance
   anova_result <- aov(A ~ event, data = all_samples_one_point)
   cat("    ANOVA result\n\n")
   print(summary(anova_result))
-  
+
   # If p < 0.05 perform Dunnett's posthoc test
-  
+
   # Perform Dunnett's Test
   dunnett_test_result <- DunnettTest(x = all_samples_one_point$A, g = all_samples_one_point$event, control = "WT")
   print(dunnett_test_result)
@@ -482,7 +512,7 @@ for (i in seq_along(avg_plot_param)) {
     main = rc_caption,
     cols = event_colors
   )))
-  
+
   if (!SAVE_TO_PDF) {
     x11(width = 8, height = 6)
     print(plot_obj)
