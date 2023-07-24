@@ -16,6 +16,10 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# UNRELEASED
+
+- Added a new convenience function for printing plot objects: `pdf_print`
+
 # PhotoGEA VERSION 0.8.0 (2023-04-30)
 
 - Modified `identify_tdl_cycles` and `process_tdl_cycle_polynomial` so they can

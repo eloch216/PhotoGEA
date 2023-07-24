@@ -328,6 +328,9 @@ The `PhotoGEA` package includes a few tools for basic operations:
   and the error bars are determined from the standard error.
 - `xyplot_avg_rc`: This function can be used to plot average response curves
   created by averaging individual curves measured from multiple plants.
+- `pdf_print`: This function can be used to switch from "exploratory" plots (in
+  R graphics windows) to "final" plots (as PDFs) once the settings in a script
+  have been optimized and the plots are ready for sharing with others.
 
 More complex statistical operations can be performed with functions from other R
 packages such as `onewaytests` or `DescTools`.
