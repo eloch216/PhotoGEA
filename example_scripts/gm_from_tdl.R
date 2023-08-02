@@ -248,7 +248,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- lapply(licor_files, function(x) {set_variable(
         x,
-        'respiration',
+        'Rd',
         'micromol m^(-2) s^(-1)',
         'gm_from_tdl',
         abs(RESPIRATION),    # this is the default value of respiration
@@ -288,6 +288,9 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculates gbc, gsc, Csurface (needed for `calculate_gm_ubierna`)
     licor_files <- calculate_gas_properties(licor_files)
+
+    # Calculates Delta_obs_tdl (needed for `calculate_gm_ubierna`)
+    licor_files <- calculate_isotope_discrimination(licor_files)
 
     licor_files <- calculate_gm_ubierna(licor_files)
 
@@ -728,23 +731,23 @@ if (MAKE_GM_PLOTS) {
     dtdl_lim <- c(0, 25)
 
     box_plot_param <- list(
-      list(Y = rep_stats_no_outliers[['gmc_avg']],        X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = rep_stats_no_outliers[['Cc_avg']],         X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']], X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = rep_stats_no_outliers[['A_avg']],          X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = rep_stats_no_outliers[['iWUE_avg']],       X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = rep_stats_no_outliers[['g_ratio_avg']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
-      list(Y = rep_stats_no_outliers[['delta_tdl_avg']],  X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
+      list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['A_avg']],             X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = rep_stats_no_outliers[['Delta_obs_tdl_avg']], X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     box_bar_plot_param <- list(
-      list(Y = rep_stats_no_outliers[['gmc_avg']],        X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = rep_stats_no_outliers[['Cc_avg']],         X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']], X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = rep_stats_no_outliers[['A_avg']],          X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = rep_stats_no_outliers[['iWUE_avg']],       X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = rep_stats_no_outliers[['g_ratio_avg']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
-      list(Y = rep_stats_no_outliers[['delta_tdl_avg']],  X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
+      list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['A_avg']],             X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = rep_stats_no_outliers[['Delta_obs_tdl_avg']], X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     # Make all the box and bar charts
