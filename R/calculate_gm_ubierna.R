@@ -14,12 +14,12 @@ calculate_gm_ubierna <- function(licor_exdf)
     required_variables$Pa <- "kPa"
     required_variables$Csurface <- "micromol mol^(-1)"
     required_variables$Ci <- "micromol mol^(-1)"
-    required_variables$total_mixing_ratio_r <- "ppm"
-    required_variables$total_mixing_ratio_s <- "ppm"
+    required_variables$total_CO2_r <- "ppm"
+    required_variables$total_CO2_s <- "ppm"
     required_variables$E <- "mol m^(-2) s^(-1)"
     required_variables$gtc <- "mol m^(-2) s^(-1)"
-    required_variables$total_isotope_ratio_r <- "ppt"
-    required_variables$total_isotope_ratio_s <- "ppt"
+    required_variables$delta_C13_r <- "ppt"
+    required_variables$delta_C13_s <- "ppt"
     required_variables$A <- "micromol m^(-2) s^(-1)"
     required_variables$respiration <- "micromol m^(-2) s^(-1)"
 
@@ -75,7 +75,7 @@ calculate_gm_ubierna <- function(licor_exdf)
         ppCO2_i <- (Ci * 1e-6) * (Pa * 1e-2)
 
         xsi_LICOR <- CO2_r / (CO2_r - CO2_s)
-        xsi_TDL <- total_mixing_ratio_r / (total_mixing_ratio_r - total_mixing_ratio_s)
+        xsi_TDL <- total_CO2_r / (total_CO2_r - total_CO2_s)
 
         # `t` is a "ternary correction factor" calculated according to Equation
         # 7 of Farquhar & Cernusak, "Ternary effects on the gas exchange of
@@ -104,7 +104,7 @@ calculate_gm_ubierna <- function(licor_exdf)
         t = (1 + a_bar * 1e-3) * E / gtc / 2
 
         # What are these?
-        e <- total_isotope_ratio_r - delta_growth
+        e <- delta_C13_r - delta_growth
         gamma_star <- alpha * ppO2 / specificity
 
         # Calculate some factors from t that will be used in later calculations
@@ -129,8 +129,8 @@ calculate_gm_ubierna <- function(licor_exdf)
 
         # delta_tdl is determined by ?
         delta_tdl <-
-            1e3 * xsi_TDL * (total_isotope_ratio_s - total_isotope_ratio_r) /
-            (1e3 + total_isotope_ratio_s - xsi_TDL * (total_isotope_ratio_s - total_isotope_ratio_r))
+            1e3 * xsi_TDL * (delta_C13_s - delta_C13_r) /
+            (1e3 + delta_C13_s - xsi_TDL * (delta_C13_s - delta_C13_r))
 
         # delta_e is determined by ?
         delta_e <-

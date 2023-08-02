@@ -120,10 +120,10 @@ process_tdl_cycle_polynomial <- function(
 
     # Determine the total mixing and isotope ratios from the calibrated 12C and
     # 13C concentrations
-    tdl_cycle[, 'total_mixing_ratio'] <-
+    tdl_cycle[, 'total_CO2'] <-
         tdl_cycle[, 'calibrated_13c'] + tdl_cycle[, 'calibrated_12c']
 
-    tdl_cycle[, 'total_isotope_ratio'] <-
+    tdl_cycle[, 'delta_C13'] <-
         1000 * (tdl_cycle[, 'calibrated_13c'] / tdl_cycle[, 'calibrated_12c'] / R_VPDB - 1)
 
 
@@ -158,10 +158,10 @@ process_tdl_cycle_polynomial <- function(
     # Document the columns that were just added
     tdl_cycle <- document_variables(
         tdl_cycle,
-        c('process_tdl_cycle_n_point', 'calibrated_12c',      'ppm'),
-        c('process_tdl_cycle_n_point', 'calibrated_13c',      'ppm'),
-        c('process_tdl_cycle_n_point', 'total_mixing_ratio',  'ppm'),
-        c('process_tdl_cycle_n_point', 'total_isotope_ratio', 'ppt')
+        c('process_tdl_cycle_n_point', 'calibrated_12c', 'ppm'),
+        c('process_tdl_cycle_n_point', 'calibrated_13c', 'ppm'),
+        c('process_tdl_cycle_n_point', 'total_CO2',      'ppm'),
+        c('process_tdl_cycle_n_point', 'delta_C13',      'ppt')
     )
 
     return(list(

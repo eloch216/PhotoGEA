@@ -15,27 +15,27 @@ calculate_leakiness_ubierna <- function(licor_exdf)
   required_variables$gtc <- "mol m^(-2) s^(-1)"
   required_variables$H2O_s <- "mmol mol^(-1)"
   required_variables$Rd <- "micromol m^(-2) s^(-1)"
-  required_variables$total_isotope_ratio_r <- "ppt"
-  required_variables$total_isotope_ratio_s <- "ppt"
-  required_variables$total_mixing_ratio_r <- "ppm"
-  required_variables$total_mixing_ratio_s <- "ppm"
+  required_variables$delta_C13_r <- "ppt"
+  required_variables$delta_C13_s <- "ppt"
+  required_variables$total_CO2_r <- "ppm"
+  required_variables$total_CO2_s <- "ppm"
 
   check_required_variables(licor_exdf, required_variables)
 
   # Extract some important columns
-  A <- licor_exdf[, 'A']                                         # micromol / m^2 / s
-  Ci <- licor_exdf[, 'Ci']                                       # micromol / mol
-  CL <- licor_exdf[, 'Csurface']                                 # micromol / mol
-  CO2_r <- licor_exdf[, 'CO2_r']                                 # micromol / mol
-  CO2_s <- licor_exdf[, 'CO2_s']                                 # micromol / mol
-  E <- licor_exdf[, 'E']                                         # mol / m^2 / s
-  gtc <- licor_exdf[, 'gtc']                                     # mol / m^2 / s
-  H2O_s <- licor_exdf[, 'H2O_s']                                 # mmol / mol
-  Rd <- licor_exdf[, 'Rd']                                       # micromol / m^2 / s
-  total_isotope_ratio_r <- licor_exdf[, 'total_isotope_ratio_r'] # ppt
-  total_isotope_ratio_s <- licor_exdf[, 'total_isotope_ratio_s'] # ppt
-  total_mixing_ratio_r <- licor_exdf[, 'total_mixing_ratio_r']   # ppm
-  total_mixing_ratio_s <- licor_exdf[, 'total_mixing_ratio_s']   # ppm
+  A <- licor_exdf[, 'A']                     # micromol / m^2 / s
+  Ci <- licor_exdf[, 'Ci']                   # micromol / mol
+  CL <- licor_exdf[, 'Csurface']             # micromol / mol
+  CO2_r <- licor_exdf[, 'CO2_r']             # micromol / mol
+  CO2_s <- licor_exdf[, 'CO2_s']             # micromol / mol
+  E <- licor_exdf[, 'E']                     # mol / m^2 / s
+  gtc <- licor_exdf[, 'gtc']                 # mol / m^2 / s
+  H2O_s <- licor_exdf[, 'H2O_s']             # mmol / mol
+  Rd <- licor_exdf[, 'Rd']                   # micromol / m^2 / s
+  delta_C13_r <- licor_exdf[, 'delta_C13_r'] # ppt
+  delta_C13_s <- licor_exdf[, 'delta_C13_s'] # ppt
+  total_CO2_r <- licor_exdf[, 'total_CO2_r'] # ppm
+  total_CO2_s <- licor_exdf[, 'total_CO2_s'] # ppm
 
   # Define some constants to avoid magic numbers in the equations below
   a_b <- 2.9             # Fractionation across the boundary layer (ppt)
@@ -75,8 +75,8 @@ calculate_leakiness_ubierna <- function(licor_exdf)
   # leaf chamber and the sample chamber values represent the air leaving the
   # leaf chamber. Note that the CO2 concentrations are measured by the Licor and
   # the TDL, so there are two ways to calculate xsi.
-  xsi_licor <- CO2_r / (CO2_r - CO2_s)                                            # dimensionless
-  xsi_tdl <- total_mixing_ratio_r / (total_mixing_ratio_r - total_mixing_ratio_s) # dimensionless
+  xsi_licor <- CO2_r / (CO2_r - CO2_s)                 # dimensionless
+  xsi_tdl <- total_CO2_r / (total_CO2_r - total_CO2_s) # dimensionless
 
   # Equation 1 from Ubierna et al. (2012). Delta_obs is the observed
   # photosynthetic discrimination against 13C. As with Equation 1, subscripts o
@@ -86,16 +86,16 @@ calculate_leakiness_ubierna <- function(licor_exdf)
   # 1e3 in the code below are necessary because we express isotope ratios in
   # units of ppt.
   Delta_obs_licor <-
-    1e3 * xsi_licor * (total_isotope_ratio_s - total_isotope_ratio_r) /
-      (1e3 + total_isotope_ratio_s - xsi_licor * (total_isotope_ratio_s - total_isotope_ratio_r)) # ppt
+    1e3 * xsi_licor * (delta_C13_s - delta_C13_r) /
+      (1e3 + delta_C13_s - xsi_licor * (delta_C13_s - delta_C13_r)) # ppt
 
   Delta_obs_tdl <-
-    1e3 * xsi_tdl * (total_isotope_ratio_s - total_isotope_ratio_r) /
-      (1e3 + total_isotope_ratio_s - xsi_tdl * (total_isotope_ratio_s - total_isotope_ratio_r)) # ppt
+    1e3 * xsi_tdl * (delta_C13_s - delta_C13_r) /
+      (1e3 + delta_C13_s - xsi_tdl * (delta_C13_s - delta_C13_r)) # ppt
 
   # Equation 21 from Ubierna et al. (2012). e_prime is the fractionation during
   # decarboxylation including measurement artefacts
-  e_prime <- e + total_isotope_ratio_r - delta_13c_growth # ppt
+  e_prime <- e + delta_C13_r - delta_13c_growth # ppt
 
   # Equation 18 from Ubierna et al. (2012). a_bar is the weighted fractionation
   # across the boundary layer and stomata in series

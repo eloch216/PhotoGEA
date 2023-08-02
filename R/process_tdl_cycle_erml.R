@@ -57,9 +57,9 @@ process_tdl_cycle_erml <- function(
     # Make adjustments for 12C calibration using a standard cylinder from NOAA.
     # Here we determine a multiplicative factor for converting the measured
     # zero-corrected 12C concentrations to true concentrations.
-    total_mixing_ratio_noaa <- noaa_cylinder_co2_concentration * (1 - f_other)
+    total_CO2_noaa <- noaa_cylinder_co2_concentration * (1 - f_other)
     R_noaa <- R_VPDB * (1 + noaa_cylinder_isotope_ratio / 1000)
-    noaa_12C16O16O <- total_mixing_ratio_noaa / (1 + R_noaa)
+    noaa_12C16O16O <- total_CO2_noaa / (1 + R_noaa)
 
     noaa_reference <-
         tdl_cycle[tdl_cycle[, valve_column_name] == noaa_valve, ]
@@ -73,7 +73,7 @@ process_tdl_cycle_erml <- function(
     calibration_12CO2 <- exdf(data.frame(
         cycle_num = tdl_cycle[1, 'cycle_num'],
         elapsed_time = tdl_cycle[1, 'elapsed_time'],
-        total_mixing_ratio_noaa = total_mixing_ratio_noaa,
+        total_CO2_noaa = total_CO2_noaa,
         R_noaa = R_noaa,
         noaa_12C16O16O = noaa_12C16O16O,
         gain_12CO2 = gain_12CO2
@@ -81,12 +81,12 @@ process_tdl_cycle_erml <- function(
 
     calibration_12CO2 <- document_variables(
         calibration_12CO2,
-        c('process_tdl_cycle_erml', 'cycle_num',               tdl_cycle$units$cycle_num),
-        c('process_tdl_cycle_erml', 'elapsed_time',            tdl_cycle$units$elapsed_time),
-        c('process_tdl_cycle_erml', 'total_mixing_ratio_noaa', 'ppm'),
-        c('process_tdl_cycle_erml', 'R_noaa',                  '?'),
-        c('process_tdl_cycle_erml', 'noaa_12C16O16O',          '?'),
-        c('process_tdl_cycle_erml', 'gain_12CO2',              'dimensionless')
+        c('process_tdl_cycle_erml', 'cycle_num',      tdl_cycle$units$cycle_num),
+        c('process_tdl_cycle_erml', 'elapsed_time',   tdl_cycle$units$elapsed_time),
+        c('process_tdl_cycle_erml', 'total_CO2_noaa', 'ppm'),
+        c('process_tdl_cycle_erml', 'R_noaa',         '?'),
+        c('process_tdl_cycle_erml', 'noaa_12C16O16O', '?'),
+        c('process_tdl_cycle_erml', 'gain_12CO2',     'dimensionless')
     )
 
     # Make adjustments for 13C calibration using another reference that has been
@@ -176,21 +176,21 @@ process_tdl_cycle_erml <- function(
     # 13C concentrations using Equations A.1 and A.2 from Griffis et al.
     # Agricultural and Forest Meteorology 124, 15-29 (2004)
     # (https://doi.org/10.1016/j.agrformet.2004.01.009).
-    tdl_cycle[, 'total_mixing_ratio'] <-
+    tdl_cycle[, 'total_CO2'] <-
         tdl_cycle[, 'calibrated_13c'] + tdl_cycle[, 'calibrated_12c']
 
-    tdl_cycle[, 'total_isotope_ratio'] <-
+    tdl_cycle[, 'delta_C13'] <-
         1000 * (tdl_cycle[, 'calibrated_13c'] / tdl_cycle[, 'calibrated_12c'] / R_VPDB - 1)
 
     # Document the columns that were added to the cycle data
     tdl_cycle <- document_variables(
         tdl_cycle,
-        c('process_tdl_cycle_erml', 'zero_corrected_12c',    'ppm'),
-        c('process_tdl_cycle_erml', 'zero_corrected_13c',    'ppm'),
-        c('process_tdl_cycle_erml', 'calibrated_12c',        'ppm'),
-        c('process_tdl_cycle_erml', 'calibrated_13c',        'ppm'),
-        c('process_tdl_cycle_erml', 'total_mixing_ratio',    'ppm'),
-        c('process_tdl_cycle_erml', 'total_isotope_ratio',   'ppt')
+        c('process_tdl_cycle_erml', 'zero_corrected_12c', 'ppm'),
+        c('process_tdl_cycle_erml', 'zero_corrected_13c', 'ppm'),
+        c('process_tdl_cycle_erml', 'calibrated_12c',     'ppm'),
+        c('process_tdl_cycle_erml', 'calibrated_13c',     'ppm'),
+        c('process_tdl_cycle_erml', 'total_CO2',          'ppm'),
+        c('process_tdl_cycle_erml', 'delta_C13',          'ppt')
     )
 
     return(list(

@@ -10,17 +10,17 @@ pair_licor_and_tdl <- function(
     # data
     licor_file <- document_variables(
         licor_file,
-        c("calibrated TDL",              "cycle_num",              ""),
-        c("calibrated TDL (sample)",     "tdl_time_s",             ""),
-        c("calibrated TDL (sample)",     "calibrated_12c_s",       "ppm"),
-        c("calibrated TDL (sample)",     "calibrated_13c_s",       "ppm"),
-        c("calibrated TDL (sample)",     "total_mixing_ratio_s",   "ppm"),
-        c("calibrated TDL (sample)",     "total_isotope_ratio_s",  "ppt"),
-        c("calibrated TDL (reference)",  "tdl_time_r",             ""),
-        c("calibrated TDL (reference)",  "calibrated_12c_r",       "ppm"),
-        c("calibrated TDL (reference)",  "calibrated_13c_r",       "ppm"),
-        c("calibrated TDL (reference)",  "total_mixing_ratio_r",   "ppm"),
-        c("calibrated TDL (reference)",  "total_isotope_ratio_r",  "ppt")
+        c("calibrated TDL",              "cycle_num",        ""),
+        c("calibrated TDL (sample)",     "tdl_time_s",       ""),
+        c("calibrated TDL (sample)",     "calibrated_12c_s", "ppm"),
+        c("calibrated TDL (sample)",     "calibrated_13c_s", "ppm"),
+        c("calibrated TDL (sample)",     "total_CO2_s",      "ppm"),
+        c("calibrated TDL (sample)",     "delta_C13_s",      "ppt"),
+        c("calibrated TDL (reference)",  "tdl_time_r",       ""),
+        c("calibrated TDL (reference)",  "calibrated_12c_r", "ppm"),
+        c("calibrated TDL (reference)",  "calibrated_13c_r", "ppm"),
+        c("calibrated TDL (reference)",  "total_CO2_r",      "ppm"),
+        c("calibrated TDL (reference)",  "delta_C13_r",      "ppt")
     )
 
     # Make sure the time columns have the correct class, or we won't be able to
@@ -66,12 +66,12 @@ pair_licor_and_tdl <- function(
             tdl_time_reference <- NA
             calibrated_12c_s <- NA
             calibrated_13c_s <- NA
-            total_mixing_ratio_s <- NA
-            total_isotope_ratio_s <- NA
+            total_CO2_s <- NA
+            delta_C13_s <- NA
             calibrated_12c_r <- NA
             calibrated_13c_r <- NA
-            total_mixing_ratio_r <- NA
-            total_isotope_ratio_r <- NA
+            total_CO2_r <- NA
+            delta_C13_r <- NA
         } else {
             # Find the TDL times for the sample and reference measurements
             tdl_time_sample <-
@@ -91,13 +91,13 @@ pair_licor_and_tdl <- function(
                 tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
                     tdl_data[['valve_number']] == sample_valve, 'calibrated_13c']
 
-            total_mixing_ratio_s <-
+            total_CO2_s <-
                 tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                    tdl_data[['valve_number']] == sample_valve, 'total_mixing_ratio']
+                    tdl_data[['valve_number']] == sample_valve, 'total_CO2']
 
-            total_isotope_ratio_s <-
+            delta_C13_s <-
                 tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                    tdl_data[['valve_number']] == sample_valve, 'total_isotope_ratio']
+                    tdl_data[['valve_number']] == sample_valve, 'delta_C13']
 
             # Find the reference CO2 data
             calibrated_12c_r <-
@@ -108,13 +108,13 @@ pair_licor_and_tdl <- function(
                 tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
                     tdl_data[['valve_number']] == reference_valve, 'calibrated_13c']
 
-            total_mixing_ratio_r <-
+            total_CO2_r <-
                 tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                    tdl_data[['valve_number']] == reference_valve, 'total_mixing_ratio']
+                    tdl_data[['valve_number']] == reference_valve, 'total_CO2']
 
-            total_isotope_ratio_r <-
+            delta_C13_r <-
                 tdl_data[tdl_data[['cycle_num']] == cycle_of_closest_tdl_pnt &
-                    tdl_data[['valve_number']] == reference_valve, 'total_isotope_ratio']
+                    tdl_data[['valve_number']] == reference_valve, 'delta_C13']
         }
 
         # Store results in the Licor file
@@ -124,13 +124,13 @@ pair_licor_and_tdl <- function(
 
         licor_file[['main_data']][['calibrated_12c_s']][i] <- calibrated_12c_s
         licor_file[['main_data']][['calibrated_13c_s']][i] <- calibrated_13c_s
-        licor_file[['main_data']][['total_mixing_ratio_s']][i] <- total_mixing_ratio_s
-        licor_file[['main_data']][['total_isotope_ratio_s']][i] <- total_isotope_ratio_s
+        licor_file[['main_data']][['total_CO2_s']][i] <- total_CO2_s
+        licor_file[['main_data']][['delta_C13_s']][i] <- delta_C13_s
 
         licor_file[['main_data']][['calibrated_12c_r']][i] <- calibrated_12c_r
         licor_file[['main_data']][['calibrated_13c_r']][i] <- calibrated_13c_r
-        licor_file[['main_data']][['total_mixing_ratio_r']][i] <- total_mixing_ratio_r
-        licor_file[['main_data']][['total_isotope_ratio_r']][i] <- total_isotope_ratio_r
+        licor_file[['main_data']][['total_CO2_r']][i] <- total_CO2_r
+        licor_file[['main_data']][['delta_C13_r']][i] <- delta_C13_r
     }
 
     return(licor_file)

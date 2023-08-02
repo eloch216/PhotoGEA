@@ -134,8 +134,8 @@
     \item \code{tdl_data}: An \code{exdf} object containing the original content
           of \code{tdl_cycle} and several new columns:
           \code{'zero_corrected_12c'}, \code{'zero_corrected_13c'},
-          \code{'calibrated_12c'}, \code{'calibrated_13c'},
-          \code{'total_mixing_ratio'}, and \code{'total_isotope_ratio'}.
+          \code{'calibrated_12c'}, \code{'calibrated_13c'}, \code{'total_CO2'},
+          and \code{'delta_C13'}.
     \item \code{calibration_zero}: An \code{exdf} object describing the values
           used to calculate the zero-corrected 12C and 13C signals.
     \item \code{calibration_12CO2}: An \code{exdf} object describing the gain

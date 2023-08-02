@@ -101,8 +101,8 @@
   \itemize{
     \item \code{tdl_data}: An \code{exdf} object containing the original content
           of \code{tdl_cycle} and several new columns:
-          \code{'calibrated_12c'}, \code{'calibrated_13c'},
-          \code{'total_mixing_ratio'}, and \code{'total_isotope_ratio'}.
+          \code{'calibrated_12c'}, \code{'calibrated_13c'}, \code{'total_CO2'},
+          and \code{'delta_C13'}.
     \item \code{calibration_parameters}: An \code{exdf} object describing the
           fitted polynomial coefficients.
   }
