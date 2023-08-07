@@ -1,5 +1,4 @@
 # Functions for interacting with data files and `exdf` objects
-export(batch_get_genotype_info_from_licor_filename)
 export(check_licor_data)
 export(choose_input_files)
 export(choose_input_licor_files)
