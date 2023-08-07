@@ -272,12 +272,9 @@ if (PERFORM_CALCULATIONS) {
 
     # Combine the Licor and TDL data
     licor_files <- lapply(licor_files, function(licor_exdf) {
-        pair_licor_and_tdl(
+        pair_gasex_and_tdl(
             licor_exdf,
-            processed_tdl_data$tdl_data$main_data,
-            LICOR_TIMESTAMP_COLUMN_NAME,
-            TDL_TIMESTAMP_COLUMN_NAME,
-            max_allowed_time_difference = 1
+            processed_tdl_data$tdl_data
         )
     })
 
