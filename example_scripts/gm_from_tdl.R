@@ -244,7 +244,7 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
 
-    licor_files <- lapply(licor_files, get_oxygen_info_from_preamble)
+    licor_files <- lapply(licor_files, get_oxygen_from_preamble)
 
     licor_files <- lapply(licor_files, function(x) {set_variable(
         x,

@@ -3,6 +3,11 @@ get_sample_valve_from_filename <- function(
     reference_table = NULL
 )
 {
+    # Check the input
+    if (!is.exdf(exdf_obj)) {
+        stop('exdf_obj must be an exdf object')
+    }
+
     # Make sure the filename is included in the exdf object
     if (!'file_name' %in% names(exdf_obj)) {
         stop('exdf_obj$file_name must be defined; see read_gasex_file for more info')
