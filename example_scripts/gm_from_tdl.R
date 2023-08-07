@@ -262,7 +262,7 @@ if (PERFORM_CALCULATIONS) {
     )})
 
     licor_files <- lapply(licor_files, function(x) {
-        get_sample_valve_from_licor_filename(x, list(
+        get_sample_valve_from_filename(x, list(
             '13' = 12, # ERML TDL
             '11' = 10, # ERML TDL
              '8' = 7,  # IGB TDL
