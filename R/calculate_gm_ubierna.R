@@ -6,36 +6,34 @@ calculate_gm_ubierna <- function(licor_exdf)
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
+    required_variables$a_bar         <- 'ppt'
     required_variables$A             <- 'micromol m^(-2) s^(-1)'
     required_variables$Ci            <- 'micromol mol^(-1)'
     required_variables$CO2_s         <- 'micromol mol^(-1)'
     required_variables$Csurface      <- 'micromol mol^(-1)'
     required_variables$delta_C13_r   <- 'ppt'
-    required_variables$E             <- 'mol m^(-2) s^(-1)'
-    required_variables$gtc           <- 'mol m^(-2) s^(-1)'
+    required_variables$Delta_obs_tdl <- 'ppt'
     required_variables$Oxygen        <- '%'
     required_variables$Pa            <- 'kPa'
     required_variables$Rd            <- 'micromol m^(-2) s^(-1)'
-    required_variables$Delta_obs_tdl <- 'ppt'
+    required_variables$t             <- 'dimensionless'
 
     check_required_variables(licor_exdf, required_variables)
 
     # Extract some important columns
     A             <- licor_exdf[, 'A']             # micromol / m^2 / s
+    a_bar         <- licor_exdf[, 'a_bar']         # ppt
     Ci            <- licor_exdf[, 'Ci']            # micromol / mol
     CO2_s         <- licor_exdf[, 'CO2_s']         # micromol / mol
     Csurface      <- licor_exdf[, 'Csurface']      # micromol / mol
     delta_C13_r   <- licor_exdf[, 'delta_C13_r']   # ppt
-    E             <- licor_exdf[, 'E']             # mol / m^2 / s
-    gtc           <- licor_exdf[, 'gtc']           # mol / m^2 / s
+    Delta_obs_tdl <- licor_exdf[, 'Delta_obs_tdl'] # ppt
     Oxygen        <- licor_exdf[, 'Oxygen']        # percent
     Pa            <- licor_exdf[, 'Pa']            # kPa
     Rd            <- licor_exdf[, 'Rd']            # micromol / m^2 / s
-    Delta_obs_tdl <- licor_exdf[, 'Delta_obs_tdl'] # ppt
+    t             <- licor_exdf[, 't']             # dimensionless
 
     # Define some constants to avoid magic numbers in the equations
-    ubierna_a_b <- 2.9  # 13C fractionation during diffusion through the leaf boundary layer (Ubierna, 2017)
-    ubierna_a_s <- 4.4  # 13C fractionation due to diffusion in air (Ubierna, 2017)
     b_prime_3 <- 29     # where does this value come from? Ubierna (2017) uses 30, as do other sources
     delta_growth <- -8  # where does this value come from?
     alpha <- 0.5        # where does this value come from?
@@ -48,32 +46,6 @@ calculate_gm_ubierna <- function(licor_exdf)
     ppCO2_s <- (CO2_s * 1e-6) * (Pa * 1e-2)
     ppCO2_surface <- (Csurface * 1e-6) * (Pa * 1e-2)
     ppCO2_i <- (Ci * 1e-6) * (Pa * 1e-2)
-
-    # `t` is a "ternary correction factor" calculated according to Equation
-    # 7 of Farquhar & Cernusak, "Ternary effects on the gas exchange of
-    # isotopologues of carbon dioxide" Plant, Cell & Environment 35,
-    # 1221–1231 (2012)
-    # (https://doi.org/10.1111/j.1365-3040.2012.02484.x).
-    #
-    # Equation 7 reads `t = alpha_ac * E / (2 * g_ac)`, where E is the
-    # transpiration rate, `g_ac` is the conductance to diffusion of air in
-    # CO2, and `alpha_ac` is determined by `1 / alpha_ac = 1 / (1 + a_bar)`,
-    # where `a_bar` is the weighted fractionation across the boundary layer
-    # and stomata in series.
-    #
-    # We can therefore write alpha_ac as 1 + a_bar.
-    #
-    # In turn, a_bar (13C) is calculated using the equation from Table 4 in
-    # Ubierna et al. "Temperature response of mesophyll conductance in three
-    # C4 species calculated with two methods: 18O discrimination and in
-    # vitro Vpmax" New Phytologist 214, 66–80 (2017)
-    # (https://doi.org/10.1111/nph.14359)
-
-    a_bar <-
-        (ubierna_a_b * (ppCO2_s - ppCO2_surface) + ubierna_a_s * (ppCO2_surface - ppCO2_i)) /
-        (ppCO2_s - ppCO2_i)
-
-    t = (1 + a_bar * 1e-3) * E / gtc / 2
 
     # What are these?
     e <- delta_C13_r - delta_growth
@@ -117,7 +89,6 @@ calculate_gm_ubierna <- function(licor_exdf)
     gmc <- equation_top / delta_difference / 1e6
 
     # Store the calculated quantities in the exdf object
-    licor_exdf[, 'a_bar'] <- a_bar
     licor_exdf[, 'delta_difference'] <- delta_difference
     licor_exdf[, 'Delta_e'] <- Delta_e
     licor_exdf[, 'Delta_f'] <- Delta_f
@@ -126,12 +97,10 @@ calculate_gm_ubierna <- function(licor_exdf)
     licor_exdf[, 'equation_top'] <- equation_top
     licor_exdf[, 'Gamma_star'] <- Gamma_star
     licor_exdf[, 'gmc'] <- gmc
-    licor_exdf[, 't'] <- t
 
     # # Document the columns that were added and return the exdf
     document_variables(
         licor_exdf,
-        c('calculate_gm_ubierna', 'a_bar',            'ppt'),
         c('calculate_gm_ubierna', 'delta_difference', 'ppt'),
         c('calculate_gm_ubierna', 'Delta_e',          'ppt'),
         c('calculate_gm_ubierna', 'Delta_f',          'ppt'),
@@ -139,7 +108,6 @@ calculate_gm_ubierna <- function(licor_exdf)
         c('calculate_gm_ubierna', 'e',                'ppt'),
         c('calculate_gm_ubierna', 'equation_top',     '?'),
         c('calculate_gm_ubierna', 'Gamma_star',       'bar'),
-        c('calculate_gm_ubierna', 'gmc',              'mol m^(-2) s^(-1) bar^(-1)'),
-        c('calculate_gm_ubierna', 't',                'dimensionless')
+        c('calculate_gm_ubierna', 'gmc',              'mol m^(-2) s^(-1) bar^(-1)')
     )
 }

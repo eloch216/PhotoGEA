@@ -396,6 +396,9 @@ if (PERFORM_CALCULATIONS) {
     # Calculates Delta_obs_tdl (needed for `calculate_gm_ubierna`)
     licor_files <- calculate_isotope_discrimination(licor_files)
 
+    # Calculates t (needed for `calculate_gm_ubierna`)
+    licor_files <- calculate_ternary_correction(licor_files)
+
     licor_files <- calculate_gm_ubierna(licor_files)
 
     licor_files <- apply_gm(licor_files)
