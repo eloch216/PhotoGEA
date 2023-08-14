@@ -2,21 +2,19 @@
 # 1. Busch et al. Nat. Plants 6, 245–258 (2020) [https://doi.org/10.1038/s41477-020-0606-6]
 calculate_gm_busch <- function(
     exdf_obj,
-    e = -3,                     # ppt; isotopic fractionation during day respiration
-    f = 11,                     # ppt; isotopic fractionation during photorespiration
-    rubisco_alpha = 0.5,        # dimensionless
-    rubisco_specificity = 2115, # dimensionless
+    e = -3, # ppt; isotopic fractionation during day respiration
+    f = 11, # ppt; isotopic fractionation during photorespiration
     e_star_equation = 20,
     gm_type = 'dis',
-    a_column_name = 'A',
     a_bar_column_name = 'a_bar',
+    a_column_name = 'A',
     ci_column_name = 'Ci',
     co2_s_column_name = 'CO2_s',
     csurface_column_name = 'Csurface',
     delta_C13_r_column_name = 'delta_C13_r',
     delta_obs_growth_column_name = 'Delta_obs_growth',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
-    oxygen_column_name = 'Oxygen',
+    gamma_star_column_name = 'Gamma_star',
     rd_column_name = 'Rd',
     t_column_name = 't'
 )
@@ -40,15 +38,15 @@ calculate_gm_busch <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]                <- 'micromol m^(-2) s^(-1)'
     required_variables[[a_bar_column_name]]            <- 'ppt'
+    required_variables[[a_column_name]]                <- 'micromol m^(-2) s^(-1)'
     required_variables[[ci_column_name]]               <- 'micromol mol^(-1)'
     required_variables[[co2_s_column_name]]            <- 'micromol mol^(-1)'
     required_variables[[csurface_column_name]]         <- 'micromol mol^(-1)'
     required_variables[[delta_C13_r_column_name]]      <- 'ppt'
     required_variables[[delta_obs_growth_column_name]] <- 'ppt'
     required_variables[[delta_obs_tdl_column_name]]    <- 'ppt'
-    required_variables[[oxygen_column_name]]           <- '%'
+    required_variables[[gamma_star_column_name]]       <- 'micromol mol^(-1)'
     required_variables[[rd_column_name]]               <- 'micromol m^(-2) s^(-1)'
     required_variables[[t_column_name]]                <- 'dimensionless'
 
@@ -63,27 +61,20 @@ calculate_gm_busch <- function(
     delta_Ca_meas    <- exdf_obj[, delta_C13_r_column_name]      # ppt
     Delta_obs_growth <- exdf_obj[, delta_obs_growth_column_name] # ppt
     Delta_obs_meas   <- exdf_obj[, delta_obs_tdl_column_name]    # ppt
-    oxygen           <- exdf_obj[, oxygen_column_name]           # percent
+    Gamma_star       <- exdf_obj[, gamma_star_column_name]       # micromol / mol
     Rd               <- exdf_obj[, rd_column_name]               # micromol / m^2 / s
     t                <- exdf_obj[, t_column_name]                # dimensionless
 
-    ##
-    ## Define and calculate miscellaneous variables
-    ##
-    delta_Ca_growth <- -8 # ppt
+    # Get the values of some constants that are defined in `constants.R`
+    a_b             <- ISOTOPE_CONSTANTS$a_b             # ppt
+    a_s             <- ISOTOPE_CONSTANTS$a_s             # ppt
+    a_m             <- ISOTOPE_CONSTANTS$a_m             # ppt
+    b               <- ISOTOPE_CONSTANTS$b               # ppt
+    delta_Ca_growth <- ISOTOPE_CONSTANTS$delta_Ca_growth # ppt
 
-    Gamma_star <-
-        rubisco_alpha * (oxygen * 1e-2 * 1e6) / rubisco_specificity # micromol / mol
-
     ##
-    ## Define and calculate isotopic fractionation values
+    ## Calculate isotopic fractionation values
     ##
-
-    # Some are taken to be constant
-    a_b <- 2.9 # ppt; isotopic fractionation during diffusion through the laminar boundary layer
-    a_s <- 4.4 # ppt; isotopic fractionation during diffusion through air
-    a_m <- 1.8 # ppt; isotopic fractionation during diffusion through water
-    b <- 29    # ppt; isotopic fractionation during Rubisco carboxylation
 
     # Equations 19 and 20 from Busch et al. (2020) calculate the apparent
     # isotopic fractionation during day respiration under different assumptions

@@ -1,4 +1,7 @@
-calculate_leakiness_ubierna <- function(licor_exdf)
+calculate_leakiness_ubierna <- function(
+    licor_exdf,
+    e = -3 # ppt; isotopic fractionation during day respiration
+)
 {
   if (!is.exdf(licor_exdf)) {
       stop('calculate_leakiness_ubierna requires an exdf object')
@@ -31,13 +34,14 @@ calculate_leakiness_ubierna <- function(licor_exdf)
   Rd              <- licor_exdf[, 'Rd']              # micromol / m^2 / s
   t               <- licor_exdf[, 't']               # dimensionless
 
-  # Define some constants to avoid magic numbers in the equations below
-  b_prime_3 <- 30        # Rubisco fractionation (ppt)
-  b_prime_4 <- -5.7      # Combined effects of fractionations by CO2 dissolution, hydration, and PEPc activity at 25 degrees C (ppt)
-  delta_13c_growth <- -8 # Carbon isotope ratio of ambient air during growth (ppt)
-  e <- 0                 # Fractionation during decarboxylation (ppt)
+  # Get the values of some constants that are defined in `constants.R`
+  b_prime_3        <- ISOTOPE_CONSTANTS$b               # ppt
+  b_prime_4        <- ISOTOPE_CONSTANTS$b_prime_4       # ppt
+  delta_13c_growth <- ISOTOPE_CONSTANTS$delta_Ca_growth # ppt
+  s                <- ISOTOPE_CONSTANTS$s               # ppt
+
+  # Define some other constants to avoid magic numbers in the equations below
   Rm_frac <- 0.5         # Rm is defined as a fraction of Rd
-  s <- 1.8               # Fractionation during leakage from the bundle-sheath cells (ppt)
 
   # Make the calculations
 

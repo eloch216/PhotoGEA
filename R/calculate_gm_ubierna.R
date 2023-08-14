@@ -1,4 +1,8 @@
-calculate_gm_ubierna <- function(licor_exdf)
+calculate_gm_ubierna <- function(
+    licor_exdf,
+    e = -3, # ppt; isotopic fractionation during day respiration
+    f = 11  # ppt; isotopic fractionation during photorespiration
+)
 {
     if (!is.exdf(licor_exdf)) {
         stop('calculate_gm_ubierna requires an exdf object')
@@ -32,22 +36,19 @@ calculate_gm_ubierna <- function(licor_exdf)
     Rd            <- licor_exdf[, 'Rd']            # micromol / m^2 / s
     t             <- licor_exdf[, 't']             # dimensionless
 
-    # Define some constants to avoid magic numbers in the equations
-    b_prime_3 <- 29     # where does this value come from? Ubierna (2017) uses 30, as do other sources
-    delta_growth <- -8  # where does this value come from?
-    alpha <- 0.5        # where does this value come from?
-    specificity <- 2115 # where does this value come from?
-    f <- 11.6           # fractionation factor during photorespiration; value from https://doi.org/10.1104/pp.108.130153
-    ai <- 1.8           # check https://doi.org/10.1111/j.1365-3040.2012.02591.x
+    # Get the values of some constants that are defined in `constants.R`
+    b_prime_3    <- ISOTOPE_CONSTANTS$b               # ppt
+    ai           <- ISOTOPE_CONSTANTS$a_m             # ppt
+    delta_growth <- ISOTOPE_CONSTANTS$delta_Ca_growth # ppt
 
     # Make the calculations; here we make use of 1 kPa = 0.01 bar
-    ppCO2_s <- (CO2_s * 1e-6) * (Pa * 1e-2)
-    ppCO2_surface <- (Csurface * 1e-6) * (Pa * 1e-2)
-    ppCO2_i <- (Ci * 1e-6) * (Pa * 1e-2)
+    ppCO2_s <- (CO2_s * 1e-6) * (Pa * 1e-2)                         # bar
+    ppCO2_surface <- (Csurface * 1e-6) * (Pa * 1e-2)                # bar
+    ppCO2_i <- (Ci * 1e-6) * (Pa * 1e-2)                            # bar
     Gamma_star <- (licor_exdf[, 'Gamma_star'] * 1e-6) * (Pa * 1e-2) # bar
 
-    # What are these?
-    e <- delta_C13_r - delta_growth
+    # Total isotopic fractionation due to day respiration
+    e_prime <- e + delta_C13_r - delta_growth # ppt
 
     # Calculate some factors from t that will be used in later calculations
     t_factor_1 <- 1 + t
@@ -71,7 +72,7 @@ calculate_gm_ubierna <- function(licor_exdf)
 
     # Delta_e is determined by ?
     Delta_e <-
-        t_factor_3 * e * Rd * (ppCO2_i - Gamma_star) /
+        t_factor_3 * e_prime * Rd * (ppCO2_i - Gamma_star) /
         ((A + Rd) * ppCO2_s)
 
     # Delta_f is determined by ?
@@ -82,7 +83,7 @@ calculate_gm_ubierna <- function(licor_exdf)
 
     equation_top <-
         t_factor_3 *
-        (b_prime_3 - ai - (e * Rd) / (A + Rd)) * (A / ppCO2_s)
+        (b_prime_3 - ai - (e_prime * Rd) / (A + Rd)) * (A / ppCO2_s)
 
     gmc <- equation_top / delta_difference / 1e6
 
@@ -91,7 +92,7 @@ calculate_gm_ubierna <- function(licor_exdf)
     licor_exdf[, 'Delta_e'] <- Delta_e
     licor_exdf[, 'Delta_f'] <- Delta_f
     licor_exdf[, 'Delta_i'] <- Delta_i
-    licor_exdf[, 'e'] <- e
+    licor_exdf[, 'e_prime'] <- e_prime
     licor_exdf[, 'equation_top'] <- equation_top
     licor_exdf[, 'gmc'] <- gmc
 
@@ -102,7 +103,7 @@ calculate_gm_ubierna <- function(licor_exdf)
         c('calculate_gm_ubierna', 'Delta_e',          'ppt'),
         c('calculate_gm_ubierna', 'Delta_f',          'ppt'),
         c('calculate_gm_ubierna', 'Delta_i',          'ppt'),
-        c('calculate_gm_ubierna', 'e',                'ppt'),
+        c('calculate_gm_ubierna', 'e_prime',          'ppt'),
         c('calculate_gm_ubierna', 'equation_top',     '?'),
         c('calculate_gm_ubierna', 'gmc',              'mol m^(-2) s^(-1) bar^(-1)')
     )
