@@ -11,7 +11,7 @@ calculate_gm_busch <- function(
     ci_column_name = 'Ci',
     co2_s_column_name = 'CO2_s',
     csurface_column_name = 'Csurface',
-    delta_C13_r_column_name = 'delta_C13_r',
+    delta_c13_r_column_name = 'delta_C13_r',
     delta_obs_growth_column_name = 'Delta_obs_growth',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
@@ -43,7 +43,7 @@ calculate_gm_busch <- function(
     required_variables[[ci_column_name]]               <- 'micromol mol^(-1)'
     required_variables[[co2_s_column_name]]            <- 'micromol mol^(-1)'
     required_variables[[csurface_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[delta_C13_r_column_name]]      <- 'ppt'
+    required_variables[[delta_c13_r_column_name]]      <- 'ppt'
     required_variables[[delta_obs_growth_column_name]] <- 'ppt'
     required_variables[[delta_obs_tdl_column_name]]    <- 'ppt'
     required_variables[[gamma_star_column_name]]       <- 'micromol mol^(-1)'
@@ -58,7 +58,7 @@ calculate_gm_busch <- function(
     Ca               <- exdf_obj[, co2_s_column_name]            # micromol / mol
     Ci               <- exdf_obj[, ci_column_name]               # micromol / mol
     Cs               <- exdf_obj[, csurface_column_name]         # micromol / mol
-    delta_Ca_meas    <- exdf_obj[, delta_C13_r_column_name]      # ppt
+    delta_Ca_meas    <- exdf_obj[, delta_c13_r_column_name]      # ppt
     Delta_obs_growth <- exdf_obj[, delta_obs_growth_column_name] # ppt
     Delta_obs_meas   <- exdf_obj[, delta_obs_tdl_column_name]    # ppt
     Gamma_star       <- exdf_obj[, gamma_star_column_name]       # micromol / mol
