@@ -58,6 +58,11 @@
 
   (2) \code{rate = exp(c) * exp(-Ea / (R * T)) = exp(c - Ea / (R * T))}
 
+  The advantage of this version is that the natural logarithm of the rate is
+  equal to \code{c - Ea / (R * T)}. This means that the Arrhenius paramerer
+  values can be easily determined from a linear fit of \code{log(rate)} against
+  \code{1 / (R * T)}; \code{c} is the y-intercept and \code{-Ea} is the slope.
+
   In \code{calculate_arrhenius}, the scaling factor (\code{c}), activation
   energy (\code{Ea}), and units (\code{units}) for a variable must be specified
   as elements of a list, which itself is a named element of

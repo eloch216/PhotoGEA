@@ -6,14 +6,14 @@ calculate_gm_ubierna <- function(licor_exdf)
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables$a_bar         <- 'ppt'
     required_variables$A             <- 'micromol m^(-2) s^(-1)'
+    required_variables$a_bar         <- 'ppt'
     required_variables$Ci            <- 'micromol mol^(-1)'
     required_variables$CO2_s         <- 'micromol mol^(-1)'
     required_variables$Csurface      <- 'micromol mol^(-1)'
     required_variables$delta_C13_r   <- 'ppt'
     required_variables$Delta_obs_tdl <- 'ppt'
-    required_variables$Oxygen        <- '%'
+    required_variables$Gamma_star    <- 'micromol mol^(-1)'
     required_variables$Pa            <- 'kPa'
     required_variables$Rd            <- 'micromol m^(-2) s^(-1)'
     required_variables$t             <- 'dimensionless'
@@ -28,7 +28,6 @@ calculate_gm_ubierna <- function(licor_exdf)
     Csurface      <- licor_exdf[, 'Csurface']      # micromol / mol
     delta_C13_r   <- licor_exdf[, 'delta_C13_r']   # ppt
     Delta_obs_tdl <- licor_exdf[, 'Delta_obs_tdl'] # ppt
-    Oxygen        <- licor_exdf[, 'Oxygen']        # percent
     Pa            <- licor_exdf[, 'Pa']            # kPa
     Rd            <- licor_exdf[, 'Rd']            # micromol / m^2 / s
     t             <- licor_exdf[, 't']             # dimensionless
@@ -41,15 +40,14 @@ calculate_gm_ubierna <- function(licor_exdf)
     f <- 11.6           # fractionation factor during photorespiration; value from https://doi.org/10.1104/pp.108.130153
     ai <- 1.8           # check https://doi.org/10.1111/j.1365-3040.2012.02591.x
 
-    # Make the calculations
-    ppO2 <- (Oxygen * 1e-2) * (Pa * 1e-2)
+    # Make the calculations; here we make use of 1 kPa = 0.01 bar
     ppCO2_s <- (CO2_s * 1e-6) * (Pa * 1e-2)
     ppCO2_surface <- (Csurface * 1e-6) * (Pa * 1e-2)
     ppCO2_i <- (Ci * 1e-6) * (Pa * 1e-2)
+    Gamma_star <- (licor_exdf[, 'Gamma_star'] * 1e-6) * (Pa * 1e-2) # bar
 
     # What are these?
     e <- delta_C13_r - delta_growth
-    Gamma_star <- alpha * ppO2 / specificity
 
     # Calculate some factors from t that will be used in later calculations
     t_factor_1 <- 1 + t
@@ -95,7 +93,6 @@ calculate_gm_ubierna <- function(licor_exdf)
     licor_exdf[, 'Delta_i'] <- Delta_i
     licor_exdf[, 'e'] <- e
     licor_exdf[, 'equation_top'] <- equation_top
-    licor_exdf[, 'Gamma_star'] <- Gamma_star
     licor_exdf[, 'gmc'] <- gmc
 
     # # Document the columns that were added and return the exdf
@@ -107,7 +104,6 @@ calculate_gm_ubierna <- function(licor_exdf)
         c('calculate_gm_ubierna', 'Delta_i',          'ppt'),
         c('calculate_gm_ubierna', 'e',                'ppt'),
         c('calculate_gm_ubierna', 'equation_top',     '?'),
-        c('calculate_gm_ubierna', 'Gamma_star',       'bar'),
         c('calculate_gm_ubierna', 'gmc',              'mol m^(-2) s^(-1) bar^(-1)')
     )
 }

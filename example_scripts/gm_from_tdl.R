@@ -44,7 +44,19 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- 2.69
+# Specify a default respiration
+DEFAULT_RESPIRATION <- 2.69
+
+# Specify respiration values for each event; these will override the default
+RESPIRATION_TABLE <- list(
+  'WT' = 2.18,
+  '8' = 2.02,
+  '10' = 1.94,
+  '14' = 2.08
+)
+
+RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
+#RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
@@ -353,21 +365,6 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- lapply(licor_files, get_oxygen_from_preamble)
 
-    licor_files <- lapply(licor_files, function(x) {set_variable(
-        x,
-        'Rd',
-        'micromol m^(-2) s^(-1)',
-        'gm_from_tdl',
-        abs(RESPIRATION),    # this is the default value of respiration
-        id_column = 'event', # the default value can be overridden for certain events
-        value_table = list(
-          'WT' = 2.18,
-          '8' = 2.02,
-          '10' = 1.94,
-          '14' = 2.08
-        )
-    )})
-
     licor_files <- lapply(licor_files, function(x) {
         get_sample_valve_from_filename(x, list(
             '13' = 12, # ERML TDL
@@ -387,6 +384,26 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- do.call(rbind, licor_files)
 
+    # Specify respiration values
+    licor_files <- set_variable(
+        licor_files,
+        'Rd',
+        'micromol m^(-2) s^(-1)',
+        'gm_from_tdl',
+        abs(DEFAULT_RESPIRATION), # this is the default value of respiration
+        id_column = 'event',      # the default value can be overridden for certain events
+        value_table = RESPIRATION_TABLE
+    )
+
+    # Specify Rubisco specificity values
+    licor_files <- set_variable(
+        licor_files,
+        'specificity_at_tleaf',
+        'M / M',
+        'gm_from_tdl',
+        RUBISCO_SPECIFICITY_AT_TLEAF
+    )
+
     # Calculate total pressure (needed for `calculate_gas_properties`)
     licor_files <- calculate_total_pressure(licor_files)
 
@@ -398,6 +415,9 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculates t (needed for `calculate_gm_ubierna`)
     licor_files <- calculate_ternary_correction(licor_files)
+
+    # Calculate Gamma_star (needed for `calculate_gm_ubierna`)
+    licor_files <- calculate_gamma_star(licor_files)
 
     licor_files <- calculate_gm_ubierna(licor_files)
 

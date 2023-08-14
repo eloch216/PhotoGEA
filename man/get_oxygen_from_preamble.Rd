@@ -31,7 +31,7 @@
 
 \value{
   An \code{exdf} object based on \code{licor_exdf} that includes the oxygen
-  percentage as a new column called \code{Oxygen}.
+  percentage as a new column called \code{oxygen}.
 }
 
 \examples{

@@ -13,7 +13,7 @@ get_oxygen_from_preamble <- function(licor_exdf) {
     # oxygen information
     licor_exdf <- document_variables(
         licor_exdf,
-        c('in', 'Oxygen', '%')
+        c('in', 'oxygen', 'percent')
     )
 
     # Try to get the oxygen information from the Licor file's preamble
@@ -35,7 +35,7 @@ get_oxygen_from_preamble <- function(licor_exdf) {
     }
 
     # Store it in the Licor file and return the updated file
-    licor_exdf[, 'Oxygen'] <- oxygen
+    licor_exdf[, 'oxygen'] <- oxygen
 
     return(licor_exdf)
 }
