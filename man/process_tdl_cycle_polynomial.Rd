@@ -17,8 +17,6 @@
     poly_order,
     reference_tanks,
     reference_tank_time_points = NA,
-    f_other = 0.00474,
-    R_VPDB = 0.0111797,
     valve_column_name = 'valve_number',
     raw_12c_colname = 'Conc12C_Avg',
     raw_13c_colname = 'Conc13C_Avg'
@@ -50,14 +48,6 @@
     should indicate the first and last time points where the measurements from
     this valve should be averaged. The order of valves must be the same as in
     the \code{reference_tanks} input argument.
-  }
-
-  \item{f_other}{
-    The fraction of CO2 that is not 13C16O16O or 12C16O16O.
-  }
-
-  \item{R_VPDB}{
-    The Vienna Pee Dee Belemnite reference value.
   }
 
   \item{valve_column_name}{

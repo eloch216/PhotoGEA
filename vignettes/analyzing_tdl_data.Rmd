@@ -236,9 +236,7 @@ processed_tdl <- consolidate(by(
   raw_13c_colname = 'Conc13C_Avg',
   noaa_cylinder_co2_concentration = 294.996,
   noaa_cylinder_isotope_ratio = -8.40,
-  calibration_isotope_ratio = -11.505,
-  f_other = 0.00474,
-  R_VPDB = 0.0111797
+  calibration_isotope_ratio = -11.505
 ))
 ```
 
@@ -438,9 +436,7 @@ processed_smooth_tdl <- consolidate(by(
   raw_13c_colname = 'Conc13C_Avg',
   noaa_cylinder_co2_concentration = 294.996,
   noaa_cylinder_isotope_ratio = -8.40,
-  calibration_isotope_ratio = -11.505,
-  f_other = 0.00474,
-  R_VPDB = 0.0111797
+  calibration_isotope_ratio = -11.505
 ))
 ```
 

@@ -341,11 +341,9 @@ if (PERFORM_CALCULATIONS) {
             calibration_3_valve = 26,
             raw_12c_colname = TDL_12C_COLUMN_NAME,
             raw_13c_colname = TDL_13C_COLUMN_NAME,
-            noaa_cylinder_co2_concentration = 294.996,  # ppm
-            noaa_cylinder_isotope_ratio = -8.40,        # ppt
-            calibration_isotope_ratio = -11.505,        # ppt
-            f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
-            R_VPDB = 0.0111797
+            noaa_cylinder_co2_concentration = 294.996, # ppm
+            noaa_cylinder_isotope_ratio = -8.40,       # ppt
+            calibration_isotope_ratio = -11.505        # ppt
         ))
     }
 

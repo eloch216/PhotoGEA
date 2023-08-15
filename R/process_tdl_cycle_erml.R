@@ -1,18 +1,16 @@
 process_tdl_cycle_erml <- function(
-    tdl_cycle,                        # exdf object
-    valve_column_name,                # column name string
-    noaa_valve,                       # value of valve column
-    calibration_0_valve,              # value of valve column
-    calibration_1_valve,              # value of valve column
-    calibration_2_valve,              # value of valve column
-    calibration_3_valve,              # value of valve column
-    raw_12c_colname,                  # column name string
-    raw_13c_colname,                  # column name string
-    noaa_cylinder_co2_concentration,  # ppm
-    noaa_cylinder_isotope_ratio,      # ppt
-    calibration_isotope_ratio,        # ppt
-    f_other,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
-    R_VPDB
+    tdl_cycle,                       # exdf object
+    noaa_valve,                      # value of valve column
+    calibration_0_valve,             # value of valve column
+    calibration_1_valve,             # value of valve column
+    calibration_2_valve,             # value of valve column
+    calibration_3_valve,             # value of valve column
+    noaa_cylinder_co2_concentration, # ppm
+    noaa_cylinder_isotope_ratio,     # ppt
+    calibration_isotope_ratio,       # ppt
+    valve_column_name = 'valve_number',
+    raw_12c_colname = 'Conc12C_Avg',
+    raw_13c_colname = 'Conc13C_Avg'
 )
 {
     if (!is.exdf(tdl_cycle)) {
@@ -26,6 +24,10 @@ process_tdl_cycle_erml <- function(
     required_variables[[raw_13c_colname]] <- 'ppm'
 
     check_required_variables(tdl_cycle, required_variables)
+
+    # Get the values of constants from `constants.R`
+    R_VPDB <- ISOTOPE_CONSTANTS$R_VPDB   # dimensionless
+    f_other <- ISOTOPE_CONSTANTS$f_other # dimensionless
 
     # Make a correction by subtracting the carbon concentrations measured in a
     # line that should have no carbon
@@ -172,15 +174,18 @@ process_tdl_cycle_erml <- function(
         c('process_tdl_cycle_erml', 'fitted_13c_values',   'ppm')
     )
 
-    # Determine the total mixing and isotope ratios from the calibrated 12C and
-    # 13C concentrations using Equations A.1 and A.2 from Griffis et al.
-    # Agricultural and Forest Meteorology 124, 15-29 (2004)
-    # (https://doi.org/10.1016/j.agrformet.2004.01.009).
+    # Determine the raw and calibrated values of total CO2 and delta 13C
+    tdl_cycle[, 'total_CO2_raw'] <-
+        total_CO2(tdl_cycle[, raw_12c_colname], tdl_cycle[, raw_13c_colname])
+
     tdl_cycle[, 'total_CO2'] <-
-        tdl_cycle[, 'calibrated_13c'] + tdl_cycle[, 'calibrated_12c']
+        total_CO2(tdl_cycle[, 'calibrated_12c'], tdl_cycle[, 'calibrated_13c'])
+
+    tdl_cycle[, 'delta_C13_raw'] <-
+        delta_13C(tdl_cycle[, raw_12c_colname], tdl_cycle[, raw_13c_colname])
 
     tdl_cycle[, 'delta_C13'] <-
-        1000 * (tdl_cycle[, 'calibrated_13c'] / tdl_cycle[, 'calibrated_12c'] / R_VPDB - 1)
+        delta_13C(tdl_cycle[, 'calibrated_12c'], tdl_cycle[, 'calibrated_13c'])
 
     # Document the columns that were added to the cycle data
     tdl_cycle <- document_variables(
@@ -189,7 +194,9 @@ process_tdl_cycle_erml <- function(
         c('process_tdl_cycle_erml', 'zero_corrected_13c', 'ppm'),
         c('process_tdl_cycle_erml', 'calibrated_12c',     'ppm'),
         c('process_tdl_cycle_erml', 'calibrated_13c',     'ppm'),
+        c('process_tdl_cycle_erml', 'total_CO2_raw',      'ppm'),
         c('process_tdl_cycle_erml', 'total_CO2',          'ppm'),
+        c('process_tdl_cycle_erml', 'delta_C13_raw',      'ppt'),
         c('process_tdl_cycle_erml', 'delta_C13',          'ppt')
     )
 

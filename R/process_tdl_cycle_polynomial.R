@@ -3,8 +3,6 @@ process_tdl_cycle_polynomial <- function(
     poly_order,
     reference_tanks,
     reference_tank_time_points = NA,
-    f_other = 0.00474,
-    R_VPDB = 0.0111797,
     valve_column_name = 'valve_number',
     raw_12c_colname = 'Conc12C_Avg',
     raw_13c_colname = 'Conc13C_Avg'
@@ -118,14 +116,18 @@ process_tdl_cycle_polynomial <- function(
     tdl_cycle[, 'calibrated_13c'] <-
         stats::predict(fit_13C, data.frame(measured_13C = tdl_cycle[, raw_13c_colname]))
 
-    # Determine the total mixing and isotope ratios from the calibrated 12C and
-    # 13C concentrations
+    # Determine the raw and calibrated values of total CO2 and delta 13C
+    tdl_cycle[, 'total_CO2_raw'] <-
+        total_CO2(tdl_cycle[, raw_12c_colname], tdl_cycle[, raw_13c_colname])
+
     tdl_cycle[, 'total_CO2'] <-
-        tdl_cycle[, 'calibrated_13c'] + tdl_cycle[, 'calibrated_12c']
+        total_CO2(tdl_cycle[, 'calibrated_12c'], tdl_cycle[, 'calibrated_13c'])
+
+    tdl_cycle[, 'delta_C13_raw'] <-
+        delta_13C(tdl_cycle[, raw_12c_colname], tdl_cycle[, raw_13c_colname])
 
     tdl_cycle[, 'delta_C13'] <-
-        1000 * (tdl_cycle[, 'calibrated_13c'] / tdl_cycle[, 'calibrated_12c'] / R_VPDB - 1)
-
+        delta_13C(tdl_cycle[, 'calibrated_12c'], tdl_cycle[, 'calibrated_13c'])
 
     ## FORMATTING AND RETURNING RESULTS
 
@@ -149,7 +151,7 @@ process_tdl_cycle_polynomial <- function(
 
     # Create an exdf object from the numeric vector
     coeff_exdf <- exdf(as.data.frame(as.list(coeff)))
-    coeff_exdf$categories[1, 1:3] <- 'process_tdl_cycle_n_point'
+    coeff_exdf$categories[1, 1:3] <- 'process_tdl_cycle_polynomial'
     coeff_exdf$categories[1, seq(4, 4 + poly_order)] <- '12C coefficients'
     coeff_exdf$categories[1, seq(5 + poly_order, 5 + 2 * poly_order)] <- '13C coefficients'
     coeff_exdf$units$cycle_num <- tdl_cycle$units$cycle_num
@@ -158,10 +160,12 @@ process_tdl_cycle_polynomial <- function(
     # Document the columns that were just added
     tdl_cycle <- document_variables(
         tdl_cycle,
-        c('process_tdl_cycle_n_point', 'calibrated_12c', 'ppm'),
-        c('process_tdl_cycle_n_point', 'calibrated_13c', 'ppm'),
-        c('process_tdl_cycle_n_point', 'total_CO2',      'ppm'),
-        c('process_tdl_cycle_n_point', 'delta_C13',      'ppt')
+        c('process_tdl_cycle_polynomial', 'calibrated_12c', 'ppm'),
+        c('process_tdl_cycle_polynomial', 'calibrated_13c', 'ppm'),
+        c('process_tdl_cycle_polynomial', 'total_CO2_raw',  'ppm'),
+        c('process_tdl_cycle_polynomial', 'total_CO2',      'ppm'),
+        c('process_tdl_cycle_polynomial', 'delta_C13_raw',  'ppt'),
+        c('process_tdl_cycle_polynomial', 'delta_C13',      'ppt')
     )
 
     return(list(
