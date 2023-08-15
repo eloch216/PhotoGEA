@@ -19,6 +19,26 @@ for the next release.
 # UNRELEASED
 
 - Added a new convenience function for printing plot objects: `pdf_print`
+- Added and/or documented several functions related to isotope discrimination
+  measurements:
+  - `calculate_gamma_star`
+  - `calculate_gm_busch`
+  - `calculate_gm_ubierna`
+  - `calculate_isotope_discrimination`
+  - `calculate_leakiness_ubierna`
+  - `calculate_ternary_correction`
+  - `get_oxygen_from_preamble`
+  - `get_sample_valve_from_filename`
+  - `pair_gasex_and_tdl`
+- Renamed some variables related to isotope measurements; the new terms are
+  more consistent with the way these quantities are typically described:
+  - `total_isotope_ratio` was renamed to `delta_13C`
+  - `total_mixing_ratio` was renamed to `total_CO2`
+- Removed a function that was specific to one user
+  (`batch_get_genotype_info_from_licor_filename`).
+- Added a new R file (`constants.R`) to store the values of some constants that
+  appear in multiple functions; this will help ensure that consistent values
+  are used in each instance.
 
 # PhotoGEA VERSION 0.8.0 (2023-04-30)
 
@@ -39,6 +59,7 @@ for the next release.
     `cj_crossover_max` to better reflect their purpose.
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/68
+  - https://github.com/eloch216/PhotoGEA/pull/69
 
 # PhotoGEA VERSION 0.7.1 (2023-01-11)
 
