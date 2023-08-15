@@ -25,7 +25,7 @@
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     rd_column_name = 'Rd',
     t_column_name = 't'
-)
+  )
 }
 
 \arguments{
@@ -87,11 +87,6 @@
 }
 
 \details{
-  This function uses the comprehensive model for photosynthetic discrimination
-  against 13C in C3 plants, as described in Ubierna et al. (2018). In
-  particular, the following equations from that source are implemented in the
-  code:
-
   This function uses the model for photosynthetic discrimination against 13C in
   C4 plants to determine leakiness values, as described in Ubierna et al.
   (2013). In particular, the following equations from that source are

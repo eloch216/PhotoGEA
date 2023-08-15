@@ -1,32 +1,34 @@
-\name{calculate_gm_ubierna}
+\name{calculate_gm_busch}
 
-\alias{calculate_gm_ubierna}
+\alias{calculate_gm_busch}
 
 \title{Calculate mesophyll conductance to CO2 diffusion}
 
 \description{
   Calculates mesophyll conductance to CO2 diffusion (\code{gmc}) from combined
-  gas exchange and isotope discrimination measurements as described in Ubierna
-  et al. (2018). This function can accomodate alternative colum names for the
+  gas exchange and isotope discrimination measurements as described in Busch
+  et al. (2020). This function can accomodate alternative colum names for the
   variables taken from \code{exdf_obj}; it also checks the units of each
   required column and will produce an error if any units are incorrect.
 }
 
 \usage{
-  calculate_gm_ubierna(
+  calculate_gm_busch(
     exdf_obj,
     e = -3,
     f = 11,
+    e_star_equation = 20,
+    gm_type = 'dis',
     a_bar_column_name = 'a_bar',
     a_column_name = 'A',
     ci_column_name = 'Ci',
     co2_s_column_name = 'CO2_s',
     csurface_column_name = 'Csurface',
     delta_c13_r_column_name = 'delta_C13_r',
+    delta_obs_growth_column_name = 'Delta_obs_growth',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
     rd_column_name = 'Rd',
-    total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
   )
 }
@@ -40,6 +42,20 @@
 
   \item{f}{
     The isotopic fractionation during photorespiration in \code{ppt}.
+  }
+
+  \item{e_star_equation}{
+    The equation from Busch et al. (2020) to use for calculating \code{e_star};
+    must be \code{19} or \code{20}.
+  }
+
+  \item{gm_type}{
+    Determines whether day respiration is assumed to be isotopically connected
+    to the CBB cycle (\code{gm_type = 'con'}) or isotopically disconnected from
+    the CBB cycle (\code{gm_type = 'dis'}). This choice will determine which
+    equations are used to calculate mesophyll conductance; when \code{gm_type}
+    is \code{'con'}, Equations 2 and 21 will be used; otherwise, Equations 13
+    and 22 will be used.
   }
 
   \item{a_bar_column_name}{
@@ -76,6 +92,13 @@
     ratio in the reference line (incoming air) in \code{ppt}.
   }
 
+  \item{delta_obs_growth_column_name}{
+    The name of the column in \code{exdf_obj} that contains the observed
+    discrimination under the typical CO2 concentration in the plant's
+    environment during its growth (in \code{ppt}). This is only required when
+    using Equation 20 for \code{e_star} (see \code{e_star_equation}).
+  }
+
   \item{delta_obs_tdl_column_name}{
     The name of the column in \code{exdf_obj} that contains the observed isotope
     discrimination values in \code{ppt}.
@@ -93,11 +116,6 @@
     respiration in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{total_pressure_column_name}{
-    The name of the column in \code{exdf_obj} that contains the total pressure
-    in \code{bar}.
-  }
-
   \item{t_column_name}{
     The name of the column in \code{exdf_obj} that contains the ternary
     correction factor (\code{dimensionless}). Values of \code{t} are typically
@@ -106,42 +124,48 @@
 }
 
 \details{
-  This function uses the comprehensive model for photosynthetic discrimination
-  against 13C in C3 plants to calculate mesophyll conductance, as described in
-  Ubierna et al. (2018). In particular, the following equations from that source
-  are implemented in the code:
+  This function uses a model for photosynthetic discrimination against 13C in
+  C3 plants to determine mesophyll conductance values as described in Busch et
+  al. (2020). That paper provides two alternate ways to calculate \code{e_star},
+  and two alternate ways to calculate mesophyll conductance \code{gmc}; this
+  function allows the user to choose between them. In more detail:
 
   \itemize{
-    \item Isotopic fractionation due to day respiration (\code{e_prime}) is
-          calculated using Equations 28 and 30.
-    \item Isotopic discrimination due to photorespiration (\code{Delta_f}), due
-          to day respiration (\code{Delta_e}), and that would occur if Ci = Cc
-          in the absence of any respiratory fractionation (\code{Delta_i}) are
-          calculated using Equations 34, 33, and 31, respectively.
-    \item Mesophyll conductance to CO2 diffusion (\code{gmc}) is calculated
-          using Equation 44. This equation is broken up into two factors called
-          \code{Delta_difference} and \code{equation_top} which are separately
-          returned in the output from \code{calculate_gm_ubierna}.
+    \item Isotopic fractionation due to day respiration
+          (\code{e_prime = e + e_star}) is calculated with \code{e_star} given
+          by either Equation 19 or 20 depending on the value of
+          \code{e_star_equation}.
+    \item Isotopic discrimination assuming infinite mesophyll conductance
+          (\code{Delta_i}) is calculated by setting \code{Cc = Ci} in either
+          Equation 2 or 13, depending on the value of \code{gm_type}.
+    \item Mesophyll conductance to CO2 (\code{gmc}) is calculated using either
+          Equation 21 or 22, depending on the value of \code{gm_type}.
   }
 
-  For an alternative method for calculating \code{gmc}, see
-  \code{\link{calculate_gm_busch}}.
+  Note 1: Setting \code{e_star_equation = 19} and \code{gm_type = 'con'} should
+  produce identical or similar results to \code{\link{calculate_gm_ubierna}}.
+
+  Note 2: Using \code{e_star_equation = 20} and \code{gm_type = 'dis'} is
+  expected to be more accurate, as discussed in Busch et al. (2020); however, be
+  aware that this method requires a value for \code{Delta_obs_growth}, which may
+  not always be available unless it is intentionally measured.
 
   References:
 
-  Ubierna, N., Holloway-Phillips, M.-M. and Farquhar, G. D. "Using Stable Carbon
-  Isotopes to Study C3 and C4 Photosynthesis: Models and Calculations." in
-  Photosynthesis: Methods and Protocols (ed. Covshoff, S.) 155–196 (Springer,
-  2018) [\doi{10.1007/978-1-4939-7786-4_10}].
+  Busch, F. A., Holloway-Phillips, M., Stuart-Williams, H. and Farquhar, G. D.
+  "Revisiting carbon isotope discrimination in C3 plants shows respiration rules
+  when photosynthesis is low." Nat. Plants 6, 245–258 (2020)
+  [\doi{10.1038/s41477-020-0606-6}].
 }
 
 \value{
   An \code{exdf} object based on \code{exdf_obj} that includes the following
   additional columns, calculated as described above: \code{e_prime},
-  \code{Delta_i}, \code{Delta_e}, \code{Delta_f}, \code{Delta_difference},
-  \code{equation_top}, and \code{gmc}. The category for each of these new
-  columns is \code{calculate_gm_ubierna} to indicate that they were created
-  using this function.
+  \code{e_star}, \code{Delta_i}, and \code{gmc}, as well as the values of a few
+  intermediate calculations such as \code{Delta_i_term_1} and
+  \code{Delta_i_term_2}. The category for each of these new columns is
+  \code{calculate_gm_busch} to indicate that they were created using this
+  function.
 }
 
 \concept{exdf}

@@ -38,32 +38,40 @@ calculate_gm_busch <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_bar_column_name]]            <- 'ppt'
-    required_variables[[a_column_name]]                <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ci_column_name]]               <- 'micromol mol^(-1)'
-    required_variables[[co2_s_column_name]]            <- 'micromol mol^(-1)'
-    required_variables[[csurface_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[delta_c13_r_column_name]]      <- 'ppt'
-    required_variables[[delta_obs_growth_column_name]] <- 'ppt'
-    required_variables[[delta_obs_tdl_column_name]]    <- 'ppt'
-    required_variables[[gamma_star_column_name]]       <- 'micromol mol^(-1)'
-    required_variables[[rd_column_name]]               <- 'micromol m^(-2) s^(-1)'
-    required_variables[[t_column_name]]                <- 'dimensionless'
+    required_variables[[a_bar_column_name]]         <- 'ppt'
+    required_variables[[a_column_name]]             <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ci_column_name]]            <- 'micromol mol^(-1)'
+    required_variables[[co2_s_column_name]]         <- 'micromol mol^(-1)'
+    required_variables[[csurface_column_name]]      <- 'micromol mol^(-1)'
+    required_variables[[delta_c13_r_column_name]]   <- 'ppt'
+    required_variables[[delta_obs_tdl_column_name]] <- 'ppt'
+    required_variables[[gamma_star_column_name]]    <- 'micromol mol^(-1)'
+    required_variables[[rd_column_name]]            <- 'micromol m^(-2) s^(-1)'
+    required_variables[[t_column_name]]             <- 'dimensionless'
+
+    if (e_star_equation == 20) {
+        required_variables[[delta_obs_growth_column_name]] <- 'ppt'
+    }
 
     check_required_variables(exdf_obj, required_variables)
 
     # Extract some important columns
-    A                <- exdf_obj[, a_column_name]                # micromol / m^2 / s
-    a_bar            <- exdf_obj[, a_bar_column_name]            # ppt
-    Ca               <- exdf_obj[, co2_s_column_name]            # micromol / mol
-    Ci               <- exdf_obj[, ci_column_name]               # micromol / mol
-    Cs               <- exdf_obj[, csurface_column_name]         # micromol / mol
-    delta_Ca_meas    <- exdf_obj[, delta_c13_r_column_name]      # ppt
-    Delta_obs_growth <- exdf_obj[, delta_obs_growth_column_name] # ppt
-    Delta_obs_meas   <- exdf_obj[, delta_obs_tdl_column_name]    # ppt
-    Gamma_star       <- exdf_obj[, gamma_star_column_name]       # micromol / mol
-    Rd               <- exdf_obj[, rd_column_name]               # micromol / m^2 / s
-    t                <- exdf_obj[, t_column_name]                # dimensionless
+    A              <- exdf_obj[, a_column_name]             # micromol / m^2 / s
+    a_bar          <- exdf_obj[, a_bar_column_name]         # ppt
+    Ca             <- exdf_obj[, co2_s_column_name]         # micromol / mol
+    Ci             <- exdf_obj[, ci_column_name]            # micromol / mol
+    Cs             <- exdf_obj[, csurface_column_name]      # micromol / mol
+    delta_Ca_meas  <- exdf_obj[, delta_c13_r_column_name]   # ppt
+    Delta_obs_meas <- exdf_obj[, delta_obs_tdl_column_name] # ppt
+    Gamma_star     <- exdf_obj[, gamma_star_column_name]    # micromol / mol
+    Rd             <- exdf_obj[, rd_column_name]            # micromol / m^2 / s
+    t              <- exdf_obj[, t_column_name]             # dimensionless
+
+    Delta_obs_growth <- if (e_star_equation == 20) {
+        exdf_obj[, delta_obs_growth_column_name] # ppt
+    } else {
+        NULL
+    }
 
     # Get the values of some constants that are defined in `constants.R`
     a_b             <- ISOTOPE_CONSTANTS$a_b             # ppt
@@ -175,34 +183,30 @@ calculate_gm_busch <- function(
 
     # Store the calculated quantities in the exdf object
     exdf_obj[, 'alpha_R'] <- alpha_R
-    exdf_obj[, 'a_bar'] <- a_bar
     exdf_obj[, 'Delta_i'] <- Delta_i
     exdf_obj[, 'Delta_i_term_1']  <- Delta_i_term_1
     exdf_obj[, 'Delta_i_term_2']  <- Delta_i_term_2
+    exdf_obj[, 'e_prime'] <- e_prime
     exdf_obj[, 'e_star'] <- e_star
     exdf_obj[, 'e_star_equation'] <- e_star_equation
-    exdf_obj[, 'Gamma_star'] <- Gamma_star
     exdf_obj[, 'gmc'] <- gmc
     exdf_obj[, 'gm_bottom'] <- gm_bottom
     exdf_obj[, 'gm_top'] <- gm_top
     exdf_obj[, 'gm_type'] <- gm_type
-    exdf_obj[, 't'] <- t
 
     # # Document the columns that were added and return the exdf
     document_variables(
         exdf_obj,
         c('calculate_gm_busch', 'alpha_R',         'dimensionless'),
-        c('calculate_gm_busch', 'a_bar',           'ppt'),
         c('calculate_gm_busch', 'Delta_i',         'ppt'),
         c('calculate_gm_busch', 'Delta_i_term_1',  'ppt'),
         c('calculate_gm_busch', 'Delta_i_term_2',  'ppt'),
+        c('calculate_gm_busch', 'e_prime',         'ppt'),
         c('calculate_gm_busch', 'e_star',          'ppt'),
         c('calculate_gm_busch', 'e_star_equation', ''),
-        c('calculate_gm_busch', 'Gamma_star',      'micromol mol^(-1)'),
         c('calculate_gm_busch', 'gmc',             'mol m^(-2) s^(-1)'),
         c('calculate_gm_busch', 'gm_bottom',       'ppt * micromol / mol'),
         c('calculate_gm_busch', 'gm_top',          'ppt * micromol / m^2 / s'),
-        c('calculate_gm_busch', 'gm_type',         ''),
-        c('calculate_gm_busch', 't',               'dimensionless')
+        c('calculate_gm_busch', 'gm_type',         '')
     )
 }

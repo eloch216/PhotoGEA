@@ -8,7 +8,6 @@ calculate_isotope_discrimination <- function(
     h2o_s_column_name = 'H2O_s',
     tdl_12C_r_column_name = 'calibrated_12c_r',
     tdl_12C_s_column_name = 'calibrated_12c_s'
-
 )
 {
     if (!is.exdf(exdf_obj)) {
