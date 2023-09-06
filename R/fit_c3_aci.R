@@ -128,7 +128,7 @@ fit_c3_aci <- function(
         if (any(is.na(assim$An))) {
             1e10 # return a huge value to penalize this set of parameter values
         } else {
-            sum((replicate_exdf[, 'A'] - assim$An)^2)
+            sum((replicate_exdf[, a_column_name] - assim$An)^2)
         }
     }
 
