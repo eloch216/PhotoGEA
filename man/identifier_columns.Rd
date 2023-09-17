@@ -4,7 +4,7 @@
 \alias{identifier_columns.data.frame}
 \alias{identifier_columns.exdf}
 
-\title{Make sure required variables exist}
+\title{Find columns that have a single value across all rows}
 
 \description{
   Identifies columns that have a single value across all rows and returns them.

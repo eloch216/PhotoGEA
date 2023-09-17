@@ -35,15 +35,21 @@
 }
 
 \examples{
+# Example: Read data from a Licor log file and get the oxygen information from
+# the preamble
 
-\dontrun{
+# Read the file
+licor_data <- read_gasex_file(
+  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+)
 
-# In this example, licor_files is a list of exdf objects representing Licor gas
-# exchange data as loaded with the `read_gasex_file` function.
-licor_files <- lapply(licor_files, function(exdf_obj) {
-  get_oxygen_from_preamble(exdf_obj)
-})
-}
+# Here we can see the oxygen percentage in the preamble
+str(licor_data$preamble)
+
+# Include the oxygen info as a column in the file
+licor_data <- get_oxygen_from_preamble(licor_data)
+
+licor_data[, c('replicate', 'oxygen'), TRUE]
 }
 
 \concept{exdf}

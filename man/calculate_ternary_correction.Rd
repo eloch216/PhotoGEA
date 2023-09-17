@@ -37,7 +37,8 @@
 
   \item{csurface_column_name}{
     The name of the column in \code{exdf_obj} that contains the CO2
-    concentration at the leaf surface in \code{micromol mol^(-1)}.
+    concentration at the leaf surface in \code{micromol mol^(-1)}. This is
+    typically calculated using \code{\link{calculate_gas_properties}}.
   }
 
   \item{e_column_name}{
@@ -99,6 +100,29 @@
   \code{t}, \code{a_bar}, and \code{alpha_ac} calculated as described above.
   The category of each new column is \code{calculate_ternary_correction} to
   indicate that it was created using this function.
+}
+
+\examples{
+## In this example we load a gas exchange data file and then calculate the
+## ternary correction factor
+
+# Read the gas exchange data
+licor_data <- read_gasex_file(
+  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+  'time'
+)
+
+# Calculate total pressure (needed for calculate_gas_properties)
+licor_data <- calculate_total_pressure(licor_data)
+
+# Calculate Csurface (needed for calculate_ternary_correction)
+licor_data <- calculate_gas_properties(licor_data)
+
+# Calculate ternary correction
+licor_data <- calculate_ternary_correction(licor_data)
+
+# View some of the results
+licor_data[, c('replicate', 'A', 'E', 'Csurface', 't', 'a_bar', 'alpha_ac')]
 }
 
 \concept{exdf}

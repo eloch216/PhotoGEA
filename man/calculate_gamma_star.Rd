@@ -2,7 +2,7 @@
 
 \alias{calculate_gamma_star}
 
-\title{Calculate gas properties that are typically not included in Licor files}
+\title{Calculate Gamma_star from Rubisco specificity}
 
 \description{
   Calculates the CO2 compensation point in the absence of day respiration
@@ -137,133 +137,151 @@
 }
 
 \examples{
-  # Example 1: Calculate Gamma_star at 21% and 2% oxygen for a Rubisco whose
-  # specificity was measured to be 100 M / M at 25 degrees C.
+# Example 1: Calculate Gamma_star for each point in a gas exchange log file
+licor_data <- read_gasex_file(
+  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+)
 
-  exdf_obj <- calculate_gamma_star(
-    exdf(
-      data.frame(
-        oxygen = c(2, 21),
-        specificity_at_tleaf = c(100, 100),
-        TleafCnd = c(25, 25)
-      ),
-      data.frame(
-        oxygen = 'percent',
-        specificity_at_tleaf = 'M / M',
-        TleafCnd = 'degrees C'
-      )
-    )
-  )
+licor_data <- get_oxygen_from_preamble(licor_data)
 
-  exdf_obj[, c('specificity_gas_basis', 'oxygen', 'Gamma_star'), TRUE]
+licor_data <- set_variable(
+    licor_data,
+    'specificity_at_tleaf',
+    'M / M',
+    value = 90
+)
 
-  # Example 2: Here we recreate Figure 1 from Long, S. P. "Modification of the
-  # response of photosynthetic productivity to rising temperature by atmospheric
-  # CO2 concentrations: Has its importance been underestimated?" Plant, Cell and
-  # Environment 14, 729–739 (1991). This is a fairly complicated example where
-  # Arrhenius constants for Rubisco parameters are determined by fitting
-  # published data and then used to determine the Rubisco specificity across a
-  # range of temperatures.
+licor_data <- calculate_gamma_star(licor_data)
 
-  # Specify leaf temperature and oxygen concentration
-  leaf_temp <- seq(0, 50, by = 0.1)
+licor_data[, c('specificity_gas_basis', 'oxygen', 'Gamma_star'), TRUE]
 
-  exdf_obj <- exdf(
+# Example 2: Calculate Gamma_star at 21% and 2% oxygen for a Rubisco whose
+# specificity was measured to be 100 M / M at 25 degrees C.
+
+exdf_obj <- calculate_gamma_star(
+  exdf(
     data.frame(
-      oxygen = rep_len(21, length(leaf_temp)),
-      TleafCnd = leaf_temp
+      oxygen = c(2, 21),
+      specificity_at_tleaf = c(100, 100),
+      TleafCnd = c(25, 25)
     ),
     data.frame(
       oxygen = 'percent',
+      specificity_at_tleaf = 'M / M',
       TleafCnd = 'degrees C'
     )
   )
+)
 
-  # Get Arrhenius constants for Rubisco parameters using data from Table 2 of
-  # Jordan, D. B. and Ogren, W. L. "The CO2/O2 specificity of ribulose
-  # 1,5-bisphosphate carboxylase/oxygenase" Planta 161, 308–313 (1984).
-  rubisco_info <- data.frame(
-    temperature = c(7,    12,   15,   25,   30,   35),
-    Vc          = c(0.13, 0.36, 0.63, 1.50, 1.90, 2.90),
-    Kc          = c(2,    3,    4,    11,   14,   19),
-    Ko          = c(550,  510,  510,  500,  600,  540),
-    Vo          = c(0.24, 0.48, 0.69, 0.77, 1.1,  1.3)
+exdf_obj[, c('specificity_gas_basis', 'oxygen', 'Gamma_star'), TRUE]
+
+# Example 3: Here we recreate Figure 1 from Long, S. P. "Modification of the
+# response of photosynthetic productivity to rising temperature by atmospheric
+# CO2 concentrations: Has its importance been underestimated?" Plant, Cell and
+# Environment 14, 729–739 (1991). This is a fairly complicated example where
+# Arrhenius constants for Rubisco parameters are determined by fitting
+# published data and then used to determine the Rubisco specificity across a
+# range of temperatures.
+
+# Specify leaf temperature and oxygen concentration
+leaf_temp <- seq(0, 50, by = 0.1)
+
+exdf_obj <- exdf(
+  data.frame(
+    oxygen = rep_len(21, length(leaf_temp)),
+    TleafCnd = leaf_temp
+  ),
+  data.frame(
+    oxygen = 'percent',
+    TleafCnd = 'degrees C'
   )
+)
 
-  rubisco_info$x <- 1 / (8.314e-3 * (rubisco_info$temperature + 273.15))
+# Get Arrhenius constants for Rubisco parameters using data from Table 2 of
+# Jordan, D. B. and Ogren, W. L. "The CO2/O2 specificity of ribulose
+# 1,5-bisphosphate carboxylase/oxygenase" Planta 161, 308–313 (1984).
+rubisco_info <- data.frame(
+  temperature = c(7,    12,   15,   25,   30,   35),
+  Vc          = c(0.13, 0.36, 0.63, 1.50, 1.90, 2.90),
+  Kc          = c(2,    3,    4,    11,   14,   19),
+  Ko          = c(550,  510,  510,  500,  600,  540),
+  Vo          = c(0.24, 0.48, 0.69, 0.77, 1.1,  1.3)
+)
 
-  lm_Vc <- stats::lm(log(Vc) ~ x, data = rubisco_info)
-  lm_Kc <- stats::lm(log(Kc) ~ x, data = rubisco_info)
-  lm_Ko <- stats::lm(log(Ko) ~ x, data = rubisco_info)
-  lm_Vo <- stats::lm(log(Vo) ~ x, data = rubisco_info)
+rubisco_info$x <- 1 / (8.314e-3 * (rubisco_info$temperature + 273.15))
 
-  arrhenius_info <- list(
-    Vc = list(
-      c = as.numeric(lm_Vc$coefficients[1]),
-      Ea = -as.numeric(lm_Vc$coefficients[2]),
-      units = 'micromol / mg / min'
-    ),
-    Kc = list(
-      c = as.numeric(lm_Kc$coefficients[1]),
-      Ea = -as.numeric(lm_Kc$coefficients[2]),
-      units = 'microM'
-    ),
-    Ko = list(
-      c = as.numeric(lm_Ko$coefficients[1]),
-      Ea = -as.numeric(lm_Ko$coefficients[2]),
-      units = 'microM'
-    ),
-    Vo = list(
-      c = as.numeric(lm_Vo$coefficients[1]),
-      Ea = -as.numeric(lm_Vo$coefficients[2]),
-      units = 'micromol / mg / min'
-    )
+lm_Vc <- stats::lm(log(Vc) ~ x, data = rubisco_info)
+lm_Kc <- stats::lm(log(Kc) ~ x, data = rubisco_info)
+lm_Ko <- stats::lm(log(Ko) ~ x, data = rubisco_info)
+lm_Vo <- stats::lm(log(Vo) ~ x, data = rubisco_info)
+
+arrhenius_info <- list(
+  Vc = list(
+    c = as.numeric(lm_Vc$coefficients[1]),
+    Ea = -as.numeric(lm_Vc$coefficients[2]),
+    units = 'micromol / mg / min'
+  ),
+  Kc = list(
+    c = as.numeric(lm_Kc$coefficients[1]),
+    Ea = -as.numeric(lm_Kc$coefficients[2]),
+    units = 'microM'
+  ),
+  Ko = list(
+    c = as.numeric(lm_Ko$coefficients[1]),
+    Ea = -as.numeric(lm_Ko$coefficients[2]),
+    units = 'microM'
+  ),
+  Vo = list(
+    c = as.numeric(lm_Vo$coefficients[1]),
+    Ea = -as.numeric(lm_Vo$coefficients[2]),
+    units = 'micromol / mg / min'
   )
+)
 
-  # Get temperature-dependent values of Rubisco parameters using Arrhenius
-  # equations
-  exdf_obj <- calculate_arrhenius(
-    exdf_obj,
-    arrhenius_info
-  )
+# Get temperature-dependent values of Rubisco parameters using Arrhenius
+# equations
+exdf_obj <- calculate_arrhenius(
+  exdf_obj,
+  arrhenius_info
+)
 
-  # Calculate temperature-dependent specificity values
-  exdf_obj <- set_variable(
-    exdf_obj,
-    'specificity_at_tleaf',
-    units = 'M / M',
-    value = exdf_obj[, 'Vc'] * exdf_obj[, 'Ko'] /
-      (exdf_obj[, 'Vo'] * exdf_obj[, 'Kc'])
-  )
+# Calculate temperature-dependent specificity values
+exdf_obj <- set_variable(
+  exdf_obj,
+  'specificity_at_tleaf',
+  units = 'M / M',
+  value = exdf_obj[, 'Vc'] * exdf_obj[, 'Ko'] /
+    (exdf_obj[, 'Vo'] * exdf_obj[, 'Kc'])
+)
 
-  # Calculate Gamma_star and Henry constants
-  exdf_obj <- calculate_gamma_star(exdf_obj)
+# Calculate Gamma_star and Henry constants
+exdf_obj <- calculate_gamma_star(exdf_obj)
 
-  # Make a plot similar to Figure 1 from Long (1991)
-  lattice::xyplot(
-    specificity_at_tleaf + H_CO2 / H_O2 ~ TleafCnd,
-    data = exdf_obj$main_data,
-    auto = TRUE,
-    grid = TRUE,
-    type = 'l',
-    xlim = c(0, 50),
-    ylim = c(0, 250),
-    xlab = "Temperature [ degrees C ]",
-    ylab = "Rubisco specificity or ratio of Henry's constants (H_CO2 / H_O2)\n[ dimensionless ]"
-  )
+# Make a plot similar to Figure 1 from Long (1991)
+lattice::xyplot(
+  specificity_at_tleaf + H_CO2 / H_O2 ~ TleafCnd,
+  data = exdf_obj$main_data,
+  auto = TRUE,
+  grid = TRUE,
+  type = 'l',
+  xlim = c(0, 50),
+  ylim = c(0, 250),
+  xlab = "Temperature [ degrees C ]",
+  ylab = "Rubisco specificity or ratio of Henry's constants (H_CO2 / H_O2)\n[ dimensionless ]"
+)
 
-  # We can also make a plot of Gamma_star across this range
-  lattice::xyplot(
-    Gamma_star ~ TleafCnd,
-    data = exdf_obj$main_data,
-    auto = TRUE,
-    grid = TRUE,
-    type = 'l',
-    xlim = c(0, 50),
-    ylim = c(0, 120),
-    xlab = "Temperature [ degrees C ]",
-    ylab = paste('Gamma_star [', exdf_obj$units$Gamma_star, ']')
-  )
+# We can also make a plot of Gamma_star across this range
+lattice::xyplot(
+  Gamma_star ~ TleafCnd,
+  data = exdf_obj$main_data,
+  auto = TRUE,
+  grid = TRUE,
+  type = 'l',
+  xlim = c(0, 50),
+  ylim = c(0, 120),
+  xlab = "Temperature [ degrees C ]",
+  ylab = paste('Gamma_star [', exdf_obj$units$Gamma_star, ']')
+)
 }
 
 \concept{exdf}

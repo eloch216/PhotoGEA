@@ -30,6 +30,8 @@ for the next release.
   - `get_oxygen_from_preamble`
   - `get_sample_valve_from_filename`
   - `pair_gasex_and_tdl`
+- Added two new example data files (`licor_for_gm_site11.xslx` and
+  `tdl_for_gm.dat`) for use in examples and vignettes.
 - Renamed some variables related to isotope measurements; the new terms are
   more consistent with the way these quantities are typically described:
   - `total_isotope_ratio` was renamed to `delta_13C`

@@ -61,18 +61,21 @@
 }
 
 \examples{
+## In this example we load a gas exchange data file and determine the TDL valve
+## numbers from its file name
 
-\dontrun{
+# Read the gas exchange data
+licor_data <- read_gasex_file(
+  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+)
 
-# In this example, licor_files is a list of exdf objects representing Licor gas
-# exchange data as loaded with the `read_gasex_file` function.
-licor_files <- lapply(licor_files, function(exdf_obj) {
-  get_sample_valve_from_filename(exdf_obj, list(
-    '13' = 12, # The reference valve is 12 when the sample valve is 13
-    '11' = 10  # The reference valve is 10 when the sample valve is 11
-  ))
-})
+# Get TDL valve information from Licor file name; for this TDL system, the
+# reference valve is 12 when the sample valve is 11
+licor_data <- get_sample_valve_from_filename(licor_data, list('11' = 12))
+
+# View the results
+licor_data[, c('obs', 'valve_number_s', 'valve_number_r')]
 }
-}
+
 
 \concept{exdf}

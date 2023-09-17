@@ -2,7 +2,7 @@
 
 \alias{read_licor_6800_plaintext}
 
-\title{Reading a plaintext Licor LI-6800 log file}
+\title{Reading a Licor LI-6800 plaintext log file}
 
 \description{
   Tool for reading plaintext log files created by Licor LI-6800 instruments and

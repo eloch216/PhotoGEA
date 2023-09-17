@@ -2,7 +2,7 @@
 
 \alias{process_tdl_cycle_polynomial}
 
-\title{Process cycles from the ERML TDL}
+\title{Process TDL cycles using a polynomial correction method}
 
 \description{
   Uses the 12C and 13C signal from the calibration lines of a tunable diode
