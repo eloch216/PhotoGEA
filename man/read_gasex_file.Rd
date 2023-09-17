@@ -13,6 +13,7 @@
   read_gasex_file(
     file_name,
     timestamp_colname = NA,
+    posix_options = list(),
     file_type = 'AUTO',
     instrument_type = 'AUTO',
     \dots
@@ -26,7 +27,12 @@
 
   \item{timestamp_colname}{
     The name of the column that contains the timestamp of each measurement;
-    typically, this is \code{'time'}.
+    typically, this is something like \code{'time'} or \code{'TIMESTAMP'}.
+  }
+
+  \item{posix_options}{
+    Optional arguments to pass to \code{\link{as.POSIXlt}}; must be formatted as
+    a list of named elements. See details below for more information.
   }
 
   \item{file_type}{
@@ -60,7 +66,18 @@
 
   When reading a log file, it can be useful to identify the timestamp column so
   its values can be properly interpreted as \code{\link{POSIXlt}} objects. If
-  \code{timestamp_colname} is \code{NA}, this conversion will be skipped.
+  \code{timestamp_colname} is \code{NA}, this conversion will be skipped. By
+  default, \code{read_gasex_file} calls \code{\link{as.POSIXlt}} with
+  \code{origin = '1970-01-01'} and \code{tz = ''}. With these options, any
+  numeric timestamps (such as \code{1692386305.5}) will be interpreted as the
+  number of seconds since January 1, 1970 (the UNIX standard) and the time will
+  be expressed using the local system time. This works well in many situations.
+  However, if a log file was created in a different time zone than the local
+  one, it may be necessary to specify the time zone. This can be done via the
+  \code{posix_options} argument. For example, to interpret the timestamp as a
+  time in US Central time, set \code{posix_options = list(tz = 'US/Central')}.
+  This may be necessary when using \code{\link{pair_gasex_and_tdl}} to match
+  timestamps between different log files.
 
   When automatically determining the file type from its extension, the following
   rules are used:
