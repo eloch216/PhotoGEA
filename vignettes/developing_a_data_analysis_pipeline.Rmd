@@ -220,6 +220,8 @@ The `PhotoGEA` package includes the following functions for calculating the
 values of new variables from the values of variables that already exist in the
 data set:
 
+- `apply_gm`: Calculates values of the chloroplast or mesophyll CO~2~
+  concentration.
 - `calculate_arrhenius`: Calculates temperature-dependent values of
   photosynthetic parameters using Arrhenius exponents.
 - `calculate_ball_berry_index`: Calculates the Ball-Berry index from values of
@@ -229,11 +231,18 @@ data set:
   Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.
 - `calculate_c4_assimilation`: Calculate assimilation rates using S. von
   Caemmerer's model for C4 photosynthesis.
-- `apply_gm`: Calculates values of the chloroplast or mesophyll CO~2~
-  concentration.
+- `calculate_gamma_star`: Calculates the CO~2~ compensation point in the absence
+  of day respiration from the leaf temperature and Rubisco specificity.
 - `calculate_gas_properties`: Calculates gas properties that are not included in
   the default Licor log files, such as the H~2~O concentration at the leaf
   surface and the stomatal conductance to CO~2~.
+- `calculate_gm_busch` and `calculate_gm_ubierna`: Calculates mesophyll
+  conductance using two slightly different models.
+- `calculate_isotope_discrimination`: Calculates photosynthetic carbon isotope
+  discrimination.
+- `calculate_leakiness_ubierna`: Calculates bundle-sheath leakiness to CO~2~.
+- `calculate_ternary_correction`: Calculates ternary gas mixture correction
+  factors.
 - `calculate_total_pressure`: Calculates the total pressure in the Licor
   measurement chamber.
 

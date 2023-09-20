@@ -2,7 +2,7 @@
 
 \alias{organize_response_curve_data}
 
-\title{Check response curve data for common issues}
+\title{Reorganize response curve data for analysis and plotting}
 
 \description{
   Checks to make sure an \code{exdf} object representing response curve data

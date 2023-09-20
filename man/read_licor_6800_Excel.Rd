@@ -2,7 +2,7 @@
 
 \alias{read_licor_6800_Excel}
 
-\title{Reading a plaintext Licor LI-6800 log file}
+\title{Reading a Licor LI-6800 Excel log file}
 
 \description{
   Tool for reading Excel log files created by Licor LI-6800 instruments and

@@ -236,9 +236,7 @@ processed_tdl <- consolidate(by(
   raw_13c_colname = 'Conc13C_Avg',
   noaa_cylinder_co2_concentration = 294.996,
   noaa_cylinder_isotope_ratio = -8.40,
-  calibration_isotope_ratio = -11.505,
-  f_other = 0.00474,
-  R_VPDB = 0.0111797
+  calibration_isotope_ratio = -11.505
 ))
 ```
 
@@ -344,7 +342,7 @@ xyplot(
 # Processing TDL Cycles (With Removal and Smoothing)
 
 In [Processing TDL Cycles], we processed the full contents of the raw TDL file.
-However, it is typical to remove unreliable cycles and to apply smoothing
+However, users sometimes with to remove unreliable cycles or apply smoothing
 functions to some valves before processing the data. In this section, we
 demonstrate how to do this.
 
@@ -408,8 +406,13 @@ tdl_files_smooth <- tdl_files_clean
 # Apply the smoothing function to the 12C and 13C signal from each valve
 for (valve in valves_to_smooth) {
   for (column in c('Conc12C_Avg', 'Conc13C_Avg')) {
-    tdl_files_smooth <-
-      smooth_tdl_data(tdl_files_smooth, column, 'valve_number', valve, spline_smoothing_function)
+    tdl_files_smooth <- smooth_tdl_data(
+      tdl_files_smooth,
+      column,
+      'valve_number',
+      valve,
+      spline_smoothing_function
+    )
   }
 }
 ```
@@ -438,9 +441,7 @@ processed_smooth_tdl <- consolidate(by(
   raw_13c_colname = 'Conc13C_Avg',
   noaa_cylinder_co2_concentration = 294.996,
   noaa_cylinder_isotope_ratio = -8.40,
-  calibration_isotope_ratio = -11.505,
-  f_other = 0.00474,
-  R_VPDB = 0.0111797
+  calibration_isotope_ratio = -11.505
 ))
 ```
 

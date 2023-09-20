@@ -62,8 +62,8 @@ calculate_gas_properties <- function(
         c('calculate_gas_properties', 'SVPleaf',  'kPa'),
         c('calculate_gas_properties', 'H2O_i',    'mmol mol^(-1)'),
         c('calculate_gas_properties', 'RHleaf',   '%'),
-        c('calculate_gas_properties', 'gsc',      'mol mol^(-1)'),
-        c('calculate_gas_properties', 'gbc',      'mol mol^(-1)'),
+        c('calculate_gas_properties', 'gsc',      'mol m^(-2) s^(-1)'),
+        c('calculate_gas_properties', 'gbc',      'mol m^(-2) s^(-1)'),
         c('calculate_gas_properties', 'Csurface', 'micromol mol^(-1)')
     )
 }
