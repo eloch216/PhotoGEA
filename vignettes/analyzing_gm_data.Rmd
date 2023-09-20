@@ -808,6 +808,18 @@ Sometimes it may not be possible to estimate $\Delta^{obs}_{growth}$. In this
 case, set `e_star_equation = 19` when calling `calculate_gm_busch` or use
 `calculate_gm_ubierna` instead of `calculate_gm_busch`.
 
+## Saving Results
+
+You may want to use `write.csv` to save some or all of the results as `csv`
+files. For example, the following command will allow you to interactively
+choose an output filename for a `csv` file containing the combined gas exchange
+and TDL data, along with the calculated values of isotope discrimination and
+mesophyll conductance:
+
+```{r saving_csv_files, eval = FALSE}
+write.csv(licor_data, file.choose(), row.names = FALSE)
+```
+
 # Commands From This Document
 
 The following code chunk includes all the central commands used throughout this
