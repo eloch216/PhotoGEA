@@ -8,6 +8,18 @@ read_gasex_file <- function(
 )
 {
     # Some basic input checking
+    if (file_name == '') {
+        stop(
+            'The `file_name` input argument is an empty string. If ',
+            '`file_name` was generated using `system.file`, this means ',
+            'that the desired file could not be found.'
+        )
+    }
+
+    if (!file.exists(file_name)) {
+        stop('`', file_name, '` does not exist')
+    }
+
     if (!is.list(posix_options)) {
         stop('posix_options must be a list')
     }

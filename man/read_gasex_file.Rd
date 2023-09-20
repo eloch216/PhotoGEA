@@ -141,7 +141,7 @@
 # Example: Eeading a Licor Excel file that is included with the PhotoGEA
 # package. Here we specify 'time' as the name of the timestamp column.
 licor_file <- read_gasex_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
   'time'
 )
 

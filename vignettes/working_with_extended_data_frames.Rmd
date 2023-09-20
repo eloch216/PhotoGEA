@@ -188,7 +188,7 @@ Microsoft Excel file containing Licor measurements.
 
 ```{r}
 exdf_3 <- read_gasex_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 ```
 
@@ -420,8 +420,8 @@ The following is an example of code that accomplishes these steps:
 ```{r}
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA'),
-  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 # Load each file, storing the result in a list

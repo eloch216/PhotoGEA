@@ -20,6 +20,8 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    plantecophys
+    plantecophys,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/eloch216/PhotoGEA, https://eloch216.github.io/PhotoGEA/
+Config/testthat/edition: 3
