@@ -96,8 +96,8 @@ installation directory, and full paths to these files can be obtained with
 ```{r tdl_file_names}
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA'),
-  system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA')
+  system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA', mustWork = TRUE)
 )
 ```
 

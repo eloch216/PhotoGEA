@@ -57,8 +57,8 @@ library(lattice)
 
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA'),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 # Load the data from each file

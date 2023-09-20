@@ -167,8 +167,8 @@ installation directory, and full paths to these files can be obtained with
 ```{r licor_file_names}
 # Define a vector of paths to the files we wish to load
 licor_file_paths <- c(
-  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
-  system.file('extdata', 'licor_for_gm_site13.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'licor_for_gm_site13.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 ```
 
@@ -271,7 +271,7 @@ installation directory, and a full path to the file can be obtained with
 ```{r tdl_file_names}
 # Define a vector of paths to the files we wish to load
 tdl_file_paths <- c(
-  system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA')
+  system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA', mustWork = TRUE)
 )
 ```
 

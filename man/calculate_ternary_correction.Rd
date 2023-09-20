@@ -108,7 +108,7 @@
 
 # Read the gas exchange data
 licor_data <- read_gasex_file(
-  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA', mustWork = TRUE),
   'time'
 )
 

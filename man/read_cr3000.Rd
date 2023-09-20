@@ -69,7 +69,7 @@
 \examples{
 # Example: reading a TDL file that is included with the PhotoGEA package.
 tdl_file <- PhotoGEA:::read_cr3000(
-  system.file("extdata", "tdl_sampling_1.dat", package = "PhotoGEA")
+  system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 tdl_file$file_name # A record of where the data came from

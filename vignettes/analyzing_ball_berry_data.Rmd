@@ -114,8 +114,8 @@ installation directory, and full paths to these files can be obtained with
 ```{r licor_file_names}
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA'),
-  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 ```
 

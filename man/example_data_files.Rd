@@ -90,18 +90,18 @@
 
 \examples{
 # Print full paths to the example files
-system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c4_aci_2.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'licor_for_gm_site13.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA')
-system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA')
-system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA')
-system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA')
+system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c4_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'licor_for_gm_site13.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA', mustWork = TRUE)
 }
 
 \keyword{datasets}

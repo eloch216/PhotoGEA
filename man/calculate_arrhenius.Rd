@@ -107,7 +107,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_sharkey)

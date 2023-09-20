@@ -101,7 +101,7 @@
 # Example: reading a TDL file that is included with the PhotoGEA package and
 # identifying its measurement cycles.
 tdl_file <- read_gasex_file(
-  system.file("extdata", "tdl_sampling_1.dat", package = "PhotoGEA"),
+  system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE),
   'TIMESTAMP'
 )
 
