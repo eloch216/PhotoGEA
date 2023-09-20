@@ -41,6 +41,9 @@ for the next release.
 - Added a new R file (`constants.R`) to store the values of some constants that
   appear in multiple functions; this will help ensure that consistent values
   are used in each instance.
+- Improved some error handling in `read_gasex_file` and attempted to clarify
+  instructions for selecting files to load.
+- Added two basic tests of `read_gasex_file` using the `testthat` package.
 
 # PhotoGEA VERSION 0.8.0 (2023-04-30)
 
