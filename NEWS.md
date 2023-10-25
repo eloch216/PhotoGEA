@@ -16,7 +16,7 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# UNRELEASED
+# PhotoGEA VERSION 0.9.0 (2023-10-25)
 
 - Added a new convenience function for printing plot objects: `pdf_print`
 - Added and/or documented several functions related to isotope discrimination
@@ -44,6 +44,10 @@ for the next release.
 - Improved some error handling in `read_gasex_file` and attempted to clarify
   instructions for selecting files to load.
 - Added two basic tests of `read_gasex_file` using the `testthat` package.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/70
+  - https://github.com/eloch216/PhotoGEA/pull/71
+  - https://github.com/eloch216/PhotoGEA/pull/72
 
 # PhotoGEA VERSION 0.8.0 (2023-04-30)
 
