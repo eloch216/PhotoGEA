@@ -262,7 +262,7 @@ information from multiple files, see the _Common Patterns_ section of the
 [Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
 vignette.
 
-# Loading Tunable Diode Laster Data
+# Loading Tunable Diode Laser Data
 
 The `PhotoGEA` package includes one file representing TDL data that was
 recorded with a Campbell Scientific CR3000 data logger simultaneously with the
@@ -386,7 +386,7 @@ Now there is a new column called `seq_num`, where each point in each set is
 given a number 1-12 corresponding to the measurement order. The points have also
 been re-ordered according to `Ci`.
 
-# Combining the Gas Exchange and Isotope Discrimination data
+# Combining the Gas Exchange and Isotope Discrimination Data
 
 ## Identifying TDL Cycles
 
@@ -489,7 +489,7 @@ The output from this function -- `processed_tdl` -- is a list of several `exdf`
 objects that include calibrated TDL readings from each valve and information
 about the calibration parameters that were determined while processing the data.
 
-## Pairing Gas Exchange and TDL data
+## Pairing Gas Exchange and TDL Data
 
 When analyzing combined gas exchange and isotope discrimination data, a key step
 is to combine TDL and gas exchange data that were measured at the same times.
@@ -702,11 +702,11 @@ licor_data <- calculate_gas_properties(licor_data)
 licor_data <- calculate_ternary_correction(licor_data)
 ```
 
-Like, the observed photosynthetic isotope discrimination under growth conditions
-($\Delta_{obs}^{growth}$) must be measured from each leaf or plant species.
-Ideally, this would be determined by setting the ambient CO~2~ concentration
-around the leaf to the ambient value and using the TDL to measure the
-photosynthetic isotope discrimination $\Delta_{obs}$. In this data set, the
+Like $R_d$, the observed photosynthetic isotope discrimination under growth
+conditions ($\Delta_{obs}^{growth}$) must be measured from each leaf or plant
+species. Ideally, this would be determined by setting the ambient CO~2~
+concentration around the leaf to the ambient value and using the TDL to measure
+the photosynthetic isotope discrimination $\Delta_{obs}$. In this data set, the
 first six points in each file have `CO2_r` set to 715 ppm, which produces a
 value of $C_a$ close to 420 ppm (the global atmospheric value at the time these
 measurements were made). Thus, we can use the average value of $\Delta_{obs}$
