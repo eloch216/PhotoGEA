@@ -2,7 +2,7 @@
 
 \alias{organize_response_curve_data}
 
-\title{Check response curve data for common issues}
+\title{Reorganize response curve data for analysis and plotting}
 
 \description{
   Checks to make sure an \code{exdf} object representing response curve data
@@ -96,7 +96,7 @@
 # identified by the values of its 'species' and 'plot' columns. Since these are
 # light-response curves, each one follows a pre-set sequence of `Qin` values.
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 # Split the data into individual curves, keep all seven measurement points in

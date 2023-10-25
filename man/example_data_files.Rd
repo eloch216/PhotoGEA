@@ -10,6 +10,9 @@
 \alias{c3_aci_2}
 \alias{c4_aci_1}
 \alias{c4_aci_2}
+\alias{licor_for_gm_site11}
+\alias{licor_for_gm_site13}
+\alias{tdl_for_gm}
 \alias{tdl_sampling_1}
 \alias{tdl_sampling_2}
 \alias{plaintext_licor_file}
@@ -20,6 +23,9 @@
 \alias{c3_aci_2.xlsx}
 \alias{c4_aci_1.xlsx}
 \alias{c4_aci_2.xlsx}
+\alias{licor_for_gm_site11.xlsx}
+\alias{licor_for_gm_site13.xlsx}
+\alias{tdl_for_gm.dat}
 \alias{tdl_sampling_1.dat}
 \alias{tdl_sampling_2.dat}
 
@@ -63,6 +69,13 @@
           CO2 response (or A-Ci) curves. Several user constants were defined in
           this log that can be used to identify individual curves or subsets of
           curves: \code{species}, \code{plot}, and \code{instrument}.
+    \item \code{licor_for_gm_site11.xlsx}, \code{licor_for_gm_site13.xslsx}, and
+          \code{tdl_for_gm}: Two Licor Li-6800 log files and a CR3000 TDL log
+          file, respectively. These files are used as an example of loading and
+          processing combined gas exchange and isotope discrimination
+          measurements. Each Licor log file includes 6 points measured with the
+          \code{CO2_r} setpoint set to 715 ppm and 6 points with the setpoint
+          set to 450 ppm.
   }
 
   Since none of these data files have been published, noise has been added to
@@ -77,15 +90,18 @@
 
 \examples{
 # Print full paths to the example files
-system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'c4_aci_2.xlsx', package = 'PhotoGEA')
-system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA')
-system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA')
-system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA')
+system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'c4_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'licor_for_gm_site13.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE)
+system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA', mustWork = TRUE)
 }
 
 \keyword{datasets}

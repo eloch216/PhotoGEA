@@ -197,7 +197,7 @@
 # Read an example Licor file included in the PhotoGEA package, calculate the
 # total pressure, and calculate additional gas properties.
 licor_file <- read_gasex_file(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 licor_file <- calculate_total_pressure(licor_file)

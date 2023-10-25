@@ -44,7 +44,21 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
-RESPIRATION <- 2.69
+USE_BUSCH_GM <- TRUE
+
+# Specify a default respiration
+DEFAULT_RESPIRATION <- 2.69
+
+# Specify respiration values for each event; these will override the default
+RESPIRATION_TABLE <- list(
+  'WT' = 2.18,
+  '8' = 2.02,
+  '10' = 1.94,
+  '14' = 2.08
+)
+
+RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
+#RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
@@ -131,6 +145,113 @@ if (ALLOW_BUTTERWORTH) {
 
 # Don't do any smoothing
 null_smoothing_function <- function(Y, X) {return(Y)}
+
+###
+### DEFINE FUNCTION FOR GETTING GENOTYPE INFORMATION FROM FILENAME
+###
+
+get_genotype_info_from_licor_filename <- function(licor_exdf) {
+    # Add some new columns to the Licor file in preparation for adding the plant
+    # information
+    licor_exdf <- document_variables(
+        licor_exdf,
+        c("plant specification", "genotype",                 "NA"),
+        c("plant specification", "event",                    "NA"),
+        c("plant specification", "replicate",                "NA"),
+        c("plant specification", "genotype_event",           "NA"),
+        c("plant specification", "event_replicate",          "NA"),
+        c("plant specification", "genotype_event_replicate", "NA"),
+        c("plant specification", "original_file",            "NA")
+    )
+
+    # Get the filename without the path
+    name <- basename(licor_exdf[['file_name']])
+
+    # There are two naming conventions we need to check
+
+    # Search for the following pattern: one space, followed by one or
+    # more alphanumeric characters, followed by a dash, followed by one or more
+    # alphanumeric characters, followed by a dash, followed by one or more
+    # alphanumeric characters, followed by a period. Essentially, we expect the
+    # filename to end with ' XXX-YYY-ZZZ.xlsx', where `XXX` is the genotype,
+    # `YYY` is the event, and `ZZZ` is the replicate.
+    plant_specification1 <-
+        regmatches(name, regexpr(" [[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+\\.xlsx", name))
+
+    # Search for the following pattern: one space, followed by one or
+    # more alphanumeric characters, followed by a space, followed by one or more
+    # alphanumeric characters, followed by a space, followed by one or more
+    # alphanumeric characters, followed by a period. Essentially, we expect the
+    # filename to end with ' XXX YYY ZZZ.xlsx', where `XXX` is the genotype,
+    # `YYY` is the event, and `ZZZ` is the replicate.
+    plant_specification2 <-
+        regmatches(name, regexpr(" [[:alnum:]]+ [[:alnum:]]+ [[:alnum:]]+\\.xlsx", name))
+
+    # Make sure we found something
+    if (length(plant_specification1) == 0 & length(plant_specification2) == 0) {
+        msg <- paste0(
+            "Could not extract plant specification information from Licor file:\n'",
+            licor_exdf[['file_name']],
+            "'\nThe filename must end with ` GGG-EEE-RRR.xlsx` or ` GGG EEE RRR.xlsx`, ",
+            "where `GGG`, `EEE`, and `RRR` are alphanumeric specifiers for ",
+            "the genotype, event, and replicate represented by the file"
+
+        )
+        stop(msg)
+    }
+
+    # Extract the info
+    g <- character(0)
+    e <- character(0)
+    r <- character(0)
+    if (length(plant_specification1) > 0) {
+        # Remove the period, the extension, and the whitespace
+        plant_specification1 <- sub(" ", "", plant_specification1)
+        plant_specification1 <- sub("\\.xlsx", "", plant_specification1)
+
+        # Split the specification by the dashes
+        plant_specification1 <- strsplit(plant_specification1, "-")[[1]]
+
+        g <- plant_specification1[1]
+        e <- plant_specification1[2]
+        r <- plant_specification1[3]
+    } else {
+        # Remove the period and the extension
+        plant_specification2 <- sub("\\.xlsx", "", plant_specification2)
+
+        # Split the specification by the spaces
+        plant_specification2 <- strsplit(plant_specification2, " ")[[1]]
+
+        g <- plant_specification2[2]
+        e <- plant_specification2[3]
+        r <- plant_specification2[4]
+    }
+
+    # Store the info in the file and return it
+    licor_exdf[,'genotype'] <- g
+    licor_exdf[,'event'] <- e
+    licor_exdf[,'replicate'] <- r
+
+    licor_exdf <- process_id_columns(
+        licor_exdf,
+        'event',
+        'replicate',
+        'event_replicate'
+    )
+
+    licor_exdf[,'genotype_event'] <-
+        paste(licor_exdf[, 'genotype'], licor_exdf[, 'event'])
+
+    licor_exdf[,'event_replicate'] <-
+        paste(licor_exdf[, 'event'], licor_exdf[, 'replicate'])
+
+    licor_exdf[,'genotype_event_replicate'] <-
+        paste(licor_exdf[, 'genotype'], licor_exdf[, 'event'], licor_exdf[, 'replicate'])
+
+    licor_exdf[,'original_file'] <- licor_exdf[['file_name']]
+
+    return(licor_exdf)
+}
 
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
@@ -222,11 +343,9 @@ if (PERFORM_CALCULATIONS) {
             calibration_3_valve = 26,
             raw_12c_colname = TDL_12C_COLUMN_NAME,
             raw_13c_colname = TDL_13C_COLUMN_NAME,
-            noaa_cylinder_co2_concentration = 294.996,  # ppm
-            noaa_cylinder_isotope_ratio = -8.40,        # ppt
-            calibration_isotope_ratio = -11.505,        # ppt
-            f_other = 0.00474,                          # fraction of CO2 that is not 13C16O16O or 12C16O16O
-            R_VPDB = 0.0111797
+            noaa_cylinder_co2_concentration = 294.996, # ppm
+            noaa_cylinder_isotope_ratio = -8.40,       # ppt
+            calibration_isotope_ratio = -11.505        # ppt
         ))
     }
 
@@ -242,27 +361,12 @@ if (PERFORM_CALCULATIONS) {
         exdf_obj[ , common_columns, TRUE]
     })
 
-    licor_files <- batch_get_genotype_info_from_licor_filename(licor_files)
+    licor_files <- lapply(licor_files, get_genotype_info_from_licor_filename)
 
-    licor_files <- batch_get_oxygen_info_from_preamble(licor_files)
-
-    licor_files <- lapply(licor_files, function(x) {set_variable(
-        x,
-        'respiration',
-        'micromol m^(-2) s^(-1)',
-        'gm_from_tdl',
-        abs(RESPIRATION),    # this is the default value of respiration
-        id_column = 'event', # the default value can be overridden for certain events
-        value_table = list(
-          'WT' = 2.18,
-          '8' = 2.02,
-          '10' = 1.94,
-          '14' = 2.08
-        )
-    )})
+    licor_files <- lapply(licor_files, get_oxygen_from_preamble)
 
     licor_files <- lapply(licor_files, function(x) {
-        get_sample_valve_from_licor_filename(x, list(
+        get_sample_valve_from_filename(x, list(
             '13' = 12, # ERML TDL
             '11' = 10, # ERML TDL
              '8' = 7,  # IGB TDL
@@ -271,24 +375,60 @@ if (PERFORM_CALCULATIONS) {
     })
 
     # Combine the Licor and TDL data
-
-    licor_files <- batch_pair_licor_and_tdl(
-        licor_files,
-        processed_tdl_data$tdl_data$main_data,
-        LICOR_TIMESTAMP_COLUMN_NAME,
-        TDL_TIMESTAMP_COLUMN_NAME,
-        max_allowed_time_difference = 1
-    )
+    licor_files <- lapply(licor_files, function(licor_exdf) {
+        pair_gasex_and_tdl(
+            licor_exdf,
+            processed_tdl_data$tdl_data
+        )
+    })
 
     licor_files <- do.call(rbind, licor_files)
+
+    # Specify respiration values
+    licor_files <- set_variable(
+        licor_files,
+        'Rd',
+        'micromol m^(-2) s^(-1)',
+        'gm_from_tdl',
+        abs(DEFAULT_RESPIRATION), # this is the default value of respiration
+        id_column = 'event',      # the default value can be overridden for certain events
+        value_table = RESPIRATION_TABLE
+    )
+
+    # Specify Rubisco specificity values
+    licor_files <- set_variable(
+        licor_files,
+        'specificity_at_tleaf',
+        'M / M',
+        'gm_from_tdl',
+        RUBISCO_SPECIFICITY_AT_TLEAF
+    )
 
     # Calculate total pressure (needed for `calculate_gas_properties`)
     licor_files <- calculate_total_pressure(licor_files)
 
-    # Calculates gbc, gsc, Csurface (needed for `calculate_gm`)
+    # Calculates gbc, gsc, Csurface (needed for `calculate_gm_ubierna`)
     licor_files <- calculate_gas_properties(licor_files)
 
-    licor_files <- calculate_gm_ubierna(licor_files)
+    # Calculates Delta_obs_tdl (needed for `calculate_gm_ubierna`)
+    licor_files <- calculate_isotope_discrimination(licor_files)
+
+    # Calculates t (needed for `calculate_gm_ubierna`)
+    licor_files <- calculate_ternary_correction(licor_files)
+
+    # Calculate Gamma_star (needed for `calculate_gm_ubierna`)
+    licor_files <- calculate_gamma_star(licor_files)
+
+    licor_files <- if (USE_BUSCH_GM) {
+        # Here we use Equation 19 for e_star because we don't have values for
+        # delta_obs_growth
+        calculate_gm_busch(
+            licor_files,
+            e_star_equation = 19
+        )
+    } else {
+        calculate_gm_ubierna(licor_files)
+    }
 
     licor_files <- apply_gm(licor_files)
 
@@ -727,23 +867,23 @@ if (MAKE_GM_PLOTS) {
     dtdl_lim <- c(0, 25)
 
     box_plot_param <- list(
-      list(Y = rep_stats_no_outliers[['gmc_avg']],        X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = rep_stats_no_outliers[['Cc_avg']],         X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']], X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = rep_stats_no_outliers[['A_avg']],          X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = rep_stats_no_outliers[['iWUE_avg']],       X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = rep_stats_no_outliers[['g_ratio_avg']],    X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
-      list(Y = rep_stats_no_outliers[['delta_tdl_avg']],  X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
+      list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['A_avg']],             X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = rep_stats_no_outliers[['Delta_obs_tdl_avg']], X = x_er, S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     box_bar_plot_param <- list(
-      list(Y = rep_stats_no_outliers[['gmc_avg']],        X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
-      list(Y = rep_stats_no_outliers[['Cc_avg']],         X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']], X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
-      list(Y = rep_stats_no_outliers[['A_avg']],          X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
-      list(Y = rep_stats_no_outliers[['iWUE_avg']],       X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
-      list(Y = rep_stats_no_outliers[['g_ratio_avg']],    X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
-      list(Y = rep_stats_no_outliers[['delta_tdl_avg']],  X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
+      list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
+      list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['A_avg']],             X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
+      list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
+      list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
+      list(Y = rep_stats_no_outliers[['Delta_obs_tdl_avg']], X = x_e,  S = x_g, ylab = dtdl_lab,     ylim = dtdl_lim)
     )
 
     # Make all the box and bar charts

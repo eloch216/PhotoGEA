@@ -67,6 +67,9 @@ PERFORM_CALCULATIONS <- TRUE
 # inspection to make sure the results look reasonable)
 VIEW_DATA_FRAMES <- TRUE
 
+# Decide whether to save average response curves to PDF
+SAVE_TO_PDF <- FALSE
+
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event
 USE_GM_TABLE <- FALSE
@@ -89,9 +92,9 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
-NUM_OBS_IN_SEQ <- 13
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1)
-POINT_FOR_BOX_PLOTS <- 2
+NUM_OBS_IN_SEQ <- 15
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8,9,10)
+POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove points where the Licor stability criteria were not
 # fully met
@@ -102,14 +105,18 @@ CI_UPPER_LIMIT <- Inf # ppm
 
 # Decide whether to remove a few specific points from the data before fitting
 REMOVE_SPECIFIC_POINTS <- TRUE
+
 # Decide whether to remove statistical outliers
-REMOVE_STATISTICAL_OUTLIERS <- FALSE
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
 
 # Decide whether to calculate basic stats
 CALCULATE_BASIC_STATS <- TRUE
+
+# Decide whether to average over plots
+AVERAGE_OVER_PLOTS <- TRUE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -131,6 +138,26 @@ TLEAF_COLUMN_NAME <- "TleafCnd"
 
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
+# Define a function that averages across all non-identifier columns in an exdf
+# object
+avg_exdf <- function(exdf_obj) {
+    avg_obj <- identifier_columns(replicate_exdf)
+
+    for (cn in colnames(exdf_obj)) {
+        if (!cn %in% colnames(avg_obj) && is.numeric(exdf_obj[, cn])) {
+            set_variable(
+                avg_obj,
+                cn,
+                exdf_obj$units[[cn]],
+                exdf_obj$category[[cn]],
+                mean(exdf_obj[, cn])
+            )
+        }
+    }
+
+    return(avg_obj)
+}
+
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
 ###                                                                   ###
@@ -149,12 +176,37 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
 
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        REP_COLUMN_NAME,
+        paste0('plot_', REP_COLUMN_NAME)
+      )
+    }
+
+    # Reset the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+      paste0('plot_', REP_COLUMN_NAME)
+    } else {
+      REP_COLUMN_NAME
+    }
+
     combined_info <- process_id_columns(
         combined_info,
         EVENT_COLUMN_NAME,
         REP_COLUMN_NAME,
         UNIQUE_ID_COLUMN_NAME
     )
+
+    # Extract just the A-Ci curves, if necessary
+    if ('type' %in% colnames(combined_info)) {
+      combined_info <- combined_info[combined_info[, 'type'] == 'aci', , TRUE]
+    }
 
     # Calculate temperature-dependent values of C4 parameters
     combined_info <-
@@ -186,7 +238,7 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate PCm
     combined_info <- apply_gm(combined_info, 'C4')
-    
+
     # Calculate intrinsic water-use efficiency
     combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
 
@@ -197,15 +249,23 @@ if (PERFORM_CALCULATIONS) {
         NUM_OBS_IN_SEQ
     )
 
-
     # Organize the data, keeping only the desired measurement points
     combined_info <- organize_response_curve_data(
         combined_info,
         UNIQUE_ID_COLUMN_NAME,
         MEASUREMENT_NUMBERS_TO_REMOVE,
-        'CO2_r_sp'
+        'Ci'
+        #'CO2_r_sp'
     )
 
+    # Average over curves from the same event and plot, if necessary
+    combined_info <- if (AVERAGE_OVER_PLOTS) {
+        consolidate(by(
+            combined_info,
+            list(combined_info[, EVENT_COLUMN_NAME], combined_info[, 'plot'], combined_info[, 'CO2_r_sp']),
+            avg_exdf
+        ))
+    }
 
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
@@ -213,15 +273,23 @@ if (PERFORM_CALCULATIONS) {
       combined_info <- remove_points(
         combined_info,
         list(event = 'WT', replicate = '2a-1', obs = 29),
-        list(event = '3', replicate = '7', seq_num = 5)
+        list(event = '3', replicate = '5', seq_num = c(2,3)),
+        list(event = '25', replicate = '9', seq_num = c(2,4)),
+        list(event = '25', replicate = '1'),
+        list(event = '9', replicate = '1'),
+        list(event = '25', replicate = '8', seq_num = 6),
+        list(event = '3', replicate = '7', seq_num = 5),
+        list(event = '3', replicate = '10', seq_num = 5),
+        list(event = 'WT', replicate = '9', seq_num = 5)
+
       )
     }
-    
+
     # Remove unstable points
     if (REMOVE_UNSTABLE_POINTS) {
       # Only keep points where stability was achieved
       combined_info <- combined_info[combined_info[, 'Stable'] == 2, , TRUE]
-      
+
       # Remove any curves that have fewer than three remaining points
       npts <- by(combined_info, combined_info[, UNIQUE_ID_COLUMN_NAME], nrow)
       ids_to_keep <- names(npts[npts > 2])
@@ -234,9 +302,9 @@ if (PERFORM_CALCULATIONS) {
     ###                     ###
 
     EVENTS_TO_EXCLUDE <- c("28", "53")
-    
+
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
-    
+
     if (CALCULATE_BASIC_STATS) {
       # Calculate basic stats for each event
       all_stats <- basic_stats(
@@ -254,8 +322,8 @@ if (PERFORM_CALCULATIONS) {
         gbs = 0,
         Rm_frac = 1
     ))
-    
-    fit_result$parameters[, 'Vmax_at_25'] <- 
+
+    fit_result$parameters[, 'Vmax_at_25'] <-
       fit_result$parameters[, 'Vcmax_at_25'] - fit_result$parameters[, 'Rd_at_25']
 
     all_fit_parameters <- fit_result$parameters
@@ -321,8 +389,9 @@ if (PERFORM_CALCULATIONS) {
     }
 
     all_samples <- combined_info[['main_data']]
-    
+
     # Print average Vcmax values
+    print('average vcmax values')
     print(tapply(all_fit_parameters$Vcmax_at_25, all_fit_parameters$event, mean))
 }
 
@@ -333,9 +402,37 @@ all_samples_one_point <-
 # Convert event columns to factors to control the order of events in subsequent
 # plots
 all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
+all_samples <- factorize_id_column(all_samples, EVENT_COLUMN_NAME)
 all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 all_fits <- factorize_id_column(all_fits, UNIQUE_ID_COLUMN_NAME)
 all_fit_parameters <- factorize_id_column(all_fit_parameters, EVENT_COLUMN_NAME)
+
+# Here we do stats tests on assimilation values from a single point
+if (PERFORM_STATS_TESTS) {
+  # Perform Brown-Forsythe test to check for equal variance
+  # This test automatically prints its results to the R terminal
+  bf_test_result <- bf.test(A ~ event, data = all_samples_one_point)
+
+  # If p > 0.05 variances among populations is equal and proceed with anova
+  # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+
+  # Check normality of data with Shapiro-Wilks test
+  shapiro_test_result <- shapiro.test(all_samples_one_point$A)
+  print(shapiro_test_result)
+
+  # If p > 0.05 data has normal distribution and proceed with anova
+
+  # Perform one way analysis of variance
+  anova_result <- aov(A ~ event, data = all_samples_one_point)
+  cat("    ANOVA result\n\n")
+  print(summary(anova_result))
+
+  # If p < 0.05 perform Dunnett's posthoc test
+
+  # Perform Dunnett's Test
+  dunnett_test_result <- DunnettTest(x = all_samples_one_point$A, g = all_samples_one_point$event, control = "WT")
+  print(dunnett_test_result)
+}
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
@@ -355,6 +452,14 @@ PHIPS2_COLUMN_NAME <- if ("PhiPs2" %in% colnames(all_samples)) {
     NULL
 }
 
+# Print average A values
+print('average A values')
+print(tapply(all_samples_one_point$A, all_samples_one_point$event, mean))
+
+# Print average PhiPS2 values
+print('average PhiPS2 values')
+print(tapply(all_samples_one_point[[PHIPS2_COLUMN_NAME]], all_samples_one_point$event, mean))
+
 INCLUDE_FLUORESCENCE <- if(is.null(PHIPS2_COLUMN_NAME)) {
     FALSE
 } else {
@@ -371,6 +476,8 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
+event_colors <- rev(multi_curve_colors()[seq_len(length(levels(all_samples[, EVENT_COLUMN_NAME])))])
+
 ci_lim <- c(0, 1400)
 a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
@@ -381,30 +488,40 @@ iWUE_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)\n(error bar
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
-  list(all_samples[['A']],    x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,    xlim = ci_lim, ylim = a_lim),
-  list(all_samples[['iWUE']], x_ci, x_s, x_e, xlab = ci_lab, ylab = iWUE_lab, xlim = ci_lim)
+  a_plot = list(all_samples[['A']],    x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,    xlim = ci_lim, ylim = a_lim),
+  iwue_plot = list(all_samples[['iWUE']], x_ci, x_s, x_e, xlab = ci_lab, ylab = iWUE_lab, xlim = ci_lim)
 )
 
 if (INCLUDE_FLUORESCENCE) {
     avg_plot_param <- c(
         avg_plot_param,
         list(
-            list(all_samples[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
+            etr_plot = list(all_samples[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
         )
     )
 }
 
-invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(xyplot_avg_rc, c(x, list(
-        type = 'b',
-        pch = 20,
-        auto.key = list(space = "right"),
-        grid = TRUE,
-        main = rc_caption
-    )))
+for (i in seq_along(avg_plot_param)) {
+  plot_obj <- do.call(xyplot_avg_rc, c(avg_plot_param[[i]], list(
+    type = 'b',
+    pch = 20,
+    cex=1.5,
+    lwd=2,
+    auto.key = list(space = "right"),
+    grid = TRUE,
+    main = rc_caption,
+    cols = event_colors
+  )))
+
+  if (!SAVE_TO_PDF) {
     x11(width = 8, height = 6)
     print(plot_obj)
-}))
+  } else {
+    pdf(file = paste0(names(avg_plot_param)[i], '.pdf'), width = 8, height = 6)
+    print(plot_obj)
+    dev.off()
+  }
+}
 
 ###                                     ###
 ### PLOT ALL INDIVIDUAL RESPONSE CURVES ###
@@ -498,11 +615,12 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 70),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
   list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 120),  main = fitting_caption),
   list(Y = all_fit_parameters[['Vmax_at_25']],     X = x_p, xlab = xl, ylab = "Vmax at 25 C (micromol / m^2 / s)",                       ylim = c(0, 70),  main = fitting_caption),
   list(Y = all_fit_parameters[['Rd_at_25']],       X = x_p, xlab = xl, ylab = "Rd at 25 C (micromol / m^2 / s)",                         ylim = c(0, 4),   main = fitting_caption),
   list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 70),   main = boxplot_caption),
+  list(Y = all_samples_one_point[[CI_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intercellular CO2 concentration (micromol / mol)",          ylim = c(0, 150),   main = boxplot_caption),
   list(Y = all_samples_one_point[['iWUE']],        X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", main = boxplot_caption)
 )
 

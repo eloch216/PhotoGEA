@@ -2,7 +2,7 @@
 
 \alias{read_licor_6800_Excel}
 
-\title{Reading a plaintext Licor LI-6800 log file}
+\title{Reading a Licor LI-6800 Excel log file}
 
 \description{
   Tool for reading Excel log files created by Licor LI-6800 instruments and
@@ -67,14 +67,14 @@
 # Example 1: Reading a Licor Excel file that is included with the PhotoGEA
 # package.
 licor_file <- PhotoGEA:::read_licor_6800_Excel(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA")
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 # Example 2: Reading a Licor Excel file that is included with the PhotoGEA
 # package; here we use a different column name to identify the data block within
 # the file's contents.
 licor_file <- PhotoGEA:::read_licor_6800_Excel(
-  system.file("extdata", "ball_berry_1.xlsx", package = "PhotoGEA"),
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
   column_name = 'A'
 )
 }

@@ -112,12 +112,18 @@ installation directory, and full paths to these files can be obtained with
 `system.file`:
 
 ```{r licor_file_names}
-# Define a vector of paths to the files we wish to load
+# Define a vector of paths to the files we wish to load; in this case, we are
+# loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA'),
-  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 ```
+
+(**Note:** When loading your own files for analysis, it is not advisable to use
+`system.file` as we have done here. Instead, file paths can be directly written,
+or files can be chosen using an interactive window. See [Input Files] below for
+more information.)
 
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
@@ -555,11 +561,23 @@ not specifically mentioned here.
 ## Input Files
 
 The file paths specified in `file_paths` will need to be modified so they point
-to your Licor files. In your own script, you may want to consider using the
-`choose_input_licor_files` function from `PhotoGEA`; this function will create a
-pop-up browser window where you can interactively select a set of Excel files.
-Sometimes this is more convenient than writing out full file paths. For example,
-you could replace the previous definition of `file_paths` with this one:
+to your Licor files. One way to do this in your own script is to simply write
+out relative or absolute paths to the files you wish to load. For example, you
+could replace the previous definition of `file_paths` with this one:
+
+```{r write_file_paths, eval = FALSE}
+# Define a vector of paths to the files we wish to load
+file_paths <- c(
+  'myfile1.xlsx',        # `myfile1.xlsx` must be in the current working directory
+  'C:/documents/myfile2' # This is an absolute path to `myfile2`
+)
+```
+
+You may also want to consider using the `choose_input_licor_files` function from
+`PhotoGEA`; this function will create a pop-up browser window where you can
+interactively select a set of files. Sometimes this is more convenient than
+writing out file paths or names. For example, you could replace the previous
+definition of `file_paths` with this one:
 
 ```{r choose_licor_files, eval = FALSE}
 # Interactively define a vector of paths to the files we wish to load
@@ -628,6 +646,10 @@ vignette.
 ###
 
 <<licor_file_names>>
+
+## IMPORTANT: When loading your own files, it is not advised to use
+## `system.file` as in the above code. Instead, write out the names or use the
+## `choose_input_licor_files` function.
 
 <<loading_licor_data>>
 

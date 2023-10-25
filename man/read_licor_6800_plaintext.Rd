@@ -2,7 +2,7 @@
 
 \alias{read_licor_6800_plaintext}
 
-\title{Reading a plaintext Licor LI-6800 log file}
+\title{Reading a Licor LI-6800 plaintext log file}
 
 \description{
   Tool for reading plaintext log files created by Licor LI-6800 instruments and
@@ -54,7 +54,7 @@
 # Example: Reading a Licor plaintext file that is included with the PhotoGEA
 # package.
 licor_file <- PhotoGEA:::read_licor_6800_plaintext(
-  system.file("extdata", "plaintext_licor_file", package = "PhotoGEA")
+  system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA', mustWork = TRUE)
 )
 }
 

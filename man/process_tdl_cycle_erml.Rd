@@ -17,30 +17,23 @@
 \usage{
   process_tdl_cycle_erml(
     tdl_cycle,
-    valve_column_name,
     noaa_valve,
     calibration_0_valve,
     calibration_1_valve,
     calibration_2_valve,
     calibration_3_valve,
-    raw_12c_colname,
-    raw_13c_colname,
     noaa_cylinder_co2_concentration,
     noaa_cylinder_isotope_ratio,
     calibration_isotope_ratio,
-    f_other,
-    R_VPDB
+    valve_column_name = 'valve_number',
+    raw_12c_colname = 'Conc12C_Avg',
+    raw_13c_colname = 'Conc13C_Avg'
   )
 }
 
 \arguments{
   \item{tdl_cycle}{
     An \code{exdf} object representing one cycle of TDL data.
-  }
-
-  \item{valve_column_name}{
-    The name of the column in \code{tdl_cycle} that contains the valve number;
-    typically, this is \code{'valve_number'}.
   }
 
   \item{noaa_valve}{
@@ -67,16 +60,6 @@
     nitrogen gas with a calibrated CO2 source).
   }
 
-  \item{raw_12c_colname}{
-    The name of the column in \code{tdl_cycle} that contains the 12C signal;
-    typically, this is \code{'Conc12C_Avg'}.
-  }
-
-  \item{raw_13c_colname}{
-    The name of the column in \code{tdl_cycle} that contains the 13C signal;
-    typically, this is \code{'Conc13C_Avg'}.
-  }
-
   \item{noaa_cylinder_co2_concentration}{
     The total CO2 concentration of the NOAA calibration cylinder in ppm; this
     includes all carbon species, such as 12C18O18O.
@@ -90,12 +73,19 @@
     The isotope ratio of the other CO2 cylinder in ppt.
   }
 
-  \item{f_other}{
-    The fraction of CO2 that is not 13C16O16O or 12C16O16O.
+  \item{valve_column_name}{
+    The name of the column in \code{tdl_cycle} that contains the valve number;
+    typically, this is \code{'valve_number'}.
   }
 
-  \item{R_VPDB}{
-    The Vienna Pee Dee Belemnite reference value.
+  \item{raw_12c_colname}{
+    The name of the column in \code{tdl_cycle} that contains the 12C signal;
+    typically, this is \code{'Conc12C_Avg'}.
+  }
+
+  \item{raw_13c_colname}{
+    The name of the column in \code{tdl_cycle} that contains the 13C signal;
+    typically, this is \code{'Conc13C_Avg'}.
   }
 }
 
@@ -134,8 +124,8 @@
     \item \code{tdl_data}: An \code{exdf} object containing the original content
           of \code{tdl_cycle} and several new columns:
           \code{'zero_corrected_12c'}, \code{'zero_corrected_13c'},
-          \code{'calibrated_12c'}, \code{'calibrated_13c'},
-          \code{'total_mixing_ratio'}, and \code{'total_isotope_ratio'}.
+          \code{'calibrated_12c'}, \code{'calibrated_13c'}, \code{'total_CO2'},
+          and \code{'delta_C13'}.
     \item \code{calibration_zero}: An \code{exdf} object describing the values
           used to calculate the zero-corrected 12C and 13C signals.
     \item \code{calibration_12CO2}: An \code{exdf} object describing the gain
@@ -152,7 +142,7 @@
 # Example: reading a TDL file that is included with the PhotoGEA package,
 # identifying its measurement cycles, and then process them.
 tdl_file <- read_gasex_file(
-  system.file("extdata", "tdl_sampling_1.dat", package = "PhotoGEA"),
+  system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE),
   'TIMESTAMP'
 )
 
@@ -179,9 +169,7 @@ processed_tdl <- consolidate(by(
   raw_13c_colname = 'Conc13C_Avg',
   noaa_cylinder_co2_concentration = 294.996,
   noaa_cylinder_isotope_ratio = -8.40,
-  calibration_isotope_ratio = -11.505,
-  f_other = 0.00474,
-  R_VPDB = 0.0111797
+  calibration_isotope_ratio = -11.505
 ))
 
 # Make a plot of the raw and calibrated 13C signals across all the TDL cycles.

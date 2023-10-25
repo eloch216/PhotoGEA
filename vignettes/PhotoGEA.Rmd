@@ -46,6 +46,12 @@ model to each response curve, and then plot some of the results. This is a
 basic example that just scratches the surface of what is possible with
 `PhotoGEA`.
 
+(**Note:** When loading your own files for analysis, it is not advisable to use
+`system.file` as we have done in the code below. Instead, file paths can be
+directly written, or files can be chosen using an interactive window. See
+the [Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html#input-files)
+vignette for more information.)
+
 ## Fitting the Curves
 
 The following code can be used to read the data and fit each curve:
@@ -55,10 +61,11 @@ The following code can be used to read the data and fit each curve:
 library(PhotoGEA)
 library(lattice)
 
-# Define a vector of paths to the files we wish to load
+# Define a vector of paths to the files we wish to load; in this case, we are
+# loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA'),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA')
+  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
 )
 
 # Load the data from each file
@@ -209,6 +216,7 @@ being added all the time:
   - [Analyzing C4 A-Ci Curves](analyzing_c4_aci_curves.html)
   - [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html)
   - [Analyzing TDL Data](analyzing_tdl_data.html)
+  - [Analyzing Mesophyll Conductance Data](analyzing_gm_data.html)
 - More advanced topics:
   - [Creating Your Own Processing Tools](creating_your_own_processing_tools.html):
     Discusses how to create functions compatible with `PhotoGEA` that apply new

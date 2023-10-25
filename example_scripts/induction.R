@@ -38,6 +38,7 @@
 library(PhotoGEA)
 library(lattice)
 library(RColorBrewer)
+library(ggplot2)
 
 ###                                                                   ###
 ### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -58,7 +59,11 @@ VIEW_DATA_FRAMES <- TRUE
  # Initialize the input files
 LICOR_FILES_TO_PROCESS <- c()
 
-# Specify the filenames depending on the value of the USE_GM_TABLE boolean
+# Decide whether to remove a few specific points from the data before subsequent
+# processing and plotting
+REMOVE_SPECIFIC_POINTS <- TRUE
+
+# Specify the filenames depending on the value of PERFORM_CALCULATIONS
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
 }
@@ -71,6 +76,12 @@ NUM_OBS_IN_SEQ <- 360
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
+
+# Specify time range to use for normalization. This should be expressed as the
+# number of elapsed minutes. For each event, the average assimilation rate
+# across this interval will be calculated, and then used to normalize the A
+# values.
+TIME_RANGE_FOR_NORMALIZATION <- c(55, 60)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -85,6 +96,90 @@ A_COLUMN_NAME <- "A"
 TIME_COLUMN_NAME <- "time"
 
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
+
+A_NORM_COLUMN_NAME <- paste0(A_COLUMN_NAME, '_norm')
+
+# Define a function that plots fancy error ranges using ggplot2
+ggplot2_avg_rc <- function(
+    Y,
+    X,
+    point_identifier,
+    group_identifier,
+    xlimit,
+    ylimit,
+    xlabel,
+    ylabel
+)
+{
+    # Combine inputs to make a data frame so we can use `by` more easily
+    tdf <- data.frame(
+        X = X,
+        Y = Y,
+        point_identifier = point_identifier,
+        group_identifier = group_identifier
+    )
+
+    # Get basic stats information
+    tdf_stats <- do.call(
+        rbind,
+        by(
+            tdf,
+            list(tdf$point_identifier, tdf$group_identifier),
+            function(chunk) {
+                # Get some basic info
+                X_mean <- mean(chunk$X)
+                X_sd <- stats::sd(chunk$X)
+
+                Y_mean <- mean(chunk$Y)
+                Y_sd <- stats::sd(chunk$Y)
+
+                num <- nrow(chunk)
+
+                # Calculate the standard errors and limits
+                X_stderr <- X_sd / sqrt(num)
+                X_upper <- X_mean + X_stderr
+                X_lower <- X_mean - X_stderr
+
+                Y_stderr <- Y_sd / sqrt(num)
+                Y_upper <- Y_mean + Y_stderr
+                Y_lower <- Y_mean - Y_stderr
+
+                # Return the essentials
+                data.frame(
+                    X_mean = X_mean,
+                    X_upper = X_upper,
+                    X_lower = X_lower,
+                    Y_mean = Y_mean,
+                    Y_upper = Y_upper,
+                    Y_lower = Y_lower,
+                    point_identifier = unique(chunk$point_identifier),
+                    group_identifier = unique(chunk$group_identifier)
+                )
+            }
+        )
+    )
+
+    # Sort to make sure the curves are plotted properly
+    tdf_stats <- tdf_stats[order(tdf_stats$X_mean),]
+    tdf_stats <- tdf_stats[order(tdf_stats$group_identifier),]
+
+    # Create a return the plot object
+    ggplot(
+      data = tdf_stats,
+      aes(
+        x = X_mean,
+        y = Y_mean,
+        ymin = Y_lower,
+        ymax = Y_upper,
+        fill = group_identifier,
+        linetype = group_identifier
+      )) +
+      coord_cartesian(ylim = ylimit) +
+      geom_line() +
+      geom_ribbon(alpha = 0.5) +
+      xlab(xlabel) +
+      ylab(ylabel)
+}
 
 ###                                                                   ###
 ### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
@@ -103,6 +198,26 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
+    
+    # Determine if there is a `plot` column
+    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+    
+    # Add a column that combines `plot` and `replicate` if necessary
+    if (HAS_PLOT_INFO) {
+      combined_info <- process_id_columns(
+        combined_info,
+        "plot",
+        REP_COLUMN_NAME,
+        paste0('plot_', REP_COLUMN_NAME)
+      )
+    }
+    
+    # Reset the rep column name depending on whether there is plot information
+    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+      paste0('plot_', REP_COLUMN_NAME)
+    } else {
+      REP_COLUMN_NAME
+    }
 
     combined_info <- process_id_columns(
         combined_info,
@@ -110,6 +225,11 @@ if (PERFORM_CALCULATIONS) {
         REP_COLUMN_NAME,
         UNIQUE_ID_COLUMN_NAME
     )
+    
+    # Extract just the induction curves, if necessary
+    if ('type' %in% colnames(combined_info)) {
+      combined_info <- combined_info[combined_info[, 'type'] == 'induction', , TRUE]
+    }
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -130,6 +250,35 @@ if (PERFORM_CALCULATIONS) {
     # Add an "elapsed time" column
     combined_info[, 'elapsed_time'] <-
         (combined_info[, 'seq_num'] - 1) * TIME_INCREMENT
+    
+    # Remove specific problematic points
+    if (REMOVE_SPECIFIC_POINTS) {
+      # Specify the points to remove
+      combined_info <- remove_points(
+        combined_info,
+        list(event = 'hn1a', plot_replicate = '5 1', obs = 714:720)
+      )
+    }
+
+    # Normalize the data
+    combined_info <- do.call(
+      rbind,
+      by(combined_info, combined_info[, EVENT_COLUMN_NAME], function(x) {
+        subset <- x[x[, 'elapsed_time'] >= TIME_RANGE_FOR_NORMALIZATION[1] &
+                      x[, 'elapsed_time'] <= TIME_RANGE_FOR_NORMALIZATION[2], ]
+
+        norm_val <- mean(subset[[A_COLUMN_NAME]])
+
+        x[, 'A_norm_val'] <- norm_val
+        x[, A_NORM_COLUMN_NAME] <- x[, A_COLUMN_NAME] / norm_val
+
+        document_variables(
+          x,
+          c('', 'A_norm_val', x$units[[A_COLUMN_NAME]]),
+          c('', A_NORM_COLUMN_NAME, x$units[[A_COLUMN_NAME]])
+        )
+      })
+    )
 
     # Calculate basic stats for each event
     all_stats <- basic_stats(
@@ -144,12 +293,13 @@ if (PERFORM_CALCULATIONS) {
 # Convert event columns to factors to control the order of events in subsequent
 # plots
 all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
+all_samples <- factorize_id_column(all_samples, EVENT_COLUMN_NAME)
 #all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats)
+    View(all_stats$main_data)
 }
 
 ###                              ###
@@ -158,27 +308,50 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-x_t <- all_samples[['elapsed_time']]
-x_s <- all_samples[['seq_num']]
-x_e <- all_samples[[EVENT_COLUMN_NAME]]
+a_time_lim <- c(30, 60)
+
+all_samples_for_plots <- all_samples[all_samples[['elapsed_time']] >= a_time_lim[1] & all_samples[['elapsed_time']] <= a_time_lim[2], ]
+all_samples_for_plots[['elapsed_time']] <- all_samples_for_plots[['elapsed_time']] - min(all_samples_for_plots[['elapsed_time']])
+
+a_time_lim <- a_time_lim - min(a_time_lim)
+
+x_t <- all_samples_for_plots[['elapsed_time']]
+x_s <- all_samples_for_plots[['seq_num']]
+x_e <- all_samples_for_plots[[EVENT_COLUMN_NAME]]
 
 a_lim <- c(-3, 50)
+a_norm_lim <- c(-0.1, 1.1)
 
 t_lab <- "Elapsed time (minutes)"
-a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for each time point)"
+a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)\n(error bars: standard error of the mean for each time point)"
 
 avg_plot_param <- list(
-    list(all_samples[[A_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_lab, ylim = a_lim,  xlim = c(30, 65))
+  list(all_samples_for_plots[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = a_time_lim),
+  list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = a_time_lim)
 )
 
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = TRUE, list(
+    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = FALSE, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
         grid = TRUE,
         main = rc_caption
     )))
+    x11(width = 8, height = 6)
+    print(plot_obj)
+
+    plot_obj <- ggplot2_avg_rc(
+        x[[1]],
+        x[[2]],
+        x[[3]],
+        x[[4]],
+        x[[8]],
+        x[[7]],
+        x[[5]],
+        x[[6]]
+    )
     x11(width = 8, height = 6)
     print(plot_obj)
 }))
