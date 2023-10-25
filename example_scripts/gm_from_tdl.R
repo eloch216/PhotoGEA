@@ -44,6 +44,8 @@ MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
+USE_BUSCH_GM <- TRUE
+
 # Specify a default respiration
 DEFAULT_RESPIRATION <- 2.69
 
@@ -417,7 +419,16 @@ if (PERFORM_CALCULATIONS) {
     # Calculate Gamma_star (needed for `calculate_gm_ubierna`)
     licor_files <- calculate_gamma_star(licor_files)
 
-    licor_files <- calculate_gm_ubierna(licor_files)
+    licor_files <- if (USE_BUSCH_GM) {
+        # Here we use Equation 19 for e_star because we don't have values for
+        # delta_obs_growth
+        calculate_gm_busch(
+            licor_files,
+            e_star_equation = 19
+        )
+    } else {
+        calculate_gm_ubierna(licor_files)
+    }
 
     licor_files <- apply_gm(licor_files)
 

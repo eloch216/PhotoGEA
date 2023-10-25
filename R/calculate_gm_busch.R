@@ -16,6 +16,7 @@ calculate_gm_busch <- function(
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
     rd_column_name = 'Rd',
+    total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
 )
 {
@@ -38,16 +39,17 @@ calculate_gm_busch <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_bar_column_name]]         <- 'ppt'
-    required_variables[[a_column_name]]             <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ci_column_name]]            <- 'micromol mol^(-1)'
-    required_variables[[co2_s_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[csurface_column_name]]      <- 'micromol mol^(-1)'
-    required_variables[[delta_c13_r_column_name]]   <- 'ppt'
-    required_variables[[delta_obs_tdl_column_name]] <- 'ppt'
-    required_variables[[gamma_star_column_name]]    <- 'micromol mol^(-1)'
-    required_variables[[rd_column_name]]            <- 'micromol m^(-2) s^(-1)'
-    required_variables[[t_column_name]]             <- 'dimensionless'
+    required_variables[[a_bar_column_name]]          <- 'ppt'
+    required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
+    required_variables[[co2_s_column_name]]          <- 'micromol mol^(-1)'
+    required_variables[[csurface_column_name]]       <- 'micromol mol^(-1)'
+    required_variables[[delta_c13_r_column_name]]    <- 'ppt'
+    required_variables[[delta_obs_tdl_column_name]]  <- 'ppt'
+    required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
+    required_variables[[rd_column_name]]             <- 'micromol m^(-2) s^(-1)'
+    required_variables[[total_pressure_column_name]] <- 'bar'
+    required_variables[[t_column_name]]              <- 'dimensionless'
 
     if (e_star_equation == 20) {
         required_variables[[delta_obs_growth_column_name]] <- 'ppt'
@@ -56,16 +58,17 @@ calculate_gm_busch <- function(
     check_required_variables(exdf_obj, required_variables)
 
     # Extract some important columns
-    A              <- exdf_obj[, a_column_name]             # micromol / m^2 / s
-    a_bar          <- exdf_obj[, a_bar_column_name]         # ppt
-    Ca             <- exdf_obj[, co2_s_column_name]         # micromol / mol
-    Ci             <- exdf_obj[, ci_column_name]            # micromol / mol
-    Cs             <- exdf_obj[, csurface_column_name]      # micromol / mol
-    delta_Ca_meas  <- exdf_obj[, delta_c13_r_column_name]   # ppt
-    Delta_obs_meas <- exdf_obj[, delta_obs_tdl_column_name] # ppt
-    Gamma_star     <- exdf_obj[, gamma_star_column_name]    # micromol / mol
-    Rd             <- exdf_obj[, rd_column_name]            # micromol / m^2 / s
-    t              <- exdf_obj[, t_column_name]             # dimensionless
+    A              <- exdf_obj[, a_column_name]              # micromol / m^2 / s
+    a_bar          <- exdf_obj[, a_bar_column_name]          # ppt
+    Ca             <- exdf_obj[, co2_s_column_name]          # micromol / mol
+    Ci             <- exdf_obj[, ci_column_name]             # micromol / mol
+    Cs             <- exdf_obj[, csurface_column_name]       # micromol / mol
+    delta_Ca_meas  <- exdf_obj[, delta_c13_r_column_name]    # ppt
+    Delta_obs_meas <- exdf_obj[, delta_obs_tdl_column_name]  # ppt
+    Gamma_star     <- exdf_obj[, gamma_star_column_name]     # micromol / mol
+    total_pressure <- exdf_obj[, total_pressure_column_name] # bar
+    Rd             <- exdf_obj[, rd_column_name]             # micromol / m^2 / s
+    t              <- exdf_obj[, t_column_name]              # dimensionless
 
     Delta_obs_growth <- if (e_star_equation == 20) {
         exdf_obj[, delta_obs_growth_column_name] # ppt
@@ -129,7 +132,13 @@ calculate_gm_busch <- function(
         a_s * (Cs - Ci) / Ca # ppt
 
     # The calculations for mesophyll conductance depend on whether or not day
-    # respiration is assumed to be isotopically connected to the CBB cycle.
+    # respiration is assumed to be isotopically connected to the CBB cycle. Note
+    # about units: For most equations used in calculate_gm_busch, gas
+    # concentrations appear as ratios, so the results are the same whether
+    # partial pressures or mole fractions are used. The only exceptions are
+    # Equations 21 and 22 for the mesophyll conductance, where there is an
+    # unmatched `Ca` in the denomenator. Here we convert from mole fraction
+    # (micromol / mol) to partial pressure (bar) using the total pressure.
     if (gm_type == 'con') {
         # Here we assume that day respiration is isotopically connected to the
         # CBB cycle.
@@ -151,9 +160,9 @@ calculate_gm_busch <- function(
         Delta_i <- t_factor_1 * Delta_i_term_1 + t_factor_2 * Delta_i_term_2 # ppt
 
         # Equation 21 from Busch et al. (2020)
-        gm_bottom <- Ca * (Delta_i - Delta_obs_meas)
-        gm_top <- t_factor_2 * A * (b - a_m - rd_a_alpha_e_factor)
-        gmc <- gm_top / gm_bottom
+        gm_bottom <- (Ca * 1e-6 * total_pressure) * (Delta_i - Delta_obs_meas) # ppt * bar
+        gm_top <- t_factor_2 * A * 1e-6 * (b - a_m - rd_a_alpha_e_factor)      # ppt * mol / m^2 / s
+        gmc <- gm_top / gm_bottom                                              # mol / m^2 / s / bar
     } else {
         # Here we assume that day respiration is isotopically disconnected from
         # the CBB cycle.
@@ -176,9 +185,9 @@ calculate_gm_busch <- function(
         Delta_i <- t_factor_1 * Delta_i_term_1 + t_factor_2 * Delta_i_term_2 # ppt
 
         # Equation 22 from Busch et al. (2020)
-        gm_bottom <- Ca * (Delta_i - Delta_obs_meas)               # ppt * micromol / mol
-        gm_top <- t_factor_2 * A * (b - a_m - rd_a_alpha_e_factor) # ppt * micromol / m^2 / s
-        gmc <- gm_top / gm_bottom                                  # mol / m^2 / s
+        gm_bottom <- (Ca * 1e-6 * total_pressure) * (Delta_i - Delta_obs_meas) # ppt * bar
+        gm_top <- t_factor_2 * A * 1e-6 * (b - a_m - rd_a_alpha_e_factor)      # ppt * mol / m^2 / s
+        gmc <- gm_top / gm_bottom                                              # mol / m^2 / s / bar
     }
 
     # Store the calculated quantities in the exdf object
@@ -204,7 +213,7 @@ calculate_gm_busch <- function(
         c('calculate_gm_busch', 'e_prime',         'ppt'),
         c('calculate_gm_busch', 'e_star',          'ppt'),
         c('calculate_gm_busch', 'e_star_equation', ''),
-        c('calculate_gm_busch', 'gmc',             'mol m^(-2) s^(-1)'),
+        c('calculate_gm_busch', 'gmc',             'mol m^(-2) s^(-1) bar^(-1)'),
         c('calculate_gm_busch', 'gm_bottom',       'ppt * micromol / mol'),
         c('calculate_gm_busch', 'gm_top',          'ppt * micromol / m^2 / s'),
         c('calculate_gm_busch', 'gm_type',         '')

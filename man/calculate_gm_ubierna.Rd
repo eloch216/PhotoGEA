@@ -234,8 +234,11 @@ licor_data <- set_variable(
 # Calculate mesophyll conductance
 licor_data <- calculate_gm_ubierna(licor_data)
 
+# Calculate Cc using the new values of mesophyll conductance
+licor_data <- apply_gm(licor_data)
+
 # View some of the results
-licor_data[, c('replicate', 'CO2_s', 'Delta_obs_tdl', 'gmc')]
+licor_data[, c('replicate', 'CO2_s', 'Delta_obs_tdl', 'gmc', 'Ci', 'Cc')]
 }
 
 \concept{exdf}

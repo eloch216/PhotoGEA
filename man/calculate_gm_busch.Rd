@@ -29,6 +29,7 @@
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
     rd_column_name = 'Rd',
+    total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
   )
 }
@@ -114,6 +115,11 @@
   \item{rd_column_name}{
     The name of the column in \code{exdf_obj} that contains the rate of day
     respiration in \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{t_column_name}{
@@ -268,8 +274,11 @@ licor_data <- set_variable(
 # Calculate mesophyll conductance
 licor_data <- calculate_gm_busch(licor_data)
 
+# Calculate Cc using the new values of mesophyll conductance
+licor_data <- apply_gm(licor_data)
+
 # View some of the results
-licor_data[, c('replicate', 'CO2_s', 'Delta_obs_tdl', 'e_prime', 'gmc')]
+licor_data[, c('replicate', 'CO2_s', 'Delta_obs_tdl', 'e_prime', 'gmc', 'Ci', 'Cc')]
 }
 
 \concept{exdf}
