@@ -12,7 +12,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -73,6 +74,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_gasex_file</span><span class="op">(</span></span>
 <span>    <span class="va">file_name</span>,</span>
 <span>    timestamp_colname <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    file_type <span class="op">=</span> <span class="st">'AUTO'</span>,</span>
 <span>    instrument_type <span class="op">=</span> <span class="st">'AUTO'</span>,</span>
 <span>    <span class="va">...</span></span>
@@ -87,7 +89,12 @@
 
   <dt>timestamp_colname</dt>
 <dd><p>The name of the column that contains the timestamp of each measurement;
-    typically, this is <code>'time'</code>.</p></dd>
+    typically, this is something like <code>'time'</code> or <code>'TIMESTAMP'</code>.</p></dd>
+
+
+  <dt>posix_options</dt>
+<dd><p>Optional arguments to pass to <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXlt</a></code>; must be formatted as
+    a list of named elements. See details below for more information.</p></dd>
 
 
   <dt>file_type</dt>
@@ -120,7 +127,18 @@
   be found in the source code (<code>R/unicode_replacements.R</code>).</p>
 <p>When reading a log file, it can be useful to identify the timestamp column so
   its values can be properly interpreted as <code><a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">POSIXlt</a></code> objects. If
-  <code>timestamp_colname</code> is <code>NA</code>, this conversion will be skipped.</p>
+  <code>timestamp_colname</code> is <code>NA</code>, this conversion will be skipped. By
+  default, <code>read_gasex_file</code> calls <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXlt</a></code> with
+  <code>origin = '1970-01-01'</code> and <code>tz = ''</code>. With these options, any
+  numeric timestamps (such as <code>1692386305.5</code>) will be interpreted as the
+  number of seconds since January 1, 1970 (the UNIX standard) and the time will
+  be expressed using the local system time. This works well in many situations.
+  However, if a log file was created in a different time zone than the local
+  one, it may be necessary to specify the time zone. This can be done via the
+  <code>posix_options</code> argument. For example, to interpret the timestamp as a
+  time in US Central time, set <code>posix_options = list(tz = 'US/Central')</code>.
+  This may be necessary when using <code><a href="pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></code> to match
+  timestamps between different log files.</p>
 <p>When automatically determining the file type from its extension, the following
   rules are used:</p><ul><li><p>A <code>.xlsx</code> extension corresponds to <code>file_type = 'Excel'</code>.</p></li>
 <li><p>A <code>.dat</code> extension corresponds to <code>file_type = 'data'</code>.</p></li>
@@ -173,7 +191,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: Eeading a Licor Excel file that is included with the PhotoGEA</span></span></span>
 <span class="r-in"><span><span class="co"># package. Here we specify 'time' as the name of the timestamp column.</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">read_gasex_file</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"ball_berry_1.xlsx"</span>, package <span class="op">=</span> <span class="st">"PhotoGEA"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'ball_berry_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="st">'time'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -142,9 +143,39 @@
         <dd>Calculate C4 assimilation rates</dd>
       </dl><dl><dt>
           
+          <code><a href="calculate_gamma_star.html">calculate_gamma_star()</a></code> 
+        </dt>
+        <dd>Calculate Gamma_star from Rubisco specificity</dd>
+      </dl><dl><dt>
+          
           <code><a href="calculate_gas_properties.html">calculate_gas_properties()</a></code> 
         </dt>
         <dd>Calculate gas properties that are typically not included in Licor files</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_gm_busch.html">calculate_gm_busch()</a></code> 
+        </dt>
+        <dd>Calculate mesophyll conductance to CO2 diffusion</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_gm_ubierna.html">calculate_gm_ubierna()</a></code> 
+        </dt>
+        <dd>Calculate mesophyll conductance to CO2 diffusion</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_isotope_discrimination.html">calculate_isotope_discrimination()</a></code> 
+        </dt>
+        <dd>Calculate photosynthetic isotope discrimination</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_leakiness_ubierna.html">calculate_leakiness_ubierna()</a></code> 
+        </dt>
+        <dd>Calculate leakiness</dd>
+      </dl><dl><dt>
+          
+          <code><a href="calculate_ternary_correction.html">calculate_ternary_correction()</a></code> 
+        </dt>
+        <dd>Calculate ternary correction factor</dd>
       </dl><dl><dt>
           
           <code><a href="calculate_total_pressure.html">calculate_total_pressure()</a></code> 
@@ -202,7 +233,7 @@
         <dd>Document exdf columns by specifying units and categories</dd>
       </dl><dl><dt>
           
-          <code><a href="example_data_files.html">example_data_files</a></code> <code><a href="example_data_files.html">ball_berry_1</a></code> <code><a href="example_data_files.html">ball_berry_2</a></code> <code><a href="example_data_files.html">c3_aci_1</a></code> <code><a href="example_data_files.html">c3_aci_2</a></code> <code><a href="example_data_files.html">c4_aci_1</a></code> <code><a href="example_data_files.html">c4_aci_2</a></code> <code><a href="example_data_files.html">tdl_sampling_1</a></code> <code><a href="example_data_files.html">tdl_sampling_2</a></code> <code><a href="example_data_files.html">plaintext_licor_file</a></code> <code><a href="example_data_files.html">ball_berry_1.xlsx</a></code> <code><a href="example_data_files.html">ball_berry_2.xlsx</a></code> <code><a href="example_data_files.html">c3_aci_1.xlsx</a></code> <code><a href="example_data_files.html">c3_aci_2.xlsx</a></code> <code><a href="example_data_files.html">c4_aci_1.xlsx</a></code> <code><a href="example_data_files.html">c4_aci_2.xlsx</a></code> <code><a href="example_data_files.html">tdl_sampling_1.dat</a></code> <code><a href="example_data_files.html">tdl_sampling_2.dat</a></code> 
+          <code><a href="example_data_files.html">example_data_files</a></code> <code><a href="example_data_files.html">ball_berry_1</a></code> <code><a href="example_data_files.html">ball_berry_2</a></code> <code><a href="example_data_files.html">c3_aci_1</a></code> <code><a href="example_data_files.html">c3_aci_2</a></code> <code><a href="example_data_files.html">c4_aci_1</a></code> <code><a href="example_data_files.html">c4_aci_2</a></code> <code><a href="example_data_files.html">licor_for_gm_site11</a></code> <code><a href="example_data_files.html">licor_for_gm_site13</a></code> <code><a href="example_data_files.html">tdl_for_gm</a></code> <code><a href="example_data_files.html">tdl_sampling_1</a></code> <code><a href="example_data_files.html">tdl_sampling_2</a></code> <code><a href="example_data_files.html">plaintext_licor_file</a></code> <code><a href="example_data_files.html">ball_berry_1.xlsx</a></code> <code><a href="example_data_files.html">ball_berry_2.xlsx</a></code> <code><a href="example_data_files.html">c3_aci_1.xlsx</a></code> <code><a href="example_data_files.html">c3_aci_2.xlsx</a></code> <code><a href="example_data_files.html">c4_aci_1.xlsx</a></code> <code><a href="example_data_files.html">c4_aci_2.xlsx</a></code> <code><a href="example_data_files.html">licor_for_gm_site11.xlsx</a></code> <code><a href="example_data_files.html">licor_for_gm_site13.xlsx</a></code> <code><a href="example_data_files.html">tdl_for_gm.dat</a></code> <code><a href="example_data_files.html">tdl_sampling_1.dat</a></code> <code><a href="example_data_files.html">tdl_sampling_2.dat</a></code> 
         </dt>
         <dd>Example data files</dd>
       </dl><dl><dt>
@@ -237,9 +268,19 @@
         <dd>Fits a C4 assimilation model to an experimental curve</dd>
       </dl><dl><dt>
           
+          <code><a href="get_oxygen_from_preamble.html">get_oxygen_from_preamble()</a></code> 
+        </dt>
+        <dd>Extract oxygen information from a Licor file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_sample_valve_from_filename.html">get_sample_valve_from_filename()</a></code> 
+        </dt>
+        <dd>Extract TDL valve information from file name</dd>
+      </dl><dl><dt>
+          
           <code><a href="identifier_columns.html">identifier_columns()</a></code> 
         </dt>
-        <dd>Make sure required variables exist</dd>
+        <dd>Find columns that have a single value across all rows</dd>
       </dl><dl><dt>
           
           <code><a href="identify_common_columns.html">identify_common_columns()</a></code> 
@@ -279,7 +320,17 @@
           
           <code><a href="organize_response_curve_data.html">organize_response_curve_data()</a></code> 
         </dt>
-        <dd>Check response curve data for common issues</dd>
+        <dd>Reorganize response curve data for analysis and plotting</dd>
+      </dl><dl><dt>
+          
+          <code><a href="pair_gasex_and_tdl.html">pair_gasex_and_tdl()</a></code> 
+        </dt>
+        <dd>Pair gas exchange and TDL data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="pdf_print.html">pdf_print()</a></code> 
+        </dt>
+        <dd>Print a plot object or save it to a PDF</dd>
       </dl><dl><dt>
           
           <code><a href="print.exdf.html">print(<i>&lt;exdf&gt;</i>)</a></code> 
@@ -294,7 +345,7 @@
           
           <code><a href="process_tdl_cycle_polynomial.html">process_tdl_cycle_polynomial()</a></code> 
         </dt>
-        <dd>Process cycles from the ERML TDL</dd>
+        <dd>Process TDL cycles using a polynomial correction method</dd>
       </dl><dl><dt>
           
           <code><a href="read_cr3000.html">read_cr3000()</a></code> 
@@ -309,12 +360,12 @@
           
           <code><a href="read_licor_6800_Excel.html">read_licor_6800_Excel()</a></code> 
         </dt>
-        <dd>Reading a plaintext Licor LI-6800 log file</dd>
+        <dd>Reading a Licor LI-6800 Excel log file</dd>
       </dl><dl><dt>
           
           <code><a href="read_licor_6800_plaintext.html">read_licor_6800_plaintext()</a></code> 
         </dt>
-        <dd>Reading a plaintext Licor LI-6800 log file</dd>
+        <dd>Reading a Licor LI-6800 plaintext log file</dd>
       </dl><dl><dt>
           
           <code><a href="remove_points.html">remove_points()</a></code> 

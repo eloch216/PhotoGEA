@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -61,6 +62,40 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.0" id="photogea-version-090-2023-10-25">PhotoGEA VERSION 0.9.0 (2023-10-25)<a class="anchor" aria-label="anchor" href="#photogea-version-090-2023-10-25"></a></h2>
+<ul><li>Added a new convenience function for printing plot objects: <code>pdf_print</code>
+</li>
+<li>Added and/or documented several functions related to isotope discrimination measurements:
+<ul><li><code>calculate_gamma_star</code></li>
+<li><code>calculate_gm_busch</code></li>
+<li><code>calculate_gm_ubierna</code></li>
+<li><code>calculate_isotope_discrimination</code></li>
+<li><code>calculate_leakiness_ubierna</code></li>
+<li><code>calculate_ternary_correction</code></li>
+<li><code>get_oxygen_from_preamble</code></li>
+<li><code>get_sample_valve_from_filename</code></li>
+<li><code>pair_gasex_and_tdl</code></li>
+</ul></li>
+<li>Added two new example data files (<code>licor_for_gm_site11.xslx</code> and <code>tdl_for_gm.dat</code>) for use in examples and vignettes.</li>
+<li>Renamed some variables related to isotope measurements; the new terms are more consistent with the way these quantities are typically described:
+<ul><li>
+<code>total_isotope_ratio</code> was renamed to <code>delta_13C</code>
+</li>
+<li>
+<code>total_mixing_ratio</code> was renamed to <code>total_CO2</code>
+</li>
+</ul></li>
+<li>Removed a function that was specific to one user (<code>batch_get_genotype_info_from_licor_filename</code>).</li>
+<li>Added a new R file (<code>constants.R</code>) to store the values of some constants that appear in multiple functions; this will help ensure that consistent values are used in each instance.</li>
+<li>Improved some error handling in <code>read_gasex_file</code> and attempted to clarify instructions for selecting files to load.</li>
+<li>Added two basic tests of <code>read_gasex_file</code> using the <code>testthat</code> package.</li>
+<li>PRs related to creating this version:
+<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/70" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/70</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/71" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/71</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/72" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/72</a></li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.0" id="photogea-version-080-2023-04-30">PhotoGEA VERSION 0.8.0 (2023-04-30)<a class="anchor" aria-label="anchor" href="#photogea-version-080-2023-04-30"></a></h2>
 <ul><li>Modified <code>identify_tdl_cycles</code> and <code>process_tdl_cycle_polynomial</code> so they can handle cycles where there are multiple measurement logs from each valve.</li>
 <li>Added several functions for calculating quadratic roots; these are not exported in the package namespace, but are now used in <code>calculate_c3_assimilation</code> and <code>calculate_c4_assimilation</code> to make the code cleaner and more robust.</li>
@@ -72,6 +107,7 @@
 </ul></li>
 <li>PRs related to creating this version:
 <ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/68" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/68</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/69" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/69</a></li>
 </ul></li>
 </ul></div>
     <div class="section level2">

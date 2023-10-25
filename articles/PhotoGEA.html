@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -118,6 +119,11 @@ that contain several A-Ci curves measured from tobacco and soybean
 plants, fit a model to each response curve, and then plot some of the
 results. This is a basic example that just scratches the surface of what
 is possible with <code>PhotoGEA</code>.</p>
+<p>(<strong>Note:</strong> When loading your own files for analysis, it
+is not advisable to use <code>system.file</code> as we have done in the
+code below. Instead, file paths can be directly written, or files can be
+chosen using an interactive window. See the <a href="analyzing_c3_aci_curves.html#input-files">Analyzing C3 A-Ci
+Curves</a> vignette for more information.)</p>
 <div class="section level3">
 <h3 id="fitting-the-curves">Fitting the Curves<a class="anchor" aria-label="anchor" href="#fitting-the-curves"></a>
 </h3>
@@ -128,10 +134,11 @@ curve:</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
+<span><span class="co"># Define a vector of paths to the files we wish to load; in this case, we are</span></span>
+<span><span class="co"># loading example files included with the PhotoGEA package</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load the data from each file</span></span>
@@ -187,7 +194,7 @@ curve:</p>
 <p>When this document was generated, evaluating this code required the
 following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.279   0.012   1.294</span></span></code></pre>
+<span><span class="co">#&gt;   1.839   0.008   1.848</span></span></code></pre>
 <p>The timing results may vary depending on the particular machine used
 to run the code. Nevertheless: <em>Do you think you could fit six A-Ci
 curves in less than 2 seconds using any other method?</em></p>
@@ -279,6 +286,8 @@ Curves</a></li>
 <li><a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry
 Data</a></li>
 <li><a href="analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+<li><a href="analyzing_gm_data.html">Analyzing Mesophyll Conductance
+Data</a></li>
 </ul>
 </li>
 <li>More advanced topics:

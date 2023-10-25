@@ -22,7 +22,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -87,19 +88,17 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">process_tdl_cycle_erml</span><span class="op">(</span></span>
 <span>    <span class="va">tdl_cycle</span>,</span>
-<span>    <span class="va">valve_column_name</span>,</span>
 <span>    <span class="va">noaa_valve</span>,</span>
 <span>    <span class="va">calibration_0_valve</span>,</span>
 <span>    <span class="va">calibration_1_valve</span>,</span>
 <span>    <span class="va">calibration_2_valve</span>,</span>
 <span>    <span class="va">calibration_3_valve</span>,</span>
-<span>    <span class="va">raw_12c_colname</span>,</span>
-<span>    <span class="va">raw_13c_colname</span>,</span>
 <span>    <span class="va">noaa_cylinder_co2_concentration</span>,</span>
 <span>    <span class="va">noaa_cylinder_isotope_ratio</span>,</span>
 <span>    <span class="va">calibration_isotope_ratio</span>,</span>
-<span>    <span class="va">f_other</span>,</span>
-<span>    <span class="va">R_VPDB</span></span>
+<span>    valve_column_name <span class="op">=</span> <span class="st">'valve_number'</span>,</span>
+<span>    raw_12c_colname <span class="op">=</span> <span class="st">'Conc12C_Avg'</span>,</span>
+<span>    raw_13c_colname <span class="op">=</span> <span class="st">'Conc13C_Avg'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -107,11 +106,6 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>tdl_cycle</dt>
 <dd><p>An <code>exdf</code> object representing one cycle of TDL data.</p></dd>
-
-
-  <dt>valve_column_name</dt>
-<dd><p>The name of the column in <code>tdl_cycle</code> that contains the valve number;
-    typically, this is <code>'valve_number'</code>.</p></dd>
 
 
   <dt>noaa_valve</dt>
@@ -138,16 +132,6 @@
     nitrogen gas with a calibrated CO2 source).</p></dd>
 
 
-  <dt>raw_12c_colname</dt>
-<dd><p>The name of the column in <code>tdl_cycle</code> that contains the 12C signal;
-    typically, this is <code>'Conc12C_Avg'</code>.</p></dd>
-
-
-  <dt>raw_13c_colname</dt>
-<dd><p>The name of the column in <code>tdl_cycle</code> that contains the 13C signal;
-    typically, this is <code>'Conc13C_Avg'</code>.</p></dd>
-
-
   <dt>noaa_cylinder_co2_concentration</dt>
 <dd><p>The total CO2 concentration of the NOAA calibration cylinder in ppm; this
     includes all carbon species, such as 12C18O18O.</p></dd>
@@ -161,12 +145,19 @@
 <dd><p>The isotope ratio of the other CO2 cylinder in ppt.</p></dd>
 
 
-  <dt>f_other</dt>
-<dd><p>The fraction of CO2 that is not 13C16O16O or 12C16O16O.</p></dd>
+  <dt>valve_column_name</dt>
+<dd><p>The name of the column in <code>tdl_cycle</code> that contains the valve number;
+    typically, this is <code>'valve_number'</code>.</p></dd>
 
 
-  <dt>R_VPDB</dt>
-<dd><p>The Vienna Pee Dee Belemnite reference value.</p></dd>
+  <dt>raw_12c_colname</dt>
+<dd><p>The name of the column in <code>tdl_cycle</code> that contains the 12C signal;
+    typically, this is <code>'Conc12C_Avg'</code>.</p></dd>
+
+
+  <dt>raw_13c_colname</dt>
+<dd><p>The name of the column in <code>tdl_cycle</code> that contains the 13C signal;
+    typically, this is <code>'Conc13C_Avg'</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -202,8 +193,8 @@
 <ul><li><p><code>tdl_data</code>: An <code>exdf</code> object containing the original content
           of <code>tdl_cycle</code> and several new columns:
           <code>'zero_corrected_12c'</code>, <code>'zero_corrected_13c'</code>,
-          <code>'calibrated_12c'</code>, <code>'calibrated_13c'</code>,
-          <code>'total_mixing_ratio'</code>, and <code>'total_isotope_ratio'</code>.</p></li>
+          <code>'calibrated_12c'</code>, <code>'calibrated_13c'</code>, <code>'total_CO2'</code>,
+          and <code>'delta_C13'</code>.</p></li>
 <li><p><code>calibration_zero</code>: An <code>exdf</code> object describing the values
           used to calculate the zero-corrected 12C and 13C signals.</p></li>
 <li><p><code>calibration_12CO2</code>: An <code>exdf</code> object describing the gain
@@ -220,7 +211,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: reading a TDL file that is included with the PhotoGEA package,</span></span></span>
 <span class="r-in"><span><span class="co"># identifying its measurement cycles, and then process them.</span></span></span>
 <span class="r-in"><span><span class="va">tdl_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"tdl_sampling_1.dat"</span>, package <span class="op">=</span> <span class="st">"PhotoGEA"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'tdl_sampling_1.dat'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="st">'TIMESTAMP'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -247,9 +238,7 @@
 <span class="r-in"><span>  raw_13c_colname <span class="op">=</span> <span class="st">'Conc13C_Avg'</span>,</span></span>
 <span class="r-in"><span>  noaa_cylinder_co2_concentration <span class="op">=</span> <span class="fl">294.996</span>,</span></span>
 <span class="r-in"><span>  noaa_cylinder_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">8.40</span>,</span></span>
-<span class="r-in"><span>  calibration_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">11.505</span>,</span></span>
-<span class="r-in"><span>  f_other <span class="op">=</span> <span class="fl">0.00474</span>,</span></span>
-<span class="r-in"><span>  R_VPDB <span class="op">=</span> <span class="fl">0.0111797</span></span></span>
+<span class="r-in"><span>  calibration_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">11.505</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Make a plot of the raw and calibrated 13C signals across all the TDL cycles.</span></span></span>

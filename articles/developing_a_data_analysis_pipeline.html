@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -313,6 +314,9 @@ for calculating the values of new variables from the values of variables
 that already exist in the data set:</p>
 <ul>
 <li>
+<code>apply_gm</code>: Calculates values of the chloroplast or
+mesophyll CO<sub>2</sub> concentration.</li>
+<li>
 <code>calculate_arrhenius</code>: Calculates temperature-dependent
 values of photosynthetic parameters using Arrhenius exponents.</li>
 <li>
@@ -327,13 +331,27 @@ photosynthesis.</li>
 <code>calculate_c4_assimilation</code>: Calculate assimilation rates
 using S. von Caemmerer’s model for C4 photosynthesis.</li>
 <li>
-<code>apply_gm</code>: Calculates values of the chloroplast or
-mesophyll CO<sub>2</sub> concentration.</li>
+<code>calculate_gamma_star</code>: Calculates the CO<sub>2</sub>
+compensation point in the absence of day respiration from the leaf
+temperature and Rubisco specificity.</li>
 <li>
 <code>calculate_gas_properties</code>: Calculates gas properties
 that are not included in the default Licor log files, such as the
 H<sub>2</sub>O concentration at the leaf surface and the stomatal
 conductance to CO<sub>2</sub>.</li>
+<li>
+<code>calculate_gm_busch</code> and
+<code>calculate_gm_ubierna</code>: Calculates mesophyll conductance
+using two slightly different models.</li>
+<li>
+<code>calculate_isotope_discrimination</code>: Calculates
+photosynthetic carbon isotope discrimination.</li>
+<li>
+<code>calculate_leakiness_ubierna</code>: Calculates bundle-sheath
+leakiness to CO<sub>2</sub>.</li>
+<li>
+<code>calculate_ternary_correction</code>: Calculates ternary gas
+mixture correction factors.</li>
 <li>
 <code>calculate_total_pressure</code>: Calculates the total pressure
 in the Licor measurement chamber.</li>
@@ -456,6 +474,11 @@ standard error.</li>
 <code>xyplot_avg_rc</code>: This function can be used to plot
 average response curves created by averaging individual curves measured
 from multiple plants.</li>
+<li>
+<code>pdf_print</code>: This function can be used to switch from
+“exploratory” plots (in R graphics windows) to “final” plots (as PDFs)
+once the settings in a script have been optimized and the plots are
+ready for sharing with others.</li>
 </ul>
 <p>More complex statistical operations can be performed with functions
 from other R packages such as <code>onewaytests</code> or

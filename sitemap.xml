@@ -22,6 +22,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_c4_aci_curves.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_gm_data.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_tdl_data.html</loc>
   </url>
   <url>
@@ -91,7 +94,25 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_c4_assimilation.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gamma_star.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gas_properties.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gm_busch.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gm_ubierna.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_isotope_discrimination.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_leakiness_ubierna.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_ternary_correction.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_total_pressure.html</loc>
@@ -148,6 +169,12 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/fit_c4_aci.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/get_oxygen_from_preamble.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/get_sample_valve_from_filename.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/identifier_columns.html</loc>
   </url>
   <url>
@@ -176,6 +203,12 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/organize_response_curve_data.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/pair_gasex_and_tdl.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/pdf_print.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/print.exdf.html</loc>

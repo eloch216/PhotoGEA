@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -310,11 +311,11 @@ Curves</a> vignette:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_parameters</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   instrument species plot     Vcmax     Jmax        Rd TPU</span></span>
-<span><span class="co">#&gt; 1      ripe1 soybean   5a 126.61881 229.5225 0.8502715  NA</span></span>
-<span><span class="co">#&gt; 2      ripe1 tobacco    1 128.90040 272.3661 0.5237341  NA</span></span>
-<span><span class="co">#&gt; 3      ripe1 tobacco    2 109.78883 244.9742 0.6525276  NA</span></span>
-<span><span class="co">#&gt; 4      ripe2 soybean    1  99.85103 158.7873 0.3908914  NA</span></span>
-<span><span class="co">#&gt; 5      ripe2 soybean   5b 115.84216 189.9087 1.6311794  NA</span></span>
+<span><span class="co">#&gt; 1      ripe1 soybean   5a 126.61884 229.5225 0.8502736  NA</span></span>
+<span><span class="co">#&gt; 2      ripe1 tobacco    1 128.90039 272.3661 0.5237317  NA</span></span>
+<span><span class="co">#&gt; 3      ripe1 tobacco    2 109.78883 244.9742 0.6525278  NA</span></span>
+<span><span class="co">#&gt; 4      ripe2 soybean    1  99.85103 158.7873 0.3908915  NA</span></span>
+<span><span class="co">#&gt; 5      ripe2 soybean   5b 115.84216 189.9087 1.6311796  NA</span></span>
 <span><span class="co">#&gt; 6      ripe2 tobacco    4  83.51227 178.1061 0.3925865  NA</span></span></code></pre></div>
 <p>There are a few things to notice about these commands and the
 resulting outputs:</p>
@@ -591,8 +592,8 @@ version:</p>
 <span><span class="co">#&gt; 5                        ripe2                   soybean                     5b</span></span>
 <span><span class="co">#&gt; 6                        ripe2                   tobacco                      4</span></span>
 <span><span class="co">#&gt;   Vcmax [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                126.61881</span></span>
-<span><span class="co">#&gt; 2                                                128.90040</span></span>
+<span><span class="co">#&gt; 1                                                126.61884</span></span>
+<span><span class="co">#&gt; 2                                                128.90039</span></span>
 <span><span class="co">#&gt; 3                                                109.78883</span></span>
 <span><span class="co">#&gt; 4                                                 99.85103</span></span>
 <span><span class="co">#&gt; 5                                                115.84216</span></span>
@@ -605,11 +606,11 @@ version:</p>
 <span><span class="co">#&gt; 5                                                189.9087</span></span>
 <span><span class="co">#&gt; 6                                                178.1061</span></span>
 <span><span class="co">#&gt;   Rd [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             0.8502715</span></span>
-<span><span class="co">#&gt; 2                                             0.5237341</span></span>
-<span><span class="co">#&gt; 3                                             0.6525276</span></span>
-<span><span class="co">#&gt; 4                                             0.3908914</span></span>
-<span><span class="co">#&gt; 5                                             1.6311794</span></span>
+<span><span class="co">#&gt; 1                                             0.8502736</span></span>
+<span><span class="co">#&gt; 2                                             0.5237317</span></span>
+<span><span class="co">#&gt; 3                                             0.6525278</span></span>
+<span><span class="co">#&gt; 4                                             0.3908915</span></span>
+<span><span class="co">#&gt; 5                                             1.6311796</span></span>
 <span><span class="co">#&gt; 6                                             0.3925865</span></span>
 <span><span class="co">#&gt;   TPU [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))</span></span>
 <span><span class="co">#&gt; 1                                                     NA</span></span>
@@ -648,8 +649,8 @@ copy/paste into a text file to initialize your own script.</p>
 <span></span>
 <span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>

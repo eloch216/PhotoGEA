@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
     <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
     <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
     <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
+    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
     <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
     <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
     <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
@@ -290,11 +291,17 @@ is unpublished, so these files should only be used as examples.</p>
 installation directory, and full paths to these files can be obtained
 with <code>system.file</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
+<code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load; in this case, we are</span></span>
+<span><span class="co"># loading example files included with the PhotoGEA package</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>(<strong>Note:</strong> When loading your own files for analysis, it
+is not advisable to use <code>system.file</code> as we have done here.
+Instead, file paths can be directly written, or files can be chosen
+using an interactive window. See <a href="#input-files">Input Files</a>
+below for more information.)</p>
 <p>To actually read the data in the files and store them in R objects,
 we will use the <code>read_gasex_file</code> function from
 <code>PhotoGEA</code>. Since there are multiple files to read, we will
@@ -1000,14 +1007,24 @@ specifically mentioned here.</p>
 <h3 id="input-files">Input Files<a class="anchor" aria-label="anchor" href="#input-files"></a>
 </h3>
 <p>The file paths specified in <code>file_paths</code> will need to be
-modified so they point to your Licor files. In your own script, you may
-want to consider using the <code>choose_input_licor_files</code>
-function from <code>PhotoGEA</code>; this function will create a pop-up
-browser window where you can interactively select a set of Licor files.
-Sometimes this is more convenient than writing out full file paths. For
-example, you could replace the previous definition of
-<code>file_paths</code> with this one:</p>
+modified so they point to your Licor files. One way to do this in your
+own script is to simply write out relative or absolute paths to the
+files you wish to load. For example, you could replace the previous
+definition of <code>file_paths</code> with this one:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
+<span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">'myfile1.xlsx'</span>,        <span class="co"># `myfile1.xlsx` must be in the current working directory</span></span>
+<span>  <span class="st">'C:/documents/myfile2'</span> <span class="co"># This is an absolute path to `myfile2`</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>You may also want to consider using the
+<code>choose_input_licor_files</code> function from
+<code>PhotoGEA</code>; this function will create a pop-up browser window
+where you can interactively select a set of files. Sometimes this is
+more convenient than writing out file paths or names. For example, you
+could replace the previous definition of <code>file_paths</code> with
+this one:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Unfortunately, <code>choose_input_licor_files</code> is only
@@ -1067,7 +1084,7 @@ automatically choose them for you.</p>
 fitting results as <code>csv</code> files. For example, the following
 commands will allow you to interactively choose output filenames for the
 resulting <code>csv</code> files:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c3_aci_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -1082,7 +1099,7 @@ copy/paste into a text file to initialize your own script. Annotation
 has also been added to clearly indicate the four steps involved in data
 analysis, as described in the <a href="developing_a_data_analysis_pipeline.html">Developing a Data
 Analysis Pipeline</a> vignette.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###</span></span>
 <span><span class="co">### PRELIMINARIES:</span></span>
 <span><span class="co">### Loading packages, defining constants, creating helping functions, etc.</span></span>
@@ -1097,11 +1114,16 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">### Creating convenient R objects from raw data files</span></span>
 <span><span class="co">###</span></span>
 <span></span>
-<span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
+<span><span class="co"># Define a vector of paths to the files we wish to load; in this case, we are</span></span>
+<span><span class="co"># loading example files included with the PhotoGEA package</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_1.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, <span class="st">'c3_aci_2.xlsx'</span>, package <span class="op">=</span> <span class="st">'PhotoGEA'</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## IMPORTANT: When loading your own files, it is not advised to use</span></span>
+<span><span class="co">## `system.file` as in the above code. Instead, write out the names or use the</span></span>
+<span><span class="co">## `choose_input_licor_files` function.</span></span>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>
 <span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
