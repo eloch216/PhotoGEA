@@ -16,6 +16,10 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.9.1 (2023-11-13)
+
+- Added logo to package and documentation
+
 # PhotoGEA VERSION 0.9.0 (2023-10-25)
 
 - Added a new convenience function for printing plot objects: `pdf_print`
