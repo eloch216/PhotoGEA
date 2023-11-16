@@ -46,7 +46,7 @@ check_required_variables.exdf <- function(x, required_variables) {
         column_name <- names(required_variables)[i]
         required_units <- required_variables[[i]]
         actual_units <- x$units[[column_name]]
-        if (!is.na(required_units) && actual_units != required_units) {
+        if (!is.na(required_units) && (is.na(actual_units) || actual_units != required_units)) {
             error_msg <- append(
                 error_msg,
                 paste0(
