@@ -16,6 +16,12 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# PhotoGEA VERSION 0.9.2 (2023-11-16)
+
+- Fixed a bug in `check_required_variables` where missing units in an `exdf`
+  object were not properly identified
+- Added tests to make sure `check_required_variables` is functioning as expected
+
 # PhotoGEA VERSION 0.9.1 (2023-11-13)
 
 - Added logo to package and documentation
