@@ -46,20 +46,20 @@ estimate_operating_point <- function(
     }
 
     # Use linear interpolation to estimate the operating point
-    operating_An <- approx(
+    operating_An <- stats::approx(
         aci_exdf[, ca_column_name],
         aci_exdf[, a_column_name],
         ca_atmospheric
     )$y
 
-    operating_Ci <- approx(
+    operating_Ci <- stats::approx(
         aci_exdf[, ca_column_name],
         aci_exdf[, ci_column_name],
         ca_atmospheric
     )$y
 
     operating_Cc <- if (type == 'c3') {
-        approx(
+        stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, cc_column_name],
             ca_atmospheric
@@ -69,7 +69,7 @@ estimate_operating_point <- function(
     }
 
     operating_PCm <- if (type == 'c4') {
-        approx(
+        stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, pcm_column_name],
             ca_atmospheric
