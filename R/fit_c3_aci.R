@@ -1,7 +1,9 @@
 fit_c3_aci <- function(
     replicate_exdf,
     a_column_name = 'A',
+    ca_column_name = 'Ca',
     cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
     total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -9,6 +11,7 @@ fit_c3_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
+    ca_atmospheric = 420,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -43,7 +46,9 @@ fit_c3_aci <- function(
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
     required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
     required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
@@ -233,20 +238,67 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'feval'] <- optim_result[['feval']]
     replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
 
+    # Get operating point information
+    operating_point_info <- estimate_operating_point(
+        replicate_exdf,
+        ca_atmospheric,
+        type = 'c3',
+        a_column_name,
+        ca_column_name,
+        cc_column_name,
+        ci_column_name,
+        pcm_column_name = NULL,
+        return_list = TRUE
+    )
+
+    # Estimate An at the operating point
+    operating_An_model <- calculate_c3_assimilation(
+        operating_point_info$operating_exdf,
+        best_X[1],
+        best_X[2],
+        best_X[3],
+        best_X[4],
+        POc,
+        atp_use,
+        nadph_use,
+        alpha,
+        curvature_cj,
+        curvature_cjp,
+        cc_column_name,
+        total_pressure_column_name,
+        kc_column_name,
+        ko_column_name,
+        gamma_star_column_name,
+        vcmax_norm_column_name,
+        rd_norm_column_name,
+        j_norm_column_name,
+        perform_checks = FALSE
+    )[, 'An']
+
+    # Store the results
+    replicate_identifiers[, 'operating_Ci']       <- operating_point_info$operating_Ci
+    replicate_identifiers[, 'operating_Cc']       <- operating_point_info$operating_Cc
+    replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
+    replicate_identifiers[, 'operating_An_model'] <- operating_An_model
+
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c3_aci', 'TPU',             'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'J_at_25',         'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'Rd_at_25',        'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'Vcmax_at_25',     'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'J_tl_avg',        'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'Rd_tl_avg',       'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'Vcmax_tl_avg',    'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci', 'convergence',     ''),
-        c('fit_c3_aci', 'convergence_msg', ''),
-        c('fit_c3_aci', 'feval',           ''),
-        c('fit_c3_aci', 'optimum_val',     '')
+        c('fit_c3_aci',               'TPU',                'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'J_at_25',            'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Rd_at_25',           'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Vcmax_at_25',        'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'J_tl_avg',           'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Rd_tl_avg',          'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Vcmax_tl_avg',       'micromol m^(-2) s^(-1)'),
+        c('estimate_operating_point', 'operating_Ci',       replicate_exdf$units[[ci_column_name]]),
+        c('estimate_operating_point', 'operating_Cc',       replicate_exdf$units[[cc_column_name]]),
+        c('estimate_operating_point', 'operating_An',       replicate_exdf$units[[a_column_name]]),
+        c('fit_c3_aci',               'operating_An_model', replicate_exdf$units[[a_column_name]]),
+        c('fit_c3_aci',               'convergence',        ''),
+        c('fit_c3_aci',               'convergence_msg',    ''),
+        c('fit_c3_aci',               'feval',              ''),
+        c('fit_c3_aci',               'optimum_val',        '')
     )
 
     # Return the results

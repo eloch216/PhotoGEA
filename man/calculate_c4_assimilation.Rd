@@ -5,11 +5,11 @@
 \title{Calculate C4 assimilation rates}
 
 \description{
-  Calculates C4 assimilation rates based on the Farquhar-von-Caemmerer-Berry
-  model. This function can accomodate alternative colum names for the variables
-  taken from Licor files in case they change at some point in the future. This
-  function also checks the units of each required column and will produce an
-  error if any units are incorrect.
+  Calculates C4 assimilation rates based on the von Caemmerer (2000) model. This
+  function can accomodate alternative colum names for the variables taken from
+  Licor files in case they change at some point in the future. This function
+  also checks the units of each required column and will produce an error if any
+  units are incorrect.
 }
 
 \usage{

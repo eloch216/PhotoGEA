@@ -17,6 +17,8 @@
   fit_c4_aci(
     replicate_exdf,
     a_column_name = 'A',
+    ca_column_name = 'Ca',
+    ci_column_name = 'Ci',
     pcm_column_name = 'PCm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -26,6 +28,7 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
+    ca_atmospheric = 420,
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
@@ -55,6 +58,16 @@
   \item{a_column_name}{
     The name of the column in \code{replicate_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{ca_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    ambient CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{ci_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{pcm_column_name}{
@@ -102,6 +115,11 @@
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{ca_atmospheric}{
+    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
+    this will be used to estimate the operating point.
   }
 
   \item{POm}{
@@ -193,6 +211,13 @@
   of \code{Vpr} specified in this way will override any value returned by
   \code{initial_guess_fun}.
 
+  Once the best-fit parameters have been determined, this function also
+  estimates the operating value of `\code{PCm} from the atmospheric CO2
+  concentration \code{atmospheric_ca} using
+  \code{\link{estimate_operating_point}}, and then uses that value to estimate
+  the modeled \code{An} at the operating point via
+  \code{\link{calculate_c4_assimilation}}.
+
   This function assumes that \code{replicate_exdf} represents a single
   C4 A-Ci curve. To fit multiple curves at once, this function is often used
   along with \code{\link{by.exdf}} and \code{\link{consolidate}}.
@@ -227,6 +252,9 @@
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{Rd_tl_avg},
                   \code{Vcmax_tl_avg}, and \code{Vpmax_tl_avg}.
+            \item Information about the operating point is stored in
+                  \code{operating_PCm}, \code{operating_Ci},
+                  \code{operating_An}, and \code{operating_An_model}.
             \item The \code{convergence} column indicates whether the fit was
                   successful (\code{==0}) or if the optimizer encountered a
                   problem (\code{!=0}).
@@ -284,6 +312,7 @@ col_to_keep <- c(
   'species', 'plot',                                       # identifiers
   'Rd_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr',         # parameters scaled to 25 degrees C
   'Rd_tl_avg', 'Vcmax_tl_avg', 'Vpmax_tl_avg',             # average temperature-dependent values
+  'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
   'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats
   'convergence', 'convergence_msg', 'feval', 'optimum_val' # convergence info
 )
