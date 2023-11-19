@@ -697,9 +697,10 @@ xyplot(
 ```
 
 Note that in addition to the fitted values of `A`, the output also includes
-values of the potential limiting rates `Ac`, `Aj`, and `Ap`. We can also take a
-look at these, although they make the plots a bit busy. We can also choose to
-plot assimilation against `Cc` rather than `Ci`:
+values of the potential limiting rates `Ac`, `Aj`, and `Ap`, as well as the
+estimated operating point. We can take a look at these, although they make the
+plots a bit busy. We can also choose to plot assimilation against `Cc` rather
+than `Ci`:
 
 ```{r fit_aci_limiting}
 # Plot the C3 A-Cc fits (including limiting rates)
@@ -714,7 +715,21 @@ xyplot(
   par.settings = list(
     superpose.line = list(col = multi_curve_colors()),
     superpose.symbol = list(col = multi_curve_colors())
-  )
+  ),
+  curve_ids = c3_aci_results$fits[, 'curve_identifier'],
+  panel = function(...) {
+    panel.xyplot(...)
+    args <- list(...)
+    curve_id <- args$curve_ids[args$subscripts][1]
+    fit_param <-
+      c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
+    panel.points(
+        fit_param$operating_An_model ~ fit_param$operating_Cc,
+        type = 'p',
+        col = 'black',
+        pch = 1
+    )
+  }
 )
 ```
 
