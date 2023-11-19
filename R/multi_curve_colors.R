@@ -30,3 +30,28 @@ multi_curve_colors <- function() {
         "#666666"
     )
 }
+
+multi_curve_point_colors <- function() {
+    c(
+        multi_curve_colors()[1],
+        paste0(multi_curve_colors()[seq(2, length(multi_curve_colors()))], '00')
+    )
+}
+
+multi_curve_line_colors <- function() {
+    lc <- multi_curve_colors()
+    lc[1] <- paste0(lc[1], '00')
+    lc
+}
+
+# Set point colors so that only the first curve has points; the others will all
+# have points with alpha = 0 (which is fully transparent)
+point_colors <- c(
+    multi_curve_colors()[1],
+    paste0(multi_curve_colors()[seq(2, length(multi_curve_colors()))], '00')
+)
+
+# Set line colors so that the first curve has a line, but the others don't; the
+# first line will have alpha = 0 (which is fully transparent)
+line_colors <- multi_curve_colors()
+line_colors[1] <- paste0(line_colors[1], '00')

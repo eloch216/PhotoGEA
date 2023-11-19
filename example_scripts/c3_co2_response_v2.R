@@ -295,9 +295,23 @@ if (MAKE_ANALYSIS_PLOTS) {
       xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
       ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
       par.settings = list(
-        superpose.line = list(col = multi_curve_colors()),
-        superpose.symbol = list(col = multi_curve_colors(), pch = 16)
-      )
+        superpose.line = list(col = multi_curve_line_colors()),
+        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
+      ),
+      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
+      panel = function(...) {
+        panel.xyplot(...)
+        args <- list(...)
+        curve_id <- args$curve_ids[args$subscripts][1]
+        fit_param <-
+          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
+        panel.points(
+            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            type = 'p',
+            col = 'black',
+            pch = 1
+        )
+      }
     ))
 
     # Plot the C3 A-Ci fits
