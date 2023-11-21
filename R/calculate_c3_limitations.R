@@ -63,31 +63,36 @@ calculate_c3_limitations <- function(
     dAdC_j <- J * Gamma_star * (atp_use + nadph_use) /
         (atp_use * Cc + nadph_use * Gamma_star)^2 # mol / m^2 / s
 
-    # Calculate limitations and include them in the exdf object
-    exdf_obj[, 'ls_rubisco'] <- c3_limitation(gtot, gsc, dAdC_rubisco)
-    exdf_obj[, 'lm_rubisco'] <- c3_limitation(gtot, gmc, dAdC_rubisco)
-    exdf_obj[, 'lb_rubisco'] <- c3_limitation(gtot, 1.0, dAdC_rubisco)
-    exdf_obj[, 'ls_j']       <- c3_limitation(gtot, gsc, dAdC_j)
-    exdf_obj[, 'lm_j']       <- c3_limitation(gtot, gmc, dAdC_j)
-    exdf_obj[, 'lb_j']       <- c3_limitation(gtot, 1.0, dAdC_j)
+    # Calculate limitations and include them in the exdf object, along with
+    # partial derivatives
+    exdf_obj[, 'dAdC_rubisco'] <- dAdC_rubisco
+    exdf_obj[, 'dAdC_j']       <- dAdC_j
+    exdf_obj[, 'ls_rubisco']   <- c3_limitation(gtot, dAdC_rubisco, gsc)
+    exdf_obj[, 'lm_rubisco']   <- c3_limitation(gtot, dAdC_rubisco, gmc)
+    exdf_obj[, 'lb_rubisco']   <- c3_limitation(gtot, dAdC_rubisco, dAdC_rubisco)
+    exdf_obj[, 'ls_j']         <- c3_limitation(gtot, dAdC_j,       gsc)
+    exdf_obj[, 'lm_j']         <- c3_limitation(gtot, dAdC_j,       gmc)
+    exdf_obj[, 'lb_j']         <- c3_limitation(gtot, dAdC_j,       dAdC_j)
 
     # Document the columns that were just added and return the exdf
     document_variables(
         exdf_obj,
-        c('calculate_c3_limitations', 'ls_rubisco', 'dimensionless'),
-        c('calculate_c3_limitations', 'lm_rubisco', 'dimensionless'),
-        c('calculate_c3_limitations', 'lb_rubisco', 'dimensionless'),
-        c('calculate_c3_limitations', 'ls_j',       'dimensionless'),
-        c('calculate_c3_limitations', 'lm_j',       'dimensionless'),
-        c('calculate_c3_limitations', 'lb_j',       'dimensionless')
+        c('calculate_c3_limitations', 'dAdC_rubisco', 'mol m^(-2) s^(-1)'),
+        c('calculate_c3_limitations', 'dAdC_j',       'mol m^(-2) s^(-1)'),
+        c('calculate_c3_limitations', 'ls_rubisco',   'dimensionless'),
+        c('calculate_c3_limitations', 'lm_rubisco',   'dimensionless'),
+        c('calculate_c3_limitations', 'lb_rubisco',   'dimensionless'),
+        c('calculate_c3_limitations', 'ls_j',         'dimensionless'),
+        c('calculate_c3_limitations', 'lm_j',         'dimensionless'),
+        c('calculate_c3_limitations', 'lb_j',         'dimensionless')
     )
 }
 
 # All three parts of Equation 7 can be reproduced with one functional form
 c3_limitation <- function(
-    g_total,      # mol / m^2 / s
-    g_other,      # mol / m^2 / s
-    partial_deriv # mol / m^2 / s
+    g_total,       # mol / m^2 / s
+    partial_deriv, # mol / m^2 / s
+    g_other        # mol / m^2 / s
 )
 {
     (g_total / g_other) * partial_deriv / (g_total + partial_deriv) # dimensionless
