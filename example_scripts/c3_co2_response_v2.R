@@ -260,6 +260,9 @@ licor_data <- if (USE_GM_TABLE) {
 # Calculate total pressure (required for apply_gm)
 licor_data <- calculate_total_pressure(licor_data)
 
+# Calculate additional gas properties (required for calculate_c3_limitations)
+licor_data <- calculate_gas_properties(licor_data)
+
 # Calculate Cc
 licor_data <- apply_gm(licor_data)
 
@@ -281,6 +284,10 @@ c3_aci_results <- consolidate(by(
   cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
   fixed = c(NA, NA, NA, NA)
 ))
+
+# Calculate the relative limitations to assimilation (due to stomatal
+# conductance, mesophyll conductance, and biochemistry)
+c3_aci_results$fits <- calculate_c3_limitations(c3_aci_results$fits)
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Ci fits (including limiting rates)
@@ -353,9 +360,9 @@ if (REMOVE_STATISTICAL_OUTLIERS) {
 # Create a few data frames that will be helpful for plots and stats tests, and
 # make sure they are "factorized"
 
-all_samples_one_point <- licor_data[licor_data[, 'seq_num'] == POINT_FOR_BOX_PLOTS]
+all_samples_one_point <- c3_aci_results$fits[c3_aci_results$fits[, 'seq_num'] == POINT_FOR_BOX_PLOTS]
 aci_parameters <- c3_aci_results$parameters$main_data
-all_samples <- licor_data$main_data
+all_samples <- c3_aci_results$fits$main_data
 
 all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 aci_parameters <- factorize_id_column(aci_parameters, EVENT_COLUMN_NAME)
@@ -379,12 +386,15 @@ if (MAKE_ANALYSIS_PLOTS) {
     xl <- "Genotype"
 
     plot_param <- list(
-      list(Y = all_samples_one_point[, 'A'],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'iWUE'], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption),
-      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 140), main = fitting_caption),
-      list(Y = aci_parameters[, 'Rd_at_25'],    X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                 ylim = c(0, 3), main = fitting_caption),
-      list(Y = aci_parameters[, 'J_at_25'],     X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                  ylim = c(0, 225), main = fitting_caption),
-      list(Y = aci_parameters[, 'TPU'],         X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                ylim = c(0, 30),  main = fitting_caption)
+      list(Y = all_samples_one_point[, 'A'],          X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",            ylim = c(0, 40),  main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'iWUE'],       X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",   ylim = c(0, 100), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'ls_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lm_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lb_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (dimensionless)", ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'],       X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                ylim = c(0, 140), main = fitting_caption),
+      list(Y = aci_parameters[, 'Rd_at_25'],          X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                   ylim = c(0, 3),   main = fitting_caption),
+      list(Y = aci_parameters[, 'J_at_25'],           X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                    ylim = c(0, 225), main = fitting_caption),
+      list(Y = aci_parameters[, 'TPU'],               X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                  ylim = c(0, 30),  main = fitting_caption)
     )
 
     if (INCLUDE_FLUORESCENCE) {
