@@ -18,6 +18,8 @@ for the next release.
 
 # UNRELEASED
 
+- Added a new function for calculating the relative limiting factors of C3
+  photosynthesis: `calculate_c3_limitations`
 - Added a new function for estimating the operating point from a measured A-Ci
   curve: `estimate_operating_point`
 - Added two new color specifications: `multi_curve_line_colors` and

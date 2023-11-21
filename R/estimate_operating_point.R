@@ -38,27 +38,37 @@ estimate_operating_point <- function(
     min_ca <- min(aci_exdf[, ca_column_name])
     max_ca <- max(aci_exdf[, ca_column_name])
 
-    if (ca_atmospheric < min_ca || ca_atmospheric > max_ca) {
-        stop(
-            'the atmospheric CO2 concentration (', ca_atmospheric,
-            ') is outside the measured range (', min_ca, '-', max_ca, ')'
+    unreliable <- ca_atmospheric < min_ca || ca_atmospheric > max_ca
+    if (unreliable) {
+        warning(
+            'The atmospheric CO2 concentration (', ca_atmospheric,
+            ') is outside the measured range (', min_ca, ' - ', max_ca, ')',
+            call. = FALSE
         )
     }
 
     # Use linear interpolation to estimate the operating point
-    operating_An <- stats::approx(
-        aci_exdf[, ca_column_name],
-        aci_exdf[, a_column_name],
-        ca_atmospheric
-    )$y
+    operating_An <- if (!unreliable) {
+        stats::approx(
+            aci_exdf[, ca_column_name],
+            aci_exdf[, a_column_name],
+            ca_atmospheric
+        )$y
+    } else {
+        NA
+    }
 
-    operating_Ci <- stats::approx(
-        aci_exdf[, ca_column_name],
-        aci_exdf[, ci_column_name],
-        ca_atmospheric
-    )$y
+    operating_Ci <- if (!unreliable) {
+        stats::approx(
+            aci_exdf[, ca_column_name],
+            aci_exdf[, ci_column_name],
+            ca_atmospheric
+        )$y
+    } else {
+        NA
+    }
 
-    operating_Cc <- if (type == 'c3') {
+    operating_Cc <- if (!unreliable && type == 'c3') {
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, cc_column_name],
@@ -68,7 +78,7 @@ estimate_operating_point <- function(
         NA
     }
 
-    operating_PCm <- if (type == 'c4') {
+    operating_PCm <- if (!unreliable && type == 'c4') {
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, pcm_column_name],
@@ -84,8 +94,11 @@ estimate_operating_point <- function(
         if (type == 'c3') {
             cc_seq <- aci_exdf[, cc_column_name]
 
-            operating_row <-
+            operating_row <- if (!unreliable) {
                 which(abs(cc_seq - operating_Cc) == min(abs(cc_seq - operating_Cc)))
+            } else {
+                1
+            }
 
             operating_exdf <- aci_exdf[operating_row, , TRUE]
 
@@ -101,8 +114,11 @@ estimate_operating_point <- function(
         } else {
             pcm_seq <- aci_exdf[, pcm_column_name]
 
-            operating_row <-
+            operating_row <- if (!unreliable) {
                 which(abs(pcm_seq - operating_PCm) == min(abs(pcm_seq - operating_PCm)))
+            } else {
+                1
+            }
 
             operating_exdf <- aci_exdf[operating_row, , TRUE]
 
@@ -127,7 +143,7 @@ estimate_operating_point <- function(
         if (type == 'c3') {
             aci_identifiers[, 'operating_Cc'] <- operating_Cc
         } else {
-            aci_identifiers[, 'operating_Pcm'] <- operating_PCm
+            aci_identifiers[, 'operating_PCm'] <- operating_PCm
         }
 
         # Document the new columns that were added and return the exdf
@@ -145,7 +161,7 @@ estimate_operating_point <- function(
         } else {
             document_variables(
                 aci_identifiers,
-                c('estimate_operating_point', 'operating_Pcm', aci_exdf$units[[pcm_column_name]])
+                c('estimate_operating_point', 'operating_PCm', aci_exdf$units[[pcm_column_name]])
             )
         }
     }

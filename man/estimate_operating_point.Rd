@@ -113,6 +113,10 @@
   \code{\link{calculate_c3_assimilation}} or
   \code{\link{calculate_c4_assimilation}} in order to estimate the operating
   \code{An} from a photosynthesis model.
+
+  If \code{ca_atmospheric} is outside the range of \code{Ca} values in
+  \code{aci_exdf}, then the operating point cannot be reasonably estimated; in
+  this case, a warning occurs and all return values are set to \code{NA}.
 }
 
 \examples{
