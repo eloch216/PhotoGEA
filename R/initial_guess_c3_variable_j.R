@@ -1,0 +1,87 @@
+initial_guess_c3_variable_j <- function(
+    cc_threshold_rd = 100,
+    Oc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
+    a_column_name = 'A',
+    ci_column_name = 'Ci',
+    etr_column_name = 'ETR',
+    gamma_star_column_name = 'Gamma_star',
+    j_norm_column_name = 'J_norm',
+    kc_column_name = 'Kc',
+    ko_column_name = 'Ko',
+    phips2_column_name = 'PhiPS2',
+    qin_column_name = 'Qin',
+    rd_norm_column_name = 'Rd_norm',
+    vcmax_norm_column_name = 'Vcmax_norm'
+)
+{
+    function(rc_exdf) {
+        if (!is.exdf(rc_exdf)) {
+            stop("initial_guess_c3_variable_j requires an exdf object")
+        }
+
+        # Make sure the required variables are defined and have the correct
+        # units. Here we only need to check a few of them; initial_guess_c3_aci
+        # will check the rest.
+        required_variables <- list()
+        required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
+        required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
+        required_variables[[etr_column_name]]        <- 'micromol m^(-2) s^(-1)'
+        required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
+        required_variables[[phips2_column_name]]     <- NA
+        required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
+        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
+
+        check_required_variables(rc_exdf, required_variables)
+
+        # Extract a few columns to make the following code easier to read
+        An <- rc_exdf[, a_column_name]                  # micromol / m^2 / s
+        ETR <- rc_exdf[, etr_column_name]               # micromol / m^2 / s
+        rd_norm <- rc_exdf[, rd_norm_column_name]       # dimensionless
+        Ci <- rc_exdf[, ci_column_name]                 # micromol / mol
+        Gamma_star <- rc_exdf[, gamma_star_column_name] # micromol / mol
+
+        # Get an estimate of tau from the Licor estimate of ETR
+        tau_guess <- mean(
+            ETR / (rc_exdf[, phips2_column_name] * rc_exdf[, qin_column_name])
+        )
+
+        # Start by guessing Cc = Ci
+        rc_exdf <- set_variable(
+            rc_exdf,
+            'Cc',
+            'micromol mol^(-1)',
+            value = rc_exdf[, ci_column_name]
+        )
+
+        # Get a function that makes an initial guess for the C3 parameters
+        c3_guess_func <- initial_guess_c3_aci(
+            cc_threshold_rd,
+            Oc,
+            atp_use,
+            nadph_use,
+            a_column_name,
+            'Cc',
+            kc_column_name,
+            ko_column_name,
+            gamma_star_column_name,
+            vcmax_norm_column_name,
+            rd_norm_column_name,
+            j_norm_column_name
+        )
+
+        # Apply that function
+        c3_guess <- c3_guess_func(rc_exdf)
+
+        # Return the results in the correct order, along with an initial guess
+        # for tau
+        c(
+            c3_guess[2], # J
+            c3_guess[3], # Rd
+            tau_guess,   # tau
+            c3_guess[1], # TPU
+            c3_guess[4]  # Vcmax
+        )
+    }
+}
