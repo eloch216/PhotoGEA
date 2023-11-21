@@ -16,6 +16,28 @@ Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
+# UNRELEASED
+
+- Added a new function for estimating the operating point from a measured A-Ci
+  curve: `estimate_operating_point`
+- Added two new color specifications: `multi_curve_line_colors` and
+  `multi_curve_point_colors`
+- `fit_c3_aci` and `fit_c4_aci` now use `estimate_operating_point` to
+  automatically estimate the operating point and include it with the other fit
+  parameters
+- The C3 and C4 A-Ci vignettes now show include the operating point in one of
+  the figures
+
+# PhotoGEA VERSION 0.9.2 (2023-11-16)
+
+- Fixed a bug in `check_required_variables` where missing units in an `exdf`
+  object were not properly identified
+- Added tests to make sure `check_required_variables` is functioning as expected
+
+# PhotoGEA VERSION 0.9.1 (2023-11-13)
+
+- Added logo to package and documentation
+
 # PhotoGEA VERSION 0.9.0 (2023-10-25)
 
 - Added a new convenience function for printing plot objects: `pdf_print`

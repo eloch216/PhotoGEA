@@ -17,7 +17,9 @@
   fit_c3_aci(
     replicate_exdf,
     a_column_name = 'A',
+    ca_column_name = 'Ca',
     cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
     total_pressure_column_name = 'total_pressure',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -25,6 +27,7 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
+    ca_atmospheric = 420,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -63,9 +66,19 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
+  \item{ca_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    ambient CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
   \item{cc_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{ci_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{total_pressure_column_name}{
@@ -104,6 +117,11 @@
   \item{j_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
+  }
+
+  \item{ca_atmospheric}{
+    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
+    this will be used to estimate the operating point.
   }
 
   \item{POc}{
@@ -230,6 +248,13 @@
   of \code{TPU} specified in this way will override any value returned by
   \code{initial_guess_fun}.
 
+  Once the best-fit parameters have been determined, this function also
+  estimates the operating value of `\code{Cc} from the atmospheric CO2
+  concentration \code{atmospheric_ca} using
+  \code{\link{estimate_operating_point}}, and then uses that value to estimate
+  the modeled \code{An} at the operating point via
+  \code{\link{calculate_c3_assimilation}}.
+
   This function assumes that \code{replicate_exdf} represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used
   along with \code{\link{by.exdf}} and \code{\link{consolidate}}.
@@ -264,6 +289,9 @@
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{J_tl_avg}, \code{Rd_tl_avg},
                   and \code{Vcmax_tl_avg}.
+            \item Information about the operating point is stored in
+                  \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
+                  and \code{operating_An_model}.
             \item The \code{convergence} column indicates whether the fit was
                   successful (\code{==0}) or if the optimizer encountered a
                   problem (\code{!=0}).
@@ -327,6 +355,7 @@ col_to_keep <- c(
   'species', 'plot',                                       # identifiers
   'TPU', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25',             # parameters scaled to 25 degrees C
   'J_tl_avg', 'Rd_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
+  'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
   'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats
   'convergence', 'convergence_msg', 'feval', 'optimum_val' # convergence info
 )

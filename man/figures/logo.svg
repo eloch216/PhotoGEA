@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.9.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 360 360" style="enable-background:new 0 0 360 360;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;stroke:#000000;stroke-width:4;stroke-miterlimit:10;}
+	.st1{stroke:#000000;stroke-width:4;stroke-miterlimit:10;}
+	.st2{fill:#DD5F27;stroke:#FFFFFF;stroke-width:4;stroke-miterlimit:10;}
+	.st3{fill:#FFFFFF;stroke:#FFFFFF;stroke-width:4;stroke-miterlimit:10;}
+	.st4{fill:#DD5F27;stroke:#000000;stroke-width:4;stroke-miterlimit:10;}
+</style>
+<circle class="st0" cx="180" cy="180" r="162"/>
+<path class="st1" d="M180,18C90.53,18,18,90.53,18,180s72.53,162,162,162c44.74,0,81-36.26,81-81s-36.26-81-81-81s-81-36.26-81-81
+	S135.26,18,180,18z"/>
+<g>
+	<circle class="st2" cx="98.32" cy="228.3" r="30.14"/>
+	<circle class="st3" cx="149.17" cy="257.66" r="42.75"/>
+	<circle class="st2" cx="200.03" cy="287.02" r="30.14"/>
+</g>
+<g>
+	<circle class="st4" cx="161.8" cy="109.53" r="19.8"/>
+	<circle class="st1" cx="210.15" cy="102.93" r="42.75"/>
+	<circle class="st4" cx="228.61" cy="148.11" r="19.8"/>
+</g>
+</svg>

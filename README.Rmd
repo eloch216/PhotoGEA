@@ -1,8 +1,17 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file.          -->
 <!-- To generate README.md, run knitr::knit('README.Rmd') in this directory. -->
 
-
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/"
+)
+```
 
 ## PhotoGEA <a href="https://eloch216.github.io/PhotoGEA/"><img src="man/figures/logo.svg" align="left" style="height:138px"></a>
 
@@ -19,8 +28,7 @@ notice.
 The easiest way to install `PhotoGEA` is to type the following from within the R
 terminal:
 
-
-```r
+```{r, eval = FALSE}
 remotes::install_github('eloch216/PhotoGEA')
 ```
 
