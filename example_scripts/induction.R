@@ -61,12 +61,14 @@ LICOR_FILES_TO_PROCESS <- c()
 
 # Decide whether to remove a few specific points from the data before subsequent
 # processing and plotting
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Specify the filenames depending on the value of PERFORM_CALCULATIONS
 if (PERFORM_CALCULATIONS) {
     LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
 }
+
+GET_INFO_FROM_FILENAME <- FALSE
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
 # points along the time sequence of measurements.
@@ -81,7 +83,7 @@ TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 # number of elapsed minutes. For each event, the average assimilation rate
 # across this interval will be calculated, and then used to normalize the A
 # values.
-TIME_RANGE_FOR_NORMALIZATION <- c(55, 60)
+TIME_RANGE_FOR_NORMALIZATION <- c(55,60)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -188,7 +190,21 @@ ggplot2_avg_rc <- function(
 # Load the data and calculate the stats, if required
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_gasex_file(fname, TIME_COLUMN_NAME)
+        licor_exdf <- read_gasex_file(fname, TIME_COLUMN_NAME)
+        
+        if (GET_INFO_FROM_FILENAME) {
+          trimmed_name <- tools::file_path_sans_ext(basename(fname))
+          
+          info_phrase <-
+            toupper(regmatches(trimmed_name, regexpr("[[:alnum:]]+ [[:alnum:]]+$", trimmed_name)))
+          
+          licor_exdf[, EVENT_COLUMN_NAME] <- strsplit(info_phrase, ' ')[[1]][1]
+          licor_exdf[, REP_COLUMN_NAME] <- strsplit(info_phrase, ' ')[[1]][2]
+          licor_exdf[, 'plant_id'] <- info_phrase
+          licor_exdf[, 'file_name'] <- fname
+        }
+        
+        return(licor_exdf)
     })
 
     common_columns <- do.call(identify_common_columns, multi_file_info)
@@ -256,7 +272,11 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(event = 'hn1a', plot_replicate = '5 1', obs = 714:720)
+        list(event = '9', replicate = '3'),
+        list(event = '3', replicate = '3'),
+        list(event = '25', replicate = '1'),
+        list(event = 'WT', replicate = '3-1')
+        #list(event = 'hn1a', plot_replicate = '5 1', obs = 714:720)
       )
     }
 

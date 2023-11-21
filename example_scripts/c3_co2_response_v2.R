@@ -17,7 +17,7 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 17
+NUM_OBS_IN_SEQ <- 14
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 
 # Decide whether to make certain plots
@@ -38,7 +38,7 @@ POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
@@ -367,7 +367,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     plot_param <- list(
       list(Y = all_samples_one_point[, 'A'],    X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 40),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'], X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption),
-      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 140), main = fitting_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'], X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",              ylim = c(0, 200), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],    X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                 ylim = c(0, 3), main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],     X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                  ylim = c(0, 225), main = fitting_caption),
       list(Y = aci_parameters[, 'TPU'],         X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                ylim = c(0, 30),  main = fitting_caption)
@@ -401,21 +401,24 @@ if (MAKE_ANALYSIS_PLOTS) {
 
     ci_lim <- c(-50, 1500)
     a_lim <- c(-10, 55)
-    etr_lim <- c(0, 400)
+    gs_lim <- c(0, 0.7)
+    phi_lim <- c(0, 0.4)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
-    etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    gs_lab <- "Stomatal conductance to CO2 (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    phi_lab <- "PhiPSII (dimensionless)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
     avg_plot_param <- list(
-        list(all_samples[, 'A'], x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab, xlim = ci_lim, ylim = a_lim)
+        list(all_samples[, 'A'],   x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,  xlim = ci_lim, ylim = a_lim),
+        list(all_samples[, 'gsw'], x_ci, x_s, x_e, xlab = ci_lab, ylab = gs_lab, xlim = ci_lim, ylim = gs_lim)
     )
 
     if (INCLUDE_FLUORESCENCE) {
         avg_plot_param <- c(
             avg_plot_param,
             list(
-                list(all_samples[, 'ETR'], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
+                list(all_samples[, PHIPS2_COLUMN_NAME], x_ci, x_s, x_e, xlab = ci_lab, ylab = phi_lab, xlim = ci_lim, ylim = phi_lim)
             )
         )
     }
