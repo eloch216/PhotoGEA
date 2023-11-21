@@ -71,7 +71,7 @@ CREATE_CSV_FILES <- FALSE
 VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Decide whether to remove statistical outliers after fitting
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
@@ -293,17 +293,17 @@ if (PERFORM_CALCULATIONS) {
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
       combined_info <- remove_points(
-        combined_info
-       # list(event = 25, replicate = 4, plot = 2, obs = 3),
-        #list(event = 25, replicate = 8, plot = 6, obs = 118),
-        #list(event = 25, replicate = 8, plot = 6, obs = 119),
-        #list(event = 23, replicate = 9, plot = 6, obs = 118),
-        #list(event = 23, replicate = 9, plot = 6, obs = 119),
-        #list(event = 'WT', replicate = 9, plot = 2, obs = 30),
-        #list(event = 20, replicate = 6, plot = 3, obs = 49),
-        #list(event = 'WT', replicate = 10, plot = 3, obs = 35),
-        #list(event = 'WT', replicate = 10, plot = 3, obs = 36),
-        #list(event = 25, replicate = 6, plot = 4, obs = 62)
+        combined_info,
+        list(event = 25, replicate = 4, plot = 2, obs = 3),
+        list(event = 25, replicate = 8, plot = 6, obs = 118),
+        list(event = 25, replicate = 8, plot = 6, obs = 119),
+        list(event = 23, replicate = 9, plot = 6, obs = 118),
+        list(event = 23, replicate = 9, plot = 6, obs = 119),
+        list(event = 'WT', replicate = 9, plot = 2, obs = 30),
+        list(event = 20, replicate = 6, plot = 3, obs = 49),
+        list(event = 'WT', replicate = 10, plot = 3, obs = 35),
+        list(event = 'WT', replicate = 10, plot = 3, obs = 36),
+        list(event = 25, replicate = 6, plot = 4, obs = 62)
       )
     }
 

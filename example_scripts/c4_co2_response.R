@@ -92,8 +92,8 @@ if (PERFORM_CALCULATIONS) {
 # These numbers have been chosen for a sequence with 14 measurements. Points 1,
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
-NUM_OBS_IN_SEQ <- 15
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(8,9,10)
+NUM_OBS_IN_SEQ <- 14
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove points where the Licor stability criteria were not
@@ -107,7 +107,7 @@ CI_UPPER_LIMIT <- Inf # ppm
 REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Decide whether to remove statistical outliers
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
@@ -116,7 +116,7 @@ PERFORM_STATS_TESTS <- TRUE
 CALCULATE_BASIC_STATS <- TRUE
 
 # Decide whether to average over plots
-AVERAGE_OVER_PLOTS <- TRUE
+AVERAGE_OVER_PLOTS <- FALSE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -141,18 +141,34 @@ UNIQUE_ID_COLUMN_NAME <- "line_sample"
 # Define a function that averages across all non-identifier columns in an exdf
 # object
 avg_exdf <- function(exdf_obj) {
-    avg_obj <- identifier_columns(replicate_exdf)
+    id_columns <- c(
+      EVENT_COLUMN_NAME,
+      'plot',
+      UNIQUE_ID_COLUMN_NAME,
+      'seq_num',
+      'CO2_r_sp'
+    )
+    
+    avg_obj <- exdf_obj[1, id_columns, TRUE]
+    
+    col_to_avg <- c(
+      A_COLUMN_NAME,
+      CI_COLUMN_NAME,
+      'Ca',
+      PRESSURE_COLUMN_NAME,
+      GS_COLUMN_NAME,
+      DELTA_PRESSURE_COLUMN_NAME,
+      TLEAF_COLUMN_NAME
+    )
 
-    for (cn in colnames(exdf_obj)) {
-        if (!cn %in% colnames(avg_obj) && is.numeric(exdf_obj[, cn])) {
-            set_variable(
-                avg_obj,
-                cn,
-                exdf_obj$units[[cn]],
-                exdf_obj$category[[cn]],
-                mean(exdf_obj[, cn])
-            )
-        }
+    for (cn in col_to_avg) {
+      avg_obj <- set_variable(
+        avg_obj,
+        cn,
+        exdf_obj$units[[cn]],
+        exdf_obj$category[[cn]],
+        mean(exdf_obj[, cn])
+      )
     }
 
     return(avg_obj)
@@ -208,40 +224,6 @@ if (PERFORM_CALCULATIONS) {
       combined_info <- combined_info[combined_info[, 'type'] == 'aci', , TRUE]
     }
 
-    # Calculate temperature-dependent values of C4 parameters
-    combined_info <-
-        calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
-
-    # Include gm values
-    combined_info <- if (USE_GM_TABLE) {
-        set_variable(
-            combined_info,
-            GM_COLUMN_NAME,
-            GM_UNITS,
-            'c4_co2_response',
-            GM_VALUE,
-            EVENT_COLUMN_NAME,
-            GM_TABLE
-        )
-    } else {
-        set_variable(
-            combined_info,
-            GM_COLUMN_NAME,
-            GM_UNITS,
-            'c4_co2_response',
-            GM_VALUE
-        )
-    }
-
-    # Calculate the total pressure
-    combined_info <- calculate_total_pressure(combined_info)
-
-    # Calculate PCm
-    combined_info <- apply_gm(combined_info, 'C4')
-
-    # Calculate intrinsic water-use efficiency
-    combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
-
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
         combined_info,
@@ -258,29 +240,23 @@ if (PERFORM_CALCULATIONS) {
         #'CO2_r_sp'
     )
 
-    # Average over curves from the same event and plot, if necessary
-    combined_info <- if (AVERAGE_OVER_PLOTS) {
-        consolidate(by(
-            combined_info,
-            list(combined_info[, EVENT_COLUMN_NAME], combined_info[, 'plot'], combined_info[, 'CO2_r_sp']),
-            avg_exdf
-        ))
-    }
-
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(event = 'WT', replicate = '2a-1', obs = 29),
-        list(event = '3', replicate = '5', seq_num = c(2,3)),
-        list(event = '25', replicate = '9', seq_num = c(2,4)),
-        list(event = '25', replicate = '1'),
-        list(event = '9', replicate = '1'),
-        list(event = '25', replicate = '8', seq_num = 6),
-        list(event = '3', replicate = '7', seq_num = 5),
-        list(event = '3', replicate = '10', seq_num = 5),
-        list(event = 'WT', replicate = '9', seq_num = 5)
+        list(event = 'WT', replicate = '10', obs = 15)
+        #list(event = 'WT', replicate = '2a-1', obs = 29),
+        #list(event = '3', replicate = '1', seq_num = 5)
+        #list(event = 'zg5b', replicate = '1', plot = '5', seq_num = 2),
+        #list(event = 'WT', replicate = '2a-1', obs = 29),
+        #list(event = '25', replicate = '9', seq_num = c(2,4)),
+        #list(event = '25', replicate = '1'),
+        #list(event = '9', replicate = '1'),
+        #list(event = '25', replicate = '8', seq_num = 6),
+        #list(event = '3', replicate = '7', seq_num = 5),
+        #list(event = '3', replicate = '10', seq_num = 5),
+        #list(event = 'WT', replicate = '9', seq_num = 5)
 
       )
     }
@@ -295,7 +271,52 @@ if (PERFORM_CALCULATIONS) {
       ids_to_keep <- names(npts[npts > 2])
       combined_info <- combined_info[combined_info[, UNIQUE_ID_COLUMN_NAME] %in% ids_to_keep, , TRUE]
     }
-
+    
+    # Average over curves from the same event and plot, if necessary
+    if (AVERAGE_OVER_PLOTS) {
+       combined_info <- do.call(rbind.exdf, by(
+        combined_info,
+        list(combined_info[, EVENT_COLUMN_NAME], combined_info[, 'plot'], combined_info[, 'CO2_r_sp']),
+        avg_exdf
+      ))
+      
+      REP_COLUMN_NAME <- 'plot'
+    }
+    
+    # Calculate temperature-dependent values of C4 parameters
+    combined_info <-
+      calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
+    
+    # Include gm values
+    combined_info <- if (USE_GM_TABLE) {
+      set_variable(
+        combined_info,
+        GM_COLUMN_NAME,
+        GM_UNITS,
+        'c4_co2_response',
+        GM_VALUE,
+        EVENT_COLUMN_NAME,
+        GM_TABLE
+      )
+    } else {
+      set_variable(
+        combined_info,
+        GM_COLUMN_NAME,
+        GM_UNITS,
+        'c4_co2_response',
+        GM_VALUE
+      )
+    }
+    
+    # Calculate the total pressure
+    combined_info <- calculate_total_pressure(combined_info)
+    
+    # Calculate PCm
+    combined_info <- apply_gm(combined_info, 'C4')
+    
+    # Calculate intrinsic water-use efficiency
+    combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
+    
 
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
@@ -452,18 +473,20 @@ PHIPS2_COLUMN_NAME <- if ("PhiPs2" %in% colnames(all_samples)) {
     NULL
 }
 
+INCLUDE_FLUORESCENCE <- if(is.null(PHIPS2_COLUMN_NAME)) {
+    FALSE
+} else {
+    TRUE
+}
+
 # Print average A values
 print('average A values')
 print(tapply(all_samples_one_point$A, all_samples_one_point$event, mean))
 
 # Print average PhiPS2 values
-print('average PhiPS2 values')
-print(tapply(all_samples_one_point[[PHIPS2_COLUMN_NAME]], all_samples_one_point$event, mean))
-
-INCLUDE_FLUORESCENCE <- if(is.null(PHIPS2_COLUMN_NAME)) {
-    FALSE
-} else {
-    TRUE
+if (INCLUDE_FLUORESCENCE) {
+  print('average PhiPS2 values')
+  print(tapply(all_samples_one_point[[PHIPS2_COLUMN_NAME]], all_samples_one_point$event, mean))
 }
 
 ###                                    ###

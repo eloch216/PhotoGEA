@@ -87,7 +87,7 @@ if (PERFORM_CALCULATIONS) {
 # want to keep all of them.
 NUM_OBS_IN_SEQ <- 12
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
-POINT_FOR_BOX_PLOTS <- 1
+POINT_FOR_BOX_PLOTS <- 9
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -347,8 +347,8 @@ x_s_a <- all_samples_one_point_no_a_outliers[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 
 plot_param <- list(
-  list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 40),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 100), main = boxplot_caption)
+  list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0,6),  main = boxplot_caption),
+  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {

@@ -17,7 +17,7 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 17
+NUM_OBS_IN_SEQ <- 14
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 
 # Decide whether to make certain plots
@@ -38,7 +38,7 @@ POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
@@ -166,7 +166,7 @@ if (MAKE_VALIDATION_PLOTS) {
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
-    
+
     # Plot all gsw-Ci curves in the data set
     dev.new()
     print(xyplot(
@@ -440,14 +440,14 @@ if (MAKE_ANALYSIS_PLOTS) {
     ci_lim <- c(-50, 1500)
     cc_lim <- c(-50, 1500)
     a_lim <- c(-10, 55)
-    etr_lim <- c(0, 400)
-    gsw_lim <- c(0, 1.5)
+    gsw_lim <- c(0, 0.7)
+    phi_lim <- c(0, 0.4)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Mesophyll [CO2] (ppm)"
     a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
-    etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
     gsw_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    phi_lab <- "PhiPSII (dimensionless)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
     avg_plot_param <- list(
         list(all_samples[, 'A'],   x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim),
@@ -459,7 +459,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         avg_plot_param <- c(
             avg_plot_param,
             list(
-                list(all_samples[, 'ETR'], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
+                list(all_samples[, PHIPS2_COLUMN_NAME], x_ci, x_s, x_e, xlab = ci_lab, ylab = phi_lab, xlim = ci_lim, ylim = phi_lim)
             )
         )
     }

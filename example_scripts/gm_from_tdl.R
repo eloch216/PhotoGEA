@@ -47,21 +47,22 @@ MAKE_GM_PLOTS <- TRUE
 USE_BUSCH_GM <- TRUE
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- 2.69
+DEFAULT_RESPIRATION <- NA
 
-# Specify respiration values for each event; these will override the default
+# Specify respiration values for each event; these will override the default.
+# To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  'WT' = 2.18,
+  'WT' = 2.33,
   '8' = 2.02,
   '10' = 1.94,
   '14' = 2.08
 )
 
-RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
-#RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
+#RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
+RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
-REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
+REMOVE_STATISTICAL_OUTLIERS_EVENT <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
 MAX_GM <- 5
@@ -364,6 +365,16 @@ if (PERFORM_CALCULATIONS) {
     licor_files <- lapply(licor_files, get_genotype_info_from_licor_filename)
 
     licor_files <- lapply(licor_files, get_oxygen_from_preamble)
+
+    licor_files <- lapply(licor_files, function(x) {set_variable(
+        x,
+        'respiration',
+        'micromol m^(-2) s^(-1)',
+        'gm_from_tdl',
+        abs(DEFAULT_RESPIRATION),       # this is the default value of respiration
+        id_column = 'event',            # the default value can be overridden for certain events
+        value_table = RESPIRATION_TABLE # override default for certain events
+    )})
 
     licor_files <- lapply(licor_files, function(x) {
         get_sample_valve_from_filename(x, list(
