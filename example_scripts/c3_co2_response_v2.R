@@ -25,10 +25,10 @@ MAKE_VALIDATION_PLOTS <- TRUE
 MAKE_ANALYSIS_PLOTS <- TRUE
 
 # Decide whether to only keep points where stability conditions were met
-REQUIRE_STABILITY <- TRUE
+REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -48,7 +48,7 @@ PERFORM_STATS_TESTS <- TRUE
 # (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
 # which is not solely a property of Rubisco and which may differ between plants
 # that have identical Vcmax but different gm.
-USE_GM_TABLE <- FALSE
+USE_GM_TABLE <- TRUE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list(
@@ -165,6 +165,19 @@ if (MAKE_VALIDATION_PLOTS) {
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+    ))
+    
+    # Plot all gsw-Ci curves in the data set
+    dev.new()
+    print(xyplot(
+      gsw ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('Stomatal conductance to H2O [', licor_data$units$gsw, ']')
     ))
 
     # Make a plot to check humidity control
@@ -391,7 +404,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = all_samples_one_point[, 'ls_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'lm_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'lb_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (dimensionless)", ylim = c(0, 0.5), main = boxplot_caption),
-      list(Y = aci_parameters[, 'Vcmax_at_25'],       X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                ylim = c(0, 140), main = fitting_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'],       X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                ylim = c(0, 200), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],          X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                   ylim = c(0, 3),   main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],           X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                    ylim = c(0, 225), main = fitting_caption),
       list(Y = aci_parameters[, 'TPU'],               X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                  ylim = c(0, 30),  main = fitting_caption)
@@ -420,19 +433,26 @@ if (MAKE_ANALYSIS_PLOTS) {
     rc_caption <- "Average response curves for each event"
 
     x_ci <- all_samples[, 'Ci']
+    x_cc <- all_samples[, 'Cc']
     x_s <- all_samples[, 'seq_num']
     x_e <- all_samples[, EVENT_COLUMN_NAME]
 
     ci_lim <- c(-50, 1500)
+    cc_lim <- c(-50, 1500)
     a_lim <- c(-10, 55)
     etr_lim <- c(0, 400)
+    gsw_lim <- c(0, 1.5)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
+    cc_lab <- "Mesophyll [CO2] (ppm)"
     a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
     etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    gsw_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
     avg_plot_param <- list(
-        list(all_samples[, 'A'], x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab, xlim = ci_lim, ylim = a_lim)
+        list(all_samples[, 'A'],   x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim),
+        list(all_samples[, 'A'],   x_cc, x_s, x_e, xlab = cc_lab, ylab = a_lab,   xlim = cc_lim, ylim = a_lim),
+        list(all_samples[, 'gsw'], x_ci, x_s, x_e, xlab = ci_lab, ylab = gsw_lab, xlim = ci_lim, ylim = gsw_lim)
     )
 
     if (INCLUDE_FLUORESCENCE) {
