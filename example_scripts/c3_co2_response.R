@@ -71,10 +71,10 @@ CREATE_CSV_FILES <- FALSE
 VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Decide whether to remove statistical outliers after fitting
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
@@ -84,7 +84,7 @@ PERFORM_STATS_TESTS <- TRUE
 # (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
 # which is not solely a property of Rubisco and which may differ between plants
 # that have identical Vcmax but different gm.
-USE_GM_TABLE <- FALSE
+USE_GM_TABLE <- TRUE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list(
