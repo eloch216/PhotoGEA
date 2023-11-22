@@ -33,7 +33,7 @@
     gbs = 0.003,
     Rm_frac = 0.5,
     alpha = 0,
-    OPTIM_FUN = default_optimizer(),
+    OPTIM_FUN = optimizer_nmkb(),
     initial_guess_fun = initial_guess_c4_aci(
       gbs = gbs,
       Rm_frac = Rm_frac,

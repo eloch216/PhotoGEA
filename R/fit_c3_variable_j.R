@@ -20,7 +20,7 @@ fit_c3_variable_j <- function(
     alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = default_optimizer(),
+    OPTIM_FUN = optimizer_deoptim(),
     initial_guess_fun = initial_guess_c3_variable_j(
         Oc = POc,
         atp_use = atp_use,
@@ -124,7 +124,7 @@ fit_c3_variable_j <- function(
         )
 
         if (any(vj$gmc < 0) || any(vj$Cc < 0)) {
-            1e10 # return a huge value to penalize this set of parameter values
+            return(1e10) # return a huge value to penalize this set of parameter values
         }
 
         fitting_exdf[, 'gmc'] <- vj$gmc

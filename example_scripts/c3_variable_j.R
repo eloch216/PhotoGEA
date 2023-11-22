@@ -235,6 +235,9 @@ licor_data <- calculate_iwue(licor_data, 'A', 'gsw', 'iWUE')
 # Truncate the Ci range for fitting
 licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]
 
+# Set a seed number before fitting to make sure results are reproducible
+set.seed(1234)
+
 # Fit the C3 A-Ci curves using the variable J method
 c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves

@@ -34,7 +34,7 @@
     alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = default_optimizer(),
+    OPTIM_FUN = optimizer_nmkb(),
     initial_guess_fun = initial_guess_c3_aci(
         Oc = POc,
         atp_use = atp_use,
