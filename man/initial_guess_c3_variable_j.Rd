@@ -1,0 +1,199 @@
+\name{initial_guess_c3_variable_j}
+
+\alias{initial_guess_c3_variable_j}
+
+\title{
+  Make an initial guess of "variable J" model parameter values for one curve
+}
+
+\description{
+  Creates a function that makes an initial guess of "variable J" model parameter
+  values for one curve. The returned function meets the requirements for the
+  \code{initial_guess_fun} input argument of \code{\link{fit_c3_variable_j}}.
+
+  Values estimated by this guessing function should be considered inaccurate,
+  and should always be improved upon by an optimizer.
+}
+
+\usage{
+  initial_guess_c3_variable_j(
+    cc_threshold_rd = 100,
+    Oc = 210000,
+    atp_use = 4.0,
+    nadph_use = 8.0,
+    a_column_name = 'A',
+    ci_column_name = 'Ci',
+    etr_column_name = 'ETR',
+    gamma_star_column_name = 'Gamma_star',
+    j_norm_column_name = 'J_norm',
+    kc_column_name = 'Kc',
+    ko_column_name = 'Ko',
+    phips2_column_name = 'PhiPS2',
+    qin_column_name = 'Qin',
+    rd_norm_column_name = 'Rd_norm',
+    vcmax_norm_column_name = 'Vcmax_norm'
+  )
+}
+
+\arguments{
+  \item{cc_threshold_rd}{
+    An upper cutoff value for the chloroplast CO2 concentration in
+    \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
+  }
+
+  \item{Oc}{
+    The concentration of O2 in the chloroplast, expressed in
+    \code{micromol mol^(-1)}. This is often assumed to be the ambient value. For
+    air measurements, this would be 21 percent O2, which is 210000 ppm. For low
+    oxygen measurements, this would be 2 percent O2, which is about 20000 ppm.
+  }
+
+  \item{atp_use}{
+    The number of ATP molecules used per C3 cycle.
+  }
+
+  \item{nadph_use}{
+    The number of NADPH molecules used per C3 cycle.
+  }
+
+  \item{a_column_name}{
+    The name of the column in \code{rc_exdf} that contains the net
+    assimilation in \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{ci_column_name}{
+    The name of the column in \code{rc_exdf} that contains the
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{etr_column_name}{
+    The name of the column in \code{rc_exdf} that contains the electron
+    transport rate as estimated by the measurement system in
+    \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{gamma_star_column_name}{
+    The name of the column in \code{rc_exdf} that contains the
+    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  }
+
+  \item{j_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
+  }
+
+  \item{kc_column_name}{
+    The name of the column in \code{rc_exdf} that contains the
+    Michaelis-Menten constant for rubisco carboxylation in
+    \code{micromol mol^(-1)}.
+  }
+
+  \item{ko_column_name}{
+    The name of the column in \code{rc_exdf} that contains the
+    Michaelis-Menten constant for rubisco oxygenation in
+    \code{mmol mol^(-1)}.
+  }
+
+  \item{phips2_column_name}{
+    The name of the column in \code{rc_exdf} that contains values of the
+    operating efficiency of photosystem II (dimensionless).
+  }
+
+  \item{qin_column_name}{
+    The name of the column in \code{rc_exdf} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{rd_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{vcmax_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Vcmax} values (with units of
+    \code{normalized to Vcmax at 25 degrees C}).
+  }
+}
+
+\details{
+  The variable J method is a fitting procedure for estimating values of
+  \code{J}, \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax} from a measured
+  C3 CO2 response curve + chlorophyll fluorescence. For more information about
+  these parameters, see the documentation at
+  \code{\link{calculate_c3_variable_j}} and
+  \code{\link{calculate_c3_assimilation}}.
+
+  Here, we make an estimate for \code{tau} by noting that gas exchange
+  measurement systems equipped with chlorophyll fluorometers typically make an
+  estimate for the electron transport rate (\code{ETR}), which is essentially
+  synonymous with the actual RuBP regeneration rate. Thus, \code{tau} can be
+  estimated by inverting the equation for \code{J_actual}:
+
+  \code{tau = ETR / (Qin * PhiPSII)}
+
+  Estimates of the remaining parameters are calculated by setting \code{Cc = Ci}
+  and then calling \code{\link{initial_guess_c3_aci}}.
+}
+
+\value{
+  A function with one input argument \code{rc_exdf}, which should be an
+  \code{exdf} object representing one C3 CO2 response curve. The return value of
+  this function will be a numeric vector with four elements, representing the
+  values of \code{J}, \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax} (in
+  that order).
+}
+
+\examples{
+# Read an example Licor file included in the PhotoGEA package
+licor_file <- read_gasex_file(
+  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+)
+
+# Define a new column that uniquely identifies each curve
+licor_file[, 'species_plot'] <-
+  paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
+
+# Organize the data
+licor_file <- organize_response_curve_data(
+    licor_file,
+    'species_plot',
+    c(9, 10, 16),
+    'CO2_r_sp'
+)
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
+
+# Calculate temperature-dependent values of C3 photosynthetic parameters
+licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+
+# Create the guessing function
+guessing_func <- initial_guess_c3_variable_j()
+
+# Apply it and see the initial guesses for each curve
+str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+
+# Calculate simulated A-Ci curves based on the guesses and compare them to the
+# actual data
+calculated_aci <- do.call(rbind, by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  function(x) {
+    param <- guessing_func(x)
+    x <- cbind(x, calculate_c3_variable_j(x, param[2], param[3]))
+    cbind(x, calculate_c3_assimilation(x, param[4], param[1], param[2], param[5]))
+  }
+))
+
+lattice::xyplot(
+  Ac + Aj + Ap + An + A ~ Cc | species_plot,
+  data = cbind(licor_file, calculated_aci)$main_data,
+  type = 'b',
+  auto = TRUE,
+  grid = TRUE
+)
+}
+
+\concept{exdf}

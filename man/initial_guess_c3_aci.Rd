@@ -52,45 +52,45 @@
   }
 
   \item{a_column_name}{
-    The name of the column in \code{licor_exdf} that contains the net
+    The name of the column in \code{rc_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{cc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{rc_exdf} that contains the
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{kc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{rc_exdf} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     \code{micromol mol^(-1)}.
   }
 
   \item{ko_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{rc_exdf} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}.
   }
 
   \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{rc_exdf} that contains the
     \code{Gamma_star} values in \code{micromol mol^(-1)}.
   }
 
   \item{vcmax_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
   }
 
   \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{j_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 }

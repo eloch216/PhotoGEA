@@ -1,5 +1,6 @@
 \name{optimizers}
 
+\alias{optimizers}
 \alias{optimizer_nmkb}
 \alias{optimizer_deoptim}
 
@@ -21,30 +22,37 @@
 
 \arguments{
   \item{tol}{
-    A convergence tolerance value; to be passed to \code{dfoptim::nmkb} via its
-    \code{control} input argument.
+    A convergence tolerance value; to be passed to \code{\link[dfoptim]{nmkb}}
+    via its \code{control} input argument.
   }
 
   \item{maxfeval}{
     A maximum value for the number of function evaluations to allow during
-    optimization; to be passed to \code{dfoptim::nmkb} via its \code{control}
-    input argument.
+    optimization; to be passed to \code{\link[dfoptim]{nmkb}} via its
+    \code{control} input argument.
   }
 
   \item{restarts.max}{
     A maximum value for the number of restarts allowed during optimization;
-    to be passed to \code{dfoptim::nmkb} via its \code{control} input argument.
+    to be passed to \code{\link[dfoptim]{nmkb}} via its \code{control} input
+    argument.
   }
 
   \item{VTR}{
-    The value to be reached; to be passed to \code{DEoptim::DEoptim} via its
-    \code{control} input argument.
+    The value to be reached; to be passed to \code{\link[DEoptim]{DEoptim}} via
+    its \code{control} input argument.
   }
 
   \item{itermax}{
     The maximum number of generations to be used; to be passed to
-    \code{DEoptim::DEoptim} via its \code{control} input argument. Note that
-    when \code{VTR} is \code{-Inf}, the optimizer will always use the maximum
-    number of generations.
+    \code{\link[DEoptim]{DEoptim}} via its \code{control} input argument. Note
+    that when \code{VTR} is \code{-Inf}, the optimizer will always use the
+    maximum number of generations.
   }
+}
+
+\details{
+  \code{optimizer_nmkb} is a wrapper for \code{\link[dfoptim]{nmkb}}.
+
+  \code{optimizer_deoptim} is a wrapper for \code{\link[DEoptim]{DEoptim}}.
 }
