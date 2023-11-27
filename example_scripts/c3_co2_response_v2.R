@@ -627,6 +627,28 @@ if (SAVE_CSV) {
     write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
     write.csv(aci_parameters, file.path(base_dir, "aci_parameters_plot_avg.csv"), row.names=FALSE)
   } else {
+    tmp <- by(
+      all_samples,
+      all_samples$curve_identifier,
+      function(x) {
+        tmp2 <- data.frame(
+          event = x[1, EVENT_COLUMN_NAME],
+          plot = x[1, 'plot'],
+          replicate = x[1, 'replicate'],
+          curve_identifier = x[1, 'curve_identifier']
+        )
+        for (cn in col_to_average_as) {
+          tmp3 <- as.data.frame(t(data.frame(a = x[[cn]])))
+          colnames(tmp3) <- paste0(cn, '_', x$seq_num)
+          tmp2 <- cbind(tmp2, tmp3)
+        }
+        tmp2
+      }
+    )
+    
+    tmp <- do.call(rbind, tmp)
+    
+    write.csv(tmp, file.path(base_dir, 'for_jmp.csv'), row.names=FALSE)
     write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)
     write.csv(aci_parameters, file.path(base_dir, "aci_parameters.csv"), row.names=FALSE)
