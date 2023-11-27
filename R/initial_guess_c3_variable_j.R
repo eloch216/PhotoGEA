@@ -25,27 +25,21 @@ initial_guess_c3_variable_j <- function(
         # units. Here we only need to check a few of them; initial_guess_c3_aci
         # will check the rest.
         required_variables <- list()
-        required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
-        required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
-        required_variables[[etr_column_name]]        <- 'micromol m^(-2) s^(-1)'
-        required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
-        required_variables[[phips2_column_name]]     <- NA
-        required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
-        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
+        required_variables[[ci_column_name]]     <- 'micromol mol^(-1)'
+        required_variables[[etr_column_name]]    <- 'micromol m^(-2) s^(-1)'
+        required_variables[[phips2_column_name]] <- NA
+        required_variables[[qin_column_name]]    <- 'micromol m^(-2) s^(-1)'
 
         check_required_variables(rc_exdf, required_variables)
 
         # Extract a few columns to make the following code easier to read
-        An <- rc_exdf[, a_column_name]                  # micromol / m^2 / s
-        ETR <- rc_exdf[, etr_column_name]               # micromol / m^2 / s
-        rd_norm <- rc_exdf[, rd_norm_column_name]       # dimensionless
-        Ci <- rc_exdf[, ci_column_name]                 # micromol / mol
-        Gamma_star <- rc_exdf[, gamma_star_column_name] # micromol / mol
+        Ci <- rc_exdf[, ci_column_name]         # micromol / mol
+        ETR <- rc_exdf[, etr_column_name]       # micromol / m^2 / s
+        PhiPS2 <- rc_exdf[, phips2_column_name] # dimensionless
+        Qin <- rc_exdf[, qin_column_name]       # micromol / m^2 / s
 
         # Get an estimate of tau from the Licor estimate of ETR
-        tau_guess <- mean(
-            ETR / (rc_exdf[, phips2_column_name] * rc_exdf[, qin_column_name])
-        )
+        tau_guess <- mean(ETR / (PhiPS2 * Qin))
 
         # Start by guessing Cc = Ci
         rc_exdf <- set_variable(
