@@ -18,7 +18,7 @@ PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(7, 8, 9, 10)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(6, 7, 8, 9, 10)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -29,7 +29,6 @@ REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
 REMOVE_SPECIFIC_POINTS <- FALSE
-
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
 
@@ -44,10 +43,23 @@ REMOVE_STATISTICAL_OUTLIERS <- TRUE
 PERFORM_STATS_TESTS <- TRUE
 
 # Decide whether to average over plots
-AVERAGE_OVER_PLOTS <- TRUE
+AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
 SAVE_CSV <- TRUE
+
+# Decide which solver to use
+USE_DEOPTIM_SOLVER <- FALSE
+
+solver <- if (USE_DEOPTIM_SOLVER) {
+  # This is the default solver for the variable J fitting method; it is a little
+  # bit slower, but less likely to fail
+  optimizer_deoptim()
+} else {
+  # This is the default solver for the regular C3 A-Ci curve fitting method; it
+  # is a little bit faster, but may sometimes fail for some curves
+  optimizer_nmkb()
+}
 
 ###
 ### TRANSLATION:
@@ -223,8 +235,8 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(curve_identifier = 'WT 2 5', seq_num = 6) # has a different CO2 setpoint
-      #list(curve_identifier = c('10 5 6', '14 2 5'))
+      list(curve_identifier = 'WT 2 5', seq_num = 6), # has a different CO2 setpoint
+      list(curve_identifier = c('14 1 2'))
     )
 }
 
@@ -256,6 +268,7 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
+  OPTIM_FUN = solver,                           # The optimization algorithm to use
   cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
   cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
 ))
@@ -615,6 +628,28 @@ if (SAVE_CSV) {
     write.csv(all_samples_one_point, file.path(base_dir, "vj_all_samples_one_point_plot_avg.csv"), row.names=FALSE)
     write.csv(aci_parameters, file.path(base_dir, "vj_aci_parameters_plot_avg.csv"), row.names=FALSE)
   } else {
+    tmp <- by(
+      all_samples,
+      all_samples$curve_identifier,
+      function(x) {
+        tmp2 <- data.frame(
+          event = x[1, EVENT_COLUMN_NAME],
+          plot = x[1, 'plot'],
+          replicate = x[1, 'replicate'],
+          curve_identifier = x[1, 'curve_identifier']
+        )
+        for (cn in col_to_average_as) {
+          tmp3 <- as.data.frame(t(data.frame(a = x[[cn]])))
+          colnames(tmp3) <- paste0(cn, '_', x$seq_num)
+          tmp2 <- cbind(tmp2, tmp3)
+        }
+        tmp2
+      }
+    )
+    
+    tmp <- do.call(rbind, tmp)
+    
+    write.csv(tmp, file.path(base_dir, 'vj_for_jmp.csv'), row.names=FALSE)
     write.csv(all_samples, file.path(base_dir, "vj_all_samples.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "vj_all_samples_one_point.csv"), row.names=FALSE)
     write.csv(aci_parameters, file.path(base_dir, "vj_aci_parameters.csv"), row.names=FALSE)
