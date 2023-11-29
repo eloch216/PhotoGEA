@@ -182,6 +182,20 @@ if (MAKE_VALIDATION_PLOTS) {
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
 
+    # Plot all A-Cu curves, grouped by event
+    dev.new()
+    print(xyplot(
+      A ~ Ci | event,
+      group = curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+    ))
+
     # Plot all gsw-Ci curves in the data set
     dev.new()
     print(xyplot(
@@ -194,7 +208,7 @@ if (MAKE_VALIDATION_PLOTS) {
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Stomatal conductance to H2O [', licor_data$units$gsw, ']')
     ))
-    
+
     if (INCLUDE_FLUORESCENCE) {
       # Plot all gsw-Ci curves in the data set
       dev.new()
@@ -424,17 +438,17 @@ if (AVERAGE_OVER_PLOTS) {
         CO2_r_sp = x[1, 'CO2_r_sp'],
         curve_identifier = paste(x[1, EVENT_COLUMN_NAME], x[1, 'plot'])
       )
-      
+
       colnames(tmp)[1] <- EVENT_COLUMN_NAME
-      
+
       for (cn in col_to_average_as) {
         tmp[[cn]] <- mean(x[[cn]])
       }
-      
+
       tmp
     }
   )
-  
+
   all_samples <- do.call(rbind, all_samples_list)
 }
 
@@ -446,7 +460,7 @@ if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
     'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'TPU'
   )
-  
+
   aci_parameters_list <- by(
     aci_parameters,
     list(aci_parameters[[EVENT_COLUMN_NAME]], aci_parameters[['plot']]),
@@ -456,17 +470,17 @@ if (AVERAGE_OVER_PLOTS) {
         plot = x[1, 'plot'],
         curve_identifier = paste(x[1, EVENT_COLUMN_NAME], x[1, 'plot'])
       )
-      
+
       colnames(tmp)[1] <- EVENT_COLUMN_NAME
-      
+
       for (cn in col_to_average) {
         tmp[[cn]] <- mean(x[[cn]])
       }
-      
+
       tmp
     }
   )
-  
+
   aci_parameters <- do.call(rbind, aci_parameters_list)
 }
 
@@ -600,7 +614,7 @@ if (SAVE_CSV) {
   if (interactive() & .Platform$OS.type == "windows") {
     base_dir <- choose.dir(caption="Select folder for output files")
   }
-  
+
   if (AVERAGE_OVER_PLOTS) {
     tmp <- by(
       all_samples,
@@ -619,9 +633,9 @@ if (SAVE_CSV) {
         tmp2
       }
     )
-    
+
     tmp <- do.call(rbind, tmp)
-    
+
     write.csv(tmp, file.path(base_dir, 'for_jmp_plot_avg.csv'), row.names=FALSE)
     write.csv(all_samples, file.path(base_dir, "all_samples_plot_avg.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
@@ -645,9 +659,9 @@ if (SAVE_CSV) {
         tmp2
       }
     )
-    
+
     tmp <- do.call(rbind, tmp)
-    
+
     write.csv(tmp, file.path(base_dir, 'for_jmp.csv'), row.names=FALSE)
     write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)

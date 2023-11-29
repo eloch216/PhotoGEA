@@ -169,6 +169,20 @@ if (MAKE_VALIDATION_PLOTS) {
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
 
+    # Plot all A-Cu curves, grouped by event
+    dev.new()
+    print(xyplot(
+      A ~ Ci | event,
+      group = curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+    ))
+
     # Plot all gsw-Ci curves in the data set
     dev.new()
     print(xyplot(
@@ -308,7 +322,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         )
       }
     ))
-    
+
     # Plot the C3 A-Ci fits (including limiting rates)
     dev.new()
     print(xyplot(
@@ -378,7 +392,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
       ylab = paste0('Mesophyll conductance (', c3_aci_results$fits$units$gmc, ')')
     ))
-    
+
     # Plot the C3 gmc-Ci fits
     dev.new()
     print(xyplot(
@@ -438,17 +452,17 @@ if (AVERAGE_OVER_PLOTS) {
         CO2_r_sp = x[1, 'CO2_r_sp'],
         curve_identifier = paste(x[1, EVENT_COLUMN_NAME], x[1, 'plot'])
       )
-      
+
       colnames(tmp)[1] <- EVENT_COLUMN_NAME
-      
+
       for (cn in col_to_average_as) {
         tmp[[cn]] <- mean(x[[cn]])
       }
-      
+
       tmp
     }
   )
-  
+
   all_samples <- do.call(rbind, all_samples_list)
 }
 all_samples_one_point <- all_samples[all_samples$seq_num == POINT_FOR_BOX_PLOTS, ]
@@ -457,7 +471,7 @@ if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
     'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'TPU', 'tau'
   )
-  
+
   aci_parameters_list <- by(
     aci_parameters,
     list(aci_parameters[[EVENT_COLUMN_NAME]], aci_parameters[['plot']]),
@@ -467,17 +481,17 @@ if (AVERAGE_OVER_PLOTS) {
         plot = x[1, 'plot'],
         curve_identifier = paste(x[1, EVENT_COLUMN_NAME], x[1, 'plot'])
       )
-      
+
       colnames(tmp)[1] <- EVENT_COLUMN_NAME
-      
+
       for (cn in col_to_average) {
         tmp[[cn]] <- mean(x[[cn]])
       }
-      
+
       tmp
     }
   )
-  
+
   aci_parameters <- do.call(rbind, aci_parameters_list)
 }
 
@@ -601,7 +615,7 @@ if (SAVE_CSV) {
   if (interactive() & .Platform$OS.type == "windows") {
     base_dir <- choose.dir(caption="Select folder for output files")
   }
-  
+
   if (AVERAGE_OVER_PLOTS) {
     tmp <- by(
       all_samples,
@@ -620,9 +634,9 @@ if (SAVE_CSV) {
         tmp2
       }
     )
-    
+
     tmp <- do.call(rbind, tmp)
-    
+
     write.csv(tmp, file.path(base_dir, 'vj_for_jmp_plot_avg.csv'), row.names=FALSE)
     write.csv(all_samples, file.path(base_dir, "vj_all_samples_plot_avg.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "vj_all_samples_one_point_plot_avg.csv"), row.names=FALSE)
@@ -646,9 +660,9 @@ if (SAVE_CSV) {
         tmp2
       }
     )
-    
+
     tmp <- do.call(rbind, tmp)
-    
+
     write.csv(tmp, file.path(base_dir, 'vj_for_jmp.csv'), row.names=FALSE)
     write.csv(all_samples, file.path(base_dir, "vj_all_samples.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "vj_all_samples_one_point.csv"), row.names=FALSE)
