@@ -187,8 +187,8 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{J_F}, \code{gmc}, \code{Cc}, and \code{Rd_tl}. The
-          category for each of these new columns is
+          above: \code{J_F}, \code{gmc}, \code{Cc}, \code{tau}, and
+          \code{Rd_tl}. The category for each of these new columns is
           \code{calculate_c3_variable_j} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with

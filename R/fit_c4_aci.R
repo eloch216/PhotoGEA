@@ -146,6 +146,12 @@ fit_c4_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Add columns for the best-fit parameter values
+    replicate_exdf[, 'Rd_at_25'] <- best_X[1]
+    replicate_exdf[, 'Vcmax_at_25'] <- best_X[2]
+    replicate_exdf[, 'Vpmax_at_25'] <- best_X[3]
+    replicate_exdf[, 'Vpr'] <- best_X[4]
+
     # Add a column for the residuals
     replicate_exdf <- set_variable(
         replicate_exdf,
@@ -153,6 +159,15 @@ fit_c4_aci <- function(
         replicate_exdf$units[[a_column_name]],
         'fit_c4_aci',
         replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
+
+    # Document the new columns that were added
+    replicate_identifiers <- document_variables(
+        replicate_identifiers,
+        c('fit_c4_aci', 'Rd_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpmax_at_25', 'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpr',         'micromol m^(-2) s^(-1)')
     )
 
     # Get the replicate identifier columns

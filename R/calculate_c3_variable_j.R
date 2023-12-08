@@ -67,6 +67,7 @@ calculate_c3_variable_j <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
+            tau = tau,
             Rd_tl = Rd_tl,
             J_F = J_F,
             gmc = gmc,
@@ -75,6 +76,7 @@ calculate_c3_variable_j <- function(
 
         document_variables(
             output,
+            c('calculate_c3_variable_j', 'tau',   'dimensionless'),
             c('calculate_c3_variable_j', 'Rd_tl', 'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'J_F',   'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'gmc',   'mol m^(-2) s^(-1) bar^(-1)'),

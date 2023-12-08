@@ -237,6 +237,9 @@
                   name is determined by appending \code{'_residuals'} to the end
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
+            \item Values of fitting parameters at 25 degrees C will be stored in
+                  the \code{Rd_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
+                  and \code{Vpr} columns.
             \item The other outputs from \code{\link{calculate_c4_assimilation}}
                   will be stored in columns with the usual names:
                   \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl}, \code{Rm_tl},

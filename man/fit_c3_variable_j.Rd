@@ -286,6 +286,9 @@
                   name is determined by appending \code{'_residuals'} to the end
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
+            \item Values of fitting parameters at 25 degrees C will be stored in
+                  the \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
+                  columns.
             \item The other outputs from \code{\link{calculate_c3_variable_j}}
                   and \code{\link{calculate_c3_assimilation}} will be stored in
                   columns with the usual names: \code{tau}, \code{TPU},

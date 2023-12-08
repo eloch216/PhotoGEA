@@ -222,6 +222,9 @@ fit_c3_variable_j <- function(
     # Set all categories to `fit_c3_variable_j`
     vj$categories[1,] <- 'fit_c3_variable_j'
 
+    # Remove the Rd_tl column so it doesn't get repeated
+    vj[, 'Rd_tl'] <- NULL
+
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
 
@@ -257,6 +260,13 @@ fit_c3_variable_j <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Add columns for the best-fit parameter values (no need to include TPU
+    # since is already included in the output of calculate_c3_assimilation)
+    replicate_exdf[, 'J_at_25'] <- best_X[1]
+    replicate_exdf[, 'Rd_at_25'] <- best_X[2]
+    replicate_exdf[, 'tau'] <- best_X[3]
+    replicate_exdf[, 'Vcmax_at_25'] <- best_X[5]
+
     # Add a column for the residuals
     replicate_exdf <- set_variable(
         replicate_exdf,
@@ -264,6 +274,15 @@ fit_c3_variable_j <- function(
         replicate_exdf$units[[a_column_name]],
         'fit_c3_variable_j',
         replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
+
+    # Document the new columns that were added
+    replicate_exdf <- document_variables(
+        replicate_exdf,
+        c('fit_c3_variable_j', 'tau',         'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j', 'J_at_25',     'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j', 'Rd_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)')
     )
 
     # Get the replicate identifier columns

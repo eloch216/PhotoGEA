@@ -5,13 +5,13 @@ fit_ball_berry <- function(
 )
 {
     if (!is.exdf(replicate_exdf)) {
-        stop("fit_ball_berry requires an exdf object")
+        stop('fit_ball_berry requires an exdf object')
     }
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[gsw_column_name]] <- "mol m^(-2) s^(-1)"
-    required_variables[[bb_index_column_name]] <- "mol m^(-2) s^(-1)"
+    required_variables[[gsw_column_name]] <- 'mol m^(-2) s^(-1)'
+    required_variables[[bb_index_column_name]] <- 'mol m^(-2) s^(-1)'
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -32,10 +32,16 @@ fit_ball_berry <- function(
     replicate_exdf[, paste0(gsw_column_name, '_fit')] <-
         bb_intercept + bb_slope * replicate_exdf[, bb_index_column_name]
 
+    # Add columns for the best-fit parameter values
+    replicate_exdf[, 'bb_intercept'] <- bb_intercept
+    replicate_exdf[, 'bb_slope']     <- bb_slope
+
     # Document the column that was added
     replicate_exdf <- document_variables(
         replicate_exdf,
-        c("fit_ball_berry", paste0(gsw_column_name, '_fit'), "mol m^(-2) s^(-1)")
+        c('fit_ball_berry', paste0(gsw_column_name, '_fit'), 'mol m^(-2) s^(-1)'),
+        c('fit_ball_berry', 'bb_intercept',                  'mol m^(-2) s^(-1)'),
+        c('fit_ball_berry', 'bb_slope',                      'dimensionless')
     )
 
     # Add a column for the residuals
@@ -62,15 +68,15 @@ fit_ball_berry <- function(
 
     # Add the values of the fitted parameters
     replicate_identifiers[, 'bb_intercept'] <- bb_intercept
-    replicate_identifiers[, 'bb_slope'] <- bb_slope
-    replicate_identifiers[, 'r_squared'] <- r_squared
+    replicate_identifiers[, 'bb_slope']     <- bb_slope
+    replicate_identifiers[, 'r_squared']    <- r_squared
 
     # Document the columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c("fit_ball_berry", 'bb_intercept', "mol m^(-2) s^(-1)"),
-        c("fit_ball_berry", 'bb_slope', "dimensionless"),
-        c("fit_ball_berry", 'r_squared', "")
+        c('fit_ball_berry', 'bb_intercept', 'mol m^(-2) s^(-1)'),
+        c('fit_ball_berry', 'bb_slope',     'dimensionless'),
+        c('fit_ball_berry', 'r_squared',     '')
     )
 
     # Return the results
