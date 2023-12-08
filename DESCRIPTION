@@ -16,7 +16,8 @@ LazyData: true
 Imports:
     openxlsx,
     lattice,
-    dfoptim
+    dfoptim,
+    DEoptim
 Suggests:
     knitr,
     rmarkdown,

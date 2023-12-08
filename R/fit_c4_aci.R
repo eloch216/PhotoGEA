@@ -17,7 +17,7 @@ fit_c4_aci <- function(
     gbs = 0.003,               # mol / m^2 / s / bar
     Rm_frac = 0.5,             # dimensionless
     alpha = 0,                 # dimensionless
-    OPTIM_FUN = default_optimizer(),
+    OPTIM_FUN = optimizer_nmkb(),
     initial_guess_fun = initial_guess_c4_aci(
         gbs = gbs,
         Rm_frac = Rm_frac,

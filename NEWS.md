@@ -18,6 +18,14 @@ for the next release.
 
 # UNRELEASED
 
+- Reorganized the variable J fitting functions to be more like `fit_c3_aci`:
+  - Added `calculate_c3_variable_j`, `initial_guess_c3_variable_j`, and
+    `fit_c3_variable_j`.
+  - Removed `dpmn_error_jrv`, `dpmn_error_jrvtt`, `dpmn_error_jrv_tau`,
+    `dpmn_error_jrv_tpu`, and `photosynthesis_TRF`.
+- Added a new optimizer from the `DEoptim` package (called `optimizer_deoptim`)
+  and renamed `default_optimizer` to `optimizer_nmkb`. The new
+  `optimizer_deoptim` is used as the default optimizer for variable J fitting.
 - Added a new function for calculating the relative limiting factors of C3
   photosynthesis: `calculate_c3_limitations`
 - Added a new function for estimating the operating point from a measured A-Ci
@@ -29,6 +37,9 @@ for the next release.
   parameters
 - The C3 and C4 A-Ci vignettes now show include the operating point in one of
   the figures
+- Fixed a typo in `calculate_c3_assimilation` where `Rd` (the value of day
+  respiration at 25 degrees C) was used in place of `Rd_tl` (the value of day
+  respiration at the leaf temperature) when calculating net assimilation rates.
 
 # PhotoGEA VERSION 0.9.2 (2023-11-16)
 

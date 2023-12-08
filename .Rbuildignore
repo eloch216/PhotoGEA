@@ -10,6 +10,8 @@
 ^\.Rproj\.user$
 # Used by RStudio for temporary files.
 
+^Rhistory$
+^README\.Rmd$
 ^\.editorconfig$
 # Related to package development.
 

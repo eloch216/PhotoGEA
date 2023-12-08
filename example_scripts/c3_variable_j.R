@@ -1,522 +1,671 @@
-# This script loads Licor data representing C3 A-Ci curves from multiple Excel
-# files, combines it into one data structure, and uses a fitting procedure to
-# estimate gm and other parameters via the variable J method.
-#
-# ------------------------------------------------------------------------------
-#
-# IMPORTANT NOTE ABOUT LICOR EXCEL FILES: by default, Licor Excel files do not
-# `calculate` formula values. This causes a problem when reading them in R,
-# since any data entry determined from a formula will be read as 0. To fix this
-# issue for a Licor Excel file, open it in in Excel, go to the `Formulas` menu,
-# and choose `Calculate Now`. (Alternatively, press F9.) Then save the file and
-# close it. See https://github.com/tidyverse/readxl/issues/495 for more details.
-#
-# ------------------------------------------------------------------------------
-#
-# This script is broken up into several sections to make it easier to use:
-# - Components that might need to change each time this script is run
-# - Components that are less likely to change each time this script is run
-# - Functions used to load and process the data (shouldn't need to change)
-# - The commands that actually call the functions
-#
-# Typically, it should only be necessary to specify the names of input files.
-# This information is specified in the LICOR_FILES_TO_PROCESS vector. By
-# default, these file names are chosen interactively via a dialog box (only
-# available on MS Windows).
-#
-# Alternatively, the filenames can be specified directly as relative or absolute
-# paths. In the case of relative paths, they should be specified relative to the
-# directory that contains this script.
-#
-# ------------------------------------------------------------------------------
-#
-# This script requires the `lattice` and `dfoptim` libraries, which can be
-# installed using the following commands if they are not already installed:
-#
-# install.packages('lattice')
-# install.packages('dfoptim')
-#
-# ------------------------------------------------------------------------------
-#
-# To run the script, set the R working directory to the directory that contains
-# this script and type:
-#
-# source('c3_variable_j.R')
+###
+### PRELIMINARIES:
+### Loading packages, defining constants, creating helping functions, etc.
+###
 
+# Load required packages
 library(PhotoGEA)
 library(lattice)
-library(dfoptim)
-
-###                                                                   ###
-### COMPONENTS THAT MIGHT NEED TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
-###                                                                   ###
-
-# Decide whether to load new data and calculate stats. If the data has already
-# been loaded and the script is being run to tweak the plotting parameters, then
-# set PERFORM_CALCULATIONS to FALSE to save time. If this is the first time
-# running the script in a particular R session or for a particular data set, the
-# data will need to be loaded and analyzed, so set PERFORM_CALCULATIONS to TRUE.
-PERFORM_CALCULATIONS <- TRUE
-
-# Decide whether to view data frames along with the plots (can be useful for
-# inspection to make sure the results look reasonable)
-VIEW_DATA_FRAMES <- TRUE
-
-# Choose the input files
-if (PERFORM_CALCULATIONS) {
-    LICOR_FILES_TO_PROCESS <- choose_input_licor_files()
-}
-
-# Specify which measurement numbers to choose. Here, the numbers refer to
-# points along the sequence of A-Ci measurements.
-#
-# These numbers have been chosen for a sequence with 17 measurements. Points 1,
-# 9, and 10 all have the CO2 setpoint set to 400. Here we only want to keep the
-# first one, so we exclude points 9 and 10.
-NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
-POINT_FOR_BOX_PLOTS <- 1
-
-###                                                                        ###
-### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
-###                                                                        ###
+library(onewaytests) # for bf.test, shapiro.test, A.aov
+library(DescTools)   # for DunnettTest
 
 # Specify the names of a few important columns
-EVENT_COLUMN_NAME <- "event"
-REP_COLUMN_NAME <- "replicate"
+EVENT_COLUMN_NAME <- 'event'
+REP_COLUMN_NAME <- 'replicate'
 
-A_COLUMN_NAME <- "A"
-CI_COLUMN_NAME <- "Ci"
-TLEAF_COLUMN_NAME <- "TleafCnd"
-ETR_COLUMN_NAME <- "ETR"
-PHIPS2_COLUMN_NAME <- "PhiPS2"
-MEASUREMENT_NUMBER_NAME <- "obs"
-QIN_COLUMN_NAME <- "Qin"
-TIME_COLUMN_NAME <- "time"
+# Specify prefix that should be removed from event names
+PREFIX_TO_REMOVE <- "36625-"
 
-UNIQUE_ID_COLUMN_NAME <- "event_replicate"
+# Describe a few key features of the data
+NUM_OBS_IN_SEQ <- 17
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(6, 7, 8, 9, 10)
 
-# Choose a Ci cutoff value for fitting
-CI_THRESHOLD_UPPER <- Inf
-CI_THRESHOLD_LOWER <- 0
+# Decide whether to make certain plots
+MAKE_VALIDATION_PLOTS <- TRUE
+MAKE_ANALYSIS_PLOTS <- TRUE
 
-###                                                                   ###
-### COMMANDS THAT ACTUALLY CALL THE FUNCTIONS WITH APPROPRIATE INPUTS ###
-###                                                                   ###
+# Decide whether to only keep points where stability conditions were met
+REQUIRE_STABILITY <- FALSE
 
-if (PERFORM_CALCULATIONS) {
-    # Load the data
-    multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
-        read_gasex_file(fname, TIME_COLUMN_NAME)
-    })
+# Decide whether to remove some specific points
+REMOVE_SPECIFIC_POINTS <- FALSE
+# Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
+MAX_CI <- Inf
 
-    # Extract the common columns
-    common_columns <- do.call(identify_common_columns, multi_file_info)
+# Decide which point to use for box plots of A and other quantities
+POINT_FOR_BOX_PLOTS <- 1
 
-    extracted_multi_file_info <- lapply(multi_file_info, function(exdf_obj) {
-        exdf_obj[ , common_columns, TRUE]
-    })
+# Decide whether to remove vcmax outliers before plotting and performing stats
+# tests
+REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
-    # Combine the Licor files into one table
-    combined_info <- do.call(rbind, extracted_multi_file_info)
+# Decide whether to perform stats tests
+PERFORM_STATS_TESTS <- TRUE
 
-    # Determine if there is a `plot` column
-    HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
+# Decide whether to average over plots
+AVERAGE_OVER_PLOTS <- FALSE
 
-    # Set the rep column name depending on whether there is plot information
-    REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
-      "plot_replicate"
-    } else {
-      "replicate"
-    }
+# Decide whether to save CSV outputs
+SAVE_CSV <- TRUE
 
-    # Add a column that combines `plot` and `replicate` if necessary
-    if (HAS_PLOT_INFO) {
-      combined_info <- process_id_columns(
-        combined_info,
-        "plot",
-        "replicate",
-        "plot_replicate"
+# Decide which solver to use
+USE_DEOPTIM_SOLVER <- FALSE
+
+solver <- if (USE_DEOPTIM_SOLVER) {
+  # This is the default solver for the variable J fitting method; it is a little
+  # bit slower, but less likely to fail
+  optimizer_deoptim()
+} else {
+  # This is the default solver for the regular C3 A-Ci curve fitting method; it
+  # is a little bit faster, but may sometimes fail for some curves
+  optimizer_nmkb()
+}
+
+###
+### TRANSLATION:
+### Creating convenient R objects from raw data files
+###
+
+# Define a vector of paths to the files we wish to load
+file_paths <- choose_input_licor_files()
+
+# Load each file, storing the result in a list
+licor_exdf_list <- lapply(file_paths, function(fpath) {
+  read_gasex_file(fpath, 'time')
+})
+
+# Get the names of all columns that are present in all of the Licor files
+columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+
+# Extract just these columns
+licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+  x[ , columns_to_keep, TRUE]
+})
+
+# Use `rbind` to combine all the data
+licor_data <- do.call(rbind, licor_exdf_list)
+
+###
+### VALIDATION:
+### Organizing the data, checking its consistency and quality, cleaning it
+###
+
+# Remove unwanted prefix from any event names that contain it
+licor_data[, EVENT_COLUMN_NAME] <- gsub(
+    PREFIX_TO_REMOVE,
+    "",
+    licor_data[, EVENT_COLUMN_NAME],
+    fixed = TRUE
+)
+
+# Determine if there is fluorescence data
+PHIPS2_COLUMN_NAME <- if ("PhiPs2" %in% colnames(licor_data)) {
+    "PhiPs2"
+} else if ("PhiPS2" %in% colnames(licor_data)) {
+    "PhiPS2"
+} else {
+    stop('PhiPSII data must be available in all data files')
+}
+
+# Determine if there is a `plot` column
+HAS_PLOT_INFO <- 'plot' %in% colnames(licor_data)
+
+if (AVERAGE_OVER_PLOTS && !HAS_PLOT_INFO) {
+  stop('`AVERAGE_OVER_PLOTS` was set to `TRUE`, but there is no plot info')
+}
+
+# Add a column that combines `plot` and `replicate` if necessary
+if (HAS_PLOT_INFO) {
+  licor_data <- process_id_columns(
+    licor_data,
+    'plot',
+    REP_COLUMN_NAME,
+    paste0('plot_', REP_COLUMN_NAME)
+  )
+}
+
+# Set the rep column name depending on whether there is plot information
+REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
+    paste0('plot_', REP_COLUMN_NAME)
+} else {
+    REP_COLUMN_NAME
+}
+
+# Add a column that combines `event` and `replicate` that we can use to identify
+# each curve in the data set
+licor_data <- process_id_columns(
+    licor_data,
+    EVENT_COLUMN_NAME,
+    REP_COLUMN_NAME,
+    'curve_identifier'
+)
+
+# Check data
+#check_licor_data(
+#  licor_data,
+#  'curve_identifier',
+#  driving_column = 'CO2_r_sp'
+#)
+
+# Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+licor_data <- organize_response_curve_data(
+    licor_data,
+    'curve_identifier',
+    MEASUREMENT_NUMBERS_TO_REMOVE,
+    'Ci'
+)
+
+if (MAKE_VALIDATION_PLOTS) {
+    # Plot all A-Ci curves in the data set
+    dev.new()
+    print(xyplot(
+      A ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+    ))
+
+    # Plot all A-Cu curves, grouped by event
+    dev.new()
+    print(xyplot(
+      A ~ Ci | event,
+      group = curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+    ))
+
+    # Plot all gsw-Ci curves in the data set
+    dev.new()
+    print(xyplot(
+      gsw ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('Stomatal conductance to H2O [', licor_data$units$gsw, ']')
+    ))
+
+    # Make a plot to check humidity control
+    dev.new()
+    print(xyplot(
+      RHcham + `Humidifier_%` + `Desiccant_%` ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
+    ))
+
+    # Make a plot to check temperature control
+    dev.new()
+    print(xyplot(
+      TleafCnd + Txchg ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste0('Temperature (', licor_data$units$TleafCnd, ')')
+    ))
+
+    # Make a plot to check CO2 control
+    dev.new()
+    print(xyplot(
+      CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste0('CO2 concentration (', licor_data$units$CO2_r, ')')
+    ))
+}
+
+if (REQUIRE_STABILITY) {
+    # Only keep points where stability was achieved
+    licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+
+    # Remove any curves that have fewer than three remaining points
+    npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+    ids_to_keep <- names(npts[npts > 2])
+    licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+}
+
+if (REMOVE_SPECIFIC_POINTS) {
+    # Remove specific points
+    licor_data <- remove_points(
+      licor_data,
+      list(curve_identifier = 'WT 2 5', seq_num = 6), # has a different CO2 setpoint
+      list(curve_identifier = c('14 1 2'))
+    )
+}
+
+###
+### PROCESSING:
+### Extracting new pieces of information from the data
+###
+
+# Calculate total pressure (required for fit_c3_variable_j)
+licor_data <- calculate_total_pressure(licor_data)
+
+# Calculate additional gas properties (required for calculate_c3_limitations)
+licor_data <- calculate_gas_properties(licor_data)
+
+# Calculate temperature-dependent values of C3 photosynthetic parameters
+licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)
+
+# Calculate intrinsic water-use efficiency
+licor_data <- calculate_iwue(licor_data, 'A', 'gsw', 'iWUE')
+
+# Truncate the Ci range for fitting
+licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]
+
+# Set a seed number before fitting to make sure results are reproducible
+set.seed(1234)
+
+# Fit the C3 A-Ci curves using the variable J method
+c3_aci_results <- consolidate(by(
+  licor_data_for_fitting,                       # The `exdf` object containing the curves
+  licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
+  fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
+  OPTIM_FUN = solver,                           # The optimization algorithm to use
+  cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
+  cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
+))
+
+# Calculate the relative limitations to assimilation (due to stomatal
+# conductance, mesophyll conductance, and biochemistry)
+c3_aci_results$fits <- calculate_c3_limitations(c3_aci_results$fits)
+
+if (MAKE_ANALYSIS_PLOTS) {
+    # Plot the C3 A-Cc fits (including limiting rates)
+    dev.new()
+    print(xyplot(
+      A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto.key = list(space = 'right'),
+      grid = TRUE,
+      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
+      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
+      par.settings = list(
+        superpose.line = list(col = multi_curve_line_colors()),
+        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
+      ),
+      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
+      panel = function(...) {
+        panel.xyplot(...)
+        args <- list(...)
+        curve_id <- args$curve_ids[args$subscripts][1]
+        fit_param <-
+          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
+        panel.points(
+            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            type = 'p',
+            col = 'black',
+            pch = 1
+        )
+      }
+    ))
+
+    # Plot the C3 A-Ci fits (including limiting rates)
+    dev.new()
+    print(xyplot(
+      A + Ac + Aj + Ap + A_fit ~ Ci | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto.key = list(space = 'right'),
+      grid = TRUE,
+      xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
+      par.settings = list(
+        superpose.line = list(col = multi_curve_line_colors()),
+        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
+      ),
+      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
+      panel = function(...) {
+        panel.xyplot(...)
+        args <- list(...)
+        curve_id <- args$curve_ids[args$subscripts][1]
+        fit_param <-
+          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
+        panel.points(
+          fit_param$operating_An_model ~ fit_param$operating_Ci,
+          type = 'p',
+          col = 'black',
+          pch = 1
+        )
+      }
+    ))
+
+    # Plot the C3 A-Cc fits
+    dev.new()
+    print(xyplot(
+      A + A_fit ~ Cc | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
+      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')')
+    ))
+
+    # Plot the C3 J_F-Cc fits
+    dev.new()
+    print(xyplot(
+      ETR + J_F ~ Cc | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
+      ylab = paste0('Electron transport rate (', c3_aci_results$fits$units$J_F, ')')
+    ))
+
+    # Plot the C3 gmc-Cc fits
+    dev.new()
+    print(xyplot(
+      gmc ~ Cc | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
+      ylab = paste0('Mesophyll conductance (', c3_aci_results$fits$units$gmc, ')')
+    ))
+
+    # Plot the C3 gmc-Ci fits
+    dev.new()
+    print(xyplot(
+      gmc ~ Ci | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      ylim = c(-0.1, 0.6),
+      xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+      ylab = paste0('Mesophyll conductance (', c3_aci_results$fits$units$gmc, ')')
+    ))
+}
+
+###
+### SYNTHESIS:
+### Using plots and statistics to help draw conclusions from the data
+###
+
+if (REMOVE_STATISTICAL_OUTLIERS) {
+    print(paste("Number of rows before removing outliers:", nrow(c3_aci_results$parameters)))
+
+    c3_aci_results$parameters <- exclude_outliers(
+        c3_aci_results$parameters,
+        'Vcmax_at_25',
+        c3_aci_results$parameters[, EVENT_COLUMN_NAME]
+    )
+
+    print(paste("Number of rows after removing outliers:", nrow(c3_aci_results$parameters)))
+
+    c3_aci_results$fits <- c3_aci_results$fits[
+        c3_aci_results$fits[, 'curve_identifier'] %in% c3_aci_results$parameters[, 'curve_identifier'],
+         ,
+        TRUE]
+}
+
+# Create a few data frames that will be helpful for plots and stats tests, and
+# make sure they are "factorized"
+
+all_samples <- c3_aci_results$fits$main_data
+
+col_to_average_as <- c(
+  'A', 'iWUE', 'ls_rubisco', 'lm_rubisco', 'lb_rubisco', PHIPS2_COLUMN_NAME,
+  'ETR', 'Ci', 'Cc', 'gsw', 'gmc'
+)
+
+if (AVERAGE_OVER_PLOTS) {
+  all_samples_list <- by(
+    all_samples,
+    list(all_samples[[EVENT_COLUMN_NAME]], all_samples[['plot']], all_samples[['seq_num']]),
+    function(x) {
+      tmp <- data.frame(
+        event = x[1, EVENT_COLUMN_NAME],
+        plot = x[1, 'plot'],
+        seq_num = x[1, 'seq_num'],
+        CO2_r_sp = x[1, 'CO2_r_sp'],
+        curve_identifier = paste(x[1, EVENT_COLUMN_NAME], x[1, 'plot'])
       )
-    }
 
-    combined_info <- process_id_columns(
-        combined_info,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        UNIQUE_ID_COLUMN_NAME
-    )
+      colnames(tmp)[1] <- EVENT_COLUMN_NAME
 
-    # Rename the prefix "36625-" from any event names that contain it
-    prefix_to_remove <- "36625-"
-    combined_info[, EVENT_COLUMN_NAME] <- gsub(
-        prefix_to_remove,
-        "",
-        combined_info[, EVENT_COLUMN_NAME],
-        fixed = TRUE
-    )
+      for (cn in col_to_average_as) {
+        tmp[[cn]] <- mean(x[[cn]])
+      }
 
-    combined_info[, UNIQUE_ID_COLUMN_NAME] <- gsub(
-        prefix_to_remove,
-        "",
-        combined_info[, UNIQUE_ID_COLUMN_NAME],
-        fixed = TRUE
-    )
-
-    # Exclude some events, if necessary
-    EVENTS_TO_IGNORE <- c()
-
-    combined_info <-
-        combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_IGNORE, return_exdf = TRUE]
-
-    # Check the data for any issues before proceeding with additional analysis
-    check_licor_data(
-        combined_info,
-        c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
-        NUM_OBS_IN_SEQ
-    )
-
-    # Organize the data, keeping only the desired measurement points
-    combined_info <- organize_response_curve_data(
-        combined_info,
-        UNIQUE_ID_COLUMN_NAME,
-        MEASUREMENT_NUMBERS_TO_REMOVE,
-        'CO2_r_sp'
-    )
-
-    # Perform the variable J fitting using the general strategy of
-    # Moualeu-Ngangue et al. (2017) with the following specifications: (1) we
-    # disable TPU limitations by fixing TPU to a high value, (2) we allow `tau`
-    # to vary, and (3) we use the temperature response functions from Sharkey et
-    # al. (2007). This leaves J_high, Rd, Vcmax, and tau as fitting parameters.
-    #
-    # Here, the fitting is performed with the `nmkb` optimizer from the
-    # `dfoptim` package. Before performing the fits, we truncate the data to
-    # the specified Ci range.
-    exdf_for_fitting <-
-        combined_info[combined_info[, CI_COLUMN_NAME] <= CI_THRESHOLD_UPPER &
-            combined_info[, CI_COLUMN_NAME] >= CI_THRESHOLD_LOWER, , return_exdf = TRUE]
-
-    FIT_TPU <- TRUE
-    variable_j_results <- if (FIT_TPU) {
-      consolidate(by(
-        exdf_for_fitting,
-        exdf_for_fitting[, UNIQUE_ID_COLUMN_NAME],
-        fit_variable_j,
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PHIPS2_COLUMN_NAME,
-        QIN_COLUMN_NAME,
-        TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(c3_arrhenius_sharkey),
-        function(guess, fun, lower, upper) {
-          dfoptim::nmkb(guess, fun, lower, upper, control = list(
-            tol = 1e-7,
-            maxfeval = 2000,
-            restarts.max = 10
-          ))
-        },
-        dpmn_error_jrvtt(O = 210),                                   # Fix O, leaving J_high, Rd, Vcmax, tau, and TPU as variables
-        c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42, TPU = 20), # Initial guess
-        c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2,  TPU = 0),  # Lower limit
-        c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6,  TPU = 40)  # Upper limit
-      ))
-    } else {
-      consolidate(by(
-        exdf_for_fitting,
-        exdf_for_fitting[, UNIQUE_ID_COLUMN_NAME],
-        fit_variable_j,
-        A_COLUMN_NAME,
-        CI_COLUMN_NAME,
-        PHIPS2_COLUMN_NAME,
-        QIN_COLUMN_NAME,
-        TLEAF_COLUMN_NAME,
-        photosynthesis_TRF(c3_arrhenius_sharkey),
-        function(guess, fun, lower, upper) {
-          dfoptim::nmkb(guess, fun, lower, upper, control = list(
-            tol = 1e-7,
-            maxfeval = 2000,
-            restarts.max = 10
-          ))
-        },
-        dpmn_error_jrv_tau(O = 210, TPU = 1000),          # Fix O and TPU, leaving J_high, Rd, Vcmax, and tau as variables
-        c(J_high = 110, Rd = 1,  Vcmax = 100, tau = 0.42), # Initial guess
-        c(J_high = 0,   Rd = 0,  Vcmax = 0,   tau = 0.2),  # Lower limit
-        c(J_high = 500, Rd = 10, Vcmax = 500, tau = 0.6)   # Upper limit
-      ))
-    }
-
-    # Separate the parameters and the fitted curves (without units)
-    variable_j_parameters <- variable_j_results$parameters$main_data
-    variable_j_fits <- variable_j_results$fits$main_data
-
-    # Extract the data (without units)
-    all_samples <- combined_info$main_data
-}
-
-# Determine the value of `tau` assumed in the Licor files
-tau_licor <- mean(all_samples[[ETR_COLUMN_NAME]] /
-        (all_samples[[PHIPS2_COLUMN_NAME]] * all_samples[[QIN_COLUMN_NAME]]))
-
-# Make a subset of the full result for just the one measurement point
-variable_j_fits_one_point <-
-    variable_j_fits[variable_j_fits[['seq_num']] == POINT_FOR_BOX_PLOTS,]
-
-# Convert event columns to factors to control the order of events in subsequent
-# plots
-variable_j_fits <- factorize_id_column(variable_j_fits, UNIQUE_ID_COLUMN_NAME)
-variable_j_fits_one_point <- factorize_id_column(variable_j_fits_one_point, EVENT_COLUMN_NAME)
-
-# View the resulting data frames, if desired
-if (VIEW_DATA_FRAMES) {
-    View(variable_j_parameters)
-    View(variable_j_fits_one_point)
-}
-
-###                                   ###
-### COMMANDS THAT DISPLAY THE RESULTS ###
-###                                   ###
-
-# Ignore particular replicates
-#IDS_TO_IGNORE <- c()
-
-fits_for_plotting <- variable_j_fits[!variable_j_fits[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
-fits_one_point_for_plotting <- variable_j_fits_one_point[!variable_j_fits_one_point[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
-parameters_for_plotting <- variable_j_parameters[!variable_j_parameters[[UNIQUE_ID_COLUMN_NAME]] %in% IDS_TO_IGNORE,]
-
-# Remove points at low Ci for plotting gm curves
-seq_num_to_remove <- c(7, 8, 16:17)
-fits_for_plotting_gm <- fits_for_plotting[!fits_for_plotting$seq_num %in% seq_num_to_remove, ]
-
-# Define some common axis limits
-ci_range <- c(150, 1000)
-cc_range <- c(0, 600)
-a_range <- c(-10, 75)
-gm_range <- c(0, 0.5)
-ps2_range <- c(0, 0.4)
-
-# Define some legend labels
-a_legend <- c("Ac", "Aj", "Ap", "An_estimated", "An_measured")
-
-# Define colors to use for assimilation fit plots
-assimilation_fit_colors <- c(
-    "#1B9E77",
-    "#D95F02",
-    "#7570B3",
-    "#E7298A",
-    "#000000"
-)
-
-# Plot all measured PhiPSII-A curves
-ps2_a_plot <- xyplot(
-    variable_j_fits[[PHIPS2_COLUMN_NAME]] ~ variable_j_fits[[A_COLUMN_NAME]] |
-        variable_j_fits[[UNIQUE_ID_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    grid = TRUE,
-    xlim = a_range,
-    ylim = ps2_range,
-    xlab = "Carbon assimilation rate (micromol / m^2 / s)",
-    ylab = "Photosystem II efficiency (dimensionless)",
-    main = paste(
-        "Only showing points where",
-        CI_THRESHOLD_LOWER,
-        "< Ci <",
-        CI_THRESHOLD_UPPER,
-        "ppm"
-    )
-)
-x11(width = 12, height = 6)
-print(ps2_a_plot)
-
-# Plot all measured and fitted A-Ci curves
-a_ci_fitting_plot <- xyplot(
-    variable_j_fits$Ac + variable_j_fits$Aj + variable_j_fits$Ap +
-        variable_j_fits$An_estimate + variable_j_fits[[A_COLUMN_NAME]] ~
-        variable_j_fits[[CI_COLUMN_NAME]] |
-            variable_j_fits[[UNIQUE_ID_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    auto.key = list(text = a_legend, space = 'right'),
-    grid = TRUE,
-    par.settings = list(
-        superpose.line = list(col = assimilation_fit_colors),
-        superpose.symbol = list(col = assimilation_fit_colors)
-    ),
-    xlim = ci_range,
-    ylim = a_range,
-    xlab = "Intercellular CO2 concentration (ppm)",
-    ylab = "Carbon assimilation rate (micromol / m^2 / s)"
-)
-x11(width = 12, height = 6)
-print(a_ci_fitting_plot)
-
-# Plot all measured and fitted A-Cc curves
-a_cc_fitting_plot <- xyplot(
-    variable_j_fits$Ac + variable_j_fits$Aj + variable_j_fits$Ap +
-        variable_j_fits$An_estimate + variable_j_fits[[A_COLUMN_NAME]] ~
-        variable_j_fits$Cc | variable_j_fits[[UNIQUE_ID_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    auto.key = list(text = a_legend, space = 'right'),
-    grid = TRUE,
-    par.settings = list(
-        superpose.line = list(col = assimilation_fit_colors),
-        superpose.symbol = list(col = assimilation_fit_colors)
-    ),
-    xlim = cc_range,
-    ylim = a_range,
-    xlab = "Chloroplast CO2 concentration (ppm)",
-    ylab = "Carbon assimilation rate (micromol / m^2 / s)"
-)
-x11(width = 12, height = 6)
-print(a_cc_fitting_plot)
-
-# Plot the estimated gm-Ci curves
-gm_ci_fitting_plot <- xyplot(
-    fits_for_plotting_gm$gm ~ fits_for_plotting_gm[[CI_COLUMN_NAME]] |
-        fits_for_plotting_gm[[EVENT_COLUMN_NAME]],
-    group = fits_for_plotting_gm[[UNIQUE_ID_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    auto.key = list(space = 'right'),
-    grid = TRUE,
-    xlim = ci_range,
-    ylim = gm_range,
-    xlab = "Intercellular CO2 concentration (ppm)",
-    ylab = "Mesophyll conductance (mol / m^2 / s)"
-)
-x11(width = 12, height = 6)
-print(gm_ci_fitting_plot)
-
-# Plot the estimated gm-Ci curves using a different organization scheme
-gm_ci_fitting_plot2 <- xyplot(
-  variable_j_fits$gm  ~ variable_j_fits$Ci | variable_j_fits[[UNIQUE_ID_COLUMN_NAME]],
-  type = 'b',
-  pch = 20,
-  auto.key = list(space = 'right'),
-  grid = TRUE,
-  xlim = ci_range,
-  ylim = gm_range,
-  xlab = "Chloroplast CO2 concentration (ppm)",
-  ylab = "Mesophyll conductance (mol / m^2 / s)"
-)
-x11(width = 12, height = 6)
-print(gm_ci_fitting_plot2)
-
-# Plot the estimated gm-Cc curves
-gm_cc_fitting_plot <- xyplot(
-    fits_for_plotting_gm$gm ~ fits_for_plotting_gm$Cc |
-        fits_for_plotting_gm[[EVENT_COLUMN_NAME]],
-    group = fits_for_plotting_gm[[UNIQUE_ID_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    auto.key = list(space = 'right'),
-    grid = TRUE,
-    xlim = cc_range,
-    ylim = gm_range,
-    xlab = "Chloroplast CO2 concentration (ppm)",
-    ylab = "Mesophyll conductance (mol / m^2 / s)"
-)
-x11(width = 12, height = 6)
-print(gm_cc_fitting_plot)
-
-# Plot the average estimated gm-Ci curves
-gm_ci_avg_plot <- xyplot_avg_rc(
-    fits_for_plotting_gm$gm,
-    fits_for_plotting_gm$Ci,
-    fits_for_plotting_gm$seq_num,
-    fits_for_plotting_gm[[EVENT_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    auto = TRUE,
-    grid = TRUE,
-    xlim = ci_range,
-    ylim = gm_range,
-    xlab = "Intercellular CO2 concentration (ppm)",
-    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)",
-    eb_lwd = 2,
-    lwd = 2
-)
-x11(width = 12, height = 6)
-print(gm_ci_avg_plot)
-
-# Plot the average estimated gm-Cc curves
-gm_cc_avg_plot <- xyplot_avg_rc(
-    fits_for_plotting$gm,
-    fits_for_plotting$Cc,
-    fits_for_plotting$seq_num,
-    fits_for_plotting[[EVENT_COLUMN_NAME]],
-    type = 'b',
-    pch = 20,
-    auto = TRUE,
-    grid = TRUE,
-    xlim = cc_range,
-    ylim = gm_range,
-    xlab = "Chloroplast CO2 concentration (ppm)",
-    ylab = "Mesophyll conductance (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
-
-)
-x11(width = 12, height = 6)
-print(gm_cc_avg_plot)
-
-# Make box-whisker plots and bar charts for the selected measurement point
-
-# Define a caption
-one_point_caption <- paste0(
-    "Quartiles for measurement point ",
-    POINT_FOR_BOX_PLOTS,
-    "\n(where CO2 setpoint = ",
-    fits_one_point_for_plotting[['CO2_r_sp']][POINT_FOR_BOX_PLOTS],
-    ")"
-)
-
-fitting_caption <- "Fitted values"
-
-tau_caption <-
-    paste0(fitting_caption, "\n(Licor 6800 assumes a value of ", tau_licor, ")")
-
-# Define plotting parameters
-x <- fits_one_point_for_plotting[[EVENT_COLUMN_NAME]]
-xl <- "Event"
-plot_param <- list(
-  list(Y = fits_one_point_for_plotting$gm, X = x, xlab = xl, ylab = "Mesophyll conductance (mol / m^2 / s)", ylim = c(0, max(gm_range)), main = one_point_caption),
-  list(Y = parameters_for_plotting$Vcmax,  X = x, xlab = xl, ylab = "Vcmax (micromol / m^2 / s)",            ylim = c(0, 450),           main = fitting_caption),
-  list(Y = parameters_for_plotting$J_high, X = x, xlab = xl, ylab = "Jhigh (micromol / m^2 / s)",            ylim = c(0, 450),           main = fitting_caption),
-  list(Y = parameters_for_plotting$Rd,     X = x, xlab = xl, ylab = "Rd (micromol / m^2 / s)",               ylim = c(0, 5),             main = fitting_caption),
-  list(Y = parameters_for_plotting$tau,    X = x, xlab = xl, ylab = "tau (dimensionless)",                   ylim = c(0, 0.7),         main = tau_caption)
-)
-
-# Make all the plots
-invisible(lapply(plot_param, function(x) {
-  dev.new()
-  print(do.call(bwplot_wrapper, x))
-
-  dev.new()
-  print(do.call(barchart_with_errorbars, x))
-}))
-
-# Save the gm info
-SAVE_GM_VALUES <- TRUE
-if (SAVE_GM_VALUES) {
-  tmp <- by(
-    fits_for_plotting,
-    fits_for_plotting$event_replicate, function(x) {
-      gm_val_df <- as.data.frame(t(data.frame(gm = x$gm)))
-      colnames(gm_val_df) <- as.character(x$CO2_r_sp)
-      gm_val_df$event <- x$event[1]
-      gm_val_df$plot <- x$plot[1]
-      gm_val_df$replicate <- x$replicate[1]
-      gm_val_df$event_replicate <- x$event_replicate[1]
-      gm_val_df
+      tmp
     }
   )
 
-  tmp <- tmp[!sapply(tmp, is.null)]
+  all_samples <- do.call(rbind, all_samples_list)
+}
+all_samples_one_point <- all_samples[all_samples$seq_num == POINT_FOR_BOX_PLOTS, ]
+aci_parameters <- c3_aci_results$parameters$main_data
+if (AVERAGE_OVER_PLOTS) {
+  col_to_average <- c(
+    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'TPU', 'tau'
+  )
 
-  tmp <- do.call(rbind, tmp)
+  aci_parameters_list <- by(
+    aci_parameters,
+    list(aci_parameters[[EVENT_COLUMN_NAME]], aci_parameters[['plot']]),
+    function(x) {
+      tmp <- data.frame(
+        event = x[1, EVENT_COLUMN_NAME],
+        plot = x[1, 'plot'],
+        curve_identifier = paste(x[1, EVENT_COLUMN_NAME], x[1, 'plot'])
+      )
 
-  rownames(tmp) <- NULL
+      colnames(tmp)[1] <- EVENT_COLUMN_NAME
 
-  write.csv(tmp, file = file.choose(), row.names = FALSE)
+      for (cn in col_to_average) {
+        tmp[[cn]] <- mean(x[[cn]])
+      }
+
+      tmp
+    }
+  )
+
+  aci_parameters <- do.call(rbind, aci_parameters_list)
+}
+
+all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
+aci_parameters <- factorize_id_column(aci_parameters, EVENT_COLUMN_NAME)
+all_samples <- factorize_id_column(all_samples, 'curve_identifier')
+
+if (MAKE_ANALYSIS_PLOTS) {
+    # Make box-whisker plots and bar charts
+
+    boxplot_caption <- paste0(
+        "Quartiles for measurement point ",
+        POINT_FOR_BOX_PLOTS,
+        "\n(where CO2 setpoint = ",
+        all_samples_one_point[, 'CO2_r_sp'][POINT_FOR_BOX_PLOTS],
+        ")"
+    )
+
+    fitting_caption <- "Values obtained by fitting A vs. Ci using the FvCB model"
+
+    x_s <- all_samples_one_point[, EVENT_COLUMN_NAME]
+    x_v <- aci_parameters[, EVENT_COLUMN_NAME]
+    xl <- "Genotype"
+
+    plot_param <- list(
+      list(Y = all_samples_one_point[, 'A'],                X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",            ylim = c(0, 40),  main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'iWUE'],             X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",   ylim = c(0, 100), main = boxplot_caption),
+      list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)",       ylim = c(0, 0.4), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",              ylim = c(0, 350), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'gmc'],              X = x_s, xlab = xl, ylab = "Mesophyll conductance (mol / m^2 / s / bar)",               ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'ls_rubisco'],       X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (dimensionless)",      ylim = c(0, 1.0), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lm_rubisco'],       X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (dimensionless)",    ylim = c(0, 1.0), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lb_rubisco'],       X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (dimensionless)", ylim = c(0, 1.0), main = boxplot_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'],             X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                ylim = c(0, 450), main = fitting_caption),
+      list(Y = aci_parameters[, 'Rd_at_25'],                X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                   ylim = c(0, 0.5), main = fitting_caption),
+      list(Y = aci_parameters[, 'J_at_25'],                 X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                    ylim = c(0, 500), main = fitting_caption),
+      list(Y = aci_parameters[, 'TPU'],                     X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                  ylim = c(0, 30),  main = fitting_caption),
+      list(Y = aci_parameters[, 'tau'],                     X = x_v, xlab = xl, ylab = "tau (dimensionless)",                                       ylim = c(0, 1),   main = fitting_caption)
+    )
+
+    invisible(lapply(plot_param, function(x) {
+      dev.new()
+      print(do.call(bwplot_wrapper, x))
+
+      dev.new()
+      print(do.call(barchart_with_errorbars, x))
+    }))
+
+    # Make average response curve plots
+
+    rc_caption <- "Average response curves for each event"
+
+    x_ci <- all_samples[, 'Ci']
+    x_cc <- all_samples[, 'Cc']
+    x_s <- all_samples[, 'seq_num']
+    x_e <- all_samples[, EVENT_COLUMN_NAME]
+
+    ci_lim <- c(-50, 1500)
+    cc_lim <- c(-20, 500)
+    a_lim <- c(-10, 55)
+    gsw_lim <- c(0, 0.7)
+    phi_lim <- c(0, 0.4)
+    gmc_lim <- c(0, 0.3)
+
+    ci_lab <- "Intercellular [CO2] (ppm)"
+    cc_lab <- "Mesophyll [CO2] (ppm)"
+    a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    gsw_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    phi_lab <- "PhiPSII (dimensionless)\n(error bars: standard error of the mean for same CO2 setpoint)"
+    gmc_lab <- 'Mesophyll conductance (mol / m^2 / s / bar)\n(error bars: standard error of the mean for same CO2 setpoint)'
+
+    avg_plot_param <- list(
+        list(all_samples[, 'A'],                x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim),
+        list(all_samples[, 'A'],                x_cc, x_s, x_e, xlab = cc_lab, ylab = a_lab,   xlim = cc_lim, ylim = a_lim),
+        list(all_samples[, 'gsw'],              x_cc, x_s, x_e, xlab = cc_lab, ylab = gsw_lab, xlim = cc_lim, ylim = gsw_lim),
+        list(all_samples[, 'gmc'],              x_cc, x_s, x_e, xlab = cc_lab, ylab = gmc_lab, xlim = cc_lim, ylim = gmc_lim),
+        list(all_samples[, 'gmc'],              x_ci, x_s, x_e, xlab = ci_lab, ylab = gmc_lab, xlim = ci_lim, ylim = gmc_lim),
+        list(all_samples[, PHIPS2_COLUMN_NAME], x_cc, x_s, x_e, xlab = cc_lab, ylab = phi_lab, xlim = cc_lim, ylim = phi_lim)
+    )
+
+    invisible(lapply(avg_plot_param, function(x) {
+        dev.new(width = 8, height = 6)
+        print(do.call(xyplot_avg_rc, c(x, list(
+            type = 'b',
+            pch = 20,
+            auto = TRUE,
+            grid = TRUE,
+            main = rc_caption
+        ))))
+    }))
+}
+
+if (PERFORM_STATS_TESTS) {
+    # Perform Brown-Forsythe test to check for equal variance
+    # This test automatically prints its results to the R terminal
+    bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = aci_parameters)
+
+    # If p > 0.05 variances among populations is equal and proceed with anova
+    # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+
+    # Check normality of data with Shapiro-Wilks test
+    shapiro_test_result <- shapiro.test(aci_parameters$Vcmax_at_25)
+    print(shapiro_test_result)
+
+    # If p > 0.05 data has normal distribution and proceed with anova
+
+    # Perform one way analysis of variance
+    anova_result <- aov(Vcmax_at_25 ~ event, data = aci_parameters)
+    cat("    ANOVA result\n\n")
+    print(summary(anova_result))
+
+    # If p < 0.05 perform Dunnett's posthoc test
+
+    # Perform Dunnett's Test
+    dunnett_test_result <- DunnettTest(x = aci_parameters$Vcmax_at_25, g = aci_parameters$event, control = "WT")
+    print(dunnett_test_result)
+}
+
+if (SAVE_CSV) {
+  base_dir <- getwd()
+  if (interactive() & .Platform$OS.type == "windows") {
+    base_dir <- choose.dir(caption="Select folder for output files")
+  }
+
+  if (AVERAGE_OVER_PLOTS) {
+    tmp <- by(
+      all_samples,
+      all_samples$curve_identifier,
+      function(x) {
+        tmp2 <- data.frame(
+          event = x[1, EVENT_COLUMN_NAME],
+          plot = x[1, 'plot'],
+          curve_identifier = x[1, 'curve_identifier']
+        )
+        for (cn in col_to_average_as) {
+          tmp3 <- as.data.frame(t(data.frame(a = x[[cn]])))
+          colnames(tmp3) <- paste0(cn, '_', x$seq_num)
+          tmp2 <- cbind(tmp2, tmp3)
+        }
+        tmp2
+      }
+    )
+
+    tmp <- do.call(rbind, tmp)
+
+    write.csv(tmp, file.path(base_dir, 'vj_for_jmp_plot_avg.csv'), row.names=FALSE)
+    write.csv(all_samples, file.path(base_dir, "vj_all_samples_plot_avg.csv"), row.names=FALSE)
+    write.csv(all_samples_one_point, file.path(base_dir, "vj_all_samples_one_point_plot_avg.csv"), row.names=FALSE)
+    write.csv(aci_parameters, file.path(base_dir, "vj_aci_parameters_plot_avg.csv"), row.names=FALSE)
+  } else {
+    tmp <- by(
+      all_samples,
+      all_samples$curve_identifier,
+      function(x) {
+        tmp2 <- data.frame(
+          event = x[1, EVENT_COLUMN_NAME],
+          plot = x[1, 'plot'],
+          replicate = x[1, 'replicate'],
+          curve_identifier = x[1, 'curve_identifier']
+        )
+        for (cn in col_to_average_as) {
+          tmp3 <- as.data.frame(t(data.frame(a = x[[cn]])))
+          colnames(tmp3) <- paste0(cn, '_', x$seq_num)
+          tmp2 <- cbind(tmp2, tmp3)
+        }
+        tmp2
+      }
+    )
+
+    tmp <- do.call(rbind, tmp)
+
+    write.csv(tmp, file.path(base_dir, 'vj_for_jmp.csv'), row.names=FALSE)
+    write.csv(all_samples, file.path(base_dir, "vj_all_samples.csv"), row.names=FALSE)
+    write.csv(all_samples_one_point, file.path(base_dir, "vj_all_samples_one_point.csv"), row.names=FALSE)
+    write.csv(aci_parameters, file.path(base_dir, "vj_aci_parameters.csv"), row.names=FALSE)
+  }
 }
