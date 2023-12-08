@@ -3,7 +3,7 @@
 # affected by drought and leaf ontogeny in ash and oak trees." Plant, Cell &
 # Environment 28, 834–849 (2005).
 
-calculate_c3_limitations <- function(
+calculate_c3_limitations_grassi <- function(
     exdf_obj,
     POc = 210000, # microbar (typically this value is known from the experimental setup)
     atp_use = 4.0,
@@ -21,7 +21,7 @@ calculate_c3_limitations <- function(
 {
     # Check inputs
     if (!is.exdf(exdf_obj)) {
-        stop('calculate_c3_limitations requires an exdf object')
+        stop('calculate_c3_limitations_grassi requires an exdf object')
     }
 
     # Check to see if we should consider RuBP-regeneration-limited assimilation
@@ -70,18 +70,18 @@ calculate_c3_limitations <- function(
     dAdC_rubisco <- Vcmax * (Gamma_star + Km) / (Cc + Km)^2 # mol / m^2 / s
 
     # Include partial derivative and limitations in the exdf object
-    exdf_obj[, 'dAdC_rubisco'] <- dAdC_rubisco
-    exdf_obj[, 'ls_rubisco']   <- c3_limitation(gtot, dAdC_rubisco, gsc)
-    exdf_obj[, 'lm_rubisco']   <- c3_limitation(gtot, dAdC_rubisco, gmc)
-    exdf_obj[, 'lb_rubisco']   <- c3_limitation(gtot, dAdC_rubisco, dAdC_rubisco)
+    exdf_obj[, 'dAdC_rubisco']      <- dAdC_rubisco
+    exdf_obj[, 'ls_rubisco_grassi'] <- c3_limitation_grassi(gtot, dAdC_rubisco, gsc)
+    exdf_obj[, 'lm_rubisco_grassi'] <- c3_limitation_grassi(gtot, dAdC_rubisco, gmc)
+    exdf_obj[, 'lb_rubisco_grassi'] <- c3_limitation_grassi(gtot, dAdC_rubisco, dAdC_rubisco)
 
     # Document the columns that were just added
     exdf_obj <- document_variables(
         exdf_obj,
-        c('calculate_c3_limitations', 'dAdC_rubisco', 'mol m^(-2) s^(-1)'),
-        c('calculate_c3_limitations', 'ls_rubisco',   'dimensionless'),
-        c('calculate_c3_limitations', 'lm_rubisco',   'dimensionless'),
-        c('calculate_c3_limitations', 'lb_rubisco',   'dimensionless')
+        c('calculate_c3_limitations_grassi', 'dAdC_rubisco',      'mol m^(-2) s^(-1)'),
+        c('calculate_c3_limitations_grassi', 'ls_rubisco_grassi', 'dimensionless'),
+        c('calculate_c3_limitations_grassi', 'lm_rubisco_grassi', 'dimensionless'),
+        c('calculate_c3_limitations_grassi', 'lb_rubisco_grassi', 'dimensionless')
     )
 
     if (use_j) {
@@ -91,18 +91,18 @@ calculate_c3_limitations <- function(
             (atp_use * Cc + nadph_use * Gamma_star)^2 # mol / m^2 / s
 
         # Include partial derivative and limitations in the exdf object
-        exdf_obj[, 'dAdC_j'] <- dAdC_j
-        exdf_obj[, 'ls_j']   <- c3_limitation(gtot, dAdC_j, gsc)
-        exdf_obj[, 'lm_j']   <- c3_limitation(gtot, dAdC_j, gmc)
-        exdf_obj[, 'lb_j']   <- c3_limitation(gtot, dAdC_j, dAdC_j)
+        exdf_obj[, 'dAdC_j']      <- dAdC_j
+        exdf_obj[, 'ls_j_grassi'] <- c3_limitation_grassi(gtot, dAdC_j, gsc)
+        exdf_obj[, 'lm_j_grassi'] <- c3_limitation_grassi(gtot, dAdC_j, gmc)
+        exdf_obj[, 'lb_j_grassi'] <- c3_limitation_grassi(gtot, dAdC_j, dAdC_j)
 
         # Document the columns that were just added and return the exdf
         exdf_obj <- document_variables(
             exdf_obj,
-            c('calculate_c3_limitations', 'dAdC_j', 'mol m^(-2) s^(-1)'),
-            c('calculate_c3_limitations', 'ls_j',   'dimensionless'),
-            c('calculate_c3_limitations', 'lm_j',   'dimensionless'),
-            c('calculate_c3_limitations', 'lb_j',   'dimensionless')
+            c('calculate_c3_limitations_grassi', 'dAdC_j',      'mol m^(-2) s^(-1)'),
+            c('calculate_c3_limitations_grassi', 'ls_j_grassi', 'dimensionless'),
+            c('calculate_c3_limitations_grassi', 'lm_j_grassi', 'dimensionless'),
+            c('calculate_c3_limitations_grassi', 'lb_j_grassi', 'dimensionless')
         )
     }
 
@@ -111,7 +111,7 @@ calculate_c3_limitations <- function(
 }
 
 # All three parts of Equation 7 can be reproduced with one functional form
-c3_limitation <- function(
+c3_limitation_grassi <- function(
     g_total,       # mol / m^2 / s
     partial_deriv, # mol / m^2 / s
     g_other        # mol / m^2 / s

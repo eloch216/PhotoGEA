@@ -312,7 +312,7 @@ licor_data <- if (USE_GM_TABLE) {
 # Calculate total pressure (required for apply_gm)
 licor_data <- calculate_total_pressure(licor_data)
 
-# Calculate additional gas properties (required for calculate_c3_limitations)
+# Calculate additional gas properties (required for calculate_c3_limitations_grassi)
 licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate Cc
@@ -344,7 +344,7 @@ c3_aci_results <- consolidate(by(
 
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance, mesophyll conductance, and biochemistry)
-c3_aci_results$fits <- calculate_c3_limitations(c3_aci_results$fits)
+c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Ci fits (including limiting rates)
@@ -422,7 +422,7 @@ if (REMOVE_STATISTICAL_OUTLIERS) {
 all_samples <- c3_aci_results$fits$main_data
 
 col_to_average_as <- c(
-  'A', 'iWUE', 'ls_rubisco', 'lm_rubisco', 'lb_rubisco', PHIPS2_COLUMN_NAME,
+  'A', 'iWUE', 'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi', PHIPS2_COLUMN_NAME,
   'ETR', 'Ci', 'Cc', 'gsw'
 )
 
@@ -508,9 +508,9 @@ if (MAKE_ANALYSIS_PLOTS) {
     plot_param <- list(
       list(Y = all_samples_one_point[, 'A'],          X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",            ylim = c(0, 40),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'],       X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",   ylim = c(0, 100), main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'ls_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'lm_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'lb_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (dimensionless)", ylim = c(0, 0.7), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'ls_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lm_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lb_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (dimensionless)", ylim = c(0, 0.7), main = boxplot_caption),
       list(Y = aci_parameters[, 'Vcmax_at_25'],       X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                ylim = c(0, 200), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],          X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                   ylim = c(0, 3),   main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],           X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                    ylim = c(0, 225), main = fitting_caption),

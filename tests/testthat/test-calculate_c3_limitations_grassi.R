@@ -24,23 +24,23 @@ example_exdf <- exdf(
 )
 
 test_that('j limitations are not calculated by default', {
-    limit_res <- calculate_c3_limitations(example_exdf)
+    limit_res <- calculate_c3_limitations_grassi(example_exdf)
     expect_true(is.exdf(limit_res))
     expect_true('dAdC_rubisco' %in% colnames(limit_res))
-    expect_true('ls_rubisco' %in% colnames(limit_res))
-    expect_true('lm_rubisco' %in% colnames(limit_res))
-    expect_true('lb_rubisco' %in% colnames(limit_res))
+    expect_true('ls_rubisco_grassi' %in% colnames(limit_res))
+    expect_true('lm_rubisco_grassi' %in% colnames(limit_res))
+    expect_true('lb_rubisco_grassi' %in% colnames(limit_res))
     expect_false('dAdC_j' %in% colnames(limit_res))
-    expect_false('ls_j' %in% colnames(limit_res))
-    expect_false('lm_j' %in% colnames(limit_res))
-    expect_false('lb_j' %in% colnames(limit_res))
+    expect_false('ls_j_grassi' %in% colnames(limit_res))
+    expect_false('lm_j_grassi' %in% colnames(limit_res))
+    expect_false('lb_j_grassi' %in% colnames(limit_res))
 })
 
 test_that('limitations add to 1', {
-    limit_res <- calculate_c3_limitations(example_exdf, j_column_name = 'J_tl')
+    limit_res <- calculate_c3_limitations_grassi(example_exdf, j_column_name = 'J_tl')
 
-    limit_res[, 'l_rubisco'] <- limit_res[, 'ls_rubisco'] + limit_res[, 'lm_rubisco'] + limit_res[, 'lb_rubisco']
-    limit_res[, 'l_j'] <- limit_res[, 'ls_j'] + limit_res[, 'lm_j'] + limit_res[, 'lb_j']
+    limit_res[, 'l_rubisco'] <- limit_res[, 'ls_rubisco_grassi'] + limit_res[, 'lm_rubisco_grassi'] + limit_res[, 'lb_rubisco_grassi']
+    limit_res[, 'l_j'] <- limit_res[, 'ls_j_grassi'] + limit_res[, 'lm_j_grassi'] + limit_res[, 'lb_j_grassi']
 
     expect_equal(limit_res[, 'l_rubisco'], c(1, 1, 1))
     expect_equal(limit_res[, 'l_j'], c(1, 1, 1))
