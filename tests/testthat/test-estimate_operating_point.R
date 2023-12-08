@@ -16,7 +16,7 @@ test_curve <- exdf(
 )
 
 test_that('default c3 operating point estimation works', {
-    c3_res <- estimate_operating_point(test_curve, ca_atmospheric = 4.2)
+    c3_res <- estimate_operating_point(test_curve, 4.2)
     expect_true(is.exdf(c3_res))
     expect_equal(c3_res[, 'operating_An'], 0.42)
     expect_equal(c3_res[, 'operating_Ci'], 420)
@@ -25,7 +25,7 @@ test_that('default c3 operating point estimation works', {
 })
 
 test_that('default c4 operating point estimation works', {
-    c4_res <- estimate_operating_point(test_curve, ca_atmospheric = 4.2, type = 'c4')
+    c4_res <- estimate_operating_point(test_curve, 4.2, type = 'c4')
     expect_true(is.exdf(c4_res))
     expect_equal(c4_res[, 'operating_An'], 0.42)
     expect_equal(c4_res[, 'operating_Ci'], 420)
@@ -34,7 +34,7 @@ test_that('default c4 operating point estimation works', {
 })
 
 test_that('list c3 operating point estimation works', {
-    c3_res <- estimate_operating_point(test_curve, ca_atmospheric = 4.2, return_list = TRUE)
+    c3_res <- estimate_operating_point(test_curve, 4.2, return_list = TRUE)
     expect_true(is.list(c3_res))
     expect_true(is.exdf(c3_res$operating_exdf))
     expect_equal(c3_res$operating_An, 0.42)
@@ -44,7 +44,7 @@ test_that('list c3 operating point estimation works', {
 })
 
 test_that('list c4 operating point estimation works', {
-    c4_res <- estimate_operating_point(test_curve, ca_atmospheric = 4.2, type = 'c4', return_list = TRUE)
+    c4_res <- estimate_operating_point(test_curve, 4.2, type = 'c4', return_list = TRUE)
     expect_true(is.list(c4_res))
     expect_true(is.exdf(c4_res$operating_exdf))
     expect_equal(c4_res$operating_An, 0.42)
@@ -55,7 +55,7 @@ test_that('list c4 operating point estimation works', {
 
 test_that('extrapolation is not allowed', {
     expect_warning(
-        bad_res <- estimate_operating_point(test_curve, ca_atmospheric = 100)
+        bad_res <- estimate_operating_point(test_curve, 100)
     )
     expect_true(is.na(bad_res[, 'operating_Ci']))
     expect_true(is.na(bad_res[, 'operating_An']))

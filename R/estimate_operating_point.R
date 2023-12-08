@@ -1,6 +1,6 @@
 estimate_operating_point <- function(
     aci_exdf,
-    ca_atmospheric = 420,
+    ca_atmospheric,
     type = 'c3',
     a_column_name = 'A',
     ca_column_name = 'Ca',

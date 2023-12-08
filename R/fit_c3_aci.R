@@ -1,5 +1,6 @@
 fit_c3_aci <- function(
     replicate_exdf,
+    ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
@@ -11,7 +12,6 @@ fit_c3_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
-    ca_atmospheric = 420,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,

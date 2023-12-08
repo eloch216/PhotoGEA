@@ -1,5 +1,6 @@
 fit_c3_variable_j <- function(
     replicate_exdf,
+    ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -13,7 +14,6 @@ fit_c3_variable_j <- function(
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    ca_atmospheric = 420,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,

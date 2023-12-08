@@ -16,7 +16,7 @@
 \usage{
   estimate_operating_point(
     aci_exdf,
-    ca_atmospheric = 420,
+    ca_atmospheric,
     type = 'c3',
     a_column_name = 'A',
     ca_column_name = 'Ca',
@@ -34,8 +34,9 @@
 
   \item{ca_atmospheric}{
     The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
-    this will be used to estimate the operating point. The default value is the
-    approximate global average during the early 2020s.
+    this will be used to estimate the operating point. For example, the
+    approximate global average during the 2023 is 420 ppm, which would
+    correspond to \code{ca_atmospheric = 420}.
   }
 
   \item{type}{

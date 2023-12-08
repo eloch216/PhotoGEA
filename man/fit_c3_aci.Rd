@@ -16,6 +16,7 @@
 \usage{
   fit_c3_aci(
     replicate_exdf,
+    ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
@@ -27,7 +28,6 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
     j_norm_column_name = 'J_norm',
-    ca_atmospheric = 420,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -59,6 +59,12 @@
 \arguments{
   \item{replicate_exdf}{
     An \code{exdf} object representing one CO2 response curve.
+  }
+
+  \item{ca_atmospheric}{
+    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
+    this will be used by \code{\link{estimate_operating_point}} to estimate the
+    operating point.
   }
 
   \item{a_column_name}{
@@ -117,11 +123,6 @@
   \item{j_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
-  }
-
-  \item{ca_atmospheric}{
-    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
-    this will be used to estimate the operating point.
   }
 
   \item{POc}{

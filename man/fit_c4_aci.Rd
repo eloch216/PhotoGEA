@@ -16,6 +16,7 @@
 \usage{
   fit_c4_aci(
     replicate_exdf,
+    ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -28,7 +29,6 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    ca_atmospheric = 420,
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
@@ -53,6 +53,12 @@
 \arguments{
   \item{replicate_exdf}{
     An \code{exdf} object representing one CO2 response curve.
+  }
+
+  \item{ca_atmospheric}{
+    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
+    this will be used by \code{\link{estimate_operating_point}} to estimate the
+    operating point.
   }
 
   \item{a_column_name}{
@@ -115,11 +121,6 @@
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
-  }
-
-  \item{ca_atmospheric}{
-    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
-    this will be used to estimate the operating point.
   }
 
   \item{POm}{

@@ -1,5 +1,6 @@
 fit_c4_aci <- function(
     replicate_exdf,
+    ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -12,7 +13,6 @@ fit_c4_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    ca_atmospheric = 420,      # micromol / mol
     POm = 210000,              # microbar
     gbs = 0.003,               # mol / m^2 / s / bar
     Rm_frac = 0.5,             # dimensionless
