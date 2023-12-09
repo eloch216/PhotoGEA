@@ -301,14 +301,16 @@ licor_file <- apply_gm(licor_file, 'C4')
 
 # Fit just one curve from the data set (it is rare to do this)
 one_result <- fit_c4_aci(
-  licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE]
+  licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
+  ca_atmospheric = 420
 )
 
 # Fit all curves in the data set (it is more common to do this)
 aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
-  fit_c4_aci
+  fit_c4_aci,
+  ca_atmospheric = 420
 ))
 
 # View the fitting parameters for each species / plot
