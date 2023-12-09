@@ -1,6 +1,6 @@
 fit_c3_variable_j <- function(
     replicate_exdf,
-    ca_atmospheric,
+    Ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -267,6 +267,9 @@ fit_c3_variable_j <- function(
     replicate_exdf[, 'tau'] <- best_X[3]
     replicate_exdf[, 'Vcmax_at_25'] <- best_X[5]
 
+    # Include the atmospheric CO2 concentration
+    replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
+
     # Add a column for the residuals
     replicate_exdf <- set_variable(
         replicate_exdf,
@@ -279,10 +282,11 @@ fit_c3_variable_j <- function(
     # Document the new columns that were added
     replicate_exdf <- document_variables(
         replicate_exdf,
-        c('fit_c3_variable_j', 'tau',         'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j', 'J_at_25',     'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j', 'Rd_at_25',    'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)')
+        c('fit_c3_variable_j', 'Ca_atmospheric', 'micromol mol^(-1)'),
+        c('fit_c3_variable_j', 'tau',            'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j', 'J_at_25',        'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)')
     )
 
     # Get the replicate identifier columns
@@ -327,7 +331,7 @@ fit_c3_variable_j <- function(
     # Get operating point information
     operating_point_info <- estimate_operating_point(
         replicate_exdf,
-        ca_atmospheric,
+        Ca_atmospheric,
         type = 'c3',
         a_column_name,
         ca_column_name,

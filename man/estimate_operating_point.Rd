@@ -16,7 +16,7 @@
 \usage{
   estimate_operating_point(
     aci_exdf,
-    ca_atmospheric,
+    Ca_atmospheric,
     type = 'c3',
     a_column_name = 'A',
     ca_column_name = 'Ca',
@@ -32,11 +32,11 @@
     An \code{exdf} object representing one CO2 response curve.
   }
 
-  \item{ca_atmospheric}{
+  \item{Ca_atmospheric}{
     The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
     this will be used to estimate the operating point. For example, the
     approximate global average during the 2023 is 420 ppm, which would
-    correspond to \code{ca_atmospheric = 420}.
+    correspond to \code{Ca_atmospheric = 420}.
   }
 
   \item{type}{
@@ -103,21 +103,22 @@
 
   When \code{return_list} is \code{FALSE}, this function returns an \code{exdf}
   object based on \code{aci_exdf} that includes its identifier columns as well
-  as values of \code{operating_Ci}, \code{operating_An}, and \code{operating_Cc}
-  (or \code{operating_PCm}) in columns with those names.
+  as values of \code{Ca_atmospheric}, \code{operating_Ci}, \code{operating_An},
+  and \code{operating_Cc} (or \code{operating_PCm}) in columns with those names.
 
   When \code{return_list} is \code{TRUE}, this function returns a list with the
-  following named elements: \code{operating_Ci}, \code{operating_An},
-  \code{operating_Cc} (or \code{operating_PCm}), and \code{operating_exdf}. The
-  first three are numeric values as described above, while \code{operating_exdf}
-  is an \code{exdf} object with one row that can be passed to
-  \code{\link{calculate_c3_assimilation}} or
+  following named elements: \code{Ca_atmospheric}, \code{operating_Ci},
+  \code{operating_An}, \code{operating_Cc} (or \code{operating_PCm}), and
+  \code{operating_exdf}. The first four are numeric values as described above,
+  while \code{operating_exdf} is an \code{exdf} object with one row that can be
+  passed to \code{\link{calculate_c3_assimilation}} or
   \code{\link{calculate_c4_assimilation}} in order to estimate the operating
   \code{An} from a photosynthesis model.
 
-  If \code{ca_atmospheric} is outside the range of \code{Ca} values in
+  If \code{Ca_atmospheric} is outside the range of \code{Ca} values in
   \code{aci_exdf}, then the operating point cannot be reasonably estimated; in
-  this case, a warning occurs and all return values are set to \code{NA}.
+  this case, a warning occurs and all calculated return values are set to
+  \code{NA}.
 }
 
 \examples{

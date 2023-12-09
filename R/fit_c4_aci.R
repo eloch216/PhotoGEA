@@ -1,6 +1,6 @@
 fit_c4_aci <- function(
     replicate_exdf,
-    ca_atmospheric,
+    Ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -164,10 +164,11 @@ fit_c4_aci <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c4_aci', 'Rd_at_25',    'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vcmax_at_25', 'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpmax_at_25', 'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpr',         'micromol m^(-2) s^(-1)')
+        c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)'),
+        c('fit_c4_aci', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpmax_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpr',            'micromol m^(-2) s^(-1)')
     )
 
     # Get the replicate identifier columns
@@ -211,7 +212,7 @@ fit_c4_aci <- function(
     # Get operating point information
     operating_point_info <- estimate_operating_point(
         replicate_exdf,
-        ca_atmospheric,
+        Ca_atmospheric,
         type = 'c4',
         a_column_name,
         ca_column_name,

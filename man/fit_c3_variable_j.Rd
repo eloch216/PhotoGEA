@@ -16,7 +16,7 @@
 \usage{
   fit_c3_variable_j(
     replicate_exdf,
-    ca_atmospheric,
+    Ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -66,7 +66,7 @@
     An \code{exdf} object representing one CO2 response curve.
   }
 
-  \item{ca_atmospheric}{
+  \item{Ca_atmospheric}{
     The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
     this will be used by \code{\link{estimate_operating_point}} to estimate the
     operating point.
@@ -351,7 +351,7 @@ licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 # with `optimizer_deoptim`
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
-  ca_atmospheric = 420,
+  Ca_atmospheric = 420,
   OPTIM_FUN = optimizer_nmkb()
 )
 
@@ -362,7 +362,7 @@ aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
-  ca_atmospheric = 420,
+  Ca_atmospheric = 420,
   OPTIM_FUN = optimizer_nmkb()
 ))
 
