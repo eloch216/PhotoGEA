@@ -18,7 +18,8 @@ PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(6, 7, 8, 9, 10)
+
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1, 6, 7, 8, 9, 15, 16, 17)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -29,11 +30,12 @@ REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
 REMOVE_SPECIFIC_POINTS <- FALSE
+
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
 
 # Decide which point to use for box plots of A and other quantities
-POINT_FOR_BOX_PLOTS <- 1
+POINT_FOR_BOX_PLOTS <- 10
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
@@ -46,7 +48,7 @@ PERFORM_STATS_TESTS <- TRUE
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- TRUE
+SAVE_CSV <- FALSE
 
 # Decide which solver to use
 USE_DEOPTIM_SOLVER <- FALSE
@@ -60,6 +62,19 @@ solver <- if (USE_DEOPTIM_SOLVER) {
   # is a little bit faster, but may sometimes fail for some curves
   optimizer_nmkb()
 }
+
+# Decide whether to fit TPU
+#
+# To disable TPU limitations: TPU_VAL <- 40
+# To fit TPU: TPU_VAL <- NA
+#
+# To fix Rd: RD_VAL <- 1.234
+# To fit Rd: RD_VAL <- NA
+
+TPU_VAL <- NA
+RD_VAL <- NA
+
+FIXED <- c(NA, RD_VAL, NA, TPU_VAL, NA) # J, Rd, tau, TPU, Vcmax
 
 ###
 ### TRANSLATION:
@@ -249,8 +264,8 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(curve_identifier = 'WT 2 5', seq_num = 6), # has a different CO2 setpoint
-      list(curve_identifier = c('14 1 2'))
+      list(curve_identifier = 'WT 2 5', seq_num = 6) # has a different CO2 setpoint
+      #list(curve_identifier = c('14 1 2'))
     )
 }
 
@@ -284,6 +299,7 @@ c3_aci_results <- consolidate(by(
   fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   OPTIM_FUN = solver,                           # The optimization algorithm to use
+  fixed = FIXED,
   cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
   cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
 ))

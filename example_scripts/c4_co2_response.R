@@ -502,7 +502,7 @@ x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 event_colors <- rev(multi_curve_colors()[seq_len(length(levels(all_samples[, EVENT_COLUMN_NAME])))])
 
-ci_lim <- c(0, 1400)
+ci_lim <- c(0, 1000)
 a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
 
