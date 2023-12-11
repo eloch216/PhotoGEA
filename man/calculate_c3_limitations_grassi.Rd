@@ -273,7 +273,8 @@ licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
-  fit_c3_aci
+  fit_c3_aci,
+  Ca_atmospheric = 420
 ))
 
 # Get a subset of fitting results corresponding to the first measured point
@@ -285,8 +286,8 @@ aci_fit_subset <- calculate_c3_limitations_grassi(aci_fit_subset)
 
 # View the limiting factors for each species / plot
 col_to_keep <- c(
-  'species', 'plot',                       # identifiers
-  'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi' # convergence info
+  'species', 'plot',                                            # identifiers
+  'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi' # limitation info
 )
 
 aci_fit_subset[ , col_to_keep, TRUE]
