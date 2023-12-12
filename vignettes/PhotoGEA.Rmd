@@ -116,7 +116,8 @@ licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
 aci_results <- consolidate(by(
   licor_data,
   licor_data[, 'curve_id'],
-  fit_c3_aci
+  fit_c3_aci,
+  Ca_atmospheric = 420
 ))
 ```
 

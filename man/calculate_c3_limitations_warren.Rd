@@ -300,8 +300,8 @@ aci_fit_subset <- calculate_c3_limitations_warren(aci_fit_subset)
 
 # View the limiting factors for each species / plot
 col_to_keep <- c(
-  'species', 'plot',        # identifiers
-  'ls_warren', 'lm_warren', # limitation info
+  'species', 'plot',       # identifiers
+  'ls_warren', 'lm_warren' # limitation info
 )
 
 aci_fit_subset[ , col_to_keep, TRUE]

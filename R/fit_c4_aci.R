@@ -13,10 +13,10 @@ fit_c4_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    POm = 210000,              # microbar
-    gbs = 0.003,               # mol / m^2 / s / bar
-    Rm_frac = 0.5,             # dimensionless
-    alpha = 0,                 # dimensionless
+    POm = 210000,  # microbar
+    gbs = 0.003,   # mol / m^2 / s / bar
+    Rm_frac = 0.5, # dimensionless
+    alpha = 0,     # dimensionless
     OPTIM_FUN = optimizer_nmkb(),
     initial_guess_fun = initial_guess_c4_aci(
         gbs = gbs,
@@ -162,8 +162,8 @@ fit_c4_aci <- function(
     )
 
     # Document the new columns that were added
-    replicate_identifiers <- document_variables(
-        replicate_identifiers,
+    replicate_exdf <- document_variables(
+        replicate_exdf,
         c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)'),
         c('fit_c4_aci', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)'),

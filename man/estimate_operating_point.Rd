@@ -153,7 +153,8 @@ licor_file <- apply_gm(licor_file)
 
 # Determine the operating point for just one curve from the data set
 one_result <- estimate_operating_point(
-  licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
+  licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
+  Ca_atmospheric = 420
 )
 
 one_result[, 'operating_Cc']
