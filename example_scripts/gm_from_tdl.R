@@ -47,15 +47,15 @@ MAKE_GM_PLOTS <- TRUE
 USE_BUSCH_GM <- TRUE
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- NA
+DEFAULT_RESPIRATION <- 2.1
 
 # Specify respiration values for each event; these will override the default.
 # To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  'WT' = 2.33,
-  '8' = 2.02,
-  '10' = 1.94,
-  '14' = 2.08
+  #'WT' = 2.33,
+  #'8' = 2.02,
+  #'10' = 1.94,
+  #'14' = 2.08
 )
 
 #RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
@@ -65,7 +65,7 @@ REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
-MAX_GM <- 2
+MAX_GM <- 3
 MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
@@ -871,7 +871,7 @@ if (MAKE_GM_PLOTS) {
 
     gmc_lim <- c(0, 1)
     cc_lim <- c(0, 275)
-    drawdown_lim <- c(0, 75)
+    drawdown_lim <- c(0, 100)
     a_lim <- c(0, 50)
     iwue_lim <- c(0, 120)
     g_ratio_lim <- c(0, 1)

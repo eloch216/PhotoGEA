@@ -148,9 +148,9 @@ avg_exdf <- function(exdf_obj) {
       'seq_num',
       'CO2_r_sp'
     )
-    
+
     avg_obj <- exdf_obj[1, id_columns, TRUE]
-    
+
     col_to_avg <- c(
       A_COLUMN_NAME,
       CI_COLUMN_NAME,
@@ -271,7 +271,7 @@ if (PERFORM_CALCULATIONS) {
       ids_to_keep <- names(npts[npts > 2])
       combined_info <- combined_info[combined_info[, UNIQUE_ID_COLUMN_NAME] %in% ids_to_keep, , TRUE]
     }
-    
+
     # Average over curves from the same event and plot, if necessary
     if (AVERAGE_OVER_PLOTS) {
        combined_info <- do.call(rbind.exdf, by(
@@ -279,14 +279,14 @@ if (PERFORM_CALCULATIONS) {
         list(combined_info[, EVENT_COLUMN_NAME], combined_info[, 'plot'], combined_info[, 'CO2_r_sp']),
         avg_exdf
       ))
-      
+
       REP_COLUMN_NAME <- 'plot'
     }
-    
+
     # Calculate temperature-dependent values of C4 parameters
     combined_info <-
       calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
-    
+
     # Include gm values
     combined_info <- if (USE_GM_TABLE) {
       set_variable(
@@ -307,16 +307,16 @@ if (PERFORM_CALCULATIONS) {
         GM_VALUE
       )
     }
-    
+
     # Calculate the total pressure
     combined_info <- calculate_total_pressure(combined_info)
-    
+
     # Calculate PCm
     combined_info <- apply_gm(combined_info, 'C4')
-    
+
     # Calculate intrinsic water-use efficiency
     combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
-    
+
 
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
@@ -339,6 +339,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
         fit_c4_aci,
+        Ca_atmospheric = 420,
         alpha = 0,
         gbs = 0,
         Rm_frac = 1
@@ -501,7 +502,7 @@ x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 event_colors <- rev(multi_curve_colors()[seq_len(length(levels(all_samples[, EVENT_COLUMN_NAME])))])
 
-ci_lim <- c(0, 1400)
+ci_lim <- c(0, 1000)
 a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
 

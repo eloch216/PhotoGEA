@@ -2,21 +2,21 @@
 This file should document all pull requests and all user-visible changes.
 
 When a pull request is completed, changes made should be added to a section at
-the top of this file called "# Unreleased". All changes should be categorized
-under "## MAJOR CHANGES", "## MINOR CHANGES", or "## BUG FIXES" following the
+the top of this file called "## Unreleased". All changes should be categorized
+under "### MAJOR CHANGES", "### MINOR CHANGES", or "### BUG FIXES" following the
 major.minor.patch structure of semantic versioning. When applicable, entries
 should include direct links to the relevant pull requests.
 
-Then, when a new release is made, "# Unreleased" should be replaced by a heading
-with the new version number, such as "# CHANGES IN PhotoGEA VERSION 2.0.0." This
-section will combine all of the release notes from all of the pull requests
-merged in since the previous release.
+Then, when a new release is made, "## Unreleased" should be replaced by a
+heading with the new version number, such as "## CHANGES IN PhotoGEA VERSION
+2.0.0." This section will combine all of the release notes from all of the pull
+requests merged in since the previous release.
 
 Subsequent commits will then include a new "Unreleased" section in preparation
 for the next release.
 -->
 
-# UNRELEASED
+## UNRELEASED
 
 - Reorganized the variable J fitting functions to be more like `fit_c3_aci`:
   - Added `calculate_c3_variable_j`, `initial_guess_c3_variable_j`, and
@@ -26,32 +26,33 @@ for the next release.
 - Added a new optimizer from the `DEoptim` package (called `optimizer_deoptim`)
   and renamed `default_optimizer` to `optimizer_nmkb`. The new
   `optimizer_deoptim` is used as the default optimizer for variable J fitting.
-- Added a new function for calculating the relative limiting factors of C3
-  photosynthesis: `calculate_c3_limitations`
+- Added two new functions for calculating the relative limiting factors of C3
+  photosynthesis: `calculate_c3_limitations_grassi` and
+  `calculate_c3_limitations_warren`.
 - Added a new function for estimating the operating point from a measured A-Ci
-  curve: `estimate_operating_point`
+  curve: `estimate_operating_point`.
 - Added two new color specifications: `multi_curve_line_colors` and
-  `multi_curve_point_colors`
+  `multi_curve_point_colors`.
 - `fit_c3_aci` and `fit_c4_aci` now use `estimate_operating_point` to
   automatically estimate the operating point and include it with the other fit
-  parameters
+  parameters.
 - The C3 and C4 A-Ci vignettes now show include the operating point in one of
-  the figures
+  the figures.
 - Fixed a typo in `calculate_c3_assimilation` where `Rd` (the value of day
   respiration at 25 degrees C) was used in place of `Rd_tl` (the value of day
   respiration at the leaf temperature) when calculating net assimilation rates.
 
-# PhotoGEA VERSION 0.9.2 (2023-11-16)
+## PhotoGEA VERSION 0.9.2 (2023-11-16)
 
 - Fixed a bug in `check_required_variables` where missing units in an `exdf`
   object were not properly identified
 - Added tests to make sure `check_required_variables` is functioning as expected
 
-# PhotoGEA VERSION 0.9.1 (2023-11-13)
+## PhotoGEA VERSION 0.9.1 (2023-11-13)
 
 - Added logo to package and documentation
 
-# PhotoGEA VERSION 0.9.0 (2023-10-25)
+## PhotoGEA VERSION 0.9.0 (2023-10-25)
 
 - Added a new convenience function for printing plot objects: `pdf_print`
 - Added and/or documented several functions related to isotope discrimination
@@ -84,7 +85,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/71
   - https://github.com/eloch216/PhotoGEA/pull/72
 
-# PhotoGEA VERSION 0.8.0 (2023-04-30)
+## PhotoGEA VERSION 0.8.0 (2023-04-30)
 
 - Modified `identify_tdl_cycles` and `process_tdl_cycle_polynomial` so they can
   handle cycles where there are multiple measurement logs from each valve.
@@ -105,7 +106,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/68
   - https://github.com/eloch216/PhotoGEA/pull/69
 
-# PhotoGEA VERSION 0.7.1 (2023-01-11)
+## PhotoGEA VERSION 0.7.1 (2023-01-11)
 
 - Added new outputs from `fit_c3_aci` and `fit_c4_aci` that include the average
   values of leaf-temperature-dependent parameters like `Vcmax` and `Rd`.
@@ -116,7 +117,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/64
   - https://github.com/eloch216/PhotoGEA/pull/65
 
-# PhotoGEA VERSION 0.7.0 (2022-12-19)
+## PhotoGEA VERSION 0.7.0 (2022-12-19)
 
 - Added new example files:
   - `plaintext_licor_file` represents a plaintext Licor LI-6800 log file.
@@ -172,7 +173,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/61
   - https://github.com/eloch216/PhotoGEA/pull/62
 
-# PhotoGEA VERSION 0.6.1 (2022-11-01)
+## PhotoGEA VERSION 0.6.1 (2022-11-01)
 
 - Modified `fit_c3_aci` so it now ensures that the initial guess lies within
   (and not on) the bounds. This is a requirement for the `dfoptim::nmkb` solver
@@ -180,7 +181,7 @@ for the next release.
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/57
 
-# PhotoGEA VERSION 0.6.0 (2022-10-06)
+## PhotoGEA VERSION 0.6.0 (2022-10-06)
 
 - Moved the `dfoptim` package from `Suggests` to `Imports` because it is used by
   an essential part of `PhotoGEA`.
@@ -232,7 +233,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/55
   - https://github.com/eloch216/PhotoGEA/pull/56
 
-# PhotoGEA VERSION 0.5.0 (2022-09-16)
+## PhotoGEA VERSION 0.5.0 (2022-09-16)
 
 - Added a new vignette demonstrating how to analyze C3 A-Ci curve data.
 - Included `TPU` in the output from `calculate_c3_assimilation`.
@@ -259,7 +260,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/47
   - https://github.com/eloch216/PhotoGEA/pull/48
 
-# PhotoGEA VERSION 0.4.0 (2022-09-07)
+## PhotoGEA VERSION 0.4.0 (2022-09-07)
 
 - Made several improvements to accessibility:
   - Renamed GitHub repository from `licor-processing-and-analysis` to
@@ -325,7 +326,7 @@ for the next release.
   - https://github.com/eloch216/PhotoGEA/pull/41
   - https://github.com/eloch216/PhotoGEA/pull/42
 
-# PhotoGEA VERSION 0.3.0 (2022-08-15)
+## PhotoGEA VERSION 0.3.0 (2022-08-15)
 
 - This version adds a substantial amount of documentation, including a vignette
   describing how to use PhotoGEA to analyze TDL data.
@@ -346,7 +347,7 @@ for the next release.
     we no longer want to follow this strategy.
 - `basic_stats` and the "Variable J" example script have been fixed.
 
-# PhotoGEA VERSION 0.2.0 (2022-07-26)
+## PhotoGEA VERSION 0.2.0 (2022-07-26)
 
 - This version adds a substantial amount of documentation, including a vignette
   describing how to use PhotoGEA to analyze Ball-Berry data.
@@ -355,7 +356,7 @@ for the next release.
 - At the moment, `basic_stats` and the "Variable J" example script have been
   broken.
 
-# PhotoGEA VERSION 0.1.0
+## PhotoGEA VERSION 0.1.0
 
 - This is the first version of PhotoGEA. At this point, the package is in a
   state of rapid development, and not all changes will be described here.

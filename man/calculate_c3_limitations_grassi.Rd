@@ -1,6 +1,6 @@
-\name{calculate_c3_limitations}
+\name{calculate_c3_limitations_grassi}
 
-\alias{calculate_c3_limitations}
+\alias{calculate_c3_limitations_grassi}
 
 \title{Estimate the relative limiting factors to C3 photosynthesis}
 
@@ -14,7 +14,7 @@
 }
 
 \usage{
-  calculate_c3_limitations(
+  calculate_c3_limitations_grassi(
     exdf_obj,
     POc = 210000,
     atp_use = 4.0,
@@ -228,9 +228,9 @@
 \value{
   This function returns an \code{exdf} object based on \code{exdf_obj} but with
   several new columns representing the partial derivatives and limiting factors
-  discussed above: \code{dAdC_rubisco}, \code{ls_rubisco}, \code{lm_rubisco},
-  and \code{lb_rubisco}. If \code{j_column_name} is not \code{NULL}, the output
-  will also include \code{dAdC_j}, \code{ls_j}, \code{lm_j}, and \code{lb_j}.
+  discussed above: \code{dAdC_rubisco}, \code{ls_rubisco_grassi}, \code{lm_rubisco_grassi},
+  and \code{lb_rubisco_grassi}. If \code{j_column_name} is not \code{NULL}, the output
+  will also include \code{dAdC_j}, \code{ls_j_grassi}, \code{lm_j_grassi}, and \code{lb_j_grassi}.
 }
 
 \examples{
@@ -273,7 +273,8 @@ licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
-  fit_c3_aci
+  fit_c3_aci,
+  Ca_atmospheric = 420
 ))
 
 # Get a subset of fitting results corresponding to the first measured point
@@ -281,19 +282,19 @@ aci_results <- consolidate(by(
 aci_fit_subset <- aci_results$fits[aci_results$fits[, 'CO2_r_sp'] == 400, , TRUE]
 
 # Calculate limiting factors
-aci_fit_subset <- calculate_c3_limitations(aci_fit_subset)
+aci_fit_subset <- calculate_c3_limitations_grassi(aci_fit_subset)
 
 # View the limiting factors for each species / plot
 col_to_keep <- c(
-  'species', 'plot',                       # identifiers
-  'ls_rubisco', 'lm_rubisco', 'lb_rubisco' # convergence info
+  'species', 'plot',                                            # identifiers
+  'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi' # limitation info
 )
 
 aci_fit_subset[ , col_to_keep, TRUE]
 
 # Display as a bar chart
 lattice::barchart(
-  ls_rubisco + lm_rubisco + lb_rubisco ~ species_plot,
+  ls_rubisco_grassi + lm_rubisco_grassi + lb_rubisco_grassi ~ species_plot,
   data = aci_fit_subset$main,
   stack = TRUE,
   auto = TRUE,

@@ -16,6 +16,7 @@
 \usage{
   fit_c4_aci(
     replicate_exdf,
+    Ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -28,7 +29,6 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    ca_atmospheric = 420,
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
@@ -53,6 +53,12 @@
 \arguments{
   \item{replicate_exdf}{
     An \code{exdf} object representing one CO2 response curve.
+  }
+
+  \item{Ca_atmospheric}{
+    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
+    this will be used by \code{\link{estimate_operating_point}} to estimate the
+    operating point.
   }
 
   \item{a_column_name}{
@@ -115,11 +121,6 @@
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
-  }
-
-  \item{ca_atmospheric}{
-    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
-    this will be used to estimate the operating point.
   }
 
   \item{POm}{
@@ -237,6 +238,9 @@
                   name is determined by appending \code{'_residuals'} to the end
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
+            \item Values of fitting parameters at 25 degrees C will be stored in
+                  the \code{Rd_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
+                  and \code{Vpr} columns.
             \item The other outputs from \code{\link{calculate_c4_assimilation}}
                   will be stored in columns with the usual names:
                   \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl}, \code{Rm_tl},
@@ -297,14 +301,16 @@ licor_file <- apply_gm(licor_file, 'C4')
 
 # Fit just one curve from the data set (it is rare to do this)
 one_result <- fit_c4_aci(
-  licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE]
+  licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
+  Ca_atmospheric = 420
 )
 
 # Fit all curves in the data set (it is more common to do this)
 aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
-  fit_c4_aci
+  fit_c4_aci,
+  Ca_atmospheric = 420
 ))
 
 # View the fitting parameters for each species / plot

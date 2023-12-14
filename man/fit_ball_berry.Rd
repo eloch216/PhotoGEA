@@ -98,7 +98,8 @@
           the fitted values of stomatal conductance. The fitted values will be
           stored in a column whose name is determined by appending
           \code{'_fits'} to the end of \code{gsw_column_name}; typically, this
-          will be \code{'gsw_fits'}.
+          will be \code{'gsw_fits'}. Also includes values of the Ball-Berry
+          slope and intercept.
     \item \code{parameters}: An \code{exdf} object including the fitting
           parameters and R-squared values for each Ball-Berry curve. The
           Ball-Berry intercept is stored in the \code{bb_intercept} column, the

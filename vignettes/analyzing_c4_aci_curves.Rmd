@@ -646,7 +646,8 @@ return the resulting parameters and fits:
 c4_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c4_aci                        # The function to apply to each chunk of `licor_data`
+  fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
+  Ca_atmospheric = 420              # Additional argument passed to `fit_c4_aci`
 ))
 ```
 

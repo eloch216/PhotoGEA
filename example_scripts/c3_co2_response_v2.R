@@ -312,7 +312,7 @@ licor_data <- if (USE_GM_TABLE) {
 # Calculate total pressure (required for apply_gm)
 licor_data <- calculate_total_pressure(licor_data)
 
-# Calculate additional gas properties (required for calculate_c3_limitations)
+# Calculate additional gas properties (required for calculate_c3_limitations_grassi)
 licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate Cc
@@ -337,14 +337,19 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
+  Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   cj_crossover_min = 100,                       # Wj must be > Wc when Cc < this value (ppm)
   cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
   fixed = c(NA, NA, NA, NA)
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
-# conductance, mesophyll conductance, and biochemistry)
-c3_aci_results$fits <- calculate_c3_limitations(c3_aci_results$fits)
+# conductance, mesophyll conductance, and biochemistry) using the Grassi model
+c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
+
+# Calculate the relative limitations to assimilation (due to stomatal
+# conductance and mesophyll conductance) using the Warren model
+c3_aci_results$fits <- calculate_c3_limitations_warren(c3_aci_results$fits)
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Ci fits (including limiting rates)
@@ -379,6 +384,40 @@ if (MAKE_ANALYSIS_PLOTS) {
         )
       }
     ))
+
+    # Plot the C3 A-Ci fits (including potential rates)
+    dev.new()
+    print(xyplot(
+      A + A_fit + An_inf_gmc + An_inf_gsc ~ Ci | curve_identifier,
+      data = c3_aci_results$fits$main_data,
+      type = 'b',
+      pch = 16,
+      auto.key = list(space = 'right'),
+      grid = TRUE,
+      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
+      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
+      par.settings = list(
+        superpose.line = list(col = multi_curve_line_colors()),
+        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
+      ),
+      ylim = c(-5, 35),
+      xlim = c(0, 250),
+      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
+      panel = function(...) {
+        panel.xyplot(...)
+        args <- list(...)
+        curve_id <- args$curve_ids[args$subscripts][1]
+        fit_param <-
+          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
+        panel.points(
+            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            type = 'p',
+            col = 'black',
+            pch = 1
+        )
+      }
+    ))
+
 
     # Plot the C3 A-Ci fits
     dev.new()
@@ -422,8 +461,9 @@ if (REMOVE_STATISTICAL_OUTLIERS) {
 all_samples <- c3_aci_results$fits$main_data
 
 col_to_average_as <- c(
-  'A', 'iWUE', 'ls_rubisco', 'lm_rubisco', 'lb_rubisco', PHIPS2_COLUMN_NAME,
-  'ETR', 'Ci', 'Cc', 'gsw'
+  'A', 'iWUE', PHIPS2_COLUMN_NAME, 'ETR', 'Ci', 'Cc', 'gsw',
+  'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi',
+  'ls_warren', 'lm_warren'
 )
 
 if (AVERAGE_OVER_PLOTS) {
@@ -506,15 +546,17 @@ if (MAKE_ANALYSIS_PLOTS) {
     xl <- "Genotype"
 
     plot_param <- list(
-      list(Y = all_samples_one_point[, 'A'],          X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",            ylim = c(0, 40),  main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'iWUE'],       X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",   ylim = c(0, 100), main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'ls_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'lm_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
-      list(Y = all_samples_one_point[, 'lb_rubisco'], X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (dimensionless)", ylim = c(0, 0.7), main = boxplot_caption),
-      list(Y = aci_parameters[, 'Vcmax_at_25'],       X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                ylim = c(0, 200), main = fitting_caption),
-      list(Y = aci_parameters[, 'Rd_at_25'],          X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                   ylim = c(0, 3),   main = fitting_caption),
-      list(Y = aci_parameters[, 'J_at_25'],           X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                    ylim = c(0, 225), main = fitting_caption),
-      list(Y = aci_parameters[, 'TPU'],               X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                  ylim = c(0, 30),  main = fitting_caption)
+      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 40),  main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'iWUE'],              X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",            ylim = c(0, 100), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'ls_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Grassi) (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lm_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Grassi) (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lb_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to biochemistry (Grassi) (dimensionless)", ylim = c(0, 0.7), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'lm_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Warren) (dimensionless)",    ylim = c(0, 1.0), main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'ls_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Warren) (dimensionless)",      ylim = c(0, 1.0), main = boxplot_caption),
+      list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 200), main = fitting_caption),
+      list(Y = aci_parameters[, 'Rd_at_25'],                 X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 3),   main = fitting_caption),
+      list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 225), main = fitting_caption),
+      list(Y = aci_parameters[, 'TPU'],                      X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption)
     )
 
     if (INCLUDE_FLUORESCENCE) {
@@ -551,7 +593,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     phi_lim <- c(0, 0.4)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
-    cc_lab <- "Mesophyll [CO2] (ppm)"
+    cc_lab <- "Chloroplast [CO2] (ppm)"
     a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
     gsw_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
     phi_lab <- "PhiPSII (dimensionless)\n(error bars: standard error of the mean for same CO2 setpoint)"

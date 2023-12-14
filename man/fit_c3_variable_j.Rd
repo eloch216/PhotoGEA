@@ -16,6 +16,7 @@
 \usage{
   fit_c3_variable_j(
     replicate_exdf,
+    Ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -29,7 +30,6 @@
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    ca_atmospheric = 420,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -64,6 +64,12 @@
 \arguments{
   \item{replicate_exdf}{
     An \code{exdf} object representing one CO2 response curve.
+  }
+
+  \item{Ca_atmospheric}{
+    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
+    this will be used by \code{\link{estimate_operating_point}} to estimate the
+    operating point.
   }
 
   \item{a_column_name}{
@@ -134,11 +140,6 @@
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
-  }
-
-  \item{ca_atmospheric}{
-    The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
-    this will be used to estimate the operating point.
   }
 
   \item{POc}{
@@ -286,6 +287,9 @@
                   name is determined by appending \code{'_residuals'} to the end
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
+            \item Values of fitting parameters at 25 degrees C will be stored in
+                  the \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
+                  columns.
             \item The other outputs from \code{\link{calculate_c3_variable_j}}
                   and \code{\link{calculate_c3_assimilation}} will be stored in
                   columns with the usual names: \code{tau}, \code{TPU},
@@ -347,6 +351,7 @@ licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 # with `optimizer_deoptim`
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
+  Ca_atmospheric = 420,
   OPTIM_FUN = optimizer_nmkb()
 )
 
@@ -357,6 +362,7 @@ aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
+  Ca_atmospheric = 420,
   OPTIM_FUN = optimizer_nmkb()
 ))
 

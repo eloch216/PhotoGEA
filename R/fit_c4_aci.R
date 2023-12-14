@@ -1,5 +1,6 @@
 fit_c4_aci <- function(
     replicate_exdf,
+    Ca_atmospheric,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -12,11 +13,10 @@ fit_c4_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    ca_atmospheric = 420,      # micromol / mol
-    POm = 210000,              # microbar
-    gbs = 0.003,               # mol / m^2 / s / bar
-    Rm_frac = 0.5,             # dimensionless
-    alpha = 0,                 # dimensionless
+    POm = 210000,  # microbar
+    gbs = 0.003,   # mol / m^2 / s / bar
+    Rm_frac = 0.5, # dimensionless
+    alpha = 0,     # dimensionless
     OPTIM_FUN = optimizer_nmkb(),
     initial_guess_fun = initial_guess_c4_aci(
         gbs = gbs,
@@ -146,6 +146,12 @@ fit_c4_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Add columns for the best-fit parameter values
+    replicate_exdf[, 'Rd_at_25'] <- best_X[1]
+    replicate_exdf[, 'Vcmax_at_25'] <- best_X[2]
+    replicate_exdf[, 'Vpmax_at_25'] <- best_X[3]
+    replicate_exdf[, 'Vpr'] <- best_X[4]
+
     # Add a column for the residuals
     replicate_exdf <- set_variable(
         replicate_exdf,
@@ -153,6 +159,16 @@ fit_c4_aci <- function(
         replicate_exdf$units[[a_column_name]],
         'fit_c4_aci',
         replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
+
+    # Document the new columns that were added
+    replicate_exdf <- document_variables(
+        replicate_exdf,
+        c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)'),
+        c('fit_c4_aci', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpmax_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpr',            'micromol m^(-2) s^(-1)')
     )
 
     # Get the replicate identifier columns
@@ -196,7 +212,7 @@ fit_c4_aci <- function(
     # Get operating point information
     operating_point_info <- estimate_operating_point(
         replicate_exdf,
-        ca_atmospheric,
+        Ca_atmospheric,
         type = 'c4',
         a_column_name,
         ca_column_name,
