@@ -100,7 +100,6 @@ MEASUREMENT_NUMBER_NAME <- "obs"
 CI_COLUMN_NAME <- "Ci"
 A_COLUMN_NAME <- "A"
 GSW_COLUMN_NAME <- "gsw"
-IWUE_COLUMN_NAME <- "iwue"
 QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
 ETR_COLUMN_NAME <- "ETR"
@@ -152,12 +151,7 @@ if (PERFORM_CALCULATIONS) {
         UNIQUE_ID_COLUMN_NAME
     )
 
-    combined_info <- calculate_iwue(
-        combined_info,
-        A_COLUMN_NAME,
-        GSW_COLUMN_NAME,
-        IWUE_COLUMN_NAME
-    )
+    combined_info <- calculate_wue(combined_info)
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(

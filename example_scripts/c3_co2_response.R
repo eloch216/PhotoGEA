@@ -89,9 +89,9 @@ GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list(
   WT = 0.437,
-  `8` = 0.597, 
+  `8` = 0.597,
   `10` = 0.504,
-  `14` = 0.541 
+  `14` = 0.541
   )
 
 # Indicate whether a `plot` column is present
@@ -132,7 +132,6 @@ CI_COLUMN_NAME <- "Ci"
 CC_COLUMN_NAME <- "Cc"
 A_COLUMN_NAME <- "A"
 GSW_COLUMN_NAME <- "gsw"
-IWUE_COLUMN_NAME <- "iwue"
 O2_COLUMN_NAME <- "O2"
 F_PRIME_COLUMN_NAME <- "f_prime"
 GAMMA_STAR_COLUMN_NAME <- "Gamma_star"
@@ -241,12 +240,7 @@ if (PERFORM_CALCULATIONS) {
         PTR_FUN
     )
 
-    combined_info <- calculate_iwue(
-        combined_info,
-        A_COLUMN_NAME,
-        GSW_COLUMN_NAME,
-        IWUE_COLUMN_NAME
-    )
+    combined_info <- calculate_wue(combined_info)
 
     # Rename the prefix "36625-" from any event names that contain it
     prefix_to_remove <- "36625-"
@@ -542,7 +536,7 @@ xl <- "Genotype"
 
 plot_param <- list(
   list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                           ylim = c(0, 35),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 80), main = boxplot_caption),
+  list(Y = all_samples_one_point[['iWUE']],                      X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",                  ylim = c(0, 80), main = boxplot_caption),
   list(Y = vcmax_parameters[['Vcmax_at_25']],                    X = x_v,   xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                               ylim = c(0, 200), main = fitting_caption),
   list(Y = vcmax_parameters[['Rd_at_25']],                       X = x_v,   xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                                  ylim = c(0, 2.5), main = fitting_caption)
 )
@@ -620,7 +614,7 @@ if (PERFORM_STATS_TESTS) {
   # Perform Dunnett's Test
   dunnett_test_result <- DunnettTest(x = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], g = all_samples_one_point_no_a_outliers$event, control = "WT")
   print(dunnett_test_result)
-  
+
   # Print average A values for each event
   cat('\n\n---\n\nAverage A values for each event:\n\n')
   print(with(all_samples_one_point_no_a_outliers, tapply(A, event, mean)))
@@ -630,7 +624,7 @@ if (PERFORM_STATS_TESTS) {
 if (CREATE_CSV_FILES) {
   cat('Saving Vcmax parameters to a csv file. Please choose the name and location. Name should end with `.csv`')
   write.csv(vcmax_parameters, file = file.choose(), row.names = FALSE)
-  
+
   cat('Saving A values to a csv file. Please choose the name and location. Name should end with `.csv`')
   write.csv(all_samples_one_point_no_a_outliers, file = file.choose(), row.names = FALSE)
 }

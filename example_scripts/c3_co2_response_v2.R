@@ -327,7 +327,7 @@ if (OVERRIDE_GAMMA_STAR) {
 }
 
 # Calculate intrinsic water-use efficiency
-licor_data <- calculate_iwue(licor_data, 'A', 'gsw', 'iWUE')
+licor_data <- calculate_wue(licor_data)
 
 # Truncate the Ci range for fitting
 licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]

@@ -38,6 +38,9 @@ for the next release.
   parameters.
 - The C3 and C4 A-Ci vignettes now show include the operating point in one of
   the figures.
+- Renamed `calculate_iwue` to `calculate_wue` and provided documentation for
+  this function, which now calculates two measures of leaf-level water use
+  efficiency.
 - Fixed a typo in `calculate_c3_assimilation` where `Rd` (the value of day
   respiration at 25 degrees C) was used in place of `Rd_tl` (the value of day
   respiration at the leaf temperature) when calculating net assimilation rates.

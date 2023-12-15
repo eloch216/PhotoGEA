@@ -315,7 +315,7 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- apply_gm(combined_info, 'C4')
 
     # Calculate intrinsic water-use efficiency
-    combined_info <- calculate_iwue(combined_info, 'A', 'gsw', 'iWUE')
+    combined_info <- calculate_wue(combined_info)
 
 
     ###                     ###

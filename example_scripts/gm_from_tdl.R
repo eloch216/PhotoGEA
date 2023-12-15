@@ -105,9 +105,7 @@ LICOR_E_COLUMN_NAME <- 'E'
 LICOR_GBW_COLUMN_NAME <- 'gbw'
 LICOR_GM_COLUMN_NAME <- 'gmc'
 LICOR_GSW_COLUMN_NAME <- 'gsw'
-LICOR_G_RATIO_COLUMN_NAME <- 'g_ratio'
 LICOR_H2O_S_COLUMN_NAME <- 'H2O_s'
-LICOR_IWUE_COLUMN_NAME <- 'iWUE'
 LICOR_PA_COLUMN_NAME <- 'Pa'
 LICOR_RHLEAF_COLUMN_NAME <- 'RHleaf'
 LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
@@ -443,14 +441,10 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- apply_gm(licor_files)
 
-    licor_files <- calculate_iwue(
+    licor_files <- calculate_wue(
         licor_files,
-        LICOR_A_COLUMN_NAME,
-        LICOR_GSW_COLUMN_NAME,
-        LICOR_IWUE_COLUMN_NAME
+        calculate_c3 = TRUE
     )
-
-    licor_files <- calculate_g_ratio(licor_files)
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
@@ -591,13 +585,13 @@ if (PERFORM_CALCULATIONS) {
         print(dunnett_test_result)
 
         # Do more stats on drawdown
-        bf_test_result <- bf.test(drawdown_m_avg ~ event, data = rep_stats_no_outliers)
-        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['drawdown_m_avg']])
+        bf_test_result <- bf.test(drawdown_cm_avg ~ event, data = rep_stats_no_outliers)
+        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['drawdown_cm_avg']])
         print(shapiro_test_result)
-        anova_result <- aov(drawdown_m_avg ~ event, data = rep_stats_no_outliers)
+        anova_result <- aov(drawdown_cm_avg ~ event, data = rep_stats_no_outliers)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['drawdown_m_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['drawdown_cm_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
         print(dunnett_test_result)
 
         # Do more stats on assimilation
@@ -880,7 +874,7 @@ if (MAKE_GM_PLOTS) {
     box_plot_param <- list(
       list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
       list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_cm_avg']],    X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
       list(Y = rep_stats_no_outliers[['A_avg']],             X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
       list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
       list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
@@ -890,7 +884,7 @@ if (MAKE_GM_PLOTS) {
     box_bar_plot_param <- list(
       list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
       list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_cm_avg']],    X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
       list(Y = rep_stats_no_outliers[['A_avg']],             X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
       list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
       list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
