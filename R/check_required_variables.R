@@ -1,5 +1,4 @@
-# Checks whether the required variables are in the object. This function is not
-# exported to the package namespace since it is intended for internal use only.
+# Checks whether the required variables are in the object.
 check_required_variables <- function(x, required_variables) {
     UseMethod("check_required_variables", x)
 }

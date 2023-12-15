@@ -41,6 +41,8 @@ for the next release.
 - Renamed `calculate_iwue` to `calculate_wue` and provided documentation for
   this function, which now calculates two measures of leaf-level water use
   efficiency.
+- Provided documentation for `factorize_id_columns` and converted it to an S3
+  method so it can be applied to data frames and exdf objects.
 - Fixed a typo in `calculate_c3_assimilation` where `Rd` (the value of day
   respiration at 25 degrees C) was used in place of `Rd_tl` (the value of day
   respiration at the leaf temperature) when calculating net assimilation rates.

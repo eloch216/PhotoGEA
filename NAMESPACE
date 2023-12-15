@@ -4,7 +4,6 @@ export(choose_input_files)
 export(choose_input_licor_files)
 export(choose_input_tdl_files)
 export(document_variables)
-export(factorize_id_column)
 export(get_oxygen_from_preamble)
 export(identify_tdl_cycles)
 export(organize_response_curve_data)
@@ -116,6 +115,15 @@ export(exclude_outliers.data.frame)
 export(exclude_outliers.exdf)
 S3method(exclude_outliers, data.frame)
 S3method(exclude_outliers, exdf)
+
+# Functions for factorizing ID columns
+export(factorize_id_column)
+export(factorize_id_column.character)
+export(factorize_id_column.data.frame)
+export(factorize_id_column.exdf)
+S3method(factorize_id_column, character)
+S3method(factorize_id_column, data.frame)
+S3method(factorize_id_column, exdf)
 
 # Convenience functions for plotting
 export(barchart_with_errorbars)
