@@ -21,9 +21,7 @@ knitr::opts_chunk$set(
 an R package that provides a suite of tools for loading, processing, and
 analyzing photosynthetic gas exchange data.
 
-This package is a work in progress and is not yet fully documented. As
-documentation proceeds, functions are subject to modification or removal without
-notice.
+This package is still under rapid development.
 
 ### Installing the R Package
 
