@@ -7,7 +7,10 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/eloch216/PhotoGEA/graph/badge.svg)](https://codecov.io/gh/eloch216/PhotoGEA)
 <!-- badges: end -->
+
+### Overview
 
 **PhotoGEA** (short for **photo**synthetic **g**as **e**xchange
 **a**nalysis) is an R package that provides a suite of tools for
@@ -15,7 +18,7 @@ loading, processing, and analyzing photosynthetic gas exchange data.
 
 This package is still under rapid development.
 
-### Installing the R Package
+### Installation
 
 The easiest way to install `PhotoGEA` is to type the following from
 within the R terminal:
@@ -27,7 +30,7 @@ remotes::install_github('eloch216/PhotoGEA')
 Note that this method requires the `remotes` package, which can be
 installed from within R by typing `install.packages('remotes')`.
 
-### Learning to Use PhotoGEA
+### Usage
 
 The best way to learn about using `PhotoGEA` is to visit the [PhotoGEA
 website](https://eloch216.github.io/PhotoGEA/index.html) and click the
