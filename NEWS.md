@@ -32,7 +32,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)
 
 - Reorganized the variable J fitting functions to be more like `fit_c3_aci`:
   - Added `calculate_c3_variable_j`, `initial_guess_c3_variable_j`, and
@@ -47,8 +47,8 @@ be directly added to this file to describe the related changes.
   `calculate_c3_limitations_warren`.
 - Added a new function for estimating the operating point from a measured A-Ci
   curve: `estimate_operating_point`.
-- Added two new color specifications: `multi_curve_line_colors` and
-  `multi_curve_point_colors`.
+- Added two new color specifications (`multi_curve_line_colors` and
+  `multi_curve_point_colors`) and used them in vignette examples.
 - `fit_c3_aci` and `fit_c4_aci` now use `estimate_operating_point` to
   automatically estimate the operating point and include it with the other fit
   parameters.
@@ -65,17 +65,31 @@ be directly added to this file to describe the related changes.
 - Fixed a typo in `calculate_c3_assimilation` where `Rd` (the value of day
   respiration at 25 degrees C) was used in place of `Rd_tl` (the value of day
   respiration at the leaf temperature) when calculating net assimilation rates.
-- Added some developer documentation and an `R CMD check` GitHub workflow.
+- Added some developer documentation, an `R CMD check` GitHub workflow, and a
+  code coverage GitHub workflow.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/77
+  - https://github.com/eloch216/PhotoGEA/pull/78
+  - https://github.com/eloch216/PhotoGEA/pull/79
+  - https://github.com/eloch216/PhotoGEA/pull/80
+  - https://github.com/eloch216/PhotoGEA/pull/81
+  - https://github.com/eloch216/PhotoGEA/pull/82
 
 ## CHANGES IN PhotoGEA VERSION 0.9.2 (2023-11-16)
 
 - Fixed a bug in `check_required_variables` where missing units in an `exdf`
   object were not properly identified
 - Added tests to make sure `check_required_variables` is functioning as expected
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/75
+  - https://github.com/eloch216/PhotoGEA/pull/76
 
 ## CHANGES IN PhotoGEA VERSION 0.9.1 (2023-11-13)
 
 - Added logo to package and documentation
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/73
+  - https://github.com/eloch216/PhotoGEA/pull/74
 
 ## CHANGES IN PhotoGEA VERSION 0.9.0 (2023-10-25)
 
