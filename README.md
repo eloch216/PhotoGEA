@@ -4,13 +4,16 @@
 
 ## PhotoGEA <a href="https://eloch216.github.io/PhotoGEA/"><img src="man/figures/logo.svg" align="left" style="height:138px"></a>
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 **PhotoGEA** (short for **photo**synthetic **g**as **e**xchange
 **a**nalysis) is an R package that provides a suite of tools for
 loading, processing, and analyzing photosynthetic gas exchange data.
 
-This package is a work in progress and is not yet fully documented. As
-documentation proceeds, functions are subject to modification or removal
-without notice.
+This package is still under rapid development.
 
 ### Installing the R Package
 
