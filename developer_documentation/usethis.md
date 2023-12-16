@@ -18,3 +18,8 @@ Tests were initialized by calling `usethis::use_testthat()` from the R terminal.
 
 Package checking workflows were added by calling
 `usethis::use_github_action('check-standard')` from the R terminal.
+
+### covr
+
+Test coverage evaluation was added by calling
+`usethis::use_github_action('test-coverage')` from the R terminal.
