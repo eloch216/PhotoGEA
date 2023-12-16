@@ -48,9 +48,9 @@
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name
     ),
-    lower = c(0,  0,    0,   0),
-    upper = c(40, 1000, 100, 1000),
-    fixed = c(40, NA,   NA,  NA),
+    lower = c(0, 0, 0, 0),
+    upper = c(1000, 100, 40, 1000),
+    fixed = c(NA, NA, 40, NA),
     cj_crossover_min = NA,
     cj_crossover_max = NA
   )
@@ -169,24 +169,24 @@
   }
 
   \item{initial_guess_fun}{
-    A function that estimates values of \code{TPU}, \code{J}, \code{Rd}, and
+    A function that estimates values of \code{J}, \code{Rd}, \code{TPU}, and
     \code{Vcmax}; \code{initial_guess_fun} should have one input argument (an
     \code{exdf} object representing a single response curve) and should return a
     vector of the estimated values (at 25 degrees C) in the order above.
   }
 
   \item{lower}{
-    A numeric vector containing lower bounds for the values of \code{TPU},
-    \code{J}, \code{Rd}, and \code{Vcmax}, in that order.
+    A numeric vector containing lower bounds for the values of \code{J},
+    \code{Rd}, \code{TPU}, and \code{Vcmax}, in that order.
   }
 
   \item{upper}{
-    A numeric vector containing upper bounds for the values of \code{TPU},
-    \code{J}, \code{Rd}, and \code{Vcmax}, in that order.
+    A numeric vector containing upper bounds for the values of \code{J},
+    \code{Rd}, \code{TPU}, and \code{Vcmax}, in that order.
   }
 
   \item{fixed}{
-    A numeric vector specifying fixed values of \code{TPU}, \code{J}, \code{Rd},
+    A numeric vector specifying fixed values of \code{J}, \code{Rd}, \code{TPU},
     and \code{Vcmax}, in that order. Values of \code{NA} indicate that the
     corresponding parameter is not fixed and should be varied during the
     optimization procedure. The default value of this argument fixes \code{TPU}
@@ -211,7 +211,7 @@
 \details{
   This function calls \code{\link{calculate_c3_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{TPU}, \code{J}, \code{Rd}, and \code{Vcmax} to find
+  vary the values of \code{J}, \code{Rd}, \code{TPU}, and \code{Vcmax} to find
   ones that best reproduce the experimentally measured values of net
   assimilation.
 
@@ -240,8 +240,8 @@
   estimates of the parameters to use as an initial guess. However, it is
   possible to also use a fixed initial guess by using something like the
   following for the \code{initial_guess_fun}:
-  \code{function(x){c(10, 100, 0.5, 90)}}, which would set the initial guess to
-  \code{TPU = 10}, \code{J = 100}, \code{Rd = 0.5}, and \code{Vcmax = 90}.
+  \code{function(x){c(100, 0.5, 10, 90)}}, which would set the initial guess to
+  \code{J = 100}, \code{Rd = 0.5}, \code{TPU = 10}, and \code{Vcmax = 90}.
 
   By default, this function fixes \code{TPU} to a high value (\code{40 micromol
   m^(-2) s^(-1)}) and allows the other parameters to be fitted. This behavior

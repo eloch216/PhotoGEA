@@ -1,8 +1,8 @@
 calculate_c3_assimilation <- function(
     exdf_obj,
-    TPU,          # micromol / m^2 / s   (typically this value is being fitted)
     J,            # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Rd,           # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    TPU,          # micromol / m^2 / s   (typically this value is being fitted)
     Vcmax,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     POc = 210000, # microbar             (typically this value is known from the experimental setup)
     atp_use = 4.0,
@@ -120,10 +120,10 @@ calculate_c3_assimilation <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
+            J_tl = J_tl,
+            Rd_tl = Rd_tl,
             TPU = TPU,
             Vcmax_tl = Vcmax_tl,
-            Rd_tl = Rd_tl,
-            J_tl = J_tl,
             Ac = Ac,
             Aj = Aj,
             Ap = Ap,
@@ -136,10 +136,10 @@ calculate_c3_assimilation <- function(
 
         document_variables(
             output,
+            c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'TPU',        'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Ac',         'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Aj',         'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),

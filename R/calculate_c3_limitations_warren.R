@@ -77,9 +77,9 @@ calculate_c3_limitations_warren <- function(
         sapply(seq_len(nrow(exdf_obj)), function(i) {
             calculate_c3_assimilation(
                 exdf_obj[i, , TRUE],
-                TPU[i],
                 J[i],
                 Rd[i],
+                TPU[i],
                 Vcmax[i],
                 POc = POc,
                 atp_use = atp_use,
@@ -88,13 +88,13 @@ calculate_c3_limitations_warren <- function(
                 curvature_cj = curvature_cj,
                 curvature_cjp = curvature_cjp,
                 cc_column_name = cc_name,
-                total_pressure_column_name = total_pressure_column_name,
+                gamma_star_column_name = gamma_star_column_name,
+                j_norm_column_name = j_norm_column_name,
                 kc_column_name = kc_column_name,
                 ko_column_name = ko_column_name,
-                gamma_star_column_name = gamma_star_column_name,
-                vcmax_norm_column_name = vcmax_norm_column_name,
                 rd_norm_column_name = rd_norm_column_name,
-                j_norm_column_name = j_norm_column_name,
+                total_pressure_column_name = total_pressure_column_name,
+                vcmax_norm_column_name = vcmax_norm_column_name,
                 perform_checks = TRUE,
                 return_exdf = FALSE
             )[['An']]

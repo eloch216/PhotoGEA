@@ -110,18 +110,18 @@ calculate_c4_assimilation <- function(
 
         document_variables(
             output,
-            c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Vpmax_tl',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Rm_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Vpc',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Vpr',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Vp',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Apc',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Apr',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Ar',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)')
+            c('calculate_c4_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpmax_tl',   'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rm_tl',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpc',        'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpr',        'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vp',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apc',        'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apr',        'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ar',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'An',         'micromol m^(-2) s^(-1)')
         )
     } else {
         return(An)

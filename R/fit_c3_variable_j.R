@@ -133,9 +133,9 @@ fit_c3_variable_j <- function(
         # Use FvCB equations to get An
         assim <- calculate_c3_assimilation(
             fitting_exdf,
-            X[4], # TPU
             X[1], # J
             X[2], # Rd
+            X[4], # TPU
             X[5], # Vcmax
             POc,
             atp_use,
@@ -231,9 +231,9 @@ fit_c3_variable_j <- function(
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(
         replicate_exdf,
-        best_X[4], # TPU
         best_X[1], # J
         best_X[2], # Rd
+        best_X[4], # TPU
         best_X[5], # Vcmax
         POc,
         atp_use,
@@ -262,9 +262,9 @@ fit_c3_variable_j <- function(
 
     # Add columns for the best-fit parameter values (no need to include TPU
     # since is already included in the output of calculate_c3_assimilation)
-    replicate_exdf[, 'J_at_25'] <- best_X[1]
-    replicate_exdf[, 'Rd_at_25'] <- best_X[2]
-    replicate_exdf[, 'tau'] <- best_X[3]
+    replicate_exdf[, 'J_at_25']     <- best_X[1]
+    replicate_exdf[, 'Rd_at_25']    <- best_X[2]
+    replicate_exdf[, 'tau']         <- best_X[3]
     replicate_exdf[, 'Vcmax_at_25'] <- best_X[5]
 
     # Include the atmospheric CO2 concentration
@@ -303,15 +303,15 @@ fit_c3_variable_j <- function(
     )
 
     # Attach the best-fit parameters to the identifiers
-    replicate_identifiers[, 'J_at_25'] <- best_X[1]
-    replicate_identifiers[, 'Rd_at_25'] <- best_X[2]
-    replicate_identifiers[, 'tau'] <- best_X[3]
-    replicate_identifiers[, 'TPU'] <- best_X[4]
+    replicate_identifiers[, 'J_at_25']     <- best_X[1]
+    replicate_identifiers[, 'Rd_at_25']    <- best_X[2]
+    replicate_identifiers[, 'tau']         <- best_X[3]
+    replicate_identifiers[, 'TPU']         <- best_X[4]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[5]
 
     # Attach the average leaf-temperature values of fitting parameters
-    replicate_identifiers[, 'J_tl_avg'] <- mean(replicate_exdf[, 'J_tl'])
-    replicate_identifiers[, 'Rd_tl_avg'] <- mean(replicate_exdf[, 'Rd_tl'])
+    replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
+    replicate_identifiers[, 'Rd_tl_avg']    <- mean(replicate_exdf[, 'Rd_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
 
     # Also add fitting details
@@ -323,10 +323,10 @@ fit_c3_variable_j <- function(
         optim_result[['feval']] <- NA
     }
 
-    replicate_identifiers[, 'convergence'] <- optim_result[['convergence']]
+    replicate_identifiers[, 'convergence']     <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg'] <- optim_result[['message']]
-    replicate_identifiers[, 'feval'] <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
+    replicate_identifiers[, 'feval']           <- optim_result[['feval']]
+    replicate_identifiers[, 'optimum_val']     <- optim_result[['value']]
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -344,9 +344,9 @@ fit_c3_variable_j <- function(
     # Estimate An at the operating point
     operating_An_model <- calculate_c3_assimilation(
         operating_point_info$operating_exdf,
-        best_X[4], # TPU
         best_X[1], # J
         best_X[2], # Rd
+        best_X[4], # TPU
         best_X[5], # Vcmax
         POc,
         atp_use,
@@ -374,13 +374,13 @@ fit_c3_variable_j <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c3_variable_j',        'TPU',                'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'tau',                'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'J_at_25',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'Rd_at_25',           'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'Vcmax_at_25',        'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'J_tl_avg',           'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'Rd_at_25',           'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Rd_tl_avg',          'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'tau',                'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'TPU',                'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'Vcmax_at_25',        'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Vcmax_tl_avg',       'micromol m^(-2) s^(-1)'),
         c('estimate_operating_point', 'operating_Ci',       replicate_exdf$units[[ci_column_name]]),
         c('estimate_operating_point', 'operating_Cc',       replicate_exdf$units[['Cc']]),

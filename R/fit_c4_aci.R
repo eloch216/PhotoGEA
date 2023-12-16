@@ -185,13 +185,13 @@ fit_c4_aci <- function(
     )
 
     # Attach the best-fit parameters to the identifiers
-    replicate_identifiers[, 'Rd_at_25'] <- best_X[1]
+    replicate_identifiers[, 'Rd_at_25']    <- best_X[1]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[2]
     replicate_identifiers[, 'Vpmax_at_25'] <- best_X[3]
-    replicate_identifiers[, 'Vpr'] <- best_X[4]
+    replicate_identifiers[, 'Vpr']         <- best_X[4]
 
     # Attach the average leaf-temperature values of fitting parameters
-    replicate_identifiers[, 'Rd_tl_avg'] <- mean(replicate_exdf[, 'Rd_tl'])
+    replicate_identifiers[, 'Rd_tl_avg']    <- mean(replicate_exdf[, 'Rd_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
 
@@ -204,10 +204,10 @@ fit_c4_aci <- function(
         optim_result[['feval']] <- NA
     }
 
-    replicate_identifiers[, 'convergence'] <- optim_result[['convergence']]
+    replicate_identifiers[, 'convergence']     <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg'] <- optim_result[['message']]
-    replicate_identifiers[, 'feval'] <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
+    replicate_identifiers[, 'feval']           <- optim_result[['feval']]
+    replicate_identifiers[, 'optimum_val']     <- optim_result[['value']]
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(

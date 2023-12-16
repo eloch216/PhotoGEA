@@ -71,10 +71,10 @@ initial_guess_c3_variable_j <- function(
         # Return the results in the correct order, along with an initial guess
         # for tau
         c(
-            c3_guess[2], # J
-            c3_guess[3], # Rd
+            c3_guess[1], # J
+            c3_guess[2], # Rd
             tau_guess,   # tau
-            c3_guess[1], # TPU
+            c3_guess[3], # TPU
             c3_guess[4]  # Vcmax
         )
     }

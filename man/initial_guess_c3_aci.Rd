@@ -96,7 +96,7 @@
 }
 
 \details{
-  Here we estimate values of \code{Rd}, \code{Vcmax}, \code{J}, and \code{TPU}
+  Here we estimate values of \code{J}, \code{Rd}, \code{TPU}, and \code{Vcmax}
   from a measured C3 CO2 response curve. For more information about these
   parameters, see the documentation for \code{\link{calculate_c3_assimilation}}.
   To estimate these parameter values, we use several equations from S. von

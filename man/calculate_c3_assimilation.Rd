@@ -15,9 +15,9 @@
 \usage{
   calculate_c3_assimilation(
     exdf_obj,
-    TPU,
     J,
     Rd,
+    TPU,
     Vcmax,
     POc = 210000,
     atp_use = 4.0,
@@ -41,11 +41,6 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{TPU}{
-    The maximum rate of triphosphate utilization, expressed in
-    \code{micromol m^(-2) s^(-1)}.
-  }
-
   \item{J}{
     The electron transport rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
@@ -54,6 +49,11 @@
 
   \item{Rd}{
     The respiration rate at 25 degrees C, expressed in
+    \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{TPU}{
+    The maximum rate of triphosphate utilization, expressed in
     \code{micromol m^(-2) s^(-1)}.
   }
 
