@@ -231,12 +231,8 @@ get_genotype_info_from_licor_filename <- function(licor_exdf) {
     licor_exdf[,'event'] <- e
     licor_exdf[,'replicate'] <- r
 
-    licor_exdf <- process_id_columns(
-        licor_exdf,
-        'event',
-        'replicate',
-        'event_replicate'
-    )
+    licor_exdf[, 'event_replicate'] <-
+        paste(licor_exdf[, 'event'], licor_exdf[, 'replicate'])
 
     licor_exdf[,'genotype_event'] <-
         paste(licor_exdf[, 'genotype'], licor_exdf[, 'event'])
@@ -392,6 +388,10 @@ if (PERFORM_CALCULATIONS) {
     })
 
     licor_files <- do.call(rbind, licor_files)
+
+    # Factorize ID columns
+    licor_files <- factorize_id_column(licor_files, 'event')
+    licor_files <- factorize_id_column(licor_files, 'event_replicate')
 
     # Specify respiration values
     licor_files <- set_variable(
@@ -846,9 +846,6 @@ if (MAKE_GM_PLOTS) {
     # Convert some columns to factors so we can control the order of boxes and
     # bars when plotting
     licor_files_no_outliers_data <- licor_files_no_outliers[['main_data']]
-
-    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event')
-    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event_replicate')
 
     # Define plotting parameters
     x_e <- rep_stats_no_outliers[['event']]

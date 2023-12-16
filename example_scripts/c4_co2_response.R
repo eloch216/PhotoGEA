@@ -197,12 +197,8 @@ if (PERFORM_CALCULATIONS) {
 
     # Add a column that combines `plot` and `replicate` if necessary
     if (HAS_PLOT_INFO) {
-      combined_info <- process_id_columns(
-        combined_info,
-        "plot",
-        REP_COLUMN_NAME,
-        paste0('plot_', REP_COLUMN_NAME)
-      )
+      combined_info[, paste0('plot_', REP_COLUMN_NAME)] <-
+        paste(combined_info[, 'plot'], combined_info[, REP_COLUMN_NAME])
     }
 
     # Reset the rep column name depending on whether there is plot information
@@ -212,12 +208,12 @@ if (PERFORM_CALCULATIONS) {
       REP_COLUMN_NAME
     }
 
-    combined_info <- process_id_columns(
-        combined_info,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        UNIQUE_ID_COLUMN_NAME
-    )
+    combined_info[, UNIQUE_ID_COLUMN_NAME] <-
+        paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
+
+    # Factorize ID columns
+    combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
+    combined_info <- factorize_id_column(combined_info, 'curve_identifier')
 
     # Extract just the A-Ci curves, if necessary
     if ('type' %in% colnames(combined_info)) {
@@ -420,14 +416,6 @@ if (PERFORM_CALCULATIONS) {
 # Make a subset of the full result for just the one measurement point
 all_samples_one_point <-
     all_samples[all_samples[['seq_num']] == POINT_FOR_BOX_PLOTS,]
-
-# Convert event columns to factors to control the order of events in subsequent
-# plots
-all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
-all_samples <- factorize_id_column(all_samples, EVENT_COLUMN_NAME)
-all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
-all_fits <- factorize_id_column(all_fits, UNIQUE_ID_COLUMN_NAME)
-all_fit_parameters <- factorize_id_column(all_fit_parameters, EVENT_COLUMN_NAME)
 
 # Here we do stats tests on assimilation values from a single point
 if (PERFORM_STATS_TESTS) {
