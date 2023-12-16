@@ -43,6 +43,9 @@ for the next release.
   efficiency.
 - Provided documentation for `factorize_id_columns` and converted it to an S3
   method so it can be applied to data frames and exdf objects.
+- Removed the `process_id_column` function since it can easily be replicated
+  using `paste`.
+- Stopped reversing colors in `xyplot_avg_rc`.
 - Fixed a typo in `calculate_c3_assimilation` where `Rd` (the value of day
   respiration at 25 degrees C) was used in place of `Rd_tl` (the value of day
   respiration at the leaf temperature) when calculating net assimilation rates.
