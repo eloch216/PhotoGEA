@@ -17,18 +17,18 @@
   fit_c4_aci(
     replicate_exdf,
     Ca_atmospheric,
+    ao_column_name = 'ao',
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
-    pcm_column_name = 'PCm',
+    gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    gamma_star_column_name = 'gamma_star',
-    ao_column_name = 'ao',
+    pcm_column_name = 'PCm',
+    rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    rd_norm_column_name = 'Rd_norm',
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
@@ -38,8 +38,8 @@
       gbs = gbs,
       Rm_frac = Rm_frac,
       a_column_name = a_column_name,
-      pcm_column_name = pcm_column_name,
       kp_column_name = kp_column_name,
+      pcm_column_name = pcm_column_name,
       rd_norm_column_name = rd_norm_column_name,
       vcmax_norm_column_name = vcmax_norm_column_name,
       vpmax_norm_column_name = vpmax_norm_column_name
@@ -61,6 +61,11 @@
     operating point.
   }
 
+  \item{ao_column_name}{
+    The name of the column in \code{exdf_obj} that contains the dimensionless
+    ratio of solubility and diffusivity of O2 to CO2.
+  }
+
   \item{a_column_name}{
     The name of the column in \code{replicate_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
@@ -76,9 +81,9 @@
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{pcm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the partial pressure
-    of CO2 in the mesophyll, expressed in \code{microbar}.
+  \item{gamma_star_column_name}{
+    The name of the column in \code{exdf_obj} that contains the dimensionless
+    \code{gamma_star} values.
   }
 
   \item{kc_column_name}{
@@ -96,14 +101,14 @@
     constant for PEP carboxylase carboxylation in \code{microbar}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the dimensionless
-    \code{gamma_star} values.
+  \item{pcm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the partial pressure
+    of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
-  \item{ao_column_name}{
-    The name of the column in \code{exdf_obj} that contains the dimensionless
-    ratio of solubility and diffusivity of O2 to CO2.
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -116,11 +121,6 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
-  }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{POm}{

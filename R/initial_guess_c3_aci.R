@@ -5,12 +5,12 @@ initial_guess_c3_aci <- function(
     nadph_use = 8.0,
     a_column_name = 'A',
     cc_column_name = 'Cc',
+    gamma_star_column_name = 'Gamma_star',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    gamma_star_column_name = 'Gamma_star',
-    vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm'
+    vcmax_norm_column_name = 'Vcmax_norm'
 )
 {
     function(rc_exdf) {
@@ -21,14 +21,14 @@ initial_guess_c3_aci <- function(
         # Make sure the required variables are defined and have the correct
         # units
         required_variables <- list()
-        required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-        required_variables[[cc_column_name]] <- "micromol mol^(-1)"
-        required_variables[[kc_column_name]] <- 'micromol mol^(-1)'
-        required_variables[[ko_column_name]] <- 'mmol mol^(-1)'
+        required_variables[[a_column_name]]          <- "micromol m^(-2) s^(-1)"
+        required_variables[[cc_column_name]]         <- "micromol mol^(-1)"
         required_variables[[gamma_star_column_name]] <- 'micromol mol^(-1)'
+        required_variables[[j_norm_column_name]]     <- 'normalized to J at 25 degrees C'
+        required_variables[[kc_column_name]]         <- 'micromol mol^(-1)'
+        required_variables[[ko_column_name]]         <- 'mmol mol^(-1)'
+        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
-        required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
-        required_variables[[j_norm_column_name]] <- 'normalized to J at 25 degrees C'
 
         check_required_variables(rc_exdf, required_variables)
 

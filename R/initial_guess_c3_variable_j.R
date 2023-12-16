@@ -56,13 +56,13 @@ initial_guess_c3_variable_j <- function(
             atp_use,
             nadph_use,
             a_column_name,
-            'Cc',
+            cc_column_name = 'Cc',
+            gamma_star_column_name,
+            j_norm_column_name,
             kc_column_name,
             ko_column_name,
-            gamma_star_column_name,
-            vcmax_norm_column_name,
             rd_norm_column_name,
-            j_norm_column_name
+            vcmax_norm_column_name
         )
 
         # Apply that function

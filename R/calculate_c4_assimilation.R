@@ -8,15 +8,15 @@ calculate_c4_assimilation <- function(
     gbs = 0.003,               # mol / m^2 / s / bar  (typically this value is fixed)
     Rm_frac = 0.5,             # dimensionless        (typically this value is fixed)
     alpha = 0,                 # dimensionless        (typically this value is fixed)
-    pcm_column_name = 'PCm',
+    ao_column_name = 'ao',
+    gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    gamma_star_column_name = 'gamma_star',
-    ao_column_name = 'ao',
+    pcm_column_name = 'PCm',
+    rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    rd_norm_column_name = 'Rd_norm',
     perform_checks = TRUE,
     return_exdf = TRUE
 )
@@ -28,15 +28,15 @@ calculate_c4_assimilation <- function(
 
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
-        required_variables[[pcm_column_name]] <- 'microbar'
-        required_variables[[kc_column_name]] <- 'microbar'
-        required_variables[[ko_column_name]] <- 'mbar'
-        required_variables[[kp_column_name]] <- 'microbar'
+        required_variables[[ao_column_name]]         <- 'dimensionless'
         required_variables[[gamma_star_column_name]] <- 'dimensionless'
-        required_variables[[ao_column_name]] <- 'dimensionless'
+        required_variables[[kc_column_name]]         <- 'microbar'
+        required_variables[[ko_column_name]]         <- 'mbar'
+        required_variables[[kp_column_name]]         <- 'microbar'
+        required_variables[[pcm_column_name]]        <- 'microbar'
+        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
-        required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
 
         check_required_variables(exdf_obj, required_variables)
     }

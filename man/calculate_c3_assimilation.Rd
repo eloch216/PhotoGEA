@@ -26,13 +26,13 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
-    total_pressure_column_name = 'total_pressure',
+    gamma_star_column_name = 'Gamma_star',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    gamma_star_column_name = 'Gamma_star',
-    vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm',
+    total_pressure_column_name = 'total_pressure',
+    vcmax_norm_column_name = 'Vcmax_norm',
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -101,9 +101,14 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{total_pressure_column_name}{
-    The name of the column in \code{exdf_obj} that contains the total pressure
-    in \code{bar}.
+  \item{gamma_star_column_name}{
+    The name of the column in \code{exdf_obj} that contains the
+    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  }
+
+  \item{j_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -118,25 +123,20 @@
     \code{mmol mol^(-1)}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{vcmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
-  }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
-  }
-
-  \item{j_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{perform_checks}{
