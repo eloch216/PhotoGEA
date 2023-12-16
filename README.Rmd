@@ -1,9 +1,11 @@
 ---
-output: github_document
+output:
+  github_document:
+    html_preview: false
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file.          -->
-<!-- To generate README.md, run knitr::knit('README.Rmd') in this directory. -->
+<!-- README.md is generated from README.Rmd. Please edit that file.      -->
+<!-- To locally generate README.md, run rmarkdown::render('README.Rmd'). -->
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
