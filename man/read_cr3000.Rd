@@ -46,7 +46,7 @@
   }
 
   \item{\dots}{
-    Additional arguments; currently unused.
+    Additional arguments to be passed to \code{\link[utils]{read.csv}}.
   }
 }
 

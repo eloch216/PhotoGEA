@@ -10,7 +10,8 @@ read_cr3000 <- function(
     raw_cr <- utils::read.csv(
         file_name,
         header = FALSE,
-        skip = rows_to_skip
+        skip = rows_to_skip,
+        ...
     )
 
     cr_variable_names <- raw_cr[variable_name_row - rows_to_skip,]

@@ -10,6 +10,8 @@
 ^\.Rproj\.user$
 # Used by RStudio for temporary files.
 
+^Rhistory$
+^README\.Rmd$
 ^\.editorconfig$
 # Related to package development.
 
@@ -24,3 +26,6 @@
 ^pkgdown$
 ^\.github$
 # Related to pkgdown
+
+^developer_documentation$
+# Developer documentation directories.

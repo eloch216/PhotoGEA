@@ -111,10 +111,10 @@ calculate_c3_assimilation <- function(
     # Calculate corresponding net CO2 assimilations by accounting for
     # photorespiration and day respiration
     photo_resp_factor <- 1.0 - Gamma_star / PCc # dimensionless
-    Ac <- photo_resp_factor * Wc - Rd
-    Aj <- photo_resp_factor * Wj - Rd
-    Ap <- photo_resp_factor * Wp - Rd
-    An <- photo_resp_factor * Wcjp - Rd
+    Ac <- photo_resp_factor * Wc - Rd_tl
+    Aj <- photo_resp_factor * Wj - Rd_tl
+    Ap <- photo_resp_factor * Wp - Rd_tl
+    An <- photo_resp_factor * Wcjp - Rd_tl
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units

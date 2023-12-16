@@ -47,24 +47,25 @@ MAKE_GM_PLOTS <- TRUE
 USE_BUSCH_GM <- TRUE
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- 2.69
+DEFAULT_RESPIRATION <- 2.1
 
-# Specify respiration values for each event; these will override the default
+# Specify respiration values for each event; these will override the default.
+# To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  'WT' = 2.18,
-  '8' = 2.02,
-  '10' = 1.94,
-  '14' = 2.08
+  #'WT' = 2.33,
+  #'8' = 2.02,
+  #'10' = 1.94,
+  #'14' = 2.08
 )
 
-RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
-#RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
+#RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
+RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
-MAX_GM <- 5
+MAX_GM <- 3
 MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
@@ -104,9 +105,7 @@ LICOR_E_COLUMN_NAME <- 'E'
 LICOR_GBW_COLUMN_NAME <- 'gbw'
 LICOR_GM_COLUMN_NAME <- 'gmc'
 LICOR_GSW_COLUMN_NAME <- 'gsw'
-LICOR_G_RATIO_COLUMN_NAME <- 'g_ratio'
 LICOR_H2O_S_COLUMN_NAME <- 'H2O_s'
-LICOR_IWUE_COLUMN_NAME <- 'iWUE'
 LICOR_PA_COLUMN_NAME <- 'Pa'
 LICOR_RHLEAF_COLUMN_NAME <- 'RHleaf'
 LICOR_TIMESTAMP_COLUMN_NAME <- 'time'
@@ -232,12 +231,8 @@ get_genotype_info_from_licor_filename <- function(licor_exdf) {
     licor_exdf[,'event'] <- e
     licor_exdf[,'replicate'] <- r
 
-    licor_exdf <- process_id_columns(
-        licor_exdf,
-        'event',
-        'replicate',
-        'event_replicate'
-    )
+    licor_exdf[, 'event_replicate'] <-
+        paste(licor_exdf[, 'event'], licor_exdf[, 'replicate'])
 
     licor_exdf[,'genotype_event'] <-
         paste(licor_exdf[, 'genotype'], licor_exdf[, 'event'])
@@ -365,6 +360,16 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- lapply(licor_files, get_oxygen_from_preamble)
 
+    licor_files <- lapply(licor_files, function(x) {set_variable(
+        x,
+        'respiration',
+        'micromol m^(-2) s^(-1)',
+        'gm_from_tdl',
+        abs(DEFAULT_RESPIRATION),       # this is the default value of respiration
+        id_column = 'event',            # the default value can be overridden for certain events
+        value_table = RESPIRATION_TABLE # override default for certain events
+    )})
+
     licor_files <- lapply(licor_files, function(x) {
         get_sample_valve_from_filename(x, list(
             '13' = 12, # ERML TDL
@@ -383,6 +388,10 @@ if (PERFORM_CALCULATIONS) {
     })
 
     licor_files <- do.call(rbind, licor_files)
+
+    # Factorize ID columns
+    licor_files <- factorize_id_column(licor_files, 'event')
+    licor_files <- factorize_id_column(licor_files, 'event_replicate')
 
     # Specify respiration values
     licor_files <- set_variable(
@@ -432,14 +441,10 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- apply_gm(licor_files)
 
-    licor_files <- calculate_iwue(
+    licor_files <- calculate_wue(
         licor_files,
-        LICOR_A_COLUMN_NAME,
-        LICOR_GSW_COLUMN_NAME,
-        LICOR_IWUE_COLUMN_NAME
+        calculate_c3 = TRUE
     )
-
-    licor_files <- calculate_g_ratio(licor_files)
 
     # Exclude some events, if necessary
     EVENTS_TO_IGNORE <- c(
@@ -580,13 +585,13 @@ if (PERFORM_CALCULATIONS) {
         print(dunnett_test_result)
 
         # Do more stats on drawdown
-        bf_test_result <- bf.test(drawdown_m_avg ~ event, data = rep_stats_no_outliers)
-        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['drawdown_m_avg']])
+        bf_test_result <- bf.test(drawdown_cm_avg ~ event, data = rep_stats_no_outliers)
+        shapiro_test_result <- shapiro.test(rep_stats_no_outliers[['drawdown_cm_avg']])
         print(shapiro_test_result)
-        anova_result <- aov(drawdown_m_avg ~ event, data = rep_stats_no_outliers)
+        anova_result <- aov(drawdown_cm_avg ~ event, data = rep_stats_no_outliers)
         cat("    ANOVA result\n\n")
         print(summary(anova_result))
-        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['drawdown_m_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
+        dunnett_test_result <- DunnettTest(x = rep_stats_no_outliers[['drawdown_cm_avg']], g = rep_stats_no_outliers[['event']], control = "WT")
         print(dunnett_test_result)
 
         # Do more stats on assimilation
@@ -842,9 +847,6 @@ if (MAKE_GM_PLOTS) {
     # bars when plotting
     licor_files_no_outliers_data <- licor_files_no_outliers[['main_data']]
 
-    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event')
-    rep_stats_no_outliers <- factorize_id_column(rep_stats_no_outliers, 'event_replicate')
-
     # Define plotting parameters
     x_e <- rep_stats_no_outliers[['event']]
     x_g <- rep_stats_no_outliers[['genotype']]
@@ -860,7 +862,7 @@ if (MAKE_GM_PLOTS) {
 
     gmc_lim <- c(0, 1)
     cc_lim <- c(0, 275)
-    drawdown_lim <- c(0, 75)
+    drawdown_lim <- c(0, 100)
     a_lim <- c(0, 50)
     iwue_lim <- c(0, 120)
     g_ratio_lim <- c(0, 1)
@@ -869,7 +871,7 @@ if (MAKE_GM_PLOTS) {
     box_plot_param <- list(
       list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_er, S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
       list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_er, S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_cm_avg']],    X = x_er, S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
       list(Y = rep_stats_no_outliers[['A_avg']],             X = x_er, S = x_g, ylab = a_lab,        ylim = a_lim),
       list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_er, S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
       list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_er, S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),
@@ -879,7 +881,7 @@ if (MAKE_GM_PLOTS) {
     box_bar_plot_param <- list(
       list(Y = rep_stats_no_outliers[['gmc_avg']],           X = x_e,  S = x_g, ylab = gmc_lab,      ylim = gmc_lim),
       list(Y = rep_stats_no_outliers[['Cc_avg']],            X = x_e,  S = x_g, ylab = cc_lab,       ylim = cc_lim),
-      list(Y = rep_stats_no_outliers[['drawdown_m_avg']],    X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
+      list(Y = rep_stats_no_outliers[['drawdown_cm_avg']],    X = x_e,  S = x_g, ylab = drawdown_lab, ylim = drawdown_lim),
       list(Y = rep_stats_no_outliers[['A_avg']],             X = x_e,  S = x_g, ylab = a_lab,        ylim = a_lim),
       list(Y = rep_stats_no_outliers[['iWUE_avg']],          X = x_e,  S = x_g, ylab = iwue_lab,     ylim = iwue_lim),
       list(Y = rep_stats_no_outliers[['g_ratio_avg']],       X = x_e,  S = x_g, ylab = g_ratio_lab,  ylim = g_ratio_lim),

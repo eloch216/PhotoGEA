@@ -229,6 +229,10 @@ data set:
   concentration at the leaf surface.
 - `calculate_c3_assimilation`: Calculates assimilation rates using the
   Farquhar-von-Caemmerer-Berry model for C3 photosynthesis.
+- `calculate_c3_limitations_grassi`: Calculates limitations to C3 photosynthesis
+  using the Grassi & Magnani (2005) framework.
+- `calculate_c3_limitations_warren`: Calculates limitations to C3 photosynthesis
+  using the Warren et al. (2003) framework.
 - `calculate_c4_assimilation`: Calculate assimilation rates using S. von
   Caemmerer's model for C4 photosynthesis.
 - `calculate_gamma_star`: Calculates the CO~2~ compensation point in the absence
@@ -245,6 +249,8 @@ data set:
   factors.
 - `calculate_total_pressure`: Calculates the total pressure in the Licor
   measurement chamber.
+- `estimate_operating_point`: Estimates internal CO~2~ concentrations and
+  assimilation rates under atmospheric CO~2~ concentrations.
 
 (This list is not exhaustive; instead, it only includes functions for which
 documentation has been written.)
@@ -262,11 +268,11 @@ response curves:
   the Ball-Berry index.
 - `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.
   chloroplastic CO~2~ concentration.
+- `fit_c3_variable_j`: Calculates a nonlinear fit of net CO2 assimilation vs.
+  chloroplastic CO~2~ concentration, estimating mesophyll conductance from
+  chlorophyll fluorescence data.
 - `fit_c4_aci`: Calculates a nonlinear fit of net CO2 assimilation vs. the
   partial pressure of CO~2~ in the mesophyll.
-
-(This list is not exhaustive; instead, it only includes functions for which
-documentation has been written.)
 
 These functions generally assume that the input `exdf` object represents a
 single response curve, and they return both the optimized parameter values and

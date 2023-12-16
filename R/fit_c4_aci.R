@@ -1,6 +1,9 @@
 fit_c4_aci <- function(
     replicate_exdf,
+    Ca_atmospheric,
     a_column_name = 'A',
+    ca_column_name = 'Ca',
+    ci_column_name = 'Ci',
     pcm_column_name = 'PCm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -10,11 +13,11 @@ fit_c4_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    POm = 210000,              # microbar
-    gbs = 0.003,               # mol / m^2 / s / bar
-    Rm_frac = 0.5,             # dimensionless
-    alpha = 0,                 # dimensionless
-    OPTIM_FUN = default_optimizer(),
+    POm = 210000,  # microbar
+    gbs = 0.003,   # mol / m^2 / s / bar
+    Rm_frac = 0.5, # dimensionless
+    alpha = 0,     # dimensionless
+    OPTIM_FUN = optimizer_nmkb(),
     initial_guess_fun = initial_guess_c4_aci(
         gbs = gbs,
         Rm_frac = Rm_frac,
@@ -37,6 +40,8 @@ fit_c4_aci <- function(
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
     required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
     required_variables[[pcm_column_name]] <- 'microbar'
     required_variables[[kc_column_name]] <- 'microbar'
     required_variables[[ko_column_name]] <- 'mbar'
@@ -141,6 +146,12 @@ fit_c4_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Add columns for the best-fit parameter values
+    replicate_exdf[, 'Rd_at_25'] <- best_X[1]
+    replicate_exdf[, 'Vcmax_at_25'] <- best_X[2]
+    replicate_exdf[, 'Vpmax_at_25'] <- best_X[3]
+    replicate_exdf[, 'Vpr'] <- best_X[4]
+
     # Add a column for the residuals
     replicate_exdf <- set_variable(
         replicate_exdf,
@@ -148,6 +159,16 @@ fit_c4_aci <- function(
         replicate_exdf$units[[a_column_name]],
         'fit_c4_aci',
         replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
+    )
+
+    # Document the new columns that were added
+    replicate_exdf <- document_variables(
+        replicate_exdf,
+        c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)'),
+        c('fit_c4_aci', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpmax_at_25',    'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci', 'Vpr',            'micromol m^(-2) s^(-1)')
     )
 
     # Get the replicate identifier columns
@@ -188,20 +209,66 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'feval'] <- optim_result[['feval']]
     replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
 
+    # Get operating point information
+    operating_point_info <- estimate_operating_point(
+        replicate_exdf,
+        Ca_atmospheric,
+        type = 'c4',
+        a_column_name,
+        ca_column_name,
+        cc_column_name = NULL,
+        ci_column_name,
+        pcm_column_name,
+        return_list = TRUE
+    )
+
+    # Estimate An at the operating point
+    operating_An_model <- calculate_c4_assimilation(
+        operating_point_info$operating_exdf,
+        best_X[1], # Rd
+        best_X[2], # Vcmax
+        best_X[3], # Vpmax
+        best_X[4], # Vpr
+        POm,
+        gbs,
+        Rm_frac,
+        alpha,
+        pcm_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        gamma_star_column_name,
+        ao_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        rd_norm_column_name,
+        perform_checks = FALSE
+    )[, 'An']
+
+    # Store the results
+    replicate_identifiers[, 'operating_Ci']       <- operating_point_info$operating_Ci
+    replicate_identifiers[, 'operating_PCm']      <- operating_point_info$operating_PCm
+    replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
+    replicate_identifiers[, 'operating_An_model'] <- operating_An_model
+
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c4_aci', 'Rd_at_25',        'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vcmax_at_25',     'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpmax_at_25',     'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpr',             'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Rd_tl_avg',       'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vcmax_tl_avg',    'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpmax_tl_avg',    'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'convergence',     ''),
-        c('fit_c4_aci', 'convergence_msg', ''),
-        c('fit_c4_aci', 'feval',           ''),
-        c('fit_c4_aci', 'optimum_val',     '')
+        c('fit_c4_aci',               'Rd_at_25',           'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vcmax_at_25',        'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vpmax_at_25',        'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vpr',                'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Rd_tl_avg',          'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vcmax_tl_avg',       'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vpmax_tl_avg',       'micromol m^(-2) s^(-1)'),
+        c('estimate_operating_point', 'operating_Ci',       replicate_exdf$units[[ci_column_name]]),
+        c('estimate_operating_point', 'operating_PCm',      replicate_exdf$units[[pcm_column_name]]),
+        c('estimate_operating_point', 'operating_An',       replicate_exdf$units[[a_column_name]]),
+        c('fit_c4_aci',               'operating_An_model', replicate_exdf$units[[a_column_name]]),
+        c('fit_c4_aci',               'convergence',        ''),
+        c('fit_c4_aci',               'convergence_msg',    ''),
+        c('fit_c4_aci',               'feval',              ''),
+        c('fit_c4_aci',               'optimum_val',        '')
     )
 
     # Return the results
