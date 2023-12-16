@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C3 A-Ci Curves">
 <meta property="og:description" content="PhotoGEA">
@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -728,6 +728,7 @@ and return the resulting parameters and fits:</p>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>         <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Note that in this command, we specified
@@ -764,24 +765,39 @@ make plots of all the fits, which are stored in
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Note that in addition to the fitted values of <code>A</code>, the
 output also includes values of the potential limiting rates
-<code>Ac</code>, <code>Aj</code>, and <code>Ap</code>. We can also take
-a look at these, although they make the plots a bit busy. We can also
-choose to plot assimilation against <code>Cc</code> rather than
-<code>Ci</code>:</p>
+<code>Ac</code>, <code>Aj</code>, and <code>Ap</code>, as well as the
+estimated operating point. We can take a look at these, although they
+make the plots a bit busy. We can also choose to plot assimilation
+against <code>Cc</code> rather than <code>Ci</code>, and include the
+operating point as an open circle:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'l'</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Chloroplast CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  par.settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_line_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_point_colors</a></span><span class="op">(</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  curve_ids <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>  panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.xyplot.html" class="external-link">panel.xyplot</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">curve_id</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">$</span><span class="va">curve_ids</span><span class="op">[</span><span class="va">args</span><span class="op">$</span><span class="va">subscripts</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>    <span class="va">fit_param</span> <span class="op">&lt;-</span></span>
+<span>      <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="va">curve_id</span>, <span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/llines.html" class="external-link">panel.points</a></span><span class="op">(</span></span>
+<span>        <span class="va">fit_param</span><span class="op">$</span><span class="va">operating_An_model</span> <span class="op">~</span> <span class="va">fit_param</span><span class="op">$</span><span class="va">operating_Cc</span>,</span>
+<span>        type <span class="op">=</span> <span class="st">'p'</span>,</span>
+<span>        col <span class="op">=</span> <span class="st">'black'</span>,</span>
+<span>        pch <span class="op">=</span> <span class="fl">1</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/fit_aci_limiting-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Considering these two plots, we can see that although the model is
@@ -807,6 +823,7 @@ can sometimes produce more reasonable fits.</p>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
 <span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
@@ -816,15 +833,29 @@ can sometimes produce more reasonable fits.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'l'</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Chloroplast CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  par.settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_line_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_point_colors</a></span><span class="op">(</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  curve_ids <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>  panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.xyplot.html" class="external-link">panel.xyplot</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">curve_id</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">$</span><span class="va">curve_ids</span><span class="op">[</span><span class="va">args</span><span class="op">$</span><span class="va">subscripts</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>    <span class="va">fit_param</span> <span class="op">&lt;-</span></span>
+<span>      <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="va">curve_id</span>, <span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/llines.html" class="external-link">panel.points</a></span><span class="op">(</span></span>
+<span>        <span class="va">fit_param</span><span class="op">$</span><span class="va">operating_An_model</span> <span class="op">~</span> <span class="va">fit_param</span><span class="op">$</span><span class="va">operating_Cc</span>,</span>
+<span>        type <span class="op">=</span> <span class="st">'p'</span>,</span>
+<span>        col <span class="op">=</span> <span class="st">'black'</span>,</span>
+<span>        pch <span class="op">=</span> <span class="fl">1</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/fit_c3_aci-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Here we can see that <code>Aj</code> is now significantly lower in
@@ -923,33 +954,33 @@ can view them as follows:</p>
 <span><span class="co">#&gt; 5                        ripe2                   soybean                     5b</span></span>
 <span><span class="co">#&gt; 6                        ripe2                   tobacco                      4</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         131.07955</span></span>
-<span><span class="co">#&gt; 2                                         152.62464</span></span>
-<span><span class="co">#&gt; 3                                         127.00819</span></span>
-<span><span class="co">#&gt; 4                                         106.53575</span></span>
-<span><span class="co">#&gt; 5                                         121.02817</span></span>
-<span><span class="co">#&gt; 6                                          94.34416</span></span>
+<span><span class="co">#&gt; 1                                         103.83134</span></span>
+<span><span class="co">#&gt; 2                                         152.37207</span></span>
+<span><span class="co">#&gt; 3                                         126.91187</span></span>
+<span><span class="co">#&gt; 4                                         106.78006</span></span>
+<span><span class="co">#&gt; 5                                         122.19041</span></span>
+<span><span class="co">#&gt; 6                                          93.20743</span></span>
 <span><span class="co">#&gt;   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      189.7304</span></span>
-<span><span class="co">#&gt; 2                                      240.4423</span></span>
-<span><span class="co">#&gt; 3                                      211.5295</span></span>
-<span><span class="co">#&gt; 4                                      168.7631</span></span>
-<span><span class="co">#&gt; 5                                      160.3583</span></span>
-<span><span class="co">#&gt; 6                                      188.6700</span></span>
+<span><span class="co">#&gt; 1                                      202.7426</span></span>
+<span><span class="co">#&gt; 2                                      240.2689</span></span>
+<span><span class="co">#&gt; 3                                      211.6049</span></span>
+<span><span class="co">#&gt; 4                                      189.1701</span></span>
+<span><span class="co">#&gt; 5                                      160.9122</span></span>
+<span><span class="co">#&gt; 6                                      158.7684</span></span>
 <span><span class="co">#&gt;   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                       3.254662</span></span>
-<span><span class="co">#&gt; 2                                       3.216083</span></span>
-<span><span class="co">#&gt; 3                                       2.761860</span></span>
-<span><span class="co">#&gt; 4                                       2.775662</span></span>
-<span><span class="co">#&gt; 5                                       3.879665</span></span>
-<span><span class="co">#&gt; 6                                       2.252303</span></span>
+<span><span class="co">#&gt; 1                                      0.8472307</span></span>
+<span><span class="co">#&gt; 2                                      2.3270835</span></span>
+<span><span class="co">#&gt; 3                                      1.9856870</span></span>
+<span><span class="co">#&gt; 4                                      2.0581130</span></span>
+<span><span class="co">#&gt; 5                                      2.7882040</span></span>
+<span><span class="co">#&gt; 6                                      1.4456288</span></span>
 <span><span class="co">#&gt;   TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                  22.41905</span></span>
-<span><span class="co">#&gt; 2                                  23.72679</span></span>
-<span><span class="co">#&gt; 3                                  21.88365</span></span>
-<span><span class="co">#&gt; 4                                  13.26002</span></span>
-<span><span class="co">#&gt; 5                                  24.86546</span></span>
-<span><span class="co">#&gt; 6                                  15.34649</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                  24.85118</span></span>
+<span><span class="co">#&gt; 2                                  27.68118</span></span>
+<span><span class="co">#&gt; 3                                  23.97572</span></span>
+<span><span class="co">#&gt; 4                                  13.29043</span></span>
+<span><span class="co">#&gt; 5                                  31.56510</span></span>
+<span><span class="co">#&gt; 6                                  22.78341</span></span></code></pre></div>
 <p>Alternatively, we can extract average values of the parameters for
 each species using the <code>basic_stats</code> function from
 <code>PhotoGEA</code>:</p>
@@ -970,29 +1001,29 @@ each species using the <code>basic_stats</code> function from
 <span><span class="co">#&gt; 1                   soybean</span></span>
 <span><span class="co">#&gt; 2                   tobacco</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              119.5478</span></span>
-<span><span class="co">#&gt; 2                                              124.6590</span></span>
+<span><span class="co">#&gt; 1                                              110.9339</span></span>
+<span><span class="co">#&gt; 2                                              124.1638</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                 7.123745</span></span>
-<span><span class="co">#&gt; 2                                                16.865078</span></span>
+<span><span class="co">#&gt; 1                                                 5.692242</span></span>
+<span><span class="co">#&gt; 2                                                17.134545</span></span>
 <span><span class="co">#&gt;   J_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                          172.9506</span></span>
-<span><span class="co">#&gt; 2                                          213.5473</span></span>
+<span><span class="co">#&gt; 1                                          184.2750</span></span>
+<span><span class="co">#&gt; 2                                          203.5474</span></span>
 <span><span class="co">#&gt;   J_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             8.733683</span></span>
-<span><span class="co">#&gt; 2                                            14.979403</span></span>
+<span><span class="co">#&gt; 1                                             12.32095</span></span>
+<span><span class="co">#&gt; 2                                             23.86959</span></span>
 <span><span class="co">#&gt;   Rd_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                           3.303330</span></span>
-<span><span class="co">#&gt; 2                                           2.743415</span></span>
+<span><span class="co">#&gt; 1                                           1.897849</span></span>
+<span><span class="co">#&gt; 2                                           1.919466</span></span>
 <span><span class="co">#&gt;   Rd_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             0.3196257</span></span>
-<span><span class="co">#&gt; 2                                             0.2783724</span></span>
+<span><span class="co">#&gt; 1                                             0.5660117</span></span>
+<span><span class="co">#&gt; 2                                             0.2565992</span></span>
 <span><span class="co">#&gt;   TPU_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      20.18151</span></span>
-<span><span class="co">#&gt; 2                                      20.31897</span></span>
+<span><span class="co">#&gt; 1                                      23.23557</span></span>
+<span><span class="co">#&gt; 2                                      24.81344</span></span>
 <span><span class="co">#&gt;   TPU_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         3.532067</span></span>
-<span><span class="co">#&gt; 2                                         2.542540</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                         5.336934</span></span>
+<span><span class="co">#&gt; 2                                         1.474603</span></span></code></pre></div>
 <p>Of course, more advanced statistical tests to check for differences
 between groups can also be performed within R using other packages such
 as <code>onewaytests</code> or <code>DescTools</code>. Alternatively,
@@ -1268,6 +1299,7 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
 <span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
@@ -1277,15 +1309,29 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">+</span> <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'l'</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Chloroplast CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  par.settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>    superpose.line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_line_colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../reference/multi_curve_colors.html">multi_curve_point_colors</a></span><span class="op">(</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  curve_ids <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>  panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.xyplot.html" class="external-link">panel.xyplot</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">curve_id</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">$</span><span class="va">curve_ids</span><span class="op">[</span><span class="va">args</span><span class="op">$</span><span class="va">subscripts</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>    <span class="va">fit_param</span> <span class="op">&lt;-</span></span>
+<span>      <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="va">curve_id</span>, <span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/llines.html" class="external-link">panel.points</a></span><span class="op">(</span></span>
+<span>        <span class="va">fit_param</span><span class="op">$</span><span class="va">operating_An_model</span> <span class="op">~</span> <span class="va">fit_param</span><span class="op">$</span><span class="va">operating_Cc</span>,</span>
+<span>        type <span class="op">=</span> <span class="st">'p'</span>,</span>
+<span>        col <span class="op">=</span> <span class="st">'black'</span>,</span>
+<span>        pch <span class="op">=</span> <span class="fl">1</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the C3 A-Ci fits</span></span>

@@ -4,7 +4,7 @@
   parameters. This function can accomodate alternative column names for the
   variables taken from the Licor file in case they change at some point in the
   future. This function also checks the units of each required column and will
-  produce an error if any units are incorrect."><title>Fits a C4 assimilation model to an experimental curve — fit_c4_aci • PhotoGEA</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fits a C4 assimilation model to an experimental curve — fit_c4_aci"><meta property="og:description" content="Fits a model to an experimentally measured C4 CO2 response curve using the
+  produce an error if any units are incorrect."><title>Fits a C4 assimilation model to an experimental curve — fit_c4_aci • PhotoGEA</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fits a C4 assimilation model to an experimental curve — fit_c4_aci"><meta property="og:description" content="Fits a model to an experimentally measured C4 CO2 response curve using the
   data in the exdf object along with a few other user-supplied
   parameters. This function can accomodate alternative column names for the
   variables taken from the Licor file in case they change at some point in the
@@ -20,7 +20,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,10 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_c4_aci</span><span class="op">(</span></span>
 <span>    <span class="va">replicate_exdf</span>,</span>
+<span>    <span class="va">Ca_atmospheric</span>,</span>
 <span>    a_column_name <span class="op">=</span> <span class="st">'A'</span>,</span>
+<span>    ca_column_name <span class="op">=</span> <span class="st">'Ca'</span>,</span>
+<span>    ci_column_name <span class="op">=</span> <span class="st">'Ci'</span>,</span>
 <span>    pcm_column_name <span class="op">=</span> <span class="st">'PCm'</span>,</span>
 <span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
 <span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
@@ -99,7 +102,7 @@
 <span>    gbs <span class="op">=</span> <span class="fl">0.003</span>,</span>
 <span>    Rm_frac <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>    OPTIM_FUN <span class="op">=</span> <span class="fu"><a href="default_optimizer.html">default_optimizer</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    OPTIM_FUN <span class="op">=</span> <span class="fu"><a href="optimizers.html">optimizer_nmkb</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    initial_guess_fun <span class="op">=</span> <span class="fu"><a href="initial_guess_c4_aci.html">initial_guess_c4_aci</a></span><span class="op">(</span></span>
 <span>      gbs <span class="op">=</span> <span class="va">gbs</span>,</span>
 <span>      Rm_frac <span class="op">=</span> <span class="va">Rm_frac</span>,</span>
@@ -122,9 +125,25 @@
 <dd><p>An <code>exdf</code> object representing one CO2 response curve.</p></dd>
 
 
+  <dt>Ca_atmospheric</dt>
+<dd><p>The atmospheric CO2 concentration (with units of <code>micromol mol^(-1)</code>);
+    this will be used by <code><a href="estimate_operating_point.html">estimate_operating_point</a></code> to estimate the
+    operating point.</p></dd>
+
+
   <dt>a_column_name</dt>
 <dd><p>The name of the column in <code>replicate_exdf</code> that contains the net
     assimilation in <code>micromol m^(-2) s^(-1)</code>.</p></dd>
+
+
+  <dt>ca_column_name</dt>
+<dd><p>The name of the column in <code>replicate_exdf</code> that contains the
+    ambient CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
+
+
+  <dt>ci_column_name</dt>
+<dd><p>The name of the column in <code>replicate_exdf</code> that contains the
+    intercellular CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
   <dt>pcm_column_name</dt>
@@ -259,6 +278,12 @@
   is determined by the value of the <code>fixed</code> input argument, and the value
   of <code>Vpr</code> specified in this way will override any value returned by
   <code>initial_guess_fun</code>.</p>
+<p>Once the best-fit parameters have been determined, this function also
+  estimates the operating value of `<code>PCm</code> from the atmospheric CO2
+  concentration <code>atmospheric_ca</code> using
+  <code><a href="estimate_operating_point.html">estimate_operating_point</a></code>, and then uses that value to estimate
+  the modeled <code>An</code> at the operating point via
+  <code><a href="calculate_c4_assimilation.html">calculate_c4_assimilation</a></code>.</p>
 <p>This function assumes that <code>replicate_exdf</code> represents a single
   C4 A-Ci curve. To fit multiple curves at once, this function is often used
   along with <code><a href="by.exdf.html">by.exdf</a></code> and <code><a href="consolidate.html">consolidate</a></code>.</p>
@@ -278,6 +303,9 @@
                   name is determined by appending <code>'_residuals'</code> to the end
                   of <code>a_column_name</code>; typically, this will be
                   <code>'A_residuals'</code>.</p></li>
+<li><p>Values of fitting parameters at 25 degrees C will be stored in
+                  the <code>Rd_at_25</code>, <code>Vcmax_at_25</code>, <code>Vpmax_at_25</code>,
+                  and <code>Vpr</code> columns.</p></li>
 <li><p>The other outputs from <code><a href="calculate_c4_assimilation.html">calculate_c4_assimilation</a></code>
                   will be stored in columns with the usual names:
                   <code>Vcmax_tl</code>, <code>Vpmax_tl</code>, <code>Rd_tl</code>, <code>Rm_tl</code>,
@@ -291,6 +319,9 @@
                   leaf-temperature-dependent values are stored in
                   <code>X_tl_avg</code> columns: <code>Rd_tl_avg</code>,
                   <code>Vcmax_tl_avg</code>, and <code>Vpmax_tl_avg</code>.</p></li>
+<li><p>Information about the operating point is stored in
+                  <code>operating_PCm</code>, <code>operating_Ci</code>,
+                  <code>operating_An</code>, and <code>operating_An_model</code>.</p></li>
 <li><p>The <code>convergence</code> column indicates whether the fit was
                   successful (<code>==0</code>) or if the optimizer encountered a
                   problem (<code>!=0</code>).</p></li>
@@ -333,14 +364,16 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit just one curve from the data set (it is rare to do this)</span></span></span>
 <span class="r-in"><span><span class="va">one_result</span> <span class="op">&lt;-</span> <span class="fu">fit_c4_aci</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'maize - 5'</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'maize - 5'</span>, , <span class="cn">TRUE</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit all curves in the data set (it is more common to do this)</span></span></span>
 <span class="r-in"><span><span class="va">aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>  <span class="va">fit_c4_aci</span></span></span>
+<span class="r-in"><span>  <span class="va">fit_c4_aci</span>,</span></span>
+<span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># View the fitting parameters for each species / plot</span></span></span>
@@ -348,6 +381,7 @@
 <span class="r-in"><span>  <span class="st">'species'</span>, <span class="st">'plot'</span>,                                       <span class="co"># identifiers</span></span></span>
 <span class="r-in"><span>  <span class="st">'Rd_at_25'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vpmax_at_25'</span>, <span class="st">'Vpr'</span>,         <span class="co"># parameters scaled to 25 degrees C</span></span></span>
 <span class="r-in"><span>  <span class="st">'Rd_tl_avg'</span>, <span class="st">'Vcmax_tl_avg'</span>, <span class="st">'Vpmax_tl_avg'</span>,             <span class="co"># average temperature-dependent values</span></span></span>
+<span class="r-in"><span>  <span class="st">'operating_Ci'</span>, <span class="st">'operating_An'</span>, <span class="st">'operating_An_model'</span>,    <span class="co"># operating point info</span></span></span>
 <span class="r-in"><span>  <span class="st">'dof'</span>, <span class="st">'RSS'</span>, <span class="st">'MSE'</span>, <span class="st">'RMSE'</span>, <span class="st">'RSE'</span>,                      <span class="co"># residual stats</span></span></span>
 <span class="r-in"><span>  <span class="st">'convergence'</span>, <span class="st">'convergence_msg'</span>, <span class="st">'feval'</span>, <span class="st">'optimum_val'</span> <span class="co"># convergence info</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -381,14 +415,26 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           62.96484</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           71.32106</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           67.59896</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Vpmax_tl_avg [fit_c4_aci] (micromol m^(-2) s^(-1)) dof [residual_stats] (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           257.0925                        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           208.0441                        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           208.3413                        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   RSS [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                         230.39540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                         448.93327</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          70.77968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Vpmax_tl_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           257.0925</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           208.0441</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           208.3413</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   operating_Ci [estimate_operating_point] (micromol mol^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    183.4839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                    166.2077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                    158.8843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   operating_An [estimate_operating_point] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                         52.35755</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                         51.85285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                         51.32954</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   operating_An_model [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                 56.54204</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                 58.58963</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                 56.93634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dof [residual_stats] (NA) RSS [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        10                                         230.39540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        10                                         448.93327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        10                                          70.77968</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MSE [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                         17.722723</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                         34.533328</span>
