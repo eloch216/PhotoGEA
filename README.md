@@ -7,7 +7,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/eloch216/PhotoGEA/graph/badge.svg)](https://codecov.io/gh/eloch216/PhotoGEA)
+[![codecov](https://codecov.io/gh/eloch216/PhotoGEA/graph/badge.svg)](https://app.codecov.io/gh/eloch216/PhotoGEA?branch=main)
 <!-- badges: end -->
 
 ### Overview
