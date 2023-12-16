@@ -191,19 +191,19 @@ ggplot2_avg_rc <- function(
 if (PERFORM_CALCULATIONS) {
     multi_file_info <- lapply(LICOR_FILES_TO_PROCESS, function(fname) {
         licor_exdf <- read_gasex_file(fname, TIME_COLUMN_NAME)
-        
+
         if (GET_INFO_FROM_FILENAME) {
           trimmed_name <- tools::file_path_sans_ext(basename(fname))
-          
+
           info_phrase <-
             toupper(regmatches(trimmed_name, regexpr("[[:alnum:]]+ [[:alnum:]]+$", trimmed_name)))
-          
+
           licor_exdf[, EVENT_COLUMN_NAME] <- strsplit(info_phrase, ' ')[[1]][1]
           licor_exdf[, REP_COLUMN_NAME] <- strsplit(info_phrase, ' ')[[1]][2]
           licor_exdf[, 'plant_id'] <- info_phrase
           licor_exdf[, 'file_name'] <- fname
         }
-        
+
         return(licor_exdf)
     })
 
@@ -214,20 +214,16 @@ if (PERFORM_CALCULATIONS) {
     })
 
     combined_info <- do.call(rbind, extracted_multi_file_info)
-    
+
     # Determine if there is a `plot` column
     HAS_PLOT_INFO <- 'plot' %in% colnames(combined_info)
-    
+
     # Add a column that combines `plot` and `replicate` if necessary
     if (HAS_PLOT_INFO) {
-      combined_info <- process_id_columns(
-        combined_info,
-        "plot",
-        REP_COLUMN_NAME,
-        paste0('plot_', REP_COLUMN_NAME)
-      )
+        combined_info[, paste0('plot_', REP_COLUMN_NAME)] <-
+            paste(combined_info[, 'plot'], combined_info[, REP_COLUMN_NAME])
     }
-    
+
     # Reset the rep column name depending on whether there is plot information
     REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
       paste0('plot_', REP_COLUMN_NAME)
@@ -235,13 +231,13 @@ if (PERFORM_CALCULATIONS) {
       REP_COLUMN_NAME
     }
 
-    combined_info <- process_id_columns(
-        combined_info,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        UNIQUE_ID_COLUMN_NAME
-    )
-    
+    combined_info[, UNIQUE_ID_COLUMN_NAME] <-
+        paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
+
+    # Factorize ID columns
+    combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
+    combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
+
     # Extract just the induction curves, if necessary
     if ('type' %in% colnames(combined_info)) {
       combined_info <- combined_info[combined_info[, 'type'] == 'induction', , TRUE]
@@ -266,7 +262,7 @@ if (PERFORM_CALCULATIONS) {
     # Add an "elapsed time" column
     combined_info[, 'elapsed_time'] <-
         (combined_info[, 'seq_num'] - 1) * TIME_INCREMENT
-    
+
     # Remove specific problematic points
     if (REMOVE_SPECIFIC_POINTS) {
       # Specify the points to remove
@@ -308,13 +304,6 @@ if (PERFORM_CALCULATIONS) {
 
     all_samples <- combined_info[['main_data']]
 }
-
-
-# Convert event columns to factors to control the order of events in subsequent
-# plots
-all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
-all_samples <- factorize_id_column(all_samples, EVENT_COLUMN_NAME)
-#all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {

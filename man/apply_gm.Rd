@@ -116,9 +116,9 @@
   across the mesophyll into the chloroplast, there is a decrease in CO2
   concentration at each step. Sometimes it is useful to calculate these changes,
   which are usually referred to as "CO2 drawdown" values. So, in addition to
-  \code{Ci}, this function (optionally) calculates the drawdown across the
-  stomata (\code{drawndown_s = Ca - Ci}) and the drawdown across the mesophyll
-  (\code{drawdown_m = Ci - Cc}).
+  \code{Ci}, this function (optionally) calculates the drawdown of CO2 across
+  the stomata (\code{drawndown_cs = Ca - Ci}) and the drawdown of CO2 across the
+  mesophyll (\code{drawdown_cm = Ci - Cc}).
 
   _Note_: mesophyll conductance is not specified in typical Licor files, so it
   usually must be added using \code{\link{set_variable}} before calling
@@ -136,7 +136,7 @@
   An \code{exdf} object based on \code{licor_exdf} that includes the following
   additional columns, calculated as described above: \code{Pci} and \code{Ci}
   (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
-  \code{drawndown_s}, and \code{drawdown_m}. The category for each of these new
+  \code{drawndown_s}, and \code{drawdown_cm}. The category for each of these new
   columns is \code{apply_gm} to indicate that they were created using this
   function.
 }

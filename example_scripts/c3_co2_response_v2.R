@@ -130,12 +130,8 @@ if (AVERAGE_OVER_PLOTS && !HAS_PLOT_INFO) {
 
 # Add a column that combines `plot` and `replicate` if necessary
 if (HAS_PLOT_INFO) {
-  licor_data <- process_id_columns(
-    licor_data,
-    'plot',
-    REP_COLUMN_NAME,
-    paste0('plot_', REP_COLUMN_NAME)
-  )
+  licor_data[, paste0('plot_', REP_COLUMN_NAME)] <-
+    paste(licor_data[, 'plot'], licor_data[, REP_COLUMN_NAME])
 }
 
 # Set the rep column name depending on whether there is plot information
@@ -147,12 +143,12 @@ REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
 
 # Add a column that combines `event` and `replicate` that we can use to identify
 # each curve in the data set
-licor_data <- process_id_columns(
-    licor_data,
-    EVENT_COLUMN_NAME,
-    REP_COLUMN_NAME,
-    'curve_identifier'
-)
+licor_data[, 'curve_identifier'] <-
+    paste(licor_data[, EVENT_COLUMN_NAME], licor_data[, REP_COLUMN_NAME])
+
+# Factorize ID columns
+licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
+licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
 # Remove certain events
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
@@ -327,7 +323,7 @@ if (OVERRIDE_GAMMA_STAR) {
 }
 
 # Calculate intrinsic water-use efficiency
-licor_data <- calculate_iwue(licor_data, 'A', 'gsw', 'iWUE')
+licor_data <- calculate_wue(licor_data)
 
 # Truncate the Ci range for fitting
 licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]
@@ -524,10 +520,6 @@ if (AVERAGE_OVER_PLOTS) {
   aci_parameters <- do.call(rbind, aci_parameters_list)
 }
 
-all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
-aci_parameters <- factorize_id_column(aci_parameters, EVENT_COLUMN_NAME)
-all_samples <- factorize_id_column(all_samples, 'curve_identifier')
-
 if (MAKE_ANALYSIS_PLOTS) {
     # Make box-whisker plots and bar charts
 
@@ -689,10 +681,12 @@ if (SAVE_CSV) {
       function(x) {
         tmp2 <- data.frame(
           event = x[1, EVENT_COLUMN_NAME],
-          plot = x[1, 'plot'],
           replicate = x[1, 'replicate'],
           curve_identifier = x[1, 'curve_identifier']
         )
+        if (HAS_PLOT_INFO) {
+            tmp2[, 'plot'] <- x[1, 'plot']
+        }
         for (cn in col_to_average_as) {
           tmp3 <- as.data.frame(t(data.frame(a = x[[cn]])))
           colnames(tmp3) <- paste0(cn, '_', x$seq_num)

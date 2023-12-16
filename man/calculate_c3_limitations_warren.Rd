@@ -205,12 +205,13 @@
   with infinite stomatal or mesophyll conductance. This can be done with a 1D
   diffusion equation expressed using drawdown values:
 
-  \code{Cc = Ca - drawdown_s - drawdown_m},
+  \code{Cc = Ca - drawdown_cs - drawdown_cm},
 
-  where \code{drawdown_s = Ca - Ci} is the drawdown across the stomata
-  (assuming infinite boundary layer conductance) and \code{drawdown_m = Ci - Cc}
-  is the drawdown across the mesophyll. If one conductance is infinite, the
-  corresponding drawdown becomes zero. Thus, we have:
+  where \code{drawdown_cs = Ca - Ci} is the drawdown of CO2 across the stomata
+  (assuming infinite boundary layer conductance) and
+  \code{drawdown_cm = Ci - Cc} is the drawdown of CO2 across the mesophyll. If
+  one conductance is infinite, the corresponding drawdown becomes zero. Thus, we
+  have:
 
   \code{Cc_inf_gsc = Ca - 0 - (Ci - Cc) = Ca - Ci + Cc}
 

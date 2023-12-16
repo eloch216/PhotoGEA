@@ -81,7 +81,6 @@ xyplot_avg_rc <- function(
         ))
     }
     rc_cols <- cols[seq_len(num_group_identifiers)]
-    rc_cols <- rev(rc_cols)
 
     # Make a slightly different version of the color specification to use for
     # the error bars

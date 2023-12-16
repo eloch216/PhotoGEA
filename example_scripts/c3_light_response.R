@@ -100,7 +100,6 @@ MEASUREMENT_NUMBER_NAME <- "obs"
 CI_COLUMN_NAME <- "Ci"
 A_COLUMN_NAME <- "A"
 GSW_COLUMN_NAME <- "gsw"
-IWUE_COLUMN_NAME <- "iwue"
 QIN_COLUMN_NAME <- "Qin"
 TIME_COLUMN_NAME <- "time"
 ETR_COLUMN_NAME <- "ETR"
@@ -137,27 +136,19 @@ if (PERFORM_CALCULATIONS) {
 
     # Add a column that combines `plot` and `replicate` if necessary
     if (HAS_PLOT_INFO) {
-      combined_info <- process_id_columns(
-        combined_info,
-        "plot",
-        "replicate",
-        "plot_replicate"
-      )
+      combined_info[, 'plot_replicate'] <-
+        paste(combined_info[, 'plot'], combined_info[, 'replicate'])
     }
 
-    combined_info <- process_id_columns(
-        combined_info,
-        EVENT_COLUMN_NAME,
-        REP_COLUMN_NAME,
-        UNIQUE_ID_COLUMN_NAME
-    )
+    combined_info[, UNIQUE_ID_COLUMN_NAME] <-
+        paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
 
-    combined_info <- calculate_iwue(
-        combined_info,
-        A_COLUMN_NAME,
-        GSW_COLUMN_NAME,
-        IWUE_COLUMN_NAME
-    )
+
+    # Factorize ID columns
+    combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
+    combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
+
+    combined_info <- calculate_wue(combined_info)
 
     # Check the data for any issues before proceeding with additional analysis
     check_licor_data(
@@ -188,11 +179,6 @@ if (CALCULATE_STATS) {
 # Make a subset of the full result for just the one measurement point
 all_samples_one_point <-
     all_samples[all_samples[['seq_num']] == POINT_FOR_BOX_PLOTS,]
-
-# Convert event columns to factors to control the order of events in subsequent
-# plots
-all_samples <- factorize_id_column(all_samples, UNIQUE_ID_COLUMN_NAME)
-all_samples_one_point <- factorize_id_column(all_samples_one_point, EVENT_COLUMN_NAME)
 
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {

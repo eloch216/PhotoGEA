@@ -27,8 +27,8 @@ apply_gm <- function(
     check_required_variables(licor_exdf, required_variables)
 
     # Define new column names
-    drawdown_m_column_name <- 'drawdown_m'
-    drawdown_s_column_name <- 'drawdown_s'
+    drawdown_cm_column_name <- 'drawdown_cm'
+    drawdown_cs_column_name <- 'drawdown_cs'
 
     c_column_name <- if(toupper(photosynthesis_type) == 'C3') {
         'Cc'
@@ -55,16 +55,16 @@ apply_gm <- function(
     )
 
     if (calculate_drawdown) {
-        licor_exdf[,drawdown_m_column_name] <-
+        licor_exdf[,drawdown_cm_column_name] <-
             licor_exdf[, ci_column_name] - licor_exdf[, c_column_name]
 
-        licor_exdf[,drawdown_s_column_name] <-
+        licor_exdf[,drawdown_cs_column_name] <-
             licor_exdf[, ca_column_name] - licor_exdf[, ci_column_name]
 
         licor_exdf <- document_variables(
             licor_exdf,
-            c('apply_gm', drawdown_m_column_name, 'micromol mol^(-1)'),
-            c('apply_gm', drawdown_s_column_name, 'micromol mol^(-1)')
+            c('apply_gm', drawdown_cm_column_name, 'micromol mol^(-1)'),
+            c('apply_gm', drawdown_cs_column_name, 'micromol mol^(-1)')
         )
     }
 
