@@ -31,7 +31,6 @@
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     OPTIM_FUN = optimizer_nmkb(),
@@ -48,11 +47,12 @@
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name
     ),
-    lower = c(0, 0, 0, 0),
-    upper = c(1000, 100, 40, 1000),
-    fixed = c(NA, NA, 40, NA),
+    lower = c(0, 0, 0, 0, 0),
+    upper = c(1, 1000, 100, 40, 1000),
+    fixed = c(0, NA, NA, NA, NA),
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    remove_unreliable_param = FALSE
   )
 }
 
@@ -141,12 +141,6 @@
     The number of NADPH molecules used per C3 cycle.
   }
 
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
-  }
-
   \item{curvature_cj}{
     A dimensionless quadratic curvature parameter greater than or equal to 0 and
     less than or equal to 1 that sets the degree of co-limitation between
@@ -169,30 +163,35 @@
   }
 
   \item{initial_guess_fun}{
-    A function that estimates values of \code{J}, \code{Rd}, \code{TPU}, and
-    \code{Vcmax}; \code{initial_guess_fun} should have one input argument (an
-    \code{exdf} object representing a single response curve) and should return a
-    vector of the estimated values (at 25 degrees C) in the order above.
+    A function that estimates values of \code{alpha} \code{J_at_25},
+    \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25};
+    \code{initial_guess_fun} should have one input argument (an \code{exdf}
+    object representing a single response curve) and should return a vector of
+    the estimated values (at 25 degrees C) in the order above.
   }
 
   \item{lower}{
-    A numeric vector containing lower bounds for the values of \code{J},
-    \code{Rd}, \code{TPU}, and \code{Vcmax}, in that order.
+    A numeric vector containing lower bounds for the values of \code{alpha},
+    \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}, in that
+    order.
   }
 
   \item{upper}{
-    A numeric vector containing upper bounds for the values of \code{J},
-    \code{Rd}, \code{TPU}, and \code{Vcmax}, in that order.
+    A numeric vector containing upper bounds for the values of \code{alpha},
+    \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}, in that
+    order.
   }
 
   \item{fixed}{
-    A numeric vector specifying fixed values of \code{J}, \code{Rd}, \code{TPU},
-    and \code{Vcmax}, in that order. Values of \code{NA} indicate that the
-    corresponding parameter is not fixed and should be varied during the
-    optimization procedure. The default value of this argument fixes \code{TPU}
-    to its upper limit (so net assimilation is never limited by phosphate
-    utilization) and allows the other parameters to vary. To vary all of the
-    parameters, set \code{fixed} to \code{c(NA, NA, NA, NA)}.
+    A numeric vector specifying fixed values of \code{alpha}, \code{J_at_25},
+    \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}, in that order. Values
+    of \code{NA} indicate that the corresponding parameter is not fixed and
+    should be varied during the optimization procedure. The default value of
+    this argument fixes \code{alpha} to 0 and allows the other parameters to
+    vary. To vary all of the parameters, set \code{fixed} to
+    \code{c(NA, NA, NA, NA, NA)}. To disable TPU limitations, set \code{alpha}
+    to 0 and \code{TPU} to a high value (such as its upper limit) by setting
+    \code{fixed} to \code{c(0, NA, NA, 40, NA)}.
   }
 
   \item{cj_crossover_min}{
@@ -206,21 +205,26 @@
     smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
   }
+
+  \item{remove_unreliable_param}{
+    A logical value indicating whether or not to remove unreliable parameter
+    estimates; see below for details.
+  }
 }
 
 \details{
   This function calls \code{\link{calculate_c3_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{J}, \code{Rd}, \code{TPU}, and \code{Vcmax} to find
-  ones that best reproduce the experimentally measured values of net
-  assimilation.
+  vary the values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
+  and \code{Vcmax_at_25} to find ones that best reproduce the experimentally
+  measured values of net assimilation.
 
   The photosynthesis model represented by \code{calculate_c3_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
   necessarily cause changes in its outputs. This is related to the final step in
   the calculations, where the overall assimilation rate is taken to be the
   minimum of three enzyme-limited rates. For example, if the assimilation rate
-  is never phosphate-limited, modifying \code{TPU} will not change the model's
+  is never TPU-limited, modifying \code{TPU} will not change the model's
   outputs. For this reason, derivative-based optimizers tend to struggle when
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that \code{dfoptim::nmkb} is often able to find a
@@ -228,9 +232,9 @@
 
   Sometimes the optimizer will choose biologically unreasonable parameter values
   that nevertheless produce good fits to the supplied assimilation values. A
-  common problem is that the fit result may not follow the expected progression
-  of \code{Ac-limited -> Aj-limited -> Ap-limited} assimilation as \code{Cc}
-  increases. In this case, the optional \code{cj_crossover_min} and
+  common problem is that the fit result may not indicate Ac-limited assimilation
+  at low CO2 values, which should be the case for any A-Ci curves measured at
+  saturating light. In this case, the optional \code{cj_crossover_min} and
   \code{cj_crossover_max} can be used to constrain the range of \code{Cc} values
   (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
   See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
@@ -240,14 +244,21 @@
   estimates of the parameters to use as an initial guess. However, it is
   possible to also use a fixed initial guess by using something like the
   following for the \code{initial_guess_fun}:
-  \code{function(x){c(100, 0.5, 10, 90)}}, which would set the initial guess to
-  \code{J = 100}, \code{Rd = 0.5}, \code{TPU = 10}, and \code{Vcmax = 90}.
+  \code{function(x){c(0, 100, 0.5, 10, 90)}}, which would set the initial guess
+  to \code{alpha = 0}, \code{J_at_25 = 100}, \code{Rd_at_25 = 0.5},
+  \code{TPU = 10}, and \code{Vcmax_at_25 = 90}.
 
-  By default, this function fixes \code{TPU} to a high value (\code{40 micromol
-  m^(-2) s^(-1)}) and allows the other parameters to be fitted. This behavior
-  is determined by the value of the \code{fixed} input argument, and the value
-  of \code{TPU} specified in this way will override any value returned by
-  \code{initial_guess_fun}.
+  By default, this function fixes \code{alpha} to 0 and allows the other
+  parameters to be fitted. This behavior is determined by the value of the
+  \code{fixed} input argument, and the value of \code{alpha} specified in this
+  way will override any value returned by \code{initial_guess_fun}.
+
+  Sometimes the optimizer may choose a set of parameter values where one or more
+  of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
+  \code{Wp}) is never the smallest rate. In this case, the corresponding
+  parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha} & \code{TPU})
+  will be unreliable. If \code{remove_unreliable_param} is \code{TRUE}, such
+  values will be set to \code{NA} in the outputs from \code{fit_c3_aci}.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{Cc} from the atmospheric CO2
@@ -279,20 +290,24 @@
                   the \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
                   columns.
             \item The other outputs from \code{\link{calculate_c3_assimilation}}
-                  will be stored in columns with the usual names: \code{TPU},
-                  \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
+                  will be stored in columns with the usual names: \code{alpha},
+                  \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
+                  \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
                   \code{Aj}, and \code{Ap}.
           }
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{
-            \item The best-fit values are stored in the \code{TPU},
-                  \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
-                  columns.
+            \item The number of points where \code{Wc}, \code{Wj}, and \code{Wp}
+                  are each the smallest potential carboxylation are stored in
+                  the \code{n_Wc_smallest}, \code{n_Wj_smallest}, and
+                  \code{n_Wp_smallest} columns.
+            \item The best-fit values are stored in the \code{alpha},
+                  \code{TPU}, \code{J_at_25}, \code{Rd_at_25}, and
+                  \code{Vcmax_at_25} columns.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  \code{X_tl_avg} columns: \code{J_tl_avg}, \code{Rd_tl_avg},
-                  and \code{Vcmax_tl_avg}.
+                  \code{J_tl_avg}, \code{Rd_tl_avg}, and \code{Vcmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.
@@ -359,6 +374,8 @@ aci_results <- consolidate(by(
 # View the fitting parameters for each species / plot
 col_to_keep <- c(
   'species', 'plot',                                       # identifiers
+  'n_Wc_smallest', 'n_Wj_smallest', 'n_Wp_smallest',       # number of points where
+                                                           #   each process is limiting
   'TPU', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25',             # parameters scaled to 25 degrees C
   'J_tl_avg', 'Rd_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
   'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
@@ -391,6 +408,19 @@ lattice::xyplot(
   xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
   ylab = paste0('Assimilation rate residuals (', aci_results$fits$units$A_residuals, ')')
 )
+
+# In the curves above, there are no points where carboxylation is TPU limited.
+# We can automatically remove the unreliable TPU estimates.
+# Fit all curves in the data set (it is more common to do this)
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c3_aci,
+  Ca_atmospheric = 420,
+  remove_unreliable_param = TRUE
+))
+
+aci_results$parameters[ , col_to_keep, TRUE]
 }
 
 \concept{exdf}

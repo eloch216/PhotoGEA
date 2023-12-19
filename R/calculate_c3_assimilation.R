@@ -1,13 +1,13 @@
 calculate_c3_assimilation <- function(
     exdf_obj,
-    J,            # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Rd,           # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    TPU,          # micromol / m^2 / s   (typically this value is being fitted)
-    Vcmax,        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    POc = 210000, # microbar             (typically this value is known from the experimental setup)
+    alpha,        # dimensionless      (this value is sometimes being fitted)
+    J_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
+    Rd_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
+    TPU,          # micromol / m^2 / s (typically this value is being fitted)
+    Vcmax_at_25,  # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
+    POc = 210000, # microbar           (typically this value is known from the experimental setup)
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
@@ -69,9 +69,9 @@ calculate_c3_assimilation <- function(
     Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
     Gamma_star <- exdf_obj[, gamma_star_column_name] * pressure # microbar
 
-    Vcmax_tl <- Vcmax * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
-    Rd_tl <- Rd * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
-    J_tl <- J * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
+    Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
+    Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
+    J_tl <- J_at_25 * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
 
     # Rubisco-limited carboxylation (micromol / m^2 / s)
     Wc <- PCc * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko))
@@ -120,6 +120,7 @@ calculate_c3_assimilation <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
+            alpha = alpha,
             J_tl = J_tl,
             Rd_tl = Rd_tl,
             TPU = TPU,
@@ -136,6 +137,7 @@ calculate_c3_assimilation <- function(
 
         document_variables(
             output,
+            c('calculate_c3_assimilation', 'alpha',      'dimensionless'),
             c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'TPU',        'micromol m^(-2) s^(-1)'),

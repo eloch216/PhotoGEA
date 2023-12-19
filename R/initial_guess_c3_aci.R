@@ -93,6 +93,7 @@ initial_guess_c3_aci <- function(
 
         # Return the estimates
         c(
+            alpha,
             max(j_estimates),
             as.numeric(rd_estimate), # remove names
             max(tpu_estimates),

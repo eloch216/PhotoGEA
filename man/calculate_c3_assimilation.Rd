@@ -15,14 +15,14 @@
 \usage{
   calculate_c3_assimilation(
     exdf_obj,
-    J,
-    Rd,
+    alpha,
+    J_at_25,
+    Rd_at_25,
     TPU,
-    Vcmax,
+    Vcmax_at_25,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
@@ -41,13 +41,19 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{J}{
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha} is often assumed to be 0.
+  }
+
+  \item{J_at_25}{
     The electron transport rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
     general will depend on the incident photosynthetically active flux density.
   }
 
-  \item{Rd}{
+  \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}.
   }
@@ -57,7 +63,7 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{Vcmax}{
+  \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}.
   }
@@ -76,12 +82,6 @@
 
   \item{nadph_use}{
     The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
   }
 
   \item{curvature_cj}{
@@ -266,9 +266,9 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
-          \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, and \code{Vc}. The
-          category for each of these new columns is
+          above: \code{alpha}, \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl},
+          \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, and
+          \code{Vc}. The category for each of these new columns is
           \code{calculate_c3_assimilation} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
@@ -296,7 +296,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 12, 150, 1, 120)
+assim <- calculate_c3_assimilation(inputs, 0, 150, 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ Cc,
