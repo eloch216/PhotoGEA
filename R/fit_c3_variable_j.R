@@ -185,14 +185,7 @@ fit_c3_variable_j <- function(
     }
 
     # Get an initial guess for all the parameter values
-    initial_guess <- initial_guess_fun(fitting_exdf)
-
-    # Make sure the initial guess lies within (and not on) the bounds
-    lower_temp <- lower + 0.01 * (upper - lower)
-    upper_temp <- upper - 0.01 * (upper - lower)
-
-    initial_guess <- pmax(initial_guess, lower_temp)
-    initial_guess <- pmin(initial_guess, upper_temp)
+    initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
@@ -353,8 +346,8 @@ fit_c3_variable_j <- function(
         best_X[1], # alpha
         best_X[2], # J_at_25
         best_X[3], # Rd_at_25
-        best_X[4], # TPU
-        best_X[5], # Vcmax_at_25
+        best_X[5], # TPU
+        best_X[6], # Vcmax_at_25
         POc,
         atp_use,
         nadph_use,

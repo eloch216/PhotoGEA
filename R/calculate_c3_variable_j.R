@@ -44,7 +44,7 @@ calculate_c3_variable_j <- function(
     PhiPS2 <- exdf_obj[, phips2_column_name]                    # dimensionless
     Qin    <- exdf_obj[, qin_column_name]                       # micromol / m^2 / s
 
-    Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]               # micromol / m^2 / s
+    Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]         # micromol / m^2 / s
 
     # Calculate J_F (actual RuBP regeneration rate as estimated from
     # fluorescence) using Equation 5
