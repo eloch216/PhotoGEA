@@ -1,10 +1,10 @@
 calculate_rd_laisk <- function(
     exdf_obj,
     curve_id_column_name,
+    ci_lower = 40,  # ppm
+    ci_upper = 120, # ppm
     a_column_name = 'A',
-    ci_column_name = 'Ci',
-    Ci_lower = 40, # ppm
-    Ci_upper = 120 # ppm
+    ci_column_name = 'Ci'
 )
 {
     if (!is.exdf(exdf_obj)) {
@@ -21,7 +21,7 @@ calculate_rd_laisk <- function(
 
     # Get a subset of the data corresponding to the specified Ci range
     ci_in_range <-
-        exdf_obj[, ci_column_name] >= Ci_lower & exdf_obj[, ci_column_name] <= Ci_upper
+        exdf_obj[, ci_column_name] >= ci_lower & exdf_obj[, ci_column_name] <= ci_upper
 
     exdf_obj_subset <- exdf_obj[ci_in_range, , TRUE]
 
@@ -30,24 +30,24 @@ calculate_rd_laisk <- function(
         exdf_obj_subset,
         exdf_obj_subset[, curve_id_column_name],
         function(x) {
-            lm(x[, a_column_name] ~ x[, ci_column_name])
+            stats::lm(x[, a_column_name] ~ x[, ci_column_name])
         }
     )
 
     # Create an error function based on the standard deviation of A values
     # estimated from each fit for a particular value of Ci
     sd_error_fcn <- function(Ci) {
-        sd(laisk_eval_lms(linear_models, Ci))^2
+        stats::sd(laisk_eval_lms(linear_models, Ci))^2
     }
 
     # Find the value of Ci that minimizes the standard deviation of the
     # predicted A values across all the curves in the set
-    optim_result <- optim(
-        Ci_lower,
+    optim_result <- stats::optim(
+        ci_lower,
         sd_error_fcn,
         method = 'Brent',
         lower = 0,
-        upper = Ci_upper
+        upper = ci_upper
     )
 
     Ci_star <- optim_result$par

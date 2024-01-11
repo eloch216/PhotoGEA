@@ -33,7 +33,6 @@
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     OPTIM_FUN = optimizer_deoptim(),
@@ -53,9 +52,9 @@
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name
     ),
-    lower = c(0,    0,   0.2, 0,  0),
-    upper = c(1000, 100, 0.6, 40, 1000),
-    fixed = c(NA,   NA,  NA,  NA, NA),
+    lower = c(0, 0, 0, 0.2, 0, 0),
+    upper = c(1, 1000, 100, 0.6, 40, 1000),
+    fixed = c(0, NA, NA, NA, NA, NA),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     remove_unreliable_param = FALSE
@@ -157,12 +156,6 @@
 
   \item{nadph_use}{
     The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
   }
 
   \item{curvature_cj}{

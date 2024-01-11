@@ -75,6 +75,9 @@ fit_c3_variable_j <- function(
         }
     })
 
+    # Make sure arguments have the correct length
+    check_arg_length(6, list(lower = lower, upper = upper, fixed = fixed))
+
     # Make sure at least one parameter will be fit
     if (!any(is.na(fixed))) {
         stop('no element of `fixed` is NA, so there are no parameters to fit')

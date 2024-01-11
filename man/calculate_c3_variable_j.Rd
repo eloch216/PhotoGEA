@@ -17,7 +17,7 @@
 \usage{
   calculate_c3_variable_j(
     exdf_obj,
-    Rd,
+    Rd_at_25,
     tau,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -41,7 +41,7 @@
     chlorophyll fluorescence measurements (dimensionless).
   }
 
-  \item{Rd}{
+  \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}.
   }

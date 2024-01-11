@@ -97,12 +97,12 @@
 
 \details{
   Here we estimate values of \code{J}, \code{Rd}, \code{TPU}, and \code{Vcmax}
-  from a measured C3 CO2 response curve. For more information about these
-  parameters, see the documentation for \code{\link{calculate_c3_assimilation}}.
-  To estimate these parameter values, we use several equations from S. von
-  Caemmerer, "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing,
-  2000) [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are
-  from this book.
+  from a measured C3 CO2 response curve. The guess for \code{alpha} is always
+  set to 0.5. For more information about these parameters, see the documentation
+  for \code{\link{calculate_c3_assimilation}}. To estimate these parameter
+  values, we use several equations from S. von Caemmerer, "Biochemical Models of
+  Leaf Photosynthesis" (CSIRO Publishing, 2000) [\doi{10.1071/9780643103405}].
+  Any equation numbers referenced below are from this book.
 
   \itemize{
     \item \strong{Estimating Rd}: An estimate for \code{Rd} can be obtained using
@@ -144,8 +144,8 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with four elements, representing the
-  values of \code{TPU}, \code{J}, \code{Rd}, and \code{Vcmax} (in that order) at
-  25 degrees C.
+  values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and
+  \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -194,7 +194,7 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    calculate_c3_assimilation(x, param[1], param[2], param[3], param[4])
+    calculate_c3_assimilation(x, param[1], param[2], param[3], param[4], param[5])
   }
 ))
 

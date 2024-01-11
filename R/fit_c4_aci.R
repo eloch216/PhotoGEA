@@ -54,6 +54,9 @@ fit_c4_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
+    # Make sure arguments have the correct length
+    check_arg_length(4, list(lower = lower, upper = upper, fixed = fixed))
+
     # Make sure at least one parameter will be fit
     if (!any(is.na(fixed))) {
         stop('no element of `fixed` is NA, so there are no parameters to fit')
