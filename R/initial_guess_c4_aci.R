@@ -3,8 +3,8 @@ initial_guess_c4_aci <- function(
     gbs = 0.003,
     Rm_frac = 0.5,
     a_column_name = 'A',
-    pcm_column_name = 'PCm',
     kp_column_name = 'Kp',
+    pcm_column_name = 'PCm',
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
@@ -18,12 +18,12 @@ initial_guess_c4_aci <- function(
         # Make sure the required variables are defined and have the correct
         # units
         required_variables <- list()
-        required_variables[[a_column_name]] <- "micromol m^(-2) s^(-1)"
-        required_variables[[pcm_column_name]] <- "microbar"
-        required_variables[[kp_column_name]] <- 'microbar'
-        required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
-        required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
+        required_variables[[a_column_name]]          <- "micromol m^(-2) s^(-1)"
+        required_variables[[kp_column_name]]         <- 'microbar'
+        required_variables[[pcm_column_name]]        <- "microbar"
+        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
+        required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
         check_required_variables(rc_exdf, required_variables)
 

@@ -109,12 +109,13 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-TPU <- 18
+alpha <- 0
 J <- 200
 Rd <- 1.8
+TPU <- 18
 Vcmax <- 125
 
-assim <- calculate_c3_assimilation(inputs, TPU, J, Rd, Vcmax)
+assim <- calculate_c3_assimilation(inputs, alpha, J, Rd, TPU, Vcmax)
 
 c3_col <- rev(multi_curve_colors()[1:4])
 
@@ -165,9 +166,10 @@ identical to the ones used to generate the previous figure.
 ```{r, echo = FALSE}
 assim_curvature <- calculate_c3_assimilation(
   inputs,
-  TPU,
+  alpha,
   J,
   Rd,
+  TPU,
   Vcmax,
   curvature_cj = curvature,
   curvature_cjp = curvature
@@ -664,8 +666,7 @@ c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420,             # Additional argument passed to `fit_c3_aci`
-  fixed = c(NA, NA, NA, NA)         # Additional argument passed to `fit_c3_aci`
+  Ca_atmospheric = 420              # Additional argument passed to `fit_c3_aci`
 ))
 ```
 
@@ -756,7 +757,6 @@ c3_aci_results <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Additional argument passed to `fit_c3_aci`
-  fixed = c(NA, NA, NA, NA),        # Additional argument passed to `fit_c3_aci`
   cj_crossover_min = 100,           # Wj must be > Wc when Cc < 100 ppm
   cj_crossover_max = 550            # Wj must be < Wc when Cc > 550 ppm
 ))

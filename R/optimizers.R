@@ -1,5 +1,6 @@
 optimizer_nmkb <- function(tol = 1e-7, maxfeval = 2000, restarts.max = 10) {
     function(guess, fun, lower, upper) {
+        guess <- constrain_guess(guess, lower, upper, 0.01)
         dfoptim::nmkb(guess, fun, lower, upper, control = list(
             tol = tol,
             maxfeval = maxfeval,
@@ -20,8 +21,8 @@ optimizer_deoptim <- function(VTR = -Inf, itermax = 200) {
 
     varsize <- 0.25
     for (i in seq(2, NP)) {
-      initialpop[i, ] <-
-        guess * (1 + stats::runif(length(guess), -varsize, varsize))
+      tmp <- guess * (1 + stats::runif(length(guess), -varsize, varsize))
+      initialpop[i, ] <- constrain_guess(tmp, lower, upper, 0)
     }
 
     # Set control options and run the optimizer
@@ -41,4 +42,13 @@ optimizer_deoptim <- function(VTR = -Inf, itermax = 200) {
       feval = res$optim$nfeval
     )
   }
+}
+
+# A helping function to ensure the guess lies within (or possibly on) the bounds
+constrain_guess <- function(guess, lower, upper, pad) {
+    lower_temp <- lower + pad * (upper - lower)
+    upper_temp <- upper - pad * (upper - lower)
+
+    guess <- pmax(guess, lower_temp)
+    pmin(guess, upper_temp)
 }

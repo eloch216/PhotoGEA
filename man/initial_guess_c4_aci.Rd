@@ -19,8 +19,8 @@
     gbs = 0.003,
     Rm_frac = 0.5,
     a_column_name = 'A',
-    pcm_column_name = 'PCm',
     kp_column_name = 'Kp',
+    pcm_column_name = 'PCm',
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
@@ -47,14 +47,14 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{pcm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the partial pressure
-    of CO2 in the mesophyll, expressed in \code{microbar}.
-  }
-
   \item{kp_column_name}{
     The name of the column in \code{exdf_obj} that contains the Michaelis-Menten
     constant for PEP carboxylase carboxylation in \code{microbar}.
+  }
+
+  \item{pcm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the partial pressure
+    of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
   \item{rd_norm_column_name}{

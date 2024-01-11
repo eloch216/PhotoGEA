@@ -15,24 +15,24 @@
 \usage{
   calculate_c3_assimilation(
     exdf_obj,
+    alpha,
+    J_at_25,
+    Rd_at_25,
     TPU,
-    J,
-    Rd,
-    Vcmax,
+    Vcmax_at_25,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
-    total_pressure_column_name = 'total_pressure',
+    gamma_star_column_name = 'Gamma_star',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    gamma_star_column_name = 'Gamma_star',
-    vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm',
+    total_pressure_column_name = 'total_pressure',
+    vcmax_norm_column_name = 'Vcmax_norm',
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -41,23 +41,29 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{TPU}{
-    The maximum rate of triphosphate utilization, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha} is often assumed to be 0.
   }
 
-  \item{J}{
+  \item{J_at_25}{
     The electron transport rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
     general will depend on the incident photosynthetically active flux density.
   }
 
-  \item{Rd}{
+  \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{Vcmax}{
+  \item{TPU}{
+    The maximum rate of triphosphate utilization, expressed in
+    \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}.
   }
@@ -78,12 +84,6 @@
     The number of NADPH molecules used per C3 cycle.
   }
 
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
-  }
-
   \item{curvature_cj}{
     A dimensionless quadratic curvature parameter greater than or equal to 0 and
     less than or equal to 1 that sets the degree of co-limitation between
@@ -101,9 +101,14 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{total_pressure_column_name}{
-    The name of the column in \code{exdf_obj} that contains the total pressure
-    in \code{bar}.
+  \item{gamma_star_column_name}{
+    The name of the column in \code{exdf_obj} that contains the
+    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  }
+
+  \item{j_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -118,25 +123,20 @@
     \code{mmol mol^(-1)}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{vcmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
-  }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
-  }
-
-  \item{j_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{perform_checks}{
@@ -266,9 +266,9 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
-          \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, and \code{Vc}. The
-          category for each of these new columns is
+          above: \code{alpha}, \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl},
+          \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, and
+          \code{Vc}. The category for each of these new columns is
           \code{calculate_c3_assimilation} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
@@ -296,7 +296,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 12, 150, 1, 120)
+assim <- calculate_c3_assimilation(inputs, 0, 150, 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ Cc,

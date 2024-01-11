@@ -1,18 +1,18 @@
 fit_c4_aci <- function(
     replicate_exdf,
     Ca_atmospheric,
+    ao_column_name = 'ao',
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
-    pcm_column_name = 'PCm',
+    gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    gamma_star_column_name = 'gamma_star',
-    ao_column_name = 'ao',
+    pcm_column_name = 'PCm',
+    rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    rd_norm_column_name = 'Rd_norm',
     POm = 210000,  # microbar
     gbs = 0.003,   # mol / m^2 / s / bar
     Rm_frac = 0.5, # dimensionless
@@ -22,8 +22,8 @@ fit_c4_aci <- function(
         gbs = gbs,
         Rm_frac = Rm_frac,
         a_column_name = a_column_name,
-        pcm_column_name = pcm_column_name,
         kp_column_name = kp_column_name,
+        pcm_column_name = pcm_column_name,
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name,
         vpmax_norm_column_name = vpmax_norm_column_name
@@ -39,20 +39,23 @@ fit_c4_aci <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]] <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[pcm_column_name]] <- 'microbar'
-    required_variables[[kc_column_name]] <- 'microbar'
-    required_variables[[ko_column_name]] <- 'mbar'
-    required_variables[[kp_column_name]] <- 'microbar'
+    required_variables[[ao_column_name]]         <- 'dimensionless'
+    required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
+    required_variables[[ca_column_name]]         <- 'micromol mol^(-1)'
+    required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
     required_variables[[gamma_star_column_name]] <- 'dimensionless'
-    required_variables[[ao_column_name]] <- 'dimensionless'
+    required_variables[[kc_column_name]]         <- 'microbar'
+    required_variables[[ko_column_name]]         <- 'mbar'
+    required_variables[[kp_column_name]]         <- 'microbar'
+    required_variables[[pcm_column_name]]        <- 'microbar'
+    required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
     required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
-    required_variables[[rd_norm_column_name]] <- 'normalized to Rd at 25 degrees C'
 
     check_required_variables(replicate_exdf, required_variables)
+
+    # Make sure arguments have the correct length
+    check_arg_length(4, list(lower = lower, upper = upper, fixed = fixed))
 
     # Make sure at least one parameter will be fit
     if (!any(is.na(fixed))) {
@@ -73,15 +76,15 @@ fit_c4_aci <- function(
             gbs,
             Rm_frac,
             alpha,
-            pcm_column_name,
+            ao_column_name,
+            gamma_star_column_name,
             kc_column_name,
             ko_column_name,
             kp_column_name,
-            gamma_star_column_name,
-            ao_column_name,
+            pcm_column_name,
+            rd_norm_column_name,
             vcmax_norm_column_name,
             vpmax_norm_column_name,
-            rd_norm_column_name,
             perform_checks = FALSE,
             return_exdf = FALSE
         )
@@ -95,13 +98,6 @@ fit_c4_aci <- function(
 
     # Get an initial guess for all the parameter values
     initial_guess <- initial_guess_fun(replicate_exdf)
-
-    # Make sure the initial guess lies within (and not on) the bounds
-    lower_temp <- lower + 0.01 * (upper - lower)
-    upper_temp <- upper - 0.01 * (upper - lower)
-
-    initial_guess <- pmax(initial_guess, lower_temp)
-    initial_guess <- pmin(initial_guess, upper_temp)
 
     # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
@@ -126,15 +122,15 @@ fit_c4_aci <- function(
         gbs,
         Rm_frac,
         alpha,
-        pcm_column_name,
+        ao_column_name,
+        gamma_star_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
-        gamma_star_column_name,
-        ao_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
-        rd_norm_column_name,
         perform_checks = FALSE
     )
 
@@ -185,13 +181,13 @@ fit_c4_aci <- function(
     )
 
     # Attach the best-fit parameters to the identifiers
-    replicate_identifiers[, 'Rd_at_25'] <- best_X[1]
+    replicate_identifiers[, 'Rd_at_25']    <- best_X[1]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[2]
     replicate_identifiers[, 'Vpmax_at_25'] <- best_X[3]
-    replicate_identifiers[, 'Vpr'] <- best_X[4]
+    replicate_identifiers[, 'Vpr']         <- best_X[4]
 
     # Attach the average leaf-temperature values of fitting parameters
-    replicate_identifiers[, 'Rd_tl_avg'] <- mean(replicate_exdf[, 'Rd_tl'])
+    replicate_identifiers[, 'Rd_tl_avg']    <- mean(replicate_exdf[, 'Rd_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
 
@@ -204,10 +200,10 @@ fit_c4_aci <- function(
         optim_result[['feval']] <- NA
     }
 
-    replicate_identifiers[, 'convergence'] <- optim_result[['convergence']]
+    replicate_identifiers[, 'convergence']     <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg'] <- optim_result[['message']]
-    replicate_identifiers[, 'feval'] <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val'] <- optim_result[['value']]
+    replicate_identifiers[, 'feval']           <- optim_result[['feval']]
+    replicate_identifiers[, 'optimum_val']     <- optim_result[['value']]
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -233,15 +229,15 @@ fit_c4_aci <- function(
         gbs,
         Rm_frac,
         alpha,
-        pcm_column_name,
+        ao_column_name,
+        gamma_star_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
-        gamma_star_column_name,
-        ao_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
-        rd_norm_column_name,
         perform_checks = FALSE
     )[, 'An']
 

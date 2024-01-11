@@ -33,7 +33,6 @@
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     OPTIM_FUN = optimizer_deoptim(),
@@ -53,11 +52,12 @@
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name
     ),
-    lower = c(0,    0,   0.2, 0,  0),
-    upper = c(1000, 100, 0.6, 40, 1000),
-    fixed = c(NA,   NA,  NA,  NA, NA),
+    lower = c(0, 0, 0, 0.2, 0, 0),
+    upper = c(1, 1000, 100, 0.6, 40, 1000),
+    fixed = c(0, NA, NA, NA, NA, NA),
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    remove_unreliable_param = FALSE
   )
 }
 
@@ -158,12 +158,6 @@
     The number of NADPH molecules used per C3 cycle.
   }
 
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
-  }
-
   \item{curvature_cj}{
     A dimensionless quadratic curvature parameter greater than or equal to 0 and
     less than or equal to 1 that sets the degree of co-limitation between
@@ -222,6 +216,11 @@
     smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
   }
+
+  \item{remove_unreliable_param}{
+    A logical value indicating whether or not to remove unreliable parameter
+    estimates; see below for details.
+  }
 }
 
 \details{
@@ -260,6 +259,14 @@
   \code{function(x){c(100, 0.5, 0.6, 10, 90)}}, which would set the initial
   guess to \code{J = 100}, \code{Rd = 0.5}, \code{tau = 0.6}, \code{TPU = 10},
   and \code{Vcmax = 90}.
+
+  Sometimes the optimizer may choose a set of parameter values where one or more
+  of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
+  \code{Wp}) is never the smallest rate. In this case, the corresponding
+  parameter estimate (\code{Vcmax}, \code{J}, or \code{TPU}) will be unreliable;
+  at best, it will represent a lower limit for the possible value of that
+  parameter. If \code{remove_unreliable_param} is \code{TRUE}, such values will
+  be set to \code{NA} in the outputs from \code{fit_c3_variable_j}.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{Cc} from the atmospheric CO2
@@ -369,6 +376,8 @@ aci_results <- consolidate(by(
 # View the fitting parameters for each species / plot
 col_to_keep <- c(
   'species', 'plot',                                       # identifiers
+  'n_Wc_smallest', 'n_Wj_smallest', 'n_Wp_smallest',       # number of points where
+                                                           #   each process is limiting
   'tau', 'TPU',                                            # parameters with temperature response
   'J_at_25', 'Rd_at_25', 'Vcmax_at_25',                    # parameters scaled to 25 degrees C
   'J_tl_avg', 'Rd_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
@@ -415,6 +424,19 @@ lattice::xyplot(
   ylab = paste0('Mesophyll conductance to CO2 (', aci_results$fits$units$gmc, ')'),
   ylim = c(0, 2)
 )
+
+# In some of the curves above, there are no points where carboxylation is TPU
+# limited. We can automatically remove the unreliable TPU estimates.
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c3_variable_j,
+  Ca_atmospheric = 420,
+  OPTIM_FUN = optimizer_nmkb(),
+  remove_unreliable_param = TRUE
+))
+
+aci_results$parameters[ , col_to_keep, TRUE]
 }
 
 \concept{exdf}
