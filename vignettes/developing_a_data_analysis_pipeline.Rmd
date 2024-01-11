@@ -262,8 +262,10 @@ plants or response curves.
 ### Functions for Fitting Response Curves
 
 The `PhotoGEA` package includes the following functions for fitting individual
-response curves:
+response curves or sets of response curves:
 
+- `calculate_rd_laisk`: Estimates Rd from a set of response curves using the
+  Laisk method.
 - `fit_ball_berry`: Calculates a linear fit of stomatal conductance to H~2~O vs.
   the Ball-Berry index.
 - `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.

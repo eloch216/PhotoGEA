@@ -32,6 +32,18 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- Made a few improvements to C3 curve fitting functions:
+  - `fit_c3_aci` and `fit_c3_variable_j` can now fit `alpha` (related to TPU)
+  - `fit_c3_aci` and `fit_c3_variable_j` can now exclude unreliable parameter
+    estimates (for example, if no points on a curve are limited by TPU, the
+    fit will return NA for TPU)
+  - The unknown parameters are now provided in alphabetical order (in the
+    `lower`, `upper` and `fixed` input arguments, and a few other places)
+- Added a function for estimating `Rd` with the Laisk method:
+  `calculate_rd_laisk`
+
 ## CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)
 
 - Reorganized the variable J fitting functions to be more like `fit_c3_aci`:
