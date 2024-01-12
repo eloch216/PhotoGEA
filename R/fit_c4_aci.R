@@ -1,3 +1,11 @@
+# Specify default fit settings
+c4_aci_lower       <- list(Rd_at_25 = 0,     Vcmax_at_25 = 0,     Vpmax_at_25 = 0,     Vpr = 0)
+c4_aci_upper       <- list(Rd_at_25 = 100,   Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
+c4_aci_fit_options <- list(Rd_at_25 = 'fit', Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
+
+c4_aci_param <- c('Rd_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr')
+
+# Fitting function
 fit_c4_aci <- function(
     replicate_exdf,
     Ca_atmospheric,
@@ -28,14 +36,25 @@ fit_c4_aci <- function(
         vcmax_norm_column_name = vcmax_norm_column_name,
         vpmax_norm_column_name = vpmax_norm_column_name
     ),
-    lower = c(0,   0,    0,    0),   # Rd, Vcmax, Vpmax, Vpr
-    upper = c(100, 100, 1000, 1000), # Rd, Vcmax, Vpmax, Vpr
-    fixed = c(NA, NA,   NA,   1000)  # Rd, Vcmax, Vpmax, Vpr
+    lower = list(),
+    upper = list(),
+    fit_options = list()
 )
 {
     if (!is.exdf(replicate_exdf)) {
         stop('fit_c4_aci requires an exdf object')
     }
+
+    # Assemble lower, upper, and fit_options
+    luf <- assemble_luf(
+        c4_aci_param,
+        c4_aci_lower, c4_aci_upper, c4_aci_fit_options,
+        lower, upper, fit_options
+    )
+
+    lower <- luf$lower
+    upper <- luf$upper
+    fit_options <- luf$fit_options
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
@@ -52,20 +71,32 @@ fit_c4_aci <- function(
     required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
+    required_variables <- require_flexible_param(
+        required_variables,
+        fit_options[fit_options != 'fit']
+    )
+
     check_required_variables(replicate_exdf, required_variables)
 
-    # Make sure arguments have the correct length
-    check_arg_length(4, list(lower = lower, upper = upper, fixed = fixed))
+    # Convert the bounds and fit options to vectors
+    upper <- as.numeric(upper)
+    lower <- as.numeric(lower)
+    param_to_fit <- fit_options == 'fit'
 
-    # Make sure at least one parameter will be fit
-    if (!any(is.na(fixed))) {
-        stop('no element of `fixed` is NA, so there are no parameters to fit')
-    }
+    fit_options <- sapply(fit_options, function(x) {
+        if (is.numeric(x)) {
+            x
+        } else {
+            NA
+        }
+    })
+
+    fit_options <- as.numeric(fit_options) # make sure names are gone
 
     # Define the total error function
     total_error_fcn <- function(guess) {
-        X <- fixed
-        X[is.na(fixed)] <- guess
+        X <- fit_options
+        X[param_to_fit] <- guess
         assim <- calculate_c4_assimilation(
             replicate_exdf,
             X[1], # Rd
@@ -101,15 +132,15 @@ fit_c4_aci <- function(
 
     # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
-        initial_guess[is.na(fixed)],
+        initial_guess[param_to_fit],
         total_error_fcn,
-        lower = lower[is.na(fixed)],
-        upper = upper[is.na(fixed)]
+        lower = lower[param_to_fit],
+        upper = upper[param_to_fit]
     )
 
     # Get the values of all parameters following the optimization
-    best_X <- fixed
-    best_X[is.na(fixed)] <- optim_result[['par']]
+    best_X <- fit_options
+    best_X[param_to_fit] <- optim_result[['par']]
 
     # Get the corresponding values of An at the best guess
     aci <- calculate_c4_assimilation(
@@ -176,7 +207,7 @@ fit_c4_aci <- function(
         residual_stats(
             replicate_exdf[, paste0(a_column_name, '_residuals')],
             replicate_exdf$units[[a_column_name]],
-            length(which(is.na(fixed)))
+            length(which(param_to_fit))
         )
     )
 

@@ -15,12 +15,6 @@ calculate_c3_variable_j <- function(
     return_exdf = TRUE
 )
 {
-    # Define flexible parameters
-    flexible_param <- list(
-        Rd_at_25 = Rd_at_25,
-        tau = tau
-    )
-
     if (perform_checks) {
         if (!is.exdf(exdf_obj)) {
             stop('calculate_c3_variable_j requires an exdf object')
@@ -35,6 +29,11 @@ calculate_c3_variable_j <- function(
         required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
         required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
+
+        flexible_param <- list(
+            Rd_at_25 = Rd_at_25,
+            tau = tau
+        )
 
         required_variables <-
             require_flexible_param(required_variables, flexible_param)

@@ -111,3 +111,18 @@ test_that('fit options must be `fit`, `column`, or numeric', {
         'Each element of `fit_options` must be `fit`, `column`, or a numeric value'
     )
 })
+
+test_that('at least one parameter must be fit', {
+    expect_error(
+            PhotoGEA:::assemble_luf(
+            test_param_names,
+            default_lower = list(alpha = 0, Rd = 0, Vcmax = 0, TPU = 0),
+            default_upper = list(TPU = 100, alpha = 1, Rd = 10, Vcmax = 1000),
+            default_fit_options = list(alpha = 0, Rd = 'fit', Vcmax = 'column', TPU = 40),
+            user_lower = list(),
+            user_upper = list(Vcmax = 400),
+            user_fit_options = list(alpha = 0, Rd = 0, Vcmax = 0, TPU = 0)
+        ),
+        'No entries in `fit_options` are set to `fit`'
+    )
+})

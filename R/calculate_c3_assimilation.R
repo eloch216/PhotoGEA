@@ -22,15 +22,6 @@ calculate_c3_assimilation <- function(
     return_exdf = TRUE
 )
 {
-    # Define flexible parameters
-    flexible_param <- list(
-        alpha = alpha,
-        J_at_25 = J_at_25,
-        Rd_at_25 = Rd_at_25,
-        TPU = TPU,
-        Vcmax_at_25 = Vcmax_at_25
-    )
-
     if (perform_checks) {
         if (!is.exdf(exdf_obj)) {
             stop('calculate_c3_assimilation requires an exdf object')
@@ -47,6 +38,14 @@ calculate_c3_assimilation <- function(
         required_variables[[total_pressure_column_name]] <- 'bar'
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
+        flexible_param <- list(
+            alpha = alpha,
+            J_at_25 = J_at_25,
+            Rd_at_25 = Rd_at_25,
+            TPU = TPU,
+            Vcmax_at_25 = Vcmax_at_25
+        )
+
         required_variables <-
             require_flexible_param(required_variables, flexible_param)
 
@@ -54,7 +53,7 @@ calculate_c3_assimilation <- function(
 
         # Make sure certain inputs lie on [0,1]
         check_zero_one <- list(
-            alpha = exdf_obj[['alpha']],
+            alpha = if (is.numeric(alpha)) {alpha} else {exdf_obj[, 'alpha']},
             curvature_cj = curvature_cj,
             curvature_cjp = curvature_cjp
         )

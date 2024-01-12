@@ -21,14 +21,6 @@ calculate_c4_assimilation <- function(
     return_exdf = TRUE
 )
 {
-    # Define flexible parameters
-    flexible_param <- list(
-        Rd_at_25 = Rd_at_25,
-        Vcmax_at_25 = Vcmax_at_25,
-        Vpmax_at_25 = Vpmax_at_25,
-        Vpr = Vpr
-    )
-
     if (perform_checks) {
         if (!is.exdf(exdf_obj)) {
             stop('calculate_c4_assimilation requires an exdf object')
@@ -45,6 +37,13 @@ calculate_c4_assimilation <- function(
         required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
+
+        flexible_param <- list(
+            Rd_at_25 = Rd_at_25,
+            Vcmax_at_25 = Vcmax_at_25,
+            Vpmax_at_25 = Vpmax_at_25,
+            Vpr = Vpr
+        )
 
         required_variables <-
             require_flexible_param(required_variables, flexible_param)

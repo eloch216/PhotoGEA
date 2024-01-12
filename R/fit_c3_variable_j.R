@@ -1,3 +1,11 @@
+# Specify default fit settings
+c3_variable_j_lower       <- list(alpha = 0, J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     TPU = 0,     Vcmax_at_25 = 0)
+c3_variable_j_upper       <- list(alpha = 1, J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     TPU = 40,    Vcmax_at_25 = 1000)
+c3_variable_j_fit_options <- list(alpha = 0, J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', TPU = 'fit', Vcmax_at_25 = 'fit')
+
+c3_variable_j_param <- c('alpha', 'J_at_25', 'Rd_at_25', 'tau', 'TPU', 'Vcmax_at_25')
+
+# Fitting function
 fit_c3_variable_j <- function(
     replicate_exdf,
     Ca_atmospheric,
@@ -36,9 +44,9 @@ fit_c3_variable_j <- function(
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name
     ),
-    lower = c(0, 0,    0,   0.2, 0,  0),    # alpha, J_at_25, Rd_at_25, tau, TPU, Vcmax_at_25
-    upper = c(1, 1000, 100, 0.6, 40, 1000), # alpha, J_at_25, Rd_at_25, tau, TPU, Vcmax_at_25
-    fixed = c(0, NA,   NA,  NA,  NA, NA),   # alpha, J_at_25, Rd_at_25, tau, TPU, Vcmax_at_25
+    lower = list(),
+    upper = list(),
+    fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     remove_unreliable_param = FALSE
@@ -47,6 +55,17 @@ fit_c3_variable_j <- function(
     if (!is.exdf(replicate_exdf)) {
         stop('fit_c3_variable_j requires an exdf object')
     }
+
+    # Assemble lower, upper, and fit_options
+    luf <- assemble_luf(
+        c3_variable_j_param,
+        c3_variable_j_lower, c3_variable_j_upper, c3_variable_j_fit_options,
+        lower, upper, fit_options
+    )
+
+    lower <- luf$lower
+    upper <- luf$upper
+    fit_options <- luf$fit_options
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
@@ -60,6 +79,11 @@ fit_c3_variable_j <- function(
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
     required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
+
+    required_variables <- require_flexible_param(
+        required_variables,
+        fit_options[fit_options != 'fit']
+    )
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -75,18 +99,25 @@ fit_c3_variable_j <- function(
         }
     })
 
-    # Make sure arguments have the correct length
-    check_arg_length(6, list(lower = lower, upper = upper, fixed = fixed))
-
-    # Make sure at least one parameter will be fit
-    if (!any(is.na(fixed))) {
-        stop('no element of `fixed` is NA, so there are no parameters to fit')
-    }
-
     # Make sure `remove_unreliable_param` is being used properly
     if (remove_unreliable_param && (curvature_cj < 1 || curvature_cjp < 1)) {
         stop('Unreliable parameter estimates can only be removed when both curvature values are 1.0')
     }
+
+    # Convert the bounds and fit options to vectors
+    upper <- as.numeric(upper)
+    lower <- as.numeric(lower)
+    param_to_fit <- fit_options == 'fit'
+
+    fit_options <- sapply(fit_options, function(x) {
+        if (is.numeric(x)) {
+            x
+        } else {
+            NA
+        }
+    })
+
+    fit_options <- as.numeric(fit_options) # make sure names are gone
 
     # Make a temporary copy of replicate_exdf to use for fitting, and
     # initialize its gmc and Cc columns
@@ -109,8 +140,8 @@ fit_c3_variable_j <- function(
     # not NA, apply a penalty when Wj > Wc and Cc > cj_crossover_max. We also
     # apply penalties to any negative gmc and Cc values.
     total_error_fcn <- function(guess) {
-        X <- fixed
-        X[is.na(fixed)] <- guess
+        X <- fit_options
+        X[param_to_fit] <- guess
 
         # Use the variable J equations to get gmc and Cc
         vj <- calculate_c3_variable_j(
@@ -192,15 +223,15 @@ fit_c3_variable_j <- function(
 
     # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
-        initial_guess[is.na(fixed)],
+        initial_guess[param_to_fit],
         total_error_fcn,
-        lower = lower[is.na(fixed)],
-        upper = upper[is.na(fixed)]
+        lower = lower[param_to_fit],
+        upper = upper[param_to_fit]
     )
 
     # Get the values of all parameters following the optimization
-    best_X <- fixed
-    best_X[is.na(fixed)] <- optim_result[['par']]
+    best_X <- fit_options
+    best_X[param_to_fit] <- optim_result[['par']]
 
     # Get the corresponding values of gmc, Cc, and J_F at the best guess
     vj <- calculate_c3_variable_j(
@@ -299,7 +330,7 @@ fit_c3_variable_j <- function(
         residual_stats(
             replicate_exdf[, paste0(a_column_name, '_residuals')],
             replicate_exdf$units[[a_column_name]],
-            length(which(is.na(fixed)))
+            length(which(param_to_fit))
         )
     )
 

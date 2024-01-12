@@ -52,9 +52,9 @@
         rd_norm_column_name = rd_norm_column_name,
         vcmax_norm_column_name = vcmax_norm_column_name
     ),
-    lower = c(0, 0, 0, 0.2, 0, 0),
-    upper = c(1, 1000, 100, 0.6, 40, 1000),
-    fixed = c(0, NA, NA, NA, NA, NA),
+    lower = list(),
+    upper = list(),
+    fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     remove_unreliable_param = FALSE
@@ -188,21 +188,31 @@
   }
 
   \item{lower}{
-    A numeric vector containing lower bounds for the values of \code{J},
-    \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax}, in that order.
+    A list of named numeric elements representing lower bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, \code{lower = list(Vcmax_at_25 = 10)} sets the lower
+    limit for \code{Vcmax_at_25} to 10 micromol / m^2 / s.
   }
 
   \item{upper}{
-    A numeric vector containing upper bounds for the values of \code{J},
-    \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax}, in that order.
+    A list of named numeric elements representing upper bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, \code{upper = list(Vcmax_at_25 = 200)} sets the upper
+    limit for \code{Vcmax_at_25} to 200 micromol / m^2 / s.
   }
 
-  \item{fixed}{
-    A numeric vector specifying fixed values of \code{J}, \code{Rd}, \code{tau},
-    \code{TPU}, and \code{Vcmax}, in that order. Values of \code{NA} indicate
-    that the corresponding parameter is not fixed and should be varied during
-    the optimization procedure. The default value of this argument allows all
-    parameters to vary.
+  \item{fit_options}{
+    A list of named elements representing fit options to use for each parameter.
+    Values supplied here override the default values (see details below). Each
+    element must be \code{'fit'}, \code{'column'}, or a numeric value. A value
+    of \code{'fit'} means that the parameter will be fit; a value of
+    \code{'column'} means that the value of the parameter will be taken from a
+    column in \code{exdf_obj} of the same name; and a numeric value means that
+    the parameter will be set to that value. For example, \code{fit_options =
+    list(alpha = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
+    \code{alpha} will be set to 0, \code{Vcmax_at_25} will be fit, and
+    \code{TPU} will be set to the values in the \code{TPU} column of
+    \code{exdf_obj}.
   }
 
   \item{cj_crossover_min}{
@@ -227,9 +237,20 @@
   This function calls \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}} to calculate values of net
   assimilation. The user-supplied optimization function is used to vary the
-  values of \code{J}, \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax} to
-  find ones that best reproduce the experimentally measured values of net
-  assimilation.
+  values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
+  \code{TPU}, and \code{Vcmax_at_25} to find ones that best reproduce the
+  experimentally measured values of net assimilation. By default, the following
+  options are used for the fits:
+  \itemize{
+    \item \code{alpha}: lower = 0, upper = 1, fit_option = 0
+    \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
+    \item \code{tau}: lower = 0, upper = 1, fit_option = \code{'fit'}
+    \item \code{TPU}: lower = 0, upper = 40, fit_option = \code{'fit'}
+    \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
+  }
+  With these settings, \code{alpha} is set to 0, and the other parameters are
+  fit during the process (see \code{fit_options} above).
 
   The photosynthesis model used here is not smooth in the sense that small
   changes in the input parameters do not necessarily cause changes in its
@@ -258,7 +279,9 @@
   following for the \code{initial_guess_fun}:
   \code{function(x){c(100, 0.5, 0.6, 10, 90)}}, which would set the initial
   guess to \code{J = 100}, \code{Rd = 0.5}, \code{tau = 0.6}, \code{TPU = 10},
-  and \code{Vcmax = 90}.
+  and \code{Vcmax = 90}. If the fit option for a parameter is set to
+  \code{'column'} or a numeric value, those values will override the initial
+  guess values (see \code{fit_options} above).
 
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or

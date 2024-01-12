@@ -1,30 +1,3 @@
-check_arg_length <- function(target_length, arg_list) {
-    arg_len <- lapply(arg_list, length)
-    if (any(arg_len != target_length)) {
-        arg_names <- paste('`', names(arg_list), '`', sep = '', collapse = ', ')
-        stop(arg_names, ' must each have ', target_length, ' elements')
-    }
-}
-
-# A helping function for adding "flexible" parameters to an exdf. These
-# parameters may be numeric or not; if they are numeric, they should be added
-# to the exdf with appropriate units (which can be found in the unit dictionary)
-col_from_flexible_param <- function(exdf_obj, flexible_param, category_name) {
-    for (i in seq_along(flexible_param)) {
-        if (is.numeric(flexible_param[[i]])) {
-            pn <- names(flexible_param)[i]
-            exdf_obj <- set_variable(
-                exdf_obj,
-                pn,
-                unit_dictionary[[pn]],
-                category_name,
-                flexible_param[[i]]
-            )
-        }
-    }
-    exdf_obj
-}
-
 # A helping function for checking units of "flexible" parameters (uses the unit
 # dictionary)
 require_flexible_param <- function(required_variables, flexible_param) {
@@ -119,6 +92,11 @@ assemble_luf <- function(
             tolower(x)
         }
     })
+
+    # Make sure at least one parameter will be fit
+    if (all(default_fit_options != 'fit')) {
+        stop('No entries in `fit_options` are set to `fit`')
+    }
 
     # Make sure elements are properly ordered
     default_lower <- default_lower[param_names]
