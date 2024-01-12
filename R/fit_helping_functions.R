@@ -25,6 +25,18 @@ col_from_flexible_param <- function(exdf_obj, flexible_param, category_name) {
     exdf_obj
 }
 
+# A helping function for checking units of "flexible" parameters (uses the unit
+# dictionary)
+require_flexible_param <- function(required_variables, flexible_param) {
+    for (i in seq_along(flexible_param)) {
+        if (!is.numeric(flexible_param[[i]])) {
+            pn <- names(flexible_param)[i]
+            required_variables[pn] <- unit_dictionary[pn]
+        }
+    }
+    required_variables
+}
+
 # A helping function that combines user-supplied and default values of `lower`,
 # `upper`, and `fit_options`, as used by several fitting functions in PhotoGEA.
 # This is only intended to be used internally, so checks are not provided for

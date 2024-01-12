@@ -22,11 +22,7 @@ calculate_c3_assimilation <- function(
     return_exdf = TRUE
 )
 {
-    if (!is.exdf(exdf_obj)) {
-        stop('calculate_c3_assimilation requires an exdf object')
-    }
-
-    # Add "flexible" parameters to the exdf as necessary
+    # Define flexible parameters
     flexible_param <- list(
         alpha = alpha,
         J_at_25 = J_at_25,
@@ -35,13 +31,11 @@ calculate_c3_assimilation <- function(
         Vcmax_at_25 = Vcmax_at_25
     )
 
-    exdf_obj <- col_from_flexible_param(
-        exdf_obj,
-        flexible_param,
-        'calculate_c3_assimilation'
-    )
-
     if (perform_checks) {
+        if (!is.exdf(exdf_obj)) {
+            stop('calculate_c3_assimilation requires an exdf object')
+        }
+
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[cc_column_name]]             <- 'micromol mol^(-1)'
@@ -54,7 +48,7 @@ calculate_c3_assimilation <- function(
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
         required_variables <-
-            add_required_parameters(required_variables, names(flexible_param))
+            require_flexible_param(required_variables, flexible_param)
 
         check_required_variables(exdf_obj, required_variables)
 
@@ -77,14 +71,15 @@ calculate_c3_assimilation <- function(
         }
     }
 
+    # Retrieve values of flexible parameters as necessary
+    if (!is.numeric(alpha))       {alpha       <- exdf_obj[, 'alpha']}
+    if (!is.numeric(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
+    if (!is.numeric(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
+    if (!is.numeric(TPU))         {TPU         <- exdf_obj[, 'TPU']}
+    if (!is.numeric(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
+
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
-    alpha       <- exdf_obj[, 'alpha']       # dimensionless
-    J_at_25     <- exdf_obj[, 'J_at_25']     # micromol / m^2 / s
-    Rd_at_25    <- exdf_obj[, 'Rd_at_25']    # micromol / m^2 / s
-    TPU         <- exdf_obj[, 'TPU']         # micromol / m^2 / s
-    Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25'] # micromol / m^2 / s
-
     pressure <- exdf_obj[, total_pressure_column_name] # bar
 
     PCc <- exdf_obj[, cc_column_name] * pressure # microbar

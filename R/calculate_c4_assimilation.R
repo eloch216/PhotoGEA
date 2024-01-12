@@ -21,11 +21,7 @@ calculate_c4_assimilation <- function(
     return_exdf = TRUE
 )
 {
-    if (!is.exdf(exdf_obj)) {
-        stop('calculate_c4_assimilation requires an exdf object')
-    }
-
-    # Add "flexible" parameters to the exdf as necessary
+    # Define flexible parameters
     flexible_param <- list(
         Rd_at_25 = Rd_at_25,
         Vcmax_at_25 = Vcmax_at_25,
@@ -33,13 +29,11 @@ calculate_c4_assimilation <- function(
         Vpr = Vpr
     )
 
-    exdf_obj <- col_from_flexible_param(
-        exdf_obj,
-        flexible_param,
-        'calculate_c3_assimilation'
-    )
-
     if (perform_checks) {
+        if (!is.exdf(exdf_obj)) {
+            stop('calculate_c4_assimilation requires an exdf object')
+        }
+
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[ao_column_name]]         <- 'dimensionless'
@@ -53,18 +47,19 @@ calculate_c4_assimilation <- function(
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
         required_variables <-
-            add_required_parameters(required_variables, names(flexible_param))
+            require_flexible_param(required_variables, flexible_param)
 
         check_required_variables(exdf_obj, required_variables)
     }
 
+    # Retrieve values of flexible parameters as necessary
+    if (!is.numeric(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
+    if (!is.numeric(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
+    if (!is.numeric(Vpmax_at_25)) {Vpmax_at_25 <- exdf_obj[, 'Vpmax_at_25']}
+    if (!is.numeric(Vpr))         {Vpr         <- exdf_obj[, 'Vpr']}
+
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
-    Rd_at_25    <- exdf_obj[, 'Rd_at_25']    # micromol / m^2 / s
-    Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25'] # micromol / m^2 / s
-    Vpmax_at_25 <- exdf_obj[, 'Vpmax_at_25'] # micromol / m^2 / s
-    Vpr         <- exdf_obj[, 'Vpr']         # micromol / m^2 / s
-
     Cm <- exdf_obj[, pcm_column_name]                # microbar
     Kc <- exdf_obj[, kc_column_name]                 # microbar
     Ko <- exdf_obj[, ko_column_name] * 1000          # microbar

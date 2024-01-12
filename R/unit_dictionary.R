@@ -9,12 +9,3 @@ unit_dictionary <- list(
     Vpmax_at_25 = 'micromol m^(-2) s^(-1)',
     Vpr         = 'micromol m^(-2) s^(-1)'
 )
-
-# A helping function for adding a parameters (and their units) to a list of
-# required parameters.
-add_required_parameters <- function(required_variables, param_names) {
-    for (pn in param_names) {
-         required_variables[[pn]] <- unit_dictionary[[pn]]
-    }
-    required_variables
-}

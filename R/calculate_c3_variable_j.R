@@ -15,23 +15,17 @@ calculate_c3_variable_j <- function(
     return_exdf = TRUE
 )
 {
-    if (!is.exdf(exdf_obj)) {
-        stop('calculate_c3_variable_j requires an exdf object')
-    }
-
-    # Add "flexible" parameters to the exdf as necessary
+    # Define flexible parameters
     flexible_param <- list(
         Rd_at_25 = Rd_at_25,
         tau = tau
     )
 
-    exdf_obj <- col_from_flexible_param(
-        exdf_obj,
-        flexible_param,
-        'calculate_c3_variable_j'
-    )
-
     if (perform_checks) {
+        if (!is.exdf(exdf_obj)) {
+            stop('calculate_c3_variable_j requires an exdf object')
+        }
+
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
@@ -43,16 +37,17 @@ calculate_c3_variable_j <- function(
         required_variables[[total_pressure_column_name]] <- 'bar'
 
         required_variables <-
-            add_required_parameters(required_variables, names(flexible_param))
+            require_flexible_param(required_variables, flexible_param)
 
         check_required_variables(exdf_obj, required_variables)
     }
 
+    # Retrieve values of flexible parameters as necessary
+    if (!is.numeric(Rd_at_25)) {Rd_at_25 <- exdf_obj[, 'Rd_at_25']}
+    if (!is.numeric(tau))      {tau      <- exdf_obj[, 'tau']}
+
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
-    Rd_at_25 <- exdf_obj[, 'Rd_at_25']                          # micromol / m^2 / s
-    tau      <- exdf_obj[, 'tau']                               # dimensionless
-
     pressure   <- exdf_obj[, total_pressure_column_name]        # bar
     Ci         <- exdf_obj[, ci_column_name]                    # micromol / mol
     PCi        <- Ci * pressure                                 # microbar
