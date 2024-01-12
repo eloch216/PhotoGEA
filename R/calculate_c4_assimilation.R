@@ -52,10 +52,10 @@ calculate_c4_assimilation <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
-    if (!is.numeric(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
-    if (!is.numeric(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
-    if (!is.numeric(Vpmax_at_25)) {Vpmax_at_25 <- exdf_obj[, 'Vpmax_at_25']}
-    if (!is.numeric(Vpr))         {Vpr         <- exdf_obj[, 'Vpr']}
+    if (!value_set(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
+    if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
+    if (!value_set(Vpmax_at_25)) {Vpmax_at_25 <- exdf_obj[, 'Vpmax_at_25']}
+    if (!value_set(Vpr))         {Vpr         <- exdf_obj[, 'Vpr']}
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary

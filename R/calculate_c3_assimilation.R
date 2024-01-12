@@ -1,6 +1,7 @@
 calculate_c3_assimilation <- function(
     exdf_obj,
     alpha,        # dimensionless      (this value is sometimes being fitted)
+    Gamma_star,   # micromol / mol     (this value is sometimes being fitted)
     J_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Rd_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     TPU,          # micromol / m^2 / s (typically this value is being fitted)
@@ -11,7 +12,6 @@ calculate_c3_assimilation <- function(
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -30,7 +30,6 @@ calculate_c3_assimilation <- function(
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[cc_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
         required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
@@ -40,6 +39,7 @@ calculate_c3_assimilation <- function(
 
         flexible_param <- list(
             alpha = alpha,
+            Gamma_star = Gamma_star,
             J_at_25 = J_at_25,
             Rd_at_25 = Rd_at_25,
             TPU = TPU,
@@ -53,7 +53,7 @@ calculate_c3_assimilation <- function(
 
         # Make sure certain inputs lie on [0,1]
         check_zero_one <- list(
-            alpha = if (is.numeric(alpha)) {alpha} else {exdf_obj[, 'alpha']},
+            alpha = if (value_set(alpha)) {alpha} else {exdf_obj[, 'alpha']},
             curvature_cj = curvature_cj,
             curvature_cjp = curvature_cjp
         )
@@ -71,11 +71,12 @@ calculate_c3_assimilation <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
-    if (!is.numeric(alpha))       {alpha       <- exdf_obj[, 'alpha']}
-    if (!is.numeric(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
-    if (!is.numeric(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
-    if (!is.numeric(TPU))         {TPU         <- exdf_obj[, 'TPU']}
-    if (!is.numeric(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
+    if (!value_set(alpha))       {alpha       <- exdf_obj[, 'alpha']}
+    if (!value_set(Gamma_star))  {Gamma_star  <- exdf_obj[, 'Gamma_star']}
+    if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
+    if (!value_set(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
+    if (!value_set(TPU))         {TPU         <- exdf_obj[, 'TPU']}
+    if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
@@ -85,7 +86,7 @@ calculate_c3_assimilation <- function(
 
     Kc <- exdf_obj[, kc_column_name] * pressure                 # microbar
     Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
-    Gamma_star <- exdf_obj[, gamma_star_column_name] * pressure # microbar
+    Gamma_star <- Gamma_star * pressure                         # microbar
 
     Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
     Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
@@ -139,6 +140,7 @@ calculate_c3_assimilation <- function(
         # are included
         output <- exdf(data.frame(
             alpha = alpha,
+            Gamma_star = Gamma_star,
             J_tl = J_tl,
             Rd_tl = Rd_tl,
             TPU = TPU,
@@ -156,6 +158,7 @@ calculate_c3_assimilation <- function(
         document_variables(
             output,
             c('calculate_c3_assimilation', 'alpha',      'dimensionless'),
+            c('calculate_c3_assimilation', 'Gamma_star', 'micromol mol^(-1)'),
             c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'TPU',        'micromol m^(-2) s^(-1)'),

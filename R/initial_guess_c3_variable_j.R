@@ -6,7 +6,6 @@ initial_guess_c3_variable_j <- function(
     a_column_name = 'A',
     ci_column_name = 'Ci',
     etr_column_name = 'ETR',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -57,7 +56,6 @@ initial_guess_c3_variable_j <- function(
             nadph_use,
             a_column_name,
             'Cc', # cc_column_name
-            gamma_star_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
@@ -72,11 +70,12 @@ initial_guess_c3_variable_j <- function(
         # for tau
         c(
             c3_guess[1], # alpha
-            c3_guess[2], # J_at_25
-            c3_guess[3], # Rd_at_25
+            c3_guess[2], # Gamma_star
+            c3_guess[3], # J_at_25
+            c3_guess[4], # Rd_at_25
             tau_guess,   # tau
-            c3_guess[4], # TPU
-            c3_guess[5]  # Vcmax_at_25
+            c3_guess[5], # TPU
+            c3_guess[6]  # Vcmax_at_25
         )
     }
 }

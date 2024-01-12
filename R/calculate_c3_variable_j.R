@@ -1,12 +1,12 @@
 calculate_c3_variable_j <- function(
     exdf_obj,
-    Rd_at_25, # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
-    tau,      # dimensionless      (typically this value is being fitted)
+    Gamma_star, # micromol / mol     (this value is sometimes being fitted)
+    Rd_at_25,   # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
+    tau,        # dimensionless      (typically this value is being fitted)
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
@@ -24,13 +24,13 @@ calculate_c3_variable_j <- function(
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
         required_variables[[phips2_column_name]]         <- NA
         required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
         required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
 
         flexible_param <- list(
+            Gamma_star = Gamma_star,
             Rd_at_25 = Rd_at_25,
             tau = tau
         )
@@ -42,15 +42,16 @@ calculate_c3_variable_j <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
-    if (!is.numeric(Rd_at_25)) {Rd_at_25 <- exdf_obj[, 'Rd_at_25']}
-    if (!is.numeric(tau))      {tau      <- exdf_obj[, 'tau']}
+    if (!value_set(Gamma_star)) {Gamma_star <- exdf_obj[, 'Gamma_star']}
+    if (!value_set(Rd_at_25))   {Rd_at_25   <- exdf_obj[, 'Rd_at_25']}
+    if (!value_set(tau))        {tau        <- exdf_obj[, 'tau']}
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
     pressure   <- exdf_obj[, total_pressure_column_name]        # bar
     Ci         <- exdf_obj[, ci_column_name]                    # micromol / mol
     PCi        <- Ci * pressure                                 # microbar
-    Gamma_star <- exdf_obj[, gamma_star_column_name] * pressure # microbar
+    Gamma_star <- Gamma_star * pressure                         # microbar
 
     An     <- exdf_obj[, a_column_name]                         # micromol / m^2 / s
     PhiPS2 <- exdf_obj[, phips2_column_name]                    # dimensionless
@@ -79,6 +80,7 @@ calculate_c3_variable_j <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
+            Gamma_star = Gamma_star,
             tau = tau,
             Rd_tl = Rd_tl,
             J_F = J_F,
@@ -88,11 +90,12 @@ calculate_c3_variable_j <- function(
 
         document_variables(
             output,
-            c('calculate_c3_variable_j', 'tau',   'dimensionless'),
-            c('calculate_c3_variable_j', 'Rd_tl', 'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_variable_j', 'J_F',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_variable_j', 'gmc',   'mol m^(-2) s^(-1) bar^(-1)'),
-            c('calculate_c3_variable_j', 'Cc',    'micromol mol^(-1)')
+            c('calculate_c3_variable_j', 'Gamma_star', 'micromol mol^(-1)'),
+            c('calculate_c3_variable_j', 'tau',        'dimensionless'),
+            c('calculate_c3_variable_j', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_variable_j', 'J_F',        'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_variable_j', 'gmc',        'mol m^(-2) s^(-1) bar^(-1)'),
+            c('calculate_c3_variable_j', 'Cc',         'micromol mol^(-1)')
         )
     } else {
         return(list(gmc = gmc, Cc = Cc))

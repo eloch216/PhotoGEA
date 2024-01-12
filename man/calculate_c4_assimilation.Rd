@@ -43,7 +43,7 @@
   \item{Rd_at_25}{
     The total rate of mitochondrial respiration across the mesophyll and bundle
     sheath at 25 degrees C, expressed in \code{micromol m^(-2) s^(-1)}. If
-    \code{Rd_at_25} is not numeric, then there must be a column in
+    \code{Rd_at_25} is not a number, then there must be a column in
     \code{exdf_obj} called \code{Rd_at_25} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{Rd_at_25} column
     of \code{exdf_obj} if it exists.
@@ -51,7 +51,7 @@
 
   \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Vcmax_at_25} is not numeric, then
+    \code{micromol m^(-2) s^(-1)}. If \code{Vcmax_at_25} is not a number, then
     there must be a column in \code{exdf_obj} called \code{Vcmax_at_25} with
     appropriate units. A numeric value supplied here will overwrite the values
     in the \code{Vcmax_at_25} column of \code{exdf_obj} if it exists.
@@ -59,7 +59,7 @@
 
   \item{Vpmax_at_25}{
     The maximum rate of PEP carboxylase activity at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Vpmax_at_25} is not numeric, then
+    \code{micromol m^(-2) s^(-1)}. If \code{Vpmax_at_25} is not a number, then
     there must be a column in \code{exdf_obj} called \code{Vpmax_at_25} with
     appropriate units. A numeric value supplied here will overwrite the values
     in the \code{Vpmax_at_25} column of \code{exdf_obj} if it exists.
@@ -67,10 +67,10 @@
 
   \item{Vpr}{
     The rate of PEP carboxylase regeneration, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Vpr} is not numeric, then there must
-    be a column in \code{exdf_obj} called \code{Vpr} with appropriate units. A
-    numeric value supplied here will overwrite the values in the \code{Vpr}
-    column of \code{exdf_obj} if it exists.
+    \code{micromol m^(-2) s^(-1)}. If \code{Vpr} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Vpr} with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    \code{Vpr} column of \code{exdf_obj} if it exists.
   }
 
   \item{POm}{

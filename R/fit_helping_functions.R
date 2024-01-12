@@ -1,8 +1,13 @@
+# A helping function for determining if a flexible parameter has been set
+value_set <- function(x) {
+    is.numeric(x) && !is.na(x)
+}
+
 # A helping function for checking units of "flexible" parameters (uses the unit
 # dictionary)
 require_flexible_param <- function(required_variables, flexible_param) {
     for (i in seq_along(flexible_param)) {
-        if (!is.numeric(flexible_param[[i]])) {
+        if (!value_set(flexible_param[[i]])) {
             pn <- names(flexible_param)[i]
             required_variables[pn] <- unit_dictionary[pn]
         }
@@ -66,7 +71,7 @@ assemble_luf <- function(
 
     # Make sure the fit options are acceptable
     fit_options_okay <- sapply(user_fit_options, function(x) {
-        if (is.numeric(x)) {
+        if (value_set(x)) {
             TRUE
         } else if (is.character(x)) {
             tolower(x) %in% c('fit', 'column')
@@ -86,7 +91,7 @@ assemble_luf <- function(
 
     # Make sure capitalization is standardized in fit options
     default_fit_options <- lapply(default_fit_options, function(x) {
-        if (is.numeric(x)) {
+        if (value_set(x)) {
             x
         } else {
             tolower(x)

@@ -25,7 +25,6 @@
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
     j_column_name = 'J_at_25',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
@@ -92,13 +91,6 @@
   \item{ci_column_name}{
     The name of the column in \code{exdf_obj} that contains the intercellular
     CO2 concentration in \code{micromol mol^(-1)}.
-  }
-
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}. Typically these are
-    the leaf-temperature dependent values calculated using
-    \code{\link{calculate_arrhenius}}.
   }
 
   \item{j_column_name}{

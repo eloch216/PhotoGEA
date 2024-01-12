@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_aci_lower       <- list(alpha = 0, J_at_25 = 0,     Rd_at_25 = 0,      TPU = 0,     Vcmax_at_25 = 0)
-c3_aci_upper       <- list(alpha = 1, J_at_25 = 1000,  Rd_at_25 = 100,    TPU = 40,    Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha = 0, J_at_25 = 'fit', Rd_at_25 = 'fit',  TPU = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_lower       <- list(alpha = 0, Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,      TPU = 0,     Vcmax_at_25 = 0)
+c3_aci_upper       <- list(alpha = 1, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,    TPU = 40,    Vcmax_at_25 = 1000)
+c3_aci_fit_options <- list(alpha = 0, Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit',  TPU = 'fit', Vcmax_at_25 = 'fit')
 
-c3_aci_param <- c('alpha', 'J_at_25', 'Rd_at_25', 'TPU', 'Vcmax_at_25')
+c3_aci_param <- c('alpha', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'TPU', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_aci <- function(
@@ -13,7 +13,6 @@ fit_c3_aci <- function(
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -32,7 +31,6 @@ fit_c3_aci <- function(
         nadph_use = nadph_use,
         a_column_name = a_column_name,
         cc_column_name = cc_column_name,
-        gamma_star_column_name = gamma_star_column_name,
         j_norm_column_name = j_norm_column_name,
         kc_column_name = kc_column_name,
         ko_column_name = ko_column_name,
@@ -68,7 +66,6 @@ fit_c3_aci <- function(
     required_variables[[ca_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[cc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
     required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
@@ -129,17 +126,17 @@ fit_c3_aci <- function(
         assim <- calculate_c3_assimilation(
             replicate_exdf,
             X[1], # alpha
-            X[2], # J_at_25
-            X[3], # Rd_at_25
-            X[4], # TPU
-            X[5], # Vcmax_at_25
+            X[2], # Gamma_star
+            X[3], # J_at_25
+            X[4], # Rd_at_25
+            X[5], # TPU
+            X[6], # Vcmax_at_25
             POc,
             atp_use,
             nadph_use,
             curvature_cj,
             curvature_cjp,
             cc_column_name,
-            gamma_star_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
@@ -194,17 +191,17 @@ fit_c3_aci <- function(
     aci <- calculate_c3_assimilation(
         replicate_exdf,
         best_X[1], # alpha
-        best_X[2], # J_at_25
-        best_X[3], # Rd_at_25
-        best_X[4], # TPU
-        best_X[5], # Vcmax_at_25
+        best_X[2], # Gamma_star
+        best_X[3], # J_at_25
+        best_X[4], # Rd_at_25
+        best_X[5], # TPU
+        best_X[6], # Vcmax_at_25
         POc,
         atp_use,
         nadph_use,
         curvature_cj,
         curvature_cjp,
         cc_column_name,
-        gamma_star_column_name,
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
@@ -222,12 +219,12 @@ fit_c3_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
-    # Add columns for the best-fit parameter values (no need to include alpha or
-    # TPU since they are already included in the output of
+    # Add columns for the best-fit parameter values (no need to include alpha,
+    # Gamma_star, or TPU since they are already included in the output of
     # calculate_c3_assimilation)
-    replicate_exdf[, 'J_at_25']     <- best_X[2]
-    replicate_exdf[, 'Rd_at_25']    <- best_X[3]
-    replicate_exdf[, 'Vcmax_at_25'] <- best_X[5]
+    replicate_exdf[, 'J_at_25']     <- best_X[3]
+    replicate_exdf[, 'Rd_at_25']    <- best_X[4]
+    replicate_exdf[, 'Vcmax_at_25'] <- best_X[6]
 
     # Include the atmospheric CO2 concentration
     replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
@@ -265,10 +262,11 @@ fit_c3_aci <- function(
 
     # Attach the best-fit parameters to the identifiers
     replicate_identifiers[, 'alpha']       <- best_X[1]
-    replicate_identifiers[, 'J_at_25']     <- best_X[2]
-    replicate_identifiers[, 'Rd_at_25']    <- best_X[3]
-    replicate_identifiers[, 'TPU']         <- best_X[4]
-    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[5]
+    replicate_identifiers[, 'Gamma_star']  <- best_X[2]
+    replicate_identifiers[, 'J_at_25']     <- best_X[3]
+    replicate_identifiers[, 'Rd_at_25']    <- best_X[4]
+    replicate_identifiers[, 'TPU']         <- best_X[5]
+    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[6]
 
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
@@ -306,17 +304,17 @@ fit_c3_aci <- function(
     operating_An_model <- calculate_c3_assimilation(
         operating_point_info$operating_exdf,
         best_X[1], # alpha
-        best_X[1], # J_at_25
-        best_X[2], # Rd_at_25
-        best_X[3], # TPU
-        best_X[4], # Vcmax_at_25
+        best_X[2], # Gamma_star
+        best_X[3], # J_at_25
+        best_X[4], # Rd_at_25
+        best_X[5], # TPU
+        best_X[6], # Vcmax_at_25
         POc,
         atp_use,
         nadph_use,
         curvature_cj,
         curvature_cjp,
         cc_column_name,
-        gamma_star_column_name,
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
@@ -345,6 +343,7 @@ fit_c3_aci <- function(
         c('fit_c3_aci',               'n_Wj_smallest',      ''),
         c('fit_c3_aci',               'n_Wp_smallest',      ''),
         c('fit_c3_aci',               'alpha',              'dimensionless'),
+        c('fit_c3_aci',               'Gamma_star',         'micromol mol^(-1)'),
         c('fit_c3_aci',               'J_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'J_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'Rd_at_25',           'micromol m^(-2) s^(-1)'),

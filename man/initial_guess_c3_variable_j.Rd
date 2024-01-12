@@ -24,7 +24,6 @@
     a_column_name = 'A',
     ci_column_name = 'Ci',
     etr_column_name = 'ETR',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -72,11 +71,6 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{rc_exdf} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
-  }
-
   \item{j_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
@@ -119,10 +113,10 @@
 
 \details{
   The variable J method is a fitting procedure for estimating values of
-  \code{alpha}, \code{J}, \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax}
-  from a measured C3 CO2 response curve + chlorophyll fluorescence. For more
-  information about these parameters, see the documentation at
-  \code{\link{calculate_c3_variable_j}} and
+  \code{alpha}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
+  \code{TPU}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve +
+  chlorophyll fluorescence. For more information about these parameters, see the
+  documentation at \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}}.
 
   Here, we make an estimate for \code{tau} by noting that gas exchange
@@ -182,8 +176,9 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    x <- cbind(x, calculate_c3_variable_j(x, param[3], param[4]))
-    cbind(x, calculate_c3_assimilation(x, param[1], param[2], param[3], param[5], param[6]))
+    x <- cbind(x, calculate_c3_variable_j(x, param[2], param[4], param[5]))
+    cbind(x, calculate_c3_assimilation(
+      x, param[1], param[2], param[3], param[4], param[6], param[7]))
   }
 ))
 

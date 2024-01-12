@@ -13,7 +13,6 @@ calculate_c3_limitations_warren <- function(
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
     j_column_name = 'J_at_25',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
@@ -35,6 +34,7 @@ calculate_c3_limitations_warren <- function(
     # We don't need to check all of them, since calculate_c3_assimilation will
     # perform checks.
     required_variables <- list()
+    required_variables[['Gamma_star']]      <- unit_dictionary[['Gamma_star']]
     required_variables[[ca_column_name]]    <- 'micromol mol^(-1)'
     required_variables[[cc_column_name]]    <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]]    <- 'micromol mol^(-1)'
@@ -46,13 +46,14 @@ calculate_c3_limitations_warren <- function(
     check_required_variables(exdf_obj, required_variables)
 
     # Extract key variables to make the following equations simpler
-    Ca    <- exdf_obj[, ca_column_name]    # micromol / mol
-    Cc    <- exdf_obj[, cc_column_name]    # micromol / mol
-    Ci    <- exdf_obj[, ci_column_name]    # micromol / mol
-    J     <- exdf_obj[, j_column_name]     # micromol / m^2 / s
-    Rd    <- exdf_obj[, rd_column_name]    # micromol / m^2 / s
-    TPU   <- exdf_obj[, tpu_column_name]   # micromol / m^2 / s
-    Vcmax <- exdf_obj[, vcmax_column_name] # micromol / m^2 / s
+    Ca         <- exdf_obj[, ca_column_name]    # micromol / mol
+    Cc         <- exdf_obj[, cc_column_name]    # micromol / mol
+    Ci         <- exdf_obj[, ci_column_name]    # micromol / mol
+    Gamma_star <- exdf_obj[, 'Gamma_star']      # micromol / mol
+    J          <- exdf_obj[, j_column_name]     # micromol / m^2 / s
+    Rd         <- exdf_obj[, rd_column_name]    # micromol / m^2 / s
+    TPU        <- exdf_obj[, tpu_column_name]   # micromol / m^2 / s
+    Vcmax      <- exdf_obj[, vcmax_column_name] # micromol / m^2 / s
 
     # If gsc is as measured and gmc is infinite, we have the measured drawdown
     # across the stomata, but no drawdown across the mesophyll:
@@ -78,6 +79,7 @@ calculate_c3_limitations_warren <- function(
             calculate_c3_assimilation(
                 exdf_obj[i, , TRUE],
                 J[i],
+                Gamma_star[i],
                 Rd[i],
                 TPU[i],
                 Vcmax[i],
@@ -88,7 +90,6 @@ calculate_c3_limitations_warren <- function(
                 curvature_cj = curvature_cj,
                 curvature_cjp = curvature_cjp,
                 cc_column_name = cc_name,
-                gamma_star_column_name = gamma_star_column_name,
                 j_norm_column_name = j_norm_column_name,
                 kc_column_name = kc_column_name,
                 ko_column_name = ko_column_name,

@@ -21,7 +21,6 @@
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     etr_column_name = 'ETR',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -43,7 +42,6 @@
         a_column_name = a_column_name,
         ci_column_name = ci_column_name,
         etr_column_name = etr_column_name,
-        gamma_star_column_name = gamma_star_column_name,
         j_norm_column_name = j_norm_column_name,
         kc_column_name = kc_column_name,
         ko_column_name = ko_column_name,
@@ -91,11 +89,6 @@
     The name of the column in \code{rc_exdf} that contains the electron
     transport rate as estimated by the measurement system in
     \code{micromol m^(-2) s^(-1)}.
-  }
-
-  \item{gamma_star_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
   }
 
   \item{j_norm_column_name}{
@@ -243,14 +236,16 @@
   options are used for the fits:
   \itemize{
     \item \code{alpha}: lower = 0, upper = 1, fit_option = 0
+    \item \code{Gamma_star}: lower = 0, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
     \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
     \item \code{tau}: lower = 0, upper = 1, fit_option = \code{'fit'}
     \item \code{TPU}: lower = 0, upper = 40, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
   }
-  With these settings, \code{alpha} is set to 0, and the other parameters are
-  fit during the process (see \code{fit_options} above).
+  With these settings, \code{alpha} is set to 0, values of \code{Gamma_star} are
+  taken from the \code{Gamma_star} column of \code{replicate_exdf}, and the
+  other parameters are fit during the process (see \code{fit_options} above).
 
   The photosynthesis model used here is not smooth in the sense that small
   changes in the input parameters do not necessarily cause changes in its
@@ -277,11 +272,11 @@
   rough estimates of the parameters to use as an initial guess. However, it is
   possible to also use a fixed initial guess by using something like the
   following for the \code{initial_guess_fun}:
-  \code{function(x){c(100, 0.5, 0.6, 10, 90)}}, which would set the initial
-  guess to \code{J = 100}, \code{Rd = 0.5}, \code{tau = 0.6}, \code{TPU = 10},
-  and \code{Vcmax = 90}. If the fit option for a parameter is set to
-  \code{'column'} or a numeric value, those values will override the initial
-  guess values (see \code{fit_options} above).
+  \code{function(x){c(100, 40, 0.5, 0.6, 10, 90)}}, which would set the initial
+  guess to \code{J_at_25 = 100}, \code{Gamma_star = 40}, \code{Rd_at_25 = 0.5},
+  \code{tau = 0.6}, \code{TPU = 10}, and \code{Vcmax_at_25 = 90}. If the fit
+  option for a parameter is set to \code{'column'} or a numeric value, those
+  values will override the initial guess values (see \code{fit_options} above).
 
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
