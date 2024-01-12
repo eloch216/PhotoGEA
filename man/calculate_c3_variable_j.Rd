@@ -38,12 +38,18 @@
 
   \item{tau}{
     The proportionality factor used to calculate the RuBP regeneration rate from
-    chlorophyll fluorescence measurements (dimensionless).
+    chlorophyll fluorescence measurements (dimensionless). If \code{tau} is not
+    numeric, then there must be a column in \code{exdf_obj} called \code{tau}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{tau} column of \code{exdf_obj} if it exists.
   }
 
   \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Rd_at_25} is not numeric, then there
+    must be a column in \code{exdf_obj} called \code{Rd_at_25} with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    \code{Rd_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{atp_use}{

@@ -44,28 +44,44 @@
   \item{alpha}{
     A dimensionless parameter greater than or equal to 0 and less than or equal
     to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast. \code{alpha} is often assumed to be 0.
+    chloroplast. \code{alpha} is often assumed to be 0. If \code{alpha} is not
+    numeric, then there must be a column in \code{exdf_obj} called \code{alpha}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha} column of \code{exdf_obj} if it exists.
   }
 
   \item{J_at_25}{
     The electron transport rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
     general will depend on the incident photosynthetically active flux density.
+    If \code{J_at_25} is not numeric, then there must be a column in
+    \code{exdf_obj} called \code{J_at_25} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{J_at_25} column
+    of \code{exdf_obj} if it exists.
   }
 
   \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Rd_at_25} is not numeric, then there
+    must be a column in \code{exdf_obj} called \code{Rd_at_25} with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    \code{Rd_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{TPU}{
     The maximum rate of triphosphate utilization, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{TPU} is not numeric, then there must
+    be a column in \code{exdf_obj} called \code{TPU} with appropriate units. A
+    numeric value supplied here will overwrite the values in the \code{TPU}
+    column of \code{exdf_obj} if it exists.
   }
 
   \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Vcmax_at_25} is not numeric, then
+    there must be a column in \code{exdf_obj} called \code{Vcmax_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{Vcmax_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{POc}{

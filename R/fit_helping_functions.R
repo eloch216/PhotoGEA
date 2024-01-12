@@ -6,6 +6,25 @@ check_arg_length <- function(target_length, arg_list) {
     }
 }
 
+# A helping function for adding "flexible" parameters to an exdf. These
+# parameters may be numeric or not; if they are numeric, they should be added
+# to the exdf with appropriate units (which can be found in the unit dictionary)
+col_from_flexible_param <- function(exdf_obj, flexible_param, category_name) {
+    for (i in seq_along(flexible_param)) {
+        if (is.numeric(flexible_param[[i]])) {
+            pn <- names(flexible_param)[i]
+            exdf_obj <- set_variable(
+                exdf_obj,
+                pn,
+                unit_dictionary[[pn]],
+                category_name,
+                flexible_param[[i]]
+            )
+        }
+    }
+    exdf_obj
+}
+
 # A helping function that combines user-supplied and default values of `lower`,
 # `upper`, and `fit_options`, as used by several fitting functions in PhotoGEA.
 # This is only intended to be used internally, so checks are not provided for

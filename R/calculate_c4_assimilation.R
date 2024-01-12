@@ -1,9 +1,9 @@
 calculate_c4_assimilation <- function(
     exdf_obj,
-    Rd,                        # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Vcmax,                     # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Vpmax,                     # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
-    Vpr,                       # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Rd_at_25,                  # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Vcmax_at_25,               # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Vpmax_at_25,               # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Vpr,                       # micromol / m^2 / s   (typically this value is being fitted)
     POm = 210000,              # microbar             (typically this value is known from the experimental setup)
     gbs = 0.003,               # mol / m^2 / s / bar  (typically this value is fixed)
     Rm_frac = 0.5,             # dimensionless        (typically this value is fixed)
@@ -21,11 +21,25 @@ calculate_c4_assimilation <- function(
     return_exdf = TRUE
 )
 {
-    if (perform_checks) {
-        if (!is.exdf(exdf_obj)) {
-            stop('calculate_c4_assimilation requires an exdf object')
-        }
+    if (!is.exdf(exdf_obj)) {
+        stop('calculate_c4_assimilation requires an exdf object')
+    }
 
+    # Add "flexible" parameters to the exdf as necessary
+    flexible_param <- list(
+        Rd_at_25 = Rd_at_25,
+        Vcmax_at_25 = Vcmax_at_25,
+        Vpmax_at_25 = Vpmax_at_25,
+        Vpr = Vpr
+    )
+
+    exdf_obj <- col_from_flexible_param(
+        exdf_obj,
+        flexible_param,
+        'calculate_c3_assimilation'
+    )
+
+    if (perform_checks) {
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[ao_column_name]]         <- 'dimensionless'
@@ -38,11 +52,19 @@ calculate_c4_assimilation <- function(
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
+        required_variables <-
+            add_required_parameters(required_variables, names(flexible_param))
+
         check_required_variables(exdf_obj, required_variables)
     }
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
+    Rd_at_25    <- exdf_obj[, 'Rd_at_25']    # micromol / m^2 / s
+    Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25'] # micromol / m^2 / s
+    Vpmax_at_25 <- exdf_obj[, 'Vpmax_at_25'] # micromol / m^2 / s
+    Vpr         <- exdf_obj[, 'Vpr']         # micromol / m^2 / s
+
     Cm <- exdf_obj[, pcm_column_name]                # microbar
     Kc <- exdf_obj[, kc_column_name]                 # microbar
     Ko <- exdf_obj[, ko_column_name] * 1000          # microbar
@@ -52,10 +74,10 @@ calculate_c4_assimilation <- function(
 
     # Apply temperature responses to Vcmax, Vpmax, Rd, and Rm, making use of
     # Table 4.1
-    Vcmax_tl <- Vcmax * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
-    Vpmax_tl <- Vpmax * exdf_obj[, vpmax_norm_column_name] # micromol / m^2 / s
-    Rd_tl <- Rd * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
-    Rm_tl <- Rm_frac * Rd_tl                               # micromol / m^2 / s
+    Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
+    Vpmax_tl <- Vpmax_at_25 * exdf_obj[, vpmax_norm_column_name] # micromol / m^2 / s
+    Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
+    Rm_tl <- Rm_frac * Rd_tl                                     # micromol / m^2 / s
 
     # Equations 4.17 and 4.19
     Vpc <- Cm * Vpmax_tl / (Cm + Kp)  # micromol / m^2 / s
@@ -110,18 +132,18 @@ calculate_c4_assimilation <- function(
 
         document_variables(
             output,
-            c('calculate_c4_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpmax_tl',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rm_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpc',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpr',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vp',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Apc',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Apr',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Ar',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'An',         'micromol m^(-2) s^(-1)')
+            c('calculate_c4_assimilation', 'Vcmax_tl', 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpmax_tl', 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rd_tl',    'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rm_tl',    'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpc',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpr',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vp',       'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apc',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apr',      'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ap',       'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ar',       'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'An',       'micromol m^(-2) s^(-1)')
         )
     } else {
         return(An)
