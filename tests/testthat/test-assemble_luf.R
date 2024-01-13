@@ -15,20 +15,20 @@ test_that('reasonable inputs work properly', {
     expect_true('lower' %in% names(res))
     expect_true('upper' %in% names(res))
     expect_true('fit_options' %in% names(res))
+    expect_true('fit_options_vec' %in% names(res))
+    expect_true('param_to_fit' %in% names(res))
 
-    expect_equal(names(res$lower), test_param_names)
-    expect_equal(names(res$upper), test_param_names)
+    expect_true(is.numeric(res$lower))
+    expect_true(is.numeric(res$upper))
+    expect_true(is.list(res$fit_options))
+    expect_true(is.numeric(res$fit_options_vec))
+    expect_true(is.logical(res$param_to_fit))
+
     expect_equal(names(res$fit_options), test_param_names)
 
-    expect_equal(res$lower$alpha, 0)
-    expect_equal(res$lower$Rd, 0)
-    expect_equal(res$lower$Vcmax, 0)
-    expect_equal(res$lower$TPU, 0)
-
-    expect_equal(res$upper$alpha, 1)
-    expect_equal(res$upper$Rd, 10)
-    expect_equal(res$upper$Vcmax, 400)
-    expect_equal(res$upper$TPU, 100)
+    expect_equal(res$lower, c(0, 0, 0, 0))
+    expect_equal(res$upper, c(1, 10, 400, 100))
+    expect_equal(res$fit_options_vec, c(0, NA, NA, 40))
 
     expect_equal(res$fit_options$alpha, 0)
     expect_equal(res$fit_options$Rd, 'column')

@@ -64,6 +64,8 @@ fit_c3_variable_j <- function(
     lower <- luf$lower
     upper <- luf$upper
     fit_options <- luf$fit_options
+    fit_options_vec <- luf$fit_options_vec
+    param_to_fit <- luf$param_to_fit
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
@@ -101,21 +103,6 @@ fit_c3_variable_j <- function(
         stop('Unreliable parameter estimates can only be removed when both curvature values are 1.0')
     }
 
-    # Convert the bounds and fit options to vectors
-    upper <- as.numeric(upper)
-    lower <- as.numeric(lower)
-    param_to_fit <- fit_options == 'fit'
-
-    fit_options <- sapply(fit_options, function(x) {
-        if (is.numeric(x)) {
-            x
-        } else {
-            NA
-        }
-    })
-
-    fit_options <- as.numeric(fit_options) # make sure names are gone
-
     # Make a temporary copy of replicate_exdf to use for fitting, and
     # initialize its gmc and Cc columns
     fitting_exdf <- replicate_exdf
@@ -137,7 +124,7 @@ fit_c3_variable_j <- function(
     # not NA, apply a penalty when Wj > Wc and Cc > cj_crossover_max. We also
     # apply penalties to any negative gmc and Cc values.
     total_error_fcn <- function(guess) {
-        X <- fit_options
+        X <- fit_options_vec
         X[param_to_fit] <- guess
 
         # Use the variable J equations to get gmc and Cc
@@ -227,7 +214,7 @@ fit_c3_variable_j <- function(
     )
 
     # Get the values of all parameters following the optimization
-    best_X <- fit_options
+    best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
 
     # Get the corresponding values of gmc, Cc, and J_F at the best guess

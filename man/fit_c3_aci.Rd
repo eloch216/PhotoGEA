@@ -228,6 +228,10 @@
   taken from the \code{Gamma_star} column of \code{replicate_exdf}, and the
   other parameters are fit during the process (see \code{fit_options} above).
 
+  The fit is made by creating an error function using
+  \code{\link{error_function_c3_aci}} and minimizing its value using
+  \code{OPTIM_FUN}.
+
   The photosynthesis model represented by \code{calculate_c3_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
   necessarily cause changes in its outputs. This is related to the final step in
@@ -238,16 +242,6 @@
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that \code{dfoptim::nmkb} is often able to find a
   good fit.
-
-  Sometimes the optimizer will choose biologically unreasonable parameter values
-  that nevertheless produce good fits to the supplied assimilation values. A
-  common problem is that the fit result may not indicate Ac-limited assimilation
-  at low CO2 values, which should be the case for any A-Ci curves measured at
-  saturating light. In this case, the optional \code{cj_crossover_min} and
-  \code{cj_crossover_max} can be used to constrain the range of \code{Cc} values
-  (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
-  See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
-  arguments can be used to improve the quality of a fit.
 
   By default, this function will use \code{initial_guess_c3_aci} to make rough
   estimates of the parameters to use as an initial guess. However, it is

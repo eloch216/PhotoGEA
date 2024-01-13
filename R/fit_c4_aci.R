@@ -55,6 +55,8 @@ fit_c4_aci <- function(
     lower <- luf$lower
     upper <- luf$upper
     fit_options <- luf$fit_options
+    fit_options_vec <- luf$fit_options_vec
+    param_to_fit <- luf$param_to_fit
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
@@ -78,24 +80,9 @@ fit_c4_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
-    # Convert the bounds and fit options to vectors
-    upper <- as.numeric(upper)
-    lower <- as.numeric(lower)
-    param_to_fit <- fit_options == 'fit'
-
-    fit_options <- sapply(fit_options, function(x) {
-        if (is.numeric(x)) {
-            x
-        } else {
-            NA
-        }
-    })
-
-    fit_options <- as.numeric(fit_options) # make sure names are gone
-
     # Define the total error function
     total_error_fcn <- function(guess) {
-        X <- fit_options
+        X <- fit_options_vec
         X[param_to_fit] <- guess
         assim <- calculate_c4_assimilation(
             replicate_exdf,
@@ -139,7 +126,7 @@ fit_c4_aci <- function(
     )
 
     # Get the values of all parameters following the optimization
-    best_X <- fit_options
+    best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
 
     # Get the corresponding values of An at the best guess

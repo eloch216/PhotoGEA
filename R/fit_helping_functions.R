@@ -108,10 +108,31 @@ assemble_luf <- function(
     default_upper <- default_upper[param_names]
     default_fit_options <- default_fit_options[param_names]
 
+    # Get a logical vector indicating which parameters should be fit
+    param_to_fit <- default_fit_options == 'fit'
+
+    # Convert the bounds to numeric vectors
+    default_upper <- as.numeric(default_upper)
+    default_lower <- as.numeric(default_lower)
+
+    # Make a new version of the fit options, expressed as a numeric vector.
+    # Here, any entries set to `fit` or `column` will be replaced by NA.
+    fit_options_vec <- sapply(default_fit_options, function(x) {
+        if (value_set(x)) {
+            x
+        } else {
+            NA
+        }
+    })
+
+    fit_options_vec <- as.numeric(fit_options_vec) # make sure names are gone
+
     # Return
     list(
         lower = default_lower,
         upper = default_upper,
-        fit_options = default_fit_options
+        fit_options = default_fit_options,
+        fit_options_vec = fit_options_vec,
+        param_to_fit = param_to_fit
     )
 }
