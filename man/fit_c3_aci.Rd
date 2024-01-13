@@ -50,6 +50,8 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
   )
 }
@@ -150,9 +152,8 @@
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. The bounded optimizers from
-    the \code{dfoptim} package meet these requirements. The base function
-    \code{optim} with the \code{L-BFGS-B} method can also be used.
+    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
+    for a list of available options.
   }
 
   \item{initial_guess_fun}{
@@ -201,6 +202,16 @@
     The maximim value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
     smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
+  }
+
+  \item{error_threshold_factor}{
+    To be passed to \code{\link{confidence_intervals_c3_aci}} when
+    \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{calculate_confidence_intervals}{
+    A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using \code{\link{confidence_intervals_c3_aci}}.
   }
 
   \item{remove_unreliable_param}{
