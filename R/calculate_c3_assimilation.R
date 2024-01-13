@@ -51,9 +51,8 @@ calculate_c3_assimilation <- function(
 
         check_required_variables(exdf_obj, required_variables)
 
-        # Make sure certain inputs lie on [0,1]
+        # Make sure curvature parameters lie on [0,1]
         check_zero_one <- list(
-            alpha = if (value_set(alpha)) {alpha} else {exdf_obj[, 'alpha']},
             curvature_cj = curvature_cj,
             curvature_cjp = curvature_cjp
         )
@@ -82,7 +81,8 @@ calculate_c3_assimilation <- function(
     # read, converting units as necessary
     pressure <- exdf_obj[, total_pressure_column_name] # bar
 
-    PCc <- exdf_obj[, cc_column_name] * pressure # microbar
+    Cc <- exdf_obj[, cc_column_name] # micromol / mol
+    PCc <- Cc * pressure             # microbar
 
     Kc <- exdf_obj[, kc_column_name] * pressure                 # microbar
     Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
@@ -91,6 +91,25 @@ calculate_c3_assimilation <- function(
     Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
     Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
     J_tl <- J_at_25 * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
+
+    # Make sure key inputs have reasonable values; these checks cannot be
+    # bypassed
+    msg <- character()
+
+    if (any(alpha < 0 | alpha > 1)) {msg <- append(msg, 'alpha must be >= 0 and <= 1')}
+    if (any(Cc < 0))                {msg <- append(msg, 'Cc must be >= 0')}
+    if (any(Gamma_star < 0))        {msg <- append(msg, 'Gamma_star must be >= 0')}
+    if (any(J_at_25 < 0))           {msg <- append(msg, 'J_at_25 must be >= 0')}
+    if (any(Kc < 0))                {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0))                {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(pressure < 0))          {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Rd_at_25 < 0))          {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(TPU < 0))               {msg <- append(msg, 'TPU must be >= 0')}
+    if (any(Vcmax_at_25 < 0))       {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+
+    if (length(msg) > 0) {
+        stop(paste(msg, collapse = '. '))
+    }
 
     # Rubisco-limited carboxylation (micromol / m^2 / s)
     Wc <- PCc * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko))

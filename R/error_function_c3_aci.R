@@ -47,7 +47,7 @@ error_function_c3_aci <- function(
 
     check_required_variables(replicate_exdf, required_variables)
 
-    # Make sure certain inputs lie on [0,1]
+    # Make sure curvature parameters lie on [0,1]
     check_zero_one <- list(
         curvature_cj = curvature_cj,
         curvature_cjp = curvature_cjp
@@ -59,44 +59,51 @@ error_function_c3_aci <- function(
         }
     })
 
-    # Make sure the Cc values are all positive
-    if (any(replicate_exdf[, cc_column_name] <= 0)) {
-        stop('All Cc values must be positive')
-    }
-
     # Create and return the error function
     function(guess) {
         X <- fit_options_vec
         X[param_to_fit] <- guess
-        assim <- calculate_c3_assimilation(
-            replicate_exdf,
-            X[1], # alpha
-            X[2], # Gamma_star
-            X[3], # J_at_25
-            X[4], # Rd_at_25
-            X[5], # TPU
-            X[6], # Vcmax_at_25
-            POc,
-            atp_use,
-            nadph_use,
-            curvature_cj,
-            curvature_cjp,
-            cc_column_name,
-            j_norm_column_name,
-            kc_column_name,
-            ko_column_name,
-            rd_norm_column_name,
-            total_pressure_column_name,
-            vcmax_norm_column_name,
-            perform_checks = FALSE,
-            return_exdf = FALSE
+
+        assim <- tryCatch(
+            {
+                calculate_c3_assimilation(
+                    replicate_exdf,
+                    X[1], # alpha
+                    X[2], # Gamma_star
+                    X[3], # J_at_25
+                    X[4], # Rd_at_25
+                    X[5], # TPU
+                    X[6], # Vcmax_at_25
+                    POc,
+                    atp_use,
+                    nadph_use,
+                    curvature_cj,
+                    curvature_cjp,
+                    cc_column_name,
+                    j_norm_column_name,
+                    kc_column_name,
+                    ko_column_name,
+                    rd_norm_column_name,
+                    total_pressure_column_name,
+                    vcmax_norm_column_name,
+                    perform_checks = FALSE,
+                    return_exdf = FALSE
+                )
+            },
+            error = function(e) {
+                NULL
+            }
         )
+
+        if (is.null(assim) || any(is.na(assim$An))) {
+            return(1e10)
+        }
 
         if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
                 if (replicate_exdf[i, cc_column_name] < cj_crossover_min &&
                         assim$Wj[i] < assim$Wc[i]) {
-                    assim$An[i] <- 1e10
+                    return(1e10)
                 }
             }
         }
@@ -105,15 +112,11 @@ error_function_c3_aci <- function(
             for (i in seq_along(assim$An)) {
                 if (replicate_exdf[i, cc_column_name] > cj_crossover_max &&
                         assim$Wj[i] > assim$Wc[i]) {
-                    assim$An[i] <- 1e10
+                    return(1e10)
                 }
             }
         }
 
-        if (any(is.na(assim$An))) {
-            1e10 # return a huge value to penalize this set of parameter values
-        } else {
-            sum((replicate_exdf[, a_column_name] - assim$An)^2)
-        }
+        sum((replicate_exdf[, a_column_name] - assim$An)^2)
     }
 }

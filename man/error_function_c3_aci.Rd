@@ -144,7 +144,7 @@
   values that produce the smallest error.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
-  particular A-Ci curve and a set of fitting options. It is possible to only fit
+  particular A-Ci curve and a set of fitting options. It is possible to just fit
   a subset of the available fitting parameters; by default, the fitting
   parameters are \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and \code{Vcmax}.
   This behavior can be changed via the \code{fit_options} argument.
@@ -164,7 +164,7 @@
   fit.
 
   A penalty is also added for any parameter combination where \code{An} is not a
-  number.
+  number, or where \code{\link{calculate_c3_assimilation}} produces an error.
 }
 
 \value{
