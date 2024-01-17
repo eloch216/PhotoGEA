@@ -74,7 +74,7 @@ solver <- if (USE_DEOPTIM_SOLVER) {
 TPU_VAL <- NA
 RD_VAL <- NA
 
-FIXED <- c(NA, RD_VAL, NA, TPU_VAL, NA) # J, Rd, tau, TPU, Vcmax
+FIXED <- c(NA, NA, RD_VAL, NA, TPU_VAL, NA) # alpha, J, Rd, tau, TPU, Vcmax
 
 ###
 ### TRANSLATION:
@@ -307,6 +307,40 @@ c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance and mesophyll conductance) using the Warren model
 c3_aci_results$fits <- calculate_c3_limitations_warren(c3_aci_results$fits)
+
+# Print average operating point information
+cat('\nAverage operating point Ci for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Ci'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point Cc for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Cc'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (interpolated) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (modeled) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An_model'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Cc fits (including limiting rates)

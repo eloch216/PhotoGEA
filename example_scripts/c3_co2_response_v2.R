@@ -335,8 +335,7 @@ c3_aci_results <- consolidate(by(
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   cj_crossover_min = 100,                       # Wj must be > Wc when Cc < this value (ppm)
-  cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
-  fixed = c(NA, NA, NA, NA)
+  cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -346,6 +345,39 @@ c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance and mesophyll conductance) using the Warren model
 c3_aci_results$fits <- calculate_c3_limitations_warren(c3_aci_results$fits)
+
+# Print average operating point information
+cat('\nAverage operating point Ci for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Ci'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point Cc for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Cc'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (interpolated) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (modeled) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An_model'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Ci fits (including limiting rates)
@@ -373,7 +405,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         fit_param <-
           c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
         panel.points(
-            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            fit_param$operating_An ~ fit_param$operating_Cc,
             type = 'p',
             col = 'black',
             pch = 1
@@ -406,7 +438,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         fit_param <-
           c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
         panel.points(
-            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            fit_param$operating_An ~ fit_param$operating_Cc,
             type = 'p',
             col = 'black',
             pch = 1
