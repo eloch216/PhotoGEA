@@ -206,6 +206,10 @@
   limited by PEP carboxylase regeneration), and the other parameters are fit
   during the process (see \code{fit_options} above).
 
+  The fit is made by creating an error function using
+  \code{\link{error_function_c4_aci}} and minimizing its value using
+  \code{OPTIM_FUN}.
+
   The photosynthesis model represented by \code{calculate_c4_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
   necessarily cause changes in its outputs. This is related to the calculation

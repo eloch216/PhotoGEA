@@ -45,6 +45,35 @@ fit_c4_aci <- function(
         stop('fit_c4_aci requires an exdf object')
     }
 
+    # Define the total error function; units will also be checked by this
+    # function
+    total_error_fcn <- error_function_c4_aci(
+        replicate_exdf,
+        fit_options,
+        ao_column_name,
+        a_column_name,
+        gamma_star_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        POm,
+        gbs,
+        Rm_frac,
+        alpha
+    )
+
+    # Make sure the required variables are defined and have the correct units;
+    # most units have already been chcked by error_function_c3_aci
+    required_variables <- list()
+    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
+
+    check_required_variables(replicate_exdf, required_variables)
+
     # Assemble lower, upper, and fit_options
     luf <- assemble_luf(
         c4_aci_param,
@@ -57,62 +86,6 @@ fit_c4_aci <- function(
     fit_options <- luf$fit_options
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
-
-    # Make sure the required variables are defined and have the correct units
-    required_variables <- list()
-    required_variables[[ao_column_name]]         <- 'dimensionless'
-    required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ca_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[gamma_star_column_name]] <- 'dimensionless'
-    required_variables[[kc_column_name]]         <- 'microbar'
-    required_variables[[ko_column_name]]         <- 'mbar'
-    required_variables[[kp_column_name]]         <- 'microbar'
-    required_variables[[pcm_column_name]]        <- 'microbar'
-    required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
-    required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
-    required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
-
-    required_variables <- require_flexible_param(
-        required_variables,
-        fit_options[fit_options != 'fit']
-    )
-
-    check_required_variables(replicate_exdf, required_variables)
-
-    # Define the total error function
-    total_error_fcn <- function(guess) {
-        X <- fit_options_vec
-        X[param_to_fit] <- guess
-        assim <- calculate_c4_assimilation(
-            replicate_exdf,
-            X[1], # Rd
-            X[2], # Vcmax
-            X[3], # Vpmax
-            X[4], # Vpr
-            POm,
-            gbs,
-            Rm_frac,
-            alpha,
-            ao_column_name,
-            gamma_star_column_name,
-            kc_column_name,
-            ko_column_name,
-            kp_column_name,
-            pcm_column_name,
-            rd_norm_column_name,
-            vcmax_norm_column_name,
-            vpmax_norm_column_name,
-            perform_checks = FALSE,
-            return_exdf = FALSE
-        )
-
-        if (any(is.na(assim))) {
-            1e10 # return a huge value to penalize this set of parameter values
-        } else {
-            sum((replicate_exdf[, 'A'] - assim)^2)
-        }
-    }
 
     # Get an initial guess for all the parameter values
     initial_guess <- initial_guess_fun(replicate_exdf)

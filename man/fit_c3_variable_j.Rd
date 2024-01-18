@@ -247,6 +247,10 @@
   taken from the \code{Gamma_star} column of \code{replicate_exdf}, and the
   other parameters are fit during the process (see \code{fit_options} above).
 
+  The fit is made by creating an error function using
+  \code{\link{error_function_c3_variable_j}} and minimizing its value using
+  \code{OPTIM_FUN}.
+
   The photosynthesis model used here is not smooth in the sense that small
   changes in the input parameters do not necessarily cause changes in its
   outputs. This is related to the final step in the calculations, where the
@@ -257,16 +261,6 @@
   results are obtained using derivative-free methods. It has been found that
   \code{\link[DEoptim]{DEoptim}} is often able to find a good fit, although it
   may take a few minutes to run for a single curve.
-
-  Sometimes the optimizer will choose biologically unreasonable parameter values
-  that nevertheless produce good fits to the supplied assimilation values. A
-  common problem is that the fit result may not follow the expected progression
-  of \code{Ac-limited -> Aj-limited -> Ap-limited} assimilation as \code{Cc}
-  increases. In this case, the optional \code{cj_crossover_min} and
-  \code{cj_crossover_max} can be used to constrain the range of \code{Cc} values
-  (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
-  See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
-  arguments can be used to improve the quality of a fit.
 
   By default, this function will use \code{initial_guess_c3_variable_j} to make
   rough estimates of the parameters to use as an initial guess. However, it is

@@ -54,6 +54,37 @@ fit_c3_variable_j <- function(
         stop('fit_c3_variable_j requires an exdf object')
     }
 
+    # Define the total error function; units will also be checked by this
+    # function
+    total_error_fcn <- error_function_c3_variable_j(
+        replicate_exdf,
+        fit_options,
+        POc,
+        atp_use,
+        nadph_use,
+        curvature_cj,
+        curvature_cjp,
+        a_column_name,
+        ci_column_name,
+        j_norm_column_name,
+        kc_column_name,
+        ko_column_name,
+        phips2_column_name,
+        qin_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        vcmax_norm_column_name,
+        cj_crossover_min,
+        cj_crossover_max
+    )
+
+    # Make sure the required variables are defined and have the correct units;
+    # most units have already been chcked by error_function_c3_aci
+    required_variables <- list()
+    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+
+    check_required_variables(replicate_exdf, required_variables)
+
     # Assemble lower, upper, and fit_options
     luf <- assemble_luf(
         c3_variable_j_param,
@@ -63,143 +94,12 @@ fit_c3_variable_j <- function(
 
     lower <- luf$lower
     upper <- luf$upper
-    fit_options <- luf$fit_options
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
-
-    # Make sure the required variables are defined and have the correct units
-    required_variables <- list()
-    required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ca_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
-    required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
-    required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
-    required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
-
-    required_variables <- require_flexible_param(
-        required_variables,
-        fit_options[fit_options != 'fit']
-    )
-
-    check_required_variables(replicate_exdf, required_variables)
-
-    # Make sure certain inputs lie on [0,1]
-    check_zero_one <- list(
-        curvature_cj = curvature_cj,
-        curvature_cjp = curvature_cjp
-    )
-
-    sapply(seq_along(check_zero_one), function(i) {
-        if (check_zero_one[[i]] < 0 || check_zero_one[[i]] > 1) {
-            stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
-        }
-    })
 
     # Make sure `remove_unreliable_param` is being used properly
     if (remove_unreliable_param && (curvature_cj < 1 || curvature_cjp < 1)) {
         stop('Unreliable parameter estimates can only be removed when both curvature values are 1.0')
-    }
-
-    # Make a temporary copy of replicate_exdf to use for fitting, and
-    # initialize its gmc and Cc columns
-    fitting_exdf <- replicate_exdf
-
-    fitting_exdf <- set_variable(
-        fitting_exdf,
-        'gmc',
-        'mol m^(-2) s^(-1) bar^(-1)'
-    )
-
-    fitting_exdf <- set_variable(
-        fitting_exdf,
-        'Cc',
-        'micromol mol^(-1)'
-    )
-
-    # Define the total error function. If `cj_crossover_min` is not NA, apply a
-    # penalty when Wj < Wc and Cc < cj_crossover_min. If `cj_crossover_max` is
-    # not NA, apply a penalty when Wj > Wc and Cc > cj_crossover_max. We also
-    # apply penalties to any negative gmc and Cc values.
-    total_error_fcn <- function(guess) {
-        X <- fit_options_vec
-        X[param_to_fit] <- guess
-
-        # Use the variable J equations to get gmc and Cc
-        vj <- calculate_c3_variable_j(
-            fitting_exdf,
-            X[2], # Gamma_star
-            X[4], # Rd_at_25
-            X[5], # tau
-            atp_use,
-            nadph_use,
-            a_column_name,
-            ci_column_name,
-            phips2_column_name,
-            qin_column_name,
-            rd_norm_column_name,
-            total_pressure_column_name,
-            perform_checks = FALSE,
-            return_exdf = FALSE
-        )
-
-        if (any(vj$gmc < 0) || any(vj$Cc < 0)) {
-            return(1e10) # return a huge value to penalize this set of parameter values
-        }
-
-        fitting_exdf[, 'gmc'] <- vj$gmc
-        fitting_exdf[, 'Cc']  <- vj$Cc
-
-        # Use FvCB equations to get An
-        assim <- calculate_c3_assimilation(
-            fitting_exdf,
-            X[1], # alpha
-            X[2], # Gamma_star
-            X[3], # J_at_25
-            X[4], # Rd_at_25
-            X[6], # TPU
-            X[7], # Vcmax_at_25
-            POc,
-            atp_use,
-            nadph_use,
-            curvature_cj,
-            curvature_cjp,
-            cc_column_name = 'Cc',
-            j_norm_column_name,
-            kc_column_name,
-            ko_column_name,
-            rd_norm_column_name,
-            total_pressure_column_name,
-            vcmax_norm_column_name,
-            perform_checks = FALSE,
-            return_exdf = FALSE
-        )
-
-        if (!is.na(cj_crossover_min)) {
-            for (i in seq_along(assim$An)) {
-                if (fitting_exdf[i, 'Cc'] < cj_crossover_min &&
-                        assim$Wj[i] < assim$Wc[i]) {
-                    assim$An[i] <- 1e10
-                }
-            }
-        }
-
-        if (!is.na(cj_crossover_max)) {
-            for (i in seq_along(assim$An)) {
-                if (fitting_exdf[i, 'Cc'] > cj_crossover_max &&
-                        assim$Wj[i] > assim$Wc[i]) {
-                    assim$An[i] <- 1e10
-                }
-            }
-        }
-
-        if (any(is.na(assim$An))) {
-            1e10 # return a huge value to penalize this set of parameter values
-        } else {
-            sum((fitting_exdf[, a_column_name] - assim$An)^2)
-        }
     }
 
     # Get an initial guess for all the parameter values

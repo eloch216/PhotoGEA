@@ -45,6 +45,9 @@ initial_guess_c4_aci <- function(
             1.0
         }
 
+        # If Rm was estimated to be negative, reset it to zero
+        rm_estimate <- max(0, rm_estimate)
+
         # Rm is determined by Rm = Rm_frac * Rd, so Rd = Rm / Rm_frac.
         rd_estimate <- rm_estimate / Rm_frac
 

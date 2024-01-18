@@ -66,6 +66,25 @@ calculate_c4_assimilation <- function(
     gamma_star <- exdf_obj[, gamma_star_column_name] # dimensionless
     ao <- exdf_obj[, ao_column_name]                 # dimensionless
 
+    # Make sure key inputs have reasonable values; these checks cannot be
+    # bypassed
+    msg <- character()
+
+    if (any(Cm < 0))          {msg <- append(msg, 'PCm must be >= 0')}
+    if (any(Kc < 0))          {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0))          {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(Kp < 0))          {msg <- append(msg, 'Kp must be >= 0')}
+    if (any(gamma_star < 0))  {msg <- append(msg, 'gamma_star must be >= 0')}
+    if (any(ao < 0))          {msg <- append(msg, 'ao must be >= 0')}
+    if (any(Rd_at_25 < 0))    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(Vcmax_at_25 < 0)) {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    if (any(Vpmax_at_25 < 0)) {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
+    if (any(Vpr < 0))         {msg <- append(msg, 'Vpr must be >= 0')}
+
+    if (length(msg) > 0) {
+        stop(paste(msg, collapse = '. '))
+    }
+
     # Apply temperature responses to Vcmax, Vpmax, Rd, and Rm, making use of
     # Table 4.1
     Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s

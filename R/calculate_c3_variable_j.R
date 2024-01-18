@@ -59,6 +59,22 @@ calculate_c3_variable_j <- function(
 
     Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]         # micromol / m^2 / s
 
+    # Make sure key inputs have reasonable values; these checks cannot be
+    # bypassed
+    msg <- character()
+
+    if (any(Ci < 0))         {msg <- append(msg, 'Ci must be >= 0')}
+    if (any(Gamma_star < 0)) {msg <- append(msg, 'Gamma_star must be >= 0')}
+    if (any(PhiPS2 < 0))     {msg <- append(msg, 'PhiPS2 must be >= 0')}
+    if (any(pressure < 0))   {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Qin < 0))        {msg <- append(msg, 'Qin must be >= 0')}
+    if (any(Rd_at_25 < 0))   {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(tau < 0))        {msg <- append(msg, 'tau must be >= 0')}
+
+    if (length(msg) > 0) {
+        stop(paste(msg, collapse = '. '))
+    }
+
     # Calculate J_F (actual RuBP regeneration rate as estimated from
     # fluorescence) using Equation 5
     J_F <- tau * Qin * PhiPS2 # micromol / m^2 / s

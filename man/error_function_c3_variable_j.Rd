@@ -1,8 +1,8 @@
-\name{error_function_c3_aci}
+\name{error_function_c3_variable_j}
 
-\alias{error_function_c3_aci}
+\alias{error_function_c3_variable_j}
 
-\title{Generate an error function for C3 A-Ci curve fitting}
+\title{Generate an error function for C3 Variable J curve fitting}
 
 \description{
   Creates a function that returns an error value (the sum of squared residuals)
@@ -11,7 +11,7 @@
 }
 
 \usage{
-  error_function_c3_aci(
+  error_function_c3_variable_j(
     replicate_exdf,
     fit_options = list(),
     POc = 210000,
@@ -20,10 +20,12 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     a_column_name = 'A',
-    cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    phips2_column_name = 'PhiPS2',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -84,9 +86,9 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{cc_column_name}{
+  \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{j_norm_column_name}{
@@ -104,6 +106,17 @@
     The name of the column in \code{replicate_exdf} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}.
+  }
+
+  \item{phips2_column_name}{
+    The name of the column in \code{replicate_exdf} that contains values of the
+    operating efficiency of photosystem II (dimensionless).
+  }
+
+  \item{qin_column_name}{
+    The name of the column in \code{replicate_exdf} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rd_norm_column_name}{
@@ -136,19 +149,20 @@
 }
 
 \details{
-  When fitting A-Ci curves, it is necessary to define a function that calculates
-  the sum of squared residuals for a given set of \code{alpha},
-  \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and
+  When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
+  method, it is necessary to define a function that calculates the sum of
+  squared residuals for a given set of \code{alpha}, \code{Gamma_star},
+  \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{TPU}, and
   \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
   This function will be passed to an optimization algorithm which will determine
   the values that produce the smallest error.
 
-  The \code{error_function_c3_aci} returns such a function, which is based on a
-  particular A-Ci curve and a set of fitting options. It is possible to just fit
-  a subset of the available fitting parameters; by default, the fitting
-  parameters are \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and
-  \code{Vcmax_at_25}. This behavior can be changed via the \code{fit_options}
-  argument.
+  The \code{error_function_c3_variable_j} returns such a function, which is
+  based on a particular replicate and a set of fitting options. It is possible
+  to just fit a subset of the available fitting parameters; by default, the
+  fitting parameters are \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
+  \code{tau}, and \code{Vcmax_at_25}. This behavior can be changed via the
+  \code{fit_options} argument.
 
   Sometimes an optimizer will choose biologically unreasonable parameter values
   that nevertheless produce good fits to the supplied assimilation values. A
@@ -165,7 +179,8 @@
   fit.
 
   A penalty is also added for any parameter combination where \code{An} is not a
-  number, or where \code{\link{calculate_c3_assimilation}} produces an error.
+  number, or where \code{\link{calculate_c3_variable_j}} or
+  \code{\link{calculate_c3_assimilation}} produce an error.
 }
 
 \value{
@@ -174,7 +189,8 @@
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
   default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25} (in that order).
+  \code{Rd_at_25}, \code{tau}, \code{TPU}, and \code{Vcmax_at_25} (in that
+  order).
 }
 
 \examples{
@@ -195,34 +211,26 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Define an error function for one curve from the set
-error_fcn <- error_function_c3_aci(
+error_fcn <- error_function_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, TPU = 15, Vcmax_at_25 = 100
-error_fcn(c(200, 1, 15, 100))
+# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, tau = 0.5, TPU = 15,
+# Vcmax_at_25 = 100
+error_fcn(c(200, 1, 0.5, 15, 100))
 
 # Make a plot of error vs. TPU when the other parameters are fixed to the values
 # above. As TPU increases, it eventually stops limiting the assimilation rate
 # and its value stops influencing the error.
-tpu_error_fcn <- function(TPU) {error_fcn(c(200, 1, TPU, 100))}
-tpu_seq <- seq(15, 25)
+tpu_error_fcn <- function(TPU) {error_fcn(c(200, 1, 0.5, TPU, 100))}
+tpu_seq <- seq(5, 25)
 
 lattice::xyplot(
   sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,
