@@ -311,7 +311,7 @@ fit_c3_aci <- function(
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max
-          )
+        )
     }
 
     # Return the results

@@ -47,6 +47,8 @@ fit_c3_variable_j <- function(
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
 )
 {
@@ -92,8 +94,8 @@ fit_c3_variable_j <- function(
         lower, upper, fit_options
     )
 
-    lower <- luf$lower
-    upper <- luf$upper
+    lower_complete <- luf$lower
+    upper_complete <- luf$upper
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
 
@@ -109,8 +111,8 @@ fit_c3_variable_j <- function(
     optim_result <- OPTIM_FUN(
         initial_guess[param_to_fit],
         total_error_fcn,
-        lower = lower[param_to_fit],
-        upper = upper[param_to_fit]
+        lower = lower_complete[param_to_fit],
+        upper = upper_complete[param_to_fit]
     )
 
     # Get the values of all parameters following the optimization
@@ -320,6 +322,35 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'feval',              ''),
         c('fit_c3_variable_j',        'optimum_val',        '')
     )
+
+    # Calculate confidence intervals, if necessary
+    if (calculate_confidence_intervals) {
+        replicate_identifiers <- confidence_intervals_c3_variable_j(
+            replicate_exdf,
+            replicate_identifiers,
+            lower,
+            upper,
+            fit_options,
+            error_threshold_factor,
+            POc,
+            atp_use,
+            nadph_use,
+            curvature_cj,
+            curvature_cjp,
+            a_column_name,
+            ci_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            phips2_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            cj_crossover_min,
+            cj_crossover_max
+        )
+    }
 
     # Return the results
     if (remove_unreliable_param) {

@@ -374,11 +374,13 @@ one_result <- fit_c3_aci(
   Ca_atmospheric = 420
 )
 
-# We can fit the same curve, but also allow alpha and Gamma_star to vary
+# We can fit the same curve, but also allow alpha and Gamma_star to vary, and
+# calculate confidence intervals
 one_result_v2 <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  fit_options = list(Gamma_star = 'fit', alpha = 'fit')
+  fit_options = list(Gamma_star = 'fit', alpha = 'fit'),
+  calculate_confidence_intervals = TRUE
 )
 
 # Fit all curves in the data set (it is more common to do this)

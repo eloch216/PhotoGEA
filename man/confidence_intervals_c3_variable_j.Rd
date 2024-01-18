@@ -1,17 +1,18 @@
-\name{confidence_intervals_c3_aci}
+\name{confidence_intervals_c3_variable_j}
 
-\alias{confidence_intervals_c3_aci}
+\alias{confidence_intervals_c3_variable_j}
 
 \title{Calculate confidence intervals for C3 A-Ci fitting parameters}
 
 \description{
   Calculates confidence intervals for parameters estimated by a C3 A-Ci curve
   fit. It is rare for users to call this function directly, because it can be
-  automatically applied to each curve when calling \code{\link{fit_c3_aci}}.
+  automatically applied to each curve when calling
+  \code{\link{fit_c3_variable_j}}.
 }
 
 \usage{
-  confidence_intervals_c3_aci(
+  confidence_intervals_c3_variable_j(
     replicate_exdf,
     best_fit_parameters,
     lower = list(),
@@ -24,10 +25,12 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     a_column_name = 'A',
-    cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    phips2_column_name = 'PhiPS2',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -43,22 +46,23 @@
 
   \item{best_fit_parameters}{
     An \code{exdf} object representing best-fit parameters for the CO2 response
-    curve in \code{replicate_exdf}, as calculated by \code{\link{fit_c3_aci}}.
+    curve in \code{replicate_exdf}, as calculated by
+    \code{\link{fit_c3_variable_j}}.
   }
 
   \item{lower}{
-    The same value that was passed to \code{\link{fit_c3_aci}} when generating
-    \code{best_fit_parameters}.
+    The same value that was passed to \code{\link{fit_c3_variable_j}} when
+    generating \code{best_fit_parameters}.
   }
 
   \item{upper}{
-    The same value that was passed to \code{\link{fit_c3_aci}} when generating
-    \code{best_fit_parameters}.
+    The same value that was passed to \code{\link{fit_c3_variable_j}} when
+    generating \code{best_fit_parameters}.
   }
 
   \item{fit_options}{
-    The same value that was passed to \code{\link{fit_c3_aci}} when generating
-    \code{best_fit_parameters}.
+    The same value that was passed to \code{\link{fit_c3_variable_j}} when
+    generating \code{best_fit_parameters}.
   }
 
   \item{error_threshold_factor}{
@@ -99,9 +103,9 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{cc_column_name}{
+  \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{j_norm_column_name}{
@@ -119,6 +123,17 @@
     The name of the column in \code{replicate_exdf} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}.
+  }
+
+  \item{phips2_column_name}{
+    The name of the column in \code{replicate_exdf} that contains values of the
+    operating efficiency of photosystem II (dimensionless).
+  }
+
+  \item{qin_column_name}{
+    The name of the column in \code{replicate_exdf} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rd_norm_column_name}{
@@ -162,6 +177,7 @@
 }
 
 \examples{
+\donttest{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
   system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
@@ -179,35 +195,27 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Fit just one curve from the data set
-one_result <- fit_c3_aci(
+one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420
 )
 
 # Calculate confidence limits for the fit parameters
-parameters_with_limits <- confidence_intervals_c3_aci(
+parameters_with_limits <- confidence_intervals_c3_variable_j(
     licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
     one_result$parameters
 )
 
 # View confidence limits and best estimate for Vcmax_at_25
 parameters_with_limits[, c('Vcmax_at_25_lower', 'Vcmax_at_25', 'Vcmax_at_25_upper')]
+}
 }
 
 \concept{exdf}

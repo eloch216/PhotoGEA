@@ -38,7 +38,9 @@ fit_c4_aci <- function(
     ),
     lower = list(),
     upper = list(),
-    fit_options = list()
+    fit_options = list(),
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -81,8 +83,8 @@ fit_c4_aci <- function(
         lower, upper, fit_options
     )
 
-    lower <- luf$lower
-    upper <- luf$upper
+    lower_complete <- luf$lower
+    upper_complete <- luf$upper
     fit_options <- luf$fit_options
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
@@ -94,8 +96,8 @@ fit_c4_aci <- function(
     optim_result <- OPTIM_FUN(
         initial_guess[param_to_fit],
         total_error_fcn,
-        lower = lower[param_to_fit],
-        upper = upper[param_to_fit]
+        lower = lower_complete[param_to_fit],
+        upper = upper_complete[param_to_fit]
     )
 
     # Get the values of all parameters following the optimization
@@ -257,6 +259,32 @@ fit_c4_aci <- function(
         c('fit_c4_aci',               'feval',              ''),
         c('fit_c4_aci',               'optimum_val',        '')
     )
+
+    # Calculate confidence intervals, if necessary
+    if (calculate_confidence_intervals) {
+        replicate_identifiers <- confidence_intervals_c4_aci(
+            replicate_exdf,
+            replicate_identifiers,
+            lower,
+            upper,
+            fit_options,
+            error_threshold_factor,
+            ao_column_name,
+            a_column_name,
+            gamma_star_column_name,
+            kc_column_name,
+            ko_column_name,
+            kp_column_name,
+            pcm_column_name,
+            rd_norm_column_name,
+            vcmax_norm_column_name,
+            vpmax_norm_column_name,
+            POm,
+            gbs,
+            Rm_frac,
+            alpha
+        )
+    }
 
     # Return the results
     return(list(

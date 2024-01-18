@@ -46,7 +46,9 @@
     ),
     lower = list(),
     upper = list(),
-    fit_options = list()
+    fit_options = list(),
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE
   )
 }
 
@@ -148,9 +150,8 @@
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. The bounded optimizers from
-    the \code{dfoptim} package meet these requirements. The base function
-    \code{optim} with the \code{L-BFGS-B} method can also be used.
+    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
+    for a list of available options.
   }
 
   \item{initial_guess_fun}{
@@ -186,6 +187,16 @@
     \code{Rd_at_25} will be set to 0, \code{Vcmax_at_25} will be fit, and
     \code{Vpr} will be set to the values in the \code{TPU} column of
     \code{exdf_obj}.
+  }
+
+  \item{error_threshold_factor}{
+    To be passed to \code{\link{confidence_intervals_c4_aci}} when
+    \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{calculate_confidence_intervals}{
+    A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using \code{\link{confidence_intervals_c4_aci}}.
   }
 }
 
@@ -318,10 +329,12 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate PCm
 licor_file <- apply_gm(licor_file, 'C4')
 
-# Fit just one curve from the data set (it is rare to do this)
+# Fit just one curve from the data set (it is rare to do this). Here we also
+# calculate confidence intervals.
 one_result <- fit_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  calculate_confidence_intervals = TRUE
 )
 
 # Fit all curves in the data set (it is more common to do this)

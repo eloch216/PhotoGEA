@@ -55,6 +55,8 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
   )
 }
@@ -220,6 +222,17 @@
     restriction will not be applied.
   }
 
+  \item{error_threshold_factor}{
+    To be passed to \code{\link{confidence_intervals_c3_variable_j}} when
+    \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{calculate_confidence_intervals}{
+    A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using
+    \code{\link{confidence_intervals_c3_variable_j}}.
+  }
+
   \item{remove_unreliable_param}{
     A logical value indicating whether or not to remove unreliable parameter
     estimates; see below for details.
@@ -365,14 +378,15 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Fit just one curve from the data set (it is rare to do this). Here we use
-# `optimizer_nmkb` to speed up the fit, although the results might be better
-# with `optimizer_deoptim`
+# Fit just one curve from the data set (it is rare to do this). Here we also
+# calculate confidence intervals.
+\donttest{
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb()
+  calculate_confidence_intervals = TRUE
 )
+}
 
 # Fit all curves in the data set (it is more common to do this). Here we use
 # `optimizer_nmkb` to speed up the fit, although the results might be better
