@@ -74,7 +74,7 @@ solver <- if (USE_DEOPTIM_SOLVER) {
 TPU_VAL <- NA
 RD_VAL <- NA
 
-FIXED <- c(NA, NA, RD_VAL, NA, TPU_VAL, NA) # alpha, J, Rd, tau, TPU, Vcmax
+FIXED <- c(0, NA, RD_VAL, NA, TPU_VAL, NA) # alpha, J, Rd, tau, TPU, Vcmax
 
 ###
 ### TRANSLATION:
