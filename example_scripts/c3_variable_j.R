@@ -74,7 +74,7 @@ solver <- if (USE_DEOPTIM_SOLVER) {
 TPU_VAL <- NA
 RD_VAL <- NA
 
-FIXED <- c(NA, RD_VAL, NA, TPU_VAL, NA) # J, Rd, tau, TPU, Vcmax
+FIXED <- c(0, NA, RD_VAL, NA, TPU_VAL, NA) # alpha, J, Rd, tau, TPU, Vcmax
 
 ###
 ### TRANSLATION:
@@ -307,6 +307,40 @@ c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance and mesophyll conductance) using the Warren model
 c3_aci_results$fits <- calculate_c3_limitations_warren(c3_aci_results$fits)
+
+# Print average operating point information
+cat('\nAverage operating point Ci for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Ci'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point Cc for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Cc'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (interpolated) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (modeled) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An_model'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Cc fits (including limiting rates)
@@ -632,6 +666,8 @@ if (MAKE_ANALYSIS_PLOTS) {
 }
 
 if (PERFORM_STATS_TESTS) {
+    ### TESTS FOR VCMAX ###
+  
     # Perform Brown-Forsythe test to check for equal variance
     # This test automatically prints its results to the R terminal
     bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = aci_parameters)
@@ -654,6 +690,32 @@ if (PERFORM_STATS_TESTS) {
 
     # Perform Dunnett's Test
     dunnett_test_result <- DunnettTest(x = aci_parameters$Vcmax_at_25, g = aci_parameters$event, control = "WT")
+    print(dunnett_test_result)
+    
+    ### TESTS FOR GMC ###
+    
+    # Perform Brown-Forsythe test to check for equal variance
+    # This test automatically prints its results to the R terminal
+    bf_test_result <- bf.test(gmc ~ event, data = all_samples_one_point)
+    
+    # If p > 0.05 variances among populations is equal and proceed with anova
+    # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
+    
+    # Check normality of data with Shapiro-Wilks test
+    shapiro_test_result <- shapiro.test(all_samples_one_point$gmc)
+    print(shapiro_test_result)
+    
+    # If p > 0.05 data has normal distribution and proceed with anova
+    
+    # Perform one way analysis of variance
+    anova_result <- aov(gmc ~ event, data = all_samples_one_point)
+    cat("    ANOVA result\n\n")
+    print(summary(anova_result))
+    
+    # If p < 0.05 perform Dunnett's posthoc test
+    
+    # Perform Dunnett's Test
+    dunnett_test_result <- DunnettTest(x = all_samples_one_point$gmc, g = all_samples_one_point$event, control = "WT")
     print(dunnett_test_result)
 }
 
