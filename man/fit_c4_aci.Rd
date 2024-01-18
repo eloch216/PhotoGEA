@@ -34,16 +34,6 @@
     Rm_frac = 0.5,
     alpha = 0,
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c4_aci(
-      gbs = gbs,
-      Rm_frac = Rm_frac,
-      a_column_name = a_column_name,
-      kp_column_name = kp_column_name,
-      pcm_column_name = pcm_column_name,
-      rd_norm_column_name = rd_norm_column_name,
-      vcmax_norm_column_name = vcmax_norm_column_name,
-      vpmax_norm_column_name = vpmax_norm_column_name
-    ),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -154,13 +144,6 @@
     for a list of available options.
   }
 
-  \item{initial_guess_fun}{
-    A function that estimates values of \code{Rd}, \code{Vcmax}, \code{Vpmax},
-    and \code{Vpr}; \code{initial_guess_fun} should have one input argument (an
-    \code{exdf} object representing a single response curve and should return a
-    vector of the estimated values (at 25 degrees C) in the order above.
-  }
-
   \item{lower}{
     A list of named numeric elements representing lower bounds to use when
     fitting. Values supplied here override the default values (see details
@@ -219,7 +202,9 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c4_aci}} and minimizing its value using
-  \code{OPTIM_FUN}.
+  \code{OPTIM_FUN}. An initial guess for the parameters is generated using
+  \code{\link{initial_guess_c4_aci}}, but any fixed values specified in the fit
+  options will override the values returned by the guessing function.
 
   The photosynthesis model represented by \code{calculate_c4_assimilation} is
   not smooth in the sense that small changes in the input parameters do not

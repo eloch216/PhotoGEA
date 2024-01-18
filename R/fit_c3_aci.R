@@ -25,18 +25,6 @@ fit_c3_aci <- function(
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c3_aci(
-        Oc = POc,
-        atp_use = atp_use,
-        nadph_use = nadph_use,
-        a_column_name = a_column_name,
-        cc_column_name = cc_column_name,
-        j_norm_column_name = j_norm_column_name,
-        kc_column_name = kc_column_name,
-        ko_column_name = ko_column_name,
-        rd_norm_column_name = rd_norm_column_name,
-        vcmax_norm_column_name = vcmax_norm_column_name
-    ),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -99,6 +87,20 @@ fit_c3_aci <- function(
     }
 
     # Get an initial guess for all the parameter values
+    initial_guess_fun <- initial_guess_c3_aci(
+        100, # cc_threshold_rd
+        POc,
+        atp_use,
+        nadph_use,
+        a_column_name,
+        cc_column_name,
+        j_norm_column_name,
+        kc_column_name,
+        ko_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name
+    )
+
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied

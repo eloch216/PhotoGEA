@@ -33,18 +33,6 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c3_aci(
-        Oc = POc,
-        atp_use = atp_use,
-        nadph_use = nadph_use,
-        a_column_name = a_column_name,
-        cc_column_name = cc_column_name,
-        j_norm_column_name = j_norm_column_name,
-        kc_column_name = kc_column_name,
-        ko_column_name = ko_column_name,
-        rd_norm_column_name = rd_norm_column_name,
-        vcmax_norm_column_name = vcmax_norm_column_name
-    ),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -156,14 +144,6 @@
     for a list of available options.
   }
 
-  \item{initial_guess_fun}{
-    A function that estimates values of \code{alpha} \code{J_at_25},
-    \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25};
-    \code{initial_guess_fun} should have one input argument (an \code{exdf}
-    object representing a single response curve) and should return a vector of
-    the estimated values (at 25 degrees C) in the order above.
-  }
-
   \item{lower}{
     A list of named numeric elements representing lower bounds to use when
     fitting. Values supplied here override the default values (see details
@@ -241,7 +221,9 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c3_aci}} and minimizing its value using
-  \code{OPTIM_FUN}.
+  \code{OPTIM_FUN}. An initial guess for the parameters is generated using
+  \code{\link{initial_guess_c3_aci}}, but any fixed values specified in the fit
+  options will override the values returned by the guessing function.
 
   The photosynthesis model represented by \code{calculate_c3_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
@@ -253,16 +235,6 @@
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that \code{dfoptim::nmkb} is often able to find a
   good fit.
-
-  By default, this function will use \code{initial_guess_c3_aci} to make rough
-  estimates of the parameters to use as an initial guess. However, it is
-  possible to also use a fixed initial guess by using something like the
-  following for the \code{initial_guess_fun}:
-  \code{function(x){c(0, 40, 100, 0.5, 10, 90)}}, which would set the initial
-  guess to \code{alpha = 0}, \code{Gamma_star = 40}, \code{J_at_25 = 100},
-  \code{Rd_at_25 = 0.5}, \code{TPU = 10}, and \code{Vcmax_at_25 = 90}. If the
-  fit option for a parameter is set to \code{'column'} or a numeric value, those
-  values will override the initial guess values (see \code{fit_options} above).
 
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or

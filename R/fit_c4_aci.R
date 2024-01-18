@@ -26,16 +26,6 @@ fit_c4_aci <- function(
     Rm_frac = 0.5, # dimensionless
     alpha = 0,     # dimensionless
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c4_aci(
-        gbs = gbs,
-        Rm_frac = Rm_frac,
-        a_column_name = a_column_name,
-        kp_column_name = kp_column_name,
-        pcm_column_name = pcm_column_name,
-        rd_norm_column_name = rd_norm_column_name,
-        vcmax_norm_column_name = vcmax_norm_column_name,
-        vpmax_norm_column_name = vpmax_norm_column_name
-    ),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -90,6 +80,18 @@ fit_c4_aci <- function(
     param_to_fit <- luf$param_to_fit
 
     # Get an initial guess for all the parameter values
+    initial_guess_fun <- initial_guess_c4_aci(
+        100, # pcm_threshold_rm
+        gbs,
+        Rm_frac,
+        a_column_name,
+        kp_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name
+    )
+
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
