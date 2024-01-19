@@ -15,6 +15,8 @@
 
 \usage{
   initial_guess_c3_aci(
+    alpha,
+    Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
@@ -30,6 +32,23 @@
 }
 
 \arguments{
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha} is often assumed to be 0. If \code{alpha} is not
+    a number, then there must be a column in \code{rc_exdf} called \code{alpha}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{Gamma_star}{
+    The CO2 compensation point in the absence of day respiration, expressed in
+    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
+    must be a column in \code{rc_exdf} called \code{Gamma_star} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Gamma_star} column of \code{rc_exdf} if it exists.
+  }
+
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
@@ -91,12 +110,12 @@
 
 \details{
   Here we estimate values of \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and
-  \code{Vcmax_at_25} from a measured C3 CO2 response curve. The guess for
-  \code{alpha} is always set to 0.5, and the guess for \code{Gamma_star} is
-  always set to 40. For more information about these parameters, see the
-  documentation for \code{\link{calculate_c3_assimilation}}. To estimate these
-  parameter values, we use several equations from S. von Caemmerer, "Biochemical
-  Models of Leaf Photosynthesis" (CSIRO Publishing, 2000)
+  \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult to
+  estimate values of \code{alpha} and \code{Gamma_star} from a curve, so they
+  must be supplied beforehand. For more information about these parameters, see
+  the documentation for \code{\link{calculate_c3_assimilation}}. To estimate
+  these parameter values, we use several equations from S. von Caemmerer,
+  "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing, 2000)
   [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are from
   this book.
 
@@ -140,8 +159,8 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with four elements, representing the
-  values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and
-  \code{Vcmax_at_25} (in that order).
+  values of \code{alpha}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25},
+  \code{TPU}, and \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -177,8 +196,9 @@ licor_file <- apply_gm(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Create the guessing function
-guessing_func <- initial_guess_c3_aci()
+# Create the guessing function; here we set alpha = 0 and use the
+# temperature-dependent values of Gamma_star calculated above
+guessing_func <- initial_guess_c3_aci(alpha = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))

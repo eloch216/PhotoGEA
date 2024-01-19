@@ -81,6 +81,7 @@ fit_c3_variable_j <- function(
 
     lower_complete <- luf$lower
     upper_complete <- luf$upper
+    fit_options <- luf$fit_options
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
 
@@ -91,6 +92,8 @@ fit_c3_variable_j <- function(
 
     # Get an initial guess for all the parameter values
     initial_guess_fun <- initial_guess_c3_variable_j(
+        if (fit_options$alpha == 'fit')      {0.5} else {fit_options$alpha},      # alpha
+        if (fit_options$Gamma_star == 'fit') {40}  else {fit_options$Gamma_star}, # Gamma_star
         100, # cc_threshold_rd
         POc,
         atp_use,

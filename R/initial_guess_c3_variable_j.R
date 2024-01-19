@@ -1,4 +1,6 @@
 initial_guess_c3_variable_j <- function(
+    alpha,
+    Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
@@ -50,6 +52,8 @@ initial_guess_c3_variable_j <- function(
 
         # Get a function that makes an initial guess for the C3 parameters
         c3_guess_func <- initial_guess_c3_aci(
+            alpha,
+            Gamma_star,
             cc_threshold_rd,
             Oc,
             atp_use,

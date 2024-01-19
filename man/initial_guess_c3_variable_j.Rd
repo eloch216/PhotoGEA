@@ -17,6 +17,8 @@
 
 \usage{
   initial_guess_c3_variable_j(
+    alpha,
+    Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
@@ -35,6 +37,23 @@
 }
 
 \arguments{
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha} is often assumed to be 0. If \code{alpha} is not
+    a number, then there must be a column in \code{rc_exdf} called \code{alpha}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{Gamma_star}{
+    The CO2 compensation point in the absence of day respiration, expressed in
+    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
+    must be a column in \code{rc_exdf} called \code{Gamma_star} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Gamma_star} column of \code{rc_exdf} if it exists.
+  }
+
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
@@ -163,8 +182,9 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Create the guessing function
-guessing_func <- initial_guess_c3_variable_j()
+# Create the guessing function; here we set alpha = 0 and use the
+# temperature-dependent values of Gamma_star calculated above
+guessing_func <- initial_guess_c3_variable_j(alpha = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))

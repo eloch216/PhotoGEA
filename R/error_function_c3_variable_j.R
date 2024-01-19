@@ -158,7 +158,7 @@ error_function_c3_variable_j <- function(
 
         if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
-                if (replicate_exdf[i, cc_column_name] < cj_crossover_min &&
+                if (fitting_exdf[i, cc_column_name] < cj_crossover_min &&
                         assim$Wj[i] < assim$Wc[i]) {
                     return(1e10)
                 }
@@ -167,13 +167,13 @@ error_function_c3_variable_j <- function(
 
         if (!is.na(cj_crossover_max)) {
             for (i in seq_along(assim$An)) {
-                if (replicate_exdf[i, cc_column_name] > cj_crossover_max &&
+                if (fitting_exdf[i, cc_column_name] > cj_crossover_max &&
                         assim$Wj[i] > assim$Wc[i]) {
                     return(1e10)
                 }
             }
         }
 
-        sum((replicate_exdf[, a_column_name] - assim$An)^2)
+        sum((fitting_exdf[, a_column_name] - assim$An)^2)
     }
 }

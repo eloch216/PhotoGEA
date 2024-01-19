@@ -1,4 +1,6 @@
 initial_guess_c3_aci <- function(
+    alpha,      # dimensionless
+    Gamma_star, # micromol / mol
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
@@ -28,32 +30,47 @@ initial_guess_c3_aci <- function(
         required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
 
+        flexible_param <- list(
+            alpha = alpha,
+            Gamma_star = Gamma_star
+        )
+
+        required_variables <-
+            require_flexible_param(required_variables, flexible_param)
+
         check_required_variables(rc_exdf, required_variables)
 
-        # Make a guess that Gamma_star is 40 micromol / mol. This is a pretty
-        # good guess most of the time.
-        gstar_estimate <- 40
+        # Include values of alpha and Gamma_star in the exdf if they are not
+        # already present
+        if (value_set(alpha))      {rc_exdf[, 'alpha']      <- alpha}
+        if (value_set(Gamma_star)) {rc_exdf[, 'Gamma_star'] <- Gamma_star}
 
         # To estimate Rd, first make a linear fit of A ~ Cc where Cc is below
-        # the threshold. Then, evaluate the fit at Cc = Gamma_star. If there are
-        # not enough points to do the fit, just estimate Rd to be a typical
-        # value.
+        # the threshold. Then, evaluate the fit at Cc = Gamma_star. Gamma_star
+        # is temperature dependent and not necessarily constant across the
+        # measured points, so use its average value across points where Cc is
+        # below the threshold. If there are not enough points to do the fit,
+        # just estimate Rd to be a typical value.
         rd_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rd, ] # a data frame
 
         rd_estimate <- if (nrow(rd_subset) > 1) {
+            mean_gstar_rd <- mean(rd_subset[, 'Gamma_star'])
             mean_rd_norm <- mean(rd_subset[, rd_norm_column_name])
 
             rd_fit <-
                 stats::lm(rd_subset[, a_column_name] ~ rd_subset[, cc_column_name])
 
-            -(rd_fit$coefficients[1] + rd_fit$coefficients[2] * gstar_estimate) / mean_rd_norm
+            -(rd_fit$coefficients[1] + rd_fit$coefficients[2] * mean_gstar_rd) / mean_rd_norm
         } else {
             1.0
         }
 
-        # Calculate gross assimilation, which is used in several of the next
-        # calculations.
-        Ag <- rc_exdf[, a_column_name] + rd_estimate * rc_exdf[, rd_norm_column_name]
+        # Make sure rd_estimate has no names
+        rd_estimate <- as.numeric(rd_estimate)
+
+        # Calculate the photosynthetic contribution to the net assimilation
+        # rate, which is used in several of the next calculations.
+        Aphoto <- rc_exdf[, a_column_name] + rd_estimate * rc_exdf[, rd_norm_column_name]
 
         # To estimate Vcmax, we solve Equation 2.20 for Vcmax and calculate it
         # for each point in the response curve. Vcmax values calculated this way
@@ -64,9 +81,9 @@ initial_guess_c3_aci <- function(
         # the Rubisco-limited range. With this in mind, we choose the largest
         # Vcmax value as our best estimate. In this calculation, we need a value
         # of Rd, so we use the previously-estimated value.
-        vcmax_estimates <- Ag *
+        vcmax_estimates <- Aphoto *
             (rc_exdf[, cc_column_name] + rc_exdf[, kc_column_name] * (1 + Oc / (1000 * rc_exdf[, ko_column_name]))) /
-            (rc_exdf[, cc_column_name] - gstar_estimate)
+            (rc_exdf[, cc_column_name] - rc_exdf[, 'Gamma_star'])
 
         vcmax_estimates <- vcmax_estimates / rc_exdf[, vcmax_norm_column_name]
 
@@ -74,28 +91,25 @@ initial_guess_c3_aci <- function(
         # To estimate J, we solve Equation 2.23 for J and calculate it for each
         # point in the response curve. Then we choose the largest value as the
         # best estimate.
-        j_estimates <- Ag *
-            (atp_use * rc_exdf[, cc_column_name] + nadph_use * gstar_estimate) /
-            (rc_exdf[, cc_column_name] - gstar_estimate)
+        j_estimates <- Aphoto *
+            (atp_use * rc_exdf[, cc_column_name] + nadph_use * rc_exdf[, 'Gamma_star']) /
+            (rc_exdf[, cc_column_name] - rc_exdf[, 'Gamma_star'])
 
         j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]
-
-        # Assume a mid-range value for alpha
-        alpha <- 0.5 # dimensionles
 
         # To estimate TPU, we solve Equation 2.26 for TPU and calculate it for
         # each point in the response curve. Then we choose the largest value as
         # the best estimate.
-        tpu_estimates <- Ag *
-            (rc_exdf[, cc_column_name] - (1 - 3 * alpha / 2) * gstar_estimate) /
-            (3 * (rc_exdf[, cc_column_name] - gstar_estimate))
+        tpu_estimates <- Aphoto *
+            (rc_exdf[, cc_column_name] - (1 - 3 * rc_exdf[, 'alpha'] / 2) * rc_exdf[, 'Gamma_star']) /
+            (3 * (rc_exdf[, cc_column_name] - rc_exdf[, 'Gamma_star']))
 
         # Return the estimates
         c(
-            alpha,
-            gstar_estimate,
+            mean(rc_exdf[, 'alpha']),
+            mean(rc_exdf[, 'Gamma_star']),
             max(j_estimates),
-            as.numeric(rd_estimate), # remove names
+            rd_estimate,
             max(tpu_estimates),
             max(vcmax_estimates)
         )
