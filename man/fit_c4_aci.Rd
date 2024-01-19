@@ -34,19 +34,11 @@
     Rm_frac = 0.5,
     alpha = 0,
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c4_aci(
-      gbs = gbs,
-      Rm_frac = Rm_frac,
-      a_column_name = a_column_name,
-      kp_column_name = kp_column_name,
-      pcm_column_name = pcm_column_name,
-      rd_norm_column_name = rd_norm_column_name,
-      vcmax_norm_column_name = vcmax_norm_column_name,
-      vpmax_norm_column_name = vpmax_norm_column_name
-    ),
-    lower = c(0,   0,   0,    0),
-    upper = c(100, 100, 1000, 1000),
-    fixed = c(NA,  NA,  NA,   1000)
+    lower = list(),
+    upper = list(),
+    fit_options = list(),
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE
   )
 }
 
@@ -148,45 +140,74 @@
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. The bounded optimizers from
-    the \code{dfoptim} package meet these requirements. The base function
-    \code{optim} with the \code{L-BFGS-B} method can also be used.
-  }
-
-  \item{initial_guess_fun}{
-    A function that estimates values of \code{Rd}, \code{Vcmax}, \code{Vpmax},
-    and \code{Vpr}; \code{initial_guess_fun} should have one input argument (an
-    \code{exdf} object representing a single response curve and should return a
-    vector of the estimated values (at 25 degrees C) in the order above.
+    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
+    for a list of available options.
   }
 
   \item{lower}{
-    A numeric vector containing lower bounds for the values of \code{Rd},
-    \code{Vcmax}, \code{Vpmax}, and \code{Vpr}, in that order.
+    A list of named numeric elements representing lower bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, \code{lower = list(Vcmax_at_25 = 10)} sets the lower
+    limit for \code{Vcmax_at_25} to 10 micromol / m^2 / s.
   }
 
   \item{upper}{
-    A numeric vector containing upper bounds for the values of \code{Rd},
-    \code{Vcmax}, \code{Vpmax}, and \code{Vpr}, in that order.
+    A list of named numeric elements representing upper bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, \code{upper = list(Vcmax_at_25 = 200)} sets the upper
+    limit for \code{Vcmax_at_25} to 200 micromol / m^2 / s.
   }
 
-  \item{fixed}{
-    A numeric vector specifying fixed values of \code{Rd}, \code{Vcmax},
-    \code{Vpmax}, and \code{Vpr}, in that order. Values of \code{NA} indicate
-    that the corresponding parameter is not fixed and should be varied during
-    the optimization procedure. The default value of this argument fixes
-    \code{Vpr} to a high value (so net assimilation is rarely limited by PEP
-    carboxylase regeneration) and allows the other parameters to vary. To vary
-    all of the parameters, set \code{fixed} to \code{c(NA, NA, NA, NA)}.
+  \item{fit_options}{
+    A list of named elements representing fit options to use for each parameter.
+    Values supplied here override the default values (see details below). Each
+    element must be \code{'fit'}, \code{'column'}, or a numeric value. A value
+    of \code{'fit'} means that the parameter will be fit; a value of
+    \code{'column'} means that the value of the parameter will be taken from a
+    column in \code{exdf_obj} of the same name; and a numeric value means that
+    the parameter will be set to that value. For example, \code{fit_options =
+    list(Rd_at_25 = 0, Vcmax_at_25 = 'fit', Vpr = 'column')} means that
+    \code{Rd_at_25} will be set to 0, \code{Vcmax_at_25} will be fit, and
+    \code{Vpr} will be set to the values in the \code{TPU} column of
+    \code{exdf_obj}.
+  }
+
+  \item{error_threshold_factor}{
+    To be passed to \code{\link{confidence_intervals_c4_aci}} when
+    \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{calculate_confidence_intervals}{
+    A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using \code{\link{confidence_intervals_c4_aci}}.
   }
 }
 
 \details{
   This function calls \code{\link{calculate_c4_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{Rd}, \code{Vcmax}, \code{Vpmax}, and \code{Vpr} to
-  find ones that best reproduce the experimentally measured values of net
-  assimilation.
+  vary the values of \code{Rd_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
+  and \code{Vpr} to find ones that best reproduce the experimentally measured
+  values of net assimilation. By default, the following options are used for the
+  fits:
+  \itemize{
+    \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
+    \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Vpmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Vpr}: lower = 0, upper = 1000, fit_option = 1000
+  }
+  With these settings, \code{Vpr} is set to 1000 (so net assimilation is rarely
+  limited by PEP carboxylase regeneration), and the other parameters are fit
+  during the process (see \code{fit_options} above).
+
+  An initial guess for the parameters is generated by calling
+  \code{\link{initial_guess_c4_aci}} with the \code{pcm_threshold_rm} argument
+  set to 100 microbar. Note that any fixed values specified in the fit options
+  will override the values returned by the guessing function.
+
+  The fit is made by creating an error function using
+  \code{\link{error_function_c4_aci}} and minimizing its value using
+  \code{OPTIM_FUN}, starting from the initial guess described above.
 
   The photosynthesis model represented by \code{calculate_c4_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
@@ -204,13 +225,10 @@
   possible to also use a fixed initial guess by using something like the
   following for the \code{initial_guess_fun}:
   \code{function(x){c(1, 20, 60, 90)}}, which would set the initial guess to
-  \code{Rd = 1}, \code{Vcmax = 20}, \code{Vpmax = 60}, and \code{Vpr = 90}.
-
-  By default, this function fixes \code{Vpr} to a high value (\code{800 micromol
-  m^(-2) s^(-1)}) and allows the other parameters to be fitted. This behavior
-  is determined by the value of the \code{fixed} input argument, and the value
-  of \code{Vpr} specified in this way will override any value returned by
-  \code{initial_guess_fun}.
+  \code{Rd = 1}, \code{Vcmax = 20}, \code{Vpmax = 60}, and \code{Vpr = 90}. If
+  the fit option for a parameter is set to \code{'column'} or a numeric value,
+  those values will override the initial guess values (see \code{fit_options}
+  above).
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{PCm} from the atmospheric CO2
@@ -299,10 +317,12 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate PCm
 licor_file <- apply_gm(licor_file, 'C4')
 
-# Fit just one curve from the data set (it is rare to do this)
+# Fit just one curve from the data set (it is rare to do this). Here we also
+# calculate confidence intervals.
 one_result <- fit_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  calculate_confidence_intervals = TRUE
 )
 
 # Fit all curves in the data set (it is more common to do this)

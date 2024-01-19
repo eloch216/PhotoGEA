@@ -63,18 +63,21 @@ solver <- if (USE_DEOPTIM_SOLVER) {
   optimizer_nmkb()
 }
 
-# Decide whether to fit TPU
+# Decide whether to fit TPU and Rd
 #
 # To disable TPU limitations: TPU_VAL <- 40
-# To fit TPU: TPU_VAL <- NA
+# To fit TPU: TPU_VAL <- 'fit'
 #
 # To fix Rd: RD_VAL <- 1.234
-# To fit Rd: RD_VAL <- NA
+# To fit Rd: RD_VAL <- 'fit'
 
-TPU_VAL <- NA
-RD_VAL <- NA
+TPU_VAL <- 'fit'
+RD_VAL <- 'fit'
 
-FIXED <- c(0, NA, RD_VAL, NA, TPU_VAL, NA) # alpha, J, Rd, tau, TPU, Vcmax
+FIT_OPTIONS <- list(
+    Rd_at_25 = RD_VAL,
+    TPU = TPU_VAL
+)
 
 ###
 ### TRANSLATION:
@@ -295,7 +298,9 @@ c3_aci_results <- consolidate(by(
   fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   OPTIM_FUN = solver,                           # The optimization algorithm to use
-  fixed = FIXED,
+  lower = list(tau = 0.2),
+  upper = list(tau = 0.6),
+  fit_options = FIT_OPTIONS,
   cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
   cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
 ))
@@ -667,7 +672,7 @@ if (MAKE_ANALYSIS_PLOTS) {
 
 if (PERFORM_STATS_TESTS) {
     ### TESTS FOR VCMAX ###
-  
+
     # Perform Brown-Forsythe test to check for equal variance
     # This test automatically prints its results to the R terminal
     bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = aci_parameters)
@@ -691,29 +696,29 @@ if (PERFORM_STATS_TESTS) {
     # Perform Dunnett's Test
     dunnett_test_result <- DunnettTest(x = aci_parameters$Vcmax_at_25, g = aci_parameters$event, control = "WT")
     print(dunnett_test_result)
-    
+
     ### TESTS FOR GMC ###
-    
+
     # Perform Brown-Forsythe test to check for equal variance
     # This test automatically prints its results to the R terminal
     bf_test_result <- bf.test(gmc ~ event, data = all_samples_one_point)
-    
+
     # If p > 0.05 variances among populations is equal and proceed with anova
     # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
-    
+
     # Check normality of data with Shapiro-Wilks test
     shapiro_test_result <- shapiro.test(all_samples_one_point$gmc)
     print(shapiro_test_result)
-    
+
     # If p > 0.05 data has normal distribution and proceed with anova
-    
+
     # Perform one way analysis of variance
     anova_result <- aov(gmc ~ event, data = all_samples_one_point)
     cat("    ANOVA result\n\n")
     print(summary(anova_result))
-    
+
     # If p < 0.05 perform Dunnett's posthoc test
-    
+
     # Perform Dunnett's Test
     dunnett_test_result <- DunnettTest(x = all_samples_one_point$gmc, g = all_samples_one_point$event, control = "WT")
     print(dunnett_test_result)

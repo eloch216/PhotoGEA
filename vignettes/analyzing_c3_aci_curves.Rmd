@@ -115,7 +115,7 @@ Rd <- 1.8
 TPU <- 18
 Vcmax <- 125
 
-assim <- calculate_c3_assimilation(inputs, alpha, J, Rd, TPU, Vcmax)
+assim <- calculate_c3_assimilation(inputs, alpha, '', J, Rd, TPU, Vcmax)
 
 c3_col <- rev(multi_curve_colors()[1:4])
 
@@ -167,6 +167,7 @@ identical to the ones used to generate the previous figure.
 assim_curvature <- calculate_c3_assimilation(
   inputs,
   alpha,
+  '',
   J,
   Rd,
   TPU,

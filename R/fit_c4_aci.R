@@ -1,3 +1,11 @@
+# Specify default fit settings
+c4_aci_lower       <- list(Rd_at_25 = 0,     Vcmax_at_25 = 0,     Vpmax_at_25 = 0,     Vpr = 0)
+c4_aci_upper       <- list(Rd_at_25 = 100,   Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
+c4_aci_fit_options <- list(Rd_at_25 = 'fit', Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
+
+c4_aci_param <- c('Rd_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr')
+
+# Fitting function
 fit_c4_aci <- function(
     replicate_exdf,
     Ca_atmospheric,
@@ -18,98 +26,85 @@ fit_c4_aci <- function(
     Rm_frac = 0.5, # dimensionless
     alpha = 0,     # dimensionless
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c4_aci(
-        gbs = gbs,
-        Rm_frac = Rm_frac,
-        a_column_name = a_column_name,
-        kp_column_name = kp_column_name,
-        pcm_column_name = pcm_column_name,
-        rd_norm_column_name = rd_norm_column_name,
-        vcmax_norm_column_name = vcmax_norm_column_name,
-        vpmax_norm_column_name = vpmax_norm_column_name
-    ),
-    lower = c(0,   0,    0,    0),   # Rd, Vcmax, Vpmax, Vpr
-    upper = c(100, 100, 1000, 1000), # Rd, Vcmax, Vpmax, Vpr
-    fixed = c(NA, NA,   NA,   1000)  # Rd, Vcmax, Vpmax, Vpr
+    lower = list(),
+    upper = list(),
+    fit_options = list(),
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
         stop('fit_c4_aci requires an exdf object')
     }
 
-    # Make sure the required variables are defined and have the correct units
+    # Define the total error function; units will also be checked by this
+    # function
+    total_error_fcn <- error_function_c4_aci(
+        replicate_exdf,
+        fit_options,
+        ao_column_name,
+        a_column_name,
+        gamma_star_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        POm,
+        gbs,
+        Rm_frac,
+        alpha
+    )
+
+    # Make sure the required variables are defined and have the correct units;
+    # most units have already been chcked by error_function_c3_aci
     required_variables <- list()
-    required_variables[[ao_column_name]]         <- 'dimensionless'
-    required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ca_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
-    required_variables[[gamma_star_column_name]] <- 'dimensionless'
-    required_variables[[kc_column_name]]         <- 'microbar'
-    required_variables[[ko_column_name]]         <- 'mbar'
-    required_variables[[kp_column_name]]         <- 'microbar'
-    required_variables[[pcm_column_name]]        <- 'microbar'
-    required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
-    required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
-    required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
+    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
 
     check_required_variables(replicate_exdf, required_variables)
 
-    # Make sure arguments have the correct length
-    check_arg_length(4, list(lower = lower, upper = upper, fixed = fixed))
+    # Assemble lower, upper, and fit_options
+    luf <- assemble_luf(
+        c4_aci_param,
+        c4_aci_lower, c4_aci_upper, c4_aci_fit_options,
+        lower, upper, fit_options
+    )
 
-    # Make sure at least one parameter will be fit
-    if (!any(is.na(fixed))) {
-        stop('no element of `fixed` is NA, so there are no parameters to fit')
-    }
-
-    # Define the total error function
-    total_error_fcn <- function(guess) {
-        X <- fixed
-        X[is.na(fixed)] <- guess
-        assim <- calculate_c4_assimilation(
-            replicate_exdf,
-            X[1], # Rd
-            X[2], # Vcmax
-            X[3], # Vpmax
-            X[4], # Vpr
-            POm,
-            gbs,
-            Rm_frac,
-            alpha,
-            ao_column_name,
-            gamma_star_column_name,
-            kc_column_name,
-            ko_column_name,
-            kp_column_name,
-            pcm_column_name,
-            rd_norm_column_name,
-            vcmax_norm_column_name,
-            vpmax_norm_column_name,
-            perform_checks = FALSE,
-            return_exdf = FALSE
-        )
-
-        if (any(is.na(assim))) {
-            1e10 # return a huge value to penalize this set of parameter values
-        } else {
-            sum((replicate_exdf[, 'A'] - assim)^2)
-        }
-    }
+    lower_complete <- luf$lower
+    upper_complete <- luf$upper
+    fit_options <- luf$fit_options
+    fit_options_vec <- luf$fit_options_vec
+    param_to_fit <- luf$param_to_fit
 
     # Get an initial guess for all the parameter values
+    initial_guess_fun <- initial_guess_c4_aci(
+        100, # pcm_threshold_rm
+        gbs,
+        Rm_frac,
+        a_column_name,
+        kp_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name
+    )
+
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
     optim_result <- OPTIM_FUN(
-        initial_guess[is.na(fixed)],
+        initial_guess[param_to_fit],
         total_error_fcn,
-        lower = lower[is.na(fixed)],
-        upper = upper[is.na(fixed)]
+        lower = lower_complete[param_to_fit],
+        upper = upper_complete[param_to_fit]
     )
 
     # Get the values of all parameters following the optimization
-    best_X <- fixed
-    best_X[is.na(fixed)] <- optim_result[['par']]
+    best_X <- fit_options_vec
+    best_X[param_to_fit] <- optim_result[['par']]
 
     # Get the corresponding values of An at the best guess
     aci <- calculate_c4_assimilation(
@@ -176,7 +171,7 @@ fit_c4_aci <- function(
         residual_stats(
             replicate_exdf[, paste0(a_column_name, '_residuals')],
             replicate_exdf$units[[a_column_name]],
-            length(which(is.na(fixed)))
+            length(which(param_to_fit))
         )
     )
 
@@ -266,6 +261,32 @@ fit_c4_aci <- function(
         c('fit_c4_aci',               'feval',              ''),
         c('fit_c4_aci',               'optimum_val',        '')
     )
+
+    # Calculate confidence intervals, if necessary
+    if (calculate_confidence_intervals) {
+        replicate_identifiers <- confidence_intervals_c4_aci(
+            replicate_exdf,
+            replicate_identifiers,
+            lower,
+            upper,
+            fit_options,
+            error_threshold_factor,
+            ao_column_name,
+            a_column_name,
+            gamma_star_column_name,
+            kc_column_name,
+            ko_column_name,
+            kp_column_name,
+            pcm_column_name,
+            rd_norm_column_name,
+            vcmax_norm_column_name,
+            vpmax_norm_column_name,
+            POm,
+            gbs,
+            Rm_frac,
+            alpha
+        )
+    }
 
     # Return the results
     return(list(

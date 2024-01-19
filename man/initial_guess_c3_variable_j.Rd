@@ -17,6 +17,8 @@
 
 \usage{
   initial_guess_c3_variable_j(
+    alpha,
+    Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
@@ -24,7 +26,6 @@
     a_column_name = 'A',
     ci_column_name = 'Ci',
     etr_column_name = 'ETR',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -36,6 +37,23 @@
 }
 
 \arguments{
+  \item{alpha}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha} is often assumed to be 0. If \code{alpha} is not
+    a number, then there must be a column in \code{rc_exdf} called \code{alpha}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{Gamma_star}{
+    The CO2 compensation point in the absence of day respiration, expressed in
+    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
+    must be a column in \code{rc_exdf} called \code{Gamma_star} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Gamma_star} column of \code{rc_exdf} if it exists.
+  }
+
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
@@ -70,11 +88,6 @@
     The name of the column in \code{rc_exdf} that contains the electron
     transport rate as estimated by the measurement system in
     \code{micromol m^(-2) s^(-1)}.
-  }
-
-  \item{gamma_star_column_name}{
-    The name of the column in \code{rc_exdf} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
   }
 
   \item{j_norm_column_name}{
@@ -119,10 +132,10 @@
 
 \details{
   The variable J method is a fitting procedure for estimating values of
-  \code{alpha}, \code{J}, \code{Rd}, \code{tau}, \code{TPU}, and \code{Vcmax}
-  from a measured C3 CO2 response curve + chlorophyll fluorescence. For more
-  information about these parameters, see the documentation at
-  \code{\link{calculate_c3_variable_j}} and
+  \code{alpha}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
+  \code{TPU}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve +
+  chlorophyll fluorescence. For more information about these parameters, see the
+  documentation at \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}}.
 
   Here, we make an estimate for \code{tau} by noting that gas exchange
@@ -169,8 +182,9 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Create the guessing function
-guessing_func <- initial_guess_c3_variable_j()
+# Create the guessing function; here we set alpha = 0 and use the
+# temperature-dependent values of Gamma_star calculated above
+guessing_func <- initial_guess_c3_variable_j(alpha = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -182,8 +196,9 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    x <- cbind(x, calculate_c3_variable_j(x, param[3], param[4]))
-    cbind(x, calculate_c3_assimilation(x, param[1], param[2], param[3], param[5], param[6]))
+    x <- cbind(x, calculate_c3_variable_j(x, param[2], param[4], param[5]))
+    cbind(x, calculate_c3_assimilation(
+      x, param[1], param[2], param[3], param[4], param[6], param[7]))
   }
 ))
 

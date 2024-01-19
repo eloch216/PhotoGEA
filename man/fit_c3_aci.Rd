@@ -21,7 +21,6 @@
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -34,24 +33,13 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     OPTIM_FUN = optimizer_nmkb(),
-    initial_guess_fun = initial_guess_c3_aci(
-        Oc = POc,
-        atp_use = atp_use,
-        nadph_use = nadph_use,
-        a_column_name = a_column_name,
-        cc_column_name = cc_column_name,
-        gamma_star_column_name = gamma_star_column_name,
-        j_norm_column_name = j_norm_column_name,
-        kc_column_name = kc_column_name,
-        ko_column_name = ko_column_name,
-        rd_norm_column_name = rd_norm_column_name,
-        vcmax_norm_column_name = vcmax_norm_column_name
-    ),
-    lower = c(0, 0, 0, 0, 0),
-    upper = c(1, 1000, 100, 40, 1000),
-    fixed = c(0, NA, NA, NA, NA),
+    lower = list(),
+    upper = list(),
+    fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    error_threshold_factor = 1.5,
+    calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
   )
 }
@@ -85,11 +73,6 @@
   \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
-  }
-
-  \item{gamma_star_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
   }
 
   \item{j_norm_column_name}{
@@ -157,41 +140,36 @@
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. The bounded optimizers from
-    the \code{dfoptim} package meet these requirements. The base function
-    \code{optim} with the \code{L-BFGS-B} method can also be used.
-  }
-
-  \item{initial_guess_fun}{
-    A function that estimates values of \code{alpha} \code{J_at_25},
-    \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25};
-    \code{initial_guess_fun} should have one input argument (an \code{exdf}
-    object representing a single response curve) and should return a vector of
-    the estimated values (at 25 degrees C) in the order above.
+    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
+    for a list of available options.
   }
 
   \item{lower}{
-    A numeric vector containing lower bounds for the values of \code{alpha},
-    \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}, in that
-    order.
+    A list of named numeric elements representing lower bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, \code{lower = list(Vcmax_at_25 = 10)} sets the lower
+    limit for \code{Vcmax_at_25} to 10 micromol / m^2 / s.
   }
 
   \item{upper}{
-    A numeric vector containing upper bounds for the values of \code{alpha},
-    \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}, in that
-    order.
+    A list of named numeric elements representing upper bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, \code{upper = list(Vcmax_at_25 = 200)} sets the upper
+    limit for \code{Vcmax_at_25} to 200 micromol / m^2 / s.
   }
 
-  \item{fixed}{
-    A numeric vector specifying fixed values of \code{alpha}, \code{J_at_25},
-    \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}, in that order. Values
-    of \code{NA} indicate that the corresponding parameter is not fixed and
-    should be varied during the optimization procedure. The default value of
-    this argument fixes \code{alpha} to 0 and allows the other parameters to
-    vary. To vary all of the parameters, set \code{fixed} to
-    \code{c(NA, NA, NA, NA, NA)}. To disable TPU limitations, set \code{alpha}
-    to 0 and \code{TPU} to a high value (such as its upper limit) by setting
-    \code{fixed} to \code{c(0, NA, NA, 40, NA)}.
+  \item{fit_options}{
+    A list of named elements representing fit options to use for each parameter.
+    Values supplied here override the default values (see details below). Each
+    element must be \code{'fit'}, \code{'column'}, or a numeric value. A value
+    of \code{'fit'} means that the parameter will be fit; a value of
+    \code{'column'} means that the value of the parameter will be taken from a
+    column in \code{exdf_obj} of the same name; and a numeric value means that
+    the parameter will be set to that value. For example, \code{fit_options =
+    list(alpha = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
+    \code{alpha} will be set to 0, \code{Vcmax_at_25} will be fit, and
+    \code{TPU} will be set to the values in the \code{TPU} column of
+    \code{exdf_obj}.
   }
 
   \item{cj_crossover_min}{
@@ -206,6 +184,16 @@
     restriction will not be applied.
   }
 
+  \item{error_threshold_factor}{
+    To be passed to \code{\link{confidence_intervals_c3_aci}} when
+    \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{calculate_confidence_intervals}{
+    A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using \code{\link{confidence_intervals_c3_aci}}.
+  }
+
   \item{remove_unreliable_param}{
     A logical value indicating whether or not to remove unreliable parameter
     estimates; see below for details.
@@ -217,7 +205,37 @@
   values of net assimilation. The user-supplied optimization function is used to
   vary the values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
   and \code{Vcmax_at_25} to find ones that best reproduce the experimentally
-  measured values of net assimilation.
+  measured values of net assimilation. By default, the following options are
+  used for the fits:
+  \itemize{
+    \item \code{alpha}: lower = 0, upper = 1, fit_option = 0
+    \item \code{Gamma_star}: lower = 0, upper = 200, fit_option = \code{'column'}
+    \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
+    \item \code{TPU}: lower = 0, upper = 40, fit_option = \code{'fit'}
+    \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
+  }
+  With these settings, \code{alpha} is set to 0, values of \code{Gamma_star} are
+  taken from the \code{Gamma_star} column of \code{replicate_exdf}, and the
+  other parameters are fit during the process (see \code{fit_options} above).
+
+  An initial guess for the parameters is generated by calling
+  \code{\link{initial_guess_c3_aci}} as follows:
+  \itemize{
+    \item \code{cc_threshold_rd} is set to 100 micromol / mol.
+    \item If \code{alpha} is being fit, the \code{alpha} argument of
+          \code{initial_guess_c3_aci} is set to 0.5; otherwise, the argument is
+          set to the value specified by the fit options.
+    \item If \code{Gamma_star} is being fit, the \code{Gamma_star} argument of
+          \code{initial_guess_c3_aci} is set to 40; otherwise, the argument is
+          set to the value specified by the fit options.
+  }
+  Note that any fixed values specified in the fit options will override the
+  values returned by the guessing function.
+
+  The fit is made by creating an error function using
+  \code{\link{error_function_c3_aci}} and minimizing its value using
+  \code{OPTIM_FUN}, starting from the initial guess described above.
 
   The photosynthesis model represented by \code{calculate_c3_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
@@ -229,29 +247,6 @@
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that \code{dfoptim::nmkb} is often able to find a
   good fit.
-
-  Sometimes the optimizer will choose biologically unreasonable parameter values
-  that nevertheless produce good fits to the supplied assimilation values. A
-  common problem is that the fit result may not indicate Ac-limited assimilation
-  at low CO2 values, which should be the case for any A-Ci curves measured at
-  saturating light. In this case, the optional \code{cj_crossover_min} and
-  \code{cj_crossover_max} can be used to constrain the range of \code{Cc} values
-  (in ppm) where \code{Aj} is allowed to be the overall rate limiting factor.
-  See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
-  arguments can be used to improve the quality of a fit.
-
-  By default, this function will use \code{initial_guess_c3_aci} to make rough
-  estimates of the parameters to use as an initial guess. However, it is
-  possible to also use a fixed initial guess by using something like the
-  following for the \code{initial_guess_fun}:
-  \code{function(x){c(0, 100, 0.5, 10, 90)}}, which would set the initial guess
-  to \code{alpha = 0}, \code{J_at_25 = 100}, \code{Rd_at_25 = 0.5},
-  \code{TPU = 10}, and \code{Vcmax_at_25 = 90}.
-
-  By default, this function fixes \code{alpha} to 0 and allows the other
-  parameters to be fitted. This behavior is determined by the value of the
-  \code{fixed} input argument, and the value of \code{alpha} specified in this
-  way will override any value returned by \code{initial_guess_fun}.
 
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
@@ -357,10 +352,19 @@ licor_file <- apply_gm(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Fit just one curve from the data set (it is rare to do this)
+# We can fit just one curve from the data set, although it is rare to do this
 one_result <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420
+)
+
+# We can fit the same curve, but also allow alpha and Gamma_star to vary, and
+# calculate confidence intervals
+one_result_v2 <- fit_c3_aci(
+  licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
+  Ca_atmospheric = 420,
+  fit_options = list(Gamma_star = 'fit', alpha = 'fit'),
+  calculate_confidence_intervals = TRUE
 )
 
 # Fit all curves in the data set (it is more common to do this)
