@@ -34,15 +34,44 @@ be directly added to this file to describe the related changes.
 
 ## UNRELEASED
 
-- Made a few improvements to C3 curve fitting functions:
-  - `fit_c3_aci` and `fit_c3_variable_j` can now fit `alpha` (related to TPU)
-  - `fit_c3_aci` and `fit_c3_variable_j` can now exclude unreliable parameter
-    estimates (for example, if no points on a curve are limited by TPU, the
-    fit will return NA for TPU)
-  - The unknown parameters are now provided in alphabetical order (in the
-    `lower`, `upper` and `fixed` input arguments, and a few other places)
+- Made a few improvements to C3 curve fitting functions (`fit_c3_aci` and
+  `fit_c3_variable_j`):
+  - Two more parameters can now be fit: `alpha` (related to TPU) and
+    `Gamma_star`.
+  - Unreliable parameter estimates can now be excluded; for example, if no
+    points on a curve have An = Ap, the fit will return NA for TPU.
+  - The initial guess functions (`initial_guess_c3_aci` and
+    `initial_guess_c3_variable_j`) can now accomodate user-supplied values of
+    `alpha`.
+- Made a few improvements to all three nonlinear fitting functions
+  (`fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`):
+  - The error functions are now available in the package namespace as
+    `error_function_c3_aci`, `error_function_c3_variable_j`, and
+    `error_function_c4_aci`.
+  - Confidence intervals around the best-fit values can now be calculated
+    automatically by the fitting functions, or manually using three new
+    functions in the package namespace:
+    `confidence_intervals_c3_aci`, `confidence_intervals_c3_variable_j`, and
+    `confidence_intervals_c4_aci`.
+  - The initial guess functions are now created internally instead of being an
+    input argument.
+  - There is a new system for supplying fit options (upper and lower bounds, and
+    which parameters to fit):
+    - Users now only need to specify changes from the default settings.
+    - The order of parameters no longer matters because lists of named elements
+      are used.
+    - Parameters that could be fit, but are not being fit, can either be set to
+      fixed values or to values from a column of an exdf object.
+    - Unknown parameters are now provided in alphabetical order when applicable
+      (such as the first input arguments to `calculate_c3_assimilation`).
 - Added a function for estimating `Rd` with the Laisk method:
   `calculate_rd_laisk`
+- A "unit dictionary" was added for internal use; this may be expanded and used
+  more often in the future.
+- Tests for `calculate_c3_assimilation` were added.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/85
+  - https://github.com/eloch216/PhotoGEA/pull/86
 
 ## CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)
 
@@ -86,6 +115,8 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/80
   - https://github.com/eloch216/PhotoGEA/pull/81
   - https://github.com/eloch216/PhotoGEA/pull/82
+  - https://github.com/eloch216/PhotoGEA/pull/83
+  - https://github.com/eloch216/PhotoGEA/pull/84
 
 ## CHANGES IN PhotoGEA VERSION 0.9.2 (2023-11-16)
 
