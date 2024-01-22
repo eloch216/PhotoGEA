@@ -85,6 +85,20 @@ TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 # values.
 TIME_RANGE_FOR_NORMALIZATION <- c(55,60)
 
+# Specify time range to use for plotting curves. Elapsed time will be shifted
+# so the plots always begin at 0. Units are minutes.
+A_TIME_LIM <- c(30, 60)
+
+# Specify fraction of assimilation rate to use for speed calculations (expressed
+# as a percentage)
+TARGET_PERCENTAGE <- 50
+
+# Specify time interval for calculating average assimilation and lost carbon.
+# Units are minutes, and times should be specified relative to the start of
+# A_TIME_LIM. E.g. c(0, 5) is the first five minutes (300 seconds) after light
+# exposure.
+LOST_CARBON_INTERVAL <- c(0, 5)
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -305,10 +319,58 @@ if (PERFORM_CALCULATIONS) {
     all_samples <- combined_info[['main_data']]
 }
 
+# Extract some additional information from the curves
+curve_information <- do.call(rbind, by(
+    combined_info,
+    combined_info[, UNIQUE_ID_COLUMN_NAME],
+    function(x) {
+        # Get identifying information
+        id_cols <- if (HAS_PLOT_INFO) {
+            c(UNIQUE_ID_COLUMN_NAME, REP_COLUMN_NAME, EVENT_COLUMN_NAME, 'replicate', 'plot')
+        } else {
+            c(UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME)
+        }
+
+        res <- x[1, c(id_cols, 'A_norm_val'), TRUE]
+
+        # Get the elapsed time when normalized assimilation is X%
+        tmp <- x[, A_NORM_COLUMN_NAME] - TARGET_PERCENTAGE / 100
+        indx <- which(tmp > 0)[1]
+
+        res[, 'target_percentage'] <- TARGET_PERCENTAGE
+        res[, 'time_to_target_percentage'] <- x[indx, 'elapsed_time'] - min(A_TIME_LIM)
+
+        # Get average assimilation over the specified interval
+        mintime <- min(A_TIME_LIM) + min(LOST_CARBON_INTERVAL)
+        maxtime <- min(A_TIME_LIM) + max(LOST_CARBON_INTERVAL)
+        interval_length <- (maxtime - mintime) * 60
+
+        avg_a <- mean(x[x[, 'elapsed_time'] >= mintime & x[, 'elapsed_time'] <= maxtime, A_COLUMN_NAME], na.rm = TRUE)
+
+        res[, 'interval_start_time']  <- min(LOST_CARBON_INTERVAL)
+        res[, 'interval_end_time']    <- max(LOST_CARBON_INTERVAL)
+        res[, 'interval_length']      <- interval_length
+        res[, 'interval_A_avg']       <- avg_a
+        res[, 'interval_carbon_loss'] <- (res[, 'A_norm_val'] - avg_a) * interval_length
+
+        # Include units and return results
+        document_variables(
+            res,
+            c('', 'target_percentage',         'percent of A_norm_val'),
+            c('', 'time_to_target_percentage', 'minutes'),
+            c('', 'interval_start_time',       'minutes'),
+            c('', 'interval_end_time',         'minutes'),
+            c('', 'interval_A_avg',            'micromol m^(-2) s^(-1)'),
+            c('', 'interval_carbon_loss',      'micromol m^(-2)')
+        )
+    }
+))
+
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
     View(all_stats$main_data)
+    View(curve_information$main_data)
 }
 
 ###                              ###
@@ -317,12 +379,8 @@ if (VIEW_DATA_FRAMES) {
 
 rc_caption <- "Average response curves for each event"
 
-a_time_lim <- c(30, 60)
-
-all_samples_for_plots <- all_samples[all_samples[['elapsed_time']] >= a_time_lim[1] & all_samples[['elapsed_time']] <= a_time_lim[2], ]
+all_samples_for_plots <- all_samples[all_samples[['elapsed_time']] >= A_TIME_LIM[1] & all_samples[['elapsed_time']] <= A_TIME_LIM[2], ]
 all_samples_for_plots[['elapsed_time']] <- all_samples_for_plots[['elapsed_time']] - min(all_samples_for_plots[['elapsed_time']])
-
-a_time_lim <- a_time_lim - min(a_time_lim)
 
 x_t <- all_samples_for_plots[['elapsed_time']]
 x_s <- all_samples_for_plots[['seq_num']]
@@ -336,8 +394,8 @@ a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard 
 a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)\n(error bars: standard error of the mean for each time point)"
 
 avg_plot_param <- list(
-  list(all_samples_for_plots[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = a_time_lim),
-  list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = a_time_lim)
+  list(all_samples_for_plots[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = A_TIME_LIM - min(A_TIME_LIM)),
+  list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = A_TIME_LIM - min(A_TIME_LIM))
 )
 
 invisible(lapply(avg_plot_param, function(x) {
@@ -365,9 +423,9 @@ invisible(lapply(avg_plot_param, function(x) {
     print(plot_obj)
 }))
 
-###                                     ###
+###                                      ###
 ### PLOT ALL INDIVIDUAL INDUCTION CURVES ###
-###                                     ###
+###                                      ###
 
 ind_caption <- "Individual induction curves for each event and rep"
 
@@ -392,3 +450,47 @@ multi_induction_curves <- xyplot(
 
 x11(width = 8, height = 6)
 print(multi_induction_curves)
+
+###                                ###
+### PLOT CURVE SUMMARY INFORMATION ###
+###                                ###
+
+interval_main <- paste(
+    'Interval:', LOST_CARBON_INTERVAL[1], 'to',
+    LOST_CARBON_INTERVAL[2], curve_information$units$interval_start_time
+)
+
+plot_param <- list(
+    list(
+        Y = curve_information[, 'time_to_target_percentage'],
+        X = curve_information[, EVENT_COLUMN_NAME],
+        ylab = paste('Time to target percentage [', curve_information$units$time_to_target_percentage, ']'),
+        xlab = 'Event',
+        ylim = c(0, 20),
+        main = paste('Target percentage:', TARGET_PERCENTAGE)
+    ),
+    list(
+        Y = curve_information[, 'interval_A_avg'],
+        X = curve_information[, EVENT_COLUMN_NAME],
+        ylab = paste('Average A [', curve_information$units$interval_A_avg, ']'),
+        xlab = 'Event',
+        ylim = c(0, 20),
+        main = interval_main
+    ),
+    list(
+        Y = curve_information[, 'interval_carbon_loss'],
+        X = curve_information[, EVENT_COLUMN_NAME],
+        ylab = paste('Lost carbon [', curve_information$units$interval_carbon_loss, ']'),
+        xlab = 'Event',
+        ylim = c(0, 12e3),
+        main = interval_main
+    )
+)
+
+invisible(lapply(plot_param, function(x) {
+    dev.new()
+    print(do.call(bwplot_wrapper, x))
+
+    dev.new()
+    print(do.call(barchart_with_errorbars, x))
+}))
