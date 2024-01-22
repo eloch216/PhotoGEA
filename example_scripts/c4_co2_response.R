@@ -93,7 +93,7 @@ if (PERFORM_CALCULATIONS) {
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS_TO_REMOVE <- c()
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(7)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove points where the Licor stability criteria were not
@@ -213,7 +213,7 @@ if (PERFORM_CALCULATIONS) {
 
     # Factorize ID columns
     combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
-    combined_info <- factorize_id_column(combined_info, 'curve_identifier')
+    combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
 
     # Extract just the A-Ci curves, if necessary
     if ('type' %in% colnames(combined_info)) {
@@ -309,6 +309,9 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate PCm
     combined_info <- apply_gm(combined_info, 'C4')
+    
+    # Calculate additional gas properties
+    combined_info <- calculate_gas_properties(combined_info)
 
     # Calculate intrinsic water-use efficiency
     combined_info <- calculate_wue(combined_info)
