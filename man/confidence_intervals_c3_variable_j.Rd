@@ -35,7 +35,9 @@
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    require_positive_gmc = 'all',
+    gmc_max = Inf
   )
 }
 
@@ -153,15 +155,19 @@
   }
 
   \item{cj_crossover_min}{
-    The minimum value of \code{Cc} (in ppm) where \code{Aj} is allowed to become
-    the overall rate-limiting factor. If \code{cj_crossover_min} is set to
-    \code{NA}, this restriction will not be applied.
+    To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 
   \item{cj_crossover_max}{
-    The maximim value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
-    smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
-    restriction will not be applied.
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{require_positive_gmc}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{gmc_max}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 }
 

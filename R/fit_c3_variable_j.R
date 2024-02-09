@@ -32,6 +32,8 @@ fit_c3_variable_j <- function(
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    require_positive_gmc = 'all',
+    gmc_max = Inf,
     error_threshold_factor = 1.5,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
@@ -62,7 +64,9 @@ fit_c3_variable_j <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
-        cj_crossover_max
+        cj_crossover_max,
+        require_positive_gmc,
+        gmc_max
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -353,7 +357,9 @@ fit_c3_variable_j <- function(
             total_pressure_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
-            cj_crossover_max
+            cj_crossover_max,
+            require_positive_gmc,
+            gmc_max
         )
     }
 

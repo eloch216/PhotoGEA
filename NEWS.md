@@ -34,6 +34,9 @@ be directly added to this file to describe the related changes.
 
 ## UNRELEASED
 
+- Added new options for adding penalties to the error function during Variable J
+  fits, that enable the user to selectively penalize negative or unreasonably
+  large values of mesophyll conductance.
 - Made a few improvements to C3 curve fitting functions (`fit_c3_aci` and
   `fit_c3_variable_j`):
   - Two more parameters can now be fit: `alpha` (related to TPU) and

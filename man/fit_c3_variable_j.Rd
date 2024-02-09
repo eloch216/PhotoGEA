@@ -40,6 +40,8 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    require_positive_gmc = 'all',
+    gmc_max = Inf,
     error_threshold_factor = 1.5,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
@@ -189,15 +191,19 @@
   }
 
   \item{cj_crossover_min}{
-    The minimum value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
-    smaller than \code{Wc}. If \code{cj_crossover_min} is set to \code{NA}, this
-    restriction will not be applied.
+    To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 
   \item{cj_crossover_max}{
-    The maximum value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
-    smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
-    restriction will not be applied.
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{require_positive_gmc}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{gmc_max}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 
   \item{error_threshold_factor}{

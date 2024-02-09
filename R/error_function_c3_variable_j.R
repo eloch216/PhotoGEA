@@ -17,9 +17,21 @@ error_function_c3_variable_j <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    require_positive_gmc = 'all',
+    gmc_max = Inf
 )
 {
+    # Make sure options are okay
+    require_positive_gmc <- tolower(require_positive_gmc)
+    if (!require_positive_gmc %in% c('none', 'all', 'positive_a')) {
+        stop('`require_positive_gmc` must be `none`, `all`, or `positive_a`')
+    }
+
+    if (gmc_max <= 0) {
+        stop('`gmc_max` must be positive')
+    }
+
     # Assemble fit options; here we do not care about bounds
     luf <- assemble_luf(
         c3_variable_j_param,
@@ -83,6 +95,9 @@ error_function_c3_variable_j <- function(
         NA
     )
 
+    # Get rows where A > 0 in the fitting exdf
+    a_pos <- fitting_exdf[, a_column_name] > 0
+
     # Create and return the error function
     function(guess) {
         X <- fit_options_vec
@@ -113,7 +128,19 @@ error_function_c3_variable_j <- function(
             }
         )
 
-        if (is.null(vj) || any(vj$gmc < 0) || any(vj$Cc < 0)) {
+        if (is.null(vj) || any(vj$Cc < 0)) {
+            return(1e10)
+        }
+
+        if (require_positive_gmc == 'all' && any(vj$gmc < 0)) {
+            return(1e10)
+        }
+
+        if (require_positive_gmc == 'positive_a' && any(vj$gmc[a_pos] < 0)) {
+            return(1e10)
+        }
+
+        if (!is.infinite(gmc_max) && any(vj$gmc[a_pos] > gmc_max)) {
             return(1e10)
         }
 
