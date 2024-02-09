@@ -96,14 +96,14 @@ error_function_c3_aci <- function(
         )
 
         if (is.null(assim) || any(is.na(assim$An))) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
                 if (replicate_exdf[i, cc_column_name] < cj_crossover_min &&
                         assim$Wj[i] < assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }
@@ -112,7 +112,7 @@ error_function_c3_aci <- function(
             for (i in seq_along(assim$An)) {
                 if (replicate_exdf[i, cc_column_name] > cj_crossover_max &&
                         assim$Wj[i] > assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }

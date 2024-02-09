@@ -129,19 +129,19 @@ error_function_c3_variable_j <- function(
         )
 
         if (is.null(vj) || any(vj$Cc < 0)) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (require_positive_gmc == 'all' && any(vj$gmc < 0)) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (require_positive_gmc == 'positive_a' && any(vj$gmc[a_pos] < 0)) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (!is.infinite(gmc_max) && any(vj$gmc[a_pos] > gmc_max)) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         fitting_exdf[, 'gmc'] <- vj$gmc
@@ -180,14 +180,14 @@ error_function_c3_variable_j <- function(
         )
 
         if (is.null(assim) || any(is.na(assim$An))) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
                 if (fitting_exdf[i, cc_column_name] < cj_crossover_min &&
                         assim$Wj[i] < assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }
@@ -196,7 +196,7 @@ error_function_c3_variable_j <- function(
             for (i in seq_along(assim$An)) {
                 if (fitting_exdf[i, cc_column_name] > cj_crossover_max &&
                         assim$Wj[i] > assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }

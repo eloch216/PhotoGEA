@@ -84,7 +84,7 @@ error_function_c4_aci <- function(
         )
 
         if (is.null(assim) || any(is.na(assim))) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         sum((replicate_exdf[, a_column_name] - assim)^2)
