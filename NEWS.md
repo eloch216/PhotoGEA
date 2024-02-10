@@ -71,7 +71,11 @@ be directly added to this file to describe the related changes.
   `calculate_rd_laisk`
 - A "unit dictionary" was added for internal use; this may be expanded and used
   more often in the future.
-- Tests for `calculate_c3_assimilation` were added.
+- Tests were added for several functions:
+  - `calculate_c3_assimilation`
+  - `fit_c3_aci`
+  - `fit_c3_variable_j`
+  - `fit_c4_aci`
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/85
   - https://github.com/eloch216/PhotoGEA/pull/86

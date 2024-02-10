@@ -66,8 +66,7 @@ calculate_c4_assimilation <- function(
     gamma_star <- exdf_obj[, gamma_star_column_name] # dimensionless
     ao <- exdf_obj[, ao_column_name]                 # dimensionless
 
-    # Make sure key inputs have reasonable values; these checks cannot be
-    # bypassed
+    # Make sure key inputs have reasonable values
     msg <- character()
 
     if (any(Cm < 0))          {msg <- append(msg, 'PCm must be >= 0')}
@@ -81,8 +80,13 @@ calculate_c4_assimilation <- function(
     if (any(Vpmax_at_25 < 0)) {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
     if (any(Vpr < 0))         {msg <- append(msg, 'Vpr must be >= 0')}
 
-    if (length(msg) > 0) {
-        stop(paste(msg, collapse = '. '))
+    msg <- paste(msg, collapse = '. ')
+
+    # We only bypass these checks if !perform_checks && return_exdf
+    if (perform_checks || !return_exdf) {
+        if (msg != '') {
+            stop(msg)
+        }
     }
 
     # Apply temperature responses to Vcmax, Vpmax, Rd, and Rm, making use of
@@ -140,23 +144,25 @@ calculate_c4_assimilation <- function(
             Apr = Apr,
             Ap = Ap,
             Ar = Ar,
-            An = An
+            An = An,
+            c4_assimilation_msg = msg
         ))
 
         document_variables(
             output,
-            c('calculate_c4_assimilation', 'Vcmax_tl', 'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpmax_tl', 'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rd_tl',    'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rm_tl',    'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpc',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpr',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vp',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Apc',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Apr',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Ap',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Ar',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'An',       'micromol m^(-2) s^(-1)')
+            c('calculate_c4_assimilation', 'Vcmax_tl',            'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpmax_tl',            'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rd_tl',               'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rm_tl',               'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpc',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpr',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vp',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apc',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apr',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ap',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ar',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'An',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'c4_assimilation_msg', '')
         )
     } else {
         return(An)

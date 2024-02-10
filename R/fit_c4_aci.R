@@ -134,8 +134,55 @@ fit_c4_aci <- function(
     aci$categories[1,] <- 'fit_c4_aci'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
 
+    # Get operating point information
+    operating_point_info <- estimate_operating_point(
+        replicate_exdf,
+        Ca_atmospheric,
+        type = 'c4',
+        a_column_name,
+        ca_column_name,
+        cc_column_name = NULL,
+        ci_column_name,
+        pcm_column_name,
+        return_list = TRUE
+    )
+
+    # Estimate An at the operating point
+    operating_An_model <- calculate_c4_assimilation(
+        operating_point_info$operating_exdf,
+        best_X[1], # Rd
+        best_X[2], # Vcmax
+        best_X[3], # Vpmax
+        best_X[4], # Vpr
+        POm,
+        gbs,
+        Rm_frac,
+        alpha,
+        ao_column_name,
+        gamma_star_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        perform_checks = FALSE
+    )[, 'An']
+
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
+
+    # If there was a problem, set all the fit results to NA
+    if (aci[1, 'c4_assimilation_msg'] != '') {
+        best_X[param_to_fit] <- NA
+        operating_An_model <- NA
+        for (cn in colnames(aci)) {
+            if (cn != 'c4_assimilation_msg') {
+                replicate_exdf[, cn] <- NA
+            }
+        }
+    }
 
     # Add columns for the best-fit parameter values
     replicate_exdf[, 'Rd_at_25'] <- best_X[1]
@@ -195,46 +242,11 @@ fit_c4_aci <- function(
         optim_result[['feval']] <- NA
     }
 
-    replicate_identifiers[, 'convergence']     <- optim_result[['convergence']]
-    replicate_identifiers[, 'convergence_msg'] <- optim_result[['message']]
-    replicate_identifiers[, 'feval']           <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val']     <- optim_result[['value']]
-
-    # Get operating point information
-    operating_point_info <- estimate_operating_point(
-        replicate_exdf,
-        Ca_atmospheric,
-        type = 'c4',
-        a_column_name,
-        ca_column_name,
-        cc_column_name = NULL,
-        ci_column_name,
-        pcm_column_name,
-        return_list = TRUE
-    )
-
-    # Estimate An at the operating point
-    operating_An_model <- calculate_c4_assimilation(
-        operating_point_info$operating_exdf,
-        best_X[1], # Rd
-        best_X[2], # Vcmax
-        best_X[3], # Vpmax
-        best_X[4], # Vpr
-        POm,
-        gbs,
-        Rm_frac,
-        alpha,
-        ao_column_name,
-        gamma_star_column_name,
-        kc_column_name,
-        ko_column_name,
-        kp_column_name,
-        pcm_column_name,
-        rd_norm_column_name,
-        vcmax_norm_column_name,
-        vpmax_norm_column_name,
-        perform_checks = FALSE
-    )[, 'An']
+    replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
+    replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
+    replicate_identifiers[, 'feval']               <- optim_result[['feval']]
+    replicate_identifiers[, 'optimum_val']         <- optim_result[['value']]
+    replicate_identifiers[, 'c4_assimilation_msg'] <- replicate_exdf[1, 'c4_assimilation_msg']
 
     # Store the results
     replicate_identifiers[, 'operating_Ci']       <- operating_point_info$operating_Ci
@@ -245,21 +257,22 @@ fit_c4_aci <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c4_aci',               'Rd_at_25',           'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Vcmax_at_25',        'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Vpmax_at_25',        'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Vpr',                'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Rd_tl_avg',          'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Vcmax_tl_avg',       'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Vpmax_tl_avg',       'micromol m^(-2) s^(-1)'),
-        c('estimate_operating_point', 'operating_Ci',       replicate_exdf$units[[ci_column_name]]),
-        c('estimate_operating_point', 'operating_PCm',      replicate_exdf$units[[pcm_column_name]]),
-        c('estimate_operating_point', 'operating_An',       replicate_exdf$units[[a_column_name]]),
-        c('fit_c4_aci',               'operating_An_model', replicate_exdf$units[[a_column_name]]),
-        c('fit_c4_aci',               'convergence',        ''),
-        c('fit_c4_aci',               'convergence_msg',    ''),
-        c('fit_c4_aci',               'feval',              ''),
-        c('fit_c4_aci',               'optimum_val',        '')
+        c('fit_c4_aci',               'Rd_at_25',            'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vpmax_at_25',         'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vpr',                 'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Rd_tl_avg',           'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Vpmax_tl_avg',        'micromol m^(-2) s^(-1)'),
+        c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
+        c('estimate_operating_point', 'operating_PCm',       replicate_exdf$units[[pcm_column_name]]),
+        c('estimate_operating_point', 'operating_An',        replicate_exdf$units[[a_column_name]]),
+        c('fit_c4_aci',               'operating_An_model',  replicate_exdf$units[[a_column_name]]),
+        c('fit_c4_aci',               'convergence',         ''),
+        c('fit_c4_aci',               'convergence_msg',     ''),
+        c('fit_c4_aci',               'feval',               ''),
+        c('fit_c4_aci',               'optimum_val',         ''),
+        c('fit_c4_aci',               'c4_assimilation_msg', '')
     )
 
     # Calculate confidence intervals, if necessary

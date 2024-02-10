@@ -92,8 +92,7 @@ calculate_c3_assimilation <- function(
     Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
     J_tl <- J_at_25 * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
 
-    # Make sure key inputs have reasonable values; these checks cannot be
-    # bypassed
+    # Make sure key inputs have reasonable values
     msg <- character()
 
     if (any(alpha < 0 | alpha > 1)) {msg <- append(msg, 'alpha must be >= 0 and <= 1')}
@@ -107,8 +106,13 @@ calculate_c3_assimilation <- function(
     if (any(TPU < 0))               {msg <- append(msg, 'TPU must be >= 0')}
     if (any(Vcmax_at_25 < 0))       {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
 
-    if (length(msg) > 0) {
-        stop(paste(msg, collapse = '. '))
+    msg <- paste(msg, collapse = '. ')
+
+    # We only bypass these checks if !perform_checks && return_exdf
+    if (perform_checks || !return_exdf) {
+        if (msg != '') {
+            stop(msg)
+        }
     }
 
     # Rubisco-limited carboxylation (micromol / m^2 / s)
@@ -171,25 +175,27 @@ calculate_c3_assimilation <- function(
             Wc = Wc,
             Wj = Wj,
             Wp = Wp,
-            Vc = Wcjp
+            Vc = Wcjp,
+            c3_assimilation_msg = msg
         ))
 
         document_variables(
             output,
-            c('calculate_c3_assimilation', 'alpha',      'dimensionless'),
-            c('calculate_c3_assimilation', 'Gamma_star', 'micromol mol^(-1)'),
-            c('calculate_c3_assimilation', 'J_tl',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'TPU',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Vcmax_tl',   'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Ac',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Aj',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Ap',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'An',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Wc',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Wj',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Wp',         'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Vc',         'micromol m^(-2) s^(-1)')
+            c('calculate_c3_assimilation', 'alpha',               'dimensionless'),
+            c('calculate_c3_assimilation', 'Gamma_star',          'micromol mol^(-1)'),
+            c('calculate_c3_assimilation', 'J_tl',                'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Rd_tl',               'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'TPU',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Vcmax_tl',            'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Ac',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Aj',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Ap',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'An',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Wc',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Wj',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Wp',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Vc',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'c3_assimilation_msg', '')
         )
     } else {
         return(list(An = An, Ac = Ac, Aj = Aj, Ap = Ap, Wc = Wc, Wj = Wj))
