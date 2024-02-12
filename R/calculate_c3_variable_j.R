@@ -62,13 +62,13 @@ calculate_c3_variable_j <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(Ci < 0))         {msg <- append(msg, 'Ci must be >= 0')}
-    if (any(Gamma_star < 0)) {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(PhiPS2 < 0))     {msg <- append(msg, 'PhiPS2 must be >= 0')}
-    if (any(pressure < 0))   {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Qin < 0))        {msg <- append(msg, 'Qin must be >= 0')}
-    if (any(Rd_at_25 < 0))   {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(tau < 0))        {msg <- append(msg, 'tau must be >= 0')}
+    if (any(Ci < 0, na.rm = TRUE))         {msg <- append(msg, 'Ci must be >= 0')}
+    if (any(Gamma_star < 0, na.rm = TRUE)) {msg <- append(msg, 'Gamma_star must be >= 0')}
+    if (any(PhiPS2 < 0, na.rm = TRUE))     {msg <- append(msg, 'PhiPS2 must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE))   {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Qin < 0, na.rm = TRUE))        {msg <- append(msg, 'Qin must be >= 0')}
+    if (any(Rd_at_25 < 0, na.rm = TRUE))   {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(tau < 0, na.rm = TRUE))        {msg <- append(msg, 'tau must be >= 0')}
 
     msg <- paste(msg, collapse = '. ')
 

@@ -24,7 +24,7 @@ fit_c4_aci <- function(
     POm = 210000,  # microbar
     gbs = 0.003,   # mol / m^2 / s / bar
     Rm_frac = 0.5, # dimensionless
-    alpha = 0,     # dimensionless
+    alpha_psii = 0,     # dimensionless
     OPTIM_FUN = optimizer_nmkb(),
     lower = list(),
     upper = list(),
@@ -55,7 +55,7 @@ fit_c4_aci <- function(
         POm,
         gbs,
         Rm_frac,
-        alpha
+        alpha_psii
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -116,7 +116,7 @@ fit_c4_aci <- function(
         POm,
         gbs,
         Rm_frac,
-        alpha,
+        alpha_psii,
         ao_column_name,
         gamma_star_column_name,
         kc_column_name,
@@ -157,7 +157,7 @@ fit_c4_aci <- function(
         POm,
         gbs,
         Rm_frac,
-        alpha,
+        alpha_psii,
         ao_column_name,
         gamma_star_column_name,
         kc_column_name,
@@ -297,7 +297,7 @@ fit_c4_aci <- function(
             POm,
             gbs,
             Rm_frac,
-            alpha
+            alpha_psii
         )
     }
 

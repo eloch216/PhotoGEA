@@ -32,7 +32,7 @@
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
-    alpha = 0,
+    alpha_psii = 0,
     OPTIM_FUN = optimizer_nmkb(),
     lower = list(),
     upper = list(),
@@ -132,7 +132,7 @@
     mesophyll.
   }
 
-  \item{alpha}{
+  \item{alpha_psii}{
     The fraction of photosystem II activity in the bundle sheath.
   }
 

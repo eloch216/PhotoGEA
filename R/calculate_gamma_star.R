@@ -1,6 +1,6 @@
 calculate_gamma_star <- function(
     exdf_obj,
-    alpha = 0.5,
+    alpha_pr = 0.5,
     oxygen_column_name = 'oxygen',
     specificity_at_tleaf_column_name = 'specificity_at_tleaf',
     tleaf_column_name = 'TleafCnd'
@@ -51,7 +51,7 @@ calculate_gamma_star <- function(
     O2 <- (oxygen * 1e-2) * 1e6
 
     # Get Gamma_star in micromol / mol
-    Gamma_star <- alpha * O2 / specificity_gas_basis
+    Gamma_star <- alpha_pr * O2 / specificity_gas_basis
 
     # Store the new variables in the exdf object
     exdf_obj[, 'Gamma_star'] <- Gamma_star

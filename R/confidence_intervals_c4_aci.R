@@ -18,7 +18,7 @@ confidence_intervals_c4_aci <- function(
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
-    alpha = 0
+    alpha_psii = 0
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -43,7 +43,7 @@ confidence_intervals_c4_aci <- function(
         POm,
         gbs,
         Rm_frac,
-        alpha
+        alpha_psii
     )
 
     # Assemble lower, upper, and fit_options
