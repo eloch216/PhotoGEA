@@ -21,10 +21,10 @@ fit_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,  # microbar
-    gbs = 0.003,   # mol / m^2 / s / bar
-    Rm_frac = 0.5, # dimensionless
-    alpha_psii = 0,     # dimensionless
+    POm = 210000,   # microbar
+    gbs = 0.003,    # mol / m^2 / s / bar
+    Rm_frac = 0.5,  # dimensionless
+    alpha_psii = 0, # dimensionless
     OPTIM_FUN = optimizer_nmkb(),
     lower = list(),
     upper = list(),
