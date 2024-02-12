@@ -16,7 +16,7 @@ test_that('fit failures are handled properly', {
     expect_equal(fit_res_bad$parameters[, 'c3_variable_j_msg'], 'Ci must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, 'A_fit'])))
     expect_true(all(is.na(fit_res_bad$fits[, 'gmc'])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'TPU', 'tau')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'tau')])))
 })
 
 test_that('fit results have not changed', {
@@ -27,7 +27,7 @@ test_that('fit results have not changed', {
     fit_res <- fit_c3_variable_j(one_curve, Ca_atmospheric = 420)
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'TPU', 'tau')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'tau')]),
         c(240.5297, 253.8052, 1.8880, 31.3243, 0.4048),
         tolerance = 1e-6
     )

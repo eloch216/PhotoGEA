@@ -19,7 +19,7 @@
     Gamma_star,
     J_at_25,
     Rd_at_25,
-    TPU,
+    Tp,
     Vcmax_at_25,
     POc = 210000,
     atp_use = 4.0,
@@ -76,12 +76,12 @@
     \code{Rd_at_25} column of \code{exdf_obj} if it exists.
   }
 
-  \item{TPU}{
+  \item{Tp}{
     The maximum rate of triphosphate utilization, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{TPU} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{TPU} with appropriate
+    \code{micromol m^(-2) s^(-1)}. If \code{Tp} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Tp} with appropriate
     units. A numeric value supplied here will overwrite the values in the
-    \code{TPU} column of \code{exdf_obj} if it exists.
+    \code{Tp} column of \code{exdf_obj} if it exists.
   }
 
   \item{Vcmax_at_25}{
@@ -210,9 +210,9 @@
 
   The TPU-limited carboxylation rate is given by
 
-  \code{Wp = PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha_g))},
+  \code{Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))},
 
-  where \code{TPU} is the maximum rate of triose phosphate utilization and
+  where \code{Tp} is the maximum rate of triose phosphate utilization and
   \code{0 <= alpha_g <= 1} is the fraction of glycolate carbon not returned to the
   chloroplast. This equation only applies when
   \code{PCc > Gamma_star * (1 + 3 * alpha_g)}; for smaller values of \code{PCc},
@@ -256,7 +256,7 @@
 
   In addition to the carboxylation and assimilation rates already mentioned, it
   is also possible to calculate the net CO2 assimilation rates determined by
-  Rubisco activity, RuBP regeneration, and TPU as follows:
+  Rubisco activity, RuBP regeneration, and Tp as follows:
 
   \code{Ac = (1 - Gamma_star / PCc) * Wc - Rd}
 
@@ -285,7 +285,7 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{alpha_g}, \code{Gamma_star}, \code{TPU}, \code{Vcmax_tl},
+          above: \code{alpha_g}, \code{Gamma_star}, \code{Tp}, \code{Vcmax_tl},
           \code{Rd_tl}, \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An},
           and \code{Vc}. The category for each of these new columns is
           \code{calculate_c3_assimilation} to indicate that they were created

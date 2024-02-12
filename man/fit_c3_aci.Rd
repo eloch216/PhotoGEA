@@ -166,9 +166,9 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{exdf_obj} of the same name; and a numeric value means that
     the parameter will be set to that value. For example, \code{fit_options =
-    list(alpha_g = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
+    list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')} means that
     \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit, and
-    \code{TPU} will be set to the values in the \code{TPU} column of
+    \code{Tp} will be set to the values in the \code{Tp} column of
     \code{exdf_obj}.
   }
 
@@ -203,7 +203,7 @@
 \details{
   This function calls \code{\link{calculate_c3_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
+  vary the values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
   and \code{Vcmax_at_25} to find ones that best reproduce the experimentally
   measured values of net assimilation. By default, the following options are
   used for the fits:
@@ -212,7 +212,7 @@
     \item \code{Gamma_star}: lower = 0, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
     \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
-    \item \code{TPU}: lower = 0, upper = 40, fit_option = \code{'fit'}
+    \item \code{Tp}: lower = 0, upper = 40, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
   }
   With these settings, \code{alpha_g} is set to 0, values of \code{Gamma_star} are
@@ -242,7 +242,7 @@
   necessarily cause changes in its outputs. This is related to the final step in
   the calculations, where the overall assimilation rate is taken to be the
   minimum of three enzyme-limited rates. For example, if the assimilation rate
-  is never TPU-limited, modifying \code{TPU} will not change the model's
+  is never TPU-limited, modifying \code{Tp} will not change the model's
   outputs. For this reason, derivative-based optimizers tend to struggle when
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that \code{dfoptim::nmkb} is often able to find a
@@ -251,7 +251,7 @@
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
-  parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha_g} & \code{TPU})
+  parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha_g} & \code{Tp})
   will be unreliable. If \code{remove_unreliable_param} is \code{TRUE}, such
   values will be set to \code{NA} in the outputs from \code{fit_c3_aci}.
 
@@ -286,7 +286,7 @@
                   columns.
             \item The other outputs from \code{\link{calculate_c3_assimilation}}
                   will be stored in columns with the usual names: \code{alpha_g},
-                  \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
+                  \code{Tp}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
                   \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
                   \code{Aj}, and \code{Ap}.
           }
@@ -298,7 +298,7 @@
                   the \code{n_Wc_smallest}, \code{n_Wj_smallest}, and
                   \code{n_Wp_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_g},
-                  \code{TPU}, \code{J_at_25}, \code{Rd_at_25}, and
+                  \code{Tp}, \code{J_at_25}, \code{Rd_at_25}, and
                   \code{Vcmax_at_25} columns.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
@@ -380,7 +380,7 @@ col_to_keep <- c(
   'species', 'plot',                                       # identifiers
   'n_Wc_smallest', 'n_Wj_smallest', 'n_Wp_smallest',       # number of points where
                                                            #   each process is limiting
-  'TPU', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25',             # parameters scaled to 25 degrees C
+  'Tp', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25',              # parameters scaled to 25 degrees C
   'J_tl_avg', 'Rd_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
   'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
   'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats
@@ -414,8 +414,7 @@ lattice::xyplot(
 )
 
 # In the curves above, there are no points where carboxylation is TPU limited.
-# We can automatically remove the unreliable TPU estimates.
-# Fit all curves in the data set (it is more common to do this)
+# We can automatically remove the unreliable Tp estimates.
 aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],

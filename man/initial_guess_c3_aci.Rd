@@ -109,7 +109,7 @@
 }
 
 \details{
-  Here we estimate values of \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and
+  Here we estimate values of \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
   \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult to
   estimate values of \code{alpha_g} and \code{Gamma_star} from a curve, so they
   must be supplied beforehand. For more information about these parameters, see
@@ -149,8 +149,8 @@
     \item \strong{Estimating J}: An estimate for \code{J} can be obtained by
           solving Equation 2.23 for \code{J}, similar to the method used to
           estimate \code{Vcmax}.
-    \item \strong{Estimating TPU}: An estimate for \code{TPU} can be obtained by
-          solving Equation 2.26 for \code{TPU}, similar to the method used to
+    \item \strong{Estimating Tp}: An estimate for \code{Tp} can be obtained by
+          solving Equation 2.26 for \code{Tp}, similar to the method used to
           estimate \code{Vcmax}.
   }
 }
@@ -160,7 +160,7 @@
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with four elements, representing the
   values of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25},
-  \code{TPU}, and \code{Vcmax_at_25} (in that order).
+  \code{Tp}, and \code{Vcmax_at_25} (in that order).
 }
 
 \examples{

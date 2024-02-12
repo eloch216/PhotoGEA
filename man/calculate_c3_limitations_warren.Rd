@@ -38,7 +38,7 @@
     An \code{exdf} object representing gas exchange data. Typically this should
     be an \code{exdf} object returned from \code{\link{fit_c3_aci}}; it will be
     expected to have columns for \code{alpha_g}, \code{Gamma_star},
-    \code{J_at_25}, \code{Rd_at_25}, \code{TPU}, and \code{Vcmax_at_25}.
+    \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
   }
 
   \item{POc}{

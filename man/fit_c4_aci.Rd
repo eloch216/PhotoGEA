@@ -168,7 +168,7 @@
     the parameter will be set to that value. For example, \code{fit_options =
     list(Rd_at_25 = 0, Vcmax_at_25 = 'fit', Vpr = 'column')} means that
     \code{Rd_at_25} will be set to 0, \code{Vcmax_at_25} will be fit, and
-    \code{Vpr} will be set to the values in the \code{TPU} column of
+    \code{Vpr} will be set to the values in the \code{Vpr} column of
     \code{exdf_obj}.
   }
 

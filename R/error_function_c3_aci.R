@@ -72,7 +72,7 @@ error_function_c3_aci <- function(
                     X[2], # Gamma_star
                     X[3], # J_at_25
                     X[4], # Rd_at_25
-                    X[5], # TPU
+                    X[5], # Tp
                     X[6], # Vcmax_at_25
                     POc,
                     atp_use,

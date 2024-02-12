@@ -78,7 +78,7 @@ initial_guess_c3_variable_j <- function(
             c3_guess[3], # J_at_25
             c3_guess[4], # Rd_at_25
             tau_guess,   # tau
-            c3_guess[5], # TPU
+            c3_guess[5], # Tp
             c3_guess[6]  # Vcmax_at_25
         )
     }

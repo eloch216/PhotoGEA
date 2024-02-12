@@ -133,7 +133,7 @@
 \details{
   The variable J method is a fitting procedure for estimating values of
   \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
-  \code{TPU}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve +
+  \code{Tp}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve +
   chlorophyll fluorescence. For more information about these parameters, see the
   documentation at \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}}.
@@ -155,7 +155,7 @@
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with six elements, representing the
   values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
-  \code{TPU}, and \code{Vcmax_at_25} (in that order).
+  \code{Tp}, and \code{Vcmax_at_25} (in that order).
 }
 
 \examples{

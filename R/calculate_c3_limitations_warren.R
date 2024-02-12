@@ -31,7 +31,7 @@ calculate_c3_limitations_warren <- function(
     required_variables[['Gamma_star']]               <- unit_dictionary[['Gamma_star']]
     required_variables[['J_at_25']]                  <- unit_dictionary[['J_at_25']]
     required_variables[['Rd_at_25']]                 <- unit_dictionary[['Rd_at_25']]
-    required_variables[['TPU']]                      <- unit_dictionary[['TPU']]
+    required_variables[['Tp']]                       <- unit_dictionary[['Tp']]
     required_variables[['Vcmax_at_25']]              <- unit_dictionary[['Vcmax_at_25']]
     required_variables[[ca_column_name]]             <- unit_dictionary[['Ca']]
     required_variables[[cc_column_name]]             <- unit_dictionary[['Cc']]
@@ -76,7 +76,7 @@ calculate_c3_limitations_warren <- function(
             '', # Gamma_star
             '', # J_at_25
             '', # Rd_at_25
-            '', # TPU
+            '', # Tp
             '', # Vcmax_at_25
             POc = POc,
             atp_use = atp_use,

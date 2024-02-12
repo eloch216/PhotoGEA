@@ -192,7 +192,7 @@ fit_c3_aci_plantecophys <- function(
   fits <- cbind(replicate_identifiers, fits)
 
   # `plantecophys::fitaci` returns absurdly high values of `Ap` when it cannot
-  # get a good estimate for `TPU`. These can cause problems when plotting the
+  # get a good estimate for `Tp`. These can cause problems when plotting the
   # results, so we replace any `Ap` values above 500 micromol / m^2 / s with
   # NA.
   fits[fits$Ap > 500, 'Ap'] <- NA
@@ -204,7 +204,7 @@ fit_c3_aci_plantecophys <- function(
     Rd             = fit_res$par[3, 1]
   )
 
-  parameters$TPU <- if (fit_res$fitTPU) {
+  parameters$Tp <- if (fit_res$fitTPU) {
     fit_res$par[4, 1]
   } else {
     NA
@@ -241,7 +241,7 @@ In fact, all fitting functions in the `PhotoGEA` package make use of
 `identifier_columns` to keep track of these important pieces of "metadata."
 
 Another important point is that we have "regularized" the fitting results by
-always including `TPU`, even when it is not being fitted. In general, it is
+always including `Tp`, even when it is not being fitted. In general, it is
 easier to work with functions that always produce the same output quantities.
 
 Now we can apply this function to all the curves in the data set. Note that we
@@ -288,7 +288,7 @@ xyplot(
 
 # View the parameter values
 columns_for_viewing <-
-  c('instrument', 'species', 'plot', 'Vcmax', 'Jmax', 'Rd', 'TPU')
+  c('instrument', 'species', 'plot', 'Vcmax', 'Jmax', 'Rd', 'Tp')
 
 c3_aci_parameters <-
   c3_aci_results$parameters[ , columns_for_viewing]
@@ -301,7 +301,7 @@ There are a few things to notice about these commands and the resulting outputs:
 - In the plotting command above, we subtract `Rd` from `Ac`, `Aj`, and
   `Ap` because `plantecophys::fitaci` uses different definitions of these rates
   that are equivalent to `Ac + Rd`, `Aj + Rd`, and `Ap + Rd` in our notation.
-- In the results, `TPU` and `Ap` are both `NA` because the `fitTPU` argument of
+- In the results, `Tp` and `Ap` are both `NA` because the `fitTPU` argument of
   `plantecophys::fitaci` was left at its default value of `FALSE`. When we
   attempt to include `Ap` in the plot, `lattice::xyplot` simply does not plot
   anything because the values are `NA`.
@@ -409,7 +409,7 @@ fit_c3_aci_plantecophys <- function(
   fits <- cbind(replicate_identifiers, fits)
 
   # `plantecophys::fitaci` returns absurdly high values of `Ap` when it cannot
-  # get a good estimate for `TPU`. These can cause problems when plotting the
+  # get a good estimate for `Tp`. These can cause problems when plotting the
   # results, so we replace any `Ap` values above 500 micromol / m^2 / s with
   # NA.
   fits[fits[, 'Ap'] > 500, 'Ap'] <- NA
@@ -456,8 +456,8 @@ fit_c3_aci_plantecophys <- function(
     A_transition   = fit_res$Photosyn(Ci=fit_res$Ci_transition)$ALEAF
   ))
 
-  # The value of `TPU` and its error will depend on `fitTPU`
-  parameters[, 'TPU'] <- if (fit_res$fitTPU) {
+  # The value of `Tp` and its error will depend on `fitTPU`
+  parameters[, 'Tp'] <- if (fit_res$fitTPU) {
     fit_res$par[4, 1]
   } else {
     NA
@@ -491,7 +491,7 @@ fit_c3_aci_plantecophys <- function(
     c('fit_c3_aci_plantecophys', 'Jmax_err',       'micromol m^(-2) s^(-1)'),
     c('fit_c3_aci_plantecophys', 'Rd',             'micromol m^(-2) s^(-1)'),
     c('fit_c3_aci_plantecophys', 'Rd_err',         'micromol m^(-2) s^(-1)'),
-    c('fit_c3_aci_plantecophys', 'TPU',            'micromol m^(-2) s^(-1)'),
+    c('fit_c3_aci_plantecophys', 'Tp',             'micromol m^(-2) s^(-1)'),
     c('fit_c3_aci_plantecophys', 'TPU_err',        'micromol m^(-2) s^(-1)'),
     c('fit_c3_aci_plantecophys', 'ci_star',        'micromol mol^(-1)'),
     c('fit_c3_aci_plantecophys', 'A_transition',   'micromol m^(-2) s^(-1)')
@@ -547,7 +547,7 @@ xyplot(
 
 # View the parameter values
 columns_for_viewing <-
-  c('instrument', 'species', 'plot', 'Vcmax', 'Jmax', 'Rd', 'TPU')
+  c('instrument', 'species', 'plot', 'Vcmax', 'Jmax', 'Rd', 'Tp')
 
 c3_aci_parameters <-
   c3_aci_results$parameters[ , columns_for_viewing, TRUE]

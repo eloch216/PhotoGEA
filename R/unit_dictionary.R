@@ -20,7 +20,7 @@ unit_dictionary <- list(
     Rd_norm        = 'normalized to Rd at 25 degrees C',
     tau            = dimensionless,
     total_pressure = pressure,
-    TPU            = micromol_flux,
+    Tp             = micromol_flux,
     Vcmax_at_25    = micromol_flux,
     Vcmax_norm     = 'normalized to Vcmax at 25 degrees C',
     Vpmax_at_25    = micromol_flux,

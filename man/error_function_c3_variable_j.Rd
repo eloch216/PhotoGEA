@@ -49,9 +49,9 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{replicate_exdf} of the same name; and a numeric value means
     that the parameter will be set to that value. For example,
-    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', TPU = 'column')}
+    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')}
     means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
-    and \code{TPU} will be set to the values in the \code{TPU} column of
+    and \code{Tp} will be set to the values in the \code{Tp} column of
     \code{replicate_exdf}.
   }
 
@@ -165,7 +165,7 @@
   When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
   method, it is necessary to define a function that calculates the sum of
   squared residuals for a given set of \code{alpha_g}, \code{Gamma_star},
-  \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{TPU}, and
+  \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{Tp}, and
   \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
   This function will be passed to an optimization algorithm which will determine
   the values that produce the smallest error.
@@ -173,7 +173,7 @@
   The \code{error_function_c3_variable_j} returns such a function, which is
   based on a particular replicate and a set of fitting options. It is possible
   to just fit a subset of the available fitting parameters; by default, the
-  fitting parameters are \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
+  fitting parameters are \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
   \code{tau}, and \code{Vcmax_at_25}. This behavior can be changed via the
   \code{fit_options} argument.
 
@@ -224,7 +224,7 @@
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
   default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{Rd_at_25}, \code{tau}, \code{TPU}, and \code{Vcmax_at_25} (in that
+  \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
   order).
 }
 
@@ -257,20 +257,20 @@ error_fcn <- error_function_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, tau = 0.5, TPU = 15,
+# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, tau = 0.5, Tp = 15,
 # Vcmax_at_25 = 100
 error_fcn(c(200, 1, 0.5, 15, 100))
 
-# Make a plot of error vs. TPU when the other parameters are fixed to the values
-# above. As TPU increases, it eventually stops limiting the assimilation rate
+# Make a plot of error vs. Tp when the other parameters are fixed to the values
+# above. As Tp increases, it eventually stops limiting the assimilation rate
 # and its value stops influencing the error.
-tpu_error_fcn <- function(TPU) {error_fcn(c(200, 1, 0.5, TPU, 100))}
+tpu_error_fcn <- function(Tp) {error_fcn(c(200, 1, 0.5, Tp, 100))}
 tpu_seq <- seq(5, 25)
 
 lattice::xyplot(
   sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,
   type = 'b',
-  xlab = 'TPU (micromol / m^2 / s)',
+  xlab = 'Tp (micromol / m^2 / s)',
   ylab = 'Sum of squared residuals'
 )
 }

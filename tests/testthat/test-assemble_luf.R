@@ -1,12 +1,12 @@
 # Set some parameter names to use for testing
-test_param_names <- c('alpha_g', 'Rd', 'Vcmax', 'TPU')
+test_param_names <- c('alpha_g', 'Rd', 'Vcmax', 'Tp')
 
 test_that('reasonable inputs work properly', {
     res <- PhotoGEA:::assemble_luf(
         test_param_names,
-        default_lower = list(alpha_g = 0, Rd = 0, Vcmax = 0, TPU = 0),
-        default_upper = list(TPU = 100, alpha_g = 1, Rd = 10, Vcmax = 1000),
-        default_fit_options = list(alpha_g = 0, Rd = 'fit', Vcmax = 'column', TPU = 40),
+        default_lower = list(alpha_g = 0, Rd = 0, Vcmax = 0, Tp = 0),
+        default_upper = list(Tp = 100, alpha_g = 1, Rd = 10, Vcmax = 1000),
+        default_fit_options = list(alpha_g = 0, Rd = 'fit', Vcmax = 'column', Tp = 40),
         user_lower = list(),
         user_upper = list(Vcmax = 400),
         user_fit_options = list(Vcmax = 'FIT', alpha_g = 0, Rd = 'column')
@@ -33,7 +33,7 @@ test_that('reasonable inputs work properly', {
     expect_equal(res$fit_options$alpha_g, 0)
     expect_equal(res$fit_options$Rd, 'column')
     expect_equal(res$fit_options$Vcmax, 'fit')
-    expect_equal(res$fit_options$TPU, 40)
+    expect_equal(res$fit_options$Tp, 40)
 })
 
 test_that('luf should be lists', {
@@ -92,7 +92,7 @@ test_that('luf names must be in the parameter set', {
             user_upper = list(alpha_g = 1, Rd = 10, Vcmax = 1000),
             user_fit_options = list(alpha_g = 'fit', J = 'column', Vcmax = 100)
         ),
-        '`lower`, `upper`, and `fit_options` must only provide settings for `alpha_g`, `Rd`, `Vcmax`, `TPU`'
+        '`lower`, `upper`, and `fit_options` must only provide settings for `alpha_g`, `Rd`, `Vcmax`, `Tp`'
     )
 })
 
@@ -116,12 +116,12 @@ test_that('at least one parameter must be fit', {
     expect_error(
             PhotoGEA:::assemble_luf(
             test_param_names,
-            default_lower = list(alpha_g = 0, Rd = 0, Vcmax = 0, TPU = 0),
-            default_upper = list(TPU = 100, alpha_g = 1, Rd = 10, Vcmax = 1000),
-            default_fit_options = list(alpha_g = 0, Rd = 'fit', Vcmax = 'column', TPU = 40),
+            default_lower = list(alpha_g = 0, Rd = 0, Vcmax = 0, Tp = 0),
+            default_upper = list(Tp = 100, alpha_g = 1, Rd = 10, Vcmax = 1000),
+            default_fit_options = list(alpha_g = 0, Rd = 'fit', Vcmax = 'column', Tp = 40),
             user_lower = list(),
             user_upper = list(Vcmax = 400),
-            user_fit_options = list(alpha_g = 0, Rd = 0, Vcmax = 0, TPU = 0)
+            user_fit_options = list(alpha_g = 0, Rd = 0, Vcmax = 0, Tp = 0)
         ),
         'No entries in `fit_options` are set to `fit`'
     )

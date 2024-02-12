@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_variable_j_lower       <- list(alpha_g = 0, Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     TPU = 0,     Vcmax_at_25 = 0)
-c3_variable_j_upper       <- list(alpha_g = 1, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     TPU = 40,    Vcmax_at_25 = 1000)
-c3_variable_j_fit_options <- list(alpha_g = 0, Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', TPU = 'fit', Vcmax_at_25 = 'fit')
+c3_variable_j_lower       <- list(alpha_g = 0, Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
+c3_variable_j_upper       <- list(alpha_g = 1, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
+c3_variable_j_fit_options <- list(alpha_g = 0, Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
 
-c3_variable_j_param <- c('alpha_g', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'TPU', 'Vcmax_at_25')
+c3_variable_j_param <- c('alpha_g', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_variable_j <- function(
@@ -161,7 +161,7 @@ fit_c3_variable_j <- function(
         best_X[2], # Gamma_star
         best_X[3], # J_at_25
         best_X[4], # Rd_at_25
-        best_X[6], # TPU
+        best_X[6], # Tp
         best_X[7], # Vcmax_at_25
         POc,
         atp_use,
@@ -204,7 +204,7 @@ fit_c3_variable_j <- function(
         best_X[2], # Gamma_star
         best_X[3], # J_at_25
         best_X[4], # Rd_at_25
-        best_X[6], # TPU
+        best_X[6], # Tp
         best_X[7], # Vcmax_at_25
         POc,
         atp_use,
@@ -241,7 +241,7 @@ fit_c3_variable_j <- function(
     }
 
     # Add columns for the best-fit parameter values (no need to include alpha_g,
-    # Gamma_star, or TPU since they are already included in the output of
+    # Gamma_star, or Tp since they are already included in the output of
     # calculate_c3_assimilation)
     replicate_exdf[, 'J_at_25']     <- best_X[3]
     replicate_exdf[, 'Rd_at_25']    <- best_X[4]
@@ -289,7 +289,7 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'J_at_25']     <- best_X[3]
     replicate_identifiers[, 'Rd_at_25']    <- best_X[4]
     replicate_identifiers[, 'tau']         <- best_X[5]
-    replicate_identifiers[, 'TPU']         <- best_X[6]
+    replicate_identifiers[, 'Tp']          <- best_X[6]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[7]
 
     # Attach the average leaf-temperature values of fitting parameters
@@ -338,7 +338,7 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'Rd_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Rd_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'tau',                 'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'TPU',                 'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'Tp',                  'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),

@@ -97,7 +97,7 @@ initial_guess_c3_aci <- function(
 
         j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]
 
-        # To estimate TPU, we solve Equation 2.26 for TPU and calculate it for
+        # To estimate Tp, we solve Equation 2.26 for Tp and calculate it for
         # each point in the response curve. Then we choose the largest value as
         # the best estimate.
         tpu_estimates <- Aphoto *

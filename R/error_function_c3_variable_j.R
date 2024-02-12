@@ -156,7 +156,7 @@ error_function_c3_variable_j <- function(
                     X[2], # Gamma_star
                     X[3], # J_at_25
                     X[4], # Rd_at_25
-                    X[6], # TPU
+                    X[6], # Tp
                     X[7], # Vcmax_at_25
                     POc,
                     atp_use,
