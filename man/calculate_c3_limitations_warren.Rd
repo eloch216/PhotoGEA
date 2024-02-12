@@ -19,29 +19,26 @@
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
-    j_column_name = 'J_at_25',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    rd_column_name = 'Rd_at_25',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
-    tpu_column_name = 'TPU',
-    vcmax_column_name = 'Vcmax_at_25',
     vcmax_norm_column_name = 'Vcmax_norm'
   )
 }
 
 \arguments{
   \item{exdf_obj}{
-    An \code{exdf} object representing gas exchange data.
+    An \code{exdf} object representing gas exchange data. Typically this should
+    be an \code{exdf} object returned from \code{\link{fit_c3_aci}}; it will be
+    expected to have columns for \code{alpha_g}, \code{Gamma_star},
+    \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
   }
 
   \item{POc}{
@@ -58,12 +55,6 @@
 
   \item{nadph_use}{
     The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
   }
 
   \item{curvature_cj}{
@@ -94,19 +85,6 @@
     CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}. Typically these are
-    the leaf-temperature dependent values calculated using
-    \code{\link{calculate_arrhenius}}.
-  }
-
-  \item{j_column_name}{
-    The name of the column in \code{exdf_obj} that contains values of the
-    RuBP regeneration rate (\code{J}) in \code{micromol m^(-2) s^(-1)} at 25
-    degrees C.
-  }
-
   \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
@@ -128,12 +106,6 @@
     values calculated using \code{\link{calculate_arrhenius}}.
   }
 
-  \item{rd_column_name}{
-    The name of the column in \code{exdf_obj} that contains values of the day
-    respiration rate (\code{Rd}) in \code{micromol m^(-2) s^(-1)} at 25 degrees
-    C.
-  }
-
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
@@ -143,17 +115,6 @@
     The name of the column in \code{exdf_obj} that contains the total pressure
     in \code{bar}. Typically this is calculated using
     \code{\link{calculate_total_pressure}}.
-  }
-
-  \item{tpu_column_name}{
-    The name of the column in \code{exdf_obj} that contains the rate of triose
-    phosphate utilization in \code{micromol m^(-2) s^(-1)}.
-  }
-
-  \item{vcmax_column_name}{
-    The name of the column in \code{exdf_obj} that contains the maximum rate of
-    Rubisco carboxylation (\code{Vcmax}) in \code{micromol m^(-2) s^(-1)} at 25
-    degrees C.
   }
 
   \item{vcmax_norm_column_name}{

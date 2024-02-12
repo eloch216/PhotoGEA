@@ -1,4 +1,6 @@
 initial_guess_c3_variable_j <- function(
+    alpha_g,
+    Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
@@ -6,7 +8,6 @@ initial_guess_c3_variable_j <- function(
     a_column_name = 'A',
     ci_column_name = 'Ci',
     etr_column_name = 'ETR',
-    gamma_star_column_name = 'Gamma_star',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -51,18 +52,19 @@ initial_guess_c3_variable_j <- function(
 
         # Get a function that makes an initial guess for the C3 parameters
         c3_guess_func <- initial_guess_c3_aci(
+            alpha_g,
+            Gamma_star,
             cc_threshold_rd,
             Oc,
             atp_use,
             nadph_use,
             a_column_name,
-            'Cc',
+            'Cc', # cc_column_name
+            j_norm_column_name,
             kc_column_name,
             ko_column_name,
-            gamma_star_column_name,
-            vcmax_norm_column_name,
             rd_norm_column_name,
-            j_norm_column_name
+            vcmax_norm_column_name
         )
 
         # Apply that function
@@ -71,11 +73,13 @@ initial_guess_c3_variable_j <- function(
         # Return the results in the correct order, along with an initial guess
         # for tau
         c(
-            c3_guess[2], # J
-            c3_guess[3], # Rd
+            c3_guess[1], # alpha_g
+            c3_guess[2], # Gamma_star
+            c3_guess[3], # J_at_25
+            c3_guess[4], # Rd_at_25
             tau_guess,   # tau
-            c3_guess[1], # TPU
-            c3_guess[4]  # Vcmax
+            c3_guess[5], # Tp
+            c3_guess[6]  # Vcmax_at_25
         )
     }
 }

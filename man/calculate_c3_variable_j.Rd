@@ -17,13 +17,13 @@
 \usage{
   calculate_c3_variable_j(
     exdf_obj,
-    Rd,
+    Gamma_star,
+    Rd_at_25,
     tau,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
-    gamma_star_column_name = 'Gamma_star',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
@@ -36,14 +36,28 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{tau}{
-    The proportionality factor used to calculate the RuBP regeneration rate from
-    chlorophyll fluorescence measurements (dimensionless).
+  \item{Gamma_star}{
+    The CO2 compensation point in the absence of day respiration, expressed in
+    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Gamma_star} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Gamma_star} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Rd}{
+  \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Rd_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Rd_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Rd_at_25} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{tau}{
+    The proportionality factor used to calculate the RuBP regeneration rate from
+    chlorophyll fluorescence measurements (dimensionless). If \code{tau} is not
+    a number, then there must be a column in \code{exdf_obj} called \code{tau}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{tau} column of \code{exdf_obj} if it exists.
   }
 
   \item{atp_use}{
@@ -62,11 +76,6 @@
   \item{ci_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
-  }
-
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
   }
 
   \item{phips2_column_name}{
@@ -139,12 +148,12 @@
   photosynthetically active flux density \code{Qin} and the operating efficiency
   of photosystem II \code{PhiPSII} according to:
 
-  \code{J_actual = alpha * beta * Qin * PhiPSII},
+  \code{J_actual = alpha_g * beta * Qin * PhiPSII},
 
-  where \code{alpha} is the leaf absorptance and \code{beta} is the fraction of
+  where \code{alpha_g} is the leaf absorptance and \code{beta} is the fraction of
   absorbed light energy directed to photosystem II. \code{Qin} is set by the
   measurement conditions, while \code{PhiPSII} can be estimated from chlorophyll
-  fluorescence. However, the values of \code{alpha} and \code{beta} are
+  fluorescence. However, the values of \code{alpha_g} and \code{beta} are
   generally unknown; \code{beta} in particular is difficult or impossible to
   measure and is often assumed to be 0.5. Thus, while Equation 7 from Harley et
   al. (1992) can be used to estimate \code{gmc}, there is a practical
@@ -152,7 +161,7 @@
   in Equation 7.
 
   Moualeu-Ngangue, Chen, & Stutzel (2016) developed a way to address this issue.
-  The method from that paper replaces the product of \code{alpha} and
+  The method from that paper replaces the product of \code{alpha_g} and
   \code{beta} by a single new parameter \code{tau}, and uses it to estimate the
   actual RuBP regeneration from fluoresence (\code{J_F}):
 
@@ -215,7 +224,7 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Calculate values of J_F, gmc, and Cc assuming tau = 0.2 and Rd = 0.5
-vj_res <- calculate_c3_variable_j(licor_file, 1.5, 0.55)
+vj_res <- calculate_c3_variable_j(licor_file, '', 1.5, 0.55)
 
 # Combine with original data
 licor_file <- cbind(licor_file, vj_res)

@@ -14,7 +14,7 @@
 \usage{
   calculate_gamma_star(
     exdf_obj,
-    alpha = 0.5,
+    alpha_pr = 0.5,
     oxygen_column_name = 'oxygen',
     specificity_at_tleaf_column_name = 'specificity_at_tleaf',
     tleaf_column_name = 'TleafCnd'
@@ -24,7 +24,7 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{alpha}{
+  \item{alpha_pr}{
     The number of CO2 molecules released by the photorespiratory cycle following
     each RuBP oxygenation.
   }
@@ -56,18 +56,19 @@
   use its definition, which can be found in many places, such as Equation 2.17
   from von Caemmerer (2000):
 
-  \code{Gamma_star = alpha * O / S},
+  \code{Gamma_star = alpha_pr * O / S},
 
   where \code{O} is the partial pressure (or mole fraction) of oxygen in the
   chloroplast, \code{S} is the Rubisco specificity on a gas basis, and
-  \code{alpha} is the number of CO2 molecules released by the photorespiratory
-  cycle following each RuBP oxygenation (usually assumed to be 0.5).
+  \code{alpha_pr} is the number of CO2 molecules released by the
+  photorespiratory cycle following each RuBP oxygenation (usually assumed to be
+  0.5).
 
   The Rubisco specificity is often measured from an aqueous solution where the
   concentrations of O2 and CO2 are specified as molarities (moles of dissolved
   CO2 or O2 per mole of H2O). In this context, the equation above becomes
 
-  \code{Gamma_star_aq = alpha * O_aq / S_aq},
+  \code{Gamma_star_aq = alpha_pr * O_aq / S_aq},
 
   where \code{Gamma_star_aq} and \code{O_aq} are the molarities of CO2 and O2
   corresponding to \code{Gamma_star} and \code{O} under the measurement
@@ -83,11 +84,11 @@
   dissolved in H2O and \code{H_O2} is Henry's constant for O2 dissolved in H2O.
   With these replacements, we can re-express the equation above as:
 
-  \code{Gamma_star / H_CO2 = alpha * (O / H_O2) / S_aq}
+  \code{Gamma_star / H_CO2 = alpha_pr * (O / H_O2) / S_aq}
 
   Solving for \code{Gamma_star}, we see that:
 
-  \code{Gamma_star = (alpha * O / S_aq) * (H_CO2 / H_O2)}.
+  \code{Gamma_star = (alpha_pr * O / S_aq) * (H_CO2 / H_O2)}.
 
   In other words, both the Rubisco specificity (as measured on a molarity basis)
   and the ratio of the two Henry's constants (\code{H_CO2 / H_O2}) play a role

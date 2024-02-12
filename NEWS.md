@@ -32,6 +32,75 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
+
+- Added new options for adding penalties to the error function during Variable J
+  fits, that enable the user to selectively penalize negative or unreasonably
+  large values of mesophyll conductance.
+- Made a few improvements to C3 curve fitting functions (`fit_c3_aci` and
+  `fit_c3_variable_j`):
+  - Two more parameters can now be fit: `alpha` (related to TPU) and
+    `Gamma_star`.
+  - Unreliable parameter estimates can now be excluded; for example, if no
+    points on a curve have An = Ap, the fit will return NA for TPU.
+  - The initial guess functions (`initial_guess_c3_aci` and
+    `initial_guess_c3_variable_j`) can now accomodate user-supplied values of
+    `alpha`.
+- Made a few improvements to all three nonlinear fitting functions
+  (`fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`):
+  - The error functions are now available in the package namespace as
+    `error_function_c3_aci`, `error_function_c3_variable_j`, and
+    `error_function_c4_aci`.
+  - Confidence intervals around the best-fit values can now be calculated
+    automatically by the fitting functions, or manually using three new
+    functions in the package namespace:
+    `confidence_intervals_c3_aci`, `confidence_intervals_c3_variable_j`, and
+    `confidence_intervals_c4_aci`.
+  - The initial guess functions are now created internally instead of being an
+    input argument.
+  - There is a new system for supplying fit options (upper and lower bounds, and
+    which parameters to fit):
+    - Users now only need to specify changes from the default settings.
+    - The order of parameters no longer matters because lists of named elements
+      are used.
+    - Parameters that could be fit, but are not being fit, can either be set to
+      fixed values or to values from a column of an exdf object.
+    - Unknown parameters are now provided in alphabetical order when applicable
+      (such as the first input arguments to `calculate_c3_assimilation`).
+  - The functions are more tolerant to curves with severe problems (such as
+    negative Ci) that prevent a good fit from being found; rather than throwing
+    an error, the fit functions now silently return `NA` for all results, along
+    with a message explaining the issue.
+- Added a function for estimating `Rd` with the Laisk method:
+  `calculate_rd_laisk`
+- A "unit dictionary" was added for internal use; this may be expanded and used
+  more often in the future.
+- Renamed several variables and input arguments:
+  - Licor files contain a column called `alpha`, and several different "alphas"
+    were used throughout `PhotoGEA`. To avoid confusion, the values in
+    `PhotoGEA` were renamed as follows:
+    - `alpha_g`: used in C3 assimilation calculations
+    - `alpha_pr`: used in Gamma_star calculations
+    - `alpha_psii`: used in C4 assimilation calculations
+  - The acronym "TPU" was used to refer to a process (triose phosphate
+    utilization) and the maximum rate of that process. To avoid confusion, the
+    rate parameter was renamed to `Tp`
+- Tests were added for several functions:
+  - `calculate_c3_assimilation`
+  - `fit_c3_aci`
+  - `fit_c3_variable_j`
+  - `fit_c4_aci`
+  - `calculate_c3_limitations_grassi`
+  - `calculate_c3_limitations_warren`
+- The `read_gasex_file` function now automatically includes the filename as a
+  column in the resulting `exdf` object; this helps with troubleshooting
+  problematic curves or files.
+- PRs related to creating this version:
+  - https://github.com/eloch216/PhotoGEA/pull/85
+  - https://github.com/eloch216/PhotoGEA/pull/86
+  - https://github.com/eloch216/PhotoGEA/pull/88
+  - https://github.com/eloch216/PhotoGEA/pull/89
+
 ## CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)
 
 - Reorganized the variable J fitting functions to be more like `fit_c3_aci`:
@@ -74,6 +143,8 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/80
   - https://github.com/eloch216/PhotoGEA/pull/81
   - https://github.com/eloch216/PhotoGEA/pull/82
+  - https://github.com/eloch216/PhotoGEA/pull/83
+  - https://github.com/eloch216/PhotoGEA/pull/84
 
 ## CHANGES IN PhotoGEA VERSION 0.9.2 (2023-11-16)
 

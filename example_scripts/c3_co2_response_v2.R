@@ -28,7 +28,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -48,7 +48,7 @@ PERFORM_STATS_TESTS <- TRUE
 # (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
 # which is not solely a property of Rubisco and which may differ between plants
 # that have identical Vcmax but different gm.
-USE_GM_TABLE <- TRUE
+USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list(
@@ -60,11 +60,11 @@ GM_TABLE <- list(
 
 # Decide whether to override the Gamma_star value calculated from Arrhenius
 # equations
-OVERRIDE_GAMMA_STAR <- TRUE
+OVERRIDE_GAMMA_STAR <- FALSE
 GAMMA_STAR <- 50 # ppm
 
 # Decide whether to average over plots
-AVERAGE_OVER_PLOTS <- TRUE
+AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
 SAVE_CSV <- TRUE
@@ -275,7 +275,9 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(curve_identifier = '10 5 6', seq_num = c(2))
+      list(event = 'WT', replicate = 9, CO2_r_sp = 800),
+      list(event = '25', replicate = 4, CO2_r_sp = 200)
+      #list(curve_identifier = '10 5 6', seq_num = c(2))
     )
 }
 
@@ -335,8 +337,7 @@ c3_aci_results <- consolidate(by(
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   cj_crossover_min = 100,                       # Wj must be > Wc when Cc < this value (ppm)
-  cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
-  fixed = c(NA, NA, NA, NA)
+  cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -346,6 +347,39 @@ c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance and mesophyll conductance) using the Warren model
 c3_aci_results$fits <- calculate_c3_limitations_warren(c3_aci_results$fits)
+
+# Print average operating point information
+cat('\nAverage operating point Ci for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Ci'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point Cc for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_Cc'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (interpolated) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
+
+cat('\nAverage operating point An (modeled) for each genotype:\n')
+print(tapply(
+    c3_aci_results$parameters[, 'operating_An_model'],
+    c3_aci_results$parameters[, EVENT_COLUMN_NAME],
+    mean
+))
+cat('\n')
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Ci fits (including limiting rates)
@@ -373,7 +407,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         fit_param <-
           c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
         panel.points(
-            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            fit_param$operating_An ~ fit_param$operating_Cc,
             type = 'p',
             col = 'black',
             pch = 1
@@ -406,7 +440,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         fit_param <-
           c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
         panel.points(
-            fit_param$operating_An_model ~ fit_param$operating_Cc,
+            fit_param$operating_An ~ fit_param$operating_Cc,
             type = 'p',
             col = 'black',
             pch = 1
@@ -494,7 +528,7 @@ aci_parameters <- c3_aci_results$parameters$main_data
 
 if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
-    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'TPU'
+    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'Tp'
   )
 
   aci_parameters_list <- by(
@@ -548,7 +582,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 200), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],                 X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 3),   main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 225), main = fitting_caption),
-      list(Y = aci_parameters[, 'TPU'],                      X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption)
+      list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption)
     )
 
     if (INCLUDE_FLUORESCENCE) {

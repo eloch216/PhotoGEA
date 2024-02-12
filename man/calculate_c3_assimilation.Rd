@@ -15,24 +15,24 @@
 \usage{
   calculate_c3_assimilation(
     exdf_obj,
-    TPU,
-    J,
-    Rd,
-    Vcmax,
+    alpha_g,
+    Gamma_star,
+    J_at_25,
+    Rd_at_25,
+    Tp,
+    Vcmax_at_25,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
-    total_pressure_column_name = 'total_pressure',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    gamma_star_column_name = 'Gamma_star',
-    vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm',
+    total_pressure_column_name = 'total_pressure',
+    vcmax_norm_column_name = 'Vcmax_norm',
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -41,25 +41,55 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{TPU}{
-    The maximum rate of triphosphate utilization, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+  \item{alpha_g}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not
+    a number, then there must be a column in \code{exdf_obj} called \code{alpha_g}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha_g} column of \code{exdf_obj} if it exists.
   }
 
-  \item{J}{
+  \item{Gamma_star}{
+    The CO2 compensation point in the absence of day respiration, expressed in
+    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Gamma_star} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Gamma_star} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{J_at_25}{
     The electron transport rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
     general will depend on the incident photosynthetically active flux density.
+    If \code{J_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{J_at_25} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{J_at_25} column
+    of \code{exdf_obj} if it exists.
   }
 
-  \item{Rd}{
+  \item{Rd_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Rd_at_25} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Rd_at_25} with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    \code{Rd_at_25} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Vcmax}{
+  \item{Tp}{
+    The maximum rate of triphosphate utilization, expressed in
+    \code{micromol m^(-2) s^(-1)}. If \code{Tp} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Tp} with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    \code{Tp} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Vcmax_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Vcmax_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{Vcmax_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{POc}{
@@ -76,12 +106,6 @@
 
   \item{nadph_use}{
     The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{alpha}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.
   }
 
   \item{curvature_cj}{
@@ -101,9 +125,9 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{total_pressure_column_name}{
-    The name of the column in \code{exdf_obj} that contains the total pressure
-    in \code{bar}.
+  \item{j_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -118,25 +142,20 @@
     \code{mmol mol^(-1)}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{vcmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
-  }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
-  }
-
-  \item{j_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{perform_checks}{
@@ -191,12 +210,12 @@
 
   The TPU-limited carboxylation rate is given by
 
-  \code{Wp = PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha))},
+  \code{Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))},
 
-  where \code{TPU} is the maximum rate of triose phosphate utilization and
-  \code{0 <= alpha <= 1} is the fraction of glycolate carbon not returned to the
+  where \code{Tp} is the maximum rate of triose phosphate utilization and
+  \code{0 <= alpha_g <= 1} is the fraction of glycolate carbon not returned to the
   chloroplast. This equation only applies when
-  \code{PCc > Gamma_star * (1 + 3 * alpha)}; for smaller values of \code{PCc},
+  \code{PCc > Gamma_star * (1 + 3 * alpha_g)}; for smaller values of \code{PCc},
   TPU cannot limit the RuBP carboxylation rate and \code{Wp = Inf}.
 
   The actual carboxylation rate is often chosen to be the smallest of the three
@@ -237,7 +256,7 @@
 
   In addition to the carboxylation and assimilation rates already mentioned, it
   is also possible to calculate the net CO2 assimilation rates determined by
-  Rubisco activity, RuBP regeneration, and TPU as follows:
+  Rubisco activity, RuBP regeneration, and Tp as follows:
 
   \code{Ac = (1 - Gamma_star / PCc) * Wc - Rd}
 
@@ -266,9 +285,9 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
-          \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, and \code{Vc}. The
-          category for each of these new columns is
+          above: \code{alpha_g}, \code{Gamma_star}, \code{Tp}, \code{Vcmax_tl},
+          \code{Rd_tl}, \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An},
+          and \code{Vc}. The category for each of these new columns is
           \code{calculate_c3_assimilation} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
@@ -296,7 +315,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 12, 150, 1, 120)
+assim <- calculate_c3_assimilation(inputs, 0, '', 150, 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ Cc,

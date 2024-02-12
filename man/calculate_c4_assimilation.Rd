@@ -15,23 +15,23 @@
 \usage{
   calculate_c4_assimilation(
     exdf_obj,
-    Rd,
-    Vcmax,
-    Vpmax,
+    Rd_at_25,
+    Vcmax_at_25,
+    Vpmax_at_25,
     Vpr,
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
-    alpha = 0,
-    pcm_column_name = 'PCm',
+    alpha_psii = 0,
+    ao_column_name = 'ao',
+    gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    gamma_star_column_name = 'gamma_star',
-    ao_column_name = 'ao',
+    pcm_column_name = 'PCm',
+    rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    rd_norm_column_name = 'Rd_norm',
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -40,24 +40,37 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
-  \item{Rd}{
+  \item{Rd_at_25}{
     The total rate of mitochondrial respiration across the mesophyll and bundle
-    sheath at 25 degrees C, expressed in \code{micromol m^(-2) s^(-1)}.
+    sheath at 25 degrees C, expressed in \code{micromol m^(-2) s^(-1)}. If
+    \code{Rd_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{Rd_at_25} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{Rd_at_25} column
+    of \code{exdf_obj} if it exists.
   }
 
-  \item{Vpmax}{
-    The maximum rate of PEP carboxylase activity at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
-  }
-
-  \item{Vcmax}{
+  \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Vcmax_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Vcmax_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Vcmax_at_25} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{Vpmax_at_25}{
+    The maximum rate of PEP carboxylase activity at 25 degrees C, expressed in
+    \code{micromol m^(-2) s^(-1)}. If \code{Vpmax_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Vpmax_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Vpmax_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{Vpr}{
     The rate of PEP carboxylase regeneration, expressed in
-    \code{micromol m^(-2) s^(-1)}.
+    \code{micromol m^(-2) s^(-1)}. If \code{Vpr} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{Vpr} with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    \code{Vpr} column of \code{exdf_obj} if it exists.
   }
 
   \item{POm}{
@@ -77,13 +90,18 @@
     mesophyll.
   }
 
-  \item{alpha}{
+  \item{alpha_psii}{
     The fraction of photosystem II activity in the bundle sheath.
   }
 
-  \item{pcm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the partial pressure
-    of CO2 in the mesophyll, expressed in \code{microbar}.
+  \item{ao_column_name}{
+    The name of the column in \code{exdf_obj} that contains the dimensionless
+    ratio of solubility and diffusivity of O2 to CO2.
+  }
+
+  \item{gamma_star_column_name}{
+    The name of the column in \code{exdf_obj} that contains the dimensionless
+    \code{gamma_star} values.
   }
 
   \item{kc_column_name}{
@@ -101,14 +119,14 @@
     constant for PEP carboxylase carboxylation in \code{microbar}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the dimensionless
-    \code{gamma_star} values.
+  \item{pcm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the partial pressure
+    of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
-  \item{ao_column_name}{
-    The name of the column in \code{exdf_obj} that contains the dimensionless
-    ratio of solubility and diffusivity of O2 to CO2.
+  \item{rd_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -121,11 +139,6 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
-  }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{perform_checks}{
@@ -207,7 +220,7 @@
   To be more precise, the approximation is only reliable when \code{Vcmax} is
   much larger than \code{gbs * Kc * (1 + POm / Ko)}, which is rarely the case;
   otherwise, the limiting value of \code{An} at high \code{PCm} will be smaller
-  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha} are
+  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha_psii} are
   both set to zero, then the approximation is exact.
 
   \strong{Limiting Cases of the Approximate Equation}

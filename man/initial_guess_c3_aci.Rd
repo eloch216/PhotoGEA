@@ -15,22 +15,40 @@
 
 \usage{
   initial_guess_c3_aci(
+    alpha_g,
+    Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     cc_column_name = 'Cc',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    gamma_star_column_name = 'Gamma_star',
-    vcmax_norm_column_name = 'Vcmax_norm',
     rd_norm_column_name = 'Rd_norm',
-    j_norm_column_name = 'J_norm'
+    vcmax_norm_column_name = 'Vcmax_norm'
   )
 }
 
 \arguments{
+  \item{alpha_g}{
+    A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not
+    a number, then there must be a column in \code{rc_exdf} called \code{alpha_g}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha_g} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{Gamma_star}{
+    The CO2 compensation point in the absence of day respiration, expressed in
+    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
+    must be a column in \code{rc_exdf} called \code{Gamma_star} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Gamma_star} column of \code{rc_exdf} if it exists.
+  }
+
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
@@ -61,6 +79,11 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
+  \item{j_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
+  }
+
   \item{kc_column_name}{
     The name of the column in \code{rc_exdf} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
@@ -73,9 +96,9 @@
     \code{mmol mol^(-1)}.
   }
 
-  \item{gamma_star_column_name}{
-    The name of the column in \code{rc_exdf} that contains the
-    \code{Gamma_star} values in \code{micromol mol^(-1)}.
+  \item{rd_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -83,26 +106,18 @@
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
   }
-
-  \item{rd_norm_column_name}{
-    The name of the column in \code{rc_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
-  }
-
-  \item{j_norm_column_name}{
-    The name of the column in \code{rc_exdf} that contains the normalized
-    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
-  }
 }
 
 \details{
-  Here we estimate values of \code{Rd}, \code{Vcmax}, \code{J}, and \code{TPU}
-  from a measured C3 CO2 response curve. For more information about these
-  parameters, see the documentation for \code{\link{calculate_c3_assimilation}}.
-  To estimate these parameter values, we use several equations from S. von
-  Caemmerer, "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing,
-  2000) [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are
-  from this book.
+  Here we estimate values of \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
+  \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult to
+  estimate values of \code{alpha_g} and \code{Gamma_star} from a curve, so they
+  must be supplied beforehand. For more information about these parameters, see
+  the documentation for \code{\link{calculate_c3_assimilation}}. To estimate
+  these parameter values, we use several equations from S. von Caemmerer,
+  "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing, 2000)
+  [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are from
+  this book.
 
   \itemize{
     \item \strong{Estimating Rd}: An estimate for \code{Rd} can be obtained using
@@ -134,8 +149,8 @@
     \item \strong{Estimating J}: An estimate for \code{J} can be obtained by
           solving Equation 2.23 for \code{J}, similar to the method used to
           estimate \code{Vcmax}.
-    \item \strong{Estimating TPU}: An estimate for \code{TPU} can be obtained by
-          solving Equation 2.26 for \code{TPU}, similar to the method used to
+    \item \strong{Estimating Tp}: An estimate for \code{Tp} can be obtained by
+          solving Equation 2.26 for \code{Tp}, similar to the method used to
           estimate \code{Vcmax}.
   }
 }
@@ -144,8 +159,8 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with four elements, representing the
-  values of \code{TPU}, \code{J}, \code{Rd}, and \code{Vcmax} (in that order) at
-  25 degrees C.
+  values of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25},
+  \code{Tp}, and \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -181,8 +196,9 @@ licor_file <- apply_gm(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Create the guessing function
-guessing_func <- initial_guess_c3_aci()
+# Create the guessing function; here we set alpha_g = 0 and use the
+# temperature-dependent values of Gamma_star calculated above
+guessing_func <- initial_guess_c3_aci(alpha_g = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -194,12 +210,12 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    calculate_c3_assimilation(x, param[1], param[2], param[3], param[4])
+    calculate_c3_assimilation(x, param[1], param[2], param[3], param[4], param[5], param[6])
   }
 ))
 
 lattice::xyplot(
-  Ac + Aj + Ap + An + A ~ Cc | species_plot,
+  Ac + Aj + Ap + An + A ~ Ci | species_plot,
   data = cbind(licor_file, calculated_aci)$main_data,
   type = 'b',
   auto = TRUE,
