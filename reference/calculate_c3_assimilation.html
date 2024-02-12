@@ -18,7 +18,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,24 +82,24 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_c3_assimilation</span><span class="op">(</span></span>
 <span>    <span class="va">exdf_obj</span>,</span>
-<span>    <span class="va">TPU</span>,</span>
-<span>    <span class="va">J</span>,</span>
-<span>    <span class="va">Rd</span>,</span>
-<span>    <span class="va">Vcmax</span>,</span>
+<span>    <span class="va">alpha_g</span>,</span>
+<span>    <span class="va">Gamma_star</span>,</span>
+<span>    <span class="va">J_at_25</span>,</span>
+<span>    <span class="va">Rd_at_25</span>,</span>
+<span>    <span class="va">Tp</span>,</span>
+<span>    <span class="va">Vcmax_at_25</span>,</span>
 <span>    POc <span class="op">=</span> <span class="fl">210000</span>,</span>
 <span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
 <span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.0</span>,</span>
 <span>    curvature_cj <span class="op">=</span> <span class="fl">1.0</span>,</span>
 <span>    curvature_cjp <span class="op">=</span> <span class="fl">1.0</span>,</span>
 <span>    cc_column_name <span class="op">=</span> <span class="st">'Cc'</span>,</span>
-<span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
+<span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
 <span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
 <span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
-<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'Gamma_star'</span>,</span>
-<span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
-<span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
+<span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
+<span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    perform_checks <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    return_exdf <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
@@ -111,25 +111,55 @@
 <dd><p>An <code>exdf</code> object.</p></dd>
 
 
-  <dt>TPU</dt>
-<dd><p>The maximum rate of triphosphate utilization, expressed in
-    <code>micromol m^(-2) s^(-1)</code>.</p></dd>
+  <dt>alpha_g</dt>
+<dd><p>A dimensionless parameter greater than or equal to 0 and less than or equal
+    to 1 that represents the fraction of glycolate carbon not returned to the
+    chloroplast. <code>alpha_g</code> is often assumed to be 0. If <code>alpha_g</code> is not
+    a number, then there must be a column in <code>exdf_obj</code> called <code>alpha_g</code>
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the <code>alpha_g</code> column of <code>exdf_obj</code> if it exists.</p></dd>
 
 
-  <dt>J</dt>
+  <dt>Gamma_star</dt>
+<dd><p>The CO2 compensation point in the absence of day respiration, expressed in
+    <code>micromol mol^(-1)</code>. If <code>Gamma_star</code> is not a number, then there
+    must be a column in <code>exdf_obj</code> called <code>Gamma_star</code> with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the <code>Gamma_star</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+
+
+  <dt>J_at_25</dt>
 <dd><p>The electron transport rate at 25 degrees C, expressed in
     <code>micromol m^(-2) s^(-1)</code>. Note that this is _not_ <code>Jmax</code>, and in
-    general will depend on the incident photosynthetically active flux density.</p></dd>
+    general will depend on the incident photosynthetically active flux density.
+    If <code>J_at_25</code> is not a number, then there must be a column in
+    <code>exdf_obj</code> called <code>J_at_25</code> with appropriate units. A numeric
+    value supplied here will overwrite the values in the <code>J_at_25</code> column
+    of <code>exdf_obj</code> if it exists.</p></dd>
 
 
-  <dt>Rd</dt>
+  <dt>Rd_at_25</dt>
 <dd><p>The respiration rate at 25 degrees C, expressed in
-    <code>micromol m^(-2) s^(-1)</code>.</p></dd>
+    <code>micromol m^(-2) s^(-1)</code>. If <code>Rd_at_25</code> is not a number, then there
+    must be a column in <code>exdf_obj</code> called <code>Rd_at_25</code> with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    <code>Rd_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
 
 
-  <dt>Vcmax</dt>
+  <dt>Tp</dt>
+<dd><p>The maximum rate of triphosphate utilization, expressed in
+    <code>micromol m^(-2) s^(-1)</code>. If <code>Tp</code> is not a number, then there
+    must be a column in <code>exdf_obj</code> called <code>Tp</code> with appropriate
+    units. A numeric value supplied here will overwrite the values in the
+    <code>Tp</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+
+
+  <dt>Vcmax_at_25</dt>
 <dd><p>The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
-    <code>micromol m^(-2) s^(-1)</code>.</p></dd>
+    <code>micromol m^(-2) s^(-1)</code>. If <code>Vcmax_at_25</code> is not a number, then
+    there must be a column in <code>exdf_obj</code> called <code>Vcmax_at_25</code> with
+    appropriate units. A numeric value supplied here will overwrite the
+    values in the <code>Vcmax_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
 
 
   <dt>POc</dt>
@@ -146,12 +176,6 @@
 
   <dt>nadph_use</dt>
 <dd><p>The number of NADPH molecules used per C3 cycle.</p></dd>
-
-
-  <dt>alpha</dt>
-<dd><p>A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.</p></dd>
 
 
   <dt>curvature_cj</dt>
@@ -171,9 +195,9 @@
     chloroplastic CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
-  <dt>total_pressure_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the total pressure
-    in <code>bar</code>.</p></dd>
+  <dt>j_norm_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+    <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).</p></dd>
 
 
   <dt>kc_column_name</dt>
@@ -188,25 +212,20 @@
     <code>mmol mol^(-1)</code>.</p></dd>
 
 
-  <dt>gamma_star_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the
-    <code>Gamma_star</code> values in <code>micromol mol^(-1)</code>.</p></dd>
+  <dt>rd_norm_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+    <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
+
+
+  <dt>total_pressure_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the total pressure
+    in <code>bar</code>.</p></dd>
 
 
   <dt>vcmax_norm_column_name</dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
     <code>Vcmax</code> values (with units of
     <code>normalized to Vcmax at 25 degrees C</code>).</p></dd>
-
-
-  <dt>rd_norm_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
-    <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
-
-
-  <dt>j_norm_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
-    <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).</p></dd>
 
 
   <dt>perform_checks</dt>
@@ -251,11 +270,11 @@
   values (as they do in many sources). This is necessary because not all
   descriptions of the FvCB model use the same values.</p>
 <p>The TPU-limited carboxylation rate is given by</p>
-<p><code>Wp = PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha))</code>,</p>
-<p>where <code>TPU</code> is the maximum rate of triose phosphate utilization and
-  <code>0 &lt;= alpha &lt;= 1</code> is the fraction of glycolate carbon not returned to the
+<p><code>Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))</code>,</p>
+<p>where <code>Tp</code> is the maximum rate of triose phosphate utilization and
+  <code>0 &lt;= alpha_g &lt;= 1</code> is the fraction of glycolate carbon not returned to the
   chloroplast. This equation only applies when
-  <code>PCc &gt; Gamma_star * (1 + 3 * alpha)</code>; for smaller values of <code>PCc</code>,
+  <code>PCc &gt; Gamma_star * (1 + 3 * alpha_g)</code>; for smaller values of <code>PCc</code>,
   TPU cannot limit the RuBP carboxylation rate and <code>Wp = Inf</code>.</p>
 <p>The actual carboxylation rate is often chosen to be the smallest of the three
   potential rates:</p>
@@ -286,7 +305,7 @@
   overpressure).</p>
 <p>In addition to the carboxylation and assimilation rates already mentioned, it
   is also possible to calculate the net CO2 assimilation rates determined by
-  Rubisco activity, RuBP regeneration, and TPU as follows:</p>
+  Rubisco activity, RuBP regeneration, and Tp as follows:</p>
 <p><code>Ac = (1 - Gamma_star / PCc) * Wc - Rd</code></p>
 <p><code>Aj = (1 - Gamma_star / PCc) * Wj - Rd</code></p>
 <p><code>Ap = (1 - Gamma_star / PCc) * Wp - Rd</code></p>
@@ -313,9 +332,9 @@
 <p></p>
 <ul><li><p>If <code>return_exdf</code> is <code>TRUE</code>, the return value is an
           <code>exdf</code> object with the following columns, calculated as described
-          above: <code>TPU</code>, <code>Vcmax_tl</code>, <code>Rd_tl</code>, <code>J_tl</code>,
-          <code>Ac</code>, <code>Aj</code>, <code>Ap</code>, <code>An</code>, and <code>Vc</code>. The
-          category for each of these new columns is
+          above: <code>alpha_g</code>, <code>Gamma_star</code>, <code>Tp</code>, <code>Vcmax_tl</code>,
+          <code>Rd_tl</code>, <code>J_tl</code>, <code>Ac</code>, <code>Aj</code>, <code>Ap</code>, <code>An</code>,
+          and <code>Vc</code>. The category for each of these new columns is
           <code>calculate_c3_assimilation</code> to indicate that they were created
           using this function.</p></li>
 <li><p>If <code>return_exdf</code> is <code>FALSE</code>, the return value is a list with
@@ -343,7 +362,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">inputs</span>, <span class="va">c3_arrhenius_sharkey</span>, <span class="st">'Tleaf'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">12</span>, <span class="fl">150</span>, <span class="fl">1</span>, <span class="fl">120</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">150</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">120</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">An</span> <span class="op">~</span> <span class="va">Cc</span>,</span></span>

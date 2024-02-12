@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -865,23 +865,23 @@ can view them as follows:</p>
 <span><span class="co">#&gt; 4                        ripe2                     maize                      2</span></span>
 <span><span class="co">#&gt; 5                        ripe2                   sorghum                      3</span></span>
 <span><span class="co">#&gt;   Rd_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                       1.284540</span></span>
-<span><span class="co">#&gt; 2                                       5.049738</span></span>
-<span><span class="co">#&gt; 3                                       1.524589</span></span>
-<span><span class="co">#&gt; 4                                       5.209604</span></span>
-<span><span class="co">#&gt; 5                                       5.190008</span></span>
+<span><span class="co">#&gt; 1                                       1.284178</span></span>
+<span><span class="co">#&gt; 2                                       5.049701</span></span>
+<span><span class="co">#&gt; 3                                       1.524622</span></span>
+<span><span class="co">#&gt; 4                                       5.209788</span></span>
+<span><span class="co">#&gt; 5                                       5.189935</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                          39.35481</span></span>
-<span><span class="co">#&gt; 2                                          51.39206</span></span>
-<span><span class="co">#&gt; 3                                          46.39016</span></span>
-<span><span class="co">#&gt; 4                                          42.73374</span></span>
-<span><span class="co">#&gt; 5                                          43.57417</span></span>
+<span><span class="co">#&gt; 1                                          39.35449</span></span>
+<span><span class="co">#&gt; 2                                          51.39186</span></span>
+<span><span class="co">#&gt; 3                                          46.39039</span></span>
+<span><span class="co">#&gt; 4                                          42.73386</span></span>
+<span><span class="co">#&gt; 5                                          43.57415</span></span>
 <span><span class="co">#&gt;   Vpmax_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         129.16466</span></span>
-<span><span class="co">#&gt; 2                                         103.81965</span></span>
-<span><span class="co">#&gt; 3                                          90.54414</span></span>
-<span><span class="co">#&gt; 4                                         127.75304</span></span>
-<span><span class="co">#&gt; 5                                         102.95831</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                         129.16223</span></span>
+<span><span class="co">#&gt; 2                                         103.81944</span></span>
+<span><span class="co">#&gt; 3                                          90.54381</span></span>
+<span><span class="co">#&gt; 4                                         127.75378</span></span>
+<span><span class="co">#&gt; 5                                         102.95761</span></span></code></pre></div>
 <p>Alternatively, we can extract average values of the parameters for
 each species using the <code>basic_stats</code> function from
 <code>PhotoGEA</code>:</p>
@@ -898,23 +898,23 @@ each species using the <code>basic_stats</code> function from
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c4_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species [UserDefCon] (NA) Rd_at_25_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                     maize                                           3.247072</span></span>
-<span><span class="co">#&gt; 2                   sorghum                                           3.921445</span></span>
+<span><span class="co">#&gt; 1                     maize                                           3.246983</span></span>
+<span><span class="co">#&gt; 2                   sorghum                                           3.921420</span></span>
 <span><span class="co">#&gt;   Rd_at_25_stderr [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              1.962532</span></span>
-<span><span class="co">#&gt; 2                                              1.199112</span></span>
+<span><span class="co">#&gt; 1                                              1.962805</span></span>
+<span><span class="co">#&gt; 2                                              1.199082</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              41.04428</span></span>
+<span><span class="co">#&gt; 1                                              41.04418</span></span>
 <span><span class="co">#&gt; 2                                              47.11880</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_stderr [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                 1.689461</span></span>
-<span><span class="co">#&gt; 2                                                 2.286047</span></span>
+<span><span class="co">#&gt; 1                                                 1.689688</span></span>
+<span><span class="co">#&gt; 2                                                 2.285978</span></span>
 <span><span class="co">#&gt;   Vpmax_at_25_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             128.45885</span></span>
-<span><span class="co">#&gt; 2                                              99.10737</span></span>
+<span><span class="co">#&gt; 1                                             128.45800</span></span>
+<span><span class="co">#&gt; 2                                              99.10695</span></span>
 <span><span class="co">#&gt;   Vpmax_at_25_stderr [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                0.7058116</span></span>
-<span><span class="co">#&gt; 2                                                4.2888289</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                                0.7042254</span></span>
+<span><span class="co">#&gt; 2                                                4.2887945</span></span></code></pre></div>
 <p>Of course, more advanced statistical tests to check for differences
 between groups can also be performed within R using other packages such
 as <code>onewaytests</code> or <code>DescTools</code>. Alternatively,

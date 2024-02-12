@@ -20,7 +20,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,36 +86,28 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_c4_aci</span><span class="op">(</span></span>
 <span>    <span class="va">replicate_exdf</span>,</span>
 <span>    <span class="va">Ca_atmospheric</span>,</span>
+<span>    ao_column_name <span class="op">=</span> <span class="st">'ao'</span>,</span>
 <span>    a_column_name <span class="op">=</span> <span class="st">'A'</span>,</span>
 <span>    ca_column_name <span class="op">=</span> <span class="st">'Ca'</span>,</span>
 <span>    ci_column_name <span class="op">=</span> <span class="st">'Ci'</span>,</span>
-<span>    pcm_column_name <span class="op">=</span> <span class="st">'PCm'</span>,</span>
+<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'gamma_star'</span>,</span>
 <span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
 <span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
 <span>    kp_column_name <span class="op">=</span> <span class="st">'Kp'</span>,</span>
-<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'gamma_star'</span>,</span>
-<span>    ao_column_name <span class="op">=</span> <span class="st">'ao'</span>,</span>
+<span>    pcm_column_name <span class="op">=</span> <span class="st">'PCm'</span>,</span>
+<span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
 <span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    vpmax_norm_column_name <span class="op">=</span> <span class="st">'Vpmax_norm'</span>,</span>
-<span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
 <span>    POm <span class="op">=</span> <span class="fl">210000</span>,</span>
 <span>    gbs <span class="op">=</span> <span class="fl">0.003</span>,</span>
 <span>    Rm_frac <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    alpha_psii <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>    OPTIM_FUN <span class="op">=</span> <span class="fu"><a href="optimizers.html">optimizer_nmkb</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    initial_guess_fun <span class="op">=</span> <span class="fu"><a href="initial_guess_c4_aci.html">initial_guess_c4_aci</a></span><span class="op">(</span></span>
-<span>      gbs <span class="op">=</span> <span class="va">gbs</span>,</span>
-<span>      Rm_frac <span class="op">=</span> <span class="va">Rm_frac</span>,</span>
-<span>      a_column_name <span class="op">=</span> <span class="va">a_column_name</span>,</span>
-<span>      pcm_column_name <span class="op">=</span> <span class="va">pcm_column_name</span>,</span>
-<span>      kp_column_name <span class="op">=</span> <span class="va">kp_column_name</span>,</span>
-<span>      rd_norm_column_name <span class="op">=</span> <span class="va">rd_norm_column_name</span>,</span>
-<span>      vcmax_norm_column_name <span class="op">=</span> <span class="va">vcmax_norm_column_name</span>,</span>
-<span>      vpmax_norm_column_name <span class="op">=</span> <span class="va">vpmax_norm_column_name</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,   <span class="fl">0</span>,   <span class="fl">0</span>,    <span class="fl">0</span><span class="op">)</span>,</span>
-<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span>, <span class="fl">1000</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
-<span>    fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>,  <span class="cn">NA</span>,  <span class="cn">NA</span>,   <span class="fl">1000</span><span class="op">)</span></span>
+<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    error_threshold_factor <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>    calculate_confidence_intervals <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -129,6 +121,11 @@
 <dd><p>The atmospheric CO2 concentration (with units of <code>micromol mol^(-1)</code>);
     this will be used by <code><a href="estimate_operating_point.html">estimate_operating_point</a></code> to estimate the
     operating point.</p></dd>
+
+
+  <dt>ao_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the dimensionless
+    ratio of solubility and diffusivity of O2 to CO2.</p></dd>
 
 
   <dt>a_column_name</dt>
@@ -146,9 +143,9 @@
     intercellular CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
-  <dt>pcm_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the partial pressure
-    of CO2 in the mesophyll, expressed in <code>microbar</code>.</p></dd>
+  <dt>gamma_star_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the dimensionless
+    <code>gamma_star</code> values.</p></dd>
 
 
   <dt>kc_column_name</dt>
@@ -166,14 +163,14 @@
     constant for PEP carboxylase carboxylation in <code>microbar</code>.</p></dd>
 
 
-  <dt>gamma_star_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the dimensionless
-    <code>gamma_star</code> values.</p></dd>
+  <dt>pcm_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the partial pressure
+    of CO2 in the mesophyll, expressed in <code>microbar</code>.</p></dd>
 
 
-  <dt>ao_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the dimensionless
-    ratio of solubility and diffusivity of O2 to CO2.</p></dd>
+  <dt>rd_norm_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+    <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
 
 
   <dt>vcmax_norm_column_name</dt>
@@ -186,11 +183,6 @@
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
     <code>Vpmax</code> values (with units of
     <code>normalized to Vpmax at 25 degrees C</code>).</p></dd>
-
-
-  <dt>rd_norm_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
-    <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
 
 
   <dt>POm</dt>
@@ -210,7 +202,7 @@
     mesophyll.</p></dd>
 
 
-  <dt>alpha</dt>
+  <dt>alpha_psii</dt>
 <dd><p>The fraction of photosystem II activity in the bundle sheath.</p></dd>
 
 
@@ -218,45 +210,69 @@
 <dd><p>An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: <code>par</code>, <code>convergence</code>,
-    <code>value</code>, and (optionally) <code>message</code>. The bounded optimizers from
-    the <code>dfoptim</code> package meet these requirements. The base function
-    <code>optim</code> with the <code>L-BFGS-B</code> method can also be used.</p></dd>
-
-
-  <dt>initial_guess_fun</dt>
-<dd><p>A function that estimates values of <code>Rd</code>, <code>Vcmax</code>, <code>Vpmax</code>,
-    and <code>Vpr</code>; <code>initial_guess_fun</code> should have one input argument (an
-    <code>exdf</code> object representing a single response curve and should return a
-    vector of the estimated values (at 25 degrees C) in the order above.</p></dd>
+    <code>value</code>, and (optionally) <code>message</code>. See <code><a href="optimizers.html">optimizers</a></code>
+    for a list of available options.</p></dd>
 
 
   <dt>lower</dt>
-<dd><p>A numeric vector containing lower bounds for the values of <code>Rd</code>,
-    <code>Vcmax</code>, <code>Vpmax</code>, and <code>Vpr</code>, in that order.</p></dd>
+<dd><p>A list of named numeric elements representing lower bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, <code>lower = list(Vcmax_at_25 = 10)</code> sets the lower
+    limit for <code>Vcmax_at_25</code> to 10 micromol / m^2 / s.</p></dd>
 
 
   <dt>upper</dt>
-<dd><p>A numeric vector containing upper bounds for the values of <code>Rd</code>,
-    <code>Vcmax</code>, <code>Vpmax</code>, and <code>Vpr</code>, in that order.</p></dd>
+<dd><p>A list of named numeric elements representing upper bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, <code>upper = list(Vcmax_at_25 = 200)</code> sets the upper
+    limit for <code>Vcmax_at_25</code> to 200 micromol / m^2 / s.</p></dd>
 
 
-  <dt>fixed</dt>
-<dd><p>A numeric vector specifying fixed values of <code>Rd</code>, <code>Vcmax</code>,
-    <code>Vpmax</code>, and <code>Vpr</code>, in that order. Values of <code>NA</code> indicate
-    that the corresponding parameter is not fixed and should be varied during
-    the optimization procedure. The default value of this argument fixes
-    <code>Vpr</code> to a high value (so net assimilation is rarely limited by PEP
-    carboxylase regeneration) and allows the other parameters to vary. To vary
-    all of the parameters, set <code>fixed</code> to <code>c(NA, NA, NA, NA)</code>.</p></dd>
+  <dt>fit_options</dt>
+<dd><p>A list of named elements representing fit options to use for each parameter.
+    Values supplied here override the default values (see details below). Each
+    element must be <code>'fit'</code>, <code>'column'</code>, or a numeric value. A value
+    of <code>'fit'</code> means that the parameter will be fit; a value of
+    <code>'column'</code> means that the value of the parameter will be taken from a
+    column in <code>exdf_obj</code> of the same name; and a numeric value means that
+    the parameter will be set to that value. For example, <code>fit_options =
+    list(Rd_at_25 = 0, Vcmax_at_25 = 'fit', Vpr = 'column')</code> means that
+    <code>Rd_at_25</code> will be set to 0, <code>Vcmax_at_25</code> will be fit, and
+    <code>Vpr</code> will be set to the values in the <code>Vpr</code> column of
+    <code>exdf_obj</code>.</p></dd>
+
+
+  <dt>error_threshold_factor</dt>
+<dd><p>To be passed to <code><a href="confidence_intervals_c4_aci.html">confidence_intervals_c4_aci</a></code> when
+    <code>calculate_confidence_intervals</code> is <code>TRUE</code>.</p></dd>
+
+
+  <dt>calculate_confidence_intervals</dt>
+<dd><p>A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using <code><a href="confidence_intervals_c4_aci.html">confidence_intervals_c4_aci</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function calls <code><a href="calculate_c4_assimilation.html">calculate_c4_assimilation</a></code> to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of <code>Rd</code>, <code>Vcmax</code>, <code>Vpmax</code>, and <code>Vpr</code> to
-  find ones that best reproduce the experimentally measured values of net
-  assimilation.</p>
+  vary the values of <code>Rd_at_25</code>, <code>Vcmax_at_25</code>, <code>Vpmax_at_25</code>,
+  and <code>Vpr</code> to find ones that best reproduce the experimentally measured
+  values of net assimilation. By default, the following options are used for the
+  fits:</p><ul><li><p><code>Rd_at_25</code>: lower = 0, upper = 100, fit_option = <code>'fit'</code></p></li>
+<li><p><code>Vcmax_at_25</code>: lower = 0, upper = 1000, fit_option = <code>'fit'</code></p></li>
+<li><p><code>Vpmax_at_25</code>: lower = 0, upper = 1000, fit_option = <code>'fit'</code></p></li>
+<li><p><code>Vpr</code>: lower = 0, upper = 1000, fit_option = 1000</p></li>
+</ul><p>With these settings, <code>Vpr</code> is set to 1000 (so net assimilation is rarely
+  limited by PEP carboxylase regeneration), and the other parameters are fit
+  during the process (see <code>fit_options</code> above).</p>
+<p>An initial guess for the parameters is generated by calling
+  <code><a href="initial_guess_c4_aci.html">initial_guess_c4_aci</a></code> with the <code>pcm_threshold_rm</code> argument
+  set to 100 microbar. Note that any fixed values specified in the fit options
+  will override the values returned by the guessing function.</p>
+<p>The fit is made by creating an error function using
+  <code><a href="error_function_c4_aci.html">error_function_c4_aci</a></code> and minimizing its value using
+  <code>OPTIM_FUN</code>, starting from the initial guess described above.</p>
 <p>The photosynthesis model represented by <code>calculate_c4_assimilation</code> is
   not smooth in the sense that small changes in the input parameters do not
   necessarily cause changes in its outputs. This is related to the calculation
@@ -272,12 +288,10 @@
   possible to also use a fixed initial guess by using something like the
   following for the <code>initial_guess_fun</code>:
   <code>function(x){c(1, 20, 60, 90)}</code>, which would set the initial guess to
-  <code>Rd = 1</code>, <code>Vcmax = 20</code>, <code>Vpmax = 60</code>, and <code>Vpr = 90</code>.</p>
-<p>By default, this function fixes <code>Vpr</code> to a high value (<code>800 micromol
-  m^(-2) s^(-1)</code>) and allows the other parameters to be fitted. This behavior
-  is determined by the value of the <code>fixed</code> input argument, and the value
-  of <code>Vpr</code> specified in this way will override any value returned by
-  <code>initial_guess_fun</code>.</p>
+  <code>Rd = 1</code>, <code>Vcmax = 20</code>, <code>Vpmax = 60</code>, and <code>Vpr = 90</code>. If
+  the fit option for a parameter is set to <code>'column'</code> or a numeric value,
+  those values will override the initial guess values (see <code>fit_options</code>
+  above).</p>
 <p>Once the best-fit parameters have been determined, this function also
   estimates the operating value of `<code>PCm</code> from the atmospheric CO2
   concentration <code>atmospheric_ca</code> using
@@ -362,10 +376,12 @@
 <span class="r-in"><span><span class="co"># Calculate PCm</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="apply_gm.html">apply_gm</a></span><span class="op">(</span><span class="va">licor_file</span>, <span class="st">'C4'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Fit just one curve from the data set (it is rare to do this)</span></span></span>
+<span class="r-in"><span><span class="co"># Fit just one curve from the data set (it is rare to do this). Here we also</span></span></span>
+<span class="r-in"><span><span class="co"># calculate confidence intervals.</span></span></span>
 <span class="r-in"><span><span class="va">one_result</span> <span class="op">&lt;-</span> <span class="fu">fit_c4_aci</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'maize - 5'</span>, , <span class="cn">TRUE</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span></span></span>
+<span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,</span></span>
+<span class="r-in"><span>  calculate_confidence_intervals <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit all curves in the data set (it is more common to do this)</span></span></span>
@@ -392,33 +408,33 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                   sorghum                      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                   sorghum                      3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   3.186012e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                   7.313382e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   6.980638e-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   1.050525e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                   7.316230e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   2.591433e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          36.30228</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          42.62241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          38.84480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          36.30229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          42.62273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          38.84483</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vpmax_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          180.5114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          149.4698</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          145.9849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          180.5106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          149.4709</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          145.9844</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vpr [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_tl_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    5.091267e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                    1.133561e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                    1.118607e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    1.678745e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                    1.134002e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                    4.152622e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_tl_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           62.96484</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           71.32106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           67.59896</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           62.96487</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           71.32159</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           67.59901</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vpmax_tl_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           257.0925</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           208.0441</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           208.3413</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           257.0914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           208.0456</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           208.3405</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   operating_Ci [estimate_operating_point] (micromol mol^(-1))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    183.4839</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                    166.2077</span>
@@ -428,9 +444,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                         51.85285</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                         51.32954</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   operating_An_model [fit_c4_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                 56.54204</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                 58.58963</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                 56.93634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                 56.54203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                 58.58972</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                 56.93632</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   dof [residual_stats] (NA) RSS [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                        10                                         230.39540</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                        10                                         448.93327</span>
@@ -448,9 +464,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      6.700248                           0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      2.660445                           0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   convergence_msg [fit_c4_aci] () feval [fit_c4_aci] ()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          Successful convergence                   194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          Successful convergence                   175</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Successful convergence                   249</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          Successful convergence                   211</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          Successful convergence                   173</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Successful convergence                   246</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   optimum_val [fit_c4_aci] ()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   230.39540</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                   448.93327</span>

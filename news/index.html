@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,57 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.0" id="changes-in-photogea-version-0110-2024-02-12">CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-0110-2024-02-12"></a></h2>
+<ul><li>Added new options for adding penalties to the error function during Variable J fits, that enable the user to selectively penalize negative or unreasonably large values of mesophyll conductance.</li>
+<li>Made a few improvements to C3 curve fitting functions (<code>fit_c3_aci</code> and <code>fit_c3_variable_j</code>):
+<ul><li>Two more parameters can now be fit: <code>alpha</code> (related to TPU) and <code>Gamma_star</code>.</li>
+<li>Unreliable parameter estimates can now be excluded; for example, if no points on a curve have An = Ap, the fit will return NA for TPU.</li>
+<li>The initial guess functions (<code>initial_guess_c3_aci</code> and <code>initial_guess_c3_variable_j</code>) can now accomodate user-supplied values of <code>alpha</code>.</li>
+</ul></li>
+<li>Made a few improvements to all three nonlinear fitting functions (<code>fit_c3_aci</code>, <code>fit_c3_variable_j</code>, and <code>fit_c4_aci</code>):
+<ul><li>The error functions are now available in the package namespace as <code>error_function_c3_aci</code>, <code>error_function_c3_variable_j</code>, and <code>error_function_c4_aci</code>.</li>
+<li>Confidence intervals around the best-fit values can now be calculated automatically by the fitting functions, or manually using three new functions in the package namespace: <code>confidence_intervals_c3_aci</code>, <code>confidence_intervals_c3_variable_j</code>, and <code>confidence_intervals_c4_aci</code>.</li>
+<li>The initial guess functions are now created internally instead of being an input argument.</li>
+<li>There is a new system for supplying fit options (upper and lower bounds, and which parameters to fit):
+<ul><li>Users now only need to specify changes from the default settings.</li>
+<li>The order of parameters no longer matters because lists of named elements are used.</li>
+<li>Parameters that could be fit, but are not being fit, can either be set to fixed values or to values from a column of an exdf object.</li>
+<li>Unknown parameters are now provided in alphabetical order when applicable (such as the first input arguments to <code>calculate_c3_assimilation</code>).</li>
+</ul></li>
+<li>The functions are more tolerant to curves with severe problems (such as negative Ci) that prevent a good fit from being found; rather than throwing an error, the fit functions now silently return <code>NA</code> for all results, along with a message explaining the issue.</li>
+</ul></li>
+<li>Added a function for estimating <code>Rd</code> with the Laisk method: <code>calculate_rd_laisk</code>
+</li>
+<li>A “unit dictionary” was added for internal use; this may be expanded and used more often in the future.</li>
+<li>Renamed several variables and input arguments:
+<ul><li>Licor files contain a column called <code>alpha</code>, and several different “alphas” were used throughout <code>PhotoGEA</code>. To avoid confusion, the values in <code>PhotoGEA</code> were renamed as follows:
+<ul><li>
+<code>alpha_g</code>: used in C3 assimilation calculations</li>
+<li>
+<code>alpha_pr</code>: used in Gamma_star calculations</li>
+<li>
+<code>alpha_psii</code>: used in C4 assimilation calculations</li>
+</ul></li>
+<li>The acronym “TPU” was used to refer to a process (triose phosphate utilization) and the maximum rate of that process. To avoid confusion, the rate parameter was renamed to <code>Tp</code>
+</li>
+</ul></li>
+<li>Tests were added for several functions:
+<ul><li><code>calculate_c3_assimilation</code></li>
+<li><code>fit_c3_aci</code></li>
+<li><code>fit_c3_variable_j</code></li>
+<li><code>fit_c4_aci</code></li>
+<li><code>calculate_c3_limitations_grassi</code></li>
+<li><code>calculate_c3_limitations_warren</code></li>
+</ul></li>
+<li>The <code>read_gasex_file</code> function now automatically includes the filename as a column in the resulting <code>exdf</code> object; this helps with troubleshooting problematic curves or files.</li>
+<li>PRs related to creating this version:
+<ul><li><a href="https://github.com/eloch216/PhotoGEA/pull/85" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/85</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/86" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/86</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/88" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/88</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/89" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/89</a></li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.0" id="changes-in-photogea-version-0100-2023-12-16">CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-0100-2023-12-16"></a></h2>
 <ul><li>Reorganized the variable J fitting functions to be more like <code>fit_c3_aci</code>:
 <ul><li>Added <code>calculate_c3_variable_j</code>, <code>initial_guess_c3_variable_j</code>, and <code>fit_c3_variable_j</code>.</li>
@@ -87,6 +138,8 @@
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/80" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/80</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/81" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/81</a></li>
 <li><a href="https://github.com/eloch216/PhotoGEA/pull/82" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/82</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/83" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/83</a></li>
+<li><a href="https://github.com/eloch216/PhotoGEA/pull/84" class="external-link uri">https://github.com/eloch216/PhotoGEA/pull/84</a></li>
 </ul></li>
 </ul></div>
     <div class="section level2">

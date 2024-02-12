@@ -22,7 +22,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,13 +88,13 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_c3_variable_j</span><span class="op">(</span></span>
 <span>    <span class="va">exdf_obj</span>,</span>
-<span>    <span class="va">Rd</span>,</span>
+<span>    <span class="va">Gamma_star</span>,</span>
+<span>    <span class="va">Rd_at_25</span>,</span>
 <span>    <span class="va">tau</span>,</span>
 <span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
 <span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
 <span>    a_column_name <span class="op">=</span> <span class="st">'A'</span>,</span>
 <span>    ci_column_name <span class="op">=</span> <span class="st">'Ci'</span>,</span>
-<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'Gamma_star'</span>,</span>
 <span>    phips2_column_name <span class="op">=</span> <span class="st">'PhiPS2'</span>,</span>
 <span>    qin_column_name <span class="op">=</span> <span class="st">'Qin'</span>,</span>
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
@@ -110,14 +110,28 @@
 <dd><p>An <code>exdf</code> object.</p></dd>
 
 
+  <dt>Gamma_star</dt>
+<dd><p>The CO2 compensation point in the absence of day respiration, expressed in
+    <code>micromol mol^(-1)</code>. If <code>Gamma_star</code> is not a number, then there
+    must be a column in <code>exdf_obj</code> called <code>Gamma_star</code> with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the <code>Gamma_star</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+
+
+  <dt>Rd_at_25</dt>
+<dd><p>The respiration rate at 25 degrees C, expressed in
+    <code>micromol m^(-2) s^(-1)</code>. If <code>Rd_at_25</code> is not a number, then
+    there must be a column in <code>exdf_obj</code> called <code>Rd_at_25</code> with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the <code>Rd_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+
+
   <dt>tau</dt>
 <dd><p>The proportionality factor used to calculate the RuBP regeneration rate from
-    chlorophyll fluorescence measurements (dimensionless).</p></dd>
-
-
-  <dt>Rd</dt>
-<dd><p>The respiration rate at 25 degrees C, expressed in
-    <code>micromol m^(-2) s^(-1)</code>.</p></dd>
+    chlorophyll fluorescence measurements (dimensionless). If <code>tau</code> is not
+    a number, then there must be a column in <code>exdf_obj</code> called <code>tau</code>
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the <code>tau</code> column of <code>exdf_obj</code> if it exists.</p></dd>
 
 
   <dt>atp_use</dt>
@@ -136,11 +150,6 @@
   <dt>ci_column_name</dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the
     intercellular CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
-
-
-  <dt>gamma_star_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the
-    <code>Gamma_star</code> values in <code>micromol mol^(-1)</code>.</p></dd>
 
 
   <dt>phips2_column_name</dt>
@@ -208,18 +217,18 @@
 <p>The actual RuBP regeneration rate is related to the incident
   photosynthetically active flux density <code>Qin</code> and the operating efficiency
   of photosystem II <code>PhiPSII</code> according to:</p>
-<p><code>J_actual = alpha * beta * Qin * PhiPSII</code>,</p>
-<p>where <code>alpha</code> is the leaf absorptance and <code>beta</code> is the fraction of
+<p><code>J_actual = alpha_g * beta * Qin * PhiPSII</code>,</p>
+<p>where <code>alpha_g</code> is the leaf absorptance and <code>beta</code> is the fraction of
   absorbed light energy directed to photosystem II. <code>Qin</code> is set by the
   measurement conditions, while <code>PhiPSII</code> can be estimated from chlorophyll
-  fluorescence. However, the values of <code>alpha</code> and <code>beta</code> are
+  fluorescence. However, the values of <code>alpha_g</code> and <code>beta</code> are
   generally unknown; <code>beta</code> in particular is difficult or impossible to
   measure and is often assumed to be 0.5. Thus, while Equation 7 from Harley et
   al. (1992) can be used to estimate <code>gmc</code>, there is a practical
   uncertainty associated with determining a value of <code>J_actual</code> to be used
   in Equation 7.</p>
 <p>Moualeu-Ngangue, Chen, &amp; Stutzel (2016) developed a way to address this issue.
-  The method from that paper replaces the product of <code>alpha</code> and
+  The method from that paper replaces the product of <code>alpha_g</code> and
   <code>beta</code> by a single new parameter <code>tau</code>, and uses it to estimate the
   actual RuBP regeneration from fluoresence (<code>J_F</code>):</p>
 <p><code>J_F = tau * Qin * PhiPSII</code>.</p>
@@ -279,7 +288,7 @@
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_file</span>, <span class="va">c3_arrhenius_bernacchi</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate values of J_F, gmc, and Cc assuming tau = 0.2 and Rd = 0.5</span></span></span>
-<span class="r-in"><span><span class="va">vj_res</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_variable_j</span><span class="op">(</span><span class="va">licor_file</span>, <span class="fl">1.5</span>, <span class="fl">0.55</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vj_res</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_variable_j</span><span class="op">(</span><span class="va">licor_file</span>, <span class="st">''</span>, <span class="fl">1.5</span>, <span class="fl">0.55</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Combine with original data</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">licor_file</span>, <span class="va">vj_res</span><span class="op">)</span></span></span>

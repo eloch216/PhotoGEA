@@ -20,7 +20,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,22 +88,16 @@
 <span>    POc <span class="op">=</span> <span class="fl">210000</span>,</span>
 <span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
 <span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.0</span>,</span>
 <span>    curvature_cj <span class="op">=</span> <span class="fl">1.0</span>,</span>
 <span>    curvature_cjp <span class="op">=</span> <span class="fl">1.0</span>,</span>
 <span>    ca_column_name <span class="op">=</span> <span class="st">'Ca'</span>,</span>
 <span>    cc_column_name <span class="op">=</span> <span class="st">'Cc'</span>,</span>
 <span>    ci_column_name <span class="op">=</span> <span class="st">'Ci'</span>,</span>
-<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'Gamma_star'</span>,</span>
-<span>    j_column_name <span class="op">=</span> <span class="st">'J_at_25'</span>,</span>
 <span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
 <span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
 <span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
-<span>    rd_column_name <span class="op">=</span> <span class="st">'Rd_at_25'</span>,</span>
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
 <span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
-<span>    tpu_column_name <span class="op">=</span> <span class="st">'TPU'</span>,</span>
-<span>    vcmax_column_name <span class="op">=</span> <span class="st">'Vcmax_at_25'</span>,</span>
 <span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
@@ -111,7 +105,10 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>exdf_obj</dt>
-<dd><p>An <code>exdf</code> object representing gas exchange data.</p></dd>
+<dd><p>An <code>exdf</code> object representing gas exchange data. Typically this should
+    be an <code>exdf</code> object returned from <code><a href="fit_c3_aci.html">fit_c3_aci</a></code>; it will be
+    expected to have columns for <code>alpha_g</code>, <code>Gamma_star</code>,
+    <code>J_at_25</code>, <code>Rd_at_25</code>, <code>Tp</code>, and <code>Vcmax_at_25</code>.</p></dd>
 
 
   <dt>POc</dt>
@@ -128,12 +125,6 @@
 
   <dt>nadph_use</dt>
 <dd><p>The number of NADPH molecules used per C3 cycle.</p></dd>
-
-
-  <dt>alpha</dt>
-<dd><p>A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.</p></dd>
 
 
   <dt>curvature_cj</dt>
@@ -164,19 +155,6 @@
     CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
-  <dt>gamma_star_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the
-    <code>Gamma_star</code> values in <code>micromol mol^(-1)</code>. Typically these are
-    the leaf-temperature dependent values calculated using
-    <code><a href="calculate_arrhenius.html">calculate_arrhenius</a></code>.</p></dd>
-
-
-  <dt>j_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains values of the
-    RuBP regeneration rate (<code>J</code>) in <code>micromol m^(-2) s^(-1)</code> at 25
-    degrees C.</p></dd>
-
-
   <dt>j_norm_column_name</dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
     <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).
@@ -198,12 +176,6 @@
     values calculated using <code><a href="calculate_arrhenius.html">calculate_arrhenius</a></code>.</p></dd>
 
 
-  <dt>rd_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains values of the day
-    respiration rate (<code>Rd</code>) in <code>micromol m^(-2) s^(-1)</code> at 25 degrees
-    C.</p></dd>
-
-
   <dt>rd_norm_column_name</dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
     <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
@@ -213,17 +185,6 @@
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the total pressure
     in <code>bar</code>. Typically this is calculated using
     <code><a href="calculate_total_pressure.html">calculate_total_pressure</a></code>.</p></dd>
-
-
-  <dt>tpu_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the rate of triose
-    phosphate utilization in <code>micromol m^(-2) s^(-1)</code>.</p></dd>
-
-
-  <dt>vcmax_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the maximum rate of
-    Rubisco carboxylation (<code>Vcmax</code>) in <code>micromol m^(-2) s^(-1)</code> at 25
-    degrees C.</p></dd>
 
 
   <dt>vcmax_norm_column_name</dt>
@@ -370,13 +331,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21                   tobacco                      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34                   tobacco                      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    ls_warren [calculate_c3_limitations_warren] (dimensionless)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                    0.8230455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                   0.2632085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                   0.3086578</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                    0.5705978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                   0.2614729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                   0.3086594</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    lm_warren [calculate_c3_limitations_warren] (dimensionless)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                    0.6894644</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                   0.1977779</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                   0.2381895</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                    0.3595932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                   0.1963588</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                   0.2381902</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Display as a bar chart</span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">barchart</a></span><span class="op">(</span></span></span>

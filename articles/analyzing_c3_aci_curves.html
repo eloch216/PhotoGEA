@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -182,7 +182,7 @@ typical high-light A-Ci curve.</p>
 <code>calculate_c3_assimilation</code> function from the
 <code>PhotoGEA</code> package, and it represents the photosynethetic
 response of a C<sub>3</sub> leaf according to the FvCB model with
-<code>TPU</code> = 18 micromol m^(-2) s^(-1), <code>J</code> = 200
+<code>Tp</code> = 18 micromol m^(-2) s^(-1), <code>J</code> = 200
 micromol m^(-2) s^(-1), <code>Rd</code> = 1.8 micromol m^(-2) s^(-1),
 <code>Vcmax</code> = 125 micromol m^(-2) s^(-1), and a leaf temperature
 of 30 degrees C. Arrhenius temperature response parameters were taken
@@ -190,7 +190,7 @@ from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007" 
 <p>Thus, one of the most common reasons to measure an A-Ci curve is to
 interpret it in the context of this model. In other words, by fitting
 the model’s equations to a measured curve, it is possible to estimate
-values for <code>TPU</code>, <code>J</code>, <code>Rd</code>, and
+values for <code>Tp</code>, <code>J</code>, <code>Rd</code>, and
 <code>Vcmax</code>. See the documentation for
 <code>calculate_c3_assimilation</code> for more information about these
 important quantities.</p>
@@ -728,16 +728,15 @@ and return the resulting parameters and fits:</p>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
-<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>         <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Note that in this command, we specified
 <code>fixed = c(NA, NA, NA, NA)</code> when calling
 <code>fit_c3_aci</code>. By doing this, we are choosing to vary all four
-key photosynthetic parameters: <code>TPU</code>, <code>J</code>,
+key photosynthetic parameters: <code>Tp</code>, <code>J</code>,
 <code>Rd</code>, and <code>Vcmax</code>. If <code>fixed</code> is not
 specified, it will take its default value:
-<code>c(Inf, NA, NA, NA)</code>. In that case, <code>TPU</code> would be
+<code>c(Inf, NA, NA, NA)</code>. In that case, <code>Tp</code> would be
 fixed to a high value that essentially disables
 triose-phosphate-utilization-limited assimilation, and only
 <code>J</code>, <code>Rd</code>, and <code>Vcmax</code> would be
@@ -804,9 +803,9 @@ operating point as an open circle:</p>
 able to reproduce the observed <code>A</code> values fairly well, some
 output parameters may be less reliable than others. For example, the
 triose-phosphate-utilization-limited rate <code>Ap</code> is determined
-by the <code>TPU</code> parameter; for some of the curves, the
+by the <code>Tp</code> parameter; for some of the curves, the
 assimilation rate is never limited by <code>Ap</code>, so the resulting
-“best-fit” values of <code>TPU</code> may not be meaningful for these
+“best-fit” values of <code>Tp</code> may not be meaningful for these
 curves.</p>
 <p>There is also one curve (<code>ripe2 - soybean - 1</code>) where the
 optimizer is possibly overestimating <code>J</code>, so <code>Aj</code>
@@ -824,7 +823,6 @@ can sometimes produce more reasonable fits.</p>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
 <span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
@@ -869,7 +867,7 @@ values of <code>Ci</code> and <code>Cc</code>, it seems that this
 plant’s stomata did not fully open during the measurement, almost fully
 restricting the measured assimilation values to the Rubisco-limited
 range; there is nothing that can be done about this. It is also apparent
-that the <code>TPU</code> issue remains, and some curves are never
+that the <code>Tp</code> issue remains, and some curves are never
 triose-phosphate-utilization-limited; again, there is nothing that can
 really be done to address it besides measuring more A-Ci curves.</p>
 <p>Checking the residuals is also a powerful way to gauge the quality of
@@ -940,7 +938,7 @@ can view them as follows:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View the C3 parameters</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'TPU'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
@@ -954,33 +952,33 @@ can view them as follows:</p>
 <span><span class="co">#&gt; 5                        ripe2                   soybean                     5b</span></span>
 <span><span class="co">#&gt; 6                        ripe2                   tobacco                      4</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         103.83134</span></span>
-<span><span class="co">#&gt; 2                                         152.37207</span></span>
-<span><span class="co">#&gt; 3                                         126.91187</span></span>
-<span><span class="co">#&gt; 4                                         106.78006</span></span>
-<span><span class="co">#&gt; 5                                         122.19041</span></span>
-<span><span class="co">#&gt; 6                                          93.20743</span></span>
+<span><span class="co">#&gt; 1                                         130.67209</span></span>
+<span><span class="co">#&gt; 2                                         171.33517</span></span>
+<span><span class="co">#&gt; 3                                         126.91199</span></span>
+<span><span class="co">#&gt; 4                                         106.77874</span></span>
+<span><span class="co">#&gt; 5                                         122.18979</span></span>
+<span><span class="co">#&gt; 6                                          94.02087</span></span>
 <span><span class="co">#&gt;   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      202.7426</span></span>
-<span><span class="co">#&gt; 2                                      240.2689</span></span>
-<span><span class="co">#&gt; 3                                      211.6049</span></span>
-<span><span class="co">#&gt; 4                                      189.1701</span></span>
+<span><span class="co">#&gt; 1                                      189.9699</span></span>
+<span><span class="co">#&gt; 2                                      241.3024</span></span>
+<span><span class="co">#&gt; 3                                      211.6050</span></span>
+<span><span class="co">#&gt; 4                                      192.7724</span></span>
 <span><span class="co">#&gt; 5                                      160.9122</span></span>
-<span><span class="co">#&gt; 6                                      158.7684</span></span>
+<span><span class="co">#&gt; 6                                      187.1940</span></span>
 <span><span class="co">#&gt;   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      0.8472307</span></span>
-<span><span class="co">#&gt; 2                                      2.3270835</span></span>
-<span><span class="co">#&gt; 3                                      1.9856870</span></span>
-<span><span class="co">#&gt; 4                                      2.0581130</span></span>
-<span><span class="co">#&gt; 5                                      2.7882040</span></span>
-<span><span class="co">#&gt; 6                                      1.4456288</span></span>
-<span><span class="co">#&gt;   TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                  24.85118</span></span>
-<span><span class="co">#&gt; 2                                  27.68118</span></span>
-<span><span class="co">#&gt; 3                                  23.97572</span></span>
-<span><span class="co">#&gt; 4                                  13.29043</span></span>
-<span><span class="co">#&gt; 5                                  31.56510</span></span>
-<span><span class="co">#&gt; 6                                  22.78341</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                       2.302072</span></span>
+<span><span class="co">#&gt; 2                                       3.268178</span></span>
+<span><span class="co">#&gt; 3                                       1.985670</span></span>
+<span><span class="co">#&gt; 4                                       2.057739</span></span>
+<span><span class="co">#&gt; 5                                       2.788209</span></span>
+<span><span class="co">#&gt; 6                                       1.580455</span></span>
+<span><span class="co">#&gt;   Tp [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
+<span><span class="co">#&gt; 1                                 20.47098</span></span>
+<span><span class="co">#&gt; 2                                 25.62096</span></span>
+<span><span class="co">#&gt; 3                                 22.56653</span></span>
+<span><span class="co">#&gt; 4                                 13.29026</span></span>
+<span><span class="co">#&gt; 5                                 20.53278</span></span>
+<span><span class="co">#&gt; 6                                 15.30975</span></span></code></pre></div>
 <p>Alternatively, we can extract average values of the parameters for
 each species using the <code>basic_stats</code> function from
 <code>PhotoGEA</code>:</p>
@@ -994,36 +992,36 @@ each species using the <code>basic_stats</code> function from
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
 <span>  <span class="st">'J_at_25_avg'</span>, <span class="st">'J_at_25_stderr'</span>,</span>
 <span>  <span class="st">'Rd_at_25_avg'</span>, <span class="st">'Rd_at_25_stderr'</span>,</span>
-<span>  <span class="st">'TPU_avg'</span>, <span class="st">'TPU_stderr'</span></span>
+<span>  <span class="st">'Tp_avg'</span>, <span class="st">'Tp_stderr'</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species [UserDefCon] (NA)</span></span>
 <span><span class="co">#&gt; 1                   soybean</span></span>
 <span><span class="co">#&gt; 2                   tobacco</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              110.9339</span></span>
-<span><span class="co">#&gt; 2                                              124.1638</span></span>
+<span><span class="co">#&gt; 1                                              119.8802</span></span>
+<span><span class="co">#&gt; 2                                              130.7560</span></span>
 <span><span class="co">#&gt;   Vcmax_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                 5.692242</span></span>
-<span><span class="co">#&gt; 2                                                17.134545</span></span>
+<span><span class="co">#&gt; 1                                                 6.993418</span></span>
+<span><span class="co">#&gt; 2                                                22.401320</span></span>
 <span><span class="co">#&gt;   J_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                          184.2750</span></span>
-<span><span class="co">#&gt; 2                                          203.5474</span></span>
+<span><span class="co">#&gt; 1                                          181.2181</span></span>
+<span><span class="co">#&gt; 2                                          213.3671</span></span>
 <span><span class="co">#&gt;   J_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             12.32095</span></span>
-<span><span class="co">#&gt; 2                                             23.86959</span></span>
+<span><span class="co">#&gt; 1                                             10.18517</span></span>
+<span><span class="co">#&gt; 2                                             15.64456</span></span>
 <span><span class="co">#&gt;   Rd_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                           1.897849</span></span>
-<span><span class="co">#&gt; 2                                           1.919466</span></span>
+<span><span class="co">#&gt; 1                                           2.382673</span></span>
+<span><span class="co">#&gt; 2                                           2.278101</span></span>
 <span><span class="co">#&gt;   Rd_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             0.5660117</span></span>
-<span><span class="co">#&gt; 2                                             0.2565992</span></span>
-<span><span class="co">#&gt;   TPU_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      23.23557</span></span>
-<span><span class="co">#&gt; 2                                      24.81344</span></span>
-<span><span class="co">#&gt;   TPU_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         5.336934</span></span>
-<span><span class="co">#&gt; 2                                         1.474603</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                                             0.2146848</span></span>
+<span><span class="co">#&gt; 2                                             0.5086711</span></span>
+<span><span class="co">#&gt;   Tp_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
+<span><span class="co">#&gt; 1                                     18.09801</span></span>
+<span><span class="co">#&gt; 2                                     21.16575</span></span>
+<span><span class="co">#&gt;   Tp_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
+<span><span class="co">#&gt; 1                                        2.403937</span></span>
+<span><span class="co">#&gt; 2                                        3.057881</span></span></code></pre></div>
 <p>Of course, more advanced statistical tests to check for differences
 between groups can also be performed within R using other packages such
 as <code>onewaytests</code> or <code>DescTools</code>. Alternatively,
@@ -1090,15 +1088,15 @@ remove problematic points if they seem to cause problems with the
 fits.</p>
 </div>
 <div class="section level3">
-<h3 id="tpu-limitations">TPU Limitations<a class="anchor" aria-label="anchor" href="#tpu-limitations"></a>
+<h3 id="tp-limitations">Tp Limitations<a class="anchor" aria-label="anchor" href="#tp-limitations"></a>
 </h3>
 <p>In this example, we consider triose phosphate utilization as a factor
 that may possibly limit assimilation. However, as discussed in <a href="#fitting-licor-data">Fitting Licor Data</a>, it is also possible
 to remove this potential limitation from the model by fixing
-<code>TPU</code> to a high value and only fitting <code>J</code>,
+<code>Tp</code> to a high value and only fitting <code>J</code>,
 <code>Rd</code>, and <code>Vcmax</code>. Often it is wise to first try
-fitting a set of curves without <code>TPU</code> limitations, and only
-consider allowing <code>TPU</code> limitations if the resulting fits are
+fitting a set of curves without <code>Tp</code> limitations, and only
+consider allowing <code>Tp</code> limitations if the resulting fits are
 not good.</p>
 </div>
 <div class="section level3">
@@ -1300,7 +1298,6 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
 <span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
@@ -1382,7 +1379,7 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># View the C3 parameters</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'TPU'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
@@ -1398,7 +1395,7 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
 <span>  <span class="st">'J_at_25_avg'</span>, <span class="st">'J_at_25_stderr'</span>,</span>
 <span>  <span class="st">'Rd_at_25_avg'</span>, <span class="st">'Rd_at_25_stderr'</span>,</span>
-<span>  <span class="st">'TPU_avg'</span>, <span class="st">'TPU_stderr'</span></span>
+<span>  <span class="st">'Tp_avg'</span>, <span class="st">'Tp_stderr'</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>

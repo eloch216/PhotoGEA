@@ -121,6 +121,9 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_leakiness_ubierna.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_rd_laisk.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/calculate_ternary_correction.html</loc>
   </url>
   <url>
@@ -142,6 +145,15 @@
     <loc>https://eloch216.github.io/PhotoGEA/reference/choose_input_files.html</loc>
   </url>
   <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c3_aci.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c3_variable_j.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c4_aci.html</loc>
+  </url>
+  <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/consolidate.html</loc>
   </url>
   <url>
@@ -155,6 +167,15 @@
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/document_variables.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/error_function_c3_aci.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/error_function_c3_variable_j.html</loc>
+  </url>
+  <url>
+    <loc>https://eloch216.github.io/PhotoGEA/reference/error_function_c4_aci.html</loc>
   </url>
   <url>
     <loc>https://eloch216.github.io/PhotoGEA/reference/estimate_operating_point.html</loc>

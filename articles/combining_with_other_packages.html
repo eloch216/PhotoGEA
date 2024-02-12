@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -214,7 +214,7 @@ discussed previously, we can use a wrapper function to make
 <span>  <span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">replicate_identifiers</span>, <span class="va">fits</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># `plantecophys::fitaci` returns absurdly high values of `Ap` when it cannot</span></span>
-<span>  <span class="co"># get a good estimate for `TPU`. These can cause problems when plotting the</span></span>
+<span>  <span class="co"># get a good estimate for `Tp`. These can cause problems when plotting the</span></span>
 <span>  <span class="co"># results, so we replace any `Ap` values above 500 micromol / m^2 / s with</span></span>
 <span>  <span class="co"># NA.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span><span class="va">fits</span><span class="op">$</span><span class="va">Ap</span> <span class="op">&gt;</span> <span class="fl">500</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -226,7 +226,7 @@ discussed previously, we can use a wrapper function to make
 <span>    Rd             <span class="op">=</span> <span class="va">fit_res</span><span class="op">$</span><span class="va">par</span><span class="op">[</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span>  <span class="va">parameters</span><span class="op">$</span><span class="va">TPU</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fit_res</span><span class="op">$</span><span class="va">fitTPU</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">parameters</span><span class="op">$</span><span class="va">Tp</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fit_res</span><span class="op">$</span><span class="va">fitTPU</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">fit_res</span><span class="op">$</span><span class="va">par</span><span class="op">[</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>    <span class="cn">NA</span></span>
@@ -264,7 +264,7 @@ all fitting functions in the <code>PhotoGEA</code> package make use of
 <code>identifier_columns</code> to keep track of these important pieces
 of “metadata.”</p>
 <p>Another important point is that we have “regularized” the fitting
-results by always including <code>TPU</code>, even when it is not being
+results by always including <code>Tp</code>, even when it is not being
 fitted. In general, it is easier to work with functions that always
 produce the same output quantities.</p>
 <p>Now we can apply this function to all the curves in the data set.
@@ -311,19 +311,19 @@ Curves</a> vignette:</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># View the parameter values</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax'</span>, <span class="st">'Jmax'</span>, <span class="st">'Rd'</span>, <span class="st">'TPU'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax'</span>, <span class="st">'Jmax'</span>, <span class="st">'Rd'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_parameters</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   instrument species plot     Vcmax     Jmax        Rd TPU</span></span>
-<span><span class="co">#&gt; 1      ripe1 soybean   5a 126.61884 229.5225 0.8502736  NA</span></span>
-<span><span class="co">#&gt; 2      ripe1 tobacco    1 128.90039 272.3661 0.5237317  NA</span></span>
-<span><span class="co">#&gt; 3      ripe1 tobacco    2 109.78883 244.9742 0.6525278  NA</span></span>
-<span><span class="co">#&gt; 4      ripe2 soybean    1  99.85103 158.7873 0.3908915  NA</span></span>
-<span><span class="co">#&gt; 5      ripe2 soybean   5b 115.84216 189.9087 1.6311796  NA</span></span>
-<span><span class="co">#&gt; 6      ripe2 tobacco    4  83.51227 178.1061 0.3925865  NA</span></span></code></pre></div>
+<span><span class="co">#&gt;   instrument species plot     Vcmax     Jmax        Rd Tp</span></span>
+<span><span class="co">#&gt; 1      ripe1 soybean   5a 126.61884 229.5225 0.8502736 NA</span></span>
+<span><span class="co">#&gt; 2      ripe1 tobacco    1 128.90039 272.3661 0.5237317 NA</span></span>
+<span><span class="co">#&gt; 3      ripe1 tobacco    2 109.78883 244.9742 0.6525278 NA</span></span>
+<span><span class="co">#&gt; 4      ripe2 soybean    1  99.85103 158.7873 0.3908915 NA</span></span>
+<span><span class="co">#&gt; 5      ripe2 soybean   5b 115.84216 189.9087 1.6311796 NA</span></span>
+<span><span class="co">#&gt; 6      ripe2 tobacco    4  83.51227 178.1061 0.3925865 NA</span></span></code></pre></div>
 <p>There are a few things to notice about these commands and the
 resulting outputs:</p>
 <ul>
@@ -332,7 +332,7 @@ resulting outputs:</p>
 <code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> uses different definitions of these
 rates that are equivalent to <code>Ac + Rd</code>, <code>Aj + Rd</code>,
 and <code>Ap + Rd</code> in our notation.</li>
-<li>In the results, <code>TPU</code> and <code>Ap</code> are both
+<li>In the results, <code>Tp</code> and <code>Ap</code> are both
 <code>NA</code> because the <code>fitTPU</code> argument of
 <code><a href="https://rdrr.io/pkg/plantecophys/man/fitaci.html" class="external-link">plantecophys::fitaci</a></code> was left at its default value of
 <code>FALSE</code>. When we attempt to include <code>Ap</code> in the
@@ -446,7 +446,7 @@ break the code into several sections devoted to checking inputs, calling
 <span>  <span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">replicate_identifiers</span>, <span class="va">fits</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># `plantecophys::fitaci` returns absurdly high values of `Ap` when it cannot</span></span>
-<span>  <span class="co"># get a good estimate for `TPU`. These can cause problems when plotting the</span></span>
+<span>  <span class="co"># get a good estimate for `Tp`. These can cause problems when plotting the</span></span>
 <span>  <span class="co"># results, so we replace any `Ap` values above 500 micromol / m^2 / s with</span></span>
 <span>  <span class="co"># NA.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">500</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -493,8 +493,8 @@ break the code into several sections devoted to checking inputs, calling
 <span>    A_transition   <span class="op">=</span> <span class="va">fit_res</span><span class="op">$</span><span class="fu">Photosyn</span><span class="op">(</span>Ci<span class="op">=</span><span class="va">fit_res</span><span class="op">$</span><span class="va">Ci_transition</span><span class="op">)</span><span class="op">$</span><span class="va">ALEAF</span></span>
 <span>  <span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="co"># The value of `TPU` and its error will depend on `fitTPU`</span></span>
-<span>  <span class="va">parameters</span><span class="op">[</span>, <span class="st">'TPU'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fit_res</span><span class="op">$</span><span class="va">fitTPU</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># The value of `Tp` and its error will depend on `fitTPU`</span></span>
+<span>  <span class="va">parameters</span><span class="op">[</span>, <span class="st">'Tp'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fit_res</span><span class="op">$</span><span class="va">fitTPU</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">fit_res</span><span class="op">$</span><span class="va">par</span><span class="op">[</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>    <span class="cn">NA</span></span>
@@ -528,7 +528,7 @@ break the code into several sections devoted to checking inputs, calling
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Jmax_err'</span>,       <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Rd'</span>,             <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Rd_err'</span>,         <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'TPU'</span>,            <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Tp'</span>,             <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'TPU_err'</span>,        <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'ci_star'</span>,        <span class="st">'micromol mol^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'A_transition'</span>,   <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span></span>
@@ -585,7 +585,7 @@ version:</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># View the parameter values</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax'</span>, <span class="st">'Jmax'</span>, <span class="st">'Rd'</span>, <span class="st">'TPU'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax'</span>, <span class="st">'Jmax'</span>, <span class="st">'Rd'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
@@ -619,13 +619,13 @@ version:</p>
 <span><span class="co">#&gt; 4                                             0.3908915</span></span>
 <span><span class="co">#&gt; 5                                             1.6311796</span></span>
 <span><span class="co">#&gt; 6                                             0.3925865</span></span>
-<span><span class="co">#&gt;   TPU [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                     NA</span></span>
-<span><span class="co">#&gt; 2                                                     NA</span></span>
-<span><span class="co">#&gt; 3                                                     NA</span></span>
-<span><span class="co">#&gt; 4                                                     NA</span></span>
-<span><span class="co">#&gt; 5                                                     NA</span></span>
-<span><span class="co">#&gt; 6                                                     NA</span></span></code></pre></div>
+<span><span class="co">#&gt;   Tp [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))</span></span>
+<span><span class="co">#&gt; 1                                                    NA</span></span>
+<span><span class="co">#&gt; 2                                                    NA</span></span>
+<span><span class="co">#&gt; 3                                                    NA</span></span>
+<span><span class="co">#&gt; 4                                                    NA</span></span>
+<span><span class="co">#&gt; 5                                                    NA</span></span>
+<span><span class="co">#&gt; 6                                                    NA</span></span></code></pre></div>
 <p>It’s also easy to plot the residuals now:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the residuals</span></span>
@@ -789,7 +789,7 @@ copy/paste into a text file to initialize your own script.</p>
 <span>  <span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">replicate_identifiers</span>, <span class="va">fits</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># `plantecophys::fitaci` returns absurdly high values of `Ap` when it cannot</span></span>
-<span>  <span class="co"># get a good estimate for `TPU`. These can cause problems when plotting the</span></span>
+<span>  <span class="co"># get a good estimate for `Tp`. These can cause problems when plotting the</span></span>
 <span>  <span class="co"># results, so we replace any `Ap` values above 500 micromol / m^2 / s with</span></span>
 <span>  <span class="co"># NA.</span></span>
 <span>  <span class="va">fits</span><span class="op">[</span><span class="va">fits</span><span class="op">[</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">500</span>, <span class="st">'Ap'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -836,8 +836,8 @@ copy/paste into a text file to initialize your own script.</p>
 <span>    A_transition   <span class="op">=</span> <span class="va">fit_res</span><span class="op">$</span><span class="fu">Photosyn</span><span class="op">(</span>Ci<span class="op">=</span><span class="va">fit_res</span><span class="op">$</span><span class="va">Ci_transition</span><span class="op">)</span><span class="op">$</span><span class="va">ALEAF</span></span>
 <span>  <span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="co"># The value of `TPU` and its error will depend on `fitTPU`</span></span>
-<span>  <span class="va">parameters</span><span class="op">[</span>, <span class="st">'TPU'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fit_res</span><span class="op">$</span><span class="va">fitTPU</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># The value of `Tp` and its error will depend on `fitTPU`</span></span>
+<span>  <span class="va">parameters</span><span class="op">[</span>, <span class="st">'Tp'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fit_res</span><span class="op">$</span><span class="va">fitTPU</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">fit_res</span><span class="op">$</span><span class="va">par</span><span class="op">[</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>    <span class="cn">NA</span></span>
@@ -871,7 +871,7 @@ copy/paste into a text file to initialize your own script.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Jmax_err'</span>,       <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Rd'</span>,             <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Rd_err'</span>,         <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'TPU'</span>,            <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'Tp'</span>,             <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'TPU_err'</span>,        <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'ci_star'</span>,        <span class="st">'micromol mol^(-1)'</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fit_c3_aci_plantecophys'</span>, <span class="st">'A_transition'</span>,   <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span></span>
@@ -911,7 +911,7 @@ copy/paste into a text file to initialize your own script.</p>
 <span></span>
 <span><span class="co"># View the parameter values</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax'</span>, <span class="st">'Jmax'</span>, <span class="st">'Rd'</span>, <span class="st">'TPU'</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax'</span>, <span class="st">'Jmax'</span>, <span class="st">'Rd'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>

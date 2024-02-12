@@ -18,7 +18,7 @@ Values estimated by this guessing function should be considered inaccurate,
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,8 +85,8 @@ Values estimated by this guessing function should be considered inaccurate,
 <span>    gbs <span class="op">=</span> <span class="fl">0.003</span>,</span>
 <span>    Rm_frac <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>    a_column_name <span class="op">=</span> <span class="st">'A'</span>,</span>
-<span>    pcm_column_name <span class="op">=</span> <span class="st">'PCm'</span>,</span>
 <span>    kp_column_name <span class="op">=</span> <span class="st">'Kp'</span>,</span>
+<span>    pcm_column_name <span class="op">=</span> <span class="st">'PCm'</span>,</span>
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
 <span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    vpmax_norm_column_name <span class="op">=</span> <span class="st">'Vpmax_norm'</span></span>
@@ -114,14 +114,14 @@ Values estimated by this guessing function should be considered inaccurate,
     assimilation in <code>micromol m^(-2) s^(-1)</code>.</p></dd>
 
 
-  <dt>pcm_column_name</dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the partial pressure
-    of CO2 in the mesophyll, expressed in <code>microbar</code>.</p></dd>
-
-
   <dt>kp_column_name</dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the Michaelis-Menten
     constant for PEP carboxylase carboxylation in <code>microbar</code>.</p></dd>
+
+
+  <dt>pcm_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the partial pressure
+    of CO2 in the mesophyll, expressed in <code>microbar</code>.</p></dd>
 
 
   <dt>rd_norm_column_name</dt>
@@ -236,9 +236,9 @@ Values estimated by this guessing function should be considered inaccurate,
 <span class="r-in"><span><span class="co"># Apply it and see the initial guesses for each curve</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_file</span>, <span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span>, <span class="va">guessing_func</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ maize - 5  : num [1:4] -12 26.5 125.4 54.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sorghum - 2: num [1:4] -6.81 35.79 145.14 62.94</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sorghum - 3: num [1:4] -10.8 27.4 86.1 58.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ maize - 5  : num [1:4] 0 37.5 208.2 64.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sorghum - 2: num [1:4] 0 42.1 249.5 68.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sorghum - 3: num [1:4] 0 37.2 182.4 67.8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate simulated A-Ci curves based on the guesses and compare them to the</span></span></span>
 <span class="r-in"><span><span class="co"># actual data</span></span></span>

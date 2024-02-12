@@ -20,7 +20,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,38 +90,26 @@
 <span>    ca_column_name <span class="op">=</span> <span class="st">'Ca'</span>,</span>
 <span>    cc_column_name <span class="op">=</span> <span class="st">'Cc'</span>,</span>
 <span>    ci_column_name <span class="op">=</span> <span class="st">'Ci'</span>,</span>
-<span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
+<span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
 <span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
 <span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
-<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'Gamma_star'</span>,</span>
-<span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
-<span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
+<span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
+<span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    POc <span class="op">=</span> <span class="fl">210000</span>,</span>
 <span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
 <span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.0</span>,</span>
 <span>    curvature_cj <span class="op">=</span> <span class="fl">1.0</span>,</span>
 <span>    curvature_cjp <span class="op">=</span> <span class="fl">1.0</span>,</span>
 <span>    OPTIM_FUN <span class="op">=</span> <span class="fu"><a href="optimizers.html">optimizer_nmkb</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    initial_guess_fun <span class="op">=</span> <span class="fu"><a href="initial_guess_c3_aci.html">initial_guess_c3_aci</a></span><span class="op">(</span></span>
-<span>        Oc <span class="op">=</span> <span class="va">POc</span>,</span>
-<span>        atp_use <span class="op">=</span> <span class="va">atp_use</span>,</span>
-<span>        nadph_use <span class="op">=</span> <span class="va">nadph_use</span>,</span>
-<span>        a_column_name <span class="op">=</span> <span class="va">a_column_name</span>,</span>
-<span>        cc_column_name <span class="op">=</span> <span class="va">cc_column_name</span>,</span>
-<span>        kc_column_name <span class="op">=</span> <span class="va">kc_column_name</span>,</span>
-<span>        ko_column_name <span class="op">=</span> <span class="va">ko_column_name</span>,</span>
-<span>        gamma_star_column_name <span class="op">=</span> <span class="va">gamma_star_column_name</span>,</span>
-<span>        vcmax_norm_column_name <span class="op">=</span> <span class="va">vcmax_norm_column_name</span>,</span>
-<span>        rd_norm_column_name <span class="op">=</span> <span class="va">rd_norm_column_name</span>,</span>
-<span>        j_norm_column_name <span class="op">=</span> <span class="va">j_norm_column_name</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,  <span class="fl">0</span>,    <span class="fl">0</span>,   <span class="fl">0</span><span class="op">)</span>,</span>
-<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">1000</span>, <span class="fl">100</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
-<span>    fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="cn">NA</span>,   <span class="cn">NA</span>,  <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    cj_crossover_min <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>    cj_crossover_max <span class="op">=</span> <span class="cn">NA</span></span>
+<span>    cj_crossover_max <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    error_threshold_factor <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>    calculate_confidence_intervals <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    remove_unreliable_param <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -157,9 +145,9 @@
     intercellular CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
-  <dt>total_pressure_column_name</dt>
-<dd><p>The name of the column in <code>replicate_exdf</code> that contains the total
-    pressure in <code>bar</code>.</p></dd>
+  <dt>j_norm_column_name</dt>
+<dd><p>The name of the column in <code>replicate_exdf</code> that contains the normalized
+    <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).</p></dd>
 
 
   <dt>kc_column_name</dt>
@@ -174,25 +162,20 @@
     <code>mmol mol^(-1)</code>.</p></dd>
 
 
-  <dt>gamma_star_column_name</dt>
-<dd><p>The name of the column in <code>replicate_exdf</code> that contains the
-    <code>Gamma_star</code> values in <code>micromol mol^(-1)</code>.</p></dd>
+  <dt>rd_norm_column_name</dt>
+<dd><p>The name of the column in <code>replicate_exdf</code> that contains the normalized
+    <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
+
+
+  <dt>total_pressure_column_name</dt>
+<dd><p>The name of the column in <code>replicate_exdf</code> that contains the total
+    pressure in <code>bar</code>.</p></dd>
 
 
   <dt>vcmax_norm_column_name</dt>
 <dd><p>The name of the column in <code>replicate_exdf</code> that contains the normalized
     <code>Vcmax</code> values (with units of
     <code>normalized to Vcmax at 25 degrees C</code>).</p></dd>
-
-
-  <dt>rd_norm_column_name</dt>
-<dd><p>The name of the column in <code>replicate_exdf</code> that contains the normalized
-    <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
-
-
-  <dt>j_norm_column_name</dt>
-<dd><p>The name of the column in <code>replicate_exdf</code> that contains the normalized
-    <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).</p></dd>
 
 
   <dt>POc</dt>
@@ -211,12 +194,6 @@
 <dd><p>The number of NADPH molecules used per C3 cycle.</p></dd>
 
 
-  <dt>alpha</dt>
-<dd><p>A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast.</p></dd>
-
-
   <dt>curvature_cj</dt>
 <dd><p>A dimensionless quadratic curvature parameter greater than or equal to 0 and
     less than or equal to 1 that sets the degree of co-limitation between
@@ -233,36 +210,36 @@
 <dd><p>An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: <code>par</code>, <code>convergence</code>,
-    <code>value</code>, and (optionally) <code>message</code>. The bounded optimizers from
-    the <code>dfoptim</code> package meet these requirements. The base function
-    <code>optim</code> with the <code>L-BFGS-B</code> method can also be used.</p></dd>
-
-
-  <dt>initial_guess_fun</dt>
-<dd><p>A function that estimates values of <code>TPU</code>, <code>J</code>, <code>Rd</code>, and
-    <code>Vcmax</code>; <code>initial_guess_fun</code> should have one input argument (an
-    <code>exdf</code> object representing a single response curve) and should return a
-    vector of the estimated values (at 25 degrees C) in the order above.</p></dd>
+    <code>value</code>, and (optionally) <code>message</code>. See <code><a href="optimizers.html">optimizers</a></code>
+    for a list of available options.</p></dd>
 
 
   <dt>lower</dt>
-<dd><p>A numeric vector containing lower bounds for the values of <code>TPU</code>,
-    <code>J</code>, <code>Rd</code>, and <code>Vcmax</code>, in that order.</p></dd>
+<dd><p>A list of named numeric elements representing lower bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, <code>lower = list(Vcmax_at_25 = 10)</code> sets the lower
+    limit for <code>Vcmax_at_25</code> to 10 micromol / m^2 / s.</p></dd>
 
 
   <dt>upper</dt>
-<dd><p>A numeric vector containing upper bounds for the values of <code>TPU</code>,
-    <code>J</code>, <code>Rd</code>, and <code>Vcmax</code>, in that order.</p></dd>
+<dd><p>A list of named numeric elements representing upper bounds to use when
+    fitting. Values supplied here override the default values (see details
+    below). For example, <code>upper = list(Vcmax_at_25 = 200)</code> sets the upper
+    limit for <code>Vcmax_at_25</code> to 200 micromol / m^2 / s.</p></dd>
 
 
-  <dt>fixed</dt>
-<dd><p>A numeric vector specifying fixed values of <code>TPU</code>, <code>J</code>, <code>Rd</code>,
-    and <code>Vcmax</code>, in that order. Values of <code>NA</code> indicate that the
-    corresponding parameter is not fixed and should be varied during the
-    optimization procedure. The default value of this argument fixes <code>TPU</code>
-    to its upper limit (so net assimilation is never limited by phosphate
-    utilization) and allows the other parameters to vary. To vary all of the
-    parameters, set <code>fixed</code> to <code>c(NA, NA, NA, NA)</code>.</p></dd>
+  <dt>fit_options</dt>
+<dd><p>A list of named elements representing fit options to use for each parameter.
+    Values supplied here override the default values (see details below). Each
+    element must be <code>'fit'</code>, <code>'column'</code>, or a numeric value. A value
+    of <code>'fit'</code> means that the parameter will be fit; a value of
+    <code>'column'</code> means that the value of the parameter will be taken from a
+    column in <code>exdf_obj</code> of the same name; and a numeric value means that
+    the parameter will be set to that value. For example, <code>fit_options =
+    list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')</code> means that
+    <code>alpha_g</code> will be set to 0, <code>Vcmax_at_25</code> will be fit, and
+    <code>Tp</code> will be set to the values in the <code>Tp</code> column of
+    <code>exdf_obj</code>.</p></dd>
 
 
   <dt>cj_crossover_min</dt>
@@ -276,44 +253,67 @@
     smaller than <code>Wc</code>. If <code>cj_crossover_max</code> is set to <code>NA</code>, this
     restriction will not be applied.</p></dd>
 
+
+  <dt>error_threshold_factor</dt>
+<dd><p>To be passed to <code><a href="confidence_intervals_c3_aci.html">confidence_intervals_c3_aci</a></code> when
+    <code>calculate_confidence_intervals</code> is <code>TRUE</code>.</p></dd>
+
+
+  <dt>calculate_confidence_intervals</dt>
+<dd><p>A logical value indicating whether or not to estimate confidence intervals
+    for the fitting parameters using <code><a href="confidence_intervals_c3_aci.html">confidence_intervals_c3_aci</a></code>.</p></dd>
+
+
+  <dt>remove_unreliable_param</dt>
+<dd><p>A logical value indicating whether or not to remove unreliable parameter
+    estimates; see below for details.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function calls <code><a href="calculate_c3_assimilation.html">calculate_c3_assimilation</a></code> to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of <code>TPU</code>, <code>J</code>, <code>Rd</code>, and <code>Vcmax</code> to find
-  ones that best reproduce the experimentally measured values of net
-  assimilation.</p>
+  vary the values of <code>alpha_g</code>, <code>J_at_25</code>, <code>Rd_at_25</code>, <code>Tp</code>,
+  and <code>Vcmax_at_25</code> to find ones that best reproduce the experimentally
+  measured values of net assimilation. By default, the following options are
+  used for the fits:</p><ul><li><p><code>alpha_g</code>: lower = 0, upper = 1, fit_option = 0</p></li>
+<li><p><code>Gamma_star</code>: lower = 0, upper = 200, fit_option = <code>'column'</code></p></li>
+<li><p><code>J_at_25</code>: lower = 0, upper = 1000, fit_option = <code>'fit'</code></p></li>
+<li><p><code>Rd_at_25</code>: lower = 0, upper = 100, fit_option = <code>'fit'</code></p></li>
+<li><p><code>Tp</code>: lower = 0, upper = 40, fit_option = <code>'fit'</code></p></li>
+<li><p><code>Vcmax_at_25</code>: lower = 0, upper = 1000, fit_option = <code>'fit'</code></p></li>
+</ul><p>With these settings, <code>alpha_g</code> is set to 0, values of <code>Gamma_star</code> are
+  taken from the <code>Gamma_star</code> column of <code>replicate_exdf</code>, and the
+  other parameters are fit during the process (see <code>fit_options</code> above).</p>
+<p>An initial guess for the parameters is generated by calling
+  <code><a href="initial_guess_c3_aci.html">initial_guess_c3_aci</a></code> as follows:</p><ul><li><p><code>cc_threshold_rd</code> is set to 100 micromol / mol.</p></li>
+<li><p>If <code>alpha_g</code> is being fit, the <code>alpha_g</code> argument of
+          <code>initial_guess_c3_aci</code> is set to 0.5; otherwise, the argument is
+          set to the value specified by the fit options.</p></li>
+<li><p>If <code>Gamma_star</code> is being fit, the <code>Gamma_star</code> argument of
+          <code>initial_guess_c3_aci</code> is set to 40; otherwise, the argument is
+          set to the value specified by the fit options.</p></li>
+</ul><p>Note that any fixed values specified in the fit options will override the
+  values returned by the guessing function.</p>
+<p>The fit is made by creating an error function using
+  <code><a href="error_function_c3_aci.html">error_function_c3_aci</a></code> and minimizing its value using
+  <code>OPTIM_FUN</code>, starting from the initial guess described above.</p>
 <p>The photosynthesis model represented by <code>calculate_c3_assimilation</code> is
   not smooth in the sense that small changes in the input parameters do not
   necessarily cause changes in its outputs. This is related to the final step in
   the calculations, where the overall assimilation rate is taken to be the
   minimum of three enzyme-limited rates. For example, if the assimilation rate
-  is never phosphate-limited, modifying <code>TPU</code> will not change the model's
+  is never TPU-limited, modifying <code>Tp</code> will not change the model's
   outputs. For this reason, derivative-based optimizers tend to struggle when
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
   methods. It has been found that <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">dfoptim::nmkb</a></code> is often able to find a
   good fit.</p>
-<p>Sometimes the optimizer will choose biologically unreasonable parameter values
-  that nevertheless produce good fits to the supplied assimilation values. A
-  common problem is that the fit result may not follow the expected progression
-  of <code>Ac-limited -&gt; Aj-limited -&gt; Ap-limited</code> assimilation as <code>Cc</code>
-  increases. In this case, the optional <code>cj_crossover_min</code> and
-  <code>cj_crossover_max</code> can be used to constrain the range of <code>Cc</code> values
-  (in ppm) where <code>Aj</code> is allowed to be the overall rate limiting factor.
-  See the _Analyzing C3 A-Ci Curves_ vignette for an example of how these
-  arguments can be used to improve the quality of a fit.</p>
-<p>By default, this function will use <code>initial_guess_c3_aci</code> to make rough
-  estimates of the parameters to use as an initial guess. However, it is
-  possible to also use a fixed initial guess by using something like the
-  following for the <code>initial_guess_fun</code>:
-  <code>function(x){c(10, 100, 0.5, 90)}</code>, which would set the initial guess to
-  <code>TPU = 10</code>, <code>J = 100</code>, <code>Rd = 0.5</code>, and <code>Vcmax = 90</code>.</p>
-<p>By default, this function fixes <code>TPU</code> to a high value (<code>40 micromol
-  m^(-2) s^(-1)</code>) and allows the other parameters to be fitted. This behavior
-  is determined by the value of the <code>fixed</code> input argument, and the value
-  of <code>TPU</code> specified in this way will override any value returned by
-  <code>initial_guess_fun</code>.</p>
+<p>Sometimes the optimizer may choose a set of parameter values where one or more
+  of the potential limiting carboxylation rates (<code>Wc</code>, <code>Wj</code>, or
+  <code>Wp</code>) is never the smallest rate. In this case, the corresponding
+  parameter estimates (<code>Vcmax</code>, <code>J</code>, or <code>alpha_g</code> &amp; <code>Tp</code>)
+  will be unreliable. If <code>remove_unreliable_param</code> is <code>TRUE</code>, such
+  values will be set to <code>NA</code> in the outputs from <code>fit_c3_aci</code>.</p>
 <p>Once the best-fit parameters have been determined, this function also
   estimates the operating value of `<code>Cc</code> from the atmospheric CO2
   concentration <code>atmospheric_ca</code> using
@@ -343,18 +343,22 @@
                   the <code>J_at_25</code>, <code>Rd_at_25</code>, and <code>Vcmax_at_25</code>
                   columns.</p></li>
 <li><p>The other outputs from <code><a href="calculate_c3_assimilation.html">calculate_c3_assimilation</a></code>
-                  will be stored in columns with the usual names: <code>TPU</code>,
-                  <code>Vcmax_tl</code>, <code>Rd_tl</code>, <code>J_tl</code>, <code>Ac</code>,
+                  will be stored in columns with the usual names: <code>alpha_g</code>,
+                  <code>Tp</code>, <code>Vcmax_tl</code>, <code>Rd_tl</code>, <code>J_tl</code>,
+                  <code>Wc</code>, <code>Wj</code>, <code>Wp</code>, <code>Vc</code>, <code>Ac</code>,
                   <code>Aj</code>, and <code>Ap</code>.</p></li>
 </ul></li>
 <li><p><code>parameters</code>: An <code>exdf</code> object including the identifiers,
-          fitting parameters, and convergence information for the A-Ci curve:</p><ul><li><p>The best-fit values are stored in the <code>TPU</code>,
-                  <code>J_at_25</code>, <code>Rd_at_25</code>, and <code>Vcmax_at_25</code>
-                  columns.</p></li>
+          fitting parameters, and convergence information for the A-Ci curve:</p><ul><li><p>The number of points where <code>Wc</code>, <code>Wj</code>, and <code>Wp</code>
+                  are each the smallest potential carboxylation are stored in
+                  the <code>n_Wc_smallest</code>, <code>n_Wj_smallest</code>, and
+                  <code>n_Wp_smallest</code> columns.</p></li>
+<li><p>The best-fit values are stored in the <code>alpha_g</code>,
+                  <code>Tp</code>, <code>J_at_25</code>, <code>Rd_at_25</code>, and
+                  <code>Vcmax_at_25</code> columns.</p></li>
 <li><p>For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  <code>X_tl_avg</code> columns: <code>J_tl_avg</code>, <code>Rd_tl_avg</code>,
-                  and <code>Vcmax_tl_avg</code>.</p></li>
+                  <code>J_tl_avg</code>, <code>Rd_tl_avg</code>, and <code>Vcmax_tl_avg</code>.</p></li>
 <li><p>Information about the operating point is stored in
                   <code>operating_Cc</code>, <code>operating_Ci</code>, <code>operating_An</code>,
                   and <code>operating_An_model</code>.</p></li>
@@ -404,10 +408,19 @@
 <span class="r-in"><span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_file</span>, <span class="va">c3_arrhenius_bernacchi</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Fit just one curve from the data set (it is rare to do this)</span></span></span>
+<span class="r-in"><span><span class="co"># We can fit just one curve from the data set, although it is rare to do this</span></span></span>
 <span class="r-in"><span><span class="va">one_result</span> <span class="op">&lt;-</span> <span class="fu">fit_c3_aci</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'tobacco - 1'</span>, , <span class="cn">TRUE</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># We can fit the same curve, but also allow alpha_g and Gamma_star to vary, and</span></span></span>
+<span class="r-in"><span><span class="co"># calculate confidence intervals</span></span></span>
+<span class="r-in"><span><span class="va">one_result_v2</span> <span class="op">&lt;-</span> <span class="fu">fit_c3_aci</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span><span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'tobacco - 1'</span>, , <span class="cn">TRUE</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,</span></span>
+<span class="r-in"><span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Gamma_star <span class="op">=</span> <span class="st">'fit'</span>, alpha_g <span class="op">=</span> <span class="st">'fit'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  calculate_confidence_intervals <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit all curves in the data set (it is more common to do this)</span></span></span>
@@ -421,7 +434,9 @@
 <span class="r-in"><span><span class="co"># View the fitting parameters for each species / plot</span></span></span>
 <span class="r-in"><span><span class="va">col_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">'species'</span>, <span class="st">'plot'</span>,                                       <span class="co"># identifiers</span></span></span>
-<span class="r-in"><span>  <span class="st">'TPU'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Vcmax_at_25'</span>,             <span class="co"># parameters scaled to 25 degrees C</span></span></span>
+<span class="r-in"><span>  <span class="st">'n_Wc_smallest'</span>, <span class="st">'n_Wj_smallest'</span>, <span class="st">'n_Wp_smallest'</span>,       <span class="co"># number of points where</span></span></span>
+<span class="r-in"><span>                                                           <span class="co">#   each process is limiting</span></span></span>
+<span class="r-in"><span>  <span class="st">'Tp'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Vcmax_at_25'</span>,              <span class="co"># parameters scaled to 25 degrees C</span></span></span>
 <span class="r-in"><span>  <span class="st">'J_tl_avg'</span>, <span class="st">'Rd_tl_avg'</span>, <span class="st">'Vcmax_tl_avg'</span>,                 <span class="co"># average temperature-dependent values</span></span></span>
 <span class="r-in"><span>  <span class="st">'operating_Ci'</span>, <span class="st">'operating_An'</span>, <span class="st">'operating_An_model'</span>,    <span class="co"># operating point info</span></span></span>
 <span class="r-in"><span>  <span class="st">'dof'</span>, <span class="st">'RSS'</span>, <span class="st">'MSE'</span>, <span class="st">'RMSE'</span>, <span class="st">'RSE'</span>,                      <span class="co"># residual stats</span></span></span>
@@ -433,34 +448,38 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   soybean                     5a</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                   tobacco                      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                   tobacco                      2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   TPU [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                        40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                        40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                        40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_Wc_smallest [fit_c3_aci] () n_Wj_smallest [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                             8                             5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                            10                             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                             9                             4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_Wp_smallest [fit_c3_aci] () Tp [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                             0                                 26.69448</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                             3                                 22.14909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                             1                                 20.94393</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      190.8852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      232.8344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      206.4812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      190.8853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                     1000.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      205.9192</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      0.5768653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      0.3554307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      0.3813936</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   5.768942e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                   7.735462e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   2.682438e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          144.6390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          145.4358</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          124.2801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          144.6388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          132.3373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          123.6075</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   J_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       268.1486</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       320.7115</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       285.9188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       268.1489</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      1377.4236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       285.1405</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       0.8146656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       0.4915379</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       0.5304210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    8.147064e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                    1.069765e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                    3.730587e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           232.1783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           226.6675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           195.2299</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           232.1779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           206.2528</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           194.1733</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   operating_Ci [estimate_operating_point] (micromol mol^(-1))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    264.3297</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                    294.7032</span>
@@ -470,33 +489,33 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                         37.51608</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                         31.57904</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   operating_An_model [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                 33.29664</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                 37.85628</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                 33.05816</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                 33.29654</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                 34.88518</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                 33.03342</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   dof [residual_stats] (NA) RSS [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        10                                         149.01374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        10                                          38.87372</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        10                                          49.79148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                         9                                         149.01374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                         9                                          92.08265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                         9                                          49.91249</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MSE [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                         11.462596</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          2.990286</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          3.830114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          7.083281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          3.839422</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   RMSE [residual_stats] (micromol m^(-2) s^(-1))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       3.385646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       1.729244</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       1.957068</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       2.661443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       1.959444</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   RSE [residual_stats] (micromol m^(-2) s^(-1)) convergence [fit_c3_aci] ()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      3.860230                           0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      1.971642                           0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      2.231400                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      4.069039                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      3.198657                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      2.354959                           0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   convergence_msg [fit_c3_aci] () feval [fit_c3_aci] ()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          Successful convergence                   166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          Successful convergence                   160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Successful convergence                   187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          Successful convergence                   226</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          Successful convergence                   300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Successful convergence                   466</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   optimum_val [fit_c3_aci] ()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   149.01374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    38.87372</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    49.79148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    92.08265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    49.91249</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># View the fits for each species / plot</span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
@@ -523,6 +542,90 @@
 <span class="r-in"><span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate residuals ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A_residuals</span>, <span class="st">')'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="fit_c3_aci-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># In the curves above, there are no points where carboxylation is TPU limited.</span></span></span>
+<span class="r-in"><span><span class="co"># We can automatically remove the unreliable Tp estimates.</span></span></span>
+<span class="r-in"><span><span class="va">aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
+<span class="r-in"><span>  <span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  <span class="va">fit_c3_aci</span>,</span></span>
+<span class="r-in"><span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,</span></span>
+<span class="r-in"><span>  remove_unreliable_param <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">col_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   species [UserDefCon] (NA) plot [UserDefCon] (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   soybean                     5a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                   tobacco                      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                   tobacco                      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_Wc_smallest [fit_c3_aci] () n_Wj_smallest [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                             8                             5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                            10                             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                             9                             4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n_Wp_smallest [fit_c3_aci] () Tp [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                             0                                       NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                             3                                 22.14909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                             1                                 20.94393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      190.8853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                            NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      205.9192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                   5.768942e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                   7.735462e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   2.682438e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          144.6388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          132.3373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          123.6075</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   J_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       268.1489</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                             NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       285.1405</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Rd_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    8.147064e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                    1.069765e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                    3.730587e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Vcmax_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                           232.1779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                           206.2528</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                           194.1733</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   operating_Ci [estimate_operating_point] (micromol mol^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    264.3297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                    294.7032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                    301.2673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   operating_An [estimate_operating_point] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                         31.00316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                         37.51608</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                         31.57904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   operating_An_model [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                 33.29654</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                 34.88518</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                 33.03342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dof [residual_stats] (NA) RSS [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                         9                                         149.01374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                         9                                          92.08265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                         9                                          49.91249</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   MSE [residual_stats] ((micromol m^(-2) s^(-1))^2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                         11.462596</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          7.083281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          3.839422</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   RMSE [residual_stats] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       3.385646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       2.661443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       1.959444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   RSE [residual_stats] (micromol m^(-2) s^(-1)) convergence [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                      4.069039                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                      3.198657                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                      2.354959                           0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   convergence_msg [fit_c3_aci] () feval [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          Successful convergence                   226</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          Successful convergence                   300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          Successful convergence                   466</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   optimum_val [fit_c3_aci] ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   149.01374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    92.08265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    49.91249</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

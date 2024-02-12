@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_gamma_star</span><span class="op">(</span></span>
 <span>    <span class="va">exdf_obj</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    alpha_pr <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>    oxygen_column_name <span class="op">=</span> <span class="st">'oxygen'</span>,</span>
 <span>    specificity_at_tleaf_column_name <span class="op">=</span> <span class="st">'specificity_at_tleaf'</span>,</span>
 <span>    tleaf_column_name <span class="op">=</span> <span class="st">'TleafCnd'</span></span>
@@ -92,7 +92,7 @@
 <dd><p>An <code>exdf</code> object.</p></dd>
 
 
-  <dt>alpha</dt>
+  <dt>alpha_pr</dt>
 <dd><p>The number of CO2 molecules released by the photorespiratory cycle following
     each RuBP oxygenation.</p></dd>
 
@@ -123,15 +123,16 @@
   role in many photosynthesis calculations. One way to calculate its value is to
   use its definition, which can be found in many places, such as Equation 2.17
   from von Caemmerer (2000):</p>
-<p><code>Gamma_star = alpha * O / S</code>,</p>
+<p><code>Gamma_star = alpha_pr * O / S</code>,</p>
 <p>where <code>O</code> is the partial pressure (or mole fraction) of oxygen in the
   chloroplast, <code>S</code> is the Rubisco specificity on a gas basis, and
-  <code>alpha</code> is the number of CO2 molecules released by the photorespiratory
-  cycle following each RuBP oxygenation (usually assumed to be 0.5).</p>
+  <code>alpha_pr</code> is the number of CO2 molecules released by the
+  photorespiratory cycle following each RuBP oxygenation (usually assumed to be
+  0.5).</p>
 <p>The Rubisco specificity is often measured from an aqueous solution where the
   concentrations of O2 and CO2 are specified as molarities (moles of dissolved
   CO2 or O2 per mole of H2O). In this context, the equation above becomes</p>
-<p><code>Gamma_star_aq = alpha * O_aq / S_aq</code>,</p>
+<p><code>Gamma_star_aq = alpha_pr * O_aq / S_aq</code>,</p>
 <p>where <code>Gamma_star_aq</code> and <code>O_aq</code> are the molarities of CO2 and O2
   corresponding to <code>Gamma_star</code> and <code>O</code> under the measurement
   conditions and <code>S_aq</code> is the specificity on a molarity basis.</p>
@@ -144,9 +145,9 @@
   <code>O = O_aq * H_O2</code>, where <code>H_CO2</code> is Henry's constant for CO2
   dissolved in H2O and <code>H_O2</code> is Henry's constant for O2 dissolved in H2O.
   With these replacements, we can re-express the equation above as:</p>
-<p><code>Gamma_star / H_CO2 = alpha * (O / H_O2) / S_aq</code></p>
+<p><code>Gamma_star / H_CO2 = alpha_pr * (O / H_O2) / S_aq</code></p>
 <p>Solving for <code>Gamma_star</code>, we see that:</p>
-<p><code>Gamma_star = (alpha * O / S_aq) * (H_CO2 / H_O2)</code>.</p>
+<p><code>Gamma_star = (alpha_pr * O / S_aq) * (H_CO2 / H_O2)</code>.</p>
 <p>In other words, both the Rubisco specificity (as measured on a molarity basis)
   and the ratio of the two Henry's constants (<code>H_CO2 / H_O2</code>) play a role
   in determining <code>Gamma_star</code>. This equation also shows that it is possible

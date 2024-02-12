@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -626,29 +626,29 @@ words, a nested list. We can see this structure as follows:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">by_result</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 8</span></span>
 <span><span class="co">#&gt;  $ soybean.1 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  74 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1a:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  74 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1b:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  71 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  72 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.2 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  71 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  72 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  71 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  72 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.5 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  74 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5a:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  76 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5c:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  252 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  76 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  253 variables:</span></span></code></pre></div>
 <p>It would be much easier to work with this information if it were
 reorganized by separately combining all of the <code>fits</code> and
 <code>parameters</code> elements. Fortunately, this can be easily done
@@ -662,8 +662,8 @@ using <code>rbind</code>:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">consolidate_by_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  70 variables:</span></span>
-<span><span class="co">#&gt;  $ fits      :'data.frame':  56 obs. of  252 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  71 variables:</span></span>
+<span><span class="co">#&gt;  $ fits      :'data.frame':  56 obs. of  253 variables:</span></span></code></pre></div>
 <p>It is common to apply the <code>consolidate</code> and
 <code>by</code> functions in the same line to make the code more
 concise. Afterwards, the elements from the resulting list can be

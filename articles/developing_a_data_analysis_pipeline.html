@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -384,8 +384,11 @@ objects that include data from many plants or response curves.</p>
 <h4 id="functions-for-fitting-response-curves">Functions for Fitting Response Curves<a class="anchor" aria-label="anchor" href="#functions-for-fitting-response-curves"></a>
 </h4>
 <p>The <code>PhotoGEA</code> package includes the following functions
-for fitting individual response curves:</p>
+for fitting individual response curves or sets of response curves:</p>
 <ul>
+<li>
+<code>calculate_rd_laisk</code>: Estimates Rd from a set of response
+curves using the Laisk method.</li>
 <li>
 <code>fit_ball_berry</code>: Calculates a linear fit of stomatal
 conductance to H<sub>2</sub>O vs. the Ball-Berry index.</li>
