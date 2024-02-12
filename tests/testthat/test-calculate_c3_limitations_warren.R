@@ -1,0 +1,50 @@
+# Get test curves to use
+source('one_curve_c3_aci.R')
+
+# Specify mesophyll conductance
+one_curve <- set_variable(
+  one_curve,
+  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
+)
+
+one_curve_bad <- set_variable(
+  one_curve_bad,
+  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
+)
+
+# Calculate Cc
+one_curve <- apply_gm(one_curve)
+one_curve_bad <- apply_gm(one_curve_bad)
+
+test_that('fit failures are handled properly', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res_bad <- fit_c3_aci(one_curve_bad, Ca_atmospheric = 420)
+
+    limit_res_bad <- expect_no_error(
+        calculate_c3_limitations_warren(fit_res_bad$fits)
+    )
+
+    expect_true(all(is.na(limit_res_bad[, 'lm_warren'])))
+    expect_true(all(is.na(limit_res_bad[, 'An_inf_gmc'])))
+})
+
+test_that('fit results have not changed', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c3_aci(one_curve, Ca_atmospheric = 420)
+
+    limit_res <- expect_silent(
+        calculate_c3_limitations_warren(fit_res$fits)
+    )
+
+    expect_equal(
+        as.numeric(limit_res[1, c('Cc_inf_gmc', 'Cc_inf_gsc', 'An_inf_gmc', 'An_inf_gsc', 'lm_warren', 'ls_warren')]),
+        c(38.202507, 29.805330, -5.921654, -8.103482, 0.202050, 0.416895),
+        tolerance = 1e-6
+    )
+})

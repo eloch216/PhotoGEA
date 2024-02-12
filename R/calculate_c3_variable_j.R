@@ -59,20 +59,24 @@ calculate_c3_variable_j <- function(
 
     Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]         # micromol / m^2 / s
 
-    # Make sure key inputs have reasonable values; these checks cannot be
-    # bypassed
+    # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(Ci < 0))         {msg <- append(msg, 'Ci must be >= 0')}
-    if (any(Gamma_star < 0)) {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(PhiPS2 < 0))     {msg <- append(msg, 'PhiPS2 must be >= 0')}
-    if (any(pressure < 0))   {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Qin < 0))        {msg <- append(msg, 'Qin must be >= 0')}
-    if (any(Rd_at_25 < 0))   {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(tau < 0))        {msg <- append(msg, 'tau must be >= 0')}
+    if (any(Ci < 0, na.rm = TRUE))         {msg <- append(msg, 'Ci must be >= 0')}
+    if (any(Gamma_star < 0, na.rm = TRUE)) {msg <- append(msg, 'Gamma_star must be >= 0')}
+    if (any(PhiPS2 < 0, na.rm = TRUE))     {msg <- append(msg, 'PhiPS2 must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE))   {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Qin < 0, na.rm = TRUE))        {msg <- append(msg, 'Qin must be >= 0')}
+    if (any(Rd_at_25 < 0, na.rm = TRUE))   {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(tau < 0, na.rm = TRUE))        {msg <- append(msg, 'tau must be >= 0')}
 
-    if (length(msg) > 0) {
-        stop(paste(msg, collapse = '. '))
+    msg <- paste(msg, collapse = '. ')
+
+    # We only bypass these checks if !perform_checks && return_exdf
+    if (perform_checks || !return_exdf) {
+        if (msg != '') {
+            stop(msg)
+        }
     }
 
     # Calculate J_F (actual RuBP regeneration rate as estimated from
@@ -101,17 +105,19 @@ calculate_c3_variable_j <- function(
             Rd_tl = Rd_tl,
             J_F = J_F,
             gmc = gmc,
-            Cc = Cc
+            Cc = Cc,
+            c3_variable_j_msg = msg
         ))
 
         document_variables(
             output,
-            c('calculate_c3_variable_j', 'Gamma_star', 'micromol mol^(-1)'),
-            c('calculate_c3_variable_j', 'tau',        'dimensionless'),
-            c('calculate_c3_variable_j', 'Rd_tl',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_variable_j', 'J_F',        'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_variable_j', 'gmc',        'mol m^(-2) s^(-1) bar^(-1)'),
-            c('calculate_c3_variable_j', 'Cc',         'micromol mol^(-1)')
+            c('calculate_c3_variable_j', 'Gamma_star',        'micromol mol^(-1)'),
+            c('calculate_c3_variable_j', 'tau',               'dimensionless'),
+            c('calculate_c3_variable_j', 'Rd_tl',             'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_variable_j', 'J_F',               'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_variable_j', 'gmc',               'mol m^(-2) s^(-1) bar^(-1)'),
+            c('calculate_c3_variable_j', 'Cc',                'micromol mol^(-1)'),
+            c('calculate_c3_variable_j', 'c3_variable_j_msg', '')
         )
     } else {
         return(list(gmc = gmc, Cc = Cc))

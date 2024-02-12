@@ -32,7 +32,7 @@
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
-    alpha = 0,
+    alpha_psii = 0,
     OPTIM_FUN = optimizer_nmkb(),
     lower = list(),
     upper = list(),
@@ -132,7 +132,7 @@
     mesophyll.
   }
 
-  \item{alpha}{
+  \item{alpha_psii}{
     The fraction of photosystem II activity in the bundle sheath.
   }
 
@@ -168,7 +168,7 @@
     the parameter will be set to that value. For example, \code{fit_options =
     list(Rd_at_25 = 0, Vcmax_at_25 = 'fit', Vpr = 'column')} means that
     \code{Rd_at_25} will be set to 0, \code{Vcmax_at_25} will be fit, and
-    \code{Vpr} will be set to the values in the \code{TPU} column of
+    \code{Vpr} will be set to the values in the \code{Vpr} column of
     \code{exdf_obj}.
   }
 

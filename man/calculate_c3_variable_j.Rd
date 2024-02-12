@@ -148,12 +148,12 @@
   photosynthetically active flux density \code{Qin} and the operating efficiency
   of photosystem II \code{PhiPSII} according to:
 
-  \code{J_actual = alpha * beta * Qin * PhiPSII},
+  \code{J_actual = alpha_g * beta * Qin * PhiPSII},
 
-  where \code{alpha} is the leaf absorptance and \code{beta} is the fraction of
+  where \code{alpha_g} is the leaf absorptance and \code{beta} is the fraction of
   absorbed light energy directed to photosystem II. \code{Qin} is set by the
   measurement conditions, while \code{PhiPSII} can be estimated from chlorophyll
-  fluorescence. However, the values of \code{alpha} and \code{beta} are
+  fluorescence. However, the values of \code{alpha_g} and \code{beta} are
   generally unknown; \code{beta} in particular is difficult or impossible to
   measure and is often assumed to be 0.5. Thus, while Equation 7 from Harley et
   al. (1992) can be used to estimate \code{gmc}, there is a practical
@@ -161,7 +161,7 @@
   in Equation 7.
 
   Moualeu-Ngangue, Chen, & Stutzel (2016) developed a way to address this issue.
-  The method from that paper replaces the product of \code{alpha} and
+  The method from that paper replaces the product of \code{alpha_g} and
   \code{beta} by a single new parameter \code{tau}, and uses it to estimate the
   actual RuBP regeneration from fluoresence (\code{J_F}):
 

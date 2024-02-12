@@ -36,25 +36,9 @@ combined_info <- calculate_total_pressure(combined_info)
 
 # Calculate gas properties and use the result to determine the Ball-Berry index
 
-combined_info <- calculate_gas_properties(
-    combined_info,
-    A_COLUMN_NAME,
-    CA_COLUMN_NAME,
-    DELTAPCHAM_COLUMN_NAME,
-    E_COLUMN_NAME,
-    GBW_COLUMN_NAME,
-    GSW_COLUMN_NAME,
-    H2O_S_COLUMN_NAME,
-    PA_COLUMN_NAME,
-    TLEAF_COLUMN_NAME
-)
+combined_info <- calculate_gas_properties(combined_info)
 
-combined_info <- calculate_ball_berry_index(
-    combined_info,
-    A_COLUMN_NAME,
-    RHLEAF_COLUMN_NAME,
-    CSURFACE_COLUMN_NAME
-)
+combined_info <- calculate_ball_berry_index(combined_info)
 
 # Make a new identifier based on the plot and instrument names
 combined_info[,'plot_instrument'] <- paste(
@@ -80,9 +64,7 @@ check_licor_data(combined_info, c('species', 'plot_instrument'))
 bb_results <- consolidate(by(
     combined_info,
     combined_info[, 'species_plot_instrument'],
-    fit_ball_berry,
-    GSW_COLUMN_NAME,
-    BB_INDEX_COLUMN_NAME
+    fit_ball_berry
 ))
 
 bb_parameters <- bb_results$parameters$main_data

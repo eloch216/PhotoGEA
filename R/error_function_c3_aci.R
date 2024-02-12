@@ -68,11 +68,11 @@ error_function_c3_aci <- function(
             {
                 calculate_c3_assimilation(
                     replicate_exdf,
-                    X[1], # alpha
+                    X[1], # alpha_g
                     X[2], # Gamma_star
                     X[3], # J_at_25
                     X[4], # Rd_at_25
-                    X[5], # TPU
+                    X[5], # Tp
                     X[6], # Vcmax_at_25
                     POc,
                     atp_use,
@@ -96,14 +96,14 @@ error_function_c3_aci <- function(
         )
 
         if (is.null(assim) || any(is.na(assim$An))) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
                 if (replicate_exdf[i, cc_column_name] < cj_crossover_min &&
                         assim$Wj[i] < assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }
@@ -112,7 +112,7 @@ error_function_c3_aci <- function(
             for (i in seq_along(assim$An)) {
                 if (replicate_exdf[i, cc_column_name] > cj_crossover_max &&
                         assim$Wj[i] > assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }

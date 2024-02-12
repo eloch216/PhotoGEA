@@ -22,7 +22,7 @@
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
-    alpha = 0,
+    alpha_psii = 0,
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
@@ -90,7 +90,7 @@
     mesophyll.
   }
 
-  \item{alpha}{
+  \item{alpha_psii}{
     The fraction of photosystem II activity in the bundle sheath.
   }
 
@@ -220,7 +220,7 @@
   To be more precise, the approximation is only reliable when \code{Vcmax} is
   much larger than \code{gbs * Kc * (1 + POm / Ko)}, which is rarely the case;
   otherwise, the limiting value of \code{An} at high \code{PCm} will be smaller
-  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha} are
+  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha_psii} are
   both set to zero, then the approximation is exact.
 
   \strong{Limiting Cases of the Approximate Equation}

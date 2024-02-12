@@ -63,20 +63,20 @@ solver <- if (USE_DEOPTIM_SOLVER) {
   optimizer_nmkb()
 }
 
-# Decide whether to fit TPU and Rd
+# Decide whether to fit Tp and Rd
 #
-# To disable TPU limitations: TPU_VAL <- 40
-# To fit TPU: TPU_VAL <- 'fit'
+# To disable TPU limitations: TP_VAL <- 40
+# To fit Tp: TP_VAL <- 'fit'
 #
 # To fix Rd: RD_VAL <- 1.234
 # To fit Rd: RD_VAL <- 'fit'
 
-TPU_VAL <- 'fit'
+TP_VAL <- 'fit'
 RD_VAL <- 'fit'
 
 FIT_OPTIONS <- list(
     Rd_at_25 = RD_VAL,
-    TPU = TPU_VAL
+    Tp = TP_VAL
 )
 
 ###
@@ -557,7 +557,7 @@ all_samples_one_point <- all_samples[all_samples$seq_num == POINT_FOR_BOX_PLOTS,
 aci_parameters <- c3_aci_results$parameters$main_data
 if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
-    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'TPU', 'tau'
+    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'Tp', 'tau'
   )
 
   aci_parameters_list <- by(
@@ -614,7 +614,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 450), main = fitting_caption),
       list(Y = aci_parameters[, 'Rd_at_25'],                 X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 0.5), main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 500), main = fitting_caption),
-      list(Y = aci_parameters[, 'TPU'],                      X = x_v, xlab = xl, ylab = "TPU (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption),
+      list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption),
       list(Y = aci_parameters[, 'tau'],                      X = x_v, xlab = xl, ylab = "tau (dimensionless)",                                                ylim = c(0, 1),   main = fitting_caption)
     )
 

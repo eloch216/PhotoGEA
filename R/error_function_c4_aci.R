@@ -14,7 +14,7 @@ error_function_c4_aci <- function(
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
-    alpha = 0
+    alpha_psii = 0
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -64,7 +64,7 @@ error_function_c4_aci <- function(
                     POm,
                     gbs,
                     Rm_frac,
-                    alpha,
+                    alpha_psii,
                     ao_column_name,
                     gamma_star_column_name,
                     kc_column_name,
@@ -84,7 +84,7 @@ error_function_c4_aci <- function(
         )
 
         if (is.null(assim) || any(is.na(assim))) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         sum((replicate_exdf[, a_column_name] - assim)^2)

@@ -7,7 +7,7 @@ calculate_c4_assimilation <- function(
     POm = 210000,              # microbar             (typically this value is known from the experimental setup)
     gbs = 0.003,               # mol / m^2 / s / bar  (typically this value is fixed)
     Rm_frac = 0.5,             # dimensionless        (typically this value is fixed)
-    alpha = 0,                 # dimensionless        (typically this value is fixed)
+    alpha_psii = 0,                 # dimensionless        (typically this value is fixed)
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
@@ -66,23 +66,27 @@ calculate_c4_assimilation <- function(
     gamma_star <- exdf_obj[, gamma_star_column_name] # dimensionless
     ao <- exdf_obj[, ao_column_name]                 # dimensionless
 
-    # Make sure key inputs have reasonable values; these checks cannot be
-    # bypassed
+    # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(Cm < 0))          {msg <- append(msg, 'PCm must be >= 0')}
-    if (any(Kc < 0))          {msg <- append(msg, 'Kc must be >= 0')}
-    if (any(Ko < 0))          {msg <- append(msg, 'Ko must be >= 0')}
-    if (any(Kp < 0))          {msg <- append(msg, 'Kp must be >= 0')}
-    if (any(gamma_star < 0))  {msg <- append(msg, 'gamma_star must be >= 0')}
-    if (any(ao < 0))          {msg <- append(msg, 'ao must be >= 0')}
-    if (any(Rd_at_25 < 0))    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(Vcmax_at_25 < 0)) {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
-    if (any(Vpmax_at_25 < 0)) {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
-    if (any(Vpr < 0))         {msg <- append(msg, 'Vpr must be >= 0')}
+    if (any(Cm < 0, na.rm = TRUE))          {msg <- append(msg, 'PCm must be >= 0')}
+    if (any(Kc < 0, na.rm = TRUE))          {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0, na.rm = TRUE))          {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(Kp < 0, na.rm = TRUE))          {msg <- append(msg, 'Kp must be >= 0')}
+    if (any(gamma_star < 0, na.rm = TRUE))  {msg <- append(msg, 'gamma_star must be >= 0')}
+    if (any(ao < 0, na.rm = TRUE))          {msg <- append(msg, 'ao must be >= 0')}
+    if (any(Rd_at_25 < 0, na.rm = TRUE))    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(Vcmax_at_25 < 0, na.rm = TRUE)) {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    if (any(Vpmax_at_25 < 0, na.rm = TRUE)) {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
+    if (any(Vpr < 0, na.rm = TRUE))         {msg <- append(msg, 'Vpr must be >= 0')}
 
-    if (length(msg) > 0) {
-        stop(paste(msg, collapse = '. '))
+    msg <- paste(msg, collapse = '. ')
+
+    # We only bypass these checks if !perform_checks && return_exdf
+    if (perform_checks || !return_exdf) {
+        if (msg != '') {
+            stop(msg)
+        }
     }
 
     # Apply temperature responses to Vcmax, Vpmax, Rd, and Rm, making use of
@@ -105,7 +109,7 @@ calculate_c4_assimilation <- function(
     Ar <- Vcmax_tl - Rd_tl         # micromol / m^2 / s
 
     # Calculate terms that appear in several of the next equations
-    f1 <- alpha / ao                  # dimensionless
+    f1 <- alpha_psii / ao             # dimensionless
     f2 <- gbs * Kc * (1.0 + POm / Ko) # micromol / m^2 / s
     f3 <- gamma_star * Vcmax_tl       # micromol / m^2 / s
     f4 <- Kc / Ko                     # dimensionless
@@ -140,23 +144,25 @@ calculate_c4_assimilation <- function(
             Apr = Apr,
             Ap = Ap,
             Ar = Ar,
-            An = An
+            An = An,
+            c4_assimilation_msg = msg
         ))
 
         document_variables(
             output,
-            c('calculate_c4_assimilation', 'Vcmax_tl', 'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpmax_tl', 'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rd_tl',    'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rm_tl',    'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpc',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vpr',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Vp',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Apc',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Apr',      'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Ap',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Ar',       'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'An',       'micromol m^(-2) s^(-1)')
+            c('calculate_c4_assimilation', 'Vcmax_tl',            'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpmax_tl',            'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rd_tl',               'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Rm_tl',               'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpc',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vpr',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Vp',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apc',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Apr',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ap',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'Ar',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'An',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'c4_assimilation_msg', '')
         )
     } else {
         return(An)

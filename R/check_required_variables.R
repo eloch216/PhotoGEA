@@ -20,14 +20,6 @@ check_required_variables.data.frame <- function(x, required_variables) {
     na_columns <- sapply(required_variables, function(rv) {
         all(is.na(x[[rv]]))
     })
-
-    if (any(na_columns)) {
-        msg <- paste(
-            "The following columns are NA:",
-            paste(required_variables[na_columns], collapse = " ")
-        )
-        stop(msg)
-    }
 }
 
 # For an exdf object, `required_variables` should be a list of named elements,

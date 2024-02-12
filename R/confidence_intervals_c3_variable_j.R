@@ -21,7 +21,10 @@ confidence_intervals_c3_variable_j <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    require_positive_gmc = 'all',
+    gmc_max = Inf
+
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -49,7 +52,9 @@ confidence_intervals_c3_variable_j <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
-        cj_crossover_max
+        cj_crossover_max,
+        require_positive_gmc,
+        gmc_max
     )
 
     # Assemble lower, upper, and fit_options

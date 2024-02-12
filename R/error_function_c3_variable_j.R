@@ -17,9 +17,21 @@ error_function_c3_variable_j <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    require_positive_gmc = 'all',
+    gmc_max = Inf
 )
 {
+    # Make sure options are okay
+    require_positive_gmc <- tolower(require_positive_gmc)
+    if (!require_positive_gmc %in% c('none', 'all', 'positive_a')) {
+        stop('`require_positive_gmc` must be `none`, `all`, or `positive_a`')
+    }
+
+    if (gmc_max <= 0) {
+        stop('`gmc_max` must be positive')
+    }
+
     # Assemble fit options; here we do not care about bounds
     luf <- assemble_luf(
         c3_variable_j_param,
@@ -83,6 +95,9 @@ error_function_c3_variable_j <- function(
         NA
     )
 
+    # Get rows where A > 0 in the fitting exdf
+    a_pos <- fitting_exdf[, a_column_name] > 0
+
     # Create and return the error function
     function(guess) {
         X <- fit_options_vec
@@ -113,8 +128,20 @@ error_function_c3_variable_j <- function(
             }
         )
 
-        if (is.null(vj) || any(vj$gmc < 0) || any(vj$Cc < 0)) {
-            return(1e10)
+        if (is.null(vj) || any(vj$Cc < 0)) {
+            return(ERROR_PENALTY)
+        }
+
+        if (require_positive_gmc == 'all' && any(vj$gmc < 0)) {
+            return(ERROR_PENALTY)
+        }
+
+        if (require_positive_gmc == 'positive_a' && any(vj$gmc[a_pos] < 0)) {
+            return(ERROR_PENALTY)
+        }
+
+        if (!is.infinite(gmc_max) && any(vj$gmc[a_pos] > gmc_max)) {
+            return(ERROR_PENALTY)
         }
 
         fitting_exdf[, 'gmc'] <- vj$gmc
@@ -125,11 +152,11 @@ error_function_c3_variable_j <- function(
             {
                 calculate_c3_assimilation(
                     fitting_exdf,
-                    X[1], # alpha
+                    X[1], # alpha_g
                     X[2], # Gamma_star
                     X[3], # J_at_25
                     X[4], # Rd_at_25
-                    X[6], # TPU
+                    X[6], # Tp
                     X[7], # Vcmax_at_25
                     POc,
                     atp_use,
@@ -153,14 +180,14 @@ error_function_c3_variable_j <- function(
         )
 
         if (is.null(assim) || any(is.na(assim$An))) {
-            return(1e10)
+            return(ERROR_PENALTY)
         }
 
         if (!is.na(cj_crossover_min)) {
             for (i in seq_along(assim$An)) {
                 if (fitting_exdf[i, cc_column_name] < cj_crossover_min &&
                         assim$Wj[i] < assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }
@@ -169,7 +196,7 @@ error_function_c3_variable_j <- function(
             for (i in seq_along(assim$An)) {
                 if (fitting_exdf[i, cc_column_name] > cj_crossover_max &&
                         assim$Wj[i] > assim$Wc[i]) {
-                    return(1e10)
+                    return(ERROR_PENALTY)
                 }
             }
         }
