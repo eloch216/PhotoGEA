@@ -1,15 +1,15 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
+# Specify mesophyll conductance
 one_curve <- set_variable(
   one_curve,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
+  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
 )
 
 one_curve_bad <- set_variable(
   one_curve_bad,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
+  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
 )
 
 # Calculate Cc
@@ -44,7 +44,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(limit_res[1, c('Cc_inf_gmc', 'Cc_inf_gsc', 'An_inf_gmc', 'An_inf_gsc', 'lm_warren', 'ls_warren')]),
-        c(38.2025073, 25.1495000, -3.2844129, -5.6809809, 0.0000000, 0.4218581),
+        c(38.202507, 29.805330, -5.921654, -8.103482, 0.202050, 0.416895),
         tolerance = 1e-6
     )
 })
