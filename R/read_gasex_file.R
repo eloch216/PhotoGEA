@@ -87,6 +87,14 @@ read_gasex_file <- function(
             do.call(as.POSIXlt, full_posix_options)
     }
 
+    # Add a filename column to the exdf
+    gasex_exdf <- set_variable(
+        gasex_exdf,
+        'file_name',
+        category = 'read_gasex_file',
+        value = file_name
+    )
+
     # Add "extras" to the exdf
     gasex_exdf$file_name <- file_name
     gasex_exdf$file_type <- file_type
