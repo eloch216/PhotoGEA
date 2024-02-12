@@ -28,7 +28,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -48,7 +48,7 @@ PERFORM_STATS_TESTS <- TRUE
 # (Inf), then Cc = Ci and the resulting Vcmax values will be "apparent Vcmax,"
 # which is not solely a property of Rubisco and which may differ between plants
 # that have identical Vcmax but different gm.
-USE_GM_TABLE <- TRUE
+USE_GM_TABLE <- FALSE
 GM_VALUE <- Inf
 GM_UNITS <- "mol m^(-2) s^(-1) bar^(-1)"
 GM_TABLE <- list(
@@ -60,11 +60,11 @@ GM_TABLE <- list(
 
 # Decide whether to override the Gamma_star value calculated from Arrhenius
 # equations
-OVERRIDE_GAMMA_STAR <- TRUE
+OVERRIDE_GAMMA_STAR <- FALSE
 GAMMA_STAR <- 50 # ppm
 
 # Decide whether to average over plots
-AVERAGE_OVER_PLOTS <- TRUE
+AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
 SAVE_CSV <- TRUE
@@ -275,7 +275,9 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(curve_identifier = '10 5 6', seq_num = c(2))
+      list(event = 'WT', replicate = 9, CO2_r_sp = 800),
+      list(event = '25', replicate = 4, CO2_r_sp = 200)
+      #list(curve_identifier = '10 5 6', seq_num = c(2))
     )
 }
 

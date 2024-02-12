@@ -61,7 +61,7 @@ LICOR_FILES_TO_PROCESS <- c()
 
 # Decide whether to remove a few specific points from the data before subsequent
 # processing and plotting
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Specify the filenames depending on the value of PERFORM_CALCULATIONS
 if (PERFORM_CALCULATIONS) {
@@ -74,7 +74,7 @@ GET_INFO_FROM_FILENAME <- FALSE
 # points along the time sequence of measurements.
 #
 #
-NUM_OBS_IN_SEQ <- 360
+NUM_OBS_IN_SEQ <- 420
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
@@ -97,7 +97,7 @@ TARGET_PERCENTAGE <- 50
 # Units are minutes, and times should be specified relative to the start of
 # A_TIME_LIM. E.g. c(0, 5) is the first five minutes (300 seconds) after light
 # exposure.
-LOST_CARBON_INTERVAL <- c(0, 5)
+LOST_CARBON_INTERVAL <- c(0,3)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -282,10 +282,12 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(event = '9', replicate = '3'),
-        list(event = '3', replicate = '3'),
-        list(event = '25', replicate = '1'),
-        list(event = 'WT', replicate = '3-1')
+        list(event = '9', replicate = '6', obs = 904:912),
+        list(event = '9', replicate = '5', obs = 183:198),
+        list(event = '3', replicate = '6', obs = 1264:1271),
+        list(event = '25', replicate = '6', obs = 544:552),
+        list(event = '25', replicate = '9', obs = 1623:1632),
+        list(event = '25', replicate = '10', obs = 1263:1268)
         #list(event = 'hn1a', plot_replicate = '5 1', obs = 714:720)
       )
     }
@@ -388,14 +390,17 @@ x_e <- all_samples_for_plots[[EVENT_COLUMN_NAME]]
 
 a_lim <- c(-3, 50)
 a_norm_lim <- c(-0.1, 1.1)
+gs_lim <- c(0, 0.5)
 
 t_lab <- "Elapsed time (minutes)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for each time point)"
 a_norm_lab <- "Normalized net CO2 assimilation rate (dimensionless)\n(error bars: standard error of the mean for each time point)"
+gs_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for each time point)"
 
 avg_plot_param <- list(
   list(all_samples_for_plots[[A_COLUMN_NAME]],      x_t, x_s, x_e, xlab = t_lab, ylab = a_lab,      ylim = a_lim,       xlim = A_TIME_LIM - min(A_TIME_LIM)),
-  list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = A_TIME_LIM - min(A_TIME_LIM))
+  list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, x_e, xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim,  xlim = A_TIME_LIM - min(A_TIME_LIM)),
+  list(all_samples_for_plots[['gsw']],              x_t, x_s, x_e, xlab = t_lab, ylab = gs_lab,     ylim = gs_lim,      xlim = A_TIME_LIM - min(A_TIME_LIM))
 )
 
 invisible(lapply(avg_plot_param, function(x) {
@@ -466,7 +471,7 @@ plot_param <- list(
         X = curve_information[, EVENT_COLUMN_NAME],
         ylab = paste('Time to target percentage [', curve_information$units$time_to_target_percentage, ']'),
         xlab = 'Event',
-        ylim = c(0, 20),
+        ylim = c(0, 15),
         main = paste('Target percentage:', TARGET_PERCENTAGE)
     ),
     list(
@@ -474,7 +479,7 @@ plot_param <- list(
         X = curve_information[, EVENT_COLUMN_NAME],
         ylab = paste('Average A [', curve_information$units$interval_A_avg, ']'),
         xlab = 'Event',
-        ylim = c(0, 20),
+        ylim = c(0, 30),
         main = interval_main
     ),
     list(
