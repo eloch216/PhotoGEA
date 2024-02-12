@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_aci_lower       <- list(alpha = 0, Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,      TPU = 0,     Vcmax_at_25 = 0)
-c3_aci_upper       <- list(alpha = 1, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,    TPU = 40,    Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha = 0, Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit',  TPU = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_lower       <- list(alpha_g = 0, Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,      TPU = 0,     Vcmax_at_25 = 0)
+c3_aci_upper       <- list(alpha_g = 1, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,    TPU = 40,    Vcmax_at_25 = 1000)
+c3_aci_fit_options <- list(alpha_g = 0, Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit',  TPU = 'fit', Vcmax_at_25 = 'fit')
 
-c3_aci_param <- c('alpha', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'TPU', 'Vcmax_at_25')
+c3_aci_param <- c('alpha_g', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'TPU', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_aci <- function(
@@ -89,7 +89,7 @@ fit_c3_aci <- function(
 
     # Get an initial guess for all the parameter values
     initial_guess_fun <- initial_guess_c3_aci(
-        if (fit_options$alpha == 'fit')      {0.5} else {fit_options$alpha},      # alpha
+        if (fit_options$alpha_g == 'fit')    {0.5} else {fit_options$alpha_g},    # alpha_g
         if (fit_options$Gamma_star == 'fit') {40}  else {fit_options$Gamma_star}, # Gamma_star
         100, # cc_threshold_rd
         POc,
@@ -121,7 +121,7 @@ fit_c3_aci <- function(
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(
         replicate_exdf,
-        best_X[1], # alpha
+        best_X[1], # alpha_g
         best_X[2], # Gamma_star
         best_X[3], # J_at_25
         best_X[4], # Rd_at_25
@@ -163,7 +163,7 @@ fit_c3_aci <- function(
     # Estimate An at the operating point
     operating_An_model <- calculate_c3_assimilation(
         operating_point_info$operating_exdf,
-        best_X[1], # alpha
+        best_X[1], # alpha_g
         best_X[2], # Gamma_star
         best_X[3], # J_at_25
         best_X[4], # Rd_at_25
@@ -198,7 +198,7 @@ fit_c3_aci <- function(
         }
     }
 
-    # Add columns for the best-fit parameter values (no need to include alpha,
+    # Add columns for the best-fit parameter values (no need to include alpha_g,
     # Gamma_star, or TPU since they are already included in the output of
     # calculate_c3_assimilation)
     replicate_exdf[, 'J_at_25']     <- best_X[3]
@@ -240,7 +240,7 @@ fit_c3_aci <- function(
     )
 
     # Attach the best-fit parameters to the identifiers
-    replicate_identifiers[, 'alpha']       <- best_X[1]
+    replicate_identifiers[, 'alpha_g']     <- best_X[1]
     replicate_identifiers[, 'Gamma_star']  <- best_X[2]
     replicate_identifiers[, 'J_at_25']     <- best_X[3]
     replicate_identifiers[, 'Rd_at_25']    <- best_X[4]
@@ -285,7 +285,7 @@ fit_c3_aci <- function(
         c('fit_c3_aci',               'n_Wc_smallest',       ''),
         c('fit_c3_aci',               'n_Wj_smallest',       ''),
         c('fit_c3_aci',               'n_Wp_smallest',       ''),
-        c('fit_c3_aci',               'alpha',               'dimensionless'),
+        c('fit_c3_aci',               'alpha_g',             'dimensionless'),
         c('fit_c3_aci',               'Gamma_star',          'micromol mol^(-1)'),
         c('fit_c3_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),

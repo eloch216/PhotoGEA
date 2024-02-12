@@ -46,13 +46,13 @@ remove_c3_unreliable_points <- function(
 
     if (parameters[, 'n_Wp_smallest'] < unreliable_n_threshold) {
         # Too few points have TPU limited carboxylation, so we cannot trust
-        # the TPU or alpha estimates
-        parameters[, 'alpha'] <- NA
-        parameters[, 'TPU']   <- NA
-        fits[, 'Wp']          <- NA
-        fits[, 'Ap']          <- NA
-        fits[, 'alpha']       <- NA
-        fits[, 'TPU']         <- NA
+        # the TPU or alpha_g estimates
+        parameters[, 'alpha_g'] <- NA
+        parameters[, 'TPU']     <- NA
+        fits[, 'Wp']            <- NA
+        fits[, 'Ap']            <- NA
+        fits[, 'alpha_g']       <- NA
+        fits[, 'TPU']           <- NA
     }
 
     list(

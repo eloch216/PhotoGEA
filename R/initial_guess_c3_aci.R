@@ -1,5 +1,5 @@
 initial_guess_c3_aci <- function(
-    alpha,      # dimensionless
+    alpha_g,    # dimensionless
     Gamma_star, # micromol / mol
     cc_threshold_rd = 100,
     Oc = 210000,
@@ -31,7 +31,7 @@ initial_guess_c3_aci <- function(
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(
-            alpha = alpha,
+            alpha_g = alpha_g,
             Gamma_star = Gamma_star
         )
 
@@ -40,9 +40,9 @@ initial_guess_c3_aci <- function(
 
         check_required_variables(rc_exdf, required_variables)
 
-        # Include values of alpha and Gamma_star in the exdf if they are not
+        # Include values of alpha_g and Gamma_star in the exdf if they are not
         # already present
-        if (value_set(alpha))      {rc_exdf[, 'alpha']      <- alpha}
+        if (value_set(alpha_g))    {rc_exdf[, 'alpha_g']    <- alpha_g}
         if (value_set(Gamma_star)) {rc_exdf[, 'Gamma_star'] <- Gamma_star}
 
         # To estimate Rd, first make a linear fit of A ~ Cc where Cc is below
@@ -101,12 +101,12 @@ initial_guess_c3_aci <- function(
         # each point in the response curve. Then we choose the largest value as
         # the best estimate.
         tpu_estimates <- Aphoto *
-            (rc_exdf[, cc_column_name] - (1 - 3 * rc_exdf[, 'alpha'] / 2) * rc_exdf[, 'Gamma_star']) /
+            (rc_exdf[, cc_column_name] - (1 - 3 * rc_exdf[, 'alpha_g'] / 2) * rc_exdf[, 'Gamma_star']) /
             (3 * (rc_exdf[, cc_column_name] - rc_exdf[, 'Gamma_star']))
 
         # Return the estimates
         c(
-            mean(rc_exdf[, 'alpha']),
+            mean(rc_exdf[, 'alpha_g']),
             mean(rc_exdf[, 'Gamma_star']),
             max(j_estimates),
             rd_estimate,

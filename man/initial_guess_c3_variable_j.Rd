@@ -17,7 +17,7 @@
 
 \usage{
   initial_guess_c3_variable_j(
-    alpha,
+    alpha_g,
     Gamma_star,
     cc_threshold_rd = 100,
     Oc = 210000,
@@ -37,13 +37,13 @@
 }
 
 \arguments{
-  \item{alpha}{
+  \item{alpha_g}{
     A dimensionless parameter greater than or equal to 0 and less than or equal
     to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast. \code{alpha} is often assumed to be 0. If \code{alpha} is not
-    a number, then there must be a column in \code{rc_exdf} called \code{alpha}
+    chloroplast. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not
+    a number, then there must be a column in \code{rc_exdf} called \code{alpha_g}
     with appropriate units. A numeric value supplied here will overwrite the
-    values in the \code{alpha} column of \code{rc_exdf} if it exists.
+    values in the \code{alpha_g} column of \code{rc_exdf} if it exists.
   }
 
   \item{Gamma_star}{
@@ -132,7 +132,7 @@
 
 \details{
   The variable J method is a fitting procedure for estimating values of
-  \code{alpha}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
+  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
   \code{TPU}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve +
   chlorophyll fluorescence. For more information about these parameters, see the
   documentation at \code{\link{calculate_c3_variable_j}} and
@@ -154,7 +154,7 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with six elements, representing the
-  values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
+  values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
   \code{TPU}, and \code{Vcmax_at_25} (in that order).
 }
 
@@ -182,9 +182,9 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Create the guessing function; here we set alpha = 0 and use the
+# Create the guessing function; here we set alpha_g = 0 and use the
 # temperature-dependent values of Gamma_star calculated above
-guessing_func <- initial_guess_c3_variable_j(alpha = 0, Gamma_star = '')
+guessing_func <- initial_guess_c3_variable_j(alpha_g = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))

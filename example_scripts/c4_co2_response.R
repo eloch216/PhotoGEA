@@ -339,7 +339,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
         fit_c4_aci,
         Ca_atmospheric = 420,
-        alpha = 0,
+        alpha_g = 0,
         gbs = 0,
         Rm_frac = 1
     ))

@@ -184,8 +184,8 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{exdf_obj} of the same name; and a numeric value means that
     the parameter will be set to that value. For example, \code{fit_options =
-    list(alpha = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
-    \code{alpha} will be set to 0, \code{Vcmax_at_25} will be fit, and
+    list(alpha_g = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
+    \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit, and
     \code{TPU} will be set to the values in the \code{TPU} column of
     \code{exdf_obj}.
   }
@@ -227,12 +227,12 @@
   This function calls \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}} to calculate values of net
   assimilation. The user-supplied optimization function is used to vary the
-  values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
+  values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
   \code{TPU}, and \code{Vcmax_at_25} to find ones that best reproduce the
   experimentally measured values of net assimilation. By default, the following
   options are used for the fits:
   \itemize{
-    \item \code{alpha}: lower = 0, upper = 1, fit_option = 0
+    \item \code{alpha_g}: lower = 0, upper = 1, fit_option = 0
     \item \code{Gamma_star}: lower = 0, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
     \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
@@ -240,7 +240,7 @@
     \item \code{TPU}: lower = 0, upper = 40, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
   }
-  With these settings, \code{alpha} is set to 0, values of \code{Gamma_star} are
+  With these settings, \code{alpha_g} is set to 0, values of \code{Gamma_star} are
   taken from the \code{Gamma_star} column of \code{replicate_exdf}, and the
   other parameters are fit during the process (see \code{fit_options} above).
 
@@ -248,7 +248,7 @@
   \code{\link{initial_guess_c3_variable_j}} as follows:
   \itemize{
     \item \code{cc_threshold_rd} is set to 100 micromol / mol.
-    \item If \code{alpha} is being fit, the \code{alpha} argument of
+    \item If \code{alpha_g} is being fit, the \code{alpha_g} argument of
           \code{initial_guess_c3_aci} is set to 0.5; otherwise, the argument is
           set to the value specified by the fit options.
     \item If \code{Gamma_star} is being fit, the \code{Gamma_star} argument of

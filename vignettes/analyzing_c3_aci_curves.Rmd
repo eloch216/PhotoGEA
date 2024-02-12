@@ -109,13 +109,13 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-alpha <- 0
+alpha_g <- 0
 J <- 200
 Rd <- 1.8
 TPU <- 18
 Vcmax <- 125
 
-assim <- calculate_c3_assimilation(inputs, alpha, '', J, Rd, TPU, Vcmax)
+assim <- calculate_c3_assimilation(inputs, alpha_g, '', J, Rd, TPU, Vcmax)
 
 c3_col <- rev(multi_curve_colors()[1:4])
 
@@ -166,7 +166,7 @@ identical to the ones used to generate the previous figure.
 ```{r, echo = FALSE}
 assim_curvature <- calculate_c3_assimilation(
   inputs,
-  alpha,
+  alpha_g,
   '',
   J,
   Rd,

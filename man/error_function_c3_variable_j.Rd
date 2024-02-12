@@ -49,8 +49,8 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{replicate_exdf} of the same name; and a numeric value means
     that the parameter will be set to that value. For example,
-    \code{fit_options = list(alpha = 0, Vcmax_at_25 = 'fit', TPU = 'column')}
-    means that \code{alpha} will be set to 0, \code{Vcmax_at_25} will be fit,
+    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', TPU = 'column')}
+    means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
     and \code{TPU} will be set to the values in the \code{TPU} column of
     \code{replicate_exdf}.
   }
@@ -164,7 +164,7 @@
 \details{
   When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
   method, it is necessary to define a function that calculates the sum of
-  squared residuals for a given set of \code{alpha}, \code{Gamma_star},
+  squared residuals for a given set of \code{alpha_g}, \code{Gamma_star},
   \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{TPU}, and
   \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
   This function will be passed to an optimization algorithm which will determine

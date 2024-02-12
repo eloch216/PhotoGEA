@@ -166,8 +166,8 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{exdf_obj} of the same name; and a numeric value means that
     the parameter will be set to that value. For example, \code{fit_options =
-    list(alpha = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
-    \code{alpha} will be set to 0, \code{Vcmax_at_25} will be fit, and
+    list(alpha_g = 0, Vcmax_at_25 = 'fit', TPU = 'column')} means that
+    \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit, and
     \code{TPU} will be set to the values in the \code{TPU} column of
     \code{exdf_obj}.
   }
@@ -203,19 +203,19 @@
 \details{
   This function calls \code{\link{calculate_c3_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{alpha}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
+  vary the values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{TPU},
   and \code{Vcmax_at_25} to find ones that best reproduce the experimentally
   measured values of net assimilation. By default, the following options are
   used for the fits:
   \itemize{
-    \item \code{alpha}: lower = 0, upper = 1, fit_option = 0
+    \item \code{alpha_g}: lower = 0, upper = 1, fit_option = 0
     \item \code{Gamma_star}: lower = 0, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
     \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
     \item \code{TPU}: lower = 0, upper = 40, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
   }
-  With these settings, \code{alpha} is set to 0, values of \code{Gamma_star} are
+  With these settings, \code{alpha_g} is set to 0, values of \code{Gamma_star} are
   taken from the \code{Gamma_star} column of \code{replicate_exdf}, and the
   other parameters are fit during the process (see \code{fit_options} above).
 
@@ -223,7 +223,7 @@
   \code{\link{initial_guess_c3_aci}} as follows:
   \itemize{
     \item \code{cc_threshold_rd} is set to 100 micromol / mol.
-    \item If \code{alpha} is being fit, the \code{alpha} argument of
+    \item If \code{alpha_g} is being fit, the \code{alpha_g} argument of
           \code{initial_guess_c3_aci} is set to 0.5; otherwise, the argument is
           set to the value specified by the fit options.
     \item If \code{Gamma_star} is being fit, the \code{Gamma_star} argument of
@@ -251,7 +251,7 @@
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
-  parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha} & \code{TPU})
+  parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha_g} & \code{TPU})
   will be unreliable. If \code{remove_unreliable_param} is \code{TRUE}, such
   values will be set to \code{NA} in the outputs from \code{fit_c3_aci}.
 
@@ -285,7 +285,7 @@
                   the \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
                   columns.
             \item The other outputs from \code{\link{calculate_c3_assimilation}}
-                  will be stored in columns with the usual names: \code{alpha},
+                  will be stored in columns with the usual names: \code{alpha_g},
                   \code{TPU}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
                   \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
                   \code{Aj}, and \code{Ap}.
@@ -297,7 +297,7 @@
                   are each the smallest potential carboxylation are stored in
                   the \code{n_Wc_smallest}, \code{n_Wj_smallest}, and
                   \code{n_Wp_smallest} columns.
-            \item The best-fit values are stored in the \code{alpha},
+            \item The best-fit values are stored in the \code{alpha_g},
                   \code{TPU}, \code{J_at_25}, \code{Rd_at_25}, and
                   \code{Vcmax_at_25} columns.
             \item For parameters that depend on leaf temperature, the average
@@ -358,12 +358,12 @@ one_result <- fit_c3_aci(
   Ca_atmospheric = 420
 )
 
-# We can fit the same curve, but also allow alpha and Gamma_star to vary, and
+# We can fit the same curve, but also allow alpha_g and Gamma_star to vary, and
 # calculate confidence intervals
 one_result_v2 <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  fit_options = list(Gamma_star = 'fit', alpha = 'fit'),
+  fit_options = list(Gamma_star = 'fit', alpha_g = 'fit'),
   calculate_confidence_intervals = TRUE
 )
 

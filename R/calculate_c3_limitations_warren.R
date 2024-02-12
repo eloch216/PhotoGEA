@@ -7,21 +7,16 @@ calculate_c3_limitations_warren <- function(
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
-    alpha = 0.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
-    j_column_name = 'J_at_25',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
-    rd_column_name = 'Rd_at_25',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
-    tpu_column_name = 'TPU',
-    vcmax_column_name = 'Vcmax_at_25',
     vcmax_norm_column_name = 'Vcmax_norm'
 )
 {
@@ -31,29 +26,29 @@ calculate_c3_limitations_warren <- function(
     }
 
     # Make sure the required variables are defined and have the correct units.
-    # We don't need to check all of them, since calculate_c3_assimilation will
-    # perform checks.
     required_variables <- list()
-    required_variables[['Gamma_star']]      <- unit_dictionary[['Gamma_star']]
-    required_variables[[ca_column_name]]    <- 'micromol mol^(-1)'
-    required_variables[[cc_column_name]]    <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]]    <- 'micromol mol^(-1)'
-    required_variables[[j_column_name]]     <- 'micromol m^(-2) s^(-1)'
-    required_variables[[rd_column_name]]    <- 'micromol m^(-2) s^(-1)'
-    required_variables[[tpu_column_name]]   <- 'micromol m^(-2) s^(-1)'
-    required_variables[[vcmax_column_name]] <- 'micromol m^(-2) s^(-1)'
+    required_variables[['alpha_g']]                  <- unit_dictionary[['alpha_g']]
+    required_variables[['Gamma_star']]               <- unit_dictionary[['Gamma_star']]
+    required_variables[['J_at_25']]                  <- unit_dictionary[['J_at_25']]
+    required_variables[['Rd_at_25']]                 <- unit_dictionary[['Rd_at_25']]
+    required_variables[['TPU']]                      <- unit_dictionary[['TPU']]
+    required_variables[['Vcmax_at_25']]              <- unit_dictionary[['Vcmax_at_25']]
+    required_variables[[ca_column_name]]             <- unit_dictionary[['Ca']]
+    required_variables[[cc_column_name]]             <- unit_dictionary[['Cc']]
+    required_variables[[ci_column_name]]             <- unit_dictionary[['Ci']]
+    required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
+    required_variables[[kc_column_name]]             <- unit_dictionary[['Kc']]
+    required_variables[[ko_column_name]]             <- unit_dictionary[['Ko']]
+    required_variables[[rd_norm_column_name]]        <- unit_dictionary[['Rd_norm']]
+    required_variables[[total_pressure_column_name]] <- unit_dictionary[['total_pressure']]
+    required_variables[[vcmax_norm_column_name]]     <- unit_dictionary[['Vcmax_norm']]
 
     check_required_variables(exdf_obj, required_variables)
 
     # Extract key variables to make the following equations simpler
-    Ca         <- exdf_obj[, ca_column_name]    # micromol / mol
-    Cc         <- exdf_obj[, cc_column_name]    # micromol / mol
-    Ci         <- exdf_obj[, ci_column_name]    # micromol / mol
-    Gamma_star <- exdf_obj[, 'Gamma_star']      # micromol / mol
-    J          <- exdf_obj[, j_column_name]     # micromol / m^2 / s
-    Rd         <- exdf_obj[, rd_column_name]    # micromol / m^2 / s
-    TPU        <- exdf_obj[, tpu_column_name]   # micromol / m^2 / s
-    Vcmax      <- exdf_obj[, vcmax_column_name] # micromol / m^2 / s
+    Ca <- exdf_obj[, ca_column_name]    # micromol / mol
+    Cc <- exdf_obj[, cc_column_name]    # micromol / mol
+    Ci <- exdf_obj[, ci_column_name]    # micromol / mol
 
     # If gsc is as measured and gmc is infinite, we have the measured drawdown
     # across the stomata, but no drawdown across the mesophyll:
@@ -75,31 +70,29 @@ calculate_c3_limitations_warren <- function(
     # Make a helping function for calculating assimilation rates for different
     # Cc column names
     an_from_cc <- function(cc_name) {
-        sapply(seq_len(nrow(exdf_obj)), function(i) {
-            calculate_c3_assimilation(
-                exdf_obj[i, , TRUE],
-                J[i],
-                Gamma_star[i],
-                Rd[i],
-                TPU[i],
-                Vcmax[i],
-                POc = POc,
-                atp_use = atp_use,
-                nadph_use = nadph_use,
-                alpha = alpha,
-                curvature_cj = curvature_cj,
-                curvature_cjp = curvature_cjp,
-                cc_column_name = cc_name,
-                j_norm_column_name = j_norm_column_name,
-                kc_column_name = kc_column_name,
-                ko_column_name = ko_column_name,
-                rd_norm_column_name = rd_norm_column_name,
-                total_pressure_column_name = total_pressure_column_name,
-                vcmax_norm_column_name = vcmax_norm_column_name,
-                perform_checks = TRUE,
-                return_exdf = FALSE
-            )[['An']]
-        })
+        calculate_c3_assimilation(
+            exdf_obj,
+            '', # alpha_g
+            '', # Gamma_star
+            '', # J_at_25
+            '', # Rd_at_25
+            '', # TPU
+            '', # Vcmax_at_25
+            POc = POc,
+            atp_use = atp_use,
+            nadph_use = nadph_use,
+            curvature_cj = curvature_cj,
+            curvature_cjp = curvature_cjp,
+            cc_column_name = cc_name,
+            j_norm_column_name = j_norm_column_name,
+            kc_column_name = kc_column_name,
+            ko_column_name = ko_column_name,
+            rd_norm_column_name = rd_norm_column_name,
+            total_pressure_column_name = total_pressure_column_name,
+            vcmax_norm_column_name = vcmax_norm_column_name,
+            perform_checks = FALSE,
+            return_exdf = TRUE
+        )[, 'An']
     }
 
     # Calculate the net assimilation rate assuming gmc and gsc are as measured

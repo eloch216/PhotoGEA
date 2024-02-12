@@ -1,6 +1,6 @@
 calculate_c3_assimilation <- function(
     exdf_obj,
-    alpha,        # dimensionless      (this value is sometimes being fitted)
+    alpha_g,      # dimensionless      (this value is sometimes being fitted)
     Gamma_star,   # micromol / mol     (this value is sometimes being fitted)
     J_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Rd_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
@@ -38,7 +38,7 @@ calculate_c3_assimilation <- function(
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(
-            alpha = alpha,
+            alpha_g = alpha_g,
             Gamma_star = Gamma_star,
             J_at_25 = J_at_25,
             Rd_at_25 = Rd_at_25,
@@ -70,7 +70,7 @@ calculate_c3_assimilation <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
-    if (!value_set(alpha))       {alpha       <- exdf_obj[, 'alpha']}
+    if (!value_set(alpha_g))     {alpha_g     <- exdf_obj[, 'alpha_g']}
     if (!value_set(Gamma_star))  {Gamma_star  <- exdf_obj[, 'Gamma_star']}
     if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
     if (!value_set(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
@@ -95,16 +95,16 @@ calculate_c3_assimilation <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(alpha < 0 | alpha > 1)) {msg <- append(msg, 'alpha must be >= 0 and <= 1')}
-    if (any(Cc < 0))                {msg <- append(msg, 'Cc must be >= 0')}
-    if (any(Gamma_star < 0))        {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(J_at_25 < 0))           {msg <- append(msg, 'J_at_25 must be >= 0')}
-    if (any(Kc < 0))                {msg <- append(msg, 'Kc must be >= 0')}
-    if (any(Ko < 0))                {msg <- append(msg, 'Ko must be >= 0')}
-    if (any(pressure < 0))          {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Rd_at_25 < 0))          {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(TPU < 0))               {msg <- append(msg, 'TPU must be >= 0')}
-    if (any(Vcmax_at_25 < 0))       {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE)) {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
+    if (any(Cc < 0, na.rm = TRUE))                    {msg <- append(msg, 'Cc must be >= 0')}
+    if (any(Gamma_star < 0, na.rm = TRUE))            {msg <- append(msg, 'Gamma_star must be >= 0')}
+    if (any(J_at_25 < 0, na.rm = TRUE))               {msg <- append(msg, 'J_at_25 must be >= 0')}
+    if (any(Kc < 0, na.rm = TRUE))                    {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0, na.rm = TRUE))                    {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE))              {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Rd_at_25 < 0, na.rm = TRUE))              {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(TPU < 0, na.rm = TRUE))                   {msg <- append(msg, 'TPU must be >= 0')}
+    if (any(Vcmax_at_25 < 0, na.rm = TRUE))           {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
 
     msg <- paste(msg, collapse = '. ')
 
@@ -122,8 +122,8 @@ calculate_c3_assimilation <- function(
     Wj <- PCc * J_tl / (atp_use * PCc + nadph_use * Gamma_star)
 
     # TPU-limited carboxylation (micromol / m^2 / s)
-    Wp <- PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha))
-    Wp[PCc <= Gamma_star * (1 + 3 * alpha)] <- Inf
+    Wp <- PCc * 3 * TPU / (PCc - Gamma_star * (1 + 3 * alpha_g))
+    Wp[PCc <= Gamma_star * (1 + 3 * alpha_g)] <- Inf
 
     # Co-limitation between Wc and Wj
     a_cj <- curvature_cj
@@ -162,7 +162,7 @@ calculate_c3_assimilation <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
-            alpha = alpha,
+            alpha_g = alpha_g,
             Gamma_star = Gamma_star,
             J_tl = J_tl,
             Rd_tl = Rd_tl,
@@ -181,7 +181,7 @@ calculate_c3_assimilation <- function(
 
         document_variables(
             output,
-            c('calculate_c3_assimilation', 'alpha',               'dimensionless'),
+            c('calculate_c3_assimilation', 'alpha_g',             'dimensionless'),
             c('calculate_c3_assimilation', 'Gamma_star',          'micromol mol^(-1)'),
             c('calculate_c3_assimilation', 'J_tl',                'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Rd_tl',               'micromol m^(-2) s^(-1)'),
