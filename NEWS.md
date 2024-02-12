@@ -32,7 +32,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
 
 - Added new options for adding penalties to the error function during Variable J
   fits, that enable the user to selectively penalize negative or unreasonably
@@ -98,6 +98,8 @@ be directly added to this file to describe the related changes.
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/85
   - https://github.com/eloch216/PhotoGEA/pull/86
+  - https://github.com/eloch216/PhotoGEA/pull/88
+  - https://github.com/eloch216/PhotoGEA/pull/89
 
 ## CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)
 

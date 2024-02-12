@@ -8,6 +8,7 @@
   Calculates confidence intervals for parameters estimated by a C3 A-Ci curve
   fit. It is rare for users to call this function directly, because it can be
   automatically applied to each curve when calling \code{\link{fit_c3_aci}}.
+  Use this feature with caution, as it is under development.
 }
 
 \usage{
