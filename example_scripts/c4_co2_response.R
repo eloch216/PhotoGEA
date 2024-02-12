@@ -93,7 +93,7 @@ if (PERFORM_CALCULATIONS) {
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(7)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8,9)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove points where the Licor stability criteria were not
@@ -104,7 +104,7 @@ REMOVE_UNSTABLE_POINTS <- FALSE
 CI_UPPER_LIMIT <- Inf # ppm
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Decide whether to remove statistical outliers
 REMOVE_STATISTICAL_OUTLIERS <- FALSE
@@ -117,6 +117,9 @@ CALCULATE_BASIC_STATS <- TRUE
 
 # Decide whether to average over plots
 AVERAGE_OVER_PLOTS <- FALSE
+
+# Decide whether to save CSV outputs
+SAVE_CSV <- TRUE
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -241,7 +244,12 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(event = 'WT', replicate = '10', obs = 15)
+        list(line_sample = 'WT 10', seq_num = c(1, 14)),
+        list(line_sample = '25 10', seq_num = 14),
+        list(line_sample = '3 8',   seq_num = 14),
+        list(event = "zg12a", replicate = '1', seq_num = 7),
+        list(event = "WT", replicate = '5')
+        #list(event = 'WT', replicate = '10', obs = 15)
         #list(event = 'WT', replicate = '2a-1', obs = 29),
         #list(event = '3', replicate = '1', seq_num = 5)
         #list(event = 'zg5b', replicate = '1', plot = '5', seq_num = 2),
@@ -493,18 +501,21 @@ x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
 event_colors <- rev(multi_curve_colors()[seq_len(length(levels(all_samples[, EVENT_COLUMN_NAME])))])
 
-ci_lim <- c(0, 1000)
+ci_lim <- c(0, 1300)
 a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
+gsw_lim <- c(0, 0.5)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 iWUE_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)\n(error bars: standard error of the mean for same CO2 setpoint)"
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+gsw_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
   a_plot = list(all_samples[['A']],    x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,    xlim = ci_lim, ylim = a_lim),
-  iwue_plot = list(all_samples[['iWUE']], x_ci, x_s, x_e, xlab = ci_lab, ylab = iWUE_lab, xlim = ci_lim)
+  iwue_plot = list(all_samples[['iWUE']], x_ci, x_s, x_e, xlab = ci_lab, ylab = iWUE_lab, xlim = ci_lim),
+  gsw_plot = list(all_samples[['gsw']], x_ci, x_s, x_e, xlab = ci_lab, ylab = gsw_lab, xlim = ci_lim, ylim = gsw_lim)
 )
 
 if (INCLUDE_FLUORESCENCE) {
@@ -654,3 +665,27 @@ invisible(lapply(plot_param, function(x) {
   dev.new()
   print(do.call(barchart_with_errorbars, x))
 }))
+
+if (SAVE_CSV) {
+  base_dir <- getwd()
+  if (interactive() & .Platform$OS.type == "windows") {
+    base_dir <- choose.dir(caption="Select folder for output files")
+  }
+  
+  all_samples_col <- c(
+    UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME, 'iWUE', 'Ci', 'gsw', 'A'
+  )
+  
+  all_samples_one_point_subset <- all_samples_one_point[, all_samples_col]
+  
+  param_col <- c(
+    UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME, 'Vmax_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25'
+  )
+  
+  all_fit_parameters_subset <- all_fit_parameters[, param_col]
+  
+  write.csv(all_samples_one_point, file = file.path(base_dir, 'all_samples_one_point.csv'), row.names = FALSE)
+  write.csv(all_samples_one_point_subset, file = file.path(base_dir, 'all_samples_one_point_subset.csv'), row.names = FALSE)
+  write.csv(all_fit_parameters, file = file.path(base_dir, 'all_fit_parameters.csv'), row.names = FALSE)
+  write.csv(all_fit_parameters_subset, file = file.path(base_dir, 'all_fit_parameters_subset.csv'), row.names = FALSE)
+}
