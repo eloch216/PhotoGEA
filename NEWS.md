@@ -67,15 +67,34 @@ be directly added to this file to describe the related changes.
       fixed values or to values from a column of an exdf object.
     - Unknown parameters are now provided in alphabetical order when applicable
       (such as the first input arguments to `calculate_c3_assimilation`).
+  - The functions are more tolerant to curves with severe problems (such as
+    negative Ci) that prevent a good fit from being found; rather than throwing
+    an error, the fit functions now silently return `NA` for all results, along
+    with a message explaining the issue.
 - Added a function for estimating `Rd` with the Laisk method:
   `calculate_rd_laisk`
 - A "unit dictionary" was added for internal use; this may be expanded and used
   more often in the future.
+- Renamed several variables and input arguments:
+  - Licor files contain a column called `alpha`, and several different "alphas"
+    were used throughout `PhotoGEA`. To avoid confusion, the values in
+    `PhotoGEA` were renamed as follows:
+    - `alpha_g`: used in C3 assimilation calculations
+    - `alpha_pr`: used in Gamma_star calculations
+    - `alpha_psii`: used in C4 assimilation calculations
+  - The acronym "TPU" was used to refer to a process (triose phosphate
+    utilization) and the maximum rate of that process. To avoid confusion, the
+    rate parameter was renamed to `Tp`
 - Tests were added for several functions:
   - `calculate_c3_assimilation`
   - `fit_c3_aci`
   - `fit_c3_variable_j`
   - `fit_c4_aci`
+  - `calculate_c3_limitations_grassi`
+  - `calculate_c3_limitations_warren`
+- The `read_gasex_file` function now automatically includes the filename as a
+  column in the resulting `exdf` object; this helps with troubleshooting
+  problematic curves or files.
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/85
   - https://github.com/eloch216/PhotoGEA/pull/86
