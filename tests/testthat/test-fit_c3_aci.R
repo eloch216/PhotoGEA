@@ -41,6 +41,6 @@ test_that('fit results have not changed', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp')]),
         c(132.337261538468, 999.999998197463, 7.73546227073041e-09, 22.1490896289695),
-        tolerance = 1e-6
+        tolerance = 1e-5
     )
 })

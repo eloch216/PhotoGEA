@@ -4,7 +4,8 @@ confidence_intervals_c4_aci <- function(
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    sd_A = 1,
+    error_threshold_factor = 0.147,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
@@ -30,6 +31,7 @@ confidence_intervals_c4_aci <- function(
     error_function <- error_function_c4_aci(
         replicate_exdf,
         fit_options,
+        sd_A,
         ao_column_name,
         a_column_name,
         gamma_star_column_name,

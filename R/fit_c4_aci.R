@@ -21,6 +21,7 @@ fit_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
+    sd_A = 1,
     POm = 210000,   # microbar
     gbs = 0.003,    # mol / m^2 / s / bar
     Rm_frac = 0.5,  # dimensionless
@@ -29,7 +30,7 @@ fit_c4_aci <- function(
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     calculate_confidence_intervals = FALSE
 )
 {
@@ -42,6 +43,7 @@ fit_c4_aci <- function(
     total_error_fcn <- error_function_c4_aci(
         replicate_exdf,
         fit_options,
+        sd_A,
         ao_column_name,
         a_column_name,
         gamma_star_column_name,
@@ -59,7 +61,7 @@ fit_c4_aci <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c3_aci
+    # most units have already been chcked by error_function_c4_aci
     required_variables <- list()
     required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
@@ -283,6 +285,7 @@ fit_c4_aci <- function(
             lower,
             upper,
             fit_options,
+            sd_A,
             error_threshold_factor,
             ao_column_name,
             a_column_name,

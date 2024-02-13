@@ -1,6 +1,7 @@
 error_function_c4_aci <- function(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
@@ -43,10 +44,13 @@ error_function_c4_aci <- function(
 
     required_variables <- require_flexible_param(
         required_variables,
-        fit_options[fit_options != 'fit']
+        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
     )
 
     check_required_variables(replicate_exdf, required_variables)
+
+    # Retrieve values of flexible parameters as necessary
+    if (!value_set(sd_A)) {sd_A <- exdf_obj[, 'sd_A']}
 
     # Create and return the error function
     function(guess) {
@@ -87,6 +91,14 @@ error_function_c4_aci <- function(
             return(ERROR_PENALTY)
         }
 
-        sum((replicate_exdf[, a_column_name] - assim)^2)
+        # return the negative of the logarithm of the likelihood
+        -sum(
+            stats::dnorm(
+                replicate_exdf[, a_column_name],
+                mean = assim,
+                sd = sd_A,
+                log = TRUE
+            )
+        )
     }
 }

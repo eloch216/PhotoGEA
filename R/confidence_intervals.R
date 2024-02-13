@@ -24,40 +24,47 @@ confidence_interval_all_param <- function(
 
     # Find intervals for each fit parameter
     for (i in seq_along(param_to_fit)) {
-        if (param_to_fit[i]) {
-            # Find limits
-            lim <- confidence_interval_one_param(
+        # Get the parameter name
+        pn <- names(fit_options)[i]
+        pn_lower <- paste0(pn, '_lower')
+        pn_upper <- paste0(pn, '_upper')
+
+        # Find the limits
+        lim <- if (param_to_fit[i]) {
+            # This parameter was fit, so find the confidence limits
+            confidence_interval_one_param(
                 i,
                 error_function,
                 param_to_fit,
                 best_fit_vector,
-                best_error * error_threshold_factor,
+                best_error - log(error_threshold_factor),
                 lower[i],
                 upper[i]
             )
-
-            # Get the parameter name
-            pn <- names(fit_options)[i]
-            pn_lower <- paste0(pn, '_lower')
-            pn_upper <- paste0(pn, '_upper')
-
-            # Store the results
-            best_fit_parameters <- set_variable(
-                best_fit_parameters,
-                pn_lower,
-                best_fit_parameters$units[, pn],
-                category_name,
-                lim$conf_lower
-            )
-
-            best_fit_parameters <- set_variable(
-                best_fit_parameters,
-                pn_upper,
-                best_fit_parameters$units[, pn],
-                category_name,
-                lim$conf_upper
+        } else {
+            # This parameter was not fit, so just return NA for the limits
+            list(
+                conf_lower = NA,
+                conf_upper = NA
             )
         }
+
+        # Store the results
+        best_fit_parameters <- set_variable(
+            best_fit_parameters,
+            pn_lower,
+            best_fit_parameters$units[, pn],
+            category_name,
+            lim$conf_lower
+        )
+
+        best_fit_parameters <- set_variable(
+            best_fit_parameters,
+            pn_upper,
+            best_fit_parameters$units[, pn],
+            category_name,
+            lim$conf_upper
+        )
     }
 
     best_fit_parameters
@@ -105,6 +112,11 @@ confidence_interval_one_param <- function(
         },
         error = function(e) {Inf}
     )
+
+    # Adjust upper limit
+    if (conf_upper > 10 * upper_lim) {
+        conf_upper <- Inf
+    }
 
     list(
         conf_lower = conf_lower,

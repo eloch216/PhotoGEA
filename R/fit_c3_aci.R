@@ -19,6 +19,7 @@ fit_c3_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    sd_A = 1,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -30,7 +31,7 @@ fit_c3_aci <- function(
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
 )
@@ -44,6 +45,7 @@ fit_c3_aci <- function(
     total_error_fcn <- error_function_c3_aci(
         replicate_exdf,
         fit_options,
+        sd_A,
         POc,
         atp_use,
         nadph_use,
@@ -313,6 +315,7 @@ fit_c3_aci <- function(
             lower,
             upper,
             fit_options,
+            sd_A,
             error_threshold_factor,
             POc,
             atp_use,

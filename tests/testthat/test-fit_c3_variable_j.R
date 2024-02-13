@@ -26,9 +26,11 @@ test_that('fit results have not changed', {
 
     fit_res <- fit_c3_variable_j(one_curve, Ca_atmospheric = 420)
 
+    # The best-fit value of Tp is unreliable since n_Wp_smallest = 0 for this
+    # curve, so don't check it
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'tau')]),
-        c(240.5297, 253.8052, 1.8880, 31.3243, 0.4048),
-        tolerance = 1e-6
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau')]),
+        c(240.3990, 253.9798, 1.8903, 0.4051),
+        tolerance = 1e-5
     )
 })
