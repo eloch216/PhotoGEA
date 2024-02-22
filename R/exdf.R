@@ -11,15 +11,17 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
 
     # If `units` or `categories` is NULL, replace it with a default data frame
     # that has the same names as `main_data` and one row where all entries are
-    # NA.
+    # NA. Make sure that all columns are treated as strings.
     if (is.null(units)) {
         units <- main_data[1, ]
+        units[] <- lapply(units, as.character)
         units[1, ] <- NA
         row.names(units) <- NULL
     }
 
     if (is.null(categories)) {
         categories <- main_data[1, ]
+        categories[] <- lapply(categories, as.character)
         categories[1, ] <- NA
         row.names(categories) <- NULL
     }
@@ -77,6 +79,14 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
             )
         }
     }
+
+    # Make sure the units and categories are treated as strings, including any
+    # missing values, which should be replaced by a string "NA"
+    units[1, ] <- as.character(units[1, ])
+    units[1, is.na(units[1, ])] <- "NA"
+
+    categories[1, ] <- as.character(categories[1, ])
+    categories[1, is.na(categories[1, ])] <- "NA"
 
     # Make the exdf object
     new_exdf <- list(
@@ -168,6 +178,60 @@ as.data.frame.exdf <- function(x, ...) {
 
     # Store the categories and units as the first rows of the data.frame
     return(rbind(x$categories, x$units, main_data))
+}
+
+# Write the contents of an exdf object to a CSV file
+write.csv.exdf <- function(x, file, ...) {
+    if (!is.exdf(x)) {
+        stop('write.csv.exdf requires an exdf object')
+    }
+
+    arg_list <- list(...)
+
+    forbidden_arg <- c('sep', 'dec', 'qmethod', 'row.names', 'col.names')
+
+    if (any(forbidden_arg %in% names(arg_list))) {
+        stop(
+            'The following arguments cannot be specified when calling ',
+            'write.csv.exdf: ', paste(forbidden_arg, collapse = ', ')
+        )
+    }
+
+    utils::write.table(
+        x,
+        file = file,
+        sep = ',',
+        dec = '.',
+        qmethod = 'double',
+        row.names = FALSE,
+        col.names = colnames(x)
+    )
+
+}
+
+# Read a CSV file that was created by calling `write.csv.exdf`
+read.csv.exdf <- function(file, ...) {
+    arg_list <- list(...)
+
+    forbidden_arg <- c('header', 'tryLogical', 'skip', 'nrows')
+
+    if (any(forbidden_arg %in% names(arg_list))) {
+        stop(
+            'The following arguments cannot be specified when calling ',
+            '`read.csv.exdf`: ', paste(forbidden_arg, collapse = ', ')
+        )
+    }
+
+    cnames     <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 0, nrows = 1, ...)
+    categories <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 1, nrows = 1, ...)
+    units      <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 2, nrows = 1, ...)
+    dataf      <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 3, ...)
+
+    colnames(dataf)      <- cnames
+    colnames(units)      <- cnames
+    colnames(categories) <- cnames
+
+    exdf(dataf, units, categories, file_name = file)
 }
 
 # Define a helper function for making nice column names (used to improve `print`
