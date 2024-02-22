@@ -29,6 +29,7 @@
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
+    sd_A = 'RMSE',
     POm = 210000,
     gbs = 0.003,
     Rm_frac = 0.5,
@@ -113,6 +114,12 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
+  }
+
+  \item{sd_A}{
+    A value of the standard deviation of measured \code{A} values, or the name
+    of a method for determining the deviation; currently, the only supported
+    option is \code{'RMSE'}.
   }
 
   \item{POm}{

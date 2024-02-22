@@ -21,7 +21,7 @@ fit_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    sd_A = 1,
+    sd_A = 'RMSE',
     POm = 210000,   # microbar
     gbs = 0.003,    # mol / m^2 / s / bar
     Rm_frac = 0.5,  # dimensionless
@@ -38,12 +38,16 @@ fit_c4_aci <- function(
         stop('fit_c4_aci requires an exdf object')
     }
 
+    if (sd_A != 'RMSE') {
+        stop('At this time, the only supported option for sd_A is `RMSE`')
+    }
+
     # Define the total error function; units will also be checked by this
     # function
     total_error_fcn <- error_function_c4_aci(
         replicate_exdf,
         fit_options,
-        sd_A,
+        1, # sd_A
         ao_column_name,
         a_column_name,
         gamma_star_column_name,
@@ -247,7 +251,6 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val']         <- optim_result[['value']]
     replicate_identifiers[, 'c4_assimilation_msg'] <- replicate_exdf[1, 'c4_assimilation_msg']
 
     # Store the results
@@ -255,6 +258,27 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'operating_PCm']      <- operating_point_info$operating_PCm
     replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
     replicate_identifiers[, 'operating_An_model'] <- operating_An_model
+
+    # Get an updated likelihood value using the RMSE
+    replicate_identifiers[, 'optimum_val'] <- error_function_c4_aci(
+        replicate_exdf,
+        fit_options,
+        replicate_identifiers[, 'RMSE'], # sd_A
+        ao_column_name,
+        a_column_name,
+        gamma_star_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        POm,
+        gbs,
+        Rm_frac,
+        alpha_psii
+    )(best_X[param_to_fit])
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
@@ -285,7 +309,7 @@ fit_c4_aci <- function(
             lower,
             upper,
             fit_options,
-            sd_A,
+            replicate_identifiers[, 'RMSE'], # sd_A
             error_threshold_factor,
             ao_column_name,
             a_column_name,

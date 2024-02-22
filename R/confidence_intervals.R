@@ -13,14 +13,14 @@ confidence_interval_all_param <- function(
     fit_options <- luf$fit_options
     param_to_fit <- luf$param_to_fit
 
-    # Get the best-fit error value
-    best_error <- best_fit_parameters[, 'optimum_val']
-
     # Get the best-fit parameters as a numeric vector
     best_fit_vector <- sapply(names(fit_options), function(pn) {
         best_fit_parameters[, pn]
     })
     best_fit_vector <- as.numeric(best_fit_vector)
+
+    # Get the best-fit error value
+    best_error <- error_function(best_fit_vector[param_to_fit])
 
     # Find intervals for each fit parameter
     for (i in seq_along(param_to_fit)) {

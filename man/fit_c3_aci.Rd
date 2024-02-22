@@ -27,6 +27,7 @@
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    sd_A = 'RMSE',
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -106,6 +107,12 @@
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{sd_A}{
+    A value of the standard deviation of measured \code{A} values, or the name
+    of a method for determining the deviation; currently, the only supported
+    option is \code{'RMSE'}.
   }
 
   \item{POc}{
