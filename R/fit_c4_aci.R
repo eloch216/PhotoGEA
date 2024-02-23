@@ -180,7 +180,9 @@ fit_c4_aci <- function(
     replicate_exdf <- cbind(replicate_exdf, aci)
 
     # If there was a problem, set all the fit results to NA
-    if (aci[1, 'c4_assimilation_msg'] != '') {
+    fit_failure <- aci[1, 'c4_assimilation_msg'] != ''
+
+    if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
         for (cn in colnames(aci)) {
@@ -260,25 +262,29 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'operating_An_model'] <- operating_An_model
 
     # Get an updated likelihood value using the RMSE
-    replicate_identifiers[, 'optimum_val'] <- error_function_c4_aci(
-        replicate_exdf,
-        fit_options,
-        replicate_identifiers[, 'RMSE'], # sd_A
-        ao_column_name,
-        a_column_name,
-        gamma_star_column_name,
-        kc_column_name,
-        ko_column_name,
-        kp_column_name,
-        pcm_column_name,
-        rd_norm_column_name,
-        vcmax_norm_column_name,
-        vpmax_norm_column_name,
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii
-    )(best_X[param_to_fit])
+    replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
+        NA
+    } else {
+        error_function_c4_aci(
+            replicate_exdf,
+            fit_options,
+            replicate_identifiers[, 'RMSE'], # sd_A
+            ao_column_name,
+            a_column_name,
+            gamma_star_column_name,
+            kc_column_name,
+            ko_column_name,
+            kp_column_name,
+            pcm_column_name,
+            rd_norm_column_name,
+            vcmax_norm_column_name,
+            vpmax_norm_column_name,
+            POm,
+            gbs,
+            Rm_frac,
+            alpha_psii
+        )(best_X[param_to_fit])
+    }
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(

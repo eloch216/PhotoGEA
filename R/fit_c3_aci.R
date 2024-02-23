@@ -194,7 +194,9 @@ fit_c3_aci <- function(
     replicate_exdf <- cbind(replicate_exdf, aci)
 
     # If there was a problem, set all the fit results to NA
-    if (aci[1, 'c3_assimilation_msg'] != '') {
+    fit_failure <- aci[1, 'c3_assimilation_msg'] != ''
+
+    if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
         for (cn in colnames(aci)) {
@@ -285,26 +287,30 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'n_Wp_smallest'] <- n_C3_W_smallest(aci, 'Wp')
 
     # Get an updated likelihood value using the RMSE
-    replicate_identifiers[, 'optimum_val'] <- error_function_c3_aci(
-        replicate_exdf,
-        fit_options,
-        replicate_identifiers[, 'RMSE'], # sd_A
-        POc,
-        atp_use,
-        nadph_use,
-        curvature_cj,
-        curvature_cjp,
-        a_column_name,
-        cc_column_name,
-        j_norm_column_name,
-        kc_column_name,
-        ko_column_name,
-        rd_norm_column_name,
-        total_pressure_column_name,
-        vcmax_norm_column_name,
-        cj_crossover_min,
-        cj_crossover_max
-    )(best_X[param_to_fit])
+    replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
+        NA
+    } else {
+        error_function_c3_aci(
+            replicate_exdf,
+            fit_options,
+            replicate_identifiers[, 'RMSE'], # sd_A
+            POc,
+            atp_use,
+            nadph_use,
+            curvature_cj,
+            curvature_cjp,
+            a_column_name,
+            cc_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            cj_crossover_min,
+            cj_crossover_max
+        )(best_X[param_to_fit])
+    }
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(

@@ -189,7 +189,6 @@ fit_c3_variable_j <- function(
     aci$categories[1,] <- 'fit_c3_variable_j'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
 
-
     # Get operating point information
     operating_point_info <- estimate_operating_point(
         replicate_exdf,
@@ -231,7 +230,10 @@ fit_c3_variable_j <- function(
     replicate_exdf <- cbind(replicate_exdf, aci)
 
     # If there was a problem, set all the fit results to NA
-    if (aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != '') {
+    fit_failure <-
+        aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != ''
+
+    if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
         for (cn in colnames(aci)) {
@@ -331,30 +333,34 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'n_Wp_smallest'] <- n_C3_W_smallest(aci, 'Wp')
 
     # Get an updated likelihood value using the RMSE
-    replicate_identifiers[, 'optimum_val'] <- error_function_c3_variable_j(
-        replicate_exdf,
-        fit_options,
-        replicate_identifiers[, 'RMSE'], # sd_A
-        POc,
-        atp_use,
-        nadph_use,
-        curvature_cj,
-        curvature_cjp,
-        a_column_name,
-        ci_column_name,
-        j_norm_column_name,
-        kc_column_name,
-        ko_column_name,
-        phips2_column_name,
-        qin_column_name,
-        rd_norm_column_name,
-        total_pressure_column_name,
-        vcmax_norm_column_name,
-        cj_crossover_min,
-        cj_crossover_max,
-        require_positive_gmc,
-        gmc_max
-    )(best_X[param_to_fit])
+    replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
+        NA
+    } else {
+        error_function_c3_variable_j(
+            replicate_exdf,
+            fit_options,
+            replicate_identifiers[, 'RMSE'], # sd_A
+            POc,
+            atp_use,
+            nadph_use,
+            curvature_cj,
+            curvature_cjp,
+            a_column_name,
+            ci_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            phips2_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            cj_crossover_min,
+            cj_crossover_max,
+            require_positive_gmc,
+            gmc_max
+        )(best_X[param_to_fit])
+    }
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
