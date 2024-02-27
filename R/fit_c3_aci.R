@@ -280,12 +280,6 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
     replicate_identifiers[, 'operating_An_model'] <- operating_An_model
 
-    # Attach the number of points where each potential carboxylation rate is the
-    # smallest potential carboxylation rate
-    replicate_identifiers[, 'n_Wc_smallest'] <- n_C3_W_smallest(aci, 'Wc')
-    replicate_identifiers[, 'n_Wj_smallest'] <- n_C3_W_smallest(aci, 'Wj')
-    replicate_identifiers[, 'n_Wp_smallest'] <- n_C3_W_smallest(aci, 'Wp')
-
     # Get an updated likelihood value using the RMSE
     replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
         NA
@@ -315,9 +309,6 @@ fit_c3_aci <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c3_aci',               'n_Wc_smallest',       ''),
-        c('fit_c3_aci',               'n_Wj_smallest',       ''),
-        c('fit_c3_aci',               'n_Wp_smallest',       ''),
         c('fit_c3_aci',               'alpha_g',             'dimensionless'),
         c('fit_c3_aci',               'Gamma_star',          'micromol mol^(-1)'),
         c('fit_c3_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
@@ -366,13 +357,10 @@ fit_c3_aci <- function(
         )
     }
 
-    # Return the results
-    if (remove_unreliable_param) {
-        remove_c3_unreliable_points(replicate_identifiers, replicate_exdf)
-    } else {
-        list(
-            parameters = replicate_identifiers,
-            fits = replicate_exdf
-        )
-    }
+    # Return the results, including indicators of unreliable parameter estimates
+    identify_c3_unreliable_points(
+        replicate_identifiers,
+        replicate_exdf,
+        remove_unreliable_param
+    )
 }

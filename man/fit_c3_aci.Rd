@@ -259,8 +259,16 @@
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
   parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha_g} & \code{Tp})
-  will be unreliable. If \code{remove_unreliable_param} is \code{TRUE}, such
-  values will be set to \code{NA} in the outputs from \code{fit_c3_aci}.
+  will be unreliable. It is also possible that the upper limit of the confidence
+  interval for a parameter is infinity; this also indicates an unreliable
+  parameter estimate. These criteria are used to determine the reliability of
+  each parameter estimate, which is indicated in the \code{Vcmax_trust},
+  \code{J_trust}, \code{alpha_g_trust}, and \code{Tp_trust} columns of the
+  output from \code{fit_c3_aci}, where a value of \code{0} indicates an
+  unreliable estimate and \code{1} indicates a reliable estimate. If
+  \code{remove_unreliable_param} is \code{TRUE}, the values of any parameters
+  deemed unreliable will be set to \code{NA} in the outputs from
+  \code{fit_c3_aci}.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{Cc} from the atmospheric CO2
