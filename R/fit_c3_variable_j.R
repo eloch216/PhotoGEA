@@ -389,7 +389,7 @@ fit_c3_variable_j <- function(
             lower,
             upper,
             fit_options,
-            replicate_identifiers[, 'RMSE'], # sd_A
+            if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             error_threshold_factor,
             POc,
             atp_use,

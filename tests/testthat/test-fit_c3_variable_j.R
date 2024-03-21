@@ -7,7 +7,12 @@ test_that('fit failures are handled properly', {
     set.seed(1234)
 
     fit_res_bad <- expect_silent(
-        fit_c3_variable_j(one_curve_bad, Ca_atmospheric = 420)
+        fit_c3_variable_j(
+            one_curve_bad,
+            Ca_atmospheric = 420,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = TRUE
+        )
     )
 
     expect_equal(unique(fit_res_bad$fits[, 'c3_assimilation_msg']), 'Cc must be >= 0')
@@ -17,6 +22,7 @@ test_that('fit failures are handled properly', {
     expect_true(all(is.na(fit_res_bad$fits[, 'A_fit'])))
     expect_true(all(is.na(fit_res_bad$fits[, 'gmc'])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'tau')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'J_at_25_upper', 'Rd_at_25_upper', 'Tp', 'tau_upper')])))
 })
 
 test_that('fit results have not changed', {
@@ -24,13 +30,21 @@ test_that('fit results have not changed', {
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c3_variable_j(one_curve, Ca_atmospheric = 420)
+    fit_res <- fit_c3_variable_j(
+        one_curve,
+        Ca_atmospheric = 420,
+        calculate_confidence_intervals = TRUE
+    )
 
-    # The best-fit value of Tp is unreliable since n_Wp_smallest = 0 for this
-    # curve, so don't check it
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau')]),
-        c(240.3990, 253.9798, 1.8903, 0.4051),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp')]),
+        c(240.3990, 253.9798, 1.8903, 0.4051, 37.52540),
+        tolerance = 1e-5
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'Rd_at_25_upper', 'tau_upper', 'Tp_upper')]),
+        c(247.479919, 256.512540, 1.891567, 0.408607, Inf),
         tolerance = 1e-5
     )
 })

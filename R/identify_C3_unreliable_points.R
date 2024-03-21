@@ -9,11 +9,11 @@ n_C3_W_smallest <- function(c3_assim, w_name, tol = 1e-3) {
         stop('c3_assim must be an exdf object')
     }
 
-    min_W <- pmin(c3_assim[, 'Wc'], c3_assim[, 'Wj'], c3_assim[, 'Wp'])
+    min_W <- pmin(c3_assim[, 'Wc'], c3_assim[, 'Wj'], c3_assim[, 'Wp'], na.rm = TRUE)
 
-    sum(
-        abs((c3_assim[, w_name] - min_W) / min_W) <= tol
-    )
+    rel_diff <- abs((c3_assim[, w_name] - min_W) / min_W)
+
+    sum(!is.na(rel_diff) & rel_diff <= tol)
 }
 
 identify_c3_unreliable_points <- function(
@@ -34,15 +34,15 @@ identify_c3_unreliable_points <- function(
     unreliable_n_threshold <- 1
 
     c_unreliable_npts <- parameters[, 'n_Wc_smallest'] < unreliable_n_threshold
-    c_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && parameters[, 'Vcmax_at_25_upper'] == Inf
+    c_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
     c_unreliable      <- c_unreliable_npts || c_unreliable_inf
 
     j_unreliable_npts <- parameters[, 'n_Wj_smallest'] < unreliable_n_threshold
-    j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && parameters[, 'J_at_25_upper'] == Inf
+    j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
     j_unreliable      <- j_unreliable_npts || j_unreliable_inf
 
     p_unreliable_npts <- parameters[, 'n_Wp_smallest'] < unreliable_n_threshold
-    p_unreliable_inf  <- 'Tp_upper' %in% colnames(parameters) && parameters[, 'Tp_upper'] == Inf
+    p_unreliable_inf  <- 'Tp_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Tp_upper'])
     p_unreliable      <- p_unreliable_npts || p_unreliable_inf
 
     # If we are unsure about Rubisco limitations, then the Vcmax estimates

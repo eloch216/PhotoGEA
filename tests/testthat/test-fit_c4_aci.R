@@ -11,13 +11,19 @@ test_that('fit failures are handled properly', {
     set.seed(1234)
 
     fit_res_bad <- expect_silent(
-        fit_c4_aci(one_curve_bad, Ca_atmospheric = 420)
+        fit_c4_aci(
+            one_curve_bad,
+            Ca_atmospheric = 420,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = TRUE
+        )
     )
 
     expect_equal(unique(fit_res_bad$fits[, 'c4_assimilation_msg']), 'PCm must be >= 0')
     expect_equal(fit_res_bad$parameters[, 'c4_assimilation_msg'], 'PCm must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, 'A_fit'])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')])))
 })
 
 test_that('fit results have not changed', {
@@ -25,11 +31,22 @@ test_that('fit results have not changed', {
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c4_aci(one_curve, Ca_atmospheric = 420)
+    fit_res <- fit_c4_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        calculate_confidence_intervals = TRUE,
+        remove_unreliable_param = TRUE
+    )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25')]),
         c(3.630229e+01, 1.805106e+02, 1.050525e-08),
+        tolerance = 1e-5
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
+        c(38.43572, 214.08366, 1.56802),
         tolerance = 1e-5
     )
 })

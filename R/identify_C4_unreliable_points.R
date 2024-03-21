@@ -9,11 +9,11 @@ n_C4_V_smallest <- function(c4_assim, v_name, tol = 1e-3) {
         stop('c4_assim must be an exdf object')
     }
 
-    min_V <- pmin(c4_assim[, 'Vpc'], c4_assim[, 'Vpr'])
+    min_V <- pmin(c4_assim[, 'Vpc'], c4_assim[, 'Vpr'], na.rm = TRUE)
 
-    sum(
-        abs((c4_assim[, v_name] - min_V) / min_V) <= tol
-    )
+    rel_diff <- abs((c4_assim[, v_name] - min_V) / min_V)
+
+    sum(!is.na(rel_diff) & rel_diff <= tol)
 }
 
 identify_c4_unreliable_points <- function(
@@ -33,14 +33,14 @@ identify_c4_unreliable_points <- function(
     unreliable_n_threshold <- 1
 
     pc_unreliable_npts <- parameters[, 'n_Vpc_smallest'] < unreliable_n_threshold
-    pc_unreliable_inf  <- 'Vpmax_at_25_upper' %in% colnames(parameters) && parameters[, 'Vpmax_at_25_upper'] == Inf
+    pc_unreliable_inf  <- 'Vpmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vpmax_at_25_upper'])
     pc_unreliable      <- pc_unreliable_npts || pc_unreliable_inf
 
     pr_unreliable_npts <- parameters[, 'n_Vpr_smallest'] < unreliable_n_threshold
-    pr_unreliable_inf  <- 'Vpr_upper' %in% colnames(parameters) && parameters[, 'Vpr_upper'] == Inf
+    pr_unreliable_inf  <- 'Vpr_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vpr_upper'])
     pr_unreliable      <- pr_unreliable_npts || pr_unreliable_inf
 
-    c_unreliable_inf <- 'Vcmax_at_25_upper' %in% colnames(parameters) && parameters[, 'Vcmax_at_25_upper'] == Inf
+    c_unreliable_inf <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
     c_unreliable     <- c_unreliable_inf
 
     # If we are unsure about CO2 limitations, then the Vpmax estimates should be
