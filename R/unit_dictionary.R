@@ -1,4 +1,6 @@
 # Specify standard units for some types of quantities
+conductance       <- 'mol m^(-2) s^(-1)'
+conductance_bar   <- 'mol m^(-2) s^(-1) bar^(-1)'
 dimensionless     <- 'dimensionless'
 micromol_flux     <- 'micromol m^(-2) s^(-1)'
 micromol_fraction <- 'micromol mol^(-1)'
@@ -9,6 +11,7 @@ pressure          <- 'bar'
 unit_dictionary <- list(
     a              = micromol_flux,
     alpha_g        = dimensionless,
+    alpha_psii     = dimensionless,
     Ca             = micromol_fraction,
     Cc             = micromol_fraction,
     Ci             = micromol_fraction,
@@ -17,6 +20,7 @@ unit_dictionary <- list(
     CorrFact       = NA,
     Flow           = 'micromol s^(-1)',
     Gamma_star     = micromol_fraction,
+    gbs            = conductance_bar,
     H2O_r          = millimol_fraction,
     H2O_s          = millimol_fraction,
     J_at_25        = micromol_flux,
@@ -25,6 +29,7 @@ unit_dictionary <- list(
     Ko             = millimol_fraction,
     Rd_at_25       = micromol_flux,
     Rd_norm        = 'normalized to Rd at 25 degrees C',
+    Rm_frac        = dimensionless,
     S              = 'cm^2',
     tau            = dimensionless,
     total_pressure = pressure,

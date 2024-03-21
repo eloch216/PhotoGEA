@@ -16,10 +16,7 @@ confidence_intervals_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    POm = 210000
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -42,10 +39,7 @@ confidence_intervals_c4_aci <- function(
         rd_norm_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii
+        POm
     )
 
     # Assemble lower, upper, and fit_options

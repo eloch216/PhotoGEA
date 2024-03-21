@@ -89,32 +89,50 @@ confidence_interval_one_param <- function(
         error_function(inputs) - error_threshold
     }
 
-    # Find lower limit
-    conf_lower <- tryCatch(
-        {
-            stats::uniroot(
-                erf_i,
-                c(lower_lim, best_fit_inputs[index]),
-                extendInt = 'downX'
-            )[['root']]
-        },
-        error = function(e) {-Inf}
-    )
+    # Find lower limit. If the best-fit value is NA, that means the fit failed
+    # and it won't be possible to find a confidence interval. If the best-fit
+    # value is at the lower limit, uniroot will complain; in that case, we just
+    # use the lower limit.
+    conf_lower <- if (is.na(best_fit_inputs[index])) {
+        NA
+    } else if (lower_lim >= best_fit_inputs[index]) {
+        lower_lim
+    } else {
+        tryCatch(
+            {
+                stats::uniroot(
+                    erf_i,
+                    c(lower_lim, best_fit_inputs[index]),
+                    extendInt = 'downX'
+                )[['root']]
+            },
+            error = function(e) {print(e); -Inf}
+        )
+    }
 
-    # Find upper limit
-    conf_upper <- tryCatch(
-        {
-            stats::uniroot(
-                erf_i,
-                c(best_fit_inputs[index], upper_lim),
-                extendInt = 'upX'
-            )[['root']]
-        },
-        error = function(e) {Inf}
-    )
+    # Find upper limit. If the best-fit value is NA, that means the fit failed
+    # and it won't be possible to find a confidence interval. If the best-fit
+    # value is at the upper limit, uniroot will compain; in that case, we just
+    # use the upper limit.
+    conf_upper <- if (is.na(best_fit_inputs[index])) {
+        NA
+    } else if (best_fit_inputs[index] >= upper_lim) {
+        upper_lim
+    } else {
+        tryCatch(
+            {
+                stats::uniroot(
+                    erf_i,
+                    c(best_fit_inputs[index], upper_lim),
+                    extendInt = 'upX'
+                )[['root']]
+            },
+            error = function(e) {Inf}
+        )
+    }
 
     # Adjust upper limit
-    if (conf_upper > 10 * upper_lim) {
+    if (!is.na(conf_upper) && conf_upper > 10 * upper_lim) {
         conf_upper <- Inf
     }
 

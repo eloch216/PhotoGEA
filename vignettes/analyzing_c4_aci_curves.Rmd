@@ -107,12 +107,18 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
-Rd <- 1
-Vcmax = 30
-Vpmax = 150
-Vpr = 80
+alpha_psii <- 0
+gbs <- 0.003
+Rd_at_25 <- 1
+Rm_frac <- 0.5
+Vcmax_at_25 <- 30
+Vpmax_at_25 <- 150
+Vpr <- 80
 
-assim <- calculate_c4_assimilation(inputs, Rd, Vcmax, Vpmax, Vpr)
+assim <- calculate_c4_assimilation(
+  inputs,
+  alpha_psii, gbs, Rd_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+)
 
 c4_col <- rev(multi_curve_colors()[1:4])
 
@@ -134,9 +140,10 @@ xyplot(
 
 (Note: this figure was generated using the `calculate_c4_assimilation` function
 from the `PhotoGEA` package, and it represents the photosynethetic response of a
-C~4~ leaf according to the model with `Rd` = `r Rd` `r assim$units$Rd_tl`,
-`Vpmax` = `r Vpmax` `r assim$units$Vpmax_tl`,
-`Vcmax` = `r Vcmax` `r assim$units$Vcmax_tl`,
+C~4~ leaf according to the model with
+`Rd_at_25` = `r Rd_at_25` `r assim$units$Rd_at_25`,
+`Vpmax_at_25` = `r Vpmax_at_25` `r assim$units$Vpmax_at_25`,
+`Vcmax_at_25` = `r Vcmax_at_25` `r assim$units$Vcmax_at_25`,
 `Vpr` = `r Vpr` `r assim$units$Vpr`, and a leaf temperature of
 `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response parameters were
 taken from @von_caemmerer_updating_2021.)
