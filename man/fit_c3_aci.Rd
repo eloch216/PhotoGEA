@@ -39,7 +39,7 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
   )
@@ -314,7 +314,10 @@
                   \code{n_Wp_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_g},
                   \code{Tp}, \code{J_at_25}, \code{Rd_at_25}, and
-                  \code{Vcmax_at_25} columns.
+                  \code{Vcmax_at_25} columns. If
+                  \code{calculate_confidence_intervals} is \code{TRUE}, upper
+                  and lower limits for each of these parameters will also be
+                  included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{J_tl_avg}, \code{Rd_tl_avg}, and \code{Vcmax_tl_avg}.

@@ -8,8 +8,8 @@
 
 \description{
   Creates a function that makes an initial guess of "variable J" model parameter
-  values for one curve. The returned function meets the requirements for the
-  \code{initial_guess_fun} input argument of \code{\link{fit_c3_variable_j}}.
+  values for one curve. This function is used internally by
+  \code{\link{fit_c3_variable_j}}.
 
   Values estimated by this guessing function should be considered inaccurate,
   and should always be improved upon by an optimizer.

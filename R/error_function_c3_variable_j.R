@@ -77,7 +77,7 @@ error_function_c3_variable_j <- function(
     })
 
     # Retrieve values of flexible parameters as necessary
-    if (!value_set(sd_A)) {sd_A <- exdf_obj[, 'sd_A']}
+    if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
 
     # Make a temporary copy of replicate_exdf to use for fitting, and
     # initialize its gmc and Cc columns to NA

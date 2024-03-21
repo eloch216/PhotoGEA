@@ -18,7 +18,8 @@
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    sd_A = 1,
+    error_threshold_factor = 0.147,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
@@ -29,10 +30,7 @@
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    POm = 210000
   )
 }
 
@@ -57,6 +55,11 @@
   }
 
   \item{fit_options}{
+    The same value that was passed to \code{\link{fit_c4_aci}} when generating
+    \code{best_fit_parameters}.
+  }
+
+  \item{sd_A}{
     The same value that was passed to \code{\link{fit_c4_aci}} when generating
     \code{best_fit_parameters}.
   }
@@ -125,19 +128,6 @@
     would be 21 percent O2, which is about 210000 microbar at standard
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
-  }
-
-  \item{gbs}{
-    The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
-  }
-
-  \item{Rm_frac}{
-    The fraction of the total mitochondrial respiration that occurs in the
-    mesophyll.
-  }
-
-  \item{alpha_psii}{
-    The fraction of photosystem II activity in the bundle sheath.
   }
 }
 

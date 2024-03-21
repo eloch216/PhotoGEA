@@ -19,7 +19,7 @@
     upper = list(),
     fit_options = list(),
     sd_A = 1,
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,

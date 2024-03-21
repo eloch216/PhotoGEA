@@ -14,6 +14,7 @@
   error_function_c3_variable_j(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -53,6 +54,15 @@
     means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
     and \code{Tp} will be set to the values in the \code{Tp} column of
     \code{replicate_exdf}.
+  }
+
+  \item{sd_A}{
+    The standard deviation of the measured values of the net CO2 assimilation
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
+    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
+    called \code{sd_A} with appropriate units. A numeric value supplied here
+    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
+    exists.
   }
 
   \item{POc}{

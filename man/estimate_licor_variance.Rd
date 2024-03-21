@@ -12,11 +12,11 @@
 \usage{
   estimate_licor_variance(
     exdf_obj,
-    sd_CO2_r = 1,
-    sd_CO2_s = 0.1,
-    sd_flow = 0.2,
-    sd_H2O_r = 0.5,
-    sd_H2O_s = 0.1,
+    sd_CO2_r,
+    sd_CO2_s,
+    sd_flow,
+    sd_H2O_r,
+    sd_H2O_s,
     a_column_name = 'A',
     co2_r_column_name = 'CO2_r',
     co2_s_column_name = 'CO2_s',
@@ -62,11 +62,6 @@
   }
 
   \item{co2_r_column_name}{
-    The name of the column in \code{exdf_obj} that contains the CO2
-    concentration in the reference line in \code{micromol mol^(-1)}.
-  }
-
-  \item{co2_s_column_name}{
     The name of the column in \code{exdf_obj} that contains the CO2
     concentration in the reference line in \code{micromol mol^(-1)}.
   }

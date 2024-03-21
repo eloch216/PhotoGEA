@@ -14,6 +14,7 @@
   error_function_c4_aci(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
@@ -24,10 +25,7 @@
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    POm = 210000
   )
 }
 
@@ -48,6 +46,15 @@
     Vpmax_at_25 = 'column')} means that \code{Rd_at_25} will be set to 0,
     \code{Vcmax_at_25} will be fit, and \code{Vpmax_at_25} will be set to the
     values in the \code{Vpmax_at_25} column of \code{replicate_exdf}.
+  }
+
+  \item{sd_A}{
+    The standard deviation of the measured values of the net CO2 assimilation
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
+    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
+    called \code{sd_A} with appropriate units. A numeric value supplied here
+    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
+    exists.
   }
 
   \item{ao_column_name}{
@@ -110,28 +117,15 @@
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
   }
-
-  \item{gbs}{
-    The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
-  }
-
-  \item{Rm_frac}{
-    The fraction of the total mitochondrial respiration that occurs in the
-    mesophyll.
-  }
-
-  \item{alpha_psii}{
-    The fraction of photosystem II activity in the bundle sheath.
-  }
 }
 
 \details{
   When fitting A-Ci curves, it is necessary to define a function that calculates
-  the sum of squared residuals for a given set of \code{Rd_at_25},
-  \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} values by comparing a
-  model prediction to a measured curve. This function will be passed to an
-  optimization algorithm which will determine the values that produce the
-  smallest error.
+  the sum of squared residuals for a given set of \code{alpha_psii}, \code{gbs},
+  \code{Rd_at_25}, \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
+  \code{Vpr} values by comparing a model prediction to a measured curve. This
+  function will be passed to an optimization algorithm which will determine the
+  values that produce the smallest error.
 
   The \code{error_function_c4_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit

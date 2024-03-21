@@ -61,7 +61,7 @@ error_function_c3_aci <- function(
     })
 
     # Retrieve values of flexible parameters as necessary
-    if (!value_set(sd_A)) {sd_A <- exdf_obj[, 'sd_A']}
+    if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
 
     # Create and return the error function
     function(guess) {

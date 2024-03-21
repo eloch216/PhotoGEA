@@ -43,7 +43,7 @@
     cj_crossover_max = NA,
     require_positive_gmc = 'all',
     gmc_max = Inf,
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
   )
@@ -333,9 +333,15 @@
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{
+            \item The number of points where \code{Wc}, \code{Wj}, and \code{Wp}
+                  are each the smallest potential carboxylation are stored in
+                  the \code{n_Wc_smallest}, \code{n_Wj_smallest}, and
+                  \code{n_Wp_smallest} columns.
             \item The best-fit values are stored in the \code{tau}, \code{Tp},
                   \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
-                  columns.
+                  columns. If \code{calculate_confidence_intervals} is
+                  \code{TRUE}, upper and lower limits for each of these
+                  parameters will also be included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{J_tl_avg}, \code{Rd_tl_avg},
