@@ -32,6 +32,28 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- Changed fitting method from least-squares to maximim likelihood in
+  `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`.
+  - We use a normal distribution for calculating the likelihood.
+  - Best-fit parameter values are determined with `sigma = 1`.
+  - Then the true value of the likelihood can be estimated using `sigma = RMSE`.
+  - Confidence intervals are also calculated using `sigma = RMSE`.
+- Now users can optionally ignore `NA` values when using `xyplot_avg_rc`.
+- Specialized functions for writing `exdf` objects to `CSV` files and recreating
+  `exdf` objects from those files are now available: `write.csv.exdf` and
+  `read.csv.exdf`.
+- When determining the degree of trust in a best-fit parameter value, we now
+  consider parameters with an upper confidence limit of `Inf` to be unreliable.
+- New fitting parameters have been added to `fit_c4_aci`: `alpha_psii`, `gbs`,
+  and `Rm_frac`.
+- It is now possible to remove unreliable parameter estimates when using
+  `fit_c4_aci`.
+- Tests have been updated to make sure the fitting functions can gracefully
+  handle a fit failure, even when estimating confidence intervals and/or
+  removing unreliable parameter estimates.
+
 ## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
 
 - Added new options for adding penalties to the error function during Variable J
