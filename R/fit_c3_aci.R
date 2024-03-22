@@ -25,7 +25,7 @@ fit_c3_aci <- function(
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_nmkb(),
+    OPTIM_FUN = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
     fit_options = list(),

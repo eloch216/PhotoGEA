@@ -1,4 +1,4 @@
-optimizer_nmkb <- function(tol = 1e-7, maxfeval = 2000, restarts.max = 10) {
+optimizer_nmkb <- function(tol, maxfeval = 2000, restarts.max = 10) {
     function(guess, fun, lower, upper) {
         guess <- constrain_guess(guess, lower, upper, 0.01)
         dfoptim::nmkb(guess, fun, lower, upper, control = list(
@@ -9,7 +9,7 @@ optimizer_nmkb <- function(tol = 1e-7, maxfeval = 2000, restarts.max = 10) {
     }
 }
 
-optimizer_deoptim <- function(VTR = -Inf, itermax = 200) {
+optimizer_deoptim <- function(itermax, VTR = -Inf) {
   function(guess, fun, lower, upper) {
     # Set population size following DEoptim default behavior
     NP <- 10 * length(guess)

@@ -56,11 +56,11 @@ USE_DEOPTIM_SOLVER <- FALSE
 solver <- if (USE_DEOPTIM_SOLVER) {
   # This is the default solver for the variable J fitting method; it is a little
   # bit slower, but less likely to fail
-  optimizer_deoptim()
+  optimizer_deoptim(200)
 } else {
   # This is the default solver for the regular C3 A-Ci curve fitting method; it
   # is a little bit faster, but may sometimes fail for some curves
-  optimizer_nmkb()
+  optimizer_nmkb(1e-7)
 }
 
 # Decide whether to fit Tp and Rd

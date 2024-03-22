@@ -15,15 +15,15 @@
 }
 
 \usage{
-  optimizer_nmkb(tol = 1e-7, maxfeval = 2000, restarts.max = 10)
+  optimizer_nmkb(tol, maxfeval = 2000, restarts.max = 10)
 
-  optimizer_deoptim(VTR = -Inf, itermax = 200)
+  optimizer_deoptim(itermax, VTR = -Inf)
 }
 
 \arguments{
   \item{tol}{
     A convergence tolerance value; to be passed to \code{\link[dfoptim]{nmkb}}
-    via its \code{control} input argument.
+    via its \code{control} input argument. A typical value is \code{1e-7}.
   }
 
   \item{maxfeval}{
@@ -38,16 +38,16 @@
     argument.
   }
 
-  \item{VTR}{
-    The value to be reached; to be passed to \code{\link[DEoptim]{DEoptim}} via
-    its \code{control} input argument.
-  }
-
   \item{itermax}{
     The maximum number of generations to be used; to be passed to
     \code{\link[DEoptim]{DEoptim}} via its \code{control} input argument. Note
     that when \code{VTR} is \code{-Inf}, the optimizer will always use the
-    maximum number of generations.
+    maximum number of generations. A typical value is \code{200}.
+  }
+
+  \item{VTR}{
+    The value to be reached; to be passed to \code{\link[DEoptim]{DEoptim}} via
+    its \code{control} input argument.
   }
 }
 

@@ -35,7 +35,7 @@
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(),
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -404,7 +404,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb()
+  OPTIM_FUN = optimizer_nmkb(1e-7)
 ))
 
 # View the fitting parameters for each species / plot
@@ -466,7 +466,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb(),
+  OPTIM_FUN = optimizer_nmkb(1e-7),
   remove_unreliable_param = TRUE
 ))
 

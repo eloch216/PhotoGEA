@@ -31,7 +31,7 @@
     vpmax_norm_column_name = 'Vpmax_norm',
     sd_A = 'RMSE',
     POm = 210000,   # microbar
-    OPTIM_FUN = optimizer_nmkb(),
+    OPTIM_FUN = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
     fit_options = list(),
