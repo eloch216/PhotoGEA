@@ -181,6 +181,10 @@ calculate_c3_assimilation <- function(
             Wj = Wj,
             Wp = Wp,
             Vc = Wcjp,
+            atp_use = atp_use,
+            nadph_use = nadph_use,
+            curvature_cj = curvature_cj,
+            curvature_cjp = curvature_cjp,
             c3_assimilation_msg = msg,
             stringsAsFactors = FALSE
         ))
@@ -201,6 +205,10 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'Wj',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Wp',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vc',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'atp_use',             'dimensionless'),
+            c('calculate_c3_assimilation', 'nadph_use',           'dimensionless'),
+            c('calculate_c3_assimilation', 'curvature_cj',        'dimensionless'),
+            c('calculate_c3_assimilation', 'curvature_cjp',       'dimensionless'),
             c('calculate_c3_assimilation', 'c3_assimilation_msg', '')
         )
     } else {
