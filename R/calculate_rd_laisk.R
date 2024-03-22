@@ -68,7 +68,8 @@ calculate_rd_laisk <- function(
                 ),
                 units = data.frame(
                     laisk_intercept = 'micromol m^(-2) s^(-1)',
-                    laisk_slope = 'mol m^(-2) s^(-1)'
+                    laisk_slope = 'mol m^(-2) s^(-1)',
+                    stringsAsFactors = FALSE
                 )
             )
 
