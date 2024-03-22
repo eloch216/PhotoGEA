@@ -209,11 +209,21 @@ write.csv.exdf <- function(x, file, ...) {
 
 }
 
-# Read a CSV file that was created by calling `write.csv.exdf`
+# Read a CSV file that was created by calling `write.csv.exdf`. Notes about
+# reading the column names:
+# 1. We cannot use `read.csv` with `header = TRUE` to read the column names,
+#    because it will modify some of the names without any way to control this
+#    behavior.
+# 2. We cannot use `read.csv` with `nrows = 1, header = FALSE` to simply read
+#    the first line, since it will convert any column called `F` (which occurs
+#    in Licor files with chlorophyll fluorescence) to a logical `FALSE`.
+# 3. We cannot use `read.csv` with `nrows = 1, header = FALSE, tryLogical =
+#    FALSE` because the `tryLogical` argument is only available for R versions
+#    4.3.0 and above, and we do not want to exclude older R versions.
 read.csv.exdf <- function(file, ...) {
     arg_list <- list(...)
 
-    forbidden_arg <- c('header', 'tryLogical', 'skip', 'nrows')
+    forbidden_arg <- c('header', 'skip')
 
     if (any(forbidden_arg %in% names(arg_list))) {
         stop(
@@ -222,10 +232,17 @@ read.csv.exdf <- function(file, ...) {
         )
     }
 
-    cnames     <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 0, nrows = 1, ...)
-    categories <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 1, nrows = 1, ...)
-    units      <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 2, nrows = 1, ...)
-    dataf      <- utils::read.csv(file, header = FALSE, tryLogical = FALSE, skip = 3, ...)
+    header <- readLines(file, n = 3)
+
+    header <- lapply(header, function(x) {
+        scan(textConnection(x), what = 'character', sep = ',', quote = '\"')
+    })
+
+    cnames     <- header[[1]]
+    categories <- data.frame(t(header[[2]]))
+    units      <- data.frame(t(header[[3]]))
+
+    dataf <- utils::read.csv(file, header = FALSE, skip = 3, ...)
 
     colnames(dataf)      <- cnames
     colnames(units)      <- cnames
