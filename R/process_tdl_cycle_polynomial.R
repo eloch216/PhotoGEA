@@ -111,10 +111,10 @@ process_tdl_cycle_polynomial <- function(
 
     # Calculate calibrated values of 12C and 13C for each valve
     tdl_cycle[, 'calibrated_12c'] <-
-        stats::predict(fit_12C, data.frame(measured_12C = tdl_cycle[, raw_12c_colname]))
+        stats::predict(fit_12C, data.frame(measured_12C = tdl_cycle[, raw_12c_colname], stringsAsFactors = FALSE))
 
     tdl_cycle[, 'calibrated_13c'] <-
-        stats::predict(fit_13C, data.frame(measured_13C = tdl_cycle[, raw_13c_colname]))
+        stats::predict(fit_13C, data.frame(measured_13C = tdl_cycle[, raw_13c_colname], stringsAsFactors = FALSE))
 
     # Determine the raw and calibrated values of total CO2 and delta 13C
     tdl_cycle[, 'total_CO2_raw'] <-
@@ -150,7 +150,7 @@ process_tdl_cycle_polynomial <- function(
     )
 
     # Create an exdf object from the numeric vector
-    coeff_exdf <- exdf(as.data.frame(as.list(coeff)))
+    coeff_exdf <- exdf(as.data.frame(as.list(coeff), stringsAsFactors = FALSE))
     coeff_exdf$categories[1, 1:3] <- 'process_tdl_cycle_polynomial'
     coeff_exdf$categories[1, seq(4, 4 + poly_order)] <- '12C coefficients'
     coeff_exdf$categories[1, seq(5 + poly_order, 5 + 2 * poly_order)] <- '13C coefficients'

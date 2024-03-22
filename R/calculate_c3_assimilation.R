@@ -176,7 +176,8 @@ calculate_c3_assimilation <- function(
             Wj = Wj,
             Wp = Wp,
             Vc = Wcjp,
-            c3_assimilation_msg = msg
+            c3_assimilation_msg = msg,
+            stringsAsFactors = FALSE
         ))
 
         document_variables(

@@ -15,7 +15,8 @@ read_licor_6800_plaintext <- function(file_name, ...) {
             file_name,
             skip = skip,
             nrows = 1,
-            header = FALSE
+            header = FALSE,
+            stringsAsFactors = FALSE
         )
 
         row_data[1, ] <- replace_unicode(row_data[1, ])
@@ -33,7 +34,8 @@ read_licor_6800_plaintext <- function(file_name, ...) {
     licor_data <- utils::read.delim(
         file_name,
         skip = data_indx + 3,
-        header = FALSE
+        header = FALSE,
+        stringsAsFactors = FALSE
     )
 
     # Convert the data to numeric values whenever possible
@@ -52,11 +54,12 @@ read_licor_6800_plaintext <- function(file_name, ...) {
         file_name,
         skip = 1,
         nrows = data_indx - header_indx,
-        header = FALSE
+        header = FALSE,
+        stringsAsFactors = FALSE
     )
 
     licor_preamble <- stats::setNames(
-        as.data.frame(t(preamble_raw[, 2])),
+        as.data.frame(t(preamble_raw[, 2]), stringsAsFactors = FALSE),
         preamble_raw[, 1]
     )
 

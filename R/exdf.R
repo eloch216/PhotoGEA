@@ -235,12 +235,12 @@ read.csv.exdf <- function(file, ...) {
     header <- readLines(file, n = 3)
 
     header <- lapply(header, function(x) {
-        scan(textConnection(x), what = 'character', sep = ',', quote = '\"')
+        scan(textConnection(x), what = 'character', sep = ',', quote = '\"', quiet = TRUE)
     })
 
     cnames     <- header[[1]]
-    categories <- data.frame(t(header[[2]]))
-    units      <- data.frame(t(header[[3]]))
+    categories <- data.frame(t(header[[2]]), stringsAsFactors = FALSE)
+    units      <- data.frame(t(header[[3]]), stringsAsFactors = FALSE)
 
     dataf <- utils::read.csv(file, header = FALSE, skip = 3, ...)
 
@@ -360,7 +360,7 @@ cbind.exdf <- function(..., deparse.level = 1) {
 
     # Make sure there is one or more exdf object
     if (length(exdf_list) < 1) {
-        stop("rbind.exdf requires one or more exdf objects")
+        stop("cbind.exdf requires one or more exdf objects")
     }
 
     # Make sure all the objects are indeed exdf objects
@@ -388,8 +388,7 @@ rbind.exdf <- function(
     ...,
     deparse.level = 1,
     make.row.names = TRUE,
-    stringsAsFactors = FALSE,
-    factor.exclude = TRUE
+    stringsAsFactors = FALSE
 )
 {
     exdf_list <- list(...)
@@ -455,8 +454,7 @@ rbind.exdf <- function(
             list(
                 deparse.level = deparse.level,
                 make.row.names = make.row.names,
-                stringsAsFactors = stringsAsFactors,
-                factor.exclude = factor.exclude
+                stringsAsFactors = stringsAsFactors
             )
         )
     )

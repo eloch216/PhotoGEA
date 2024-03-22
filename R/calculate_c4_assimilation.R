@@ -157,7 +157,8 @@ calculate_c4_assimilation <- function(
             Ap = Ap,
             Ar = Ar,
             An = An,
-            c4_assimilation_msg = msg
+            c4_assimilation_msg = msg,
+            stringsAsFactors = FALSE
         ))
 
         document_variables(

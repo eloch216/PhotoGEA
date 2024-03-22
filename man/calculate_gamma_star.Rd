@@ -169,7 +169,8 @@ exdf_obj <- calculate_gamma_star(
     data.frame(
       oxygen = 'percent',
       specificity_at_tleaf = 'M / M',
-      TleafCnd = 'degrees C'
+      TleafCnd = 'degrees C',
+      stringsAsFactors = FALSE
     )
   )
 )
@@ -194,7 +195,8 @@ exdf_obj <- exdf(
   ),
   data.frame(
     oxygen = 'percent',
-    TleafCnd = 'degrees C'
+    TleafCnd = 'degrees C',
+    stringsAsFactors = FALSE
   )
 )
 

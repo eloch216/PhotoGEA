@@ -19,7 +19,8 @@ example_exdf <- exdf(
         Ko             = 'mmol mol^(-1)',
         total_pressure = 'bar',
         Vcmax_tl       = 'micromol m^(-2) s^(-1)',
-        J_tl           = 'micromol m^(-2) s^(-1)'
+        J_tl           = 'micromol m^(-2) s^(-1)',
+        stringsAsFactors = FALSE
     )
 )
 

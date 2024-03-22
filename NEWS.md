@@ -53,6 +53,7 @@ be directly added to this file to describe the related changes.
 - Tests have been updated to make sure the fitting functions can gracefully
   handle a fit failure, even when estimating confidence intervals and/or
   removing unreliable parameter estimates.
+- Specified a minimum supported R version: 3.6.0
 
 ## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
 

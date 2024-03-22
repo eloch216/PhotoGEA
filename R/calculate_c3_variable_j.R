@@ -106,7 +106,8 @@ calculate_c3_variable_j <- function(
             J_F = J_F,
             gmc = gmc,
             Cc = Cc,
-            c3_variable_j_msg = msg
+            c3_variable_j_msg = msg,
+            stringsAsFactors = FALSE
         ))
 
         document_variables(

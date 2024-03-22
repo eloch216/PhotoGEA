@@ -17,7 +17,8 @@ xyplot_avg_rc <- function(
         X = X,
         Y = Y,
         point_identifier = point_identifier,
-        group_identifier = group_identifier
+        group_identifier = group_identifier,
+        stringsAsFactors = FALSE
     )
 
     # Get basic stats information
