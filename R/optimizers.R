@@ -9,6 +9,17 @@ optimizer_nmkb <- function(tol, maxfeval = 2000, restarts.max = 10) {
     }
 }
 
+optimizer_hjkb <- function(tol, maxfeval = Inf, target = Inf) {
+    function(guess, fun, lower, upper) {
+        guess <- constrain_guess(guess, lower, upper, 0.01)
+        dfoptim::hjkb(guess, fun, lower, upper, control = list(
+            tol = tol,
+            maxfeval = maxfeval,
+            target = target
+        ))
+    }
+}
+
 optimizer_deoptim <- function(itermax, VTR = -Inf) {
   function(guess, fun, lower, upper) {
     # Set population size following DEoptim default behavior

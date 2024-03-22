@@ -55,6 +55,7 @@ export(initial_guess_c3_aci)
 export(initial_guess_c3_variable_j)
 export(initial_guess_c4_aci)
 export(optimizer_deoptim)
+export(optimizer_hjkb)
 export(optimizer_nmkb)
 export(residual_stats)
 
