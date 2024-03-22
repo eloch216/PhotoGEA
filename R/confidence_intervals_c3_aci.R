@@ -4,7 +4,8 @@ confidence_intervals_c3_aci <- function(
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    sd_A = 1,
+    error_threshold_factor = 0.147,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -31,6 +32,7 @@ confidence_intervals_c3_aci <- function(
     error_function <- error_function_c3_aci(
         replicate_exdf,
         fit_options,
+        sd_A,
         POc,
         atp_use,
         nadph_use,

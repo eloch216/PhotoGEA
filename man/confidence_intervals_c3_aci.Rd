@@ -18,7 +18,8 @@
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    sd_A = 1,
+    error_threshold_factor = 0.147,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -58,6 +59,11 @@
   }
 
   \item{fit_options}{
+    The same value that was passed to \code{\link{fit_c3_aci}} when generating
+    \code{best_fit_parameters}.
+  }
+
+  \item{sd_A}{
     The same value that was passed to \code{\link{fit_c3_aci}} when generating
     \code{best_fit_parameters}.
   }

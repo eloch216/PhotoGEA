@@ -11,10 +11,11 @@ read_cr3000 <- function(
         file_name,
         header = FALSE,
         skip = rows_to_skip,
+        stringsAsFactors = FALSE,
         ...
     )
 
-    cr_variable_names <- raw_cr[variable_name_row - rows_to_skip,]
+    cr_variable_names <- as.character(raw_cr[variable_name_row - rows_to_skip,])
     cr_variable_units <- raw_cr[variable_unit_row - rows_to_skip,]
     cr_data <- raw_cr[seq(data_start_row - rows_to_skip, nrow(raw_cr)),]
 
@@ -33,8 +34,12 @@ read_cr3000 <- function(
     row.names(cr_variable_units) <- NULL
 
     # Make a "categories" data frame
-    cr_variable_categories <- cr_variable_units
-    cr_variable_categories[1,] <- "read_cr3000"
+    cr_variable_categories <- data.frame(
+        matrix(nrow = 1, ncol = ncol(cr_variable_units), data = 'read_cr3000'),
+        stringsAsFactors = FALSE
+    )
+
+    colnames(cr_variable_categories) <- cr_variable_names
 
     return(
         exdf(

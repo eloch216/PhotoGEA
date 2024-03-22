@@ -1,7 +1,8 @@
 initial_guess_c4_aci <- function(
-    pcm_threshold_rm = 100,
-    gbs = 0.003,
-    Rm_frac = 0.5,
+    alpha_psii, # dimensionless
+    gbs,        # mol / m^2 / s / bar
+    Rm_frac,    # dimensionless
+    pcm_threshold_rm = 40,
     a_column_name = 'A',
     kp_column_name = 'Kp',
     pcm_column_name = 'PCm',
@@ -25,7 +26,22 @@ initial_guess_c4_aci <- function(
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
+        flexible_param <- list(
+            alpha_psii = alpha_psii,
+            gbs = gbs,
+            Rm_frac = Rm_frac
+        )
+
+        required_variables <-
+            require_flexible_param(required_variables, flexible_param)
+
         check_required_variables(rc_exdf, required_variables)
+
+        # Include values of alpha_psii, gbs, and Rm_frac in the exdf if they are
+        # not already present
+        if (value_set(alpha_psii)) {rc_exdf[, 'alpha_psii'] <- alpha_psii}
+        if (value_set(gbs))        {rc_exdf[, 'gbs']        <- gbs}
+        if (value_set(Rm_frac))    {rc_exdf[, 'Rm_frac']    <- Rm_frac}
 
         # To estimate Rm, make a linear fit of A ~ PCm where PCm is below the
         # threshold. The intercept from the fit should be -Rm. If there are not
@@ -42,14 +58,16 @@ initial_guess_c4_aci <- function(
 
             -rm_fit$coefficients[1] / mean_rm_norm
         } else {
-            1.0
+            0.5
         }
 
-        # If Rm was estimated to be negative, reset it to zero
-        rm_estimate <- max(0, rm_estimate)
+        # If Rm was estimated to be negative, reset it to a typical value
+        if (rm_estimate <= 0) {
+            rm_estimate <- 0.5
+        }
 
         # Rm is determined by Rm = Rm_frac * Rd, so Rd = Rm / Rm_frac.
-        rd_estimate <- rm_estimate / Rm_frac
+        rd_estimate <- rm_estimate / mean(rc_exdf[, 'Rm_frac'])
 
         # To estimate Vpmax, we solve the equation for Apc (defined in the
         # documentation for calculate_c4_assimilation) for Vpmax and calculate
@@ -61,7 +79,7 @@ initial_guess_c4_aci <- function(
         # Vpmax values will be smaller. With this is mind, we choose the largest
         # value of Vpmax as our best estimate.
         vpmax_estimates <-
-            (rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - gbs * rc_exdf[, pcm_column_name]) *
+            (rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]) *
             (rc_exdf[, pcm_column_name] + rc_exdf[, kp_column_name]) /
             rc_exdf[, pcm_column_name]
 
@@ -90,11 +108,14 @@ initial_guess_c4_aci <- function(
         # corresponding Vpr values will be smaller. With this in mind, we choose
         # the largest value of Vpr as our best estimate.
         vpr_estimates <-
-            rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - gbs * rc_exdf[, pcm_column_name]
+            rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]
 
         # Return the estimates
         c(
+            mean(rc_exdf[, 'alpha_psii']),
+            mean(rc_exdf[, 'gbs']),
             as.numeric(rd_estimate), # remove names
+            mean(rc_exdf[, 'Rm_frac']),
             max(vcmax_estimates),
             max(vpmax_estimates),
             max(vpr_estimates)

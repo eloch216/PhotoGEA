@@ -8,6 +8,7 @@ xyplot_avg_rc <- function(
     cols = multi_curve_colors(),
     eb_length = 0.05,
     eb_lwd = 1,
+    na.rm = TRUE,
     ...
 )
 {
@@ -16,7 +17,8 @@ xyplot_avg_rc <- function(
         X = X,
         Y = Y,
         point_identifier = point_identifier,
-        group_identifier = group_identifier
+        group_identifier = group_identifier,
+        stringsAsFactors = FALSE
     )
 
     # Get basic stats information
@@ -27,11 +29,11 @@ xyplot_avg_rc <- function(
             list(tdf$point_identifier, tdf$group_identifier),
             function(chunk) {
                 # Get some basic info
-                X_mean <- mean(chunk$X)
-                X_sd <- stats::sd(chunk$X)
+                X_mean <- mean(chunk$X, na.rm = na.rm)
+                X_sd <- stats::sd(chunk$X, na.rm = na.rm)
 
-                Y_mean <- mean(chunk$Y)
-                Y_sd <- stats::sd(chunk$Y)
+                Y_mean <- mean(chunk$Y, na.rm = na.rm)
+                Y_sd <- stats::sd(chunk$Y, na.rm = na.rm)
 
                 num <- nrow(chunk)
 

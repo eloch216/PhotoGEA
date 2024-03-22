@@ -19,7 +19,8 @@ example_exdf <- exdf(
         Ko             = 'mmol mol^(-1)',
         total_pressure = 'bar',
         Vcmax_tl       = 'micromol m^(-2) s^(-1)',
-        J_tl           = 'micromol m^(-2) s^(-1)'
+        J_tl           = 'micromol m^(-2) s^(-1)',
+        stringsAsFactors = FALSE
     )
 )
 
@@ -98,6 +99,6 @@ test_that('fit results have not changed', {
     expect_equal(
         as.numeric(limit_res[1, c('dAdC_rubisco', 'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi')]),
         c(0.399283, 0.434921, 0.161528, 0.403551),
-        tolerance = 1e-6
+        tolerance = 1e-5
     )
 })

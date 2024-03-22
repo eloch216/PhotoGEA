@@ -21,6 +21,7 @@ fit_c3_variable_j <- function(
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    sd_A = 'RMSE',
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -34,7 +35,7 @@ fit_c3_variable_j <- function(
     cj_crossover_max = NA,
     require_positive_gmc = 'all',
     gmc_max = Inf,
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
 )
@@ -43,11 +44,16 @@ fit_c3_variable_j <- function(
         stop('fit_c3_variable_j requires an exdf object')
     }
 
+    if (sd_A != 'RMSE') {
+        stop('At this time, the only supported option for sd_A is `RMSE`')
+    }
+
     # Define the total error function; units will also be checked by this
     # function
     total_error_fcn <- error_function_c3_variable_j(
         replicate_exdf,
         fit_options,
+        1, # sd_A
         POc,
         atp_use,
         nadph_use,
@@ -70,7 +76,7 @@ fit_c3_variable_j <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c3_aci
+    # most units have already been chcked by error_function_c3_variable_j
     required_variables <- list()
     required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
 
@@ -183,7 +189,6 @@ fit_c3_variable_j <- function(
     aci$categories[1,] <- 'fit_c3_variable_j'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
 
-
     # Get operating point information
     operating_point_info <- estimate_operating_point(
         replicate_exdf,
@@ -225,7 +230,10 @@ fit_c3_variable_j <- function(
     replicate_exdf <- cbind(replicate_exdf, aci)
 
     # If there was a problem, set all the fit results to NA
-    if (aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != '') {
+    fit_failure <-
+        aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != ''
+
+    if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
         for (cn in colnames(aci)) {
@@ -309,7 +317,6 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val']         <- optim_result[['value']]
     replicate_identifiers[, 'c3_assimilation_msg'] <- replicate_exdf[1, 'c3_assimilation_msg']
     replicate_identifiers[, 'c3_variable_j_msg']   <- replicate_exdf[1, 'c3_variable_j_msg']
 
@@ -319,18 +326,39 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
     replicate_identifiers[, 'operating_An_model'] <- operating_An_model
 
-    # Attach the number of points where each potential carboxylation rate is the
-    # smallest potential carboxylation rate
-    replicate_identifiers[, 'n_Wc_smallest'] <- n_C3_W_smallest(aci, 'Wc')
-    replicate_identifiers[, 'n_Wj_smallest'] <- n_C3_W_smallest(aci, 'Wj')
-    replicate_identifiers[, 'n_Wp_smallest'] <- n_C3_W_smallest(aci, 'Wp')
+    # Get an updated likelihood value using the RMSE
+    replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
+        NA
+    } else {
+        error_function_c3_variable_j(
+            replicate_exdf,
+            fit_options,
+            replicate_identifiers[, 'RMSE'], # sd_A
+            POc,
+            atp_use,
+            nadph_use,
+            curvature_cj,
+            curvature_cjp,
+            a_column_name,
+            ci_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            phips2_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            cj_crossover_min,
+            cj_crossover_max,
+            require_positive_gmc,
+            gmc_max
+        )(best_X[param_to_fit])
+    }
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c3_variable_j',        'n_Wc_smallest',       ''),
-        c('fit_c3_variable_j',        'n_Wj_smallest',       ''),
-        c('fit_c3_variable_j',        'n_Wp_smallest',       ''),
         c('fit_c3_variable_j',        'alpha_g',             'dimensionless'),
         c('fit_c3_variable_j',        'Gamma_star',          'micromol mol^(-1)'),
         c('fit_c3_variable_j',        'J_at_25',             'micromol m^(-2) s^(-1)'),
@@ -361,6 +389,7 @@ fit_c3_variable_j <- function(
             lower,
             upper,
             fit_options,
+            if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             error_threshold_factor,
             POc,
             atp_use,
@@ -384,13 +413,10 @@ fit_c3_variable_j <- function(
         )
     }
 
-    # Return the results
-    if (remove_unreliable_param) {
-        remove_c3_unreliable_points(replicate_identifiers, replicate_exdf)
-    } else {
-        list(
-            parameters = replicate_identifiers,
-            fits = replicate_exdf
-        )
-    }
+    # Return the results, including indicators of unreliable parameter estimates
+    identify_c3_unreliable_points(
+        replicate_identifiers,
+        replicate_exdf,
+        remove_unreliable_param
+    )
 }

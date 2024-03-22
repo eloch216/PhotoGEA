@@ -1,13 +1,13 @@
 calculate_c4_assimilation <- function(
     exdf_obj,
+    alpha_psii,                # dimensionless        (typically this value is fixed to 0)
+    gbs,                       # mol / m^2 / s / bar  (typically this value is fixed to 0.003)
     Rd_at_25,                  # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    Rm_frac,                   # dimensionless        (typically this value is fixed to 0.5 or 1.0)
     Vcmax_at_25,               # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpmax_at_25,               # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpr,                       # micromol / m^2 / s   (typically this value is being fitted)
     POm = 210000,              # microbar             (typically this value is known from the experimental setup)
-    gbs = 0.003,               # mol / m^2 / s / bar  (typically this value is fixed)
-    Rm_frac = 0.5,             # dimensionless        (typically this value is fixed)
-    alpha_psii = 0,                 # dimensionless        (typically this value is fixed)
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
@@ -39,7 +39,10 @@ calculate_c4_assimilation <- function(
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
         flexible_param <- list(
+            alpha_psii = alpha_psii,
+            gbs = gbs,
             Rd_at_25 = Rd_at_25,
+            Rm_frac = Rm_frac,
             Vcmax_at_25 = Vcmax_at_25,
             Vpmax_at_25 = Vpmax_at_25,
             Vpr = Vpr
@@ -52,7 +55,10 @@ calculate_c4_assimilation <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
+    if (!value_set(alpha_psii))  {alpha_psii  <- exdf_obj[, 'alpha_psii']}
+    if (!value_set(gbs))         {gbs         <- exdf_obj[, 'gbs']}
     if (!value_set(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
+    if (!value_set(Rm_frac))     {Rm_frac     <- exdf_obj[, 'Rm_frac']}
     if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
     if (!value_set(Vpmax_at_25)) {Vpmax_at_25 <- exdf_obj[, 'Vpmax_at_25']}
     if (!value_set(Vpr))         {Vpr         <- exdf_obj[, 'Vpr']}
@@ -69,16 +75,19 @@ calculate_c4_assimilation <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(Cm < 0, na.rm = TRUE))          {msg <- append(msg, 'PCm must be >= 0')}
-    if (any(Kc < 0, na.rm = TRUE))          {msg <- append(msg, 'Kc must be >= 0')}
-    if (any(Ko < 0, na.rm = TRUE))          {msg <- append(msg, 'Ko must be >= 0')}
-    if (any(Kp < 0, na.rm = TRUE))          {msg <- append(msg, 'Kp must be >= 0')}
-    if (any(gamma_star < 0, na.rm = TRUE))  {msg <- append(msg, 'gamma_star must be >= 0')}
-    if (any(ao < 0, na.rm = TRUE))          {msg <- append(msg, 'ao must be >= 0')}
-    if (any(Rd_at_25 < 0, na.rm = TRUE))    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(Vcmax_at_25 < 0, na.rm = TRUE)) {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
-    if (any(Vpmax_at_25 < 0, na.rm = TRUE)) {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
-    if (any(Vpr < 0, na.rm = TRUE))         {msg <- append(msg, 'Vpr must be >= 0')}
+    if (any(alpha_psii < 0 | alpha_psii > 1, na.rm = TRUE)) {msg <- append(msg, 'alpha_psii must be >= 0 and <= 1')}
+    if (any(ao < 0, na.rm = TRUE))                          {msg <- append(msg, 'ao must be >= 0')}
+    if (any(Cm < 0, na.rm = TRUE))                          {msg <- append(msg, 'PCm must be >= 0')}
+    if (any(gamma_star < 0, na.rm = TRUE))                  {msg <- append(msg, 'gamma_star must be >= 0')}
+    if (any(gbs < 0, na.rm = TRUE))                         {msg <- append(msg, 'gbs must be >= 0')}
+    if (any(Kc < 0, na.rm = TRUE))                          {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0, na.rm = TRUE))                          {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(Kp < 0, na.rm = TRUE))                          {msg <- append(msg, 'Kp must be >= 0')}
+    if (any(Rd_at_25 < 0, na.rm = TRUE))                    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(Rm_frac < 0 | Rm_frac > 1, na.rm = TRUE))       {msg <- append(msg, 'Rm_frac must be >= 0 and <= 1')}
+    if (any(Vcmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    if (any(Vpmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
+    if (any(Vpr < 0, na.rm = TRUE))                         {msg <- append(msg, 'Vpr must be >= 0')}
 
     msg <- paste(msg, collapse = '. ')
 
@@ -133,6 +142,9 @@ calculate_c4_assimilation <- function(
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
+            alpha_psii = alpha_psii,
+            gbs = gbs,
+            Rm_frac = Rm_frac,
             Vcmax_tl = Vcmax_tl,
             Vpmax_tl = Vpmax_tl,
             Rd_tl = Rd_tl,
@@ -145,11 +157,15 @@ calculate_c4_assimilation <- function(
             Ap = Ap,
             Ar = Ar,
             An = An,
-            c4_assimilation_msg = msg
+            c4_assimilation_msg = msg,
+            stringsAsFactors = FALSE
         ))
 
         document_variables(
             output,
+            c('calculate_c4_assimilation', 'alpha_psii',          unit_dictionary$alpha_psii),
+            c('calculate_c4_assimilation', 'gbs',                 unit_dictionary$gbs),
+            c('calculate_c4_assimilation', 'Rm_frac',             unit_dictionary$Rm_frac),
             c('calculate_c4_assimilation', 'Vcmax_tl',            'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'Vpmax_tl',            'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'Rd_tl',               'micromol m^(-2) s^(-1)'),

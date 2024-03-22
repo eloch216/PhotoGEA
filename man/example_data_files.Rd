@@ -17,6 +17,7 @@
 \alias{tdl_sampling_2}
 \alias{plaintext_licor_file}
 
+\alias{ball_berry_1.csv}
 \alias{ball_berry_1.xlsx}
 \alias{ball_berry_2.xlsx}
 \alias{c3_aci_1.xlsx}
@@ -46,6 +47,10 @@
           individual curves or subsets of curves: \code{species}, \code{plot},
           and \code{instrument}. These files are used in the "Analyzing
           Ball-Berry Data" vignette and in other examples.
+    \item \code{ball_berry_1.csv}: A CSV version of \code{ball_berry_1.xlsx},
+          which was created by reading the Excel file with
+          \code{\link{read_gasex_file}} and then saving it using
+          \code{\link{write.csv.exdf}}.
     \item \code{c3_aci_1.xlsx} and \code{c3_aci_2.xlsx}: Two log files
           created by Licor Li-6800 portable gas exchange measurement systems.
           These log files each contain several C3 CO2 response (or A-Ci) curves.

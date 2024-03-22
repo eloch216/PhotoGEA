@@ -1,6 +1,7 @@
 error_function_c3_aci <- function(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -42,7 +43,7 @@ error_function_c3_aci <- function(
 
     required_variables <- require_flexible_param(
         required_variables,
-        fit_options[fit_options != 'fit']
+        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
     )
 
     check_required_variables(replicate_exdf, required_variables)
@@ -58,6 +59,9 @@ error_function_c3_aci <- function(
             stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
         }
     })
+
+    # Retrieve values of flexible parameters as necessary
+    if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
 
     # Create and return the error function
     function(guess) {
@@ -117,6 +121,14 @@ error_function_c3_aci <- function(
             }
         }
 
-        sum((replicate_exdf[, a_column_name] - assim$An)^2)
+        # return the negative of the logarithm of the likelihood
+        -sum(
+            stats::dnorm(
+                replicate_exdf[, a_column_name],
+                mean = assim$An,
+                sd = sd_A,
+                log = TRUE
+            )
+        )
     }
 }

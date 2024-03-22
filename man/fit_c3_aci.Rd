@@ -27,6 +27,7 @@
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    sd_A = 'RMSE',
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -38,7 +39,7 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    error_threshold_factor = 1.5,
+    error_threshold_factor = 0.147,
     calculate_confidence_intervals = FALSE,
     remove_unreliable_param = FALSE
   )
@@ -106,6 +107,12 @@
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{sd_A}{
+    A value of the standard deviation of measured \code{A} values, or the name
+    of a method for determining the deviation; currently, the only supported
+    option is \code{'RMSE'}.
   }
 
   \item{POc}{
@@ -252,8 +259,16 @@
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
   parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha_g} & \code{Tp})
-  will be unreliable. If \code{remove_unreliable_param} is \code{TRUE}, such
-  values will be set to \code{NA} in the outputs from \code{fit_c3_aci}.
+  will be unreliable. It is also possible that the upper limit of the confidence
+  interval for a parameter is infinity; this also indicates an unreliable
+  parameter estimate. These criteria are used to determine the reliability of
+  each parameter estimate, which is indicated in the \code{Vcmax_trust},
+  \code{J_trust}, \code{alpha_g_trust}, and \code{Tp_trust} columns of the
+  output from \code{fit_c3_aci}, where a value of \code{0} indicates an
+  unreliable estimate and \code{1} indicates a reliable estimate. If
+  \code{remove_unreliable_param} is \code{TRUE}, the values of any parameters
+  deemed unreliable will be set to \code{NA} in the outputs from
+  \code{fit_c3_aci}.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{Cc} from the atmospheric CO2
@@ -299,7 +314,10 @@
                   \code{n_Wp_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_g},
                   \code{Tp}, \code{J_at_25}, \code{Rd_at_25}, and
-                  \code{Vcmax_at_25} columns.
+                  \code{Vcmax_at_25} columns. If
+                  \code{calculate_confidence_intervals} is \code{TRUE}, upper
+                  and lower limits for each of these parameters will also be
+                  included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{J_tl_avg}, \code{Rd_tl_avg}, and \code{Vcmax_tl_avg}.

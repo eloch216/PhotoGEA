@@ -15,14 +15,14 @@
 \usage{
   calculate_c4_assimilation(
     exdf_obj,
+    alpha_psii,
+    gbs,
     Rd_at_25,
+    Rm_frac,
     Vcmax_at_25,
     Vpmax_at_25,
     Vpr,
     POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0,
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
@@ -40,12 +40,36 @@
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
 
+  \item{alpha_psii}{
+    The fraction of photosystem II activity in the bundle sheath
+    (\code{dimensionless}). If \code{alpha_psii} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{alpha_psii} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{alpha_psii} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{gbs}{
+    The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
+    If \code{gbs} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{gbs} with appropriate units. A numeric value
+    supplied here will overwrite the values in the \code{gbs} column of
+    \code{exdf_obj} if it exists.
+  }
+
   \item{Rd_at_25}{
     The total rate of mitochondrial respiration across the mesophyll and bundle
     sheath at 25 degrees C, expressed in \code{micromol m^(-2) s^(-1)}. If
     \code{Rd_at_25} is not a number, then there must be a column in
     \code{exdf_obj} called \code{Rd_at_25} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{Rd_at_25} column
+    of \code{exdf_obj} if it exists.
+  }
+
+  \item{Rm_frac}{
+    The fraction of the total mitochondrial respiration that occurs in the
+    mesophyll. If \code{Rm_frac} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{Rm_frac} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{Rm_frac} column
     of \code{exdf_obj} if it exists.
   }
 
@@ -79,19 +103,6 @@
     would be 21 percent O2, which is about 210000 microbar at standard
     atmospheric pressure. For low oxygen measurements, this would be 2 percent
     O2, which is about 20000 microbar.
-  }
-
-  \item{gbs}{
-    The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
-  }
-
-  \item{Rm_frac}{
-    The fraction of the total mitochondrial respiration that occurs in the
-    mesophyll.
-  }
-
-  \item{alpha_psii}{
-    The fraction of photosystem II activity in the bundle sheath.
   }
 
   \item{ao_column_name}{
@@ -280,12 +291,16 @@
   The return value depends on the value of \code{return_exdf}:
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
-          \code{exdf} object with the following columns, calculated as described
-          above: \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl}, \code{Rm_tl},
-          \code{Vp}, \code{Apc}, \code{Apr}, \code{Ap}, \code{Ar}, and
-          \code{An}. The category for each of these new columns is
-          \code{calculate_c4_assimilation} to indicate that they were created
-          using this function.
+          \code{exdf} object with the following columns: \code{alpha_psii},
+          \code{gbs}, \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl},
+          \code{Rd_tl}, \code{Rm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp},
+          \code{Apc}, \code{Apr}, \code{Ap}, \code{Ar}, \code{An}, and
+          \code{c4_assimilation_msg}. Most of these are calculated as described
+          above, while several are copies of the input arguments with the same
+          name. The \code{c4_assimilation_msg} is usually blank but may contain
+          information about any issues with the inputs. The category for each of
+          these new columns is \code{calculate_c4_assimilation} to indicate that
+          they were created using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
           vector containing the calculated values of \code{An}.
   }
@@ -309,7 +324,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
-assim <- calculate_c4_assimilation(inputs, 1, 40, 200, 80)
+assim <- calculate_c4_assimilation(inputs, 0, 0.003, 1, 0.5, 40, 200, 80)
 
 # Now we can plot An, Apr, Apc, and Ar. From this plot, we can see that
 # replacing the complicated quadratic equation with a simple minimum yields

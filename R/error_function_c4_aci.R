@@ -1,6 +1,7 @@
 error_function_c4_aci <- function(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
@@ -11,10 +12,7 @@ error_function_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    POm = 210000
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -43,10 +41,13 @@ error_function_c4_aci <- function(
 
     required_variables <- require_flexible_param(
         required_variables,
-        fit_options[fit_options != 'fit']
+        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
     )
 
     check_required_variables(replicate_exdf, required_variables)
+
+    # Retrieve values of flexible parameters as necessary
+    if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
 
     # Create and return the error function
     function(guess) {
@@ -57,14 +58,14 @@ error_function_c4_aci <- function(
             {
                 calculate_c4_assimilation(
                     replicate_exdf,
-                    X[1], # Rd
-                    X[2], # Vcmax
-                    X[3], # Vpmax
-                    X[4], # Vpr
+                    X[1], # alpha_psii
+                    X[2], # gbs
+                    X[3], # Rd_at_25
+                    X[4], # Rm_frac
+                    X[5], # Vcmax_at_25
+                    X[6], # Vpmax_at_25
+                    X[7], # Vpr
                     POm,
-                    gbs,
-                    Rm_frac,
-                    alpha_psii,
                     ao_column_name,
                     gamma_star_column_name,
                     kc_column_name,
@@ -87,6 +88,14 @@ error_function_c4_aci <- function(
             return(ERROR_PENALTY)
         }
 
-        sum((replicate_exdf[, a_column_name] - assim)^2)
+        # return the negative of the logarithm of the likelihood
+        -sum(
+            stats::dnorm(
+                replicate_exdf[, a_column_name],
+                mean = assim,
+                sd = sd_A,
+                log = TRUE
+            )
+        )
     }
 }

@@ -4,7 +4,8 @@ confidence_intervals_c4_aci <- function(
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    sd_A = 1,
+    error_threshold_factor = 0.147,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
@@ -15,10 +16,7 @@ confidence_intervals_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    POm = 210000
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -30,6 +28,7 @@ confidence_intervals_c4_aci <- function(
     error_function <- error_function_c4_aci(
         replicate_exdf,
         fit_options,
+        sd_A,
         ao_column_name,
         a_column_name,
         gamma_star_column_name,
@@ -40,10 +39,7 @@ confidence_intervals_c4_aci <- function(
         rd_norm_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii
+        POm
     )
 
     # Assemble lower, upper, and fit_options

@@ -20,6 +20,7 @@
     cols = multi_curve_colors(),
     eb_length = 0.05,
     eb_lwd = 1,
+    na.rm = TRUE,
     ...
   )
 }
@@ -53,6 +54,11 @@
   \item{eb_length}{The width of the error bars.}
 
   \item{eb_lwd}{The line width (thickness) of the error bars.}
+
+  \item{na.rm}{
+    To be passed to \code{\link{mean}} and \code{\link{sd}} when determining
+    mean values and error bars.
+  }
 
   \item{\dots}{Additional arguments to be passed to \code{lattice::xyplot}.}
 }

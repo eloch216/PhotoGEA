@@ -6,8 +6,8 @@
 
 \description{
   Creates a function that makes an initial guess of C4 photosynthesis model
-  parameter values for one curve. The returned function meets the requirements
-  for the \code{initial_guess_fun} input argument of \code{\link{fit_c4_aci}}.
+  parameter values for one curve. This function is used internally by
+  \code{\link{fit_c4_aci}}.
 
   Values estimated by this guessing function should be considered inaccurate,
   and should always be improved upon by an optimizer.
@@ -15,9 +15,10 @@
 
 \usage{
   initial_guess_c4_aci(
-    pcm_threshold_rm = 100,
-    gbs = 0.003,
-    Rm_frac = 0.5,
+    alpha_psii,
+    gbs,
+    Rm_frac,
+    pcm_threshold_rm = 40,
     a_column_name = 'A',
     kp_column_name = 'Kp',
     pcm_column_name = 'PCm',
@@ -28,18 +29,33 @@
 }
 
 \arguments{
-  \item{pcm_threshold_rm}{
-    An upper cutoff value for the partial pressure of CO2 in the mesophyll (in
-    \code{microbar}) to be used when estimating \code{Rm}.
+  \item{alpha_psii}{
+    The fraction of photosystem II activity in the bundle sheath
+    (\code{dimensionless}). If \code{alpha_psii} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{alpha_psii} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{alpha_psii} column of \code{exdf_obj} if it exists.
   }
 
   \item{gbs}{
     The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
+    If \code{gbs} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{gbs} with appropriate units. A numeric value
+    supplied here will overwrite the values in the \code{gbs} column of
+    \code{exdf_obj} if it exists.
   }
 
   \item{Rm_frac}{
     The fraction of the total mitochondrial respiration that occurs in the
-    mesophyll.
+    mesophyll. If \code{Rm_frac} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{Rm_frac} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{Rm_frac} column
+    of \code{exdf_obj} if it exists.
+  }
+
+  \item{pcm_threshold_rm}{
+    An upper cutoff value for the partial pressure of CO2 in the mesophyll (in
+    \code{microbar}) to be used when estimating \code{Rm}.
   }
 
   \item{a_column_name}{
@@ -77,12 +93,14 @@
 
 \details{
   Here we estimate values of \code{Rd}, \code{Vcmax}, \code{Vpmax}, and
-  \code{Vpr} from a measured C4 CO2 response curve. For more information about
-  these parameters, see the documentation for
-  \code{\link{calculate_c4_assimilation}}. To estimate these parameter values,
-  we use several equations from S. von Caemmerer, "Biochemical Models of Leaf
-  Photosynthesis" (CSIRO Publishing, 2000) [\doi{10.1071/9780643103405}]. Any
-  equation numbers referenced below are from this book.
+  \code{Vpr} from a measured C4 CO2 response curve. It is difficult to
+  estimate values of \code{alpha_psii}, \code{gbs}, and \code{Rm_frac} from a
+  curve, so they must be supplied beforehand. For more information about these
+  parameters, see the documentation for \code{\link{calculate_c4_assimilation}}.
+  To estimate these parameter values, we use several equations from S. von
+  Caemmerer, "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing,
+  2000) [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are
+  from this book.
 
   \itemize{
     \item \strong{Estimating Rd}: An estimate for \code{Rm} can be obtained
@@ -162,8 +180,9 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate PCm
 licor_file <- apply_gm(licor_file, 'C4')
 
-# Create the guessing function
-guessing_func <- initial_guess_c4_aci()
+# Create the guessing function, using typical values for the alpha_psii, gbs,
+# and Rm_frac: 0, 0.003, and 0.5
+guessing_func <- initial_guess_c4_aci(0, 0.003, 0.5)
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -175,7 +194,10 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    calculate_c4_assimilation(x, param[1], param[2], param[3], param[4])
+    calculate_c4_assimilation(
+      x,
+      param[1], param[2], param[3], param[4], param[5], param[6], param[7]
+    )
   }
 ))
 

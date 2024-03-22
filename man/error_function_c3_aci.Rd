@@ -14,6 +14,7 @@
   error_function_c3_aci(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
     POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -49,6 +50,15 @@
     means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
     and \code{Tp} will be set to the values in the \code{Tp} column of
     \code{replicate_exdf}.
+  }
+
+  \item{sd_A}{
+    The standard deviation of the measured values of the net CO2 assimilation
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
+    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
+    called \code{sd_A} with appropriate units. A numeric value supplied here
+    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
+    exists.
   }
 
   \item{POc}{
@@ -136,12 +146,12 @@
 }
 
 \details{
-  When fitting A-Ci curves, it is necessary to define a function that calculates
-  the sum of squared residuals for a given set of \code{alpha_g},
-  \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
-  \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
-  This function will be passed to an optimization algorithm which will determine
-  the values that produce the smallest error.
+  When fitting A-Ci curves using a maximum likelihood approach, it is necessary
+  to define a function that calculates the likelihood of a given set of
+  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
+  and \code{Vcmax_at_25} values by comparing a model prediction to a measured
+  curve. This function will be passed to an optimization algorithm which will
+  determine the values that produce the largest likelihood.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
@@ -149,6 +159,12 @@
   parameters are \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
   \code{Vcmax_at_25}. This behavior can be changed via the \code{fit_options}
   argument.
+
+  For practical reasons, the function actually returns values of \code{-ln(L)},
+  where \code{L} is the likelihood. The logarithm of \code{L} is simpler to
+  calculate than \code{L} itself, and the minus sign converts the problem from
+  a maximization to a minimization, which is important because most optimizers
+  are designed to minimize a value.
 
   Sometimes an optimizer will choose biologically unreasonable parameter values
   that nevertheless produce good fits to the supplied assimilation values. A
@@ -215,20 +231,19 @@ error_fcn <- error_function_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, Tp = 15, Vcmax_at_25 = 100
-error_fcn(c(200, 1, 15, 100))
+# Evaluate the error for J_at_25 = 236, Rd_at_25 = 4e-8, Tp = 22.7, Vcmax_at_25 = 147
+error_fcn(c(236, 4e-8, 22.7, 147))
 
-# Make a plot of error vs. Tp when the other parameters are fixed to the values
-# above. As Tp increases, it eventually stops limiting the assimilation rate
-# and its value stops influencing the error.
-tpu_error_fcn <- function(Tp) {error_fcn(c(200, 1, Tp, 100))}
-tpu_seq <- seq(15, 25)
+# Make a plot of likelihood vs. Vcmax when other parameters are fixed to the
+# values above.
+vcmax_error_fcn <- function(Vcmax) {error_fcn(c(236, 4e-8, 22.7, Vcmax))}
+vcmax_seq <- seq(135, 152, length.out = 41)
 
 lattice::xyplot(
-  sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,
+  exp(-sapply(vcmax_seq, vcmax_error_fcn)) ~ vcmax_seq,
   type = 'b',
-  xlab = 'Tp (micromol / m^2 / s)',
-  ylab = 'Sum of squared residuals'
+  xlab = 'Vcmax_at_25 (micromol / m^2 / s)',
+  ylab = 'Likelihood (dimensionless)'
 )
 }
 

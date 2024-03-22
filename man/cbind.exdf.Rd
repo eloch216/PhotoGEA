@@ -19,8 +19,7 @@
     \dots,
     deparse.level = 1,
     make.row.names = TRUE,
-    stringsAsFactors = FALSE,
-    factor.exclude = TRUE
+    stringsAsFactors = FALSE
   )
 }
 
@@ -37,10 +36,6 @@
   }
 
   \item{stringsAsFactors}{
-    See associated documentation for the generic version of \code{rbind}.
-  }
-
-  \item{factor.exclude}{
     See associated documentation for the generic version of \code{rbind}.
   }
 }
