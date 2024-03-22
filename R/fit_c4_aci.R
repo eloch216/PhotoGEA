@@ -17,12 +17,13 @@ fit_c4_aci <- function(
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     sd_A = 'RMSE',
-    POm = 210000,   # microbar
     OPTIM_FUN = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
@@ -52,11 +53,12 @@ fit_c4_aci <- function(
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
-        vpmax_norm_column_name,
-        POm
+        vpmax_norm_column_name
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -118,14 +120,15 @@ fit_c4_aci <- function(
         best_X[5], # Vcmax_at_25
         best_X[6], # Vpmax_at_25
         best_X[7], # Vpr
-        POm,
         ao_column_name,
         gamma_star_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
         perform_checks = FALSE
@@ -159,14 +162,15 @@ fit_c4_aci <- function(
         best_X[5], # Vcmax_at_25
         best_X[6], # Vpmax_at_25
         best_X[7], # Vpr
-        POm,
         ao_column_name,
         gamma_star_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
         perform_checks = FALSE
@@ -279,11 +283,12 @@ fit_c4_aci <- function(
             kc_column_name,
             ko_column_name,
             kp_column_name,
+            oxygen_column_name,
             pcm_column_name,
             rd_norm_column_name,
+            total_pressure_column_name,
             vcmax_norm_column_name,
-            vpmax_norm_column_name,
-            POm
+            vpmax_norm_column_name
         )(best_X[param_to_fit])
     }
 
@@ -327,11 +332,12 @@ fit_c4_aci <- function(
             kc_column_name,
             ko_column_name,
             kp_column_name,
+            oxygen_column_name,
             pcm_column_name,
             rd_norm_column_name,
+            total_pressure_column_name,
             vcmax_norm_column_name,
-            vpmax_norm_column_name,
-            POm
+            vpmax_norm_column_name
         )
     }
 

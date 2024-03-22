@@ -96,13 +96,17 @@ Tleaf = 30
 
 inputs <- exdf(data.frame(
   PCm = seq(0, 500, length.out = npts),
-  Tleaf = Tleaf
+  Tleaf = Tleaf,
+  total_pressure = 1,
+  oxygen = 21
 ))
 
 inputs <- document_variables(
   inputs,
   c('', 'PCm',   'microbar'),
-  c('', 'Tleaf', 'degrees C')
+  c('', 'Tleaf', 'degrees C'),
+  c('', 'total_pressure', 'bar'),
+  c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')

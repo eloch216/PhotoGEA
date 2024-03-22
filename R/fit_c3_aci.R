@@ -16,11 +16,11 @@ fit_c3_aci <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -50,7 +50,6 @@ fit_c3_aci <- function(
         replicate_exdf,
         fit_options,
         1, # sd_A
-        POc,
         atp_use,
         nadph_use,
         curvature_cj,
@@ -60,6 +59,7 @@ fit_c3_aci <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -98,7 +98,6 @@ fit_c3_aci <- function(
         if (fit_options$alpha_g == 'fit')    {0.5} else {fit_options$alpha_g},    # alpha_g
         if (fit_options$Gamma_star == 'fit') {40}  else {fit_options$Gamma_star}, # Gamma_star
         100, # cc_threshold_rd
-        POc,
         atp_use,
         nadph_use,
         a_column_name,
@@ -106,6 +105,7 @@ fit_c3_aci <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         rd_norm_column_name,
         vcmax_norm_column_name
     )
@@ -133,7 +133,6 @@ fit_c3_aci <- function(
         best_X[4], # Rd_at_25
         best_X[5], # Tp
         best_X[6], # Vcmax_at_25
-        POc,
         atp_use,
         nadph_use,
         curvature_cj,
@@ -142,6 +141,7 @@ fit_c3_aci <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -175,7 +175,6 @@ fit_c3_aci <- function(
         best_X[4], # Rd_at_25
         best_X[5], # Tp
         best_X[6], # Vcmax_at_25
-        POc,
         atp_use,
         nadph_use,
         curvature_cj,
@@ -184,6 +183,7 @@ fit_c3_aci <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -288,7 +288,6 @@ fit_c3_aci <- function(
             replicate_exdf,
             fit_options,
             replicate_identifiers[, 'RMSE'], # sd_A
-            POc,
             atp_use,
             nadph_use,
             curvature_cj,
@@ -298,6 +297,7 @@ fit_c3_aci <- function(
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
+            oxygen_column_name,
             rd_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
@@ -339,7 +339,6 @@ fit_c3_aci <- function(
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             error_threshold_factor,
-            POc,
             atp_use,
             nadph_use,
             curvature_cj,
@@ -349,6 +348,7 @@ fit_c3_aci <- function(
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
+            oxygen_column_name,
             rd_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,

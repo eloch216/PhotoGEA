@@ -7,14 +7,15 @@ calculate_c4_assimilation <- function(
     Vcmax_at_25,               # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpmax_at_25,               # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpr,                       # micromol / m^2 / s   (typically this value is being fitted)
-    POm = 210000,              # microbar             (typically this value is known from the experimental setup)
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     perform_checks = TRUE,
@@ -28,15 +29,17 @@ calculate_c4_assimilation <- function(
 
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
-        required_variables[[ao_column_name]]         <- 'dimensionless'
-        required_variables[[gamma_star_column_name]] <- 'dimensionless'
-        required_variables[[kc_column_name]]         <- 'microbar'
-        required_variables[[ko_column_name]]         <- 'mbar'
-        required_variables[[kp_column_name]]         <- 'microbar'
-        required_variables[[pcm_column_name]]        <- 'microbar'
-        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
-        required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
-        required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
+        required_variables[[ao_column_name]]             <- 'dimensionless'
+        required_variables[[gamma_star_column_name]]     <- 'dimensionless'
+        required_variables[[kc_column_name]]             <- 'microbar'
+        required_variables[[ko_column_name]]             <- 'mbar'
+        required_variables[[kp_column_name]]             <- 'microbar'
+        required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
+        required_variables[[pcm_column_name]]            <- 'microbar'
+        required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
+        required_variables[[total_pressure_column_name]] <- 'bar'
+        required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
+        required_variables[[vpmax_norm_column_name]]     <- 'normalized to Vpmax at 25 degrees C'
 
         flexible_param <- list(
             alpha_psii = alpha_psii,
@@ -72,6 +75,10 @@ calculate_c4_assimilation <- function(
     gamma_star <- exdf_obj[, gamma_star_column_name] # dimensionless
     ao <- exdf_obj[, ao_column_name]                 # dimensionless
 
+    pressure <- exdf_obj[, total_pressure_column_name] # bar
+    oxygen   <- exdf_obj[, oxygen_column_name]         # percent
+    POm      <- oxygen * pressure * 1e4                # microbar
+
     # Make sure key inputs have reasonable values
     msg <- character()
 
@@ -83,6 +90,8 @@ calculate_c4_assimilation <- function(
     if (any(Kc < 0, na.rm = TRUE))                          {msg <- append(msg, 'Kc must be >= 0')}
     if (any(Ko < 0, na.rm = TRUE))                          {msg <- append(msg, 'Ko must be >= 0')}
     if (any(Kp < 0, na.rm = TRUE))                          {msg <- append(msg, 'Kp must be >= 0')}
+    if (any(oxygen < 0, na.rm = TRUE))                      {msg <- append(msg, 'oxygen must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE))                    {msg <- append(msg, 'pressure must be >= 0')}
     if (any(Rd_at_25 < 0, na.rm = TRUE))                    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
     if (any(Rm_frac < 0 | Rm_frac > 1, na.rm = TRUE))       {msg <- append(msg, 'Rm_frac must be >= 0 and <= 1')}
     if (any(Vcmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}

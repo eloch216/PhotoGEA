@@ -303,14 +303,16 @@
 inputs <- exdf(data.frame(
   Cc = seq(1, 601, by = 6),
   Tleaf = 30,
-  total_pressure = 1
+  total_pressure = 1,
+  oxygen = 21
 ))
 
 inputs <- document_variables(
   inputs,
   c('', 'Cc',             'micromol mol^(-1)'),
   c('', 'Tleaf',          'degrees C'),
-  c('', 'total_pressure', 'bar')
+  c('', 'total_pressure', 'bar'),
+  c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')

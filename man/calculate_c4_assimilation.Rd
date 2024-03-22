@@ -313,13 +313,17 @@ npts <- 101
 
 inputs <- exdf(data.frame(
   PCm = seq(0, 500, length.out = npts),
-  Tleaf = 25
+  Tleaf = 25,
+  total_pressure = 1,
+  oxygen = 21
 ))
 
 inputs <- document_variables(
   inputs,
-  c('', 'PCm',   'microbar'),
-  c('', 'Tleaf', 'degrees C')
+  c('', 'PCm',            'microbar'),
+  c('', 'Tleaf',          'degrees C'),
+  c('', 'total_pressure', 'bar'),
+  c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')

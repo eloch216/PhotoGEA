@@ -6,7 +6,6 @@ calculate_c3_assimilation <- function(
     Rd_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Tp,           # micromol / m^2 / s (typically this value is being fitted)
     Vcmax_at_25,  # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
-    POc = 210000, # microbar           (typically this value is known from the experimental setup)
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -15,6 +14,7 @@ calculate_c3_assimilation <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -33,6 +33,7 @@ calculate_c3_assimilation <- function(
         required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
+        required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
         required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
@@ -81,6 +82,9 @@ calculate_c3_assimilation <- function(
     # read, converting units as necessary
     pressure <- exdf_obj[, total_pressure_column_name] # bar
 
+    oxygen <- exdf_obj[, oxygen_column_name] # percent
+    POc <- oxygen * pressure * 1e4 # microbar
+
     Cc <- exdf_obj[, cc_column_name] # micromol / mol
     PCc <- Cc * pressure             # microbar
 
@@ -101,6 +105,7 @@ calculate_c3_assimilation <- function(
     if (any(J_at_25 < 0, na.rm = TRUE))               {msg <- append(msg, 'J_at_25 must be >= 0')}
     if (any(Kc < 0, na.rm = TRUE))                    {msg <- append(msg, 'Kc must be >= 0')}
     if (any(Ko < 0, na.rm = TRUE))                    {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(oxygen < 0, na.rm = TRUE))                {msg <- append(msg, 'oxygen must be >= 0')}
     if (any(pressure < 0, na.rm = TRUE))              {msg <- append(msg, 'pressure must be >= 0')}
     if (any(Rd_at_25 < 0, na.rm = TRUE))              {msg <- append(msg, 'Rd_at_25 must be >= 0')}
     if (any(Tp < 0, na.rm = TRUE))                    {msg <- append(msg, 'Tp must be >= 0')}
