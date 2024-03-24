@@ -130,30 +130,36 @@ calculate_c3_assimilation <- function(
     Wp <- PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))
     Wp[PCc <= Gamma_star * (1 + 3 * alpha_g)] <- Inf
 
-    # Co-limitation between Wc and Wj
-    a_cj <- curvature_cj
-    b_cj <- -(Wc + Wj)
-    c_cj <- Wc * Wj
+    # Overall carboxylation rate
+    Wcjp <- if (curvature_cj == 1 && curvature_cjp == 1) {
+        # Here we can just take the minimum
+        pmin(Wc, Wj, Wp, na.rm = TRUE)
+    } else {
+        # Co-limitation between Wc and Wj
+        a_cj <- curvature_cj
+        b_cj <- -(Wc + Wj)
+        c_cj <- Wc * Wj
 
-    Wcj <- sapply(seq_along(b_cj), function(i) {
-        quadratic_root_min(a_cj, b_cj[i], c_cj[i]) # micromol / m^2 / s
-    })
+        Wcj <- sapply(seq_along(b_cj), function(i) {
+            quadratic_root_min(a_cj, b_cj[i], c_cj[i]) # micromol / m^2 / s
+        })
 
-    # Co-limitation between Wcj and Wp. If Wp is infinite, then we have
-    # Wp >> Wcj and Wp >> curvature_cjp, so the quadratic coefficients become
-    # a_cjp = 0, b_cjp = -Wp, and c_cjp = Wcj * Wp. In that case, we have
-    # 0 = -Wp * Wcjp + Wcj * Wp, whose solution is simply Wcjp = Wcj.
-    a_cjp <- curvature_cjp
-    b_cjp <- -(Wcj + Wp)
-    c_cjp <- Wcj * Wp
+        # Co-limitation between Wcj and Wp. If Wp is infinite, then we have
+        # Wp >> Wcj and Wp >> curvature_cjp, so the quadratic coefficients become
+        # a_cjp = 0, b_cjp = -Wp, and c_cjp = Wcj * Wp. In that case, we have
+        # 0 = -Wp * Wcjp + Wcj * Wp, whose solution is simply Wcjp = Wcj.
+        a_cjp <- curvature_cjp
+        b_cjp <- -(Wcj + Wp)
+        c_cjp <- Wcj * Wp
 
-    Wcjp <- sapply(seq_along(b_cjp), function(i) {
-        if (is.infinite(Wp[i])) {
-            Wcj[i] # micromol / m^2 / s
-        } else {
-            quadratic_root_min(a_cjp, b_cjp[i], c_cjp[i]) # micromol / m^2 / s
-        }
-    })
+        sapply(seq_along(b_cjp), function(i) {
+            if (is.infinite(Wp[i])) {
+                Wcj[i] # micromol / m^2 / s
+            } else {
+                quadratic_root_min(a_cjp, b_cjp[i], c_cjp[i]) # micromol / m^2 / s
+            }
+        })
+    }
 
     # Calculate corresponding net CO2 assimilations by accounting for
     # photorespiration and day respiration

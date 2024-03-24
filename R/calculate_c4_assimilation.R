@@ -115,8 +115,8 @@ calculate_c4_assimilation <- function(
     Rm_tl <- Rm_frac * Rd_tl                                     # micromol / m^2 / s
 
     # Equations 4.17 and 4.19
-    Vpc <- Cm * Vpmax_tl / (Cm + Kp)  # micromol / m^2 / s
-    Vp <- pmin(Vpc, Vpr)              # micromol / m^2 / s
+    Vpc <- Cm * Vpmax_tl / (Cm + Kp)   # micromol / m^2 / s
+    Vp <- pmin(Vpc, Vpr, na.rm = TRUE) # micromol / m^2 / s
 
     # Calculate enzyme-limited assimilation rates. These are not explicitly
     # given by any equations in the textbook, but do appear as terms in some

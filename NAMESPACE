@@ -139,6 +139,8 @@ export(bwplot_wrapper)
 export(multi_curve_colors)
 export(multi_curve_line_colors)
 export(multi_curve_point_colors)
+export(plot_c3_aci_fit)
+export(plot_c4_aci_fit)
 export(xyplot_avg_rc)
 
 # Deprecated functions

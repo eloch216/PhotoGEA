@@ -408,16 +408,7 @@ col_to_keep <- c(
 aci_results$parameters[ , col_to_keep, TRUE]
 
 # View the fits for each species / plot
-lattice::xyplot(
-  Ac + Aj + Ap + A_fit + A ~ Ci | species_plot,
-  data = aci_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')')
-)
+plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
 
 # View the residuals for each species / plot
 lattice::xyplot(
@@ -442,6 +433,8 @@ aci_results <- consolidate(by(
 ))
 
 aci_results$parameters[ , col_to_keep, TRUE]
+
+plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
 }
 
 \concept{exdf}

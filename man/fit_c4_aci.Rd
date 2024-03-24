@@ -342,7 +342,8 @@ aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c4_aci,
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  remove_unreliable_param = TRUE
 ))
 
 # View the fitting parameters for each species / plot
@@ -358,16 +359,7 @@ col_to_keep <- c(
 aci_results$parameters[ , col_to_keep, TRUE]
 
 # View the fits for each species / plot
-lattice::xyplot(
-  Ar + Apc + A_fit + A ~ Ci | species_plot,
-  data = aci_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste('Intercellular CO2 concentration [', aci_results$fits$units$Ci, ']'),
-  ylab = paste('Assimilation rate [', aci_results$fits$units$A, ']')
-)
+plot_c4_aci_fit(aci_results, 'species_plot', 'Ci')
 
 # View the residuals for each species / plot
 lattice::xyplot(
