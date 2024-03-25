@@ -8,7 +8,6 @@
   Calculates confidence intervals for parameters estimated by a C3 A-Ci curve
   fit. It is rare for users to call this function directly, because it can be
   automatically applied to each curve when calling \code{\link{fit_c3_aci}}.
-  Use this feature with caution, as it is under development.
 }
 
 \usage{
@@ -156,7 +155,27 @@
 }
 
 \details{
-  TODO
+  In maximum likelihood fitting, each set of parameter values has an associated
+  likelihood value. If the maximum likelihood is known, then it is also possible
+  to define a relative likelihood \code{p} according to \code{p = L / L_max}.
+  The set of all parameter values where \code{p} exceeds a threshold value
+  \code{p_0} defines a region in parameter space called like a "relative
+  likelihood region." When taking one-dimensional cuts through parameter space,
+  the boundaries of the relative likelihood region define a relative likelihood
+  interval.
+
+  Here we calculate the upper and lower limits of the relative likelihood
+  intervals for each parameter. This is done by fixing the other parameters to
+  their best-fit values, and varying a single parameter to find the interval
+  where the relative likelihood is above the threshold value. If the threshold
+  \code{p_0} is set to 0.147, then these intervals are equivalent to 95\%
+  confidence intervals in most situations. See the Wikipedia page about
+  \href{https://en.wikipedia.org/wiki/Relative_likelihood}{relative likelihood}
+  for more information.
+
+  If the upper limit of a confidence interval is found to exceed ten times the
+  upper limit specified when fitting that parameter, then the upper limit of the
+  condfidence interval is taken to be infinity.
 }
 
 \value{
