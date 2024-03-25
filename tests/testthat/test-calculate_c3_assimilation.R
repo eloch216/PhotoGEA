@@ -1,6 +1,7 @@
 # Set up some inputs
 inputs <- exdf(data.frame(
   Cc = seq(1, 601, by = 60),
+  oxygen = 21,
   Tleaf = 30,
   total_pressure = 1
 ))
@@ -8,6 +9,7 @@ inputs <- exdf(data.frame(
 inputs <- document_variables(
   inputs,
   c('', 'Cc',             'micromol mol^(-1)'),
+  c('', 'oxygen',         'percent'),
   c('', 'Tleaf',          'degrees C'),
   c('', 'total_pressure', 'bar')
 )

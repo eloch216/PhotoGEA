@@ -44,7 +44,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(limit_res[1, c('Cc_inf_gmc', 'Cc_inf_gsc', 'An_inf_gmc', 'An_inf_gsc', 'lm_warren', 'ls_warren')]),
-        c(38.202507, 29.805330, -5.921654, -8.103482, 0.202050, 0.416895),
+        c(38.20251, 29.80533, -5.92298, -8.10522, 0.20204, 0.41688),
         tolerance = 1e-5
     )
 })
