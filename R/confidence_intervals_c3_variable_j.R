@@ -38,7 +38,6 @@ confidence_intervals_c3_variable_j <- function(
         replicate_exdf,
         fit_options,
         sd_A,
-        POc,
         atp_use,
         nadph_use,
         curvature_cj,

@@ -114,7 +114,7 @@ plot_c4_aci_fit <- function(
             assim_input[, cn] <- if (all(is.na(x[, cn]))) {
                 NA
             } else {
-                approx(x[, pcm_column_name], x[, cn], pcm_seq)[['y']]
+                stats::approx(x[, pcm_column_name], x[, cn], pcm_seq)[['y']]
             }
         }
 

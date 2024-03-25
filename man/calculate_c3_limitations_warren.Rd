@@ -16,7 +16,6 @@
 \usage{
   calculate_c3_limitations_warren(
     exdf_obj,
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -27,6 +26,7 @@
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm'
@@ -39,14 +39,6 @@
     be an \code{exdf} object returned from \code{\link{fit_c3_aci}}; it will be
     expected to have columns for \code{alpha_g}, \code{Gamma_star},
     \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
-  }
-
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
   }
 
   \item{atp_use}{
@@ -104,6 +96,12 @@
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
     values calculated using \code{\link{calculate_arrhenius}}.
+  }
+
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
   }
 
   \item{rd_norm_column_name}{

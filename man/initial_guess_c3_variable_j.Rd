@@ -20,7 +20,6 @@
     alpha_g,
     Gamma_star,
     cc_threshold_rd = 100,
-    Oc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
@@ -29,6 +28,7 @@
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
@@ -57,13 +57,6 @@
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
-  }
-
-  \item{Oc}{
-    The concentration of O2 in the chloroplast, expressed in
-    \code{micromol mol^(-1)}. This is often assumed to be the ambient value. For
-    air measurements, this would be 21 percent O2, which is 210000 ppm. For low
-    oxygen measurements, this would be 2 percent O2, which is about 20000 ppm.
   }
 
   \item{atp_use}{
@@ -105,6 +98,12 @@
     The name of the column in \code{rc_exdf} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}.
+  }
+
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
   }
 
   \item{phips2_column_name}{

@@ -109,7 +109,7 @@ plot_c3_aci_fit <- function(
             assim_input[, cn] <- if (all(is.na(x[, cn]))) {
                 NA
             } else {
-                approx(x[, cc_column_name], x[, cn], cc_seq)[['y']]
+                stats::approx(x[, cc_column_name], x[, cn], cc_seq)[['y']]
             }
         }
 
