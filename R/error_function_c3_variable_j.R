@@ -51,7 +51,7 @@ error_function_c3_variable_j <- function(
     required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
-    required_variables[[phips2_column_name]]         <- NA
+    required_variables[[phips2_column_name]]         <- 'dimensionless'
     required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
     required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'

@@ -50,7 +50,10 @@
     \item \code{ball_berry_1.csv}: A CSV version of \code{ball_berry_1.xlsx},
           which was created by reading the Excel file with
           \code{\link{read_gasex_file}} and then saving it using
-          \code{\link{write.csv.exdf}}.
+          \code{\link{write.csv.exdf}}. This can be done as follows: \code{tmp
+          <- read_gasex_file(system.file('extdata', 'ball_berry_1.xlsx', package
+          = 'PhotoGEA', mustWork = TRUE)); write.csv.exdf(tmp,
+          'ball_berry_1.csv')}
     \item \code{c3_aci_1.xlsx} and \code{c3_aci_2.xlsx}: Two log files
           created by Licor Li-6800 portable gas exchange measurement systems.
           These log files each contain several C3 CO2 response (or A-Ci) curves.

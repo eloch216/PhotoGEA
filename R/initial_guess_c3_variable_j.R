@@ -28,7 +28,7 @@ initial_guess_c3_variable_j <- function(
         required_variables <- list()
         required_variables[[ci_column_name]]     <- 'micromol mol^(-1)'
         required_variables[[etr_column_name]]    <- 'micromol m^(-2) s^(-1)'
-        required_variables[[phips2_column_name]] <- NA
+        required_variables[[phips2_column_name]] <- 'dimensionless'
         required_variables[[qin_column_name]]    <- 'micromol m^(-2) s^(-1)'
 
         check_required_variables(rc_exdf, required_variables)

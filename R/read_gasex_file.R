@@ -4,6 +4,7 @@ read_gasex_file <- function(
     posix_options = list(),
     file_type = 'AUTO',
     instrument_type = 'AUTO',
+    standardize_columns = TRUE,
     ...
 )
 {
@@ -67,6 +68,11 @@ read_gasex_file <- function(
         read_cr3000(file_name, ...)
     } else {
         stop(paste('Unsupported (instrument_type file_type) option:', instrument_type, file_type))
+    }
+
+    # Standardize columns if necessary
+    if (standardize_columns) {
+        gasex_exdf <- standardize_gasex_columns(instrument_type, gasex_exdf)
     }
 
     # Make sure the timestamp column is properly interpreted
