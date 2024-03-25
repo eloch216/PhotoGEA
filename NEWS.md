@@ -40,6 +40,13 @@ be directly added to this file to describe the related changes.
   - Best-fit parameter values are determined with `sigma = 1`.
   - Then the true value of the likelihood can be estimated using `sigma = RMSE`.
   - Confidence intervals are also calculated using `sigma = RMSE`.
+- The fitting functions `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci` now
+  include a new output called `fits_interpolated` that contains valuse of the
+  predicted assimilation rates with a `Ci` step of 1 ppm.
+- New plotting functions have been added: `plot_c3_aci_fit` and
+  `plot_c4_aci_fit`. These functions use the new information in
+  `fits_interpolated` to make nice plots comparing the measured data and the
+  fits.
 - Now users can optionally ignore `NA` values when using `xyplot_avg_rc`.
 - Specialized functions for writing `exdf` objects to `CSV` files and recreating
   `exdf` objects from those files are now available: `write.csv.exdf` and
@@ -53,7 +60,16 @@ be directly added to this file to describe the related changes.
 - Tests have been updated to make sure the fitting functions can gracefully
   handle a fit failure, even when estimating confidence intervals and/or
   removing unreliable parameter estimates.
-- Specified a minimum supported R version: 3.6.0
+- Added a new optimizer (`optimizer_hjkb`) and changed their default arguments
+  so a user must always specify the tolerance or number of generations.
+- All functions that require an O2 partial pressure now calculate it from the
+  total pressure and the oxygen concentration (expressed as a percentage).
+- A new option has been added to `read_licor_6800_Excel` and
+  `read_licor_6800_plaintext`: `get_oxygen`. When this input is `TRUE`,
+  `get_oxygen_from_preamble` will autimatically be used to get the oxygen
+  percentage from the file's preamble when it is loaded.
+- A new option has been added to `read_gasex_file`: `standardize_columns`.
+- Specified a minimum supported R version: `3.6.0`.
 
 ## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
 
