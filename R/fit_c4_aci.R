@@ -179,26 +179,81 @@ fit_c4_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Interpolate onto a finer Cc spacing and recalculate fitted rates
+    replicate_exdf_interpolated <- interpolate_assimilation_inputs(
+        replicate_exdf,
+        c(
+            'alpha_psii',
+            'gbs',
+            'Rd_at_25',
+            'Rm_frac',
+            'Vcmax_at_25',
+            'Vpmax_at_25',
+            'Vpr',
+            ao_column_name,
+            ci_column_name,
+            gamma_star_column_name,
+            kc_column_name,
+            ko_column_name,
+            kp_column_name,
+            oxygen_column_name,
+            pcm_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            vpmax_norm_column_name
+        ),
+        ci_column_name,
+        c_step = 1
+    )
+
+    assim_interpolated <- calculate_c4_assimilation(
+        replicate_exdf_interpolated,
+        '', # alpha_psii
+        '', # gbs
+        '', # Rd_at_25
+        '', # Rm_frac
+        '', # Vcmax_at_25
+        '', # Vpmax_at_25
+        '', # Vpr
+        ao_column_name,
+        gamma_star_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        oxygen_column_name,
+        pcm_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        perform_checks = FALSE
+    )
+
+    fits_interpolated <- cbind(
+        replicate_exdf_interpolated[, c(ci_column_name, pcm_column_name), TRUE],
+        assim_interpolated
+    )
+
     # If there was a problem, set all the fit results to NA
     fit_failure <- aci[1, 'c4_assimilation_msg'] != ''
 
     if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
+
         for (cn in colnames(aci)) {
             if (cn != 'c4_assimilation_msg') {
                 replicate_exdf[, cn] <- NA
             }
         }
-    }
 
-    # Add columns for the best-fit parameter values; no need to include
-    # alpha_psii, gbs, or Rm_frac here since they are already included in the
-    # output from calculate_c4_assimilation
-    replicate_exdf[, 'Rd_at_25']    <- best_X[3]
-    replicate_exdf[, 'Vcmax_at_25'] <- best_X[5]
-    replicate_exdf[, 'Vpmax_at_25'] <- best_X[6]
-    replicate_exdf[, 'Vpr']         <- best_X[7]
+        for (cn in colnames(assim_interpolated)) {
+            if (cn != 'c4_assimilation_msg') {
+                fits_interpolated[, cn] <- NA
+            }
+        }
+    }
 
     # Include the atmospheric CO2 concentration
     replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
@@ -224,6 +279,16 @@ fit_c4_aci <- function(
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach identifiers to interpolated rates, making sure to avoid duplicating
+    # any columns
+    identifiers_to_keep <-
+        colnames(replicate_identifiers)[!colnames(replicate_identifiers) %in% colnames(fits_interpolated)]
+
+    fits_interpolated <- cbind(
+        fits_interpolated,
+        replicate_identifiers[, identifiers_to_keep, TRUE]
+    )
 
     # Attach the residual stats to the identifiers
     replicate_identifiers <- cbind(
@@ -345,6 +410,7 @@ fit_c4_aci <- function(
     identify_c4_unreliable_points(
         replicate_identifiers,
         replicate_exdf,
+        fits_interpolated,
         remove_unreliable_param
     )
 }

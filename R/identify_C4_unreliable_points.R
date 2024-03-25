@@ -19,6 +19,7 @@ n_C4_V_smallest <- function(c4_assim, v_name, tol = 1e-3) {
 identify_c4_unreliable_points <- function(
     parameters,
     fits,
+    fits_interpolated,
     remove_unreliable_param
 )
 {
@@ -49,15 +50,19 @@ identify_c4_unreliable_points <- function(
 
     if (remove_unreliable_param && pc_unreliable) {
         # Remove unreliable parameter estimates
-        parameters[, 'Vpmax_at_25']  <- NA
-        parameters[, 'Vpmax_tl_avg'] <- NA
-        fits[, 'Vpmax_at_25']        <- NA
-        fits[, 'Vpmax_tl']           <- NA
+        parameters[, 'Vpmax_at_25']        <- NA
+        parameters[, 'Vpmax_tl_avg']       <- NA
+        fits[, 'Vpmax_at_25']              <- NA
+        fits[, 'Vpmax_tl']                 <- NA
+        fits_interpolated[, 'Vpmax_at_25'] <- NA
+        fits_interpolated[, 'Vpmax_tl']    <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (pc_unreliable_npts) {
-            fits[, 'Vpc'] <- NA
-            fits[, 'Apc'] <- NA
+            fits[, 'Vpc']              <- NA
+            fits[, 'Apc']              <- NA
+            fits_interpolated[, 'Vpc'] <- NA
+            fits_interpolated[, 'Apc'] <- NA
         }
     }
 
@@ -67,13 +72,16 @@ identify_c4_unreliable_points <- function(
 
     if (remove_unreliable_param && pr_unreliable) {
         # Remove unreliable parameter estimates
-        parameters[, 'Vpr'] <- NA
-        fits[, 'Vpr']       <- NA
+        parameters[, 'Vpr']        <- NA
+        fits[, 'Vpr']              <- NA
+        fits_interpolated[, 'Vpr'] <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
-        if (pc_unreliable_npts) {
-            fits[, 'Vpr'] <- NA
-            fits[, 'Apr'] <- NA
+        if (pr_unreliable_npts) {
+            fits[, 'Vpr']              <- NA
+            fits[, 'Apr']              <- NA
+            fits_interpolated[, 'Vpr'] <- NA
+            fits_interpolated[, 'Apr'] <- NA
         }
     }
 
@@ -83,10 +91,12 @@ identify_c4_unreliable_points <- function(
 
     if (remove_unreliable_param && c_unreliable) {
         # Remove unreliable parameter estimates
-        parameters[, 'Vcmax_at_25']  <- NA
-        parameters[, 'Vcmax_tl_avg'] <- NA
-        fits[, 'Vcmax_at_25']        <- NA
-        fits[, 'Vcmax_tl']           <- NA
+        parameters[, 'Vcmax_at_25']        <- NA
+        parameters[, 'Vcmax_tl_avg']       <- NA
+        fits[, 'Vcmax_at_25']              <- NA
+        fits[, 'Vcmax_tl']                 <- NA
+        fits_interpolated[, 'Vcmax_at_25'] <- NA
+        fits_interpolated[, 'Vcmax_tl']    <- NA
     }
 
     # Document the columns that were added to the parameter object
@@ -101,6 +111,7 @@ identify_c4_unreliable_points <- function(
 
     list(
         parameters = parameters,
-        fits = fits
+        fits = fits,
+        fits_interpolated = fits_interpolated
     )
 }

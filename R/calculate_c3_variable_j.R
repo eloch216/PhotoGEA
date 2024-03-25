@@ -101,11 +101,14 @@ calculate_c3_variable_j <- function(
         # are included
         output <- exdf(data.frame(
             Gamma_star = Gamma_star,
+            Rd_at_25 = Rd_at_25,
             tau = tau,
             Rd_tl = Rd_tl,
             J_F = J_F,
             gmc = gmc,
             Cc = Cc,
+            atp_use = atp_use,
+            nadph_use = nadph_use,
             c3_variable_j_msg = msg,
             stringsAsFactors = FALSE
         ))
@@ -113,11 +116,14 @@ calculate_c3_variable_j <- function(
         document_variables(
             output,
             c('calculate_c3_variable_j', 'Gamma_star',        'micromol mol^(-1)'),
+            c('calculate_c3_variable_j', 'Rd_at_25',          'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'tau',               'dimensionless'),
             c('calculate_c3_variable_j', 'Rd_tl',             'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'J_F',               'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'gmc',               'mol m^(-2) s^(-1) bar^(-1)'),
             c('calculate_c3_variable_j', 'Cc',                'micromol mol^(-1)'),
+            c('calculate_c3_variable_j', 'atp_use',           'dimensionless'),
+            c('calculate_c3_variable_j', 'nadph_use',         'dimensionless'),
             c('calculate_c3_variable_j', 'c3_variable_j_msg', '')
         )
     } else {

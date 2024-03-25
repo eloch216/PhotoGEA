@@ -154,8 +154,9 @@ fit_c3_variable_j <- function(
     # Set all categories to `fit_c3_variable_j`
     vj$categories[1,] <- 'fit_c3_variable_j'
 
-    # Remove the Rd_tl column so it doesn't get repeated
-    vj[, 'Rd_tl'] <- NULL
+    # Remove the Rd columns so they don't get repeated
+    vj[, 'Rd_at_25'] <- NULL
+    vj[, 'Rd_tl']    <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -229,6 +230,82 @@ fit_c3_variable_j <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Interpolate onto a finer Cc spacing and recalculate fitted rates
+    replicate_exdf_interpolated <- interpolate_assimilation_inputs(
+        replicate_exdf,
+        c(
+            'alpha_g',
+            'Gamma_star',
+            'J_at_25',
+            'Rd_at_25',
+            'tau',
+            'Tp',
+            'Vcmax_at_25',
+            a_column_name,
+            ci_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            oxygen_column_name,
+            phips2_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name
+        ),
+        ci_column_name,
+        c_step = 1
+    )
+
+    vj_interpolated <- calculate_c3_variable_j(
+        replicate_exdf_interpolated,
+        '', # Gamma_star
+        '', # Rd_at_25
+        '', # tau
+        atp_use,
+        nadph_use,
+        a_column_name,
+        ci_column_name,
+        phips2_column_name,
+        qin_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        perform_checks = FALSE
+    )
+
+    vj_interpolated[, 'Rd_at_25'] <- NULL
+    vj_interpolated[, 'Rd_tl']    <- NULL
+
+    replicate_exdf_interpolated <- cbind(replicate_exdf_interpolated, vj_interpolated)
+
+    assim_interpolated <- calculate_c3_assimilation(
+        replicate_exdf_interpolated,
+        '', # alpha_g
+        '', # Gamma_star
+        '', # J_at_25
+        '', # Rd_at_25
+        '', # Tp
+        '', # Vcmax_at_25
+        atp_use,
+        nadph_use,
+        curvature_cj,
+        curvature_cjp,
+        cc_column_name = 'Cc',
+        j_norm_column_name,
+        kc_column_name,
+        ko_column_name,
+        oxygen_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        vcmax_norm_column_name,
+        perform_checks = FALSE
+    )
+
+    fits_interpolated <- cbind(
+        replicate_exdf_interpolated[, c(ci_column_name, 'Cc'), TRUE],
+        assim_interpolated
+    )
+
     # If there was a problem, set all the fit results to NA
     fit_failure <-
         aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != ''
@@ -236,25 +313,34 @@ fit_c3_variable_j <- function(
     if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
+
         for (cn in colnames(aci)) {
             if (cn != 'c3_assimilation_msg') {
                 replicate_exdf[, cn] <- NA
             }
         }
+
         for (cn in colnames(vj)) {
             if (cn != 'c3_variable_j_msg') {
                 replicate_exdf[, cn] <- NA
             }
         }
+
+        for (cn in colnames(assim_interpolated)) {
+            if (cn != 'c3_assimilation_msg') {
+                fits_interpolated[, cn] <- NA
+            }
+        }
+
+        for (cn in colnames(vj_interpolated)) {
+            if (cn != 'c3_variable_j_msg') {
+                fits_interpolated[, cn] <- NA
+            }
+        }
     }
 
-    # Add columns for the best-fit parameter values (no need to include alpha_g,
-    # Gamma_star, or Tp since they are already included in the output of
-    # calculate_c3_assimilation)
-    replicate_exdf[, 'J_at_25']     <- best_X[3]
-    replicate_exdf[, 'Rd_at_25']    <- best_X[4]
-    replicate_exdf[, 'tau']         <- best_X[5]
-    replicate_exdf[, 'Vcmax_at_25'] <- best_X[7]
+    # Add columns for the best-fit tau value
+    replicate_exdf[, 'tau'] <- best_X[5]
 
     # Include the atmospheric CO2 concentration
     replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
@@ -280,6 +366,16 @@ fit_c3_variable_j <- function(
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach identifiers to interpolated rates, making sure to avoid duplicating
+    # any columns
+    identifiers_to_keep <-
+        colnames(replicate_identifiers)[!colnames(replicate_identifiers) %in% colnames(fits_interpolated)]
+
+    fits_interpolated <- cbind(
+        fits_interpolated,
+        replicate_identifiers[, identifiers_to_keep, TRUE]
+    )
 
     # Attach the residual stats to the identifiers
     replicate_identifiers <- cbind(
@@ -417,6 +513,7 @@ fit_c3_variable_j <- function(
     identify_c3_unreliable_points(
         replicate_identifiers,
         replicate_exdf,
+        fits_interpolated,
         remove_unreliable_param
     )
 }

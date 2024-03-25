@@ -274,6 +274,9 @@
                   \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl}, \code{Rm_tl},
                   \code{Vp}, \code{Apc}, \code{Apr}, \code{Ap}, and \code{Ar}.
           }
+    \item \code{fits_interpolated}: An \code{exdf} object including the
+          calculated assimilation rates at a fine spacing of \code{Ci} values
+          (step size of 1 \code{micromol mol^(-1)}).
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{

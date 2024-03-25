@@ -328,6 +328,9 @@
                   \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
                   \code{Aj}, \code{Ap}, \code{gmc}, \code{J_F}, and \code{Cc}.
           }
+    \item \code{fits_interpolated}: An \code{exdf} object including the
+          calculated assimilation rates at a fine spacing of \code{Ci} values
+          (step size of 1 \code{micromol mol^(-1)}).
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{

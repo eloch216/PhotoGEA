@@ -281,7 +281,7 @@
 }
 
 \value{
-  A list with two elements:
+  A list with three elements:
   \itemize{
     \item \code{fits}: An \code{exdf} object including the original contents of
           \code{replicate_exdf} along with several new columns:
@@ -303,6 +303,9 @@
                   \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
                   \code{Aj}, and \code{Ap}.
           }
+    \item \code{fits_interpolated}: An \code{exdf} object including the
+          calculated assimilation rates at a fine spacing of \code{Ci} values
+          (step size of 1 \code{micromol mol^(-1)}).
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{
