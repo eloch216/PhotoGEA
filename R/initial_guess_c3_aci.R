@@ -2,7 +2,6 @@ initial_guess_c3_aci <- function(
     alpha_g,    # dimensionless
     Gamma_star, # micromol / mol
     cc_threshold_rd = 100,
-    Oc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
@@ -10,6 +9,7 @@ initial_guess_c3_aci <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
 )
@@ -82,7 +82,7 @@ initial_guess_c3_aci <- function(
         # Vcmax value as our best estimate. In this calculation, we need a value
         # of Rd, so we use the previously-estimated value.
         vcmax_estimates <- Aphoto *
-            (rc_exdf[, cc_column_name] + rc_exdf[, kc_column_name] * (1 + Oc / (1000 * rc_exdf[, ko_column_name]))) /
+            (rc_exdf[, cc_column_name] + rc_exdf[, kc_column_name] * (1 + rc_exdf[, oxygen_column_name] * 1e-2 / (1e-3 * rc_exdf[, ko_column_name]))) /
             (rc_exdf[, cc_column_name] - rc_exdf[, 'Gamma_star'])
 
         vcmax_estimates <- vcmax_estimates / rc_exdf[, vcmax_norm_column_name]

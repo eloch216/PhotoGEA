@@ -96,13 +96,17 @@ Tleaf = 30
 
 inputs <- exdf(data.frame(
   PCm = seq(0, 500, length.out = npts),
-  Tleaf = Tleaf
+  Tleaf = Tleaf,
+  total_pressure = 1,
+  oxygen = 21
 ))
 
 inputs <- document_variables(
   inputs,
   c('', 'PCm',   'microbar'),
-  c('', 'Tleaf', 'degrees C')
+  c('', 'Tleaf', 'degrees C'),
+  c('', 'total_pressure', 'bar'),
+  c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
@@ -681,39 +685,12 @@ xyplot(
 
 Note that in addition to the fitted values of `A`, the output also includes
 values of the individual limiting rates `Apc` and `Ar`, as well as the estimated
-operating point. We can also take a look at these, although they make the plots
-a bit busy. We can also choose to plot assimilation against `PCm` rather than
-`Ci`, and include the operating point as an open circle:
+operating point. We can also take a look at these using a built-in plotting
+function:
 
 ```{r plot_fit_aci_limiting}
 # Plot the C4 A-PCm fits (including limiting rates)
-xyplot(
-  A + Apc + Ar + A_fit ~ PCm | curve_identifier,
-  data = c4_aci_results$fits$main_data,
-  type = 'b',
-  auto.key = list(space = 'right'),
-  grid = TRUE,
-  xlab = paste('Mesophyll CO2 pressure [', c4_aci_results$fits$units$PCm, ']'),
-  ylab = paste('Net CO2 assimilation rate [', c4_aci_results$fits$units$A, ']'),
-  par.settings = list(
-    superpose.line = list(col = multi_curve_line_colors()),
-    superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-  ),
-  curve_ids = c4_aci_results$fits[, 'curve_identifier'],
-  panel = function(...) {
-    panel.xyplot(...)
-    args <- list(...)
-    curve_id <- args$curve_ids[args$subscripts][1]
-    fit_param <-
-      c4_aci_results$parameters[c4_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
-    panel.points(
-        fit_param$operating_An_model ~ fit_param$operating_PCm,
-        type = 'p',
-        col = 'black',
-        pch = 1
-    )
-  }
-)
+plot_c4_aci_fit(c4_aci_results, 'curve_identifier', 'Ci', ylim = c(-10, 100))
 ```
 
 Checking the residuals is also a powerful way to gauge the quality of a fit. The

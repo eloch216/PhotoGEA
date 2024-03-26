@@ -4,7 +4,6 @@
 
 calculate_c3_limitations_warren <- function(
     exdf_obj,
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -15,6 +14,7 @@ calculate_c3_limitations_warren <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm'
@@ -39,6 +39,7 @@ calculate_c3_limitations_warren <- function(
     required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
     required_variables[[kc_column_name]]             <- unit_dictionary[['Kc']]
     required_variables[[ko_column_name]]             <- unit_dictionary[['Ko']]
+    required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
     required_variables[[rd_norm_column_name]]        <- unit_dictionary[['Rd_norm']]
     required_variables[[total_pressure_column_name]] <- unit_dictionary[['total_pressure']]
     required_variables[[vcmax_norm_column_name]]     <- unit_dictionary[['Vcmax_norm']]
@@ -78,7 +79,6 @@ calculate_c3_limitations_warren <- function(
             '', # Rd_at_25
             '', # Tp
             '', # Vcmax_at_25
-            POc = POc,
             atp_use = atp_use,
             nadph_use = nadph_use,
             curvature_cj = curvature_cj,
@@ -87,6 +87,7 @@ calculate_c3_limitations_warren <- function(
             j_norm_column_name = j_norm_column_name,
             kc_column_name = kc_column_name,
             ko_column_name = ko_column_name,
+            oxygen_column_name = oxygen_column_name,
             rd_norm_column_name = rd_norm_column_name,
             total_pressure_column_name = total_pressure_column_name,
             vcmax_norm_column_name = vcmax_norm_column_name,

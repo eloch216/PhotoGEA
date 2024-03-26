@@ -11,3 +11,15 @@ test_that('file_name must exist', {
         '`fake_file.xlsx` does not exist'
     )
 })
+
+
+test_that('standardizations are applied', {
+    fpath <- system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+
+    licor_file_standard <- read_gasex_file(fpath)
+
+    licor_file <- read_gasex_file(fpath, standardize_columns = FALSE)
+
+    expect_equal(licor_file_standard$units$PhiPS2, 'dimensionless')
+    expect_equal(licor_file$units$PhiPS2, 'NA')
+})

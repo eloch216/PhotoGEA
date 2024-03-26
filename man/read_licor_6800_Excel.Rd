@@ -10,7 +10,12 @@
 }
 
 \usage{
-  read_licor_6800_Excel(file_name, column_name = 'obs', \dots)
+  read_licor_6800_Excel(
+    file_name,
+    column_name = 'obs',
+    get_oxygen = TRUE,
+    \dots
+  )
 }
 
 \arguments{
@@ -21,6 +26,11 @@
   \item{column_name}{
     A column name that should be present in the log file; used to identify the
     beginning of the data block in the file.
+  }
+
+  \item{get_oxygen}{
+    A logical value indicating whether to get the oxygen percentage from the
+    file's preamble using \code{\link{get_oxygen_from_preamble}}.
   }
 
   \item{\dots}{

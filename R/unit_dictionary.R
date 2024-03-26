@@ -27,6 +27,7 @@ unit_dictionary <- list(
     J_norm         = 'normalized to J at 25 degrees C',
     Kc             = micromol_fraction,
     Ko             = millimol_fraction,
+    oxygen         = 'percent',
     Rd_at_25       = micromol_flux,
     Rd_norm        = 'normalized to Rd at 25 degrees C',
     Rm_frac        = dimensionless,

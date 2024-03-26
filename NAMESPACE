@@ -55,6 +55,7 @@ export(initial_guess_c3_aci)
 export(initial_guess_c3_variable_j)
 export(initial_guess_c4_aci)
 export(optimizer_deoptim)
+export(optimizer_hjkb)
 export(optimizer_nmkb)
 export(residual_stats)
 
@@ -138,6 +139,8 @@ export(bwplot_wrapper)
 export(multi_curve_colors)
 export(multi_curve_line_colors)
 export(multi_curve_point_colors)
+export(plot_c3_aci_fit)
+export(plot_c4_aci_fit)
 export(xyplot_avg_rc)
 
 # Deprecated functions

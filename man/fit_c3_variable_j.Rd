@@ -24,18 +24,18 @@
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(),
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -98,6 +98,12 @@
     \code{mmol mol^(-1)}.
   }
 
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
+  }
+
   \item{phips2_column_name}{
     The name of the column in \code{exdf_obj} that contains values of the
     operating efficiency of photosystem II (dimensionless).
@@ -129,14 +135,6 @@
     A value of the standard deviation of measured \code{A} values, or the name
     of a method for determining the deviation; currently, the only supported
     option is \code{'RMSE'}.
-  }
-
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
   }
 
   \item{atp_use}{
@@ -330,6 +328,9 @@
                   \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl}, \code{Ac},
                   \code{Aj}, \code{Ap}, \code{gmc}, \code{J_F}, and \code{Cc}.
           }
+    \item \code{fits_interpolated}: An \code{exdf} object including the
+          calculated assimilation rates at a fine spacing of \code{Ci} values
+          (step size of 1 \code{micromol mol^(-1)}).
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{
@@ -404,7 +405,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb()
+  OPTIM_FUN = optimizer_nmkb(1e-7)
 ))
 
 # View the fitting parameters for each species / plot
@@ -423,16 +424,7 @@ col_to_keep <- c(
 aci_results$parameters[ , col_to_keep, TRUE]
 
 # View the fits for each species / plot
-lattice::xyplot(
-  Ac + Aj + Ap + A_fit + A ~ Ci | species_plot,
-  data = aci_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')')
-)
+plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
 
 # View the residuals for each species / plot
 lattice::xyplot(
@@ -466,11 +458,13 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb(),
+  OPTIM_FUN = optimizer_nmkb(1e-7),
   remove_unreliable_param = TRUE
 ))
 
 aci_results$parameters[ , col_to_keep, TRUE]
+
+plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
 }
 
 \concept{exdf}

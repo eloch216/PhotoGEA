@@ -6,7 +6,6 @@ calculate_c3_assimilation <- function(
     Rd_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Tp,           # micromol / m^2 / s (typically this value is being fitted)
     Vcmax_at_25,  # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
-    POc = 210000, # microbar           (typically this value is known from the experimental setup)
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -15,6 +14,7 @@ calculate_c3_assimilation <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -33,6 +33,7 @@ calculate_c3_assimilation <- function(
         required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
+        required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
         required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
@@ -81,6 +82,9 @@ calculate_c3_assimilation <- function(
     # read, converting units as necessary
     pressure <- exdf_obj[, total_pressure_column_name] # bar
 
+    oxygen <- exdf_obj[, oxygen_column_name] # percent
+    POc <- oxygen * pressure * 1e4 # microbar
+
     Cc <- exdf_obj[, cc_column_name] # micromol / mol
     PCc <- Cc * pressure             # microbar
 
@@ -101,6 +105,7 @@ calculate_c3_assimilation <- function(
     if (any(J_at_25 < 0, na.rm = TRUE))               {msg <- append(msg, 'J_at_25 must be >= 0')}
     if (any(Kc < 0, na.rm = TRUE))                    {msg <- append(msg, 'Kc must be >= 0')}
     if (any(Ko < 0, na.rm = TRUE))                    {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(oxygen < 0, na.rm = TRUE))                {msg <- append(msg, 'oxygen must be >= 0')}
     if (any(pressure < 0, na.rm = TRUE))              {msg <- append(msg, 'pressure must be >= 0')}
     if (any(Rd_at_25 < 0, na.rm = TRUE))              {msg <- append(msg, 'Rd_at_25 must be >= 0')}
     if (any(Tp < 0, na.rm = TRUE))                    {msg <- append(msg, 'Tp must be >= 0')}
@@ -125,30 +130,36 @@ calculate_c3_assimilation <- function(
     Wp <- PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))
     Wp[PCc <= Gamma_star * (1 + 3 * alpha_g)] <- Inf
 
-    # Co-limitation between Wc and Wj
-    a_cj <- curvature_cj
-    b_cj <- -(Wc + Wj)
-    c_cj <- Wc * Wj
+    # Overall carboxylation rate
+    Wcjp <- if (curvature_cj == 1 && curvature_cjp == 1) {
+        # Here we can just take the minimum
+        pmin(Wc, Wj, Wp, na.rm = TRUE)
+    } else {
+        # Co-limitation between Wc and Wj
+        a_cj <- curvature_cj
+        b_cj <- -(Wc + Wj)
+        c_cj <- Wc * Wj
 
-    Wcj <- sapply(seq_along(b_cj), function(i) {
-        quadratic_root_min(a_cj, b_cj[i], c_cj[i]) # micromol / m^2 / s
-    })
+        Wcj <- sapply(seq_along(b_cj), function(i) {
+            quadratic_root_min(a_cj, b_cj[i], c_cj[i]) # micromol / m^2 / s
+        })
 
-    # Co-limitation between Wcj and Wp. If Wp is infinite, then we have
-    # Wp >> Wcj and Wp >> curvature_cjp, so the quadratic coefficients become
-    # a_cjp = 0, b_cjp = -Wp, and c_cjp = Wcj * Wp. In that case, we have
-    # 0 = -Wp * Wcjp + Wcj * Wp, whose solution is simply Wcjp = Wcj.
-    a_cjp <- curvature_cjp
-    b_cjp <- -(Wcj + Wp)
-    c_cjp <- Wcj * Wp
+        # Co-limitation between Wcj and Wp. If Wp is infinite, then we have
+        # Wp >> Wcj and Wp >> curvature_cjp, so the quadratic coefficients become
+        # a_cjp = 0, b_cjp = -Wp, and c_cjp = Wcj * Wp. In that case, we have
+        # 0 = -Wp * Wcjp + Wcj * Wp, whose solution is simply Wcjp = Wcj.
+        a_cjp <- curvature_cjp
+        b_cjp <- -(Wcj + Wp)
+        c_cjp <- Wcj * Wp
 
-    Wcjp <- sapply(seq_along(b_cjp), function(i) {
-        if (is.infinite(Wp[i])) {
-            Wcj[i] # micromol / m^2 / s
-        } else {
-            quadratic_root_min(a_cjp, b_cjp[i], c_cjp[i]) # micromol / m^2 / s
-        }
-    })
+        sapply(seq_along(b_cjp), function(i) {
+            if (is.infinite(Wp[i])) {
+                Wcj[i] # micromol / m^2 / s
+            } else {
+                quadratic_root_min(a_cjp, b_cjp[i], c_cjp[i]) # micromol / m^2 / s
+            }
+        })
+    }
 
     # Calculate corresponding net CO2 assimilations by accounting for
     # photorespiration and day respiration
@@ -164,9 +175,12 @@ calculate_c3_assimilation <- function(
         output <- exdf(data.frame(
             alpha_g = alpha_g,
             Gamma_star = Gamma_star,
+            J_at_25 = J_at_25,
+            Rd_at_25 = Rd_at_25,
+            Tp = Tp,
+            Vcmax_at_25 = Vcmax_at_25,
             J_tl = J_tl,
             Rd_tl = Rd_tl,
-            Tp = Tp,
             Vcmax_tl = Vcmax_tl,
             Ac = Ac,
             Aj = Aj,
@@ -176,6 +190,10 @@ calculate_c3_assimilation <- function(
             Wj = Wj,
             Wp = Wp,
             Vc = Wcjp,
+            atp_use = atp_use,
+            nadph_use = nadph_use,
+            curvature_cj = curvature_cj,
+            curvature_cjp = curvature_cjp,
             c3_assimilation_msg = msg,
             stringsAsFactors = FALSE
         ))
@@ -184,9 +202,12 @@ calculate_c3_assimilation <- function(
             output,
             c('calculate_c3_assimilation', 'alpha_g',             'dimensionless'),
             c('calculate_c3_assimilation', 'Gamma_star',          'micromol mol^(-1)'),
+            c('calculate_c3_assimilation', 'J_at_25',             'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Rd_at_25',            'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Tp',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'J_tl',                'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Rd_tl',               'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Tp',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vcmax_tl',            'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Ac',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Aj',                  'micromol m^(-2) s^(-1)'),
@@ -196,6 +217,10 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'Wj',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Wp',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vc',                  'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'atp_use',             'dimensionless'),
+            c('calculate_c3_assimilation', 'nadph_use',           'dimensionless'),
+            c('calculate_c3_assimilation', 'curvature_cj',        'dimensionless'),
+            c('calculate_c3_assimilation', 'curvature_cjp',       'dimensionless'),
             c('calculate_c3_assimilation', 'c3_assimilation_msg', '')
         )
     } else {

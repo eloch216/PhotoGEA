@@ -19,6 +19,7 @@ n_C3_W_smallest <- function(c3_assim, w_name, tol = 1e-3) {
 identify_c3_unreliable_points <- function(
     parameters,
     fits,
+    fits_interpolated,
     remove_unreliable_param
 )
 {
@@ -51,15 +52,19 @@ identify_c3_unreliable_points <- function(
 
     if (remove_unreliable_param && c_unreliable) {
         # Remove unreliable parameter estimates
-        parameters[, 'Vcmax_at_25']  <- NA
-        parameters[, 'Vcmax_tl_avg'] <- NA
-        fits[, 'Vcmax_at_25']        <- NA
-        fits[, 'Vcmax_tl']           <- NA
+        parameters[, 'Vcmax_at_25']        <- NA
+        parameters[, 'Vcmax_tl_avg']       <- NA
+        fits[, 'Vcmax_at_25']              <- NA
+        fits[, 'Vcmax_tl']                 <- NA
+        fits_interpolated[, 'Vcmax_at_25'] <- NA
+        fits_interpolated[, 'Vcmax_tl']    <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (c_unreliable_npts) {
-            fits[, 'Wc'] <- NA
-            fits[, 'Ac'] <- NA
+            fits[, 'Wc']              <- NA
+            fits[, 'Ac']              <- NA
+            fits_interpolated[, 'Wc'] <- NA
+            fits_interpolated[, 'Ac'] <- NA
         }
     }
 
@@ -69,15 +74,19 @@ identify_c3_unreliable_points <- function(
 
     if (remove_unreliable_param && j_unreliable) {
         # Remove unreliable parameter estimates
-        parameters[, 'J_at_25']  <- NA
-        parameters[, 'J_tl_avg'] <- NA
-        fits[, 'J_at_25']        <- NA
-        fits[, 'J_tl']           <- NA
+        parameters[, 'J_at_25']        <- NA
+        parameters[, 'J_tl_avg']       <- NA
+        fits[, 'J_at_25']              <- NA
+        fits[, 'J_tl']                 <- NA
+        fits_interpolated[, 'J_at_25'] <- NA
+        fits_interpolated[, 'J_tl']    <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (j_unreliable_npts) {
-            fits[, 'Wj'] <- NA
-            fits[, 'Aj'] <- NA
+            fits[, 'Wj']              <- NA
+            fits[, 'Aj']              <- NA
+            fits_interpolated[, 'Wj'] <- NA
+            fits_interpolated[, 'Aj'] <- NA
         }
     }
 
@@ -89,15 +98,18 @@ identify_c3_unreliable_points <- function(
 
     if (remove_unreliable_param && p_unreliable) {
         # Remove unreliable parameter estimates
-        parameters[, 'alpha_g'] <- NA
-        parameters[, 'Tp']      <- NA
-        fits[, 'alpha_g']       <- NA
-        fits[, 'Tp']            <- NA
+        parameters[, 'alpha_g']   <- NA
+        parameters[, 'Tp']        <- NA
+        fits[, 'alpha_g']         <- NA
+        fits[, 'Tp']              <- NA
+        fits_interpolated[, 'Tp'] <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (p_unreliable_npts) {
-            fits[, 'Wp'] <- NA
-            fits[, 'Ap'] <- NA
+            fits[, 'Wp']              <- NA
+            fits[, 'Ap']              <- NA
+            fits_interpolated[, 'Wp'] <- NA
+            fits_interpolated[, 'Ap'] <- NA
         }
     }
 
@@ -115,6 +127,7 @@ identify_c3_unreliable_points <- function(
 
     list(
         parameters = parameters,
-        fits = fits
+        fits = fits,
+        fits_interpolated = fits_interpolated
     )
 }

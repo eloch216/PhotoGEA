@@ -1,4 +1,9 @@
-read_licor_6800_plaintext <- function(file_name, ...) {
+read_licor_6800_plaintext <- function(
+    file_name,
+    get_oxygen = TRUE,
+    ...
+)
+{
     # First read the file as a set of lines. This will allow us to find the rows
     # where the [Header] and [Data] sections begin.
     fconn <- file(file_name)
@@ -67,14 +72,21 @@ read_licor_6800_plaintext <- function(file_name, ...) {
     licor_preamble[1, ] <- replace_unicode(licor_preamble[1, ])
 
     # Return an exdf object with information from the file
-    return(
-        exdf(
-            licor_data,
-            licor_variable_units,
-            licor_variable_categories,
-            preamble = licor_preamble,
-            header_indx = header_indx,
-            data_indx = data_indx
-        )
+
+    # Create the exdf object
+    exdf_obj <- exdf(
+        licor_data,
+        licor_variable_units,
+        licor_variable_categories,
+        preamble = licor_preamble,
+        header_indx = header_indx,
+        data_indx = data_indx
     )
+
+    # Return the object, including oxygen information if necessary
+    if (get_oxygen) {
+        get_oxygen_from_preamble(exdf_obj)
+    } else {
+        exdf_obj
+    }
 }

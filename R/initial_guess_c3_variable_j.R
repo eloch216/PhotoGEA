@@ -2,7 +2,6 @@ initial_guess_c3_variable_j <- function(
     alpha_g,
     Gamma_star,
     cc_threshold_rd = 100,
-    Oc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
@@ -11,6 +10,7 @@ initial_guess_c3_variable_j <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
@@ -28,7 +28,7 @@ initial_guess_c3_variable_j <- function(
         required_variables <- list()
         required_variables[[ci_column_name]]     <- 'micromol mol^(-1)'
         required_variables[[etr_column_name]]    <- 'micromol m^(-2) s^(-1)'
-        required_variables[[phips2_column_name]] <- NA
+        required_variables[[phips2_column_name]] <- 'dimensionless'
         required_variables[[qin_column_name]]    <- 'micromol m^(-2) s^(-1)'
 
         check_required_variables(rc_exdf, required_variables)
@@ -55,7 +55,6 @@ initial_guess_c3_variable_j <- function(
             alpha_g,
             Gamma_star,
             cc_threshold_rd,
-            Oc,
             atp_use,
             nadph_use,
             a_column_name,
@@ -63,6 +62,7 @@ initial_guess_c3_variable_j <- function(
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
+            oxygen_column_name,
             rd_norm_column_name,
             vcmax_norm_column_name
         )

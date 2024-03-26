@@ -201,18 +201,6 @@ the built-in help menu entry, or check out the
 [Working With Extended Data Frames](working_with_extended_data_frames.html)
 vignette.
 
-Later, it will be necessary to know the oxygen concentration of the ambient air
-in the gas exchange measurement cuvette. This information is included in the
-preamble of each Licor file. We can extract the value from the preamble of each
-file and store it as a column using the `get_oxygen_from_preamble` function from
-the `PhotoGEA` package. This is a more convenient way to include the oxygen
-concentration.
-
-```{r oxygen_concentration}
-# Get oxygen info from each Licor file
-licor_exdf_list <- lapply(licor_exdf_list, get_oxygen_from_preamble)
-```
-
 Later, it will also be necessary to know the "site number" for each gas exchange
 system. This refers to the TDL valve numbers corresponding to the sample and
 reference lines of each gas exchange instrument. At UIUC, there is a convention
@@ -882,8 +870,6 @@ vignette.
 ## `choose_input_licor_files` function.
 
 <<loading_licor_data>>
-
-<<oxygen_concentration>>
 
 <<site_number>>
 

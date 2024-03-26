@@ -15,7 +15,6 @@
     replicate_exdf,
     fit_options = list(),
     sd_A = 1,
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -25,6 +24,7 @@
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
@@ -63,14 +63,6 @@
     called \code{sd_A} with appropriate units. A numeric value supplied here
     will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
     exists.
-  }
-
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
   }
 
   \item{atp_use}{
@@ -118,6 +110,12 @@
     The name of the column in \code{replicate_exdf} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}.
+  }
+
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
   }
 
   \item{phips2_column_name}{

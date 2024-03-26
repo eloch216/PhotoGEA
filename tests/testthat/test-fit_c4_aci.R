@@ -21,7 +21,8 @@ test_that('fit failures are handled properly', {
 
     expect_equal(unique(fit_res_bad$fits[, 'c4_assimilation_msg']), 'PCm must be >= 0')
     expect_equal(fit_res_bad$parameters[, 'c4_assimilation_msg'], 'PCm must be >= 0')
-    expect_true(all(is.na(fit_res_bad$fits[, 'A_fit'])))
+    expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Apr', 'Apc', 'Ar')])))
+    expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Apr', 'Apc', 'Ar')])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25')])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')])))
 })
@@ -40,13 +41,13 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25')]),
-        c(3.630229e+01, 1.805106e+02, 1.050525e-08),
+        c(3.630116e+01, 1.804791e+02, 1.069116e-08),
         tolerance = 1e-5
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
-        c(38.43572, 214.08366, 1.56802),
+        c(38.434695, 214.046523, 1.568026),
         tolerance = 1e-5
     )
 })

@@ -25,13 +25,14 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     sd_A = 'RMSE',
-    POm = 210000,   # microbar
-    OPTIM_FUN = optimizer_nmkb(),
+    OPTIM_FUN = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -92,6 +93,12 @@
     constant for PEP carboxylase carboxylation in \code{microbar}.
   }
 
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
+  }
+
   \item{pcm_column_name}{
     The name of the column in \code{exdf_obj} that contains the partial pressure
     of CO2 in the mesophyll, expressed in \code{microbar}.
@@ -100,6 +107,11 @@
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{vcmax_norm_column_name}{
@@ -118,14 +130,6 @@
     A value of the standard deviation of measured \code{A} values, or the name
     of a method for determining the deviation; currently, the only supported
     option is \code{'RMSE'}.
-  }
-
-  \item{POm}{
-    The partial pressure of O2 in the mesophyll, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
   }
 
   \item{OPTIM_FUN}{
@@ -270,6 +274,9 @@
                   \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl}, \code{Rm_tl},
                   \code{Vp}, \code{Apc}, \code{Apr}, \code{Ap}, and \code{Ar}.
           }
+    \item \code{fits_interpolated}: An \code{exdf} object including the
+          calculated assimilation rates at a fine spacing of \code{Ci} values
+          (step size of 1 \code{micromol mol^(-1)}).
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{
@@ -342,7 +349,8 @@ aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c4_aci,
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  remove_unreliable_param = TRUE
 ))
 
 # View the fitting parameters for each species / plot
@@ -358,16 +366,7 @@ col_to_keep <- c(
 aci_results$parameters[ , col_to_keep, TRUE]
 
 # View the fits for each species / plot
-lattice::xyplot(
-  Ar + Apc + A_fit + A ~ Ci | species_plot,
-  data = aci_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste('Intercellular CO2 concentration [', aci_results$fits$units$Ci, ']'),
-  ylab = paste('Assimilation rate [', aci_results$fits$units$A, ']')
-)
+plot_c4_aci_fit(aci_results, 'species_plot', 'Ci')
 
 # View the residuals for each species / plot
 lattice::xyplot(
