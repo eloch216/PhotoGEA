@@ -174,7 +174,7 @@ calculate_c3_assimilation <- function(
         # are included
         output <- exdf(data.frame(
             alpha_g = alpha_g,
-            Gamma_star = Gamma_star,
+            Gamma_star = Gamma_star / pressure,
             J_at_25 = J_at_25,
             Rd_at_25 = Rd_at_25,
             Tp = Tp,
