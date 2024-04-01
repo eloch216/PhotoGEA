@@ -18,6 +18,8 @@
 \usage{
   initial_guess_c3_variable_j(
     alpha_g,
+    alpha_old,
+    alpha_s,
     Gamma_star,
     cc_threshold_rd = 100,
     atp_use = 4.0,
@@ -38,12 +40,32 @@
 
 \arguments{
   \item{alpha_g}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not
-    a number, then there must be a column in \code{rc_exdf} called \code{alpha_g}
+    A dimensionless parameter where \code{0 <= alpha_g <= 1}, representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    glycine. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not a
+    number, then there must be a column in \code{rc_exdf} called \code{alpha_g}
     with appropriate units. A numeric value supplied here will overwrite the
     values in the \code{alpha_g} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{alpha_old}{
+    A dimensionless parameter where \code{0 <= alpha_old <= 1}, representing the
+    fraction of remaining glycolate carbon not returned to the chloroplast
+    after accounting for carbon released as CO2. \code{alpha_old} is often
+    assumed to be 0. If \code{alpha_old} is not a number, then there must be a
+    column in \code{rc_exdf} called \code{alpha_old} with appropriate units.
+    A numeric value supplied here will overwrite the values in the
+    \code{alpha_old} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{alpha_s}{
+    A dimensionless parameter where \code{0 <= alpha_s <= 0.75 * (1 - alpha_g)}
+    representing the proportion of glycolate carbon taken out of the
+    photorespiratory pathway as serine. \code{alpha_s} is often assumed to be 0.
+    If \code{alpha_s} is not a number, then there must be a column in
+    \code{rc_exdf} called \code{alpha_s} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{alpha_s} column
+    of \code{rc_exdf} if it exists.
   }
 
   \item{Gamma_star}{
@@ -131,10 +153,11 @@
 
 \details{
   The variable J method is a fitting procedure for estimating values of
-  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
-  \code{Tp}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve +
-  chlorophyll fluorescence. For more information about these parameters, see the
-  documentation at \code{\link{calculate_c3_variable_j}} and
+  \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{Gamma_star},
+  \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25}
+  from a measured C3 CO2 response curve + chlorophyll fluorescence. For more
+  information about these parameters, see the documentation at
+  \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}}.
 
   Here, we make an estimate for \code{tau} by noting that gas exchange
@@ -152,9 +175,10 @@
 \value{
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
-  this function will be a numeric vector with six elements, representing the
-  values of \code{alpha_g}, \code{J_at_25}, \code{Rd_at_25}, \code{tau},
-  \code{Tp}, and \code{Vcmax_at_25} (in that order).
+  this function will be a numeric vector with nine elements, representing the
+  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{J_at_25},
+  \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
+  order).
 }
 
 \examples{

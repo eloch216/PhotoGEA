@@ -1,3 +1,7 @@
+# Note: Equation numbers in the code below refer to the numbered equations in
+# Busch, Sage, & Farquhar, G. D. "Plants increase CO2 uptake by ssimilating
+# nitrogen via the photorespiratory pathway." Nature Plants 4, 46–54 (2018)
+# doi: 10.1038/s41477-017-0065-x
 calculate_c3_assimilation <- function(
     exdf_obj,
     alpha_g,      # dimensionless      (this value is sometimes being fitted)
@@ -136,16 +140,21 @@ calculate_c3_assimilation <- function(
     }
 
     # Get the effective value of Gamma_star, accounting for carbon remaining in
-    # the cytosol as glycine
+    # the cytosol as glycine. Note that when alpha_g = 0,
+    # Gamma_star_ag = Gamma_star.
     Gamma_star_ag <- (1 - alpha_g) * Gamma_star * pressure # microbar
 
     # Rubisco-limited carboxylation (micromol / m^2 / s)
     Wc <- PCc * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko))
 
-    # RuBP-regeneration-limited carboxylation (micromol / m^2 / s)
+    # RuBP-regeneration-limited carboxylation (micromol / m^2 / s). Note that
+    # when alpha_g = alpha_s = 0, this equation is identical to Equation 7 from
+    # Busch et al. (2018); otherwise, it is identical to Equation 13.
     Wj <- PCc * J_tl / (PCc * atp_use + Gamma_star_ag * (nadph_use + 16 * alpha_g + 8 * alpha_s))
 
-    # TPU-limited carboxylation (micromol / m^2 / s)
+    # TPU-limited carboxylation (micromol / m^2 / s). Note that when alpha_g =
+    # alpha_s = 0, this equation is identical to Equation 8 from Busch et al.
+    # (2018). When alpha_old = 0, it is identical to Equation 14.
     Wp <- PCc * 3 * Tp / (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s))
     Wp[PCc <= Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)] <- Inf
 

@@ -15,6 +15,8 @@
 \usage{
   initial_guess_c3_aci(
     alpha_g,
+    alpha_old,
+    alpha_s,
     Gamma_star,
     cc_threshold_rd = 100,
     atp_use = 4.0,
@@ -32,12 +34,32 @@
 
 \arguments{
   \item{alpha_g}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not
-    a number, then there must be a column in \code{rc_exdf} called \code{alpha_g}
+    A dimensionless parameter where \code{0 <= alpha_g <= 1}, representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    glycine. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not a
+    number, then there must be a column in \code{rc_exdf} called \code{alpha_g}
     with appropriate units. A numeric value supplied here will overwrite the
     values in the \code{alpha_g} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{alpha_old}{
+    A dimensionless parameter where \code{0 <= alpha_old <= 1}, representing the
+    fraction of remaining glycolate carbon not returned to the chloroplast
+    after accounting for carbon released as CO2. \code{alpha_old} is often
+    assumed to be 0. If \code{alpha_old} is not a number, then there must be a
+    column in \code{rc_exdf} called \code{alpha_old} with appropriate units.
+    A numeric value supplied here will overwrite the values in the
+    \code{alpha_old} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{alpha_s}{
+    A dimensionless parameter where \code{0 <= alpha_s <= 0.75 * (1 - alpha_g)}
+    representing the proportion of glycolate carbon taken out of the
+    photorespiratory pathway as serine. \code{alpha_s} is often assumed to be 0.
+    If \code{alpha_s} is not a number, then there must be a column in
+    \code{rc_exdf} called \code{alpha_s} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{alpha_s} column
+    of \code{rc_exdf} if it exists.
   }
 
   \item{Gamma_star}{
@@ -89,7 +111,7 @@
   }
 
   \item{oxygen_column_name}{
-    The name of the column in \code{exdf_obj} that contains the concentration
+    The name of the column in \code{rc_exdf} that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
     the units must be \code{percent}.
   }
@@ -109,56 +131,49 @@
 \details{
   Here we estimate values of \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
   \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult to
-  estimate values of \code{alpha_g} and \code{Gamma_star} from a curve, so they
-  must be supplied beforehand. For more information about these parameters, see
-  the documentation for \code{\link{calculate_c3_assimilation}}. To estimate
-  these parameter values, we use several equations from S. von Caemmerer,
-  "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing, 2000)
-  [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are from
-  this book.
+  estimate values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, and
+  \code{Gamma_star} from a curve, so they must be supplied beforehand. For more
+  information about these parameters, see the documentation for
+  \code{\link{calculate_c3_assimilation}}.
 
   \itemize{
-    \item \strong{Estimating Rd}: An estimate for \code{Rd} can be obtained using
-          Equation 2.20. To start, note that the term \code{Kc * (1 + Oc / Ko)}
-          from this equation typically has a value of around \code{1000 ppm}.
-          So, when the concentration of CO2 in the chloroplast is low,
-          \code{Cc + Kc * (1 + Oc / Ko)} can be approximated as
-          \code{Kc * (1 + Oc / Ko)}. Under these conditions, Equation 2.20
-          simplifies to a linear relationship between \code{Ac} and \code{Cc}:
-          \code{Ac = (Cc - Gamma_star) * Vcmax / (Kc * (1.0 + Oc / Ko)) - Rd}.
-          Additionally, \code{Ac = -Rd} when \code{Cc = Gamma_star}. So, to
-          estimate \code{Rd}, we make a linear fit of \code{A} vs. \code{Cc} in
-          the low \code{Cc} range where assimilation is expected to be rubisco
-          limited and this linear equation is expected to be valid. Then, we
-          evaluate the linear model at \code{Cc = Gamma_star}, estimating
-          \code{Rd} as the negative of the predicted assimilation value at that
-          point.
-    \item \strong{Estimating Vcmax}: An estimate for \code{Vcmax} can also be
-          obtained from Equation 2.20. In this case, we simply solve the
-          equation for \code{Vcmax} and then use it to calculate a value of
-          \code{Vcmax} at each point in the curve from the measured values of
-          \code{A} and \code{Cc}, and the value of \code{Rd} estimated as above.
-          In the rubisco-limited part of the curve, \code{A = Ac} and the
-          estimated values of \code{Vcmax} should be reasonable. In other parts
-          of the curve, \code{Ac} is not the limiting rate, so \code{A < Ac}.
+    \item \strong{Estimating Rd}: Regardless of which process is limiting at low
+          \code{Cc}, it is always true that \code{An = -Rd} when
+          \code{Cc = Gamma_star_ag}. Here we make a linear fit of the measured
+          \code{An} vs. \code{Cc} values, and evaluate it at at
+          \code{Cc = Gamma_star_ag} to estimate \code{Rd}. If the linear fit
+          predicts a negative value for \code{Rd}, we use a typical value
+          instead (0.5 \code{micromol m^(-2) s^(-1)}).
+    \item \strong{Estimating Vc}: Once an estimate for \code{Rd} has been found,
+          the RuBP carboxylation rate \code{Vc} can be estimated using
+          \code{Vc = (An + Rd) / (1 - Gamma_star_ag / Cc)}. This is useful for
+          the remaining parameter estimates.
+    \item \strong{Estimating Vcmax}: An estimate for \code{Vcmax} can be
+          obtained by solving the equation for \code{Wc} for \code{Vcmax}, and
+          evaluating it with \code{Wc = Vc} as estimated above. In the
+          rubisco-limited part of the curve, \code{Vc = Wc} and the estimated
+          values of \code{Vcmax} should be reasonable. In other parts of the
+          curve, \code{Wc} is not the limiting rate, so \code{Vc < Wc}.
           Consequently, the estimated values of \code{Vcmax} in these parts of
           the curve will be smaller. So, to make an overall estimate, we choose
           the the largest estimated \code{Vcmax} value.
-    \item \strong{Estimating J}: An estimate for \code{J} can be obtained by
-          solving Equation 2.23 for \code{J}, similar to the method used to
-          estimate \code{Vcmax}.
-    \item \strong{Estimating Tp}: An estimate for \code{Tp} can be obtained by
-          solving Equation 2.26 for \code{Tp}, similar to the method used to
-          estimate \code{Vcmax}.
+    \item \strong{Estimating J and Tp}: Estimates for these parameters can be
+          made using the equations for \code{Wj} and \code{Wp}, similar to the
+          approach followed for \code{Vcmax}.
   }
+
+  For the parameter values estimated above, the values of \code{Rd_norm},
+  \code{Vcmax_norm}, and \code{J_norm} are used to convert the values at leaf
+  temperature to the values at 25 degrees C.
 }
 
 \value{
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
-  this function will be a numeric vector with four elements, representing the
-  values of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25},
-  \code{Tp}, and \code{Vcmax_at_25} (in that order).
+  this function will be a numeric vector with eight elements, representing the
+  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{Gamma_star},
+  \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that
+  order).
 }
 
 \examples{
