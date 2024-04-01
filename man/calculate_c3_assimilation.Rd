@@ -315,7 +315,7 @@ inputs <- document_variables(
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 0, '', 150, 1, 12, 120)
+assim <- calculate_c3_assimilation(inputs, 0, 0, 0, '', 150, 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ Cc,

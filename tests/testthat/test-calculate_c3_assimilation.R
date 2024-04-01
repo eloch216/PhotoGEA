@@ -20,11 +20,11 @@ inputs2 <- set_variable(inputs, 'alpha_g', 'dimensionless', '', 0.5)
 
 test_that('c3 assimilation works for numeric values of flexible inputs', {
     expect_silent(
-        calculate_c3_assimilation(inputs, 0, 40, 150, 1, 12, 120)
+        calculate_c3_assimilation(inputs, 0, 0, 0, 40, 150, 1, 12, 120)
     )
 
     res <- expect_silent(
-        calculate_c3_assimilation(inputs2, 0, 40, 150, 1, 12, 120)
+        calculate_c3_assimilation(inputs2, 0, 0, 0, 40, 150, 1, 12, 120)
     )
 
     # The alpha_g value in inputs2 should be overwritten by the supplied numeric
@@ -38,12 +38,12 @@ test_that('c3 assimilation works for numeric values of flexible inputs', {
 
 test_that('c3 assimilation works for non-numeric values of flexible inputs', {
     expect_error(
-        calculate_c3_assimilation(inputs, '', '', 150, 1, 12, 120),
+        calculate_c3_assimilation(inputs, '', 0, 0, '', 150, 1, 12, 120),
         'The following columns are undefined: alpha_g'
     )
 
     res <- expect_silent(
-        calculate_c3_assimilation(inputs2, '', '', 150, 1, 12, 120)
+        calculate_c3_assimilation(inputs2, '', 0, 0, '', 150, 1, 12, 120)
     )
 
     # The alpha_g value should be as in inputs2

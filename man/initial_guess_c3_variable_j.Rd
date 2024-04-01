@@ -181,9 +181,10 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Create the guessing function; here we set alpha_g = 0 and use the
+# Create the guessing function; here we set all alpha values to 0 and use the
 # temperature-dependent values of Gamma_star calculated above
-guessing_func <- initial_guess_c3_variable_j(alpha_g = 0, Gamma_star = '')
+guessing_func <-
+  initial_guess_c3_variable_j(alpha_g = 0, alpha_old = 0, alpha_s = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -195,9 +196,13 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    x <- cbind(x, calculate_c3_variable_j(x, param[2], param[4], param[5]))
-    cbind(x, calculate_c3_assimilation(
-      x, param[1], param[2], param[3], param[4], param[6], param[7]))
+    x <- cbind(x, calculate_c3_variable_j(x, param[4], param[6], param[7]))
+    cbind(x,
+      calculate_c3_assimilation(
+        x,
+        param[1], param[2], param[3], param[4], param[5], param[6], param[8], param[9]
+      )
+    )
   }
 ))
 

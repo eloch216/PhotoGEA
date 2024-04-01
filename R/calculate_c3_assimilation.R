@@ -1,6 +1,8 @@
 calculate_c3_assimilation <- function(
     exdf_obj,
     alpha_g,      # dimensionless      (this value is sometimes being fitted)
+    alpha_old,    # dimensionless      (this value is sometimes being fitted)
+    alpha_s,      # dimensionless      (this value is sometimes being fitted)
     Gamma_star,   # micromol / mol     (this value is sometimes being fitted)
     J_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Rd_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
@@ -40,6 +42,8 @@ calculate_c3_assimilation <- function(
 
         flexible_param <- list(
             alpha_g = alpha_g,
+            alpha_old = alpha_old,
+            alpha_s = alpha_s,
             Gamma_star = Gamma_star,
             J_at_25 = J_at_25,
             Rd_at_25 = Rd_at_25,
@@ -72,6 +76,8 @@ calculate_c3_assimilation <- function(
 
     # Retrieve values of flexible parameters as necessary
     if (!value_set(alpha_g))     {alpha_g     <- exdf_obj[, 'alpha_g']}
+    if (!value_set(alpha_old))   {alpha_old   <- exdf_obj[, 'alpha_old']}
+    if (!value_set(alpha_s))     {alpha_s     <- exdf_obj[, 'alpha_s']}
     if (!value_set(Gamma_star))  {Gamma_star  <- exdf_obj[, 'Gamma_star']}
     if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
     if (!value_set(Rd_at_25))    {Rd_at_25    <- exdf_obj[, 'Rd_at_25']}
@@ -90,7 +96,6 @@ calculate_c3_assimilation <- function(
 
     Kc <- exdf_obj[, kc_column_name] * pressure                 # microbar
     Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
-    Gamma_star <- Gamma_star * pressure                         # microbar
 
     Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
     Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]          # micromol / m^2 / s
@@ -99,17 +104,27 @@ calculate_c3_assimilation <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE)) {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
-    if (any(Cc < 0, na.rm = TRUE))                    {msg <- append(msg, 'Cc must be >= 0')}
-    if (any(Gamma_star < 0, na.rm = TRUE))            {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(J_at_25 < 0, na.rm = TRUE))               {msg <- append(msg, 'J_at_25 must be >= 0')}
-    if (any(Kc < 0, na.rm = TRUE))                    {msg <- append(msg, 'Kc must be >= 0')}
-    if (any(Ko < 0, na.rm = TRUE))                    {msg <- append(msg, 'Ko must be >= 0')}
-    if (any(oxygen < 0, na.rm = TRUE))                {msg <- append(msg, 'oxygen must be >= 0')}
-    if (any(pressure < 0, na.rm = TRUE))              {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Rd_at_25 < 0, na.rm = TRUE))              {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(Tp < 0, na.rm = TRUE))                    {msg <- append(msg, 'Tp must be >= 0')}
-    if (any(Vcmax_at_25 < 0, na.rm = TRUE))           {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    mixed_alpha <- any(alpha_old > 0, na.rm = TRUE) &&
+        (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
+
+    mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 && abs(nadph_use - 8) > 1e-10) &&
+        (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
+
+    if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
+    if (any(alpha_old < 0 | alpha_old > 1, na.rm = TRUE))                {msg <- append(msg, 'alpha_old must be >= 0 and <= 1')}
+    if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
+    if (any(Cc < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Cc must be >= 0')}
+    if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
+    if (any(J_at_25 < 0, na.rm = TRUE))                                  {msg <- append(msg, 'J_at_25 must be >= 0')}
+    if (any(Kc < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(oxygen < 0, na.rm = TRUE))                                   {msg <- append(msg, 'oxygen must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE))                                 {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Rd_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+    if (any(Tp < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Tp must be >= 0')}
+    if (any(Vcmax_at_25 < 0, na.rm = TRUE))                              {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    if (mixed_alpha)                                                     {msg <- append(msg, 'Cannot specify nonzero alpha_old and nonzero alpha_s or alpha_g')}
+    if (mixed_j_coeff)                                                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
 
     msg <- paste(msg, collapse = '. ')
 
@@ -120,15 +135,19 @@ calculate_c3_assimilation <- function(
         }
     }
 
+    # Get the effective value of Gamma_star, accounting for carbon remaining in
+    # the cytosol as glycine
+    Gamma_star_ag <- (1 - alpha_g) * Gamma_star * pressure # microbar
+
     # Rubisco-limited carboxylation (micromol / m^2 / s)
     Wc <- PCc * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko))
 
     # RuBP-regeneration-limited carboxylation (micromol / m^2 / s)
-    Wj <- PCc * J_tl / (atp_use * PCc + nadph_use * Gamma_star)
+    Wj <- PCc * J_tl / (PCc * atp_use + Gamma_star_ag * (nadph_use + 16 * alpha_g + 8 * alpha_s))
 
     # TPU-limited carboxylation (micromol / m^2 / s)
-    Wp <- PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))
-    Wp[PCc <= Gamma_star * (1 + 3 * alpha_g)] <- Inf
+    Wp <- PCc * 3 * Tp / (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s))
+    Wp[PCc <= Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)] <- Inf
 
     # Overall carboxylation rate
     Wcjp <- if (curvature_cj == 1 && curvature_cjp == 1) {
@@ -163,7 +182,7 @@ calculate_c3_assimilation <- function(
 
     # Calculate corresponding net CO2 assimilations by accounting for
     # photorespiration and day respiration
-    photo_resp_factor <- 1.0 - Gamma_star / PCc # dimensionless
+    photo_resp_factor <- 1.0 - Gamma_star_ag / PCc # dimensionless
     Ac <- photo_resp_factor * Wc - Rd_tl
     Aj <- photo_resp_factor * Wj - Rd_tl
     Ap <- photo_resp_factor * Wp - Rd_tl
@@ -174,7 +193,10 @@ calculate_c3_assimilation <- function(
         # are included
         output <- exdf(data.frame(
             alpha_g = alpha_g,
-            Gamma_star = Gamma_star / pressure,
+            alpha_old = alpha_old,
+            alpha_s = alpha_s,
+            Gamma_star = Gamma_star,
+            Gamma_star_ag = Gamma_star_ag,
             J_at_25 = J_at_25,
             Rd_at_25 = Rd_at_25,
             Tp = Tp,
@@ -201,7 +223,10 @@ calculate_c3_assimilation <- function(
         document_variables(
             output,
             c('calculate_c3_assimilation', 'alpha_g',             'dimensionless'),
+            c('calculate_c3_assimilation', 'alpha_old',           'dimensionless'),
+            c('calculate_c3_assimilation', 'alpha_s',             'dimensionless'),
             c('calculate_c3_assimilation', 'Gamma_star',          'micromol mol^(-1)'),
+            c('calculate_c3_assimilation', 'Gamma_star_ag',       'microbar'),
             c('calculate_c3_assimilation', 'J_at_25',             'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Rd_at_25',            'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
