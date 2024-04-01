@@ -111,7 +111,7 @@ calculate_c3_assimilation <- function(
     mixed_alpha <- any(alpha_old > 0, na.rm = TRUE) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
 
-    mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 && abs(nadph_use - 8) > 1e-10) &&
+    mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
 
     if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
