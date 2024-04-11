@@ -93,14 +93,20 @@ identify_c3_unreliable_points <- function(
     # If we are unsure about TPU limitations, then the Tp and alpha_g estimates
     # should be flagged as unreliable. If necessary, remove Tp, alpha_g, Wp, and
     # Ap.
-    parameters[, 'alpha_g_trust'] <- as.numeric(!p_unreliable)
-    parameters[, 'Tp_trust']      <- as.numeric(!p_unreliable)
+    parameters[, 'alpha_g_trust']   <- as.numeric(!p_unreliable)
+    parameters[, 'alpha_old_trust'] <- as.numeric(!p_unreliable)
+    parameters[, 'alpha_s_trust']   <- as.numeric(!p_unreliable)
+    parameters[, 'Tp_trust']        <- as.numeric(!p_unreliable)
 
     if (remove_unreliable_param && p_unreliable) {
         # Remove unreliable parameter estimates
         parameters[, 'alpha_g']   <- NA
+        parameters[, 'alpha_old'] <- NA
+        parameters[, 'alpha_s']   <- NA
         parameters[, 'Tp']        <- NA
         fits[, 'alpha_g']         <- NA
+        fits[, 'alpha_old']       <- NA
+        fits[, 'alpha_s']         <- NA
         fits[, 'Tp']              <- NA
         fits_interpolated[, 'Tp'] <- NA
 

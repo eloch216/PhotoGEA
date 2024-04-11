@@ -11,7 +11,9 @@ pressure          <- 'bar'
 unit_dictionary <- list(
     a              = micromol_flux,
     alpha_g        = dimensionless,
+    alpha_old      = dimensionless,
     alpha_psii     = dimensionless,
+    alpha_s        = dimensionless,
     Ca             = micromol_fraction,
     Cc             = micromol_fraction,
     Ci             = micromol_fraction,

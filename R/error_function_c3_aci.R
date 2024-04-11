@@ -74,11 +74,13 @@ error_function_c3_aci <- function(
                 calculate_c3_assimilation(
                     replicate_exdf,
                     X[1], # alpha_g
-                    X[2], # Gamma_star
-                    X[3], # J_at_25
-                    X[4], # Rd_at_25
-                    X[5], # Tp
-                    X[6], # Vcmax_at_25
+                    X[2], # alpha_old
+                    X[3], # alpha_s
+                    X[4], # Gamma_star
+                    X[5], # J_at_25
+                    X[6], # Rd_at_25
+                    X[7], # Tp
+                    X[8], # Vcmax_at_25
                     atp_use,
                     nadph_use,
                     curvature_cj,
