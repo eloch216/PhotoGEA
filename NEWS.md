@@ -34,14 +34,21 @@ be directly added to this file to describe the related changes.
 
 ## UNRELEASED
 
-- Changed fitting method from least-squares to maximim likelihood in
+- Changed fitting method from least-squares to maximum likelihood in
   `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`.
   - We use a normal distribution for calculating the likelihood.
   - Best-fit parameter values are determined with `sigma = 1`.
   - Then the true value of the likelihood can be estimated using `sigma = RMSE`.
   - Confidence intervals are also calculated using `sigma = RMSE`.
+- Changed the C3 assimilation equations to accommodate the new alpha parameters
+  from Busch et al. (2018)
+  - There are now three separate parameters: `alpha_old` (previously `alpha_g`),
+    `alpha_g`, and `alpha_s`
+  - If `alpha_old` is nonzero, then `alpha_g` and `alpha_s` must be zero.
+    Likewise, if `alpha_g` or `alpha_s` is nonzero, then `alpha_old` must be
+    zero. This will prevent users from mixing the two models together.
 - The fitting functions `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci` now
-  include a new output called `fits_interpolated` that contains valuse of the
+  include a new output called `fits_interpolated` that contains values of the
   predicted assimilation rates with a `Ci` step of 1 ppm.
 - New plotting functions have been added: `plot_c3_aci_fit` and
   `plot_c4_aci_fit`. These functions use the new information in
@@ -66,7 +73,7 @@ be directly added to this file to describe the related changes.
   total pressure and the oxygen concentration (expressed as a percentage).
 - A new option has been added to `read_licor_6800_Excel` and
   `read_licor_6800_plaintext`: `get_oxygen`. When this input is `TRUE`,
-  `get_oxygen_from_preamble` will autimatically be used to get the oxygen
+  `get_oxygen_from_preamble` will automatically be used to get the oxygen
   percentage from the file's preamble when it is loaded.
 - A new option has been added to `read_gasex_file`: `standardize_columns`.
 - Specified a minimum supported R version: `3.6.0`.
@@ -83,7 +90,7 @@ be directly added to this file to describe the related changes.
   - Unreliable parameter estimates can now be excluded; for example, if no
     points on a curve have An = Ap, the fit will return NA for TPU.
   - The initial guess functions (`initial_guess_c3_aci` and
-    `initial_guess_c3_variable_j`) can now accomodate user-supplied values of
+    `initial_guess_c3_variable_j`) can now accommodate user-supplied values of
     `alpha`.
 - Made a few improvements to all three nonlinear fitting functions
   (`fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`):
