@@ -155,6 +155,9 @@ fit_c3_aci <- function(
         perform_checks = FALSE
     )
 
+    # Remove a few columns so they don't get repeated
+    aci[, 'Gamma_star'] <- NULL
+
     # Set all categories to `fit_c3_aci` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c3_aci'

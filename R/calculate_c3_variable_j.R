@@ -96,17 +96,21 @@ calculate_c3_variable_j <- function(
     # Calculate Cc
     Cc <- Ci - An / (gmc * pressure) # micromol / mol
 
+    # Calculate the partial derivative of Cc with respect to A using Equation 10
+    dCcdA <- (atp_use + nadph_use) * Gamma_star * J_F / (J_F - atp_use * AnRd)^2 # microbar / (micromol / m^2 / s) # bar m^2 s / mol
+
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units
         # are included
         output <- exdf(data.frame(
-            Gamma_star = Gamma_star,
+            Gamma_star = Gamma_star / pressure,
             Rd_at_25 = Rd_at_25,
             tau = tau,
             Rd_tl = Rd_tl,
             J_F = J_F,
             gmc = gmc,
             Cc = Cc,
+            dCcdA = dCcdA,
             atp_use = atp_use,
             nadph_use = nadph_use,
             c3_variable_j_msg = msg,
@@ -122,6 +126,7 @@ calculate_c3_variable_j <- function(
             c('calculate_c3_variable_j', 'J_F',               'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'gmc',               'mol m^(-2) s^(-1) bar^(-1)'),
             c('calculate_c3_variable_j', 'Cc',                'micromol mol^(-1)'),
+            c('calculate_c3_variable_j', 'dCcdA',             'bar m^(2) s mol^(-1)'),
             c('calculate_c3_variable_j', 'atp_use',           'dimensionless'),
             c('calculate_c3_variable_j', 'nadph_use',         'dimensionless'),
             c('calculate_c3_variable_j', 'c3_variable_j_msg', '')

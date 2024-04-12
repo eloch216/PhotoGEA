@@ -159,9 +159,12 @@ fit_c3_variable_j <- function(
     # Set all categories to `fit_c3_variable_j`
     vj$categories[1,] <- 'fit_c3_variable_j'
 
-    # Remove the Rd columns so they don't get repeated
-    vj[, 'Rd_at_25'] <- NULL
-    vj[, 'Rd_tl']    <- NULL
+    # Remove a few columns so they don't get repeated
+    vj[, 'atp_use']    <- NULL
+    vj[, 'Gamma_star'] <- NULL
+    vj[, 'nadph_use']  <- NULL
+    vj[, 'Rd_at_25']   <- NULL
+    vj[, 'Rd_tl']      <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -191,6 +194,9 @@ fit_c3_variable_j <- function(
         vcmax_norm_column_name,
         perform_checks = FALSE
     )
+
+    # Remove a few columns so they don't get repeated
+    aci[, 'Gamma_star'] <- NULL
 
     # Set all categories to `fit_c3_variable_j` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
@@ -284,8 +290,11 @@ fit_c3_variable_j <- function(
         perform_checks = FALSE
     )
 
-    vj_interpolated[, 'Rd_at_25'] <- NULL
-    vj_interpolated[, 'Rd_tl']    <- NULL
+    vj_interpolated[, 'atp_use']    <- NULL
+    vj_interpolated[, 'Gamma_star'] <- NULL
+    vj_interpolated[, 'nadph_use']  <- NULL
+    vj_interpolated[, 'Rd_at_25']   <- NULL
+    vj_interpolated[, 'Rd_tl']      <- NULL
 
     replicate_exdf_interpolated <- cbind(replicate_exdf_interpolated, vj_interpolated)
 
