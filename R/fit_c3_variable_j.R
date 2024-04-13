@@ -142,6 +142,8 @@ fit_c3_variable_j <- function(
     # Get the corresponding values of gmc, Cc, and J_F at the best guess
     vj <- calculate_c3_variable_j(
         replicate_exdf,
+        best_X[1], # alpha_g
+        best_X[3], # alpha_s
         best_X[4], # Gamma_star
         best_X[6], # Rd_at_25
         best_X[7], # tau
@@ -276,6 +278,8 @@ fit_c3_variable_j <- function(
 
     vj_interpolated <- calculate_c3_variable_j(
         replicate_exdf_interpolated,
+        '', # alpha_g
+        '', # alpha_s
         '', # Gamma_star
         '', # Rd_at_25
         '', # tau

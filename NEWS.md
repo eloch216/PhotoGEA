@@ -40,8 +40,8 @@ be directly added to this file to describe the related changes.
   - Best-fit parameter values are determined with `sigma = 1`.
   - Then the true value of the likelihood can be estimated using `sigma = RMSE`.
   - Confidence intervals are also calculated using `sigma = RMSE`.
-- Changed the C3 assimilation equations to accommodate the new alpha parameters
-  from Busch et al. (2018)
+- Changed the C3 assimilation and Variable J equations to accommodate the new
+  alpha parameters from Busch et al. (2018)
   - There are now three separate parameters: `alpha_old` (previously `alpha_g`),
     `alpha_g`, and `alpha_s`
   - If `alpha_old` is nonzero, then `alpha_g` and `alpha_s` must be zero.

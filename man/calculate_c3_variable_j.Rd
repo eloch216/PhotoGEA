@@ -17,6 +17,8 @@
 \usage{
   calculate_c3_variable_j(
     exdf_obj,
+    alpha_g,
+    alpha_s,
     Gamma_star,
     Rd_at_25,
     tau,
@@ -35,6 +37,25 @@
 
 \arguments{
   \item{exdf_obj}{An \code{exdf} object.}
+
+  \item{alpha_g}{
+    A dimensionless parameter where \code{0 <= alpha_g <= 1}, representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    glycine. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not a
+    number, then there must be a column in \code{exdf_obj} called \code{alpha_g}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha_g} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{alpha_s}{
+    A dimensionless parameter where \code{0 <= alpha_s <= 0.75 * (1 - alpha_g)}
+    representing the proportion of glycolate carbon taken out of the
+    photorespiratory pathway as serine. \code{alpha_s} is often assumed to be 0.
+    If \code{alpha_s} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{alpha_s} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{alpha_s} column
+    of \code{exdf_obj} if it exists.
+  }
 
   \item{Gamma_star}{
     The CO2 compensation point in the absence of day respiration, expressed in
@@ -142,7 +163,9 @@
   from several quantities that can be measured using gas exchange (\code{Ci},
   \code{An}, and \code{Rd}), a quantity whose values can be known beforehand
   (\code{Gamma_star}), and \code{J_actual} (which can be estimated from
-  chlorophyll fluorescence measurements).
+  chlorophyll fluorescence measurements). Here we update Equation 7 to include
+  \code{alpha_g} and \code{alpha_s} following Busch et al. (2018) (also see
+  \code{\link{calculate_c3_assimilation}}.)
 
   The actual RuBP regeneration rate is related to the incident
   photosynthetically active flux density \code{Qin} and the operating efficiency
@@ -188,6 +211,9 @@
           rate-intercellular space CO2 concentration (A-Ci) curve and
           chlorophyll fluorescence measurements" New Phytologist 213, 1543–1554
           (2017) [\doi{10.1111/nph.14260}].
+    \item Busch, Sage, & Farquhar, G. D. "Plants increase CO2 uptake by
+          assimilating nitrogen via the photorespiratory pathway." Nature Plants
+          4, 46–54 (2018) [\doi{10.1038/s41477-017-0065-x}].
   }
 }
 
@@ -223,8 +249,9 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Calculate values of J_F, gmc, and Cc assuming tau = 0.2 and Rd = 0.5
-vj_res <- calculate_c3_variable_j(licor_file, '', 1.5, 0.55)
+# Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = 0,
+# tau = 0.2, and Rd = 0.5
+vj_res <- calculate_c3_variable_j(licor_file, 0, 0, '', 1.5, 0.55)
 
 # Combine with original data
 licor_file <- cbind(licor_file, vj_res)
