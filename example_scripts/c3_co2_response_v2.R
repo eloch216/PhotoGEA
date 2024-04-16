@@ -17,7 +17,7 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 17
+NUM_OBS_IN_SEQ <- 16
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 
 # Decide whether to make certain plots
@@ -28,7 +28,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -38,7 +38,7 @@ POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- TRUE
@@ -67,7 +67,7 @@ GAMMA_STAR <- 50 # ppm
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- TRUE
+SAVE_CSV <- FALSE
 
 ###
 ### TRANSLATION:
@@ -154,7 +154,7 @@ licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-# check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -275,8 +275,11 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(event = 'WT', replicate = 9, CO2_r_sp = 800),
-      list(event = '25', replicate = 4, CO2_r_sp = 200)
+      list(event = 'TGx2014-49FZ', replicate = '34'),
+      list(event = 'TTGx2002-3DM', replicate = '35'),
+      list(event = 'LD11-2170', replicate = '27', seq_num = c('8','17'))
+      #list(event = 'WT', replicate = 9, CO2_r_sp = 800),
+      #list(event = '25', replicate = 4, CO2_r_sp = 200)
       #list(curve_identifier = '10 5 6', seq_num = c(2))
     )
 }
@@ -589,7 +592,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         plot_param <- c(
             plot_param,
             list(
-                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.4), main = boxplot_caption),
+                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.5), main = boxplot_caption),
                 list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 350), main = boxplot_caption)
             )
         )
@@ -616,7 +619,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     cc_lim <- c(-50, 1500)
     a_lim <- c(-10, 55)
     gsw_lim <- c(0, 0.7)
-    phi_lim <- c(0, 0.4)
+    phi_lim <- c(0, 0.5)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Chloroplast [CO2] (ppm)"

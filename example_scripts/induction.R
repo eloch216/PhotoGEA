@@ -74,7 +74,7 @@ GET_INFO_FROM_FILENAME <- FALSE
 # points along the time sequence of measurements.
 #
 #
-NUM_OBS_IN_SEQ <- 420
+NUM_OBS_IN_SEQ <- 390
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes

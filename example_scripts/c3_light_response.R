@@ -63,7 +63,7 @@ PERFORM_CALCULATIONS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
 # Decide whether to calculate stats
-CALCULATE_STATS <- TRUE
+CALCULATE_STATS <- FALSE
 
 # Indicate whether a `plot` column is present
 HAS_PLOT_INFO <- TRUE
@@ -87,7 +87,7 @@ if (PERFORM_CALCULATIONS) {
 # want to keep all of them.
 NUM_OBS_IN_SEQ <- 12
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
-POINT_FOR_BOX_PLOTS <- 9
+POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -147,6 +147,10 @@ if (PERFORM_CALCULATIONS) {
     # Factorize ID columns
     combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
     combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
+    
+    combined_info <- calculate_total_pressure(combined_info)
+    
+    combined_info <- calculate_gas_properties(combined_info)
 
     combined_info <- calculate_wue(combined_info)
 

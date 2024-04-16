@@ -121,6 +121,19 @@ AVERAGE_OVER_PLOTS <- FALSE
 # Decide whether to save CSV outputs
 SAVE_CSV <- TRUE
 
+# Decide which solver to use
+USE_DEOPTIM_SOLVER <- TRUE
+
+solver <- if (USE_DEOPTIM_SOLVER) {
+  # This is the default solver for the variable J fitting method; it is a little
+  # bit slower, but less likely to fail
+  optimizer_deoptim(itermax = 200)
+} else {
+  # This is the default solver for the regular C3 A-Ci curve fitting method; it
+  # is a little bit faster, but may sometimes fail for some curves
+  optimizer_nmkb()
+}
+
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
 ###                                                                        ###
@@ -161,7 +174,10 @@ avg_exdf <- function(exdf_obj) {
       PRESSURE_COLUMN_NAME,
       GS_COLUMN_NAME,
       DELTA_PRESSURE_COLUMN_NAME,
-      TLEAF_COLUMN_NAME
+      TLEAF_COLUMN_NAME,
+      'E',
+      'gbw',
+      'H2O_s'
     )
 
     for (cn in col_to_avg) {
@@ -244,11 +260,21 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(line_sample = 'WT 10', seq_num = c(1, 14)),
-        list(line_sample = '25 10', seq_num = 14),
-        list(line_sample = '3 8',   seq_num = 14),
-        list(event = "zg12a", replicate = '1', seq_num = 7),
-        list(event = "WT", replicate = '5')
+        #list(line_sample = 'WT 10', seq_num = c(1,14)),
+        #list(line_sample = '25 10', seq_num = 14),
+        #list(line_sample = '3 8',   seq_num = 14)
+        #list(event = "zg12a", replicate = '1', seq_num = 7)                    #needed for GH sorghum 2023
+        #list(event = "WT", replicate = '5')
+        list(event = "WT", replicate = '1', plot = '5', seq_num = 7),          # needed for Aug 4 Field Aci
+        list(event = "hn1a", replicate = '2', plot = '4', seq_num = 7),        # needed for Aug 4 Field Aci
+        #list(event = "zg5b", replicate = '1', plot = '5', seq_num = 2),
+        #list(event = "zg5b", replicate = '1', plot = '5'),
+        #list(event = "zg5b", replicate = '2', plot = '6', seq_num = 7),
+        #list(event = "zg5b", replicate = '1', plot = '3'),
+        #list(event = "WT", replicate = '1', plot = '1'),
+        list(event = "zg12a", replicate = '1', plot = '4', seq_num = 2)      # needed for Aug 4 Field Aci
+        #list(event = "zg12a", replicate = '2', plot = '2', seq_num = 7)       # needed for July 10 Field Aci
+        #list(event = "zg12a", replicate = '2', plot = '5', seq_num = 1)       # needed for Aug 29 Field Aci
         #list(event = 'WT', replicate = '10', obs = 15)
         #list(event = 'WT', replicate = '2a-1', obs = 29),
         #list(event = '3', replicate = '1', seq_num = 5)
@@ -285,6 +311,12 @@ if (PERFORM_CALCULATIONS) {
       ))
 
       REP_COLUMN_NAME <- 'plot'
+      
+      combined_info[, UNIQUE_ID_COLUMN_NAME] <-
+        paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
+      
+      # Factorize ID columns
+      combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
     }
 
     # Calculate temperature-dependent values of C4 parameters
@@ -346,6 +378,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
         fit_c4_aci,
+        OPTIM_FUN = solver,
         Ca_atmospheric = 420,
         alpha_psii = 0,
         gbs = 0,
@@ -499,18 +532,18 @@ x_ci <- all_samples[[CI_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-event_colors <- rev(multi_curve_colors()[seq_len(length(levels(all_samples[, EVENT_COLUMN_NAME])))])
-
 ci_lim <- c(0, 1300)
 a_lim <- c(0, 70)
 etr_lim <- c(0, 325)
 gsw_lim <- c(0, 0.5)
+phips2_lim <- c(0, 0.4)
 
 ci_lab <- "Intercellular [CO2] (ppm)"
 a_lab <- "Net CO2 assimilation rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 iWUE_lab <- "Intrinsic water use efficiency (micromol CO2 / mol H2O)\n(error bars: standard error of the mean for same CO2 setpoint)"
 etr_lab <- "Electron transport rate (micromol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
 gsw_lab <- "Stomatal conductance to H2O (mol / m^2 / s)\n(error bars: standard error of the mean for same CO2 setpoint)"
+phips2_lab <- "PhiPSII (dimensionless)\n(error bars: standard error of the mean for same CO2 setpoint)"
 
 avg_plot_param <- list(
   a_plot = list(all_samples[['A']],    x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,    xlim = ci_lim, ylim = a_lim),
@@ -522,7 +555,8 @@ if (INCLUDE_FLUORESCENCE) {
     avg_plot_param <- c(
         avg_plot_param,
         list(
-            etr_plot = list(all_samples[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim)
+          etr_plot = list(all_samples[['ETR']], x_ci, x_s, x_e, xlab = ci_lab, ylab = etr_lab, xlim = ci_lim, ylim = etr_lim),
+          phips2_plot = list(all_samples[[PHIPS2_COLUMN_NAME]], x_ci, x_s, x_e, xlab = ci_lab, ylab = phips2_lab, xlim = ci_lim, ylim = phips2_lim)
         )
     )
 }
@@ -535,8 +569,7 @@ for (i in seq_along(avg_plot_param)) {
     lwd=2,
     auto.key = list(space = "right"),
     grid = TRUE,
-    main = rc_caption,
-    cols = event_colors
+    main = rc_caption
   )))
 
   if (!SAVE_TO_PDF) {
@@ -676,6 +709,10 @@ if (SAVE_CSV) {
     UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME, 'iWUE', 'Ci', 'gsw', 'A'
   )
   
+  if (INCLUDE_FLUORESCENCE) {
+    all_samples_col <- c(all_samples_col, PHIPS2_COLUMN_NAME)
+  }
+  
   all_samples_one_point_subset <- all_samples_one_point[, all_samples_col]
   
   param_col <- c(
@@ -689,3 +726,14 @@ if (SAVE_CSV) {
   write.csv(all_fit_parameters, file = file.path(base_dir, 'all_fit_parameters.csv'), row.names = FALSE)
   write.csv(all_fit_parameters_subset, file = file.path(base_dir, 'all_fit_parameters_subset.csv'), row.names = FALSE)
 }
+
+# Print information about the operating point
+
+cat('\n\nOperating point Ci:\n\n')
+print(tapply(all_fit_parameters$operating_Ci, all_fit_parameters[[EVENT_COLUMN_NAME]], function(x) {mean(x, na.rm = TRUE)}))
+
+cat('\n\nOperating point An (modeled):\n\n')
+print(tapply(all_fit_parameters$operating_An_model, all_fit_parameters[[EVENT_COLUMN_NAME]], function(x) {mean(x, na.rm = TRUE)}))
+
+cat('\n\nOperating point An (measured):\n\n')
+print(tapply(all_fit_parameters$operating_An, all_fit_parameters[[EVENT_COLUMN_NAME]], function(x) {mean(x, na.rm = TRUE)}))
