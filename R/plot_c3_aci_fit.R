@@ -60,7 +60,7 @@ plot_c3_aci_fit <- function(
         data = fit_results$fits_interpolated$main_data,
         type = 'l',
         par.settings = list(superpose.line = line_settings),
-        auto.key = list(space = 'right'),
+        auto.key = list(space = 'right', lines = TRUE, points = FALSE),
         xlab = paste(x_name, '[', fit_results$fits_interpolated$units[[x_name]], ']'),
         ylab = paste(
             'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
