@@ -21,6 +21,11 @@ xyplot_avg_rc <- function(
         stringsAsFactors = FALSE
     )
 
+    # Remove NA if necessary
+    if (na.rm) {
+        tdf <- tdf[!is.na(tdf$Y), ]
+    }
+
     # Get basic stats information
     tdf_stats <- do.call(
         rbind,
@@ -29,11 +34,11 @@ xyplot_avg_rc <- function(
             list(tdf$point_identifier, tdf$group_identifier),
             function(chunk) {
                 # Get some basic info
-                X_mean <- mean(chunk$X, na.rm = na.rm)
-                X_sd <- stats::sd(chunk$X, na.rm = na.rm)
+                X_mean <- mean(chunk$X)
+                X_sd <- stats::sd(chunk$X)
 
-                Y_mean <- mean(chunk$Y, na.rm = na.rm)
-                Y_sd <- stats::sd(chunk$Y, na.rm = na.rm)
+                Y_mean <- mean(chunk$Y)
+                Y_sd <- stats::sd(chunk$Y)
 
                 num <- nrow(chunk)
 
