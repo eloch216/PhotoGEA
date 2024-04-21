@@ -4,9 +4,17 @@ barchart_with_errorbars <- function(
     eb_width = 0.2,
     eb_lwd = 1,
     eb_col = 'black',
+    na.rm = TRUE,
     ...
 )
 {
+    # Remove NA if necessary
+    if (na.rm) {
+        to_keep <- !is.na(Y)
+        X <- X[to_keep]
+        Y <- Y[to_keep]
+    }
+
     # Get the mean, standard deviation, and number of replicates for each unique
     # value of X
     means <- tapply(Y, X, mean)

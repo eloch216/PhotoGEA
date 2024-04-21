@@ -16,7 +16,10 @@ exclude_outliers.data.frame <- function(x, col_for_analysis, INDICES) {
         upper_limit <- Q[2] + outlier_threshold_factor * iqr
         lower_limit <- Q[1] - outlier_threshold_factor * iqr
 
-        chunk[chunk[[col_for_analysis]] < upper_limit & chunk[[col_for_analysis]] > lower_limit, ]
+        rows_to_keep <- is.na(chunk[[col_for_analysis]]) |
+            (chunk[[col_for_analysis]] < upper_limit & chunk[[col_for_analysis]] > lower_limit)
+
+        chunk[rows_to_keep, ]
     }))
 }
 

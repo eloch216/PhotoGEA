@@ -54,7 +54,9 @@ be directly added to this file to describe the related changes.
   `plot_c4_aci_fit`. These functions use the new information in
   `fits_interpolated` to make nice plots comparing the measured data and the
   fits.
-- Now users can optionally ignore `NA` values when using `xyplot_avg_rc`.
+- Now users can optionally ignore `NA` values when using `xyplot_avg_rc` and
+  `barchart_with_errorbars`
+- Changed `exclude_outliers` to make sure it doesn't exclude `NA` values
 - Specialized functions for writing `exdf` objects to `CSV` files and recreating
   `exdf` objects from those files are now available: `write.csv.exdf` and
   `read.csv.exdf`.

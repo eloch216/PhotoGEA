@@ -19,6 +19,7 @@
     eb_width = 0.2,
     eb_lwd = 1,
     eb_col = 'black',
+    na.rm = TRUE,
     ...
   )
 
@@ -38,6 +39,11 @@
   \item{eb_lwd}{The line width (thickness) of the error bars.}
 
   \item{eb_col}{The color of the error bars.}
+
+  \item{na.rm}{
+    A logical value indicating whether or not to remove NA values before
+    calculating means and standard errors.
+  }
 
   \item{\dots}{
     Additional arguments to be passed to \code{lattice::barchart} or
