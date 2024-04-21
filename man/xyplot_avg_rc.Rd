@@ -56,8 +56,8 @@
   \item{eb_lwd}{The line width (thickness) of the error bars.}
 
   \item{na.rm}{
-    To be passed to \code{\link{mean}} and \code{\link{sd}} when determining
-    mean values and error bars.
+    A logical value indicating whether or not to remove NA values before
+    calculating means and standard errors.
   }
 
   \item{\dots}{Additional arguments to be passed to \code{lattice::xyplot}.}
