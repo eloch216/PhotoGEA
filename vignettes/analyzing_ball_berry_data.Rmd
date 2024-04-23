@@ -109,21 +109,21 @@ used as examples.
 
 The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
-`system.file`:
+`PhotoGEA_example_file_path`:
 
 ```{r licor_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx'),
+  PhotoGEA_example_file_path('ball_berry_2.xlsx')
 )
 ```
 
 (**Note:** When loading your own files for analysis, it is not advisable to use
-`system.file` as we have done here. Instead, file paths can be directly written,
-or files can be chosen using an interactive window. See [Input Files] below for
-more information.)
+`PhotoGEA_example_file_path` as we have done here. Instead, file paths can be
+directly written, or files can be chosen using an interactive window. See
+[Input Files] below for more information.)
 
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
@@ -645,11 +645,11 @@ vignette.
 ### Creating convenient R objects from raw data files
 ###
 
-<<licor_file_names>>
-
 ## IMPORTANT: When loading your own files, it is not advised to use
-## `system.file` as in the above code. Instead, write out the names or use the
-## `choose_input_licor_files` function.
+## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
+## names or use the `choose_input_licor_files` function.
+
+<<licor_file_names>>
 
 <<loading_licor_data>>
 

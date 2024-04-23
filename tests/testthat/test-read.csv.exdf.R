@@ -1,10 +1,10 @@
 test_that('data agrees with original exdf object', {
     exdf_from_excel <- read_gasex_file(
-        system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+        PhotoGEA_example_file_path('ball_berry_1.xlsx')
     )
 
     exdf_from_csv <- read.csv.exdf(
-        system.file('extdata', 'ball_berry_1.csv', package = 'PhotoGEA', mustWork = TRUE)
+        PhotoGEA_example_file_path('ball_berry_1.csv')
     )
 
     expect_equal(colnames(exdf_from_csv), colnames(exdf_from_excel))

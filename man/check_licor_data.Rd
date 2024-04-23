@@ -94,7 +94,7 @@
 # identified by the values of its 'species' and 'plot' columns. Since these are
 # light-response curves, each one follows a pre-set sequence of `Qin` values.
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Make sure there are no infinite values and that all curves have the same

@@ -77,14 +77,14 @@
 # Example 1: Reading a Licor Excel file that is included with the PhotoGEA
 # package.
 licor_file <- PhotoGEA:::read_licor_6800_Excel(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Example 2: Reading a Licor Excel file that is included with the PhotoGEA
 # package; here we use a different column name to identify the data block within
 # the file's contents.
 licor_file <- PhotoGEA:::read_licor_6800_Excel(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  PhotoGEA_example_file_path('ball_berry_1.xlsx'),
   column_name = 'A'
 )
 }

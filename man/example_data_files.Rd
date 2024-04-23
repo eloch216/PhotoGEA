@@ -51,9 +51,8 @@
           which was created by reading the Excel file with
           \code{\link{read_gasex_file}} and then saving it using
           \code{\link{write.csv.exdf}}. This can be done as follows: \code{tmp
-          <- read_gasex_file(system.file('extdata', 'ball_berry_1.xlsx', package
-          = 'PhotoGEA', mustWork = TRUE)); write.csv.exdf(tmp,
-          'ball_berry_1.csv')}
+          <- read_gasex_file(PhotoGEA_example_file_path('ball_berry_1.xlsx'));
+          write.csv.exdf(tmp, 'ball_berry_1.csv')}
     \item \code{c3_aci_1.xlsx} and \code{c3_aci_2.xlsx}: Two log files
           created by Licor Li-6800 portable gas exchange measurement systems.
           These log files each contain several C3 CO2 response (or A-Ci) curves.
@@ -93,23 +92,23 @@
   After installing `PhotoGEA`, copies of these files will be stored in the R
   package directory (in the \code{PhotoGEA/extdata} subdirectory). This
   location will be unique to your computer, but full paths to these files can be
-  obtained using the \code{system.file} function.
+  obtained using the \code{\link{PhotoGEA_example_file_path}} function.
 }
 
 \examples{
 # Print full paths to the example files
-system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'c4_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'licor_for_gm_site13.xlsx', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE)
-system.file('extdata', 'tdl_sampling_2.dat', package = 'PhotoGEA', mustWork = TRUE)
+PhotoGEA_example_file_path('ball_berry_1.xlsx')
+PhotoGEA_example_file_path('ball_berry_2.xlsx')
+PhotoGEA_example_file_path('c3_aci_1.xlsx')
+PhotoGEA_example_file_path('c3_aci_2.xlsx')
+PhotoGEA_example_file_path('c4_aci_1.xlsx')
+PhotoGEA_example_file_path('c4_aci_2.xlsx')
+PhotoGEA_example_file_path('licor_for_gm_site11.xlsx')
+PhotoGEA_example_file_path('licor_for_gm_site13.xlsx')
+PhotoGEA_example_file_path('plaintext_licor_file')
+PhotoGEA_example_file_path('tdl_for_gm.dat')
+PhotoGEA_example_file_path('tdl_sampling_1.dat')
+PhotoGEA_example_file_path('tdl_sampling_2.dat')
 }
 
 \keyword{datasets}

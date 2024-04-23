@@ -47,10 +47,11 @@ basic example that just scratches the surface of what is possible with
 `PhotoGEA`.
 
 (**Note:** When loading your own files for analysis, it is not advisable to use
-`system.file` as we have done in the code below. Instead, file paths can be
-directly written, or files can be chosen using an interactive window. See
-the [Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html#input-files)
-vignette for more information.)
+`PhotoGEA_example_file_path` as we have done in the code below. Instead, file
+paths can be directly written, or files can be chosen using an interactive
+window. See the
+[Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html#input-files) vignette
+for more information.)
 
 ## Fitting the Curves
 
@@ -64,8 +65,8 @@ library(lattice)
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx'),
+  PhotoGEA_example_file_path('c3_aci_2.xlsx')
 )
 
 # Load the data from each file

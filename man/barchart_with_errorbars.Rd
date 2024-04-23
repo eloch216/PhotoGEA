@@ -74,7 +74,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Plot the average assimilation value for each species. (Note: this is not a

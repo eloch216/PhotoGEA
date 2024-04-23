@@ -156,7 +156,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve

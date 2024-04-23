@@ -89,8 +89,8 @@ included here, but they can be found at the end of this vignette in
 ```{r loading_and_validating_data, echo = FALSE}
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx'),
+  PhotoGEA_example_file_path('c3_aci_2.xlsx')
 )
 
 # Load each file, storing the result in a list
