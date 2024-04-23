@@ -34,7 +34,7 @@ test_that('fit failures are handled properly', {
     expect_equal(fit_res_bad$parameters[, 'c3_assimilation_msg'], 'Cc must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Ac', 'Aj', 'Ap')])))
     expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Ac', 'Aj', 'Ap')])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'AIC')])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'J_at_25_upper', 'Rd_at_25_upper', 'Tp_upper')])))
 })
 
@@ -52,8 +52,8 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'AIC')]),
+        c(145.3336224, 232.8361365, 0.3557059, NA, 59.1303101),
         tolerance = 1e-5
     )
 
@@ -80,8 +80,8 @@ test_that('fit results have not changed (alpha_old)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp')]),
-        c(145.3324814, 232.8369280, 0.3555462, NA),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'AIC')]),
+        c(145.3324814, 232.8369280, 0.3555462, NA, 61.1303105),
         tolerance = 1e-5
     )
 
@@ -108,8 +108,8 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp')]),
-        c(156.565613, 255.530414, 0.790466, NA),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'AIC')]),
+        c(156.565613, 255.530414, 0.790466, NA, 56.613957),
         tolerance = 1e-5
     )
 

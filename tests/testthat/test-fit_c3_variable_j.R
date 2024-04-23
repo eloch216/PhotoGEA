@@ -21,7 +21,7 @@ test_that('fit failures are handled properly', {
     expect_equal(fit_res_bad$parameters[, 'c3_variable_j_msg'], 'Ci must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Ac', 'Aj', 'Ap', 'gmc', 'Cc')])))
     expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Ac', 'Aj', 'Ap', 'gmc', 'Cc')])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'tau')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'Tp', 'tau', 'AIC')])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'J_at_25_upper', 'Rd_at_25_upper', 'Tp', 'tau_upper')])))
 })
 
@@ -39,8 +39,8 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp')]),
-        c(242.4517893, 255.3335038, 1.8934618, 0.4072432, NA),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'AIC')]),
+        c(242.4517893, 255.3335038, 1.8934618, 0.4072432, NA, 38.4185241),
         tolerance = 1e-5
     )
 
@@ -65,8 +65,8 @@ test_that('fit results have not changed (alpha_old)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp')]),
-        c(240.2655634, 253.6329173, 1.8777752, 0.4045006, NA),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'AIC')]),
+        c(240.2655634, 253.6329173, 1.8777752, 0.4045006, NA, 40.4220665),
         tolerance = 1e-5
     )
 
@@ -91,8 +91,8 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp')]),
-        c(227.0964299, 264.2451537, 2.4690519, 0.4227365, NA),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'AIC')]),
+        c(227.0964299, 264.2451537, 2.4690519, 0.4227365, NA, 43.5099225),
         tolerance = 1e-5
     )
 

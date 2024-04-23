@@ -244,7 +244,8 @@
   concentration \code{atmospheric_ca} using
   \code{\link{estimate_operating_point}}, and then uses that value to estimate
   the modeled \code{An} at the operating point via
-  \code{\link{calculate_c4_assimilation}}.
+  \code{\link{calculate_c4_assimilation}}. It also estimates the
+  \href{https://en.wikipedia.org/wiki/Akaike_information_criterion}{Akaike information criterion (AIC)}.
 
   This function assumes that \code{replicate_exdf} represents a single
   C4 A-Ci curve. To fit multiple curves at once, this function is often used
@@ -305,6 +306,8 @@
             \item The residual stats as returned by \code{\link{residual_stats}}
                   are included as columns with the default names: \code{dof},
                   \code{RSS}, \code{RMSE}, etc.
+            \item The Akaike information criterion is included in the \code{AIC}
+                  column.
           }
   }
 }

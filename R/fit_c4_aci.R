@@ -357,6 +357,12 @@ fit_c4_aci <- function(
         )(best_X[param_to_fit])
     }
 
+    # Add the AIC
+    replicate_identifiers[, 'AIC'] <- akaike_information_criterion(
+        -1.0 * replicate_identifiers[, 'optimum_val'],
+        length(which(param_to_fit))
+    )
+
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
@@ -378,6 +384,7 @@ fit_c4_aci <- function(
         c('fit_c4_aci',               'convergence_msg',     ''),
         c('fit_c4_aci',               'feval',               ''),
         c('fit_c4_aci',               'optimum_val',         ''),
+        c('fit_c4_aci',               'AIC',                 ''),
         c('fit_c4_aci',               'c4_assimilation_msg', '')
     )
 
