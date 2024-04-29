@@ -17,7 +17,7 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 16
+NUM_OBS_IN_SEQ <- 17
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 
 # Decide whether to make certain plots
@@ -28,7 +28,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -41,7 +41,7 @@ POINT_FOR_BOX_PLOTS <- 1
 REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
-PERFORM_STATS_TESTS <- TRUE
+PERFORM_STATS_TESTS <- FALSE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
@@ -62,6 +62,13 @@ GM_TABLE <- list(
 # equations
 OVERRIDE_GAMMA_STAR <- FALSE
 GAMMA_STAR <- 50 # ppm
+
+# Specify which type of CO2 control was used
+CO2_CONTROL <- 'CO2_r_sp' # should be 'CO2_r_sp' or 'CO2_s_sp'
+
+# If CO2_s was controlled, we have to specify the setpoint values because the
+# Licor log file doesn't include them
+CO2_s_seq <- c(420, 320, 220, 150, 100, 75, 50, 20, 420, 420, 500, 600, 800, 1000, 1200, 1500)
 
 # Decide whether to average over plots
 AVERAGE_OVER_PLOTS <- FALSE
@@ -150,13 +157,23 @@ licor_data[, 'curve_identifier'] <-
 licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
+# If CO2_s was controlled, add the setpoint values
+if (CO2_CONTROL == 'CO2_s_sp') {
+  licor_data <- set_variable(
+    licor_data,
+    'CO2_s_sp',
+    units = 'micromol mol^(-1)',
+    value = rep_len(CO2_s_seq, nrow(licor_data))
+  )
+}
+
 # Remove certain events
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+#check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, CO2_CONTROL)
 
-# Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+# Remove points with duplicated CO2 setpoint values and order by `Ci`
 licor_data <- organize_response_curve_data(
     licor_data,
     'curve_identifier',
@@ -186,7 +203,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      auto.key = list(space = 'right'),
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
@@ -248,7 +265,7 @@ if (MAKE_VALIDATION_PLOTS) {
     # Make a plot to check CO2 control
     dev.new()
     print(xyplot(
-      CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
+      CO2_s + CO2_r ~ Ci | curve_identifier,
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
@@ -275,12 +292,18 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(event = 'TGx2014-49FZ', replicate = '34'),
-      list(event = 'TTGx2002-3DM', replicate = '35'),
-      list(event = 'LD11-2170', replicate = '27', seq_num = c('8','17'))
+      #list(event = 'TGx2014-49FZ', replicate = '34'),
+      #list(event = 'TTGx2002-3DM', replicate = '35'),
+      #list(event = 'LD11-2170', replicate = '27', seq_num = c('8','17'))
       #list(event = 'WT', replicate = 9, CO2_r_sp = 800),
       #list(event = '25', replicate = 4, CO2_r_sp = 200)
-      #list(curve_identifier = '10 5 6', seq_num = c(2))
+      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
+      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
+      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
+      list(curve_identifier = '20 3 6', seq_num = c(15)),
+      list(curve_identifier = '25 3 3', seq_num = c(16)),
+      list(curve_identifier = '25 2 4', seq_num = c(3))
+      
     )
 }
 
@@ -564,7 +587,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         "Quartiles for measurement point ",
         POINT_FOR_BOX_PLOTS,
         "\n(where CO2 setpoint = ",
-        all_samples_one_point[, 'CO2_r_sp'][POINT_FOR_BOX_PLOTS],
+        all_samples_one_point[, CO2_CONTROL][POINT_FOR_BOX_PLOTS],
         ")"
     )
 
@@ -617,7 +640,7 @@ if (MAKE_ANALYSIS_PLOTS) {
 
     ci_lim <- c(-50, 1500)
     cc_lim <- c(-50, 1500)
-    a_lim <- c(-10, 55)
+    a_lim <- c(-10, 65)
     gsw_lim <- c(0, 0.7)
     phi_lim <- c(0, 0.5)
 
@@ -647,7 +670,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         print(do.call(xyplot_avg_rc, c(x, list(
             type = 'b',
             pch = 20,
-            auto = TRUE,
+            auto.key = list(space = 'right'),
             grid = TRUE,
             main = rc_caption
         ))))
