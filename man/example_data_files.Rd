@@ -16,6 +16,7 @@
 \alias{tdl_sampling_1}
 \alias{tdl_sampling_2}
 \alias{plaintext_licor_file}
+\alias{plaintext_licor_file_v2}
 
 \alias{ball_berry_1.csv}
 \alias{ball_berry_1.xlsx}
@@ -76,6 +77,10 @@
           CO2 response (or A-Ci) curves. Several user constants were defined in
           this log that can be used to identify individual curves or subsets of
           curves: \code{species}, \code{plot}, and \code{instrument}.
+    \item \code{plaintext_licor_file_v2}: A log file based on
+          \code{plaintext_licor_file} that has two separate \code{[Data]} and
+          \code{[Header]} sections, as if the log file had been closed and
+          reopened halfway through the measurement sequence.
     \item \code{licor_for_gm_site11.xlsx}, \code{licor_for_gm_site13.xslsx}, and
           \code{tdl_for_gm}: Two Licor Li-6800 log files and a CR3000 TDL log
           file, respectively. These files are used as an example of loading and
@@ -106,6 +111,7 @@ PhotoGEA_example_file_path('c4_aci_2.xlsx')
 PhotoGEA_example_file_path('licor_for_gm_site11.xlsx')
 PhotoGEA_example_file_path('licor_for_gm_site13.xlsx')
 PhotoGEA_example_file_path('plaintext_licor_file')
+PhotoGEA_example_file_path('plaintext_licor_file_v2')
 PhotoGEA_example_file_path('tdl_for_gm.dat')
 PhotoGEA_example_file_path('tdl_sampling_1.dat')
 PhotoGEA_example_file_path('tdl_sampling_2.dat')

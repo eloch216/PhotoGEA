@@ -25,13 +25,24 @@ get_oxygen_from_preamble <- function(licor_exdf) {
         try_as_numeric(preamble[['SysConst:Oxygen']])
     } else {
         msg <- paste0(
-            "Could not automatically get oxygen information from Licor file:\n'",
+            "Could not automatically get oxygen information from file:\n'",
             licor_exdf[['file_name']],
             "'\nConsider adding oxygen values with the `set_variable` function ",
             "rather than using `get_oxygen_from_preamble`"
         )
         warning(msg)
         NA
+    }
+
+    if (length(unique(oxygen)) > 1) {
+        msg <- paste0(
+            "Found multiple oxygen values in file:\n'",
+            licor_exdf[['file_name']],
+            "'\nConsider adding oxygen values with the `set_variable` function ",
+            "rather than using `get_oxygen_from_preamble`"
+        )
+        warning(msg)
+        oxygen <- NA
     }
 
     # Store it in the Licor file and return the updated file
