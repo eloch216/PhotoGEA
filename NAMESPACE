@@ -1,5 +1,6 @@
 # Functions for interacting with data files and `exdf` objects
 export(check_licor_data)
+export(check_response_curve_data)
 export(choose_input_files)
 export(choose_input_licor_files)
 export(choose_input_tdl_files)

@@ -33,7 +33,7 @@ organize_response_curve_data <- function(
     # Check to make sure the identifier columns specify curves with the same
     # number of points. Don't check for any infinite values since we don't know
     # which columns should be ignored for this check.
-    check_licor_data(
+    check_response_curve_data(
       licor_exdf,
       identifier_columns,
       driving_column = column_for_ordering,

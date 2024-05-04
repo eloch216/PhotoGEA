@@ -114,7 +114,7 @@ licor_data[ , 'curve_identifier'] <-
   paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
 
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(

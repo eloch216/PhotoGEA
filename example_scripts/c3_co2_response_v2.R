@@ -154,7 +154,7 @@ licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(

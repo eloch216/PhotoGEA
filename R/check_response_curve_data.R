@@ -1,6 +1,6 @@
 # Checks a set of Licor data representing multiple response curves to make sure
 # it meets basic requirements for further analysis
-check_licor_data <- function(
+check_response_curve_data <- function(
     licor_exdf,
     identifier_columns,
     expected_npts = 0,
@@ -10,7 +10,7 @@ check_licor_data <- function(
 )
 {
     if (!is.exdf(licor_exdf)) {
-        stop('check_licor_data requires an exdf object')
+        stop('check_response_curve_data requires an exdf object')
     }
 
     # Check for any infinite values

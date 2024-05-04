@@ -333,27 +333,27 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_licor_data` function from
+response curve. To do this, we can use the `check_response_curve_data` function from
 `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`12`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_licor_data`.)
+information, see the built-in help menu entry by typing `?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', 12, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', 12, 'CO2_r_sp')
 ```
 
-However, if `check_licor_data` detects an issue, it will print a
+However, if `check_response_curve_data` detects an issue, it will print a
 helpful message to the R terminal. For example, if we had specified the wrong
 number of points or the wrong identifier column, we would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_licor_data(licor_data, 'curve_identifier', 13)
+check_response_curve_data(licor_data, 'curve_identifier', 13)
 
-check_licor_data(licor_data, 'replicate', 12)
+check_response_curve_data(licor_data, 'replicate', 12)
 ```
 
 Now that we have confirmed that our curve identifier properly identifies sets
