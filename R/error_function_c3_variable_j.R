@@ -134,7 +134,7 @@ error_function_c3_variable_j <- function(
             }
         )
 
-        if (is.null(vj) || any(vj$Cc < 0)) {
+        if (is.null(vj) || any(is.na(vj$Cc)) || any(vj$Cc < 0)) {
             return(ERROR_PENALTY)
         }
 
