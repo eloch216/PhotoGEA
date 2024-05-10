@@ -5,9 +5,9 @@
 \title{Generate an error function for C3 A-Ci curve fitting}
 
 \description{
-  Creates a function that returns an error value (the sum of squared residuals)
-  representing the amount of agreement between modeled and measured \code{An}
-  values.
+  Creates a function that returns an error value (the negative of the natural
+  logarithm of the likelihood) representing the amount of agreement between
+  modeled and measured \code{An} values.
 }
 
 \usage{
@@ -241,7 +241,7 @@ lattice::xyplot(
   exp(-sapply(vcmax_seq, vcmax_error_fcn)) ~ vcmax_seq,
   type = 'b',
   xlab = 'Vcmax_at_25 (micromol / m^2 / s)',
-  ylab = 'Likelihood (dimensionless)'
+  ylab = 'Negative log likelihood (dimensionless)'
 )
 }
 

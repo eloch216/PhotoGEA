@@ -4,7 +4,7 @@
 
 \alias{c4_peaked_gaussian_no_temp}
 
-\title{C4 Arrhenius parameters from von Caemmerer}
+\title{C4 peaked Gaussian parameters with no temperature response}
 
 \description{
   Peaked Gaussian parameters that describe a flat temperature response of

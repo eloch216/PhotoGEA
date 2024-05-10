@@ -30,6 +30,7 @@
     x_etr = 0.4,
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
@@ -148,7 +149,7 @@
     \code{gamma_star} values.
   }
 
-  \item{vcmax_norm_column_name}{
+  \item{jmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
     \code{normalized to Jmax at its optimal temperature}).
