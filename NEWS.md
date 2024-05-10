@@ -40,6 +40,8 @@ be directly added to this file to describe the related changes.
   - Best-fit parameter values are determined with `sigma = 1`.
   - Then the true value of the likelihood can be estimated using `sigma = RMSE`.
   - Confidence intervals are also calculated using `sigma = RMSE`.
+  - Fitting functions include the Akaike information criterion (AIC) in their
+    outputs
 - Changed the C3 assimilation and Variable J equations to accommodate the new
   alpha parameters from Busch et al. (2018)
   - There are now three separate parameters: `alpha_old` (previously `alpha_g`),
@@ -62,8 +64,12 @@ be directly added to this file to describe the related changes.
   `read.csv.exdf`.
 - When determining the degree of trust in a best-fit parameter value, we now
   consider parameters with an upper confidence limit of `Inf` to be unreliable.
+- Light- and electron-limited assimilation has been added to
+  `calculate_c4_assimilation`; now we have fully implemented the von Caemmerer
+  model equations. This also necessitated a new function for temperature
+  response calculations: `calculate_peaked_gaussian`.
 - New fitting parameters have been added to `fit_c4_aci`: `alpha_psii`, `gbs`,
-  and `Rm_frac`.
+  `Jmax_at_opt` and `Rm_frac`.
 - It is now possible to remove unreliable parameter estimates when using
   `fit_c4_aci`.
 - Tests have been updated to make sure the fitting functions can gracefully
@@ -78,6 +84,13 @@ be directly added to this file to describe the related changes.
   `get_oxygen_from_preamble` will automatically be used to get the oxygen
   percentage from the file's preamble when it is loaded.
 - A new option has been added to `read_gasex_file`: `standardize_columns`.
+- `read_licor_6800_plaintext` can now read log files that were closed and
+  reopened
+- Added a new function called `PhotoGEA_example_file_path` to avoid using
+  `system.file` in examples since `system.path` has been confusing for some
+  users
+- `check_licor_data` has been renamed to `check_response_curve_data` since it is
+  not limited to only Licor measurements
 - Specified a minimum supported R version: `3.6.0`.
 
 ## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
