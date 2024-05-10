@@ -45,18 +45,18 @@ plot_c4_aci_fit <- function(
     check_required_variables(fit_results$parameters, required_variables)
 
     # Choose line settings
-    assim_cols <- multi_curve_colors()[1:4]
+    assim_cols <- multi_curve_colors()[1:5]
     assim_cols[1] <- '#676767'
 
     line_settings <- list(
         col = assim_cols,
-        lwd = c(4, 2, 2, 2),
-        lty = c(1, 5, 5, 5)
+        lwd = c(4, 2, 2, 2, 2),
+        lty = c(1, 5, 5, 5, 5)
     )
 
     # Plot the fits, operating point, and raw data
     lattice::xyplot(
-        An + Apc + Apr + Ar ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name],
+        An + Apc + Apr + Ar + Aj ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name],
         data = fit_results$fits_interpolated$main_data,
         type = 'l',
         par.settings = list(superpose.line = line_settings),
