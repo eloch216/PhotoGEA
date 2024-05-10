@@ -1,5 +1,4 @@
 # Functions for interacting with data files and `exdf` objects
-export(check_licor_data)
 export(check_response_curve_data)
 export(choose_input_files)
 export(choose_input_licor_files)
@@ -36,6 +35,7 @@ export(calculate_gm_busch)
 export(calculate_gm_ubierna)
 export(calculate_isotope_discrimination)
 export(calculate_leakiness_ubierna)
+export(calculate_peaked_gaussian)
 export(calculate_rd_laisk)
 export(calculate_ternary_correction)
 export(calculate_total_pressure)
@@ -146,5 +146,6 @@ export(plot_c4_aci_fit)
 export(xyplot_avg_rc)
 
 # Deprecated functions
+export(check_licor_data)
 export(read_licor_file)
 export(read_tdl_file)
