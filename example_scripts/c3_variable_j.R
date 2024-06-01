@@ -29,7 +29,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
