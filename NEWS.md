@@ -32,7 +32,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
 
 - Changed fitting method from least-squares to maximum likelihood in
   `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`.
@@ -42,6 +42,10 @@ be directly added to this file to describe the related changes.
   - Confidence intervals are also calculated using `sigma = RMSE`.
   - Fitting functions include the Akaike information criterion (AIC) in their
     outputs
+  - Default settings have been changed to always calculate confidence intervals
+    and remove unreliable parameter estimates, to use a more reliable (but
+    slower) optimizer, and to fit `alpha_old` (for C3 A-Ci and Variable J fits);
+    these settings will ensure more robust fitting results
 - Changed the C3 assimilation and Variable J equations to accommodate the new
   alpha parameters from Busch et al. (2018)
   - There are now three separate parameters: `alpha_old` (previously `alpha_g`),
