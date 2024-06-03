@@ -292,10 +292,16 @@ col_to_keep <- c(
 
 aci_fit_subset[ , col_to_keep, TRUE]
 
+# One of these fits has NA for all the limiting factors, which causes problems
+# when making bar charts with some versions of the `lattice` package, so we
+# exclude that curve for plotting
+data_for_barchart <-
+  aci_fit_subset$main_data[aci_fit_subset$main_data$species_plot != 'tobacco - 2', ]
+
 # Display as a bar chart
 lattice::barchart(
   ls_rubisco_grassi + lm_rubisco_grassi + lb_rubisco_grassi ~ species_plot,
-  data = aci_fit_subset$main,
+  data = data_for_barchart,
   stack = TRUE,
   auto = TRUE,
   ylab = 'Factors limiting assimilation'
