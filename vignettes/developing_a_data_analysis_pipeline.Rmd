@@ -251,9 +251,6 @@ data set:
 - `estimate_operating_point`: Estimates internal CO~2~ concentrations and
   assimilation rates under atmospheric CO~2~ concentrations.
 
-(This list is not exhaustive; instead, it only includes functions for which
-documentation has been written.)
-
 These functions generally treat each row in an `exdf` object as an independent
 observation, and so they can be applied to objects that include data from many
 plants or response curves.

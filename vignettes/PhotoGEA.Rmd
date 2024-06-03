@@ -136,8 +136,10 @@ timing
 ```
 
 The timing results may vary depending on the particular machine used to run the
-code. Nevertheless: _Do you think you could fit six A-Ci curves in less than
-`r ceiling(timing[['elapsed']])` seconds using any other method?_
+code. Nevertheless, this is a small time investment for an advanced algorithm
+that uses maximum likeliood fitting and derivative-free optimizers for robust
+fitting, and calculates confidence intervals to determine which estimated
+parameter values are reliable.
 
 This example contains 12 commands, so it certainly isn't short; however, a close
 look reveals that much of the commands are general and would apply to _any_ set
@@ -151,24 +153,13 @@ harder!
 
 Having fit the response curves, it is also possible to view the fits and the
 extracted parameters. For example, we can plot the measured values of net
-assimilation (`A`), the fitted values of net assimilation (`A_fit`), and each of
-the limiting assimilation rates calculated during the fitting procedure: the
-rubisco-limited rate (`Ac`) and the electron-transport-limited rate (`Aj`).
+assimilation (black circles), the fitted values of net assimilation (`An`), and
+each of the limiting assimilation rates calculated during the fitting procedure:
+the Rubisco limited rate (`Ac`), the RuBP regeneration limited rate (`Aj`), and
+the triose phosphate utilization limited rate (`Ap`).
 
 ```{r}
-xyplot(
-  A + Ac + Aj + A_fit ~ Ci | curve_id,
-  data = aci_results$fits$main_data,
-  type = 'b',
-  auto.key = list(space = 'right'),
-  grid = TRUE,
-  xlab = paste0('Intercellular CO2 concentration (', aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Assimilation rate (', aci_results$fits$units$A, ')'),
-  par.settings = list(
-    superpose.line = list(col = multi_curve_line_colors()),
-    superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-  )
-)
+plot_c3_aci_fit(aci_results, 'curve_id', 'Ci', ylim = c(-10, 80))
 ```
 
 Another way to check the quality of the fits is to plot the residuals, which

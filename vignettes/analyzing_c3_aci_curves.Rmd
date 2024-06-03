@@ -667,7 +667,7 @@ the curve identifier column we defined before ([Basic Checks]), fit each A-Ci
 curve using the FvCB model discussed in [Understanding C3 A-Ci Curves], and
 return the resulting parameters and fits:
 
-```{r}
+```{r fit_c3_aci}
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
@@ -730,7 +730,7 @@ the crossover from Rubisco-limited carboxylation to RuBP-regeneration-limited
 carboxylation to a limited range of `Cc` values. Adding this restriction can
 sometimes produce more reasonable fits.
 
-```{r fit_c3_aci}
+```{r}
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
