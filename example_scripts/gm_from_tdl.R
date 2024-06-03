@@ -47,12 +47,12 @@ MAKE_GM_PLOTS <- TRUE
 USE_BUSCH_GM <- TRUE
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- 2.1
+DEFAULT_RESPIRATION <- 1.81
 
 # Specify respiration values for each event; these will override the default.
 # To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  #'WT' = 2.33,
+  'WT' = 1.225
   #'8' = 2.02,
   #'10' = 1.94,
   #'14' = 2.08

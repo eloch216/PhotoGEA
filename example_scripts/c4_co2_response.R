@@ -104,7 +104,7 @@ REMOVE_UNSTABLE_POINTS <- FALSE
 CI_UPPER_LIMIT <- Inf # ppm
 
 # Decide whether to remove a few specific points from the data before fitting
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Decide whether to remove statistical outliers
 REMOVE_STATISTICAL_OUTLIERS <- FALSE
