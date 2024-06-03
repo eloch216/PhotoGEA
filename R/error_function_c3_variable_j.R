@@ -112,6 +112,8 @@ error_function_c3_variable_j <- function(
             {
                 calculate_c3_variable_j(
                     fitting_exdf,
+                    X[1], # alpha_g
+                    X[3], # alpha_s
                     X[4], # Gamma_star
                     X[6], # Rd_at_25
                     X[7], # tau
@@ -132,7 +134,7 @@ error_function_c3_variable_j <- function(
             }
         )
 
-        if (is.null(vj) || any(vj$Cc < 0)) {
+        if (is.null(vj) || any(is.na(vj$Cc)) || any(vj$Cc < 0)) {
             return(ERROR_PENALTY)
         }
 

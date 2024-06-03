@@ -72,7 +72,7 @@
 \examples{
 # Example 1: Smoothing the 12C signal from one TDL valve using a spline fit
 tdl_file <- read_gasex_file(
-  system.file('extdata', 'tdl_sampling_1.dat', package = 'PhotoGEA', mustWork = TRUE),
+  PhotoGEA_example_file_path('tdl_sampling_1.dat'),
   'TIMESTAMP'
 )
 

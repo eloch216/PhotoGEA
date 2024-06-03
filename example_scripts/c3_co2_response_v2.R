@@ -174,7 +174,7 @@ if (CO2_CONTROL == 'CO2_s_sp') {
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-#check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, CO2_CONTROL)
+#check_response_curve_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
 
 # Remove points with duplicated CO2 setpoint values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -306,7 +306,7 @@ if (REMOVE_SPECIFIC_POINTS) {
       list(curve_identifier = '20 3 6', seq_num = c(15)),
       list(curve_identifier = '25 3 3', seq_num = c(16)),
       list(curve_identifier = '25 2 4', seq_num = c(3))
-      
+
     )
 }
 
@@ -652,7 +652,7 @@ if (MAKE_ANALYSIS_PLOTS) {
             )
         )
     }
-    
+
     i <- 0
 
     invisible(lapply(avg_plot_param, function(x) {
@@ -700,7 +700,7 @@ if (PERFORM_STATS_TESTS) {
 }
 
 if (SAVE_CSV) {
-  
+
   if (AVERAGE_OVER_PLOTS) {
     tmp <- by(
       all_samples,

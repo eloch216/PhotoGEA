@@ -1,6 +1,6 @@
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -17,6 +17,8 @@ licor_file <- organize_response_curve_data(
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
+
+licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)

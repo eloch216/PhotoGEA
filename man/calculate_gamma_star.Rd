@@ -140,7 +140,7 @@
 \examples{
 # Example 1: Calculate Gamma_star for each point in a gas exchange log file
 licor_data <- read_gasex_file(
-  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+  PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
 )
 
 licor_data <- get_oxygen_from_preamble(licor_data)

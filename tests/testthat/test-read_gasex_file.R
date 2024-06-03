@@ -14,7 +14,7 @@ test_that('file_name must exist', {
 
 
 test_that('standardizations are applied', {
-    fpath <- system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+    fpath <- PhotoGEA_example_file_path('c3_aci_1.xlsx')
 
     licor_file_standard <- read_gasex_file(fpath)
 

@@ -339,9 +339,8 @@
 
   \itemize{
     \item Busch, Sage, & Farquhar, G. D. "Plants increase CO2 uptake by
-          assimilating nitrogen via the photorespiratory pathway." Nature
-          Plants 4, 46–54 (2018)
-          [\doi{10.1038/s41477-017-0065-x}].
+          assimilating nitrogen via the photorespiratory pathway." Nature Plants
+          4, 46–54 (2018) [\doi{10.1038/s41477-017-0065-x}].
     \item von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
           Publishing, 2000) [\doi{10.1071/9780643103405}].
     \item Collatz, G. J., Ball, J. T., Grivet, C. & Berry, J. A. "Physiological

@@ -17,18 +17,26 @@
     exdf_obj,
     alpha_psii,
     gbs,
+    Jmax_at_opt,
     Rd_at_25,
     Rm_frac,
     Vcmax_at_25,
     Vpmax_at_25,
     Vpr,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -55,6 +63,14 @@
     \code{exdf_obj} called \code{gbs} with appropriate units. A numeric value
     supplied here will overwrite the values in the \code{gbs} column of
     \code{exdf_obj} if it exists.
+  }
+
+  \item{Jmax_at_opt}{
+    The RuBP regeneration rate at its optimal temperature, expressed in
+    \code{micromol m^(-2) s^(-1)}. If \code{Jmax_at_opt} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Jmax_at_opt} with
+    appropriate units. A numeric value supplied here will override the values
+    in the \code{Jmax_at_opt} column of \code{exdf_obj} if it exists.
   }
 
   \item{Rd_at_25}{
@@ -98,6 +114,31 @@
     \code{Vpr} column of \code{exdf_obj} if it exists.
   }
 
+  \item{absorptance}{
+    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
+    (2021).
+  }
+
+  \item{f_spectral}{
+    The spectral quality adjustment factor (dimensionless). See Equation 35
+    from S. von Caemmerer (2021).
+  }
+
+  \item{rho}{
+    The fraction of light absorbed by photosystem II rather than photosystem I
+    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
+  }
+
+  \item{theta}{
+    An empirical curvature factor (dimensionless). See Equation 34 from S. von
+    Caemmerer (2021).
+  }
+
+  \item{x_etr}{
+    The fraction of whole-chain electron transport occurring in the mesophyll
+    (dimensionless). See Equation 29 from S. von Caemmerer (2021).
+  }
+
   \item{ao_column_name}{
     The name of the column in \code{exdf_obj} that contains the dimensionless
     ratio of solubility and diffusivity of O2 to CO2.
@@ -106,6 +147,12 @@
   \item{gamma_star_column_name}{
     The name of the column in \code{exdf_obj} that contains the dimensionless
     \code{gamma_star} values.
+  }
+
+  \item{jmax_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Jmax} values (with units of
+    \code{normalized to Jmax at its optimal temperature}).
   }
 
   \item{kc_column_name}{
@@ -132,6 +179,12 @@
   \item{pcm_column_name}{
     The name of the column in \code{exdf_obj} that contains the partial pressure
     of CO2 in the mesophyll, expressed in \code{microbar}.
+  }
+
+  \item{qin_column_name}{
+    The name of the column in \code{exdf_obj} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rd_norm_column_name}{
@@ -176,25 +229,31 @@
 \details{
   \strong{General Description of the Model}
 
-  This function generally follows Section 4.2.1 from S. von Caemmerer (2000),
-  which provides equations for calculating the enzyme-limited net assimilation
-  rate \code{An} in a C4 leaf. (These equations are also reproduced in S. von
-  Caemmerer (2021), although we use the equation numbers from the 2000 textbook
-  here.) The net assimilation rate in this model is calculated according to
-  Equation 4.21:
+  This function generally follows Sections 4.2.1 and 4.2.2 from S. von Caemmerer
+  (2000), which provides equations for calculating the enzyme-limited net
+  assimilation rate \code{Ac}, the light- and electron-transport limited rate
+  \code{Aj}, and the overall net assimilation rate \code{An} in a C4 leaf.
+  (These equations are also reproduced in S. von Caemmerer (2021), although we
+  use the equation numbers from the 2000 textbook here. Also note there is a
+  typo in Equation 22 from the 2021 paper.) The enzyme-limited assimilation rate
+  in this model is calculated according to Equation 4.21:
 
-  \code{An = (-b - sqrt(b^2 - 4 * a * c)) / (2 * a)}
+  \code{Ac = (-b - sqrt(b^2 - 4 * a * c)) / (2 * a)}
 
   where the parameters \code{a}, \code{b}, and \code{c} are determined by
   Equations 4.22, 4.23, and 4.24, respectively. These equations are fairly long,
-  so we do not reproduce them here.
+  so we do not reproduce them here. Similarly, the light-limited rate \code{Aj}
+  is also calculated according to a quadratic equation. Finally, the overall
+  rate is calculated as the smaller of \code{Ac} and \code{Aj}:
+
+  \code{An = min(Ac, Aj)}
 
   \strong{An Approximation to the Full Equations}
 
-  The complicated equations above can be approximiated by a simpler one
-  (Equation 4.25):
+  The complicated equations above can be approximiated by simpler ones. For
+  \code{Ac}, we can use Equation 4.25:
 
-  \code{An = min(Vp + gbs * PCm - Rm, Vcmax - Rd)}
+  \code{Ac = min(Vp + gbs * PCm - Rm, Vcmax - Rd)}
 
   where \code{Vp} is the rate of PEP carboxylation, \code{gbs} is the bundle
   sheath conductance to CO2, \code{PCm} is the partial pressure of CO2 in the
@@ -214,10 +273,10 @@
   Michaelis-Menten constant for PEP carboxylation, and \code{Vpr} is the
   carboxylation rate when PEP carboxylase activity is limited by regeneration
   rather than carbon availability. Thus, we can see that the approximation above
-  actually calculates the net assimilation rate as the smaller of three separate
+  actually calculates the enzyme-limited rate as the smaller of three separate
   assimilation rates:
 
-  \code{An = min(Apc, Apr, Ar)}
+  \code{Ac = min(Apc, Apr, Ar)}
 
   where \code{Apc = Pcm * Vpmax / (PCm + Kp) + gbs * PCm - Rm} is the rate due
   to carbon-limited PEP carboxylation, \code{Apr = Vpr + gbs * PCm - Rm} is the
@@ -225,8 +284,8 @@
   is the rate due to Rubisco-limited assimilation.
 
   In the example at the end of this documentation page, we compare \code{Apc},
-  \code{Apr}, and \code{Ar} to \code{An} as calculated by Equation 4.21. From
-  this example, it is clear that the approximation \code{An = min(Apc, Apr, Ar)}
+  \code{Apr}, and \code{Ar} to \code{Ac} as calculated by Equation 4.21. From
+  this example, it is clear that the approximation \code{Ac = min(Apc, Apr, Ar)}
   is quite accurate for low values of \code{PCm}, but introduces significant
   errors as \code{PCm} increases. Thus, while the approximation can be helpful
   for gaining an intuitive understanding of C4 photosynthesis, it should not be
@@ -235,29 +294,59 @@
   To be more precise, the approximation is only reliable when \code{Vcmax} is
   much larger than \code{gbs * Kc * (1 + POm / Ko)}, which is rarely the case;
   otherwise, the limiting value of \code{An} at high \code{PCm} will be smaller
-  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha_psii} are
-  both set to zero, then the approximation is exact.
+  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha_psii}
+  are both set to zero, then the approximation is exact.
+
+  For \code{Aj}, the simplified version is Equation 4.45:
+
+  \code{Aj = min(x_etr * J / 2 - Rm + gbs * PCm, (1 - x_etr) * J / 3 - Rd)}
+
+  where \code{x_etr} is the fraction of whole-chain electron transport occurring
+  in the mesophyll and \code{J} is the electron transport rate. We can therefore
+  think of this equation as
+
+  \code{Aj = min(Ajm, Ajbs)}
+
+  where \code{Ajm} is the mesophyll light-limited rate and \code{Ajbs} is the
+  bundle sheath light-limited rate. These are given by
+  \code{Ajm = x_etr * J / 2 - Rm + gbs * PCm} and
+  \code{(1 - x_etr) * J / 3 - Rd} As in the case with \code{Ac}, this
+  approximation is not exact.
+
+  Combining these two simplifications, we can see that the overall net
+  assimilation rate can be approximated as the smallest of five potential rates:
+
+  \code{An = min(Apc, Apr, Ar, Ajm, Ajbs)}.
+
+  Here it is very important to note that some of these potential rates have
+  identical or similar dependence on \code{PCm}. More specifically, \code{Apr}
+  and \code{Ajm} have identical dependence, as do \code{Ar} and \code{Ajbs}.
+  If \code{gbs} is zero, all four of these rates have no dependence on
+  \code{PCm}. Thus, from a fitting point of view, it is not usually possible to
+  distinguish between these potential limiting states. For this reason, it is
+  not advisable to fit more than one of \code{Vcmax}, \code{Vpr}, and
+  \code{Jmax} when estimating parameters from an experimentally measured curve.
 
   \strong{Limiting Cases of the Approximate Equation}
 
   The bundle sheath conductance \code{gbs} is generally very small and can be
   ignored in a simple analysis of the above equations. In that case, when
-  \code{Pcm} is very high, the approximate equation for \code{An} simplifies
+  \code{Pcm} is very high, the approximate equation for \code{Ac} simplifies
   further to:
 
-  \code{An = min(Vpmax - Rm, Vpr - Rm, Vcmax - Rd)}
+  \code{Ac = min(Vpmax - Rm, Vpr - Rm, Vcmax - Rd)}
 
   Since respiration costs are also generally much smaller than the maximum
-  enzyme activity and regeneration rates, the assimilation rate at high levels
-  of CO2 is therefore determined by the smaller of \code{Vpmax}, \code{Vpr}, and
-  \code{Vcmax}. As shown in Table 4.1 of the textbook, \code{Vpmax} is typically
-  much larger than the other two rates, so high CO2 assimilation in C4 leaves is
-  usually limited by either \code{Vpr} or \code{Vcmax}. The exact limiting
-  factor can depend on many possible variables, such as the temperature. For
-  example, see Wang (2008).
+  enzyme activity and regeneration rates, the enzyme-limited assimilation rate
+  at high levels of CO2 is therefore determined by the smaller of \code{Vpmax},
+  \code{Vpr}, and \code{Vcmax}. As shown in Table 4.1 of the textbook,
+  \code{Vpmax} is typically much larger than the other two rates, so light- and
+  CO2-saturated assimilation in C4 leaves is usually limited by either
+  \code{Vpr} or \code{Vcmax}. The exact limiting factor can depend on many
+  possible variables, such as the temperature. For example, see Wang (2008).
 
-  At lower values of \code{PCm}, net assimilation is determined by CO2-limited
-  PEP carboxylation according to:
+  At lower values of \code{PCm}, enzyme-limited net assimilation is determined
+  by CO2-limited PEP carboxylation according to:
 
   \code{An = PCm * Vpmax / Kp - Rm}
 
@@ -296,15 +385,17 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns: \code{alpha_psii},
-          \code{gbs}, \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl},
-          \code{Rd_tl}, \code{Rm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp},
-          \code{Apc}, \code{Apr}, \code{Ap}, \code{Ar}, \code{An}, and
-          \code{c4_assimilation_msg}. Most of these are calculated as described
-          above, while several are copies of the input arguments with the same
-          name. The \code{c4_assimilation_msg} is usually blank but may contain
-          information about any issues with the inputs. The category for each of
-          these new columns is \code{calculate_c4_assimilation} to indicate that
-          they were created using this function.
+          \code{gbs}, \code{Jmax_at_opt}, \code{Jmax_tl}, \code{J_tl},
+          \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl},
+          \code{Rm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc},
+          \code{Apr}, \code{Ap}, \code{Ar}, \code{Ajm}, \code{Ajbs}, \code{Ac},
+          \code{Aj}, \code{An}, and \code{c4_assimilation_msg}. Most of these
+          are calculated as described above, while several are copies of the
+          input arguments with the same name. The \code{c4_assimilation_msg} is
+          usually blank but may contain information about any issues with the
+          inputs. The category for each of these new columns is
+          \code{calculate_c4_assimilation} to indicate that they were created
+          using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
           vector containing the calculated values of \code{An}.
   }
@@ -318,6 +409,7 @@ npts <- 101
 inputs <- exdf(data.frame(
   PCm = seq(0, 500, length.out = npts),
   Tleaf = 25,
+  Qin = 1800,
   total_pressure = 1,
   oxygen = 21
 ))
@@ -326,24 +418,53 @@ inputs <- document_variables(
   inputs,
   c('', 'PCm',            'microbar'),
   c('', 'Tleaf',          'degrees C'),
+  c('', 'Qin',            'micromol m^(-2) s^(-1)'),
   c('', 'total_pressure', 'bar'),
   c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
-assim <- calculate_c4_assimilation(inputs, 0, 0.003, 1, 0.5, 40, 200, 80)
+inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
 
-# Now we can plot An, Apr, Apc, and Ar. From this plot, we can see that
+assim <- calculate_c4_assimilation(inputs, 0, 0.003, 400, 1, 0.5, 40, 200, 80)
+
+# Now we can plot Ac, Apr, Apc, and Ar. From this plot, we can see that
 # replacing the complicated quadratic equation with a simple minimum yields
 # very different results. Although this approximation is helpful for
 # understanding C4 photosythesis, it should not be used for calculations.
 lattice::xyplot(
-  Apr + Apc + Ar + An ~ PCm,
+  Apr + Apc + Ar + Ac ~ PCm,
   data = cbind(inputs, assim)$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,
+  ylim = c(-5, 100),
+  xlab = paste0('Partial pressure of CO2 in the mesophyll (', inputs$units$PCm, ')'),
+  ylab = paste0('Net CO2 assimilation rate (', assim$units$An, ')')
+)
+
+# Likewise, we can look at Ajm, Ajbs, and Aj
+lattice::xyplot(
+  Ajm + Ajbs + Aj ~ PCm,
+  data = cbind(inputs, assim)$main_data,
+  type = 'l',
+  grid = TRUE,
+  auto = TRUE,
+  ylim = c(-5, 45),
+  xlab = paste0('Partial pressure of CO2 in the mesophyll (', inputs$units$PCm, ')'),
+  ylab = paste0('Net CO2 assimilation rate (', assim$units$An, ')')
+)
+
+# Finally, we can see whether enzyme activity or light limits overall
+# assimilation. In this case, assimilation is always enzyme-limited.
+lattice::xyplot(
+  Ac + Aj + An ~ PCm,
+  data = cbind(inputs, assim)$main_data,
+  type = 'l',
+  grid = TRUE,
+  auto = TRUE,
+  ylim = c(-5, 40),
   xlab = paste0('Partial pressure of CO2 in the mesophyll (', inputs$units$PCm, ')'),
   ylab = paste0('Net CO2 assimilation rate (', assim$units$An, ')')
 )

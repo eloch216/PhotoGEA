@@ -271,21 +271,21 @@ to it since it is unpublished, so these files should only be used as examples.
 
 The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
-`system.file`:
+`PhotoGEA_example_file_path`:
 
 ```{r licor_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx'),
+  PhotoGEA_example_file_path('c3_aci_2.xlsx')
 )
 ```
 
 (**Note:** When loading your own files for analysis, it is not advisable to use
-`system.file` as we have done here. Instead, file paths can be directly written,
-or files can be chosen using an interactive window. See [Input Files] below for
-more information.)
+`PhotoGEA_example_file_path` as we have done here. Instead, file paths can be
+directly written, or files can be chosen using an interactive window. See
+[Input Files] below for more information.)
 
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
@@ -360,29 +360,29 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_licor_data` function from
+response curve. To do this, we can use the `check_response_curve_data` function from
 `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_licor_data`.)
+information, see the built-in help menu entry by typing `?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
 ```
 
-However, if `check_licor_data` detects an issue, it will print a
+However, if `check_response_curve_data` detects an issue, it will print a
 helpful message to the R terminal. For example, if we had specified the wrong
 number of points or the wrong identifier column, we would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_licor_data(licor_data, 'curve_identifier', 15)
+check_response_curve_data(licor_data, 'curve_identifier', 15)
 
-check_licor_data(licor_data, 'species', 16)
+check_response_curve_data(licor_data, 'species', 16)
 
-check_licor_data(licor_data, 'curve_identifier', 16, 'Ci')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
 ## Plotting the A-Ci Curves
@@ -961,11 +961,11 @@ vignette.
 ### Creating convenient R objects from raw data files
 ###
 
-<<licor_file_names>>
-
 ## IMPORTANT: When loading your own files, it is not advised to use
-## `system.file` as in the above code. Instead, write out the names or use the
-## `choose_input_licor_files` function.
+## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
+## names or use the `choose_input_licor_files` function.
+
+<<licor_file_names>>
 
 <<loading_licor_data>>
 

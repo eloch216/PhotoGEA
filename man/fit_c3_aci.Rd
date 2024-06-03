@@ -33,15 +33,15 @@
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     error_threshold_factor = 0.147,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
   )
 }
 
@@ -214,7 +214,7 @@
   assimilation. By default, the following options are used for the fits:
   \itemize{
     \item \code{alpha_g}: lower = 0, upper = 1, fit_option = 0
-    \item \code{alpha_old}: lower = 0, upper = 1, fit_option = 0
+    \item \code{alpha_old}: lower = 0, upper = 1, fit_option = \code{'fit'}
     \item \code{alpha_s}: lower = 0, upper = 0.75, fit_option = 0
     \item \code{Gamma_star}: lower = 0, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
@@ -222,7 +222,7 @@
     \item \code{Tp}: lower = 0, upper = 40, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
   }
-  With these settings, all \code{alpha} parameters are set to 0, values of
+  With these settings, the "new" \code{alpha} parameters are set to 0, values of
   \code{Gamma_star} are taken from the \code{Gamma_star} column of
   \code{replicate_exdf}, and the other parameters are fit during the process
   (see \code{fit_options} above).
@@ -250,7 +250,12 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c3_aci}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above.
+  \code{OPTIM_FUN}, starting from the initial guess described above.  The
+  \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
+  found to reliably return great fits. However, it is a slow optimizer. If speed
+  is important, consider reducing the number of generations or using
+  \code{\link{optimizer_nmkb}}, but be aware that this optimizer is more likely
+  to get stuck in a local minimum.
 
   The photosynthesis model represented by \code{calculate_c3_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
@@ -283,7 +288,8 @@
   concentration \code{atmospheric_ca} using
   \code{\link{estimate_operating_point}}, and then uses that value to estimate
   the modeled \code{An} at the operating point via
-  \code{\link{calculate_c3_assimilation}}.
+  \code{\link{calculate_c3_assimilation}}. It also estimates the
+  \href{https://en.wikipedia.org/wiki/Akaike_information_criterion}{Akaike information criterion (AIC)}.
 
   This function assumes that \code{replicate_exdf} represents a single
   C3 A-Ci curve. To fit multiple curves at once, this function is often used
@@ -346,6 +352,8 @@
             \item The residual stats as returned by \code{\link{residual_stats}}
                   are included as columns with the default names: \code{dof},
                   \code{RSS}, \code{RMSE}, etc.
+            \item The Akaike information criterion is included in the \code{AIC}
+                  column.
           }
   }
 }
@@ -353,7 +361,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -383,19 +391,23 @@ licor_file <- apply_gm(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
+# For these examples, we will use a faster (but sometimes less reliable)
+# optimizer so they run faster
+optimizer <- optimizer_nmkb(1e-7)
+
 # We can fit just one curve from the data set, although it is rare to do this
 one_result <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  OPTIM_FUN = optimizer
 )
 
-# We can fit the same curve, but also allow alpha_old and Gamma_star to vary, and
-# calculate confidence intervals
+# We can fit the same curve, but also allow alpha_old and Gamma_star to vary
 one_result_v2 <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
   fit_options = list(Gamma_star = 'fit', alpha_old = 'fit'),
-  calculate_confidence_intervals = TRUE
+  OPTIM_FUN = optimizer
 )
 
 # Fit all curves in the data set (it is more common to do this)
@@ -403,7 +415,8 @@ aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c3_aci,
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  OPTIM_FUN = optimizer
 ))
 
 # View the fitting parameters for each species / plot
@@ -435,19 +448,8 @@ lattice::xyplot(
   ylab = paste0('Assimilation rate residuals (', aci_results$fits$units$A_residuals, ')')
 )
 
-# In the curves above, there are no points where carboxylation is TPU limited.
-# We can automatically remove the unreliable Tp estimates.
-aci_results <- consolidate(by(
-  licor_file,
-  licor_file[, 'species_plot'],
-  fit_c3_aci,
-  Ca_atmospheric = 420,
-  remove_unreliable_param = TRUE
-))
-
-aci_results$parameters[ , col_to_keep, TRUE]
-
-plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
+# In some of the curves above, there are no points where carboxylation is TPU
+# limited. Estimates of Tp are therefore unreliable and are removed.
 }
 
 \concept{exdf}

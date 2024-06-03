@@ -169,7 +169,7 @@ licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
 # Check data
-#check_licor_data(
+#check_response_curve_data(
 #  licor_data,
 #  'curve_identifier',
 #  driving_column = 'CO2_r_sp'

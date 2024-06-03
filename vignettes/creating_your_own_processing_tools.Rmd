@@ -63,8 +63,8 @@ included here, but they can be found at the end of this vignette in
 ```{r loading_and_validating_data, echo = FALSE}
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx'),
+  PhotoGEA_example_file_path('c3_aci_2.xlsx')
 )
 
 # Load each file, storing the result in a list
@@ -88,7 +88,7 @@ licor_data[ , 'curve_identifier'] <-
   paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
 
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(

@@ -106,7 +106,7 @@ confidence_interval_one_param <- function(
                     extendInt = 'downX'
                 )[['root']]
             },
-            error = function(e) {print(e); -Inf}
+            error = function(e) {-Inf}
         )
     }
 

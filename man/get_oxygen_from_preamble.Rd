@@ -40,7 +40,7 @@
 
 # Read the file
 licor_data <- read_gasex_file(
-  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
 )
 
 # Here we can see the oxygen percentage in the preamble

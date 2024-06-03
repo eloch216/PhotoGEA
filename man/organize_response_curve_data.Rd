@@ -44,7 +44,7 @@
   }
 
   \item{ordering_column_tolerance}{
-    To be passed to \code{\link{check_licor_data}} as the
+    To be passed to \code{\link{check_response_curve_data}} as the
     \code{driving_column_tolerance} input argument; the
     \code{ordering_column_tolerance} can be set to \code{Inf} to disable this
     check.
@@ -81,8 +81,8 @@
   number of points and where (2) the \code{column_for_ordering} follows the same
   sequence of values in each curve (within the tolerance set by
   \code{ordering_column_tolerance}). This check is accomplished via
-  \code{\link{check_licor_data}}, treating the \code{column_for_ordering} as the
-  \code{driving_column}.
+  \code{\link{check_response_curve_data}}, treating the
+  \code{column_for_ordering} as the \code{driving_column}.
 }
 
 \value{
@@ -96,7 +96,7 @@
 # identified by the values of its 'species' and 'plot' columns. Since these are
 # light-response curves, each one follows a pre-set sequence of `Qin` values.
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Split the data into individual curves, keep all seven measurement points in

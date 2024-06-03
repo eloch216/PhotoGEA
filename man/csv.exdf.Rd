@@ -55,7 +55,7 @@
 # Read a CSV file included with the PhotoGEA package; this file was created
 # using `write.csv.exdf`.
 licor_file <- read.csv.exdf(
-  system.file('extdata', 'ball_berry_1.csv', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.csv')
 )
 }
 

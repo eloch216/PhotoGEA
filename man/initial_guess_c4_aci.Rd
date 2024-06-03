@@ -19,9 +19,16 @@
     gbs,
     Rm_frac,
     pcm_threshold_rm = 40,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     a_column_name = 'A',
+    jmax_norm_column_name = 'Jmax_norm',
     kp_column_name = 'Kp',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
@@ -58,9 +65,40 @@
     \code{microbar}) to be used when estimating \code{Rm}.
   }
 
+  \item{absorptance}{
+    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
+    (2021).
+  }
+
+  \item{f_spectral}{
+    The spectral quality adjustment factor (dimensionless). See Equation 35
+    from S. von Caemmerer (2021).
+  }
+
+  \item{rho}{
+    The fraction of light absorbed by photosystem II rather than photosystem I
+    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
+  }
+
+  \item{theta}{
+    An empirical curvature factor (dimensionless). See Equation 34 from S. von
+    Caemmerer (2021).
+  }
+
+  \item{x_etr}{
+    The fraction of whole-chain electron transport occurring in the mesophyll
+    (dimensionless). See Equation 29 from S. von Caemmerer (2021).
+  }
+
   \item{a_column_name}{
     The name of the column in \code{licor_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{jmax_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Jmax} values (with units of
+    \code{normalized to Jmax at its optimal temperature}).
   }
 
   \item{kp_column_name}{
@@ -71,6 +109,12 @@
   \item{pcm_column_name}{
     The name of the column in \code{exdf_obj} that contains the partial pressure
     of CO2 in the mesophyll, expressed in \code{microbar}.
+  }
+
+  \item{qin_column_name}{
+    The name of the column in \code{exdf_obj} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rd_norm_column_name}{
@@ -92,15 +136,15 @@
 }
 
 \details{
-  Here we estimate values of \code{Rd}, \code{Vcmax}, \code{Vpmax}, and
-  \code{Vpr} from a measured C4 CO2 response curve. It is difficult to
-  estimate values of \code{alpha_psii}, \code{gbs}, and \code{Rm_frac} from a
-  curve, so they must be supplied beforehand. For more information about these
-  parameters, see the documentation for \code{\link{calculate_c4_assimilation}}.
-  To estimate these parameter values, we use several equations from S. von
-  Caemmerer, "Biochemical Models of Leaf Photosynthesis" (CSIRO Publishing,
-  2000) [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are
-  from this book.
+  Here we estimate values of \code{Jmax_at_opt}, \code{Rd_at_25},
+  \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} from a measured C4 CO2
+  response curve. It is difficult to estimate values of \code{alpha_psii},
+  \code{gbs}, and \code{Rm_frac} from a curve, so they must be supplied
+  beforehand. For more information about these parameters, see the documentation
+  for \code{\link{calculate_c4_assimilation}}. To estimate these parameter
+  values, we use several equations from S. von Caemmerer, "Biochemical Models of
+  Leaf Photosynthesis" (CSIRO Publishing, 2000) [\doi{10.1071/9780643103405}].
+  Any equation numbers referenced below are from this book.
 
   \itemize{
     \item \strong{Estimating Rd}: An estimate for \code{Rm} can be obtained
@@ -132,31 +176,38 @@
     \item \strong{Estimating Vpr}: An estimate for \code{Vpr} can be
           obtained by solving \code{An = Vpr + gbs * PCm - Rm} for \code{Vpr},
           similar to the method used to estimate \code{Vpmax}.
+    \item \strong{Estimating Jmax}: First, an estimate for \code{J} can be
+          obtained by solving \code{An = (1 - x_etr) * J / 3 - Rd} for \code{J}.
+          Then, estimates of \code{Jmax} can be made from \code{J} and
+          \code{Qin}. The largest value of \code{Jmax / Jmax_norm} is chosen as
+          the best estimate for \code{Jmax_at_opt}.
   }
 
   Note that a key assumption underlying this approach is that the net
-  assimilation can be reasonably approximated by \code{An = min(Apc, Apr, Ar)}
-  (Equation 4.25). While this approximation seems to work well for low values of
+  assimilation can be reasonably approximated by
+  \code{An = min(Apc, Apr, Ar, Ajm)} (Equations 4.19, 4.25, 4.45, and 4.47
+  combined). While this approximation seems to work well for low values of
   \code{PCm}, it tends to deviate significantly from the more accurate version
-  (Equation 4.21) at higher values of \code{PCm}, predicting values that are
-  noticably smaller. Thus, the values of \code{Vcmax} and \code{Vpr} estimated
-  using this procedure are unlikely to be accurate. This is not a problem;
-  instead it simply highlights the importance of improving this initial guess
-  using an optimizer, which can be accomplished via \code{\link{fit_c4_aci}}.
+  at higher values of \code{PCm}, predicting values that are noticably smaller.
+  Thus, the values of \code{Vcmax} and \code{Vpr} estimated using this procedure
+  are unlikely to be accurate. This is not a problem; instead it simply
+  highlights the importance of improving this initial guess using an optimizer,
+  which can be accomplished via \code{\link{fit_c4_aci}}.
 }
 
 \value{
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C4 CO2 response curve. The return value of
-  this function will be a numeric vector with four elements, representing the
-  values of \code{Rd}, \code{Vcmax}, \code{Vpmax}, and \code{Vpr} (in that
-  order) at 25 degrees C.
+  this function will be a numeric vector with eight elements, representing the
+  values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_opt}, \code{Rd_at_25},
+  \code{rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} (in
+  that order).
 }
 
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -173,6 +224,8 @@ licor_file <- organize_response_curve_data(
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
+
+licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
@@ -196,17 +249,22 @@ calculated_aci <- do.call(rbind, by(
     param <- guessing_func(x)
     calculate_c4_assimilation(
       x,
-      param[1], param[2], param[3], param[4], param[5], param[6], param[7]
+      param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[8]
     )
   }
 ))
 
 lattice::xyplot(
-  Apr + Apc + Ar + An + A ~ PCm | species_plot,
+  A + Apr + Apc + Ar + Ajm + Ajbs + An ~ PCm | species_plot,
   data = cbind(licor_file, calculated_aci)$main_data,
   type = 'b',
   auto = TRUE,
-  grid = TRUE
+  grid = TRUE,
+  ylim = c(0, 100),
+  par.settings = list(
+    superpose.line = list(col = multi_curve_line_colors()),
+    superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
+  )
 )
 }
 

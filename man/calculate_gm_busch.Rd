@@ -181,7 +181,7 @@
 # Read the TDL data file, making sure to interpret the time zone as US Central
 # time
 tdl_data <- read_gasex_file(
-  system.file('extdata', 'tdl_for_gm.dat', package = 'PhotoGEA'),
+  PhotoGEA_example_file_path('tdl_for_gm.dat'),
   'TIMESTAMP',
   list(tz = 'US/Central')
 )
@@ -214,7 +214,7 @@ processed_tdl <- consolidate(by(
 # Read the gas exchange data, making sure to interpret the time stamp in the US
 # Central time zone
 licor_data <- read_gasex_file(
-  system.file('extdata', 'licor_for_gm_site11.xlsx', package = 'PhotoGEA'),
+  PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
   'time',
   list(tz = 'US/Central')
 )

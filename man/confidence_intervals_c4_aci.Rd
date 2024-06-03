@@ -19,14 +19,21 @@
     fit_options = list(),
     sd_A = 1,
     error_threshold_factor = 0.147,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -69,6 +76,31 @@
     used to define the edges of the confidence intervals; see details below.
   }
 
+  \item{absorptance}{
+    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
+    (2021).
+  }
+
+  \item{f_spectral}{
+    The spectral quality adjustment factor (dimensionless). See Equation 35
+    from S. von Caemmerer (2021).
+  }
+
+  \item{rho}{
+    The fraction of light absorbed by photosystem II rather than photosystem I
+    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
+  }
+
+  \item{theta}{
+    An empirical curvature factor (dimensionless). See Equation 34 from S. von
+    Caemmerer (2021).
+  }
+
+  \item{x_etr}{
+    The fraction of whole-chain electron transport occurring in the mesophyll
+    (dimensionless). See Equation 29 from S. von Caemmerer (2021).
+  }
+
    \item{ao_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     dimensionless ratio of solubility and diffusivity of O2 to CO2.
@@ -82,6 +114,12 @@
   \item{gamma_star_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     dimensionless \code{gamma_star} values.
+  }
+
+  \item{jmax_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Jmax} values (with units of
+    \code{normalized to Jmax at its optimal temperature}).
   }
 
   \item{kc_column_name}{
@@ -109,6 +147,12 @@
   \item{pcm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the partial
     pressure of CO2 in the mesophyll, expressed in \code{microbar}.
+  }
+
+  \item{qin_column_name}{
+    The name of the column in \code{exdf_obj} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rd_norm_column_name}{
@@ -168,7 +212,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -185,6 +229,8 @@ licor_file <- organize_response_curve_data(
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
+
+licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)

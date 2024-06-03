@@ -96,6 +96,7 @@ Tleaf = 30
 
 inputs <- exdf(data.frame(
   PCm = seq(0, 500, length.out = npts),
+  Qin = 1800,
   Tleaf = Tleaf,
   total_pressure = 1,
   oxygen = 21
@@ -103,16 +104,20 @@ inputs <- exdf(data.frame(
 
 inputs <- document_variables(
   inputs,
-  c('', 'PCm',   'microbar'),
-  c('', 'Tleaf', 'degrees C'),
+  c('', 'PCm',            'microbar'),
+  c('', 'Qin',            'micromol m^(-2) s^(-1)'),
+  c('', 'Tleaf',          'degrees C'),
   c('', 'total_pressure', 'bar'),
   c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
+inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
+
 alpha_psii <- 0
 gbs <- 0.003
+Jmax_at_opt <- 400
 Rd_at_25 <- 1
 Rm_frac <- 0.5
 Vcmax_at_25 <- 30
@@ -121,7 +126,7 @@ Vpr <- 80
 
 assim <- calculate_c4_assimilation(
   inputs,
-  alpha_psii, gbs, Rd_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+  alpha_psii, gbs, Jmax_at_opt, Rd_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
 )
 
 c4_col <- rev(multi_curve_colors()[1:4])
@@ -241,21 +246,21 @@ to it since it is unpublished, so these files should only be used as examples.
 
 The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
-`system.file`:
+`PhotoGEA_example_file_path`:
 
 ```{r licor_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'c4_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c4_aci_1.xlsx'),
+  PhotoGEA_example_file_path('c4_aci_2.xlsx')
 )
 ```
 
 (**Note:** When loading your own files for analysis, it is not advisable to use
-`system.file` as we have done here. Instead, file paths can be directly written,
-or files can be chosen using an interactive window. See [Input Files] below for
-more information.)
+`PhotoGEA_example_file_path` as we have done here. Instead, file paths can be
+directly written, or files can be chosen using an interactive window. See
+[Input Files] below for more information.)
 
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
@@ -330,29 +335,29 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_licor_data` function from
+response curve. To do this, we can use the `check_response_curve_data` function from
 `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_licor_data`.)
+information, see the built-in help menu entry by typing `?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
 ```
 
-However, if `check_licor_data` detects an issue, it will print a
+However, if `check_response_curve_data` detects an issue, it will print a
 helpful message to the R terminal. For example, if we had specified the wrong
 number of points or the wrong identifier column, we would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_licor_data(licor_data, 'curve_identifier', 15)
+check_response_curve_data(licor_data, 'curve_identifier', 15)
 
-check_licor_data(licor_data, 'species', 16)
+check_response_curve_data(licor_data, 'species', 16)
 
-check_licor_data(licor_data, 'curve_identifier', 16, 'Ci')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
 ## Plotting the A-Ci Curves
@@ -586,27 +591,31 @@ In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
 temperature-dependent values of important photosynthetic parameters such as
 $\gamma^*$, values of the total pressure, and values of the partial pressure of
-CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes three
+CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes four
 functions to help with these calculations: `calculate_arrhenius`,
-`calculate_total_pressure`, and `apply_gm`. Each of these requires an `exdf`
-object containing Licor data. The units for each required column will be checked
-in an attempt to avoid unit-related errors. More information about these
-functions can be obtained from the built-in help system by typing
-`?calculate_arrhenius`, `?calculate_total_pressure`, or `?apply_gm`.
+`calculate_peaked_gaussian`, `calculate_total_pressure`, and `apply_gm`. Each of
+these requires an `exdf` object containing Licor data. The units for each
+required column will be checked in an attempt to avoid unit-related errors. More
+information about these functions can be obtained from the built-in help system
+by typing `?calculate_arrhenius`, `?calculate_total_pressure`, or `?apply_gm`.
 
-First, we can use `calculate_arrhenius`:
+First, we can use `calculate_arrhenius` and `calculate_peaked_gaussian`:
 
 ```{r calculate_arrhenius}
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 licor_data <- calculate_arrhenius(licor_data, c4_arrhenius_von_caemmerer)
+
+licor_data <- calculate_peaked_gaussian(licor_data, c4_peaked_gaussian_von_caemmerer)
 ```
 
-With this simple command, we have used the leaf temperature from the Licor file
-to calculate values of several key C4 photosynthetic parameters
-(`r paste(names(c4_arrhenius_von_caemmerer), collapse = ', ')`) according to the
-Arrhenius activation energies specified in @von_caemmerer_updating_2021. Notice
-that this command calculated values of the mesophyll conductance to CO2 (`gmc`)
-in units of mol m$^{-2}$ s$^{-1}$ bar$^{-1}$. These values were estmated for
+With these simple commands, we have used the leaf temperature from the Licor
+file to calculate values of several key C4 photosynthetic parameters
+(`r paste(names(c4_arrhenius_von_caemmerer), collapse = ', ')` and
+`r paste(names(c4_peaked_gaussian_von_caemmerer), collapse = ', ')`) according
+to the temperature response parameters specified in
+@von_caemmerer_updating_2021. Notice that this command calculated values of the
+mesophyll conductance to CO2 (`gmc`) in units of
+mol m$^{-2}$ s$^{-1}$ bar$^{-1}$. These values were estmated for
 _Setaria viridis_ and may not be appropriate for all C4 plants. They can easily
 be overwritten to another value; here we will set
 `gmc = 3.0 mol / m^2 / s / bar` for maize and `gmc = Inf` for sorghum; in this
@@ -888,11 +897,11 @@ vignette.
 ### Creating convenient R objects from raw data files
 ###
 
-<<licor_file_names>>
-
 ## IMPORTANT: When loading your own files, it is not advised to use
-## `system.file` as in the above code. Instead, write out the names or use the
-## `choose_input_licor_files` function.
+## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
+## names or use the `choose_input_licor_files` function.
+
+<<licor_file_names>>
 
 <<loading_licor_data>>
 

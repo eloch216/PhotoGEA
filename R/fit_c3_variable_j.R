@@ -1,7 +1,7 @@
 # Specify default fit settings
-c3_variable_j_lower       <- list(alpha_g = 0, alpha_old = 0, alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
-c3_variable_j_upper       <- list(alpha_g = 1, alpha_old = 1, alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
-c3_variable_j_fit_options <- list(alpha_g = 0, alpha_old = 0, alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
+c3_variable_j_lower       <- list(alpha_g = 0, alpha_old = 0,     alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
+c3_variable_j_upper       <- list(alpha_g = 1, alpha_old = 1,     alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
+c3_variable_j_fit_options <- list(alpha_g = 0, alpha_old = 'fit', alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
 
 c3_variable_j_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'Vcmax_at_25')
 
@@ -27,7 +27,7 @@ fit_c3_variable_j <- function(
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(200),
+    OPTIM_FUN = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -36,8 +36,8 @@ fit_c3_variable_j <- function(
     require_positive_gmc = 'all',
     gmc_max = Inf,
     error_threshold_factor = 0.147,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -142,6 +142,8 @@ fit_c3_variable_j <- function(
     # Get the corresponding values of gmc, Cc, and J_F at the best guess
     vj <- calculate_c3_variable_j(
         replicate_exdf,
+        best_X[1], # alpha_g
+        best_X[3], # alpha_s
         best_X[4], # Gamma_star
         best_X[6], # Rd_at_25
         best_X[7], # tau
@@ -159,9 +161,12 @@ fit_c3_variable_j <- function(
     # Set all categories to `fit_c3_variable_j`
     vj$categories[1,] <- 'fit_c3_variable_j'
 
-    # Remove the Rd columns so they don't get repeated
-    vj[, 'Rd_at_25'] <- NULL
-    vj[, 'Rd_tl']    <- NULL
+    # Remove a few columns so they don't get repeated
+    vj[, 'atp_use']    <- NULL
+    vj[, 'Gamma_star'] <- NULL
+    vj[, 'nadph_use']  <- NULL
+    vj[, 'Rd_at_25']   <- NULL
+    vj[, 'Rd_tl']      <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -191,6 +196,9 @@ fit_c3_variable_j <- function(
         vcmax_norm_column_name,
         perform_checks = FALSE
     )
+
+    # Remove a few columns so they don't get repeated
+    aci[, 'Gamma_star'] <- NULL
 
     # Set all categories to `fit_c3_variable_j` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
@@ -270,6 +278,8 @@ fit_c3_variable_j <- function(
 
     vj_interpolated <- calculate_c3_variable_j(
         replicate_exdf_interpolated,
+        '', # alpha_g
+        '', # alpha_s
         '', # Gamma_star
         '', # Rd_at_25
         '', # tau
@@ -284,8 +294,11 @@ fit_c3_variable_j <- function(
         perform_checks = FALSE
     )
 
-    vj_interpolated[, 'Rd_at_25'] <- NULL
-    vj_interpolated[, 'Rd_tl']    <- NULL
+    vj_interpolated[, 'atp_use']    <- NULL
+    vj_interpolated[, 'Gamma_star'] <- NULL
+    vj_interpolated[, 'nadph_use']  <- NULL
+    vj_interpolated[, 'Rd_at_25']   <- NULL
+    vj_interpolated[, 'Rd_tl']      <- NULL
 
     replicate_exdf_interpolated <- cbind(replicate_exdf_interpolated, vj_interpolated)
 
@@ -460,6 +473,12 @@ fit_c3_variable_j <- function(
         )(best_X[param_to_fit])
     }
 
+    # Add the AIC
+    replicate_identifiers[, 'AIC'] <- akaike_information_criterion(
+        -1.0 * replicate_identifiers[, 'optimum_val'],
+        length(which(param_to_fit))
+    )
+
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
@@ -481,6 +500,7 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'convergence_msg',     ''),
         c('fit_c3_variable_j',        'feval',               ''),
         c('fit_c3_variable_j',        'optimum_val',         ''),
+        c('fit_c3_variable_j',        'AIC',                 ''),
         c('fit_c3_variable_j',        'c3_assimilation_msg', ''),
         c('fit_c3_variable_j',        'c3_variable_j_msg',   '')
     )

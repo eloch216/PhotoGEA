@@ -171,12 +171,12 @@
 
 \details{
   When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
-  method, it is necessary to define a function that calculates the sum of
-  squared residuals for a given set of \code{alpha_g}, \code{Gamma_star},
-  \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{Tp}, and
-  \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
-  This function will be passed to an optimization algorithm which will determine
-  the values that produce the smallest error.
+  method, it is necessary to define a function that calculates the likelihood
+  of a given set of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25},
+  \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} values by
+  comparing a model prediction to a measured curve. This function will be passed
+  to an optimization algorithm which will determine the values that produce the
+  smallest error.
 
   The \code{error_function_c3_variable_j} returns such a function, which is
   based on a particular replicate and a set of fitting options. It is possible
@@ -184,6 +184,12 @@
   fitting parameters are \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
   \code{tau}, and \code{Vcmax_at_25}. This behavior can be changed via the
   \code{fit_options} argument.
+
+  For practical reasons, the function actually returns values of \code{-ln(L)},
+  where \code{L} is the likelihood. The logarithm of \code{L} is simpler to
+  calculate than \code{L} itself, and the minus sign converts the problem from
+  a maximization to a minimization, which is important because most optimizers
+  are designed to minimize a value.
 
   Sometimes an optimizer will choose biologically unreasonable parameter values
   that nevertheless produce good fits to the supplied assimilation values. There
@@ -239,7 +245,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -279,7 +285,7 @@ lattice::xyplot(
   sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,
   type = 'b',
   xlab = 'Tp (micromol / m^2 / s)',
-  ylab = 'Sum of squared residuals'
+  ylab = 'Negative log likelihood (dimensionless)'
 )
 }
 

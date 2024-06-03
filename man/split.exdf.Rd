@@ -41,7 +41,7 @@
 # Read a Licor file, select just a few columns, and then split it by the value
 # of the `plot` column
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 licor_file <- licor_file[, c('plot', 'species', 'Qin', 'A', 'gsw'), TRUE]
