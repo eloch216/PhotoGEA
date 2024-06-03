@@ -3,7 +3,7 @@
   model. This function can accomodate alternative colum names for the variables
   taken from Licor files in case they change at some point in the future. This
   function also checks the units of each required column and will produce an
-  error if any units are incorrect."><title>Calculate C3 assimilation rates — calculate_c3_assimilation • PhotoGEA</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Calculate C3 assimilation rates — calculate_c3_assimilation"><meta property="og:description" content="Calculates C3 assimilation rates based on the Farquhar-von-Caemmerer-Berry
+  error if any units are incorrect."><title>Calculate C3 assimilation rates — calculate_c3_assimilation • PhotoGEA</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Calculate C3 assimilation rates — calculate_c3_assimilation"><meta property="og:description" content="Calculates C3 assimilation rates based on the Farquhar-von-Caemmerer-Berry
   model. This function can accomodate alternative colum names for the variables
   taken from Licor files in case they change at some point in the future. This
   function also checks the units of each required column and will produce an
@@ -14,11 +14,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,12 +83,13 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_c3_assimilation</span><span class="op">(</span></span>
 <span>    <span class="va">exdf_obj</span>,</span>
 <span>    <span class="va">alpha_g</span>,</span>
+<span>    <span class="va">alpha_old</span>,</span>
+<span>    <span class="va">alpha_s</span>,</span>
 <span>    <span class="va">Gamma_star</span>,</span>
 <span>    <span class="va">J_at_25</span>,</span>
 <span>    <span class="va">Rd_at_25</span>,</span>
 <span>    <span class="va">Tp</span>,</span>
 <span>    <span class="va">Vcmax_at_25</span>,</span>
-<span>    POc <span class="op">=</span> <span class="fl">210000</span>,</span>
 <span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
 <span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
 <span>    curvature_cj <span class="op">=</span> <span class="fl">1.0</span>,</span>
@@ -97,6 +98,7 @@
 <span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
 <span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
 <span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
+<span>    oxygen_column_name <span class="op">=</span> <span class="st">'oxygen'</span>,</span>
 <span>    rd_norm_column_name <span class="op">=</span> <span class="st">'Rd_norm'</span>,</span>
 <span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
 <span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
@@ -112,12 +114,32 @@
 
 
   <dt>alpha_g</dt>
-<dd><p>A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast. <code>alpha_g</code> is often assumed to be 0. If <code>alpha_g</code> is not
-    a number, then there must be a column in <code>exdf_obj</code> called <code>alpha_g</code>
+<dd><p>A dimensionless parameter where <code>0 &lt;= alpha_g &lt;= 1</code>, representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    glycine. <code>alpha_g</code> is often assumed to be 0. If <code>alpha_g</code> is not a
+    number, then there must be a column in <code>exdf_obj</code> called <code>alpha_g</code>
     with appropriate units. A numeric value supplied here will overwrite the
     values in the <code>alpha_g</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+
+
+  <dt>alpha_old</dt>
+<dd><p>A dimensionless parameter where <code>0 &lt;= alpha_old &lt;= 1</code>, representing the
+    fraction of remaining glycolate carbon not returned to the chloroplast
+    after accounting for carbon released as CO2. <code>alpha_old</code> is often
+    assumed to be 0. If <code>alpha_old</code> is not a number, then there must be a
+    column in <code>exdf_obj</code> called <code>alpha_old</code> with appropriate units.
+    A numeric value supplied here will overwrite the values in the
+    <code>alpha_old</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+
+
+  <dt>alpha_s</dt>
+<dd><p>A dimensionless parameter where <code>0 &lt;= alpha_s &lt;= 0.75 * (1 - alpha_g)</code>
+    representing the proportion of glycolate carbon taken out of the
+    photorespiratory pathway as serine. <code>alpha_s</code> is often assumed to be 0.
+    If <code>alpha_s</code> is not a number, then there must be a column in
+    <code>exdf_obj</code> called <code>alpha_s</code> with appropriate units. A numeric
+    value supplied here will overwrite the values in the <code>alpha_s</code> column
+    of <code>exdf_obj</code> if it exists.</p></dd>
 
 
   <dt>Gamma_star</dt>
@@ -162,14 +184,6 @@
     values in the <code>Vcmax_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
 
 
-  <dt>POc</dt>
-<dd><p>The partial pressure of O2 in the chloroplast, expressed in <code>microbar</code>.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.</p></dd>
-
-
   <dt>atp_use</dt>
 <dd><p>The number of ATP molecules used per C3 cycle.</p></dd>
 
@@ -212,6 +226,12 @@
     <code>mmol mol^(-1)</code>.</p></dd>
 
 
+  <dt>oxygen_column_name</dt>
+<dd><p>The name of the column in <code>exdf_obj</code> that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21% or 2%);
+    the units must be <code>percent</code>.</p></dd>
+
+
   <dt>rd_norm_column_name</dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
     <code>Rd</code> values (with units of <code>normalized to Rd at 25 degrees C</code>).</p></dd>
@@ -246,14 +266,21 @@
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function generally follows the Farquhar-von-Caemmerer-Berry model as
-  described in Lochocki and McGrath (in preparation). In this formulation, the
-  steady-state net CO2 assimilation rate <code>An</code> is calculated according to</p>
-<p><code>An = (1 - Gamma_star / PCc) * Vc - Rd</code>,</p>
+    <p><strong>The Busch et al. (2018) model:</strong></p>
+<p>This function generally follows the Farquhar-von-Caemmerer-Berry model as
+  described in Busch et al. (2018) with a few modifications described below. In
+  this formulation, the steady-state net CO2 assimilation rate <code>An</code> is
+  calculated according to</p>
+<p><code>An = (1 - Gamma_star_ag / PCc) * Vc - Rd</code>,</p>
 <p>where <code>Gamma_star</code> is the CO2 compensation point in the absence of day
-  respiration, <code>PCc</code> is the partial pressure of CO2 in the chloroplast,
-  <code>Vc</code> is the RuBP carboxylation rate, and <code>Rd</code> is the rate of day
-  respiration.</p>
+  respiration, <code>Gamma_star_ag</code> is the effective value of <code>Gamma_star</code>
+  accounting for glycolate carbon remaining in the cytosol, <code>PCc</code> is the
+  partial pressure of CO2 in the chloroplast, <code>Vc</code> is the RuBP
+  carboxylation rate, and <code>Rd</code> is the rate of day respiration.
+  <code>Gamma_star_ag</code> is given by</p>
+<p><code>Gamma_star_ag = (1 - alpha_g) * Gamma_star</code>,</p>
+<p>where <code>alpha_g</code> is the fraction of glycolate carbon leaving the
+  photorespiratory pathway as glycine.</p>
 <p>The model considers three potential values of <code>Vc</code> that correspond to
   limitations set by three different processes: Rubisco activity, RuBP
   regeneration, and triose phopsphate utilization (TPU). The Rubisco-limited
@@ -264,20 +291,17 @@
   constant for O2, and <code>POc</code> is the partial pressure of O2 in the
   chloroplast.</p>
 <p>The RuBP-regeneration-limited carboxylation rate <code>Wj</code> is given by</p>
-<p><code>Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)</code>,</p>
-<p>where <code>J</code> is the RuBP regeneration rate. Here we have allowed
-  <code>atp_use</code> and <code>nadph_use</code> to be variables rather than taking fixed
-  values (as they do in many sources). This is necessary because not all
-  descriptions of the FvCB model use the same values.</p>
+<p><code>Wj = PCc * J / (4 * PCc + Gamma_star_ag * (8 + 16 * alpha_g + 8 * alpha_s))</code>,</p>
+<p>where <code>J</code> is the RuBP regeneration rate and <code>alpha_s</code> is the
+  fraction of glycolate carbon leaving the photorespiratory pathway as serine.</p>
 <p>The TPU-limited carboxylation rate is given by</p>
-<p><code>Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))</code>,</p>
-<p>where <code>Tp</code> is the maximum rate of triose phosphate utilization and
-  <code>0 &lt;= alpha_g &lt;= 1</code> is the fraction of glycolate carbon not returned to the
-  chloroplast. This equation only applies when
-  <code>PCc &gt; Gamma_star * (1 + 3 * alpha_g)</code>; for smaller values of <code>PCc</code>,
-  TPU cannot limit the RuBP carboxylation rate and <code>Wp = Inf</code>.</p>
-<p>The actual carboxylation rate is often chosen to be the smallest of the three
-  potential rates:</p>
+<p><code>Wp = PCc * 3 * Tp / (PCc - Gamma_star_ag * (1 + 3 * alpha_g + 4 * alpha_s))</code>,</p>
+<p>where <code>Tp</code> is the maximum rate of triose phosphate utilization. Note that
+  this equation only applies when <code>PCc &gt; Gamma_star_ag * (1 + 3 * alpha_g +
+  4 * alpha_s)</code>; for smaller values of <code>PCc</code>, TPU cannot limit the RuBP
+  carboxylation rate and <code>Wp = Inf</code>. (Lochocki &amp; McGrath, submitted).</p>
+<p>The actual carboxylation rate is typically chosen to be the smallest of the
+  three potential rates:</p>
 <p><code>Vc = min{Wc, Wj, Wp}</code>.</p>
 <p>However, it is also possible to allow co-limitation between the processes by
   using quadratic mixing equations. In other words, the carboxylation rate
@@ -306,10 +330,47 @@
 <p>In addition to the carboxylation and assimilation rates already mentioned, it
   is also possible to calculate the net CO2 assimilation rates determined by
   Rubisco activity, RuBP regeneration, and Tp as follows:</p>
-<p><code>Ac = (1 - Gamma_star / PCc) * Wc - Rd</code></p>
-<p><code>Aj = (1 - Gamma_star / PCc) * Wj - Rd</code></p>
-<p><code>Ap = (1 - Gamma_star / PCc) * Wp - Rd</code></p>
-<p>References:</p><ul><li><p>von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
+<p><code>Ac = (1 - Gamma_star_ag / PCc) * Wc - Rd</code></p>
+<p><code>Aj = (1 - Gamma_star_ag / PCc) * Wj - Rd</code></p>
+<p><code>Ap = (1 - Gamma_star_ag / PCc) * Wp - Rd</code></p>
+<p><strong>The Busch model with nitrogen restrictions</strong>:</p>
+<p>Note that the implementation as described above does not currently facilitate
+  the inclusion of nitrogen limitations (Equations 15-21 in Busch et al.
+  (2018)).</p>
+<p><strong>The "old" model:</strong></p>
+<p>In an older version of the model, <code>alpha_g</code> and <code>alpha_s</code> are
+  replaced with a single parameter <code>alpha_old</code>. Most publications refer to
+  this simply as <code>alpha</code>, but here we follow the notation of Busch et al.
+  (2018) for clarity. In this version, there is no disctinction between
+  <code>Gamma_star_ag</code> and <code>Gamma_star</code>. Other differences are as follows.</p>
+<p>he RuBP-regeneration-limited carboxylation rate <code>Wj</code> is given by</p>
+<p><code>Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)</code>,</p>
+<p>Here we have allowed <code>atp_use</code> and <code>nadph_use</code> to be variables
+  rather than taking fixed values (as they do in many sources). This is
+  necessary because not all descriptions of the FvCB model use the same values,
+  where the different values are due to different assumptions about the energy
+  requirements of RuBP regeneration.</p>
+<p>The TPU-limited carboxylation rate is given by</p>
+<p><code>Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_old))</code>,</p>
+<p>Note that this equation only applies when <code>PCc &gt; Gamma_star * (1 +
+  3 * alpha_old)</code>; for smaller values of <code>PCc</code>, TPU cannot limit the RuBP
+  carboxylation rate and <code>Wp = Inf</code>. (Lochocki &amp; McGrath, submitted).</p>
+<p><strong>Using either version of the model:</strong></p>
+<p>When using <code>calculate_c3_assimilation</code>, it is possible to use either
+  version of the model. Setting <code>alpha_g</code> and <code>alpha_s</code> to zero is
+  equivalent to using the older version of the model, while setting
+  <code>alpha_old = 0</code> is equivalent to using the newer version of the model.
+  If all <code>alpha</code> parameters are zero, there is effectively no difference
+  between the two versions of the model. Attempting to set a nonzero
+  <code>alpha_old</code> if either <code>alpha_g</code> or <code>alpha_s</code> is nonzero is
+  forbidden since it would represent a mix between the two models; if such
+  values are passed as inputs, then an error will be thrown.</p>
+<p><strong>References:</strong></p>
+<p></p><ul><li><p>Busch, Sage, &amp; Farquhar, G. D. "Plants increase CO2 uptake by
+          assimilating nitrogen via the photorespiratory pathway." Nature Plants
+          4, 46–54 (2018) [<a href="https://doi.org/10.1038/s41477-017-0065-x" class="external-link">doi:10.1038/s41477-017-0065-x</a>
+].</p></li>
+<li><p>von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
           Publishing, 2000) [<a href="https://doi.org/10.1071/9780643103405" class="external-link">doi:10.1071/9780643103405</a>
 ].</p></li>
 <li><p>Collatz, G. J., Ball, J. T., Grivet, C. &amp; Berry, J. A. "Physiological
@@ -323,6 +384,9 @@
           photosynthesis." Plant, Cell &amp; Environment 13, 219–225 (1990)
           [<a href="https://doi.org/10.1111/j.1365-3040.1990.tb01306.x" class="external-link">doi:10.1111/j.1365-3040.1990.tb01306.x</a>
 ].</p></li>
+<li><p>Lochocki &amp; McGrath "Widely Used Variants of the
+          Farquhar-von-Caemmerer-Berry Model Can Cause Errors in Parameter
+          Estimates and Simulations." submitted.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -350,19 +414,21 @@
 <span class="r-in"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="exdf.html">exdf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  Cc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">601</span>, by <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  Tleaf <span class="op">=</span> <span class="fl">30</span>,</span></span>
-<span class="r-in"><span>  total_pressure <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>  total_pressure <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  oxygen <span class="op">=</span> <span class="fl">21</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="document_variables.html">document_variables</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">inputs</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">''</span>, <span class="st">'Cc'</span>,             <span class="st">'micromol mol^(-1)'</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">''</span>, <span class="st">'Tleaf'</span>,          <span class="st">'degrees C'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">''</span>, <span class="st">'total_pressure'</span>, <span class="st">'bar'</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">''</span>, <span class="st">'total_pressure'</span>, <span class="st">'bar'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">''</span>, <span class="st">'oxygen'</span>,         <span class="st">'percent'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">inputs</span>, <span class="va">c3_arrhenius_sharkey</span>, <span class="st">'Tleaf'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">150</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">120</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">150</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">120</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">An</span> <span class="op">~</span> <span class="va">Cc</span>,</span></span>
@@ -381,11 +447,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
     </footer></div>

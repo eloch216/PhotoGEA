@@ -3,7 +3,7 @@
   OPTIM_FUN input argument of fit_c3_aci,
   fit_c3_variable_j, and fit_c4_aci. Essentially,
   they are wrappers for optimizers from other libraries that serve to
-  standardize their inputs and outputs."><title>Optimizers — optimizers • PhotoGEA</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Optimizers — optimizers"><meta property="og:description" content="These functions return optimizers that meet requirements for the
+  standardize their inputs and outputs."><title>Optimizers — optimizers • PhotoGEA</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Optimizers — optimizers"><meta property="og:description" content="These functions return optimizers that meet requirements for the
   OPTIM_FUN input argument of fit_c3_aci,
   fit_c3_variable_j, and fit_c4_aci. Essentially,
   they are wrappers for optimizers from other libraries that serve to
@@ -14,11 +14,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,22 +80,30 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">optimizer_nmkb</span><span class="op">(</span>tol <span class="op">=</span> <span class="fl">1e-7</span>, maxfeval <span class="op">=</span> <span class="fl">2000</span>, restarts.max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">optimizer_nmkb</span><span class="op">(</span><span class="va">tol</span>, maxfeval <span class="op">=</span> <span class="fl">2000</span>, restarts.max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="fu">optimizer_deoptim</span><span class="op">(</span>VTR <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>, itermax <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">optimizer_hjkb</span><span class="op">(</span><span class="va">tol</span>, maxfeval <span class="op">=</span> <span class="cn">Inf</span>, target <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">optimizer_deoptim</span><span class="op">(</span><span class="va">itermax</span>, VTR <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>tol</dt>
 <dd><p>A convergence tolerance value; to be passed to <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></code>
-    via its <code>control</code> input argument.</p></dd>
+    or <code><a href="https://rdrr.io/pkg/dfoptim/man/hookejeeves.html" class="external-link">hjkb</a></code> via their <code>control</code> input arguments. A
+    typical value is <code>1e-7</code>.</p></dd>
 
 
   <dt>maxfeval</dt>
 <dd><p>A maximum value for the number of function evaluations to allow during
-    optimization; to be passed to <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></code> via its
-    <code>control</code> input argument.</p></dd>
+    optimization; to be passed to <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></code> or
+    <code><a href="https://rdrr.io/pkg/dfoptim/man/hookejeeves.html" class="external-link">hjkb</a></code> via their <code>control</code> input arguments.</p></dd>
+
+
+  <dt>target</dt>
+<dd><p>A real number restricting the absolute function value; to be passed to
+    <code><a href="https://rdrr.io/pkg/dfoptim/man/hookejeeves.html" class="external-link">hjkb</a></code> via its <code>control</code> input argument.</p></dd>
 
 
   <dt>restarts.max</dt>
@@ -104,22 +112,25 @@
     argument.</p></dd>
 
 
-  <dt>VTR</dt>
-<dd><p>The value to be reached; to be passed to <code><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></code> via
-    its <code>control</code> input argument.</p></dd>
-
-
   <dt>itermax</dt>
 <dd><p>The maximum number of generations to be used; to be passed to
     <code><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></code> via its <code>control</code> input argument. Note
     that when <code>VTR</code> is <code>-Inf</code>, the optimizer will always use the
-    maximum number of generations.</p></dd>
+    maximum number of generations. A typical value is <code>200</code>.</p></dd>
+
+
+  <dt>VTR</dt>
+<dd><p>The value to be reached; to be passed to <code><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></code> via
+    its <code>control</code> input argument.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>optimizer_nmkb</code> is a wrapper for <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></code>.</p>
+<p><code>optimizer_hjkb</code> is a wrapper for <code><a href="https://rdrr.io/pkg/dfoptim/man/hookejeeves.html" class="external-link">hjkb</a></code>.</p>
 <p><code>optimizer_deoptim</code> is a wrapper for <code><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></code>.</p>
+<p>See the documentation for those functions for more information about how the
+  optimizers work.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -127,11 +138,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
     </footer></div>
