@@ -267,16 +267,6 @@ col_to_keep <- c(
 )
 
 aci_fit_subset[ , col_to_keep, TRUE]
-
-# Display as a bar chart
-lattice::barchart(
-  ls_warren + lm_warren ~ species_plot,
-  data = aci_fit_subset$main,
-  stack = TRUE,
-  auto = TRUE,
-  ylab = 'Factors limiting assimilation'
-)
-
 }
 
 \concept{exdf}
