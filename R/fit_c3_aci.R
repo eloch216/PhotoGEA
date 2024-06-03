@@ -1,7 +1,7 @@
 # Specify default fit settings
-c3_aci_lower       <- list(alpha_g = 0, alpha_old = 0, alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,      Tp = 0,     Vcmax_at_25 = 0)
-c3_aci_upper       <- list(alpha_g = 1, alpha_old = 1, alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,    Tp = 40,    Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha_g = 0, alpha_old = 0, alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit',  Tp = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_lower       <- list(alpha_g = 0, alpha_old = 0,     alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,      Tp = 0,     Vcmax_at_25 = 0)
+c3_aci_upper       <- list(alpha_g = 1, alpha_old = 1,     alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,    Tp = 40,    Vcmax_at_25 = 1000)
+c3_aci_fit_options <- list(alpha_g = 0, alpha_old = 'fit', alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit',  Tp = 'fit', Vcmax_at_25 = 'fit')
 
 c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'Tp', 'Vcmax_at_25')
 
@@ -25,15 +25,15 @@ fit_c3_aci <- function(
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     error_threshold_factor = 0.147,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
 )
 {
     if (!is.exdf(replicate_exdf)) {

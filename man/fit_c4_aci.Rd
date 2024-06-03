@@ -39,13 +39,13 @@
     rho = 0.5,
     theta = 0.7,
     x_etr = 0.4,
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
     error_threshold_factor = 0.147,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
   )
 }
 
@@ -258,7 +258,12 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c4_aci}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above.
+  \code{OPTIM_FUN}, starting from the initial guess described above.  The
+  \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
+  found to reliably return great fits. However, it is a slow optimizer. If speed
+  is important, consider reducing the number of generations or using
+  \code{\link{optimizer_nmkb}}, but be aware that this optimizer is more likely
+  to get stuck in a local minimum.
 
   The photosynthesis model represented by \code{calculate_c4_assimilation} is
   not smooth in the sense that small changes in the input parameters do not
@@ -391,12 +396,15 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate PCm
 licor_file <- apply_gm(licor_file, 'C4')
 
-# Fit just one curve from the data set (it is rare to do this). Here we also
-# calculate confidence intervals.
+# For these examples, we will use a faster (but sometimes less reliable)
+# optimizer so they run faster
+optimizer <- optimizer_nmkb(1e-7)
+
+# Fit just one curve from the data set (it is rare to do this).
 one_result <- fit_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
   Ca_atmospheric = 420,
-  calculate_confidence_intervals = TRUE
+  OPTIM_FUN = optimizer
 )
 
 # Fit all curves in the data set (it is more common to do this)
@@ -405,7 +413,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c4_aci,
   Ca_atmospheric = 420,
-  remove_unreliable_param = TRUE
+  OPTIM_FUN = optimizer
 ))
 
 # View the fitting parameters for each species / plot

@@ -31,13 +31,13 @@ fit_c4_aci <- function(
     rho = 0.5,
     theta = 0.7,
     x_etr = 0.4,
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
     error_threshold_factor = 0.147,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
 )
 {
     if (!is.exdf(replicate_exdf)) {

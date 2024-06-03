@@ -25,6 +25,7 @@ test_that('fit failures are handled properly', {
         fit_c3_aci(
             one_curve_bad,
             Ca_atmospheric = 420,
+            OPTIM_FUN = optimizer_nmkb(1e-7),
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = TRUE
         )
@@ -47,6 +48,7 @@ test_that('fit results have not changed (no alpha)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
+        OPTIM_FUN = optimizer_nmkb(1e-7),
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = TRUE
     )

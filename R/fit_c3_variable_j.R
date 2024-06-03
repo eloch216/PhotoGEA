@@ -1,7 +1,7 @@
 # Specify default fit settings
-c3_variable_j_lower       <- list(alpha_g = 0, alpha_old = 0, alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
-c3_variable_j_upper       <- list(alpha_g = 1, alpha_old = 1, alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
-c3_variable_j_fit_options <- list(alpha_g = 0, alpha_old = 0, alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
+c3_variable_j_lower       <- list(alpha_g = 0, alpha_old = 0,     alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
+c3_variable_j_upper       <- list(alpha_g = 1, alpha_old = 1,     alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
+c3_variable_j_fit_options <- list(alpha_g = 0, alpha_old = 'fit', alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
 
 c3_variable_j_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'Vcmax_at_25')
 
@@ -27,7 +27,7 @@ fit_c3_variable_j <- function(
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(200),
+    OPTIM_FUN = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -36,8 +36,8 @@ fit_c3_variable_j <- function(
     require_positive_gmc = 'all',
     gmc_max = Inf,
     error_threshold_factor = 0.147,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
 )
 {
     if (!is.exdf(replicate_exdf)) {
