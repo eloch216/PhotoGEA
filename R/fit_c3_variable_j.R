@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_variable_j_lower       <- list(alpha_g = 0, Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
-c3_variable_j_upper       <- list(alpha_g = 1, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
-c3_variable_j_fit_options <- list(alpha_g = 0, Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
+c3_variable_j_lower       <- list(alpha_g = 0, alpha_old = 0,     alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
+c3_variable_j_upper       <- list(alpha_g = 1, alpha_old = 1,     alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
+c3_variable_j_fit_options <- list(alpha_g = 0, alpha_old = 'fit', alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
 
-c3_variable_j_param <- c('alpha_g', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'Vcmax_at_25')
+c3_variable_j_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_variable_j <- function(
@@ -16,17 +16,18 @@ fit_c3_variable_j <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    POc = 210000,
+    sd_A = 'RMSE',
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(),
+    OPTIM_FUN = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -34,13 +35,17 @@ fit_c3_variable_j <- function(
     cj_crossover_max = NA,
     require_positive_gmc = 'all',
     gmc_max = Inf,
-    error_threshold_factor = 1.5,
-    calculate_confidence_intervals = FALSE,
-    remove_unreliable_param = FALSE
+    error_threshold_factor = 0.147,
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
 )
 {
     if (!is.exdf(replicate_exdf)) {
         stop('fit_c3_variable_j requires an exdf object')
+    }
+
+    if (sd_A != 'RMSE') {
+        stop('At this time, the only supported option for sd_A is `RMSE`')
     }
 
     # Define the total error function; units will also be checked by this
@@ -48,7 +53,7 @@ fit_c3_variable_j <- function(
     total_error_fcn <- error_function_c3_variable_j(
         replicate_exdf,
         fit_options,
-        POc,
+        1, # sd_A
         atp_use,
         nadph_use,
         curvature_cj,
@@ -58,6 +63,7 @@ fit_c3_variable_j <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         phips2_column_name,
         qin_column_name,
         rd_norm_column_name,
@@ -70,7 +76,7 @@ fit_c3_variable_j <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c3_aci
+    # most units have already been chcked by error_function_c3_variable_j
     required_variables <- list()
     required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
 
@@ -95,11 +101,15 @@ fit_c3_variable_j <- function(
     }
 
     # Get an initial guess for all the parameter values
+    alpha_g_guess <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
+    alpha_s_guess <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
+
     initial_guess_fun <- initial_guess_c3_variable_j(
-        if (fit_options$alpha_g == 'fit')    {0.5} else {fit_options$alpha_g},    # alpha_g
-        if (fit_options$Gamma_star == 'fit') {40}  else {fit_options$Gamma_star}, # Gamma_star
+        alpha_g_guess,
+        if (fit_options$alpha_old == 'fit') {0.5} else {fit_options$alpha_old}, # alpha_old
+        alpha_s_guess,
+        if (fit_options$Gamma_star == 'fit') {40} else {fit_options$Gamma_star}, # Gamma_star
         100, # cc_threshold_rd
-        POc,
         atp_use,
         nadph_use,
         a_column_name,
@@ -108,6 +118,7 @@ fit_c3_variable_j <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         phips2_column_name,
         qin_column_name,
         rd_norm_column_name,
@@ -131,9 +142,11 @@ fit_c3_variable_j <- function(
     # Get the corresponding values of gmc, Cc, and J_F at the best guess
     vj <- calculate_c3_variable_j(
         replicate_exdf,
-        best_X[2], # Gamma_star
-        best_X[4], # Rd_at_25
-        best_X[5], # tau
+        best_X[1], # alpha_g
+        best_X[3], # alpha_s
+        best_X[4], # Gamma_star
+        best_X[6], # Rd_at_25
+        best_X[7], # tau
         atp_use,
         nadph_use,
         a_column_name,
@@ -148,8 +161,12 @@ fit_c3_variable_j <- function(
     # Set all categories to `fit_c3_variable_j`
     vj$categories[1,] <- 'fit_c3_variable_j'
 
-    # Remove the Rd_tl column so it doesn't get repeated
-    vj[, 'Rd_tl'] <- NULL
+    # Remove a few columns so they don't get repeated
+    vj[, 'atp_use']    <- NULL
+    vj[, 'Gamma_star'] <- NULL
+    vj[, 'nadph_use']  <- NULL
+    vj[, 'Rd_at_25']   <- NULL
+    vj[, 'Rd_tl']      <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -158,12 +175,13 @@ fit_c3_variable_j <- function(
     aci <- calculate_c3_assimilation(
         replicate_exdf,
         best_X[1], # alpha_g
-        best_X[2], # Gamma_star
-        best_X[3], # J_at_25
-        best_X[4], # Rd_at_25
-        best_X[6], # Tp
-        best_X[7], # Vcmax_at_25
-        POc,
+        best_X[2], # alpha_old
+        best_X[3], # alpha_s
+        best_X[4], # Gamma_star
+        best_X[5], # J_at_25
+        best_X[6], # Rd_at_25
+        best_X[8], # Tp
+        best_X[9], # Vcmax_at_25
         atp_use,
         nadph_use,
         curvature_cj,
@@ -172,17 +190,20 @@ fit_c3_variable_j <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
         perform_checks = FALSE
     )
 
+    # Remove a few columns so they don't get repeated
+    aci[, 'Gamma_star'] <- NULL
+
     # Set all categories to `fit_c3_variable_j` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c3_variable_j'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
-
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -201,12 +222,13 @@ fit_c3_variable_j <- function(
     operating_An_model <- calculate_c3_assimilation(
         operating_point_info$operating_exdf,
         best_X[1], # alpha_g
-        best_X[2], # Gamma_star
-        best_X[3], # J_at_25
-        best_X[4], # Rd_at_25
-        best_X[6], # Tp
-        best_X[7], # Vcmax_at_25
-        POc,
+        best_X[2], # alpha_old
+        best_X[3], # alpha_s
+        best_X[4], # Gamma_star
+        best_X[5], # J_at_25
+        best_X[6], # Rd_at_25
+        best_X[8], # Tp
+        best_X[9], # Vcmax_at_25
         atp_use,
         nadph_use,
         curvature_cj,
@@ -215,6 +237,7 @@ fit_c3_variable_j <- function(
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
+        oxygen_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -224,29 +247,123 @@ fit_c3_variable_j <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Interpolate onto a finer Cc spacing and recalculate fitted rates
+    replicate_exdf_interpolated <- interpolate_assimilation_inputs(
+        replicate_exdf,
+        c(
+            'alpha_g',
+            'alpha_old',
+            'alpha_s',
+            'Gamma_star',
+            'J_at_25',
+            'Rd_at_25',
+            'tau',
+            'Tp',
+            'Vcmax_at_25',
+            a_column_name,
+            ci_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            oxygen_column_name,
+            phips2_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name
+        ),
+        ci_column_name,
+        c_step = 1
+    )
+
+    vj_interpolated <- calculate_c3_variable_j(
+        replicate_exdf_interpolated,
+        '', # alpha_g
+        '', # alpha_s
+        '', # Gamma_star
+        '', # Rd_at_25
+        '', # tau
+        atp_use,
+        nadph_use,
+        a_column_name,
+        ci_column_name,
+        phips2_column_name,
+        qin_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        perform_checks = FALSE
+    )
+
+    vj_interpolated[, 'atp_use']    <- NULL
+    vj_interpolated[, 'Gamma_star'] <- NULL
+    vj_interpolated[, 'nadph_use']  <- NULL
+    vj_interpolated[, 'Rd_at_25']   <- NULL
+    vj_interpolated[, 'Rd_tl']      <- NULL
+
+    replicate_exdf_interpolated <- cbind(replicate_exdf_interpolated, vj_interpolated)
+
+    assim_interpolated <- calculate_c3_assimilation(
+        replicate_exdf_interpolated,
+        '', # alpha_g
+        '', # alpha_old
+        '', # alpha_s
+        '', # Gamma_star
+        '', # J_at_25
+        '', # Rd_at_25
+        '', # Tp
+        '', # Vcmax_at_25
+        atp_use,
+        nadph_use,
+        curvature_cj,
+        curvature_cjp,
+        cc_column_name = 'Cc',
+        j_norm_column_name,
+        kc_column_name,
+        ko_column_name,
+        oxygen_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        vcmax_norm_column_name,
+        perform_checks = FALSE
+    )
+
+    fits_interpolated <- cbind(
+        replicate_exdf_interpolated[, c(ci_column_name, 'Cc'), TRUE],
+        assim_interpolated
+    )
+
     # If there was a problem, set all the fit results to NA
-    if (aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != '') {
+    fit_failure <-
+        aci[1, 'c3_assimilation_msg'] != '' || vj[1, 'c3_variable_j_msg'] != ''
+
+    if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
+
         for (cn in colnames(aci)) {
             if (cn != 'c3_assimilation_msg') {
                 replicate_exdf[, cn] <- NA
             }
         }
+
         for (cn in colnames(vj)) {
             if (cn != 'c3_variable_j_msg') {
                 replicate_exdf[, cn] <- NA
             }
         }
-    }
 
-    # Add columns for the best-fit parameter values (no need to include alpha_g,
-    # Gamma_star, or Tp since they are already included in the output of
-    # calculate_c3_assimilation)
-    replicate_exdf[, 'J_at_25']     <- best_X[3]
-    replicate_exdf[, 'Rd_at_25']    <- best_X[4]
-    replicate_exdf[, 'tau']         <- best_X[5]
-    replicate_exdf[, 'Vcmax_at_25'] <- best_X[7]
+        for (cn in colnames(assim_interpolated)) {
+            if (cn != 'c3_assimilation_msg') {
+                fits_interpolated[, cn] <- NA
+            }
+        }
+
+        for (cn in colnames(vj_interpolated)) {
+            if (cn != 'c3_variable_j_msg') {
+                fits_interpolated[, cn] <- NA
+            }
+        }
+    }
 
     # Include the atmospheric CO2 concentration
     replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
@@ -263,15 +380,21 @@ fit_c3_variable_j <- function(
     # Document the new columns that were added
     replicate_exdf <- document_variables(
         replicate_exdf,
-        c('fit_c3_variable_j', 'Ca_atmospheric', 'micromol mol^(-1)'),
-        c('fit_c3_variable_j', 'J_at_25',        'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j', 'tau',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)')
+        c('fit_c3_variable_j', 'Ca_atmospheric', 'micromol mol^(-1)')
     )
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach identifiers to interpolated rates, making sure to avoid duplicating
+    # any columns
+    identifiers_to_keep <-
+        colnames(replicate_identifiers)[!colnames(replicate_identifiers) %in% colnames(fits_interpolated)]
+
+    fits_interpolated <- cbind(
+        fits_interpolated,
+        replicate_identifiers[, identifiers_to_keep, TRUE]
+    )
 
     # Attach the residual stats to the identifiers
     replicate_identifiers <- cbind(
@@ -285,12 +408,14 @@ fit_c3_variable_j <- function(
 
     # Attach the best-fit parameters to the identifiers
     replicate_identifiers[, 'alpha_g']     <- best_X[1]
-    replicate_identifiers[, 'Gamma_star']  <- best_X[2]
-    replicate_identifiers[, 'J_at_25']     <- best_X[3]
-    replicate_identifiers[, 'Rd_at_25']    <- best_X[4]
-    replicate_identifiers[, 'tau']         <- best_X[5]
-    replicate_identifiers[, 'Tp']          <- best_X[6]
-    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[7]
+    replicate_identifiers[, 'alpha_old']   <- best_X[2]
+    replicate_identifiers[, 'alpha_s']     <- best_X[3]
+    replicate_identifiers[, 'Gamma_star']  <- best_X[4]
+    replicate_identifiers[, 'J_at_25']     <- best_X[5]
+    replicate_identifiers[, 'Rd_at_25']    <- best_X[6]
+    replicate_identifiers[, 'tau']         <- best_X[7]
+    replicate_identifiers[, 'Tp']          <- best_X[8]
+    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[9]
 
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
@@ -309,7 +434,6 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val']         <- optim_result[['value']]
     replicate_identifiers[, 'c3_assimilation_msg'] <- replicate_exdf[1, 'c3_assimilation_msg']
     replicate_identifiers[, 'c3_variable_j_msg']   <- replicate_exdf[1, 'c3_variable_j_msg']
 
@@ -319,18 +443,45 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
     replicate_identifiers[, 'operating_An_model'] <- operating_An_model
 
-    # Attach the number of points where each potential carboxylation rate is the
-    # smallest potential carboxylation rate
-    replicate_identifiers[, 'n_Wc_smallest'] <- n_C3_W_smallest(aci, 'Wc')
-    replicate_identifiers[, 'n_Wj_smallest'] <- n_C3_W_smallest(aci, 'Wj')
-    replicate_identifiers[, 'n_Wp_smallest'] <- n_C3_W_smallest(aci, 'Wp')
+    # Get an updated likelihood value using the RMSE
+    replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
+        NA
+    } else {
+        error_function_c3_variable_j(
+            replicate_exdf,
+            fit_options,
+            replicate_identifiers[, 'RMSE'], # sd_A
+            atp_use,
+            nadph_use,
+            curvature_cj,
+            curvature_cjp,
+            a_column_name,
+            ci_column_name,
+            j_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            oxygen_column_name,
+            phips2_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            cj_crossover_min,
+            cj_crossover_max,
+            require_positive_gmc,
+            gmc_max
+        )(best_X[param_to_fit])
+    }
+
+    # Add the AIC
+    replicate_identifiers[, 'AIC'] <- akaike_information_criterion(
+        -1.0 * replicate_identifiers[, 'optimum_val'],
+        length(which(param_to_fit))
+    )
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c3_variable_j',        'n_Wc_smallest',       ''),
-        c('fit_c3_variable_j',        'n_Wj_smallest',       ''),
-        c('fit_c3_variable_j',        'n_Wp_smallest',       ''),
         c('fit_c3_variable_j',        'alpha_g',             'dimensionless'),
         c('fit_c3_variable_j',        'Gamma_star',          'micromol mol^(-1)'),
         c('fit_c3_variable_j',        'J_at_25',             'micromol m^(-2) s^(-1)'),
@@ -349,6 +500,7 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'convergence_msg',     ''),
         c('fit_c3_variable_j',        'feval',               ''),
         c('fit_c3_variable_j',        'optimum_val',         ''),
+        c('fit_c3_variable_j',        'AIC',                 ''),
         c('fit_c3_variable_j',        'c3_assimilation_msg', ''),
         c('fit_c3_variable_j',        'c3_variable_j_msg',   '')
     )
@@ -361,8 +513,8 @@ fit_c3_variable_j <- function(
             lower,
             upper,
             fit_options,
+            if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             error_threshold_factor,
-            POc,
             atp_use,
             nadph_use,
             curvature_cj,
@@ -372,6 +524,7 @@ fit_c3_variable_j <- function(
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
+            oxygen_column_name,
             phips2_column_name,
             qin_column_name,
             rd_norm_column_name,
@@ -384,13 +537,11 @@ fit_c3_variable_j <- function(
         )
     }
 
-    # Return the results
-    if (remove_unreliable_param) {
-        remove_c3_unreliable_points(replicate_identifiers, replicate_exdf)
-    } else {
-        list(
-            parameters = replicate_identifiers,
-            fits = replicate_exdf
-        )
-    }
+    # Return the results, including indicators of unreliable parameter estimates
+    identify_c3_unreliable_points(
+        replicate_identifiers,
+        replicate_exdf,
+        fits_interpolated,
+        remove_unreliable_param
+    )
 }

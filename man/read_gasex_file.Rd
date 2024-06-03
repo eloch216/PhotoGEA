@@ -16,6 +16,7 @@
     posix_options = list(),
     file_type = 'AUTO',
     instrument_type = 'AUTO',
+    standardize_columns = TRUE,
     \dots
   )
 }
@@ -49,6 +50,11 @@
     \code{'Licor LI-6800'} and \code{'CR3000'}.
   }
 
+  \item{standardize_columns}{
+    A logical value indicating whether to standardize columns; see details
+    below.
+  }
+
   \item{\dots}{
     Additional arguments to be passed to specialized reading functions; see
     below for more details.
@@ -63,6 +69,24 @@
   \code{Delta}. The replacement rules are stored in a data frame that can be
   accessed via \code{PhotoGEA:::UNICODE_REPLACEMENTS}, and more information can
   be found in the source code (\code{R/unicode_replacements.R}).
+
+  Sometimes it is useful to "standardize" the names, units, or categories of
+  columns in instrument log files. This can be helpful in several situations:
+  \itemize{
+    \item An instrument may not be consistent with the name of a column; for
+          example, Licor LI-6800s may may have a \code{PhiPs2} or \code{PhiPS2}
+          column depending on the version of the operating system running on the
+          machine.
+    \item An instrument may not specify the units of a column; for example,
+          Licor LI-6800s do not specify that \code{PhiPS2} has units of
+          \code{dimensionless}.
+    \item An instrument may use different names or different units than another
+          instrument for the same measured quantity.
+  }
+  To deal with these situations, it is possible to "standardize" the column
+  names, units, and categories when reading an instrument file. A list of
+  definitions for all standardizations can be accessed from an R session by
+  typing \code{View(PhotoGEA:::gasex_column_conversions)}.
 
   When reading a log file, it can be useful to identify the timestamp column so
   its values can be properly interpreted as \code{\link{POSIXlt}} objects. If
@@ -141,7 +165,7 @@
 # Example: Eeading a Licor Excel file that is included with the PhotoGEA
 # package. Here we specify 'time' as the name of the timestamp column.
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
+  PhotoGEA_example_file_path('ball_berry_1.xlsx'),
   'time'
 )
 

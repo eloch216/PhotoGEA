@@ -10,12 +10,17 @@
 }
 
 \usage{
-  read_licor_6800_plaintext(file_name, \dots)
+  read_licor_6800_plaintext(file_name, get_oxygen = TRUE, \dots)
 }
 
 \arguments{
   \item{file_name}{
     A relative or absolute path to a plaintext file containing Licor data.
+  }
+
+  \item{get_oxygen}{
+    A logical value indicating whether to get the oxygen percentage from the
+    file's preamble using \code{\link{get_oxygen_from_preamble}}.
   }
 
   \item{\dots}{
@@ -54,7 +59,7 @@
 # Example: Reading a Licor plaintext file that is included with the PhotoGEA
 # package.
 licor_file <- PhotoGEA:::read_licor_6800_plaintext(
-  system.file('extdata', 'plaintext_licor_file', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('plaintext_licor_file')
 )
 }
 

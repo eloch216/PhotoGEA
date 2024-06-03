@@ -11,7 +11,8 @@ test_curve <- exdf(
         Ca = 'micromol mol^(-1)',
         Cc = 'micromol mol^(-1)',
         Ci = 'micromol mol^(-1)',
-        PCm = 'microbar'
+        PCm = 'microbar',
+        stringsAsFactors = FALSE
     )
 )
 

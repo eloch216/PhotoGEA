@@ -1,4 +1,10 @@
-read_licor_6800_Excel <- function(file_name, column_name = 'obs', ...) {
+read_licor_6800_Excel <- function(
+    file_name,
+    column_name = 'obs',
+    get_oxygen = TRUE,
+    ...
+)
+{
     # Read the entire workbook into a single data frame
     rawdata <- openxlsx::readWorkbook(
         file_name,
@@ -25,7 +31,7 @@ read_licor_6800_Excel <- function(file_name, column_name = 'obs', ...) {
     # Get variable names, units, and categories
     licor_variable_names <- replace_unicode(rawdata[data_row, ])
 
-    licor_variable_units <- as.data.frame(matrix(nrow = 1, ncol = ncol(rawdata)))
+    licor_variable_units <- as.data.frame(matrix(nrow = 1, ncol = ncol(rawdata)), stringsAsFactors = FALSE)
     licor_variable_units[1, ] <- replace_unicode(rawdata[data_row + 1, ])
     colnames(licor_variable_units) <- licor_variable_names
 
@@ -64,13 +70,19 @@ read_licor_6800_Excel <- function(file_name, column_name = 'obs', ...) {
     )
     licor_preamble <- do.call(cbind, row_df_list)
 
-    return(
-        exdf(
-            licor_data,
-            licor_variable_units,
-            licor_variable_categories,
-            preamble = licor_preamble,
-            data_row = data_row
-        )
+    # Create the exdf object
+    exdf_obj <- exdf(
+        licor_data,
+        licor_variable_units,
+        licor_variable_categories,
+        preamble = licor_preamble,
+        data_row = data_row
     )
+
+    # Return the object, including oxygen information if necessary
+    if (get_oxygen) {
+        get_oxygen_from_preamble(exdf_obj)
+    } else {
+        exdf_obj
+    }
 }

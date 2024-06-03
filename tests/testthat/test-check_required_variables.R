@@ -40,7 +40,7 @@ test_that('missing exdf units are detected', {
 test_that('incorrect exdf units are detected', {
     expect_error(
         check_required_variables(
-            exdf(data.frame(A = seq(1, 3), B = seq(2, 4)), units = data.frame(A = 'B units', B = 'B units')),
+            exdf(data.frame(A = seq(1, 3), B = seq(2, 4)), units = data.frame(A = 'B units', B = 'B units', stringsAsFactors = FALSE)),
             list('A' = 'A units')
         ),
         'The `A` column must have units of `A units`, but its units are `B units`'
@@ -50,7 +50,7 @@ test_that('incorrect exdf units are detected', {
 test_that('present exdf columns and units are detected', {
     expect_silent(
         check_required_variables(
-            exdf(data.frame(A = seq(1, 3), B = seq(2, 4)), units = data.frame(A = 'A units', B = 'B units')),
+            exdf(data.frame(A = seq(1, 3), B = seq(2, 4)), units = data.frame(A = 'A units', B = 'B units', stringsAsFactors = FALSE)),
             list('A' = 'A units', B = NA)
         )
     )

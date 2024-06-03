@@ -45,7 +45,8 @@ process_tdl_cycle_erml <- function(
         cycle_num = tdl_cycle[1, 'cycle_num'],
         elapsed_time = tdl_cycle[1, 'elapsed_time'],
         offset_12c = zero_carbon_reference[[raw_12c_colname]],
-        offset_13c = zero_carbon_reference[[raw_13c_colname]]
+        offset_13c = zero_carbon_reference[[raw_13c_colname]],
+        stringsAsFactors = FALSE
     ))
 
     calibration_zero <- document_variables(
@@ -78,7 +79,8 @@ process_tdl_cycle_erml <- function(
         total_CO2_noaa = total_CO2_noaa,
         R_noaa = R_noaa,
         noaa_12C16O16O = noaa_12C16O16O,
-        gain_12CO2 = gain_12CO2
+        gain_12CO2 = gain_12CO2,
+        stringsAsFactors = FALSE
     ))
 
     calibration_12CO2 <- document_variables(
@@ -135,7 +137,8 @@ process_tdl_cycle_erml <- function(
         a0 = a0,
         a1 = a1,
         a2 = a2,
-        r_squared = r_squared
+        r_squared = r_squared,
+        stringsAsFactors = FALSE
     ))
 
     calibration_13CO2_fit <- document_variables(
@@ -162,7 +165,8 @@ process_tdl_cycle_erml <- function(
         elapsed_time = tdl_cycle[1, 'elapsed_time'],
         measured_13c_values = measured_13c_values,
         expected_13c_values = expected_13c_values,
-        fitted_13c_values = fitted_13c_values
+        fitted_13c_values = fitted_13c_values,
+        stringsAsFactors = FALSE
     ))
 
     calibration_13CO2_data <- document_variables(

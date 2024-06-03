@@ -8,6 +8,7 @@ xyplot_avg_rc <- function(
     cols = multi_curve_colors(),
     eb_length = 0.05,
     eb_lwd = 1,
+    na.rm = TRUE,
     ...
 )
 {
@@ -16,8 +17,14 @@ xyplot_avg_rc <- function(
         X = X,
         Y = Y,
         point_identifier = point_identifier,
-        group_identifier = group_identifier
+        group_identifier = group_identifier,
+        stringsAsFactors = FALSE
     )
+
+    # Remove NA if necessary
+    if (na.rm) {
+        tdf <- tdf[!is.na(tdf$Y), ]
+    }
 
     # Get basic stats information
     tdf_stats <- do.call(

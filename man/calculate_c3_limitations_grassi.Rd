@@ -16,7 +16,6 @@
 \usage{
   calculate_c3_limitations_grassi(
     exdf_obj,
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     cc_column_name = 'Cc',
@@ -25,6 +24,7 @@
     gsc_column_name = 'gsc',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     total_pressure_column_name = 'total_pressure',
     vcmax_column_name = 'Vcmax_tl',
     j_column_name = NULL
@@ -34,14 +34,6 @@
 \arguments{
   \item{exdf_obj}{
     An \code{exdf} object representing gas exchange data.
-  }
-
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
   }
 
   \item{atp_use}{
@@ -88,6 +80,12 @@
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
     values calculated using \code{\link{calculate_arrhenius}}.
+  }
+
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
   }
 
   \item{total_pressure_column_name}{
@@ -236,7 +234,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -269,12 +267,14 @@ licor_file <- apply_gm(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
-# Fit all curves in the data set
+# Fit all curves in the data set. Here we use a faster optimizer than the
+# default one to ensure the example runs quickly.
 aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
   fit_c3_aci,
-  Ca_atmospheric = 420
+  Ca_atmospheric = 420,
+  OPTIM_FUN = optimizer_nmkb(1e-7)
 ))
 
 # Get a subset of fitting results corresponding to the first measured point
@@ -292,10 +292,16 @@ col_to_keep <- c(
 
 aci_fit_subset[ , col_to_keep, TRUE]
 
+# One of these fits has NA for all the limiting factors, which causes problems
+# when making bar charts with some versions of the `lattice` package, so we
+# exclude that curve for plotting
+data_for_barchart <-
+  aci_fit_subset$main_data[aci_fit_subset$main_data$species_plot != 'tobacco - 2', ]
+
 # Display as a bar chart
 lattice::barchart(
   ls_rubisco_grassi + lm_rubisco_grassi + lb_rubisco_grassi ~ species_plot,
-  data = aci_fit_subset$main,
+  data = data_for_barchart,
   stack = TRUE,
   auto = TRUE,
   ylab = 'Factors limiting assimilation'

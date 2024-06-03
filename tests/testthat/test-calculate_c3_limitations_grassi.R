@@ -4,22 +4,26 @@ example_exdf <- exdf(
         Gamma_star     = 40,
         gmc            = 0.5,
         gsc            = 0.8,
+        J_tl           = 200,
         Kc             = 270,
         Ko             = 160,
+        oxygen         = 21,
         total_pressure = 1,
-        Vcmax_tl       = 150,
-        J_tl           = 200
+        Vcmax_tl       = 150
+
     ),
     units = data.frame(
         Cc             = 'micromol mol^(-1)',
         Gamma_star     = 'micromol mol^(-1)',
         gmc            = 'mol m^(-2) s^(-1) bar^(-1)',
         gsc            = 'mol m^(-2) s^(-1)',
+        J_tl           = 'micromol m^(-2) s^(-1)',
         Kc             = 'micromol mol^(-1)',
         Ko             = 'mmol mol^(-1)',
+        oxygen         = 'percent',
         total_pressure = 'bar',
         Vcmax_tl       = 'micromol m^(-2) s^(-1)',
-        J_tl           = 'micromol m^(-2) s^(-1)'
+        stringsAsFactors = FALSE
     )
 )
 
@@ -74,7 +78,11 @@ test_that('fit failures are handled properly', {
     # default optimizer
     set.seed(1234)
 
-    fit_res_bad <- fit_c3_aci(one_curve_bad, Ca_atmospheric = 420)
+    fit_res_bad <- fit_c3_aci(
+        one_curve_bad,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7)
+    )
 
     limit_res_bad <- expect_no_error(
         calculate_c3_limitations_grassi(fit_res_bad$fits)
@@ -89,7 +97,14 @@ test_that('fit results have not changed', {
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c3_aci(one_curve, Ca_atmospheric = 420)
+    fit_res <- fit_c3_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7),
+        fit_options = list(alpha_old = 0),
+        calculate_confidence_intervals = FALSE,
+        remove_unreliable_param = FALSE
+    )
 
     limit_res <- expect_silent(
         calculate_c3_limitations_grassi(fit_res$fits)
@@ -97,7 +112,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(limit_res[1, c('dAdC_rubisco', 'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi')]),
-        c(0.399283, 0.434921, 0.161528, 0.403551),
-        tolerance = 1e-6
+        c(0.39900, 0.43480, 0.16148, 0.40372),
+        tolerance = 1e-5
     )
 })

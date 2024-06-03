@@ -1,7 +1,7 @@
 error_function_c3_aci <- function(
     replicate_exdf,
     fit_options = list(),
-    POc = 210000,
+    sd_A = 1,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -11,6 +11,7 @@ error_function_c3_aci <- function(
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -36,13 +37,14 @@ error_function_c3_aci <- function(
     required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
+    required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
     required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
     required_variables <- require_flexible_param(
         required_variables,
-        fit_options[fit_options != 'fit']
+        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
     )
 
     check_required_variables(replicate_exdf, required_variables)
@@ -59,6 +61,9 @@ error_function_c3_aci <- function(
         }
     })
 
+    # Retrieve values of flexible parameters as necessary
+    if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
+
     # Create and return the error function
     function(guess) {
         X <- fit_options_vec
@@ -69,12 +74,13 @@ error_function_c3_aci <- function(
                 calculate_c3_assimilation(
                     replicate_exdf,
                     X[1], # alpha_g
-                    X[2], # Gamma_star
-                    X[3], # J_at_25
-                    X[4], # Rd_at_25
-                    X[5], # Tp
-                    X[6], # Vcmax_at_25
-                    POc,
+                    X[2], # alpha_old
+                    X[3], # alpha_s
+                    X[4], # Gamma_star
+                    X[5], # J_at_25
+                    X[6], # Rd_at_25
+                    X[7], # Tp
+                    X[8], # Vcmax_at_25
                     atp_use,
                     nadph_use,
                     curvature_cj,
@@ -83,6 +89,7 @@ error_function_c3_aci <- function(
                     j_norm_column_name,
                     kc_column_name,
                     ko_column_name,
+                    oxygen_column_name,
                     rd_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,
@@ -117,6 +124,14 @@ error_function_c3_aci <- function(
             }
         }
 
-        sum((replicate_exdf[, a_column_name] - assim$An)^2)
+        # return the negative of the logarithm of the likelihood
+        -sum(
+            stats::dnorm(
+                replicate_exdf[, a_column_name],
+                mean = assim$An,
+                sd = sd_A,
+                log = TRUE
+            )
+        )
     }
 }

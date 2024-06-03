@@ -21,7 +21,11 @@ test_that('fit failures are handled properly', {
     # default optimizer
     set.seed(1234)
 
-    fit_res_bad <- fit_c3_aci(one_curve_bad, Ca_atmospheric = 420)
+    fit_res_bad <- fit_c3_aci(
+        one_curve_bad,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7)
+    )
 
     limit_res_bad <- expect_no_error(
         calculate_c3_limitations_warren(fit_res_bad$fits)
@@ -36,7 +40,14 @@ test_that('fit results have not changed', {
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c3_aci(one_curve, Ca_atmospheric = 420)
+    fit_res <- fit_c3_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7),
+        fit_options = list(alpha_old = 0),
+        calculate_confidence_intervals = FALSE,
+        remove_unreliable_param = FALSE
+    )
 
     limit_res <- expect_silent(
         calculate_c3_limitations_warren(fit_res$fits)
@@ -44,7 +55,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(limit_res[1, c('Cc_inf_gmc', 'Cc_inf_gsc', 'An_inf_gmc', 'An_inf_gsc', 'lm_warren', 'ls_warren')]),
-        c(38.202507, 29.805330, -5.921654, -8.103482, 0.202050, 0.416895),
-        tolerance = 1e-6
+        c(38.20251, 29.80533, -5.92298, -8.10522, 0.20204, 0.41688),
+        tolerance = 1e-5
     )
 })

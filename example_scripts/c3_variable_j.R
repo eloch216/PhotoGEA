@@ -19,7 +19,7 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1, 6, 7, 8, 9, 15, 16, 17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(7,8,9,10,16,17)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -34,15 +34,21 @@ REMOVE_SPECIFIC_POINTS <- FALSE
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
 
+# Decide whether to exclude negative assimilation rates when fitting
+EXCLUDE_NEG_ASSIM <- FALSE
+
+# Choose a maximum acceptable gm value. Set to Inf to disable.
+MAX_GM <- Inf
+
 # Decide which point to use for box plots of A and other quantities
-POINT_FOR_BOX_PLOTS <- 10
+POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
 # Decide whether to perform stats tests
-PERFORM_STATS_TESTS <- TRUE
+PERFORM_STATS_TESTS <- FALSE
 
 # Decide whether to average over plots
 AVERAGE_OVER_PLOTS <- FALSE
@@ -51,16 +57,16 @@ AVERAGE_OVER_PLOTS <- FALSE
 SAVE_CSV <- FALSE
 
 # Decide which solver to use
-USE_DEOPTIM_SOLVER <- FALSE
+USE_DEOPTIM_SOLVER <- TRUE
 
 solver <- if (USE_DEOPTIM_SOLVER) {
   # This is the default solver for the variable J fitting method; it is a little
   # bit slower, but less likely to fail
-  optimizer_deoptim()
+  optimizer_deoptim(400)
 } else {
   # This is the default solver for the regular C3 A-Ci curve fitting method; it
   # is a little bit faster, but may sometimes fail for some curves
-  optimizer_nmkb()
+  optimizer_nmkb(1e-7)
 }
 
 # Decide whether to fit Tp and Rd
@@ -68,15 +74,23 @@ solver <- if (USE_DEOPTIM_SOLVER) {
 # To disable TPU limitations: TP_VAL <- 40
 # To fit Tp: TP_VAL <- 'fit'
 #
-# To fix Rd: RD_VAL <- 1.234
+# To fix Rd to a single value: RD_VAL <- 1.234
+# To fix Rd to values from the `Rd_at_25` column: RD_VAL <- 'column'
 # To fit Rd: RD_VAL <- 'fit'
 
-TP_VAL <- 'fit'
+TP_VAL <- 40
 RD_VAL <- 'fit'
 
 FIT_OPTIONS <- list(
     Rd_at_25 = RD_VAL,
     Tp = TP_VAL
+)
+
+RD_TABLE <- list(
+  `WT` = 2.2,
+  `20` = 2.8,
+  `23` = 3.0,
+  `25` = 3.03
 )
 
 ###
@@ -155,7 +169,7 @@ licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
 # Check data
-#check_licor_data(
+#check_response_curve_data(
 #  licor_data,
 #  'curve_identifier',
 #  driving_column = 'CO2_r_sp'
@@ -170,6 +184,19 @@ licor_data <- organize_response_curve_data(
 )
 
 if (MAKE_VALIDATION_PLOTS) {
+    # Plot all PhiPS2-Ci curves in the data set
+    dev.new()
+    print(xyplot(
+      PhiPS2 ~ Ci | curve_identifier,
+      data = licor_data$main_data,
+      type = 'b',
+      pch = 16,
+      auto = TRUE,
+      grid = TRUE,
+      xlab = paste('PhiPS2 [', licor_data$units$PhiPS2, ']'),
+      ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+    ))  
+  
     # Plot all A-Ci curves in the data set
     dev.new()
     print(xyplot(
@@ -263,7 +290,17 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(curve_identifier = 'WT 2 5', seq_num = 6) # has a different CO2 setpoint
+      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
+      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
+      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
+      list(curve_identifier = '20 3 6', seq_num = c(15)),
+      list(curve_identifier = '25 3 3', seq_num = c(16)),
+      list(curve_identifier = '25 2 4', seq_num = c(3)),
+      list(curve_identifier = 'WT 3 10', seq_num = c(1, 2)),
+      list(curve_identifier = 'WT 4 3', seq_num = c(1:17)),
+      list(curve_identifier = '20 6 3', seq_num = c(1:17)),
+      list(curve_identifier = '25 3 3', seq_num = c(1:17))
+      #list(curve_identifier = 'WT 2 5', seq_num = 6) # has a different CO2 setpoint
       #list(curve_identifier = c('14 1 2'))
     )
 }
@@ -272,6 +309,18 @@ if (REMOVE_SPECIFIC_POINTS) {
 ### PROCESSING:
 ### Extracting new pieces of information from the data
 ###
+
+# Specify Rd values, if necessary
+
+if (RD_VAL == 'column') {
+  licor_data <- set_variable(
+    licor_data,
+    'Rd_at_25',
+    units = 'micromol m^(-2) s^(-1)',
+    id_column = EVENT_COLUMN_NAME,
+    value_table = RD_TABLE
+  )
+}
 
 # Calculate total pressure (required for fit_c3_variable_j)
 licor_data <- calculate_total_pressure(licor_data)
@@ -288,6 +337,11 @@ licor_data <- calculate_wue(licor_data)
 # Truncate the Ci range for fitting
 licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]
 
+# Remove points with negative assimilation rates for fitting
+if (EXCLUDE_NEG_ASSIM) {
+  licor_data_for_fitting <- licor_data_for_fitting[licor_data_for_fitting[, 'A'] > 0, , TRUE]
+}
+
 # Set a seed number before fitting to make sure results are reproducible
 set.seed(1234)
 
@@ -301,8 +355,11 @@ c3_aci_results <- consolidate(by(
   lower = list(tau = 0.2),
   upper = list(tau = 0.6),
   fit_options = FIT_OPTIONS,
+  gmc_max = MAX_GM,
   cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
-  cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
+  cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
+  calculate_confidence_intervals = TRUE,
+  remove_unreliable_param = TRUE
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal

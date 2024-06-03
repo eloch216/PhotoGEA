@@ -17,18 +17,21 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
+NUM_OBS_IN_SEQ <- 16
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10, 16)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
 MAKE_ANALYSIS_PLOTS <- TRUE
 
+# Decide whether to save average response curves to PDF
+SAVE_TO_PDF <- FALSE
+
 # Decide whether to only keep points where stability conditions were met
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -41,7 +44,7 @@ POINT_FOR_BOX_PLOTS <- 1
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
 # Decide whether to perform stats tests
-PERFORM_STATS_TESTS <- TRUE
+PERFORM_STATS_TESTS <- FALSE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
@@ -63,11 +66,18 @@ GM_TABLE <- list(
 OVERRIDE_GAMMA_STAR <- FALSE
 GAMMA_STAR <- 50 # ppm
 
+# Specify which type of CO2 control was used
+CO2_CONTROL <- 'CO2_s_sp' # should be 'CO2_r_sp' or 'CO2_s_sp'
+
+# If CO2_s was controlled, we have to specify the setpoint values because the
+# Licor log file doesn't include them
+CO2_s_seq <- c(420, 320, 220, 150, 100, 75, 50, 20, 420, 420, 500, 600, 800, 1000, 1200, 1500)
+
 # Decide whether to average over plots
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- TRUE
+SAVE_CSV <- FALSE
 
 ###
 ### TRANSLATION:
@@ -150,13 +160,23 @@ licor_data[, 'curve_identifier'] <-
 licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
+# If CO2_s was controlled, add the setpoint values
+if (CO2_CONTROL == 'CO2_s_sp') {
+  licor_data <- set_variable(
+    licor_data,
+    'CO2_s_sp',
+    units = 'micromol mol^(-1)',
+    value = rep_len(CO2_s_seq, nrow(licor_data))
+  )
+}
+
 # Remove certain events
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-# check_licor_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+#check_response_curve_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
 
-# Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+# Remove points with duplicated CO2 setpoint values and order by `Ci`
 licor_data <- organize_response_curve_data(
     licor_data,
     'curve_identifier',
@@ -186,7 +206,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      auto.key = list(space = 'right'),
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
@@ -248,7 +268,7 @@ if (MAKE_VALIDATION_PLOTS) {
     # Make a plot to check CO2 control
     dev.new()
     print(xyplot(
-      CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
+      CO2_s + CO2_r ~ Ci | curve_identifier,
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
@@ -275,9 +295,18 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      list(event = 'WT', replicate = 9, CO2_r_sp = 800),
-      list(event = '25', replicate = 4, CO2_r_sp = 200)
-      #list(curve_identifier = '10 5 6', seq_num = c(2))
+      #list(event = 'TGx2014-49FZ', replicate = '34'),
+      #list(event = 'TTGx2002-3DM', replicate = '35'),
+      #list(event = 'LD11-2170', replicate = '27', seq_num = c('8','17'))
+      #list(event = 'WT', replicate = 9, CO2_r_sp = 800),
+      #list(event = '25', replicate = 4, CO2_r_sp = 200)
+      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
+      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
+      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
+      list(curve_identifier = '20 3 6', seq_num = c(15)),
+      list(curve_identifier = '25 3 3', seq_num = c(16)),
+      list(curve_identifier = '25 2 4', seq_num = c(3))
+
     )
 }
 
@@ -336,8 +365,9 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
-  cj_crossover_min = 100,                       # Wj must be > Wc when Cc < this value (ppm)
-  cj_crossover_max = 800                        # Wj must be < Wc when Cc > this value (ppm)
+  OPTIM_FUN = optimizer_deoptim(200),
+  calculate_confidence_intervals = TRUE,
+  remove_unreliable_param = TRUE
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -383,37 +413,14 @@ cat('\n')
 
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Ci fits (including limiting rates)
-    dev.new()
-    print(xyplot(
-      A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
-      data = c3_aci_results$fits$main_data,
-      type = 'b',
-      pch = 16,
-      auto.key = list(space = 'right'),
-      grid = TRUE,
-      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
-      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
-      par.settings = list(
-        superpose.line = list(col = multi_curve_line_colors()),
-        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-      ),
-      ylim = c(-5, 35),
-      xlim = c(0, 250),
-      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
-      panel = function(...) {
-        panel.xyplot(...)
-        args <- list(...)
-        curve_id <- args$curve_ids[args$subscripts][1]
-        fit_param <-
-          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
-        panel.points(
-            fit_param$operating_An ~ fit_param$operating_Cc,
-            type = 'p',
-            col = 'black',
-            pch = 1
-        )
-      }
-    ))
+    pdf_print(
+      plot_c3_aci_fit(
+        c3_aci_results,
+        'curve_identifier',
+        'Ci',
+        ylim = c(-10, 60)
+      )
+    )
 
     # Plot the C3 A-Ci fits (including potential rates)
     dev.new()
@@ -554,6 +561,13 @@ if (AVERAGE_OVER_PLOTS) {
   aci_parameters <- do.call(rbind, aci_parameters_list)
 }
 
+if (SAVE_CSV || (MAKE_ANALYSIS_PLOTS && SAVE_TO_PDF)) {
+  base_dir <- getwd()
+  if (interactive() & .Platform$OS.type == "windows") {
+    base_dir <- choose.dir(caption="Select folder for output files")
+  }
+}
+
 if (MAKE_ANALYSIS_PLOTS) {
     # Make box-whisker plots and bar charts
 
@@ -561,7 +575,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         "Quartiles for measurement point ",
         POINT_FOR_BOX_PLOTS,
         "\n(where CO2 setpoint = ",
-        all_samples_one_point[, 'CO2_r_sp'][POINT_FOR_BOX_PLOTS],
+        all_samples_one_point[, CO2_CONTROL][POINT_FOR_BOX_PLOTS],
         ")"
     )
 
@@ -572,7 +586,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     xl <- "Genotype"
 
     plot_param <- list(
-      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 40),  main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 50),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'],              X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",            ylim = c(0, 100), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'ls_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Grassi) (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'lm_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Grassi) (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
@@ -589,7 +603,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         plot_param <- c(
             plot_param,
             list(
-                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.4), main = boxplot_caption),
+                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.5), main = boxplot_caption),
                 list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 350), main = boxplot_caption)
             )
         )
@@ -612,11 +626,11 @@ if (MAKE_ANALYSIS_PLOTS) {
     x_s <- all_samples[, 'seq_num']
     x_e <- all_samples[, EVENT_COLUMN_NAME]
 
-    ci_lim <- c(-50, 1500)
-    cc_lim <- c(-50, 1500)
-    a_lim <- c(-10, 55)
+    ci_lim <- c(-50, 1700)
+    cc_lim <- c(-50, 1700)
+    a_lim <- c(-10, 65)
     gsw_lim <- c(0, 0.7)
-    phi_lim <- c(0, 0.4)
+    phi_lim <- c(0, 0.5)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Chloroplast [CO2] (ppm)"
@@ -639,15 +653,23 @@ if (MAKE_ANALYSIS_PLOTS) {
         )
     }
 
+    i <- 0
+
     invisible(lapply(avg_plot_param, function(x) {
-        dev.new(width = 8, height = 6)
-        print(do.call(xyplot_avg_rc, c(x, list(
+        pdf_print(
+          do.call(xyplot_avg_rc, c(x, list(
             type = 'b',
             pch = 20,
-            auto = TRUE,
+            auto.key = list(space = 'right'),
             grid = TRUE,
             main = rc_caption
-        ))))
+          ))),
+          width = 8,
+          height = 6,
+          save_to_pdf = SAVE_TO_PDF,
+          file = file.path(base_dir, paste0('c3_co2_response_', i, '.pdf'))
+        )
+        i <<- i + 1
     }))
 }
 
@@ -678,10 +700,6 @@ if (PERFORM_STATS_TESTS) {
 }
 
 if (SAVE_CSV) {
-  base_dir <- getwd()
-  if (interactive() & .Platform$OS.type == "windows") {
-    base_dir <- choose.dir(caption="Select folder for output files")
-  }
 
   if (AVERAGE_OVER_PLOTS) {
     tmp <- by(

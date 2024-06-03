@@ -47,12 +47,12 @@ MAKE_GM_PLOTS <- TRUE
 USE_BUSCH_GM <- TRUE
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- 2.1
+DEFAULT_RESPIRATION <- 1.81
 
 # Specify respiration values for each event; these will override the default.
 # To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  #'WT' = 2.33,
+  'WT' = 1.225
   #'8' = 2.02,
   #'10' = 1.94,
   #'14' = 2.08
@@ -456,7 +456,7 @@ if (PERFORM_CALCULATIONS) {
         licor_files[['main_data']][!licor_files[['main_data']][['event']] %in% EVENTS_TO_IGNORE,]
 
     # Check the data for any issues before proceeding with additional analysis
-    check_licor_data(licor_files, 'event_replicate', -1)
+    check_response_curve_data(licor_files, 'event_replicate', -1)
 
     # Exclude outliers using the calculated gm values for each event
     # Exclude any bad values and outliers. First, elimate all measurements where

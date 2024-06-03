@@ -1,10 +1,18 @@
 initial_guess_c4_aci <- function(
-    pcm_threshold_rm = 100,
-    gbs = 0.003,
-    Rm_frac = 0.5,
+    alpha_psii, # dimensionless
+    gbs,        # mol / m^2 / s / bar
+    Rm_frac,    # dimensionless
+    pcm_threshold_rm = 40,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     a_column_name = 'A',
+    jmax_norm_column_name = 'Jmax_norm',
     kp_column_name = 'Kp',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
@@ -19,13 +27,30 @@ initial_guess_c4_aci <- function(
         # units
         required_variables <- list()
         required_variables[[a_column_name]]          <- "micromol m^(-2) s^(-1)"
+        required_variables[[jmax_norm_column_name]]  <- 'normalized to Jmax at its optimal temperature'
         required_variables[[kp_column_name]]         <- 'microbar'
         required_variables[[pcm_column_name]]        <- "microbar"
+        required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
         required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
+        flexible_param <- list(
+            alpha_psii = alpha_psii,
+            gbs = gbs,
+            Rm_frac = Rm_frac
+        )
+
+        required_variables <-
+            require_flexible_param(required_variables, flexible_param)
+
         check_required_variables(rc_exdf, required_variables)
+
+        # Include values of alpha_psii, gbs, and Rm_frac in the exdf if they are
+        # not already present
+        if (value_set(alpha_psii)) {rc_exdf[, 'alpha_psii'] <- alpha_psii}
+        if (value_set(gbs))        {rc_exdf[, 'gbs']        <- gbs}
+        if (value_set(Rm_frac))    {rc_exdf[, 'Rm_frac']    <- Rm_frac}
 
         # To estimate Rm, make a linear fit of A ~ PCm where PCm is below the
         # threshold. The intercept from the fit should be -Rm. If there are not
@@ -42,14 +67,16 @@ initial_guess_c4_aci <- function(
 
             -rm_fit$coefficients[1] / mean_rm_norm
         } else {
-            1.0
+            0.5
         }
 
-        # If Rm was estimated to be negative, reset it to zero
-        rm_estimate <- max(0, rm_estimate)
+        # If Rm was estimated to be negative, reset it to a typical value
+        if (rm_estimate <= 0) {
+            rm_estimate <- 0.5
+        }
 
         # Rm is determined by Rm = Rm_frac * Rd, so Rd = Rm / Rm_frac.
-        rd_estimate <- rm_estimate / Rm_frac
+        rd_estimate <- rm_estimate / mean(rc_exdf[, 'Rm_frac'])
 
         # To estimate Vpmax, we solve the equation for Apc (defined in the
         # documentation for calculate_c4_assimilation) for Vpmax and calculate
@@ -61,7 +88,7 @@ initial_guess_c4_aci <- function(
         # Vpmax values will be smaller. With this is mind, we choose the largest
         # value of Vpmax as our best estimate.
         vpmax_estimates <-
-            (rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - gbs * rc_exdf[, pcm_column_name]) *
+            (rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]) *
             (rc_exdf[, pcm_column_name] + rc_exdf[, kp_column_name]) /
             rc_exdf[, pcm_column_name]
 
@@ -90,11 +117,34 @@ initial_guess_c4_aci <- function(
         # corresponding Vpr values will be smaller. With this in mind, we choose
         # the largest value of Vpr as our best estimate.
         vpr_estimates <-
-            rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - gbs * rc_exdf[, pcm_column_name]
+            rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]
+
+        # To estimate J, we solve the equation for Ajbs (defined in the
+        # documentation for calculate_c4_assimilation) for J and calculate it
+        # for each point in the response curve.
+        j_estimates <-
+            3 * (rc_exdf[, a_column_name] + rd_estimate * rc_exdf[, rd_norm_column_name]) / (1 - x_etr)
+
+        # Now we can estimate Jmax from each J estimate. We will choose the
+        # largest estimate as with the other variables
+        jmax_estimates <- sapply(seq_along(j_estimates), function(i) {
+            jmax_from_j(
+                j_estimates[i],
+                rc_exdf[i, qin_column_name],
+                absorptance * (1 - f_spectral) * rho,
+                theta
+            )
+        })
+
+        jmax_estimates <- jmax_estimates / rc_exdf[, jmax_norm_column_name]
 
         # Return the estimates
         c(
+            mean(rc_exdf[, 'alpha_psii']),
+            mean(rc_exdf[, 'gbs']),
+            max(jmax_estimates),
             as.numeric(rd_estimate), # remove names
+            mean(rc_exdf[, 'Rm_frac']),
             max(vcmax_estimates),
             max(vpmax_estimates),
             max(vpr_estimates)

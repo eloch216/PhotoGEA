@@ -20,6 +20,7 @@
     cols = multi_curve_colors(),
     eb_length = 0.05,
     eb_lwd = 1,
+    na.rm = TRUE,
     ...
   )
 }
@@ -54,6 +55,11 @@
 
   \item{eb_lwd}{The line width (thickness) of the error bars.}
 
+  \item{na.rm}{
+    A logical value indicating whether or not to remove NA values before
+    calculating means and standard errors.
+  }
+
   \item{\dots}{Additional arguments to be passed to \code{lattice::xyplot}.}
 }
 
@@ -73,7 +79,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Organize the response curve data

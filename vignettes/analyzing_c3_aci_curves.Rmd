@@ -97,25 +97,29 @@ Tleaf <- 30
 inputs <- exdf(data.frame(
   Cc = seq(1, 1001, by = 10),
   Tleaf = Tleaf,
-  total_pressure = 1
+  total_pressure = 1,
+  oxygen = 21
 ))
 
 inputs <- document_variables(
   inputs,
   c('', 'Cc',             'micromol mol^(-1)'),
   c('', 'Tleaf',          'degrees C'),
-  c('', 'total_pressure', 'bar')
+  c('', 'total_pressure', 'bar'),
+  c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
 alpha_g <- 0
+alpha_old <- 0
+alpha_s <- 0
 J <- 200
 Rd <- 1.8
 Tp <- 18
 Vcmax <- 125
 
-assim <- calculate_c3_assimilation(inputs, alpha_g, '', J, Rd, Tp, Vcmax)
+assim <- calculate_c3_assimilation(inputs, alpha_g, alpha_old, alpha_s, '', J, Rd, Tp, Vcmax)
 
 c3_col <- rev(multi_curve_colors()[1:4])
 
@@ -167,6 +171,8 @@ identical to the ones used to generate the previous figure.
 assim_curvature <- calculate_c3_assimilation(
   inputs,
   alpha_g,
+  alpha_old,
+  alpha_s,
   '',
   J,
   Rd,
@@ -265,21 +271,21 @@ to it since it is unpublished, so these files should only be used as examples.
 
 The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
-`system.file`:
+`PhotoGEA_example_file_path`:
 
 ```{r licor_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'c3_aci_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx'),
+  PhotoGEA_example_file_path('c3_aci_2.xlsx')
 )
 ```
 
 (**Note:** When loading your own files for analysis, it is not advisable to use
-`system.file` as we have done here. Instead, file paths can be directly written,
-or files can be chosen using an interactive window. See [Input Files] below for
-more information.)
+`PhotoGEA_example_file_path` as we have done here. Instead, file paths can be
+directly written, or files can be chosen using an interactive window. See
+[Input Files] below for more information.)
 
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
@@ -354,29 +360,29 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_licor_data` function from
+response curve. To do this, we can use the `check_response_curve_data` function from
 `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_licor_data`.)
+information, see the built-in help menu entry by typing `?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_licor_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
 ```
 
-However, if `check_licor_data` detects an issue, it will print a
+However, if `check_response_curve_data` detects an issue, it will print a
 helpful message to the R terminal. For example, if we had specified the wrong
 number of points or the wrong identifier column, we would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_licor_data(licor_data, 'curve_identifier', 15)
+check_response_curve_data(licor_data, 'curve_identifier', 15)
 
-check_licor_data(licor_data, 'species', 16)
+check_response_curve_data(licor_data, 'species', 16)
 
-check_licor_data(licor_data, 'curve_identifier', 16, 'Ci')
+check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
 ## Plotting the A-Ci Curves
@@ -661,7 +667,7 @@ the curve identifier column we defined before ([Basic Checks]), fit each A-Ci
 curve using the FvCB model discussed in [Understanding C3 A-Ci Curves], and
 return the resulting parameters and fits:
 
-```{r}
+```{r fit_c3_aci}
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
@@ -701,39 +707,12 @@ xyplot(
 
 Note that in addition to the fitted values of `A`, the output also includes
 values of the potential limiting rates `Ac`, `Aj`, and `Ap`, as well as the
-estimated operating point. We can take a look at these, although they make the
-plots a bit busy. We can also choose to plot assimilation against `Cc` rather
-than `Ci`, and include the operating point as an open circle:
+estimated operating point. We can take a look at these using a built-in plotting
+function:
 
 ```{r fit_aci_limiting}
 # Plot the C3 A-Cc fits (including limiting rates)
-xyplot(
-  A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
-  data = c3_aci_results$fits$main_data,
-  type = 'b',
-  auto.key = list(space = 'right'),
-  grid = TRUE,
-  xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
-  par.settings = list(
-    superpose.line = list(col = multi_curve_line_colors()),
-    superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-  ),
-  curve_ids = c3_aci_results$fits[, 'curve_identifier'],
-  panel = function(...) {
-    panel.xyplot(...)
-    args <- list(...)
-    curve_id <- args$curve_ids[args$subscripts][1]
-    fit_param <-
-      c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
-    panel.points(
-        fit_param$operating_An_model ~ fit_param$operating_Cc,
-        type = 'p',
-        col = 'black',
-        pch = 1
-    )
-  }
-)
+plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Ci', ylim = c(-10, 80))
 ```
 
 Considering these two plots, we can see that although the model is able to
@@ -751,7 +730,7 @@ the crossover from Rubisco-limited carboxylation to RuBP-regeneration-limited
 carboxylation to a limited range of `Cc` values. Adding this restriction can
 sometimes produce more reasonable fits.
 
-```{r fit_c3_aci}
+```{r}
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
@@ -982,11 +961,11 @@ vignette.
 ### Creating convenient R objects from raw data files
 ###
 
-<<licor_file_names>>
-
 ## IMPORTANT: When loading your own files, it is not advised to use
-## `system.file` as in the above code. Instead, write out the names or use the
-## `choose_input_licor_files` function.
+## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
+## names or use the `choose_input_licor_files` function.
+
+<<licor_file_names>>
 
 <<loading_licor_data>>
 

@@ -4,21 +4,27 @@ confidence_intervals_c4_aci <- function(
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
+    sd_A = 1,
+    error_threshold_factor = 0.147,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    vpmax_norm_column_name = 'Vpmax_norm'
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -30,20 +36,26 @@ confidence_intervals_c4_aci <- function(
     error_function <- error_function_c4_aci(
         replicate_exdf,
         fit_options,
+        sd_A,
+        absorptance,
+        f_spectral,
+        rho,
+        theta,
+        x_etr,
         ao_column_name,
         a_column_name,
         gamma_star_column_name,
+        jmax_norm_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
+        qin_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
-        vpmax_norm_column_name,
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii
+        vpmax_norm_column_name
     )
 
     # Assemble lower, upper, and fit_options

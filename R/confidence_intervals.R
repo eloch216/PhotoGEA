@@ -13,51 +13,58 @@ confidence_interval_all_param <- function(
     fit_options <- luf$fit_options
     param_to_fit <- luf$param_to_fit
 
-    # Get the best-fit error value
-    best_error <- best_fit_parameters[, 'optimum_val']
-
     # Get the best-fit parameters as a numeric vector
     best_fit_vector <- sapply(names(fit_options), function(pn) {
         best_fit_parameters[, pn]
     })
     best_fit_vector <- as.numeric(best_fit_vector)
 
+    # Get the best-fit error value
+    best_error <- error_function(best_fit_vector[param_to_fit])
+
     # Find intervals for each fit parameter
     for (i in seq_along(param_to_fit)) {
-        if (param_to_fit[i]) {
-            # Find limits
-            lim <- confidence_interval_one_param(
+        # Get the parameter name
+        pn <- names(fit_options)[i]
+        pn_lower <- paste0(pn, '_lower')
+        pn_upper <- paste0(pn, '_upper')
+
+        # Find the limits
+        lim <- if (param_to_fit[i]) {
+            # This parameter was fit, so find the confidence limits
+            confidence_interval_one_param(
                 i,
                 error_function,
                 param_to_fit,
                 best_fit_vector,
-                best_error * error_threshold_factor,
+                best_error - log(error_threshold_factor),
                 lower[i],
                 upper[i]
             )
-
-            # Get the parameter name
-            pn <- names(fit_options)[i]
-            pn_lower <- paste0(pn, '_lower')
-            pn_upper <- paste0(pn, '_upper')
-
-            # Store the results
-            best_fit_parameters <- set_variable(
-                best_fit_parameters,
-                pn_lower,
-                best_fit_parameters$units[, pn],
-                category_name,
-                lim$conf_lower
-            )
-
-            best_fit_parameters <- set_variable(
-                best_fit_parameters,
-                pn_upper,
-                best_fit_parameters$units[, pn],
-                category_name,
-                lim$conf_upper
+        } else {
+            # This parameter was not fit, so just return NA for the limits
+            list(
+                conf_lower = NA,
+                conf_upper = NA
             )
         }
+
+        # Store the results
+        best_fit_parameters <- set_variable(
+            best_fit_parameters,
+            pn_lower,
+            best_fit_parameters$units[, pn],
+            category_name,
+            lim$conf_lower
+        )
+
+        best_fit_parameters <- set_variable(
+            best_fit_parameters,
+            pn_upper,
+            best_fit_parameters$units[, pn],
+            category_name,
+            lim$conf_upper
+        )
     }
 
     best_fit_parameters
@@ -82,29 +89,52 @@ confidence_interval_one_param <- function(
         error_function(inputs) - error_threshold
     }
 
-    # Find lower limit
-    conf_lower <- tryCatch(
-        {
-            stats::uniroot(
-                erf_i,
-                c(lower_lim, best_fit_inputs[index]),
-                extendInt = 'downX'
-            )[['root']]
-        },
-        error = function(e) {-Inf}
-    )
+    # Find lower limit. If the best-fit value is NA, that means the fit failed
+    # and it won't be possible to find a confidence interval. If the best-fit
+    # value is at the lower limit, uniroot will complain; in that case, we just
+    # use the lower limit.
+    conf_lower <- if (is.na(best_fit_inputs[index])) {
+        NA
+    } else if (lower_lim >= best_fit_inputs[index]) {
+        lower_lim
+    } else {
+        tryCatch(
+            {
+                stats::uniroot(
+                    erf_i,
+                    c(lower_lim, best_fit_inputs[index]),
+                    extendInt = 'downX'
+                )[['root']]
+            },
+            error = function(e) {-Inf}
+        )
+    }
 
-    # Find upper limit
-    conf_upper <- tryCatch(
-        {
-            stats::uniroot(
-                erf_i,
-                c(best_fit_inputs[index], upper_lim),
-                extendInt = 'upX'
-            )[['root']]
-        },
-        error = function(e) {Inf}
-    )
+    # Find upper limit. If the best-fit value is NA, that means the fit failed
+    # and it won't be possible to find a confidence interval. If the best-fit
+    # value is at the upper limit, uniroot will compain; in that case, we just
+    # use the upper limit.
+    conf_upper <- if (is.na(best_fit_inputs[index])) {
+        NA
+    } else if (best_fit_inputs[index] >= upper_lim) {
+        upper_lim
+    } else {
+        tryCatch(
+            {
+                stats::uniroot(
+                    erf_i,
+                    c(best_fit_inputs[index], upper_lim),
+                    extendInt = 'upX'
+                )[['root']]
+            },
+            error = function(e) {Inf}
+        )
+    }
+
+    # Adjust upper limit
+    if (!is.na(conf_upper) && conf_upper > 10 * upper_lim) {
+        conf_upper <- Inf
+    }
 
     list(
         conf_lower = conf_lower,

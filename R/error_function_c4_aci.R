@@ -1,20 +1,26 @@
 error_function_c4_aci <- function(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    vpmax_norm_column_name = 'Vpmax_norm'
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -33,20 +39,25 @@ error_function_c4_aci <- function(
     required_variables[[ao_column_name]]         <- 'dimensionless'
     required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
     required_variables[[gamma_star_column_name]] <- 'dimensionless'
+    required_variables[[jmax_norm_column_name]]  <- 'normalized to Jmax at its optimal temperature'
     required_variables[[kc_column_name]]         <- 'microbar'
     required_variables[[ko_column_name]]         <- 'mbar'
     required_variables[[kp_column_name]]         <- 'microbar'
     required_variables[[pcm_column_name]]        <- 'microbar'
+    required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
     required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
     required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
     required_variables <- require_flexible_param(
         required_variables,
-        fit_options[fit_options != 'fit']
+        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
     )
 
     check_required_variables(replicate_exdf, required_variables)
+
+    # Retrieve values of flexible parameters as necessary
+    if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
 
     # Create and return the error function
     function(guess) {
@@ -57,21 +68,30 @@ error_function_c4_aci <- function(
             {
                 calculate_c4_assimilation(
                     replicate_exdf,
-                    X[1], # Rd
-                    X[2], # Vcmax
-                    X[3], # Vpmax
-                    X[4], # Vpr
-                    POm,
-                    gbs,
-                    Rm_frac,
-                    alpha_psii,
+                    X[1], # alpha_psii
+                    X[2], # gbs
+                    X[3], # Jmax_at_opt
+                    X[4], # Rd_at_25
+                    X[5], # Rm_frac
+                    X[6], # Vcmax_at_25
+                    X[7], # Vpmax_at_25
+                    X[8], # Vpr
+                    absorptance,
+                    f_spectral,
+                    rho,
+                    theta,
+                    x_etr,
                     ao_column_name,
                     gamma_star_column_name,
+                    jmax_norm_column_name,
                     kc_column_name,
                     ko_column_name,
                     kp_column_name,
+                    oxygen_column_name,
                     pcm_column_name,
+                    qin_column_name,
                     rd_norm_column_name,
+                    total_pressure_column_name,
                     vcmax_norm_column_name,
                     vpmax_norm_column_name,
                     perform_checks = FALSE,
@@ -87,6 +107,14 @@ error_function_c4_aci <- function(
             return(ERROR_PENALTY)
         }
 
-        sum((replicate_exdf[, a_column_name] - assim)^2)
+        # return the negative of the logarithm of the likelihood
+        -sum(
+            stats::dnorm(
+                replicate_exdf[, a_column_name],
+                mean = assim,
+                sd = sd_A,
+                log = TRUE
+            )
+        )
     }
 }

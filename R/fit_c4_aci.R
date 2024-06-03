@@ -1,9 +1,9 @@
 # Specify default fit settings
-c4_aci_lower       <- list(Rd_at_25 = 0,     Vcmax_at_25 = 0,     Vpmax_at_25 = 0,     Vpr = 0)
-c4_aci_upper       <- list(Rd_at_25 = 100,   Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
-c4_aci_fit_options <- list(Rd_at_25 = 'fit', Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
+c4_aci_lower       <- list(alpha_psii = 0, gbs = 0,     Jmax_at_opt = 0,    Rd_at_25 = 0,     Rm_frac = 0,   Vcmax_at_25 = 0,     Vpmax_at_25 = 0,     Vpr = 0)
+c4_aci_upper       <- list(alpha_psii = 1, gbs = 1,     Jmax_at_opt = 1000, Rd_at_25 = 100,   Rm_frac = 1,   Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
+c4_aci_fit_options <- list(alpha_psii = 0, gbs = 0.003, Jmax_at_opt = 1000, Rd_at_25 = 'fit', Rm_frac = 0.5, Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
 
-c4_aci_param <- c('Rd_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr')
+c4_aci_param <- c('alpha_psii', 'gbs', 'Jmax_at_opt', 'Rd_at_25', 'Rm_frac', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr')
 
 # Fitting function
 fit_c4_aci <- function(
@@ -14,27 +14,38 @@ fit_c4_aci <- function(
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,   # microbar
-    gbs = 0.003,    # mol / m^2 / s / bar
-    Rm_frac = 0.5,  # dimensionless
-    alpha_psii = 0, # dimensionless
-    OPTIM_FUN = optimizer_nmkb(),
+    sd_A = 'RMSE',
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
+    OPTIM_FUN = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 1.5,
-    calculate_confidence_intervals = FALSE
+    error_threshold_factor = 0.147,
+    calculate_confidence_intervals = TRUE,
+    remove_unreliable_param = TRUE
 )
 {
     if (!is.exdf(replicate_exdf)) {
         stop('fit_c4_aci requires an exdf object')
+    }
+
+    if (sd_A != 'RMSE') {
+        stop('At this time, the only supported option for sd_A is `RMSE`')
     }
 
     # Define the total error function; units will also be checked by this
@@ -42,24 +53,30 @@ fit_c4_aci <- function(
     total_error_fcn <- error_function_c4_aci(
         replicate_exdf,
         fit_options,
+        1, # sd_A
+        absorptance,
+        f_spectral,
+        rho,
+        theta,
+        x_etr,
         ao_column_name,
         a_column_name,
         gamma_star_column_name,
+        jmax_norm_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
+        qin_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
-        vpmax_norm_column_name,
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii
+        vpmax_norm_column_name
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c3_aci
+    # most units have already been chcked by error_function_c4_aci
     required_variables <- list()
     required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
@@ -79,14 +96,37 @@ fit_c4_aci <- function(
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
 
+    # Check fitting options
+    nfit <-
+     sum(c(fit_options$Jmax_at_opt == 'fit', fit_options$Vcmax_at_25 == 'fit', fit_options$Vpr == 'fit'))
+
+    if (nfit > 1) {
+        msg <- paste0(
+            'The following C4 fit options have been selected:',
+            ' Jmax_at_opt: ', fit_options$Jmax_at_opt,
+            ', Vcmax_at_25: ', fit_options$Vcmax_at_25,
+            ', Vpr: ', fit_options$Vpr,
+            '. It is not recommended to fit more than one of Jmax_at_opt, Vcmax_at_25, and Vpr.'
+        )
+        warning(msg)
+    }
+
     # Get an initial guess for all the parameter values
     initial_guess_fun <- initial_guess_c4_aci(
-        100, # pcm_threshold_rm
-        gbs,
-        Rm_frac,
+        if (fit_options$alpha_psii == 'fit') {0.1}   else {fit_options$alpha_psii}, # alpha_psii
+        if (fit_options$gbs == 'fit')        {0.003} else {fit_options$gbs},        # gbs
+        if (fit_options$Rm_frac == 'fit')    {0.5}   else {fit_options$Rm_frac},    # gbs
+        40, # pcm_threshold_rm
+        absorptance,
+        f_spectral,
+        rho,
+        theta,
+        x_etr,
         a_column_name,
+        jmax_norm_column_name,
         kp_column_name,
         pcm_column_name,
+        qin_column_name,
         rd_norm_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name
@@ -109,21 +149,30 @@ fit_c4_aci <- function(
     # Get the corresponding values of An at the best guess
     aci <- calculate_c4_assimilation(
         replicate_exdf,
-        best_X[1], # Rd
-        best_X[2], # Vcmax
-        best_X[3], # Vpmax
-        best_X[4], # Vpr
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii,
+        best_X[1], # alpha_psii
+        best_X[2], # gbs
+        best_X[3], # Jmax_at_opt
+        best_X[4], # Rd_at_25
+        best_X[5], # Rm_frac
+        best_X[6], # Vcmax_at_25
+        best_X[7], # Vpmax_at_25
+        best_X[8], # Vpr
+        absorptance,
+        f_spectral,
+        rho,
+        theta,
+        x_etr,
         ao_column_name,
         gamma_star_column_name,
+        jmax_norm_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
+        qin_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
         perform_checks = FALSE
@@ -150,21 +199,30 @@ fit_c4_aci <- function(
     # Estimate An at the operating point
     operating_An_model <- calculate_c4_assimilation(
         operating_point_info$operating_exdf,
-        best_X[1], # Rd
-        best_X[2], # Vcmax
-        best_X[3], # Vpmax
-        best_X[4], # Vpr
-        POm,
-        gbs,
-        Rm_frac,
-        alpha_psii,
+        best_X[1], # alpha_psii
+        best_X[2], # gbs
+        best_X[3], # Jmax_at_opt
+        best_X[4], # Rd_at_25
+        best_X[5], # Rm_frac
+        best_X[6], # Vcmax_at_25
+        best_X[7], # Vpmax_at_25
+        best_X[8], # Vpr
+        absorptance,
+        f_spectral,
+        rho,
+        theta,
+        x_etr,
         ao_column_name,
         gamma_star_column_name,
+        jmax_norm_column_name,
         kc_column_name,
         ko_column_name,
         kp_column_name,
+        oxygen_column_name,
         pcm_column_name,
+        qin_column_name,
         rd_norm_column_name,
+        total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
         perform_checks = FALSE
@@ -173,22 +231,95 @@ fit_c4_aci <- function(
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, aci)
 
+    # Interpolate onto a finer Cc spacing and recalculate fitted rates
+    replicate_exdf_interpolated <- interpolate_assimilation_inputs(
+        replicate_exdf,
+        c(
+            'alpha_psii',
+            'gbs',
+            'Jmax_at_opt',
+            'Rd_at_25',
+            'Rm_frac',
+            'Vcmax_at_25',
+            'Vpmax_at_25',
+            'Vpr',
+            ao_column_name,
+            ci_column_name,
+            gamma_star_column_name,
+            jmax_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            kp_column_name,
+            oxygen_column_name,
+            pcm_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            vpmax_norm_column_name
+        ),
+        ci_column_name,
+        c_step = 1
+    )
+
+    assim_interpolated <- calculate_c4_assimilation(
+        replicate_exdf_interpolated,
+        '', # alpha_psii
+        '', # gbs
+        '', # Jmax_at_opt
+        '', # Rd_at_25
+        '', # Rm_frac
+        '', # Vcmax_at_25
+        '', # Vpmax_at_25
+        '', # Vpr
+        absorptance,
+        f_spectral,
+        rho,
+        theta,
+        x_etr,
+        ao_column_name,
+        gamma_star_column_name,
+        jmax_norm_column_name,
+        kc_column_name,
+        ko_column_name,
+        kp_column_name,
+        oxygen_column_name,
+        pcm_column_name,
+        qin_column_name,
+        rd_norm_column_name,
+        total_pressure_column_name,
+        vcmax_norm_column_name,
+        vpmax_norm_column_name,
+        perform_checks = FALSE
+    )
+
+    fits_interpolated <- cbind(
+        replicate_exdf_interpolated[, c(ci_column_name, pcm_column_name), TRUE],
+        assim_interpolated
+    )
+
     # If there was a problem, set all the fit results to NA
-    if (aci[1, 'c4_assimilation_msg'] != '') {
+    fit_failure <- aci[1, 'c4_assimilation_msg'] != ''
+
+    if (fit_failure) {
         best_X[param_to_fit] <- NA
         operating_An_model <- NA
+
         for (cn in colnames(aci)) {
             if (cn != 'c4_assimilation_msg') {
                 replicate_exdf[, cn] <- NA
             }
         }
+
+        for (cn in colnames(assim_interpolated)) {
+            if (cn != 'c4_assimilation_msg') {
+                fits_interpolated[, cn] <- NA
+            }
+        }
     }
 
-    # Add columns for the best-fit parameter values
-    replicate_exdf[, 'Rd_at_25'] <- best_X[1]
-    replicate_exdf[, 'Vcmax_at_25'] <- best_X[2]
-    replicate_exdf[, 'Vpmax_at_25'] <- best_X[3]
-    replicate_exdf[, 'Vpr'] <- best_X[4]
+    # Include the atmospheric CO2 concentration
+    replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
 
     # Add a column for the residuals
     replicate_exdf <- set_variable(
@@ -202,15 +333,21 @@ fit_c4_aci <- function(
     # Document the new columns that were added
     replicate_exdf <- document_variables(
         replicate_exdf,
-        c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)'),
-        c('fit_c4_aci', 'Rd_at_25',       'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vcmax_at_25',    'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpmax_at_25',    'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci', 'Vpr',            'micromol m^(-2) s^(-1)')
+        c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)')
     )
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach identifiers to interpolated rates, making sure to avoid duplicating
+    # any columns
+    identifiers_to_keep <-
+        colnames(replicate_identifiers)[!colnames(replicate_identifiers) %in% colnames(fits_interpolated)]
+
+    fits_interpolated <- cbind(
+        fits_interpolated,
+        replicate_identifiers[, identifiers_to_keep, TRUE]
+    )
 
     # Attach the residual stats to the identifiers
     replicate_identifiers <- cbind(
@@ -223,12 +360,18 @@ fit_c4_aci <- function(
     )
 
     # Attach the best-fit parameters to the identifiers
-    replicate_identifiers[, 'Rd_at_25']    <- best_X[1]
-    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[2]
-    replicate_identifiers[, 'Vpmax_at_25'] <- best_X[3]
-    replicate_identifiers[, 'Vpr']         <- best_X[4]
+    replicate_identifiers[, 'alpha_psii']  <- best_X[1]
+    replicate_identifiers[, 'gbs']         <- best_X[2]
+    replicate_identifiers[, 'Jmax_at_opt'] <- best_X[3]
+    replicate_identifiers[, 'Rd_at_25']    <- best_X[4]
+    replicate_identifiers[, 'Rm_frac']     <- best_X[5]
+    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[6]
+    replicate_identifiers[, 'Vpmax_at_25'] <- best_X[7]
+    replicate_identifiers[, 'Vpr']         <- best_X[8]
 
     # Attach the average leaf-temperature values of fitting parameters
+    replicate_identifiers[, 'Jmax_tl_avg']  <- mean(replicate_exdf[, 'Jmax_tl'])
+    replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
     replicate_identifiers[, 'Rd_tl_avg']    <- mean(replicate_exdf[, 'Rd_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
@@ -245,7 +388,6 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
-    replicate_identifiers[, 'optimum_val']         <- optim_result[['value']]
     replicate_identifiers[, 'c4_assimilation_msg'] <- replicate_exdf[1, 'c4_assimilation_msg']
 
     # Store the results
@@ -254,13 +396,55 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
     replicate_identifiers[, 'operating_An_model'] <- operating_An_model
 
+    # Get an updated likelihood value using the RMSE
+    replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
+        NA
+    } else {
+        error_function_c4_aci(
+            replicate_exdf,
+            fit_options,
+            replicate_identifiers[, 'RMSE'], # sd_A
+            absorptance,
+            f_spectral,
+            rho,
+            theta,
+            x_etr,
+            ao_column_name,
+            a_column_name,
+            gamma_star_column_name,
+            jmax_norm_column_name,
+            kc_column_name,
+            ko_column_name,
+            kp_column_name,
+            oxygen_column_name,
+            pcm_column_name,
+            qin_column_name,
+            rd_norm_column_name,
+            total_pressure_column_name,
+            vcmax_norm_column_name,
+            vpmax_norm_column_name
+        )(best_X[param_to_fit])
+    }
+
+    # Add the AIC
+    replicate_identifiers[, 'AIC'] <- akaike_information_criterion(
+        -1.0 * replicate_identifiers[, 'optimum_val'],
+        length(which(param_to_fit))
+    )
+
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
+        c('fit_c4_aci',               'alpha_psii',          unit_dictionary$alpha_psii),
+        c('fit_c4_aci',               'gbs',                 unit_dictionary$gbs),
+        c('fit_c4_aci',               'Jmax_at_opt',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Rd_at_25',            'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Rm_frac',             unit_dictionary$Rm_frac),
         c('fit_c4_aci',               'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpr',                 'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Jmax_tl_avg',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Rd_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpmax_tl_avg',        'micromol m^(-2) s^(-1)'),
@@ -272,6 +456,7 @@ fit_c4_aci <- function(
         c('fit_c4_aci',               'convergence_msg',     ''),
         c('fit_c4_aci',               'feval',               ''),
         c('fit_c4_aci',               'optimum_val',         ''),
+        c('fit_c4_aci',               'AIC',                 ''),
         c('fit_c4_aci',               'c4_assimilation_msg', '')
     )
 
@@ -283,27 +468,35 @@ fit_c4_aci <- function(
             lower,
             upper,
             fit_options,
+            if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             error_threshold_factor,
+            absorptance,
+            f_spectral,
+            rho,
+            theta,
+            x_etr,
             ao_column_name,
             a_column_name,
             gamma_star_column_name,
+            jmax_norm_column_name,
             kc_column_name,
             ko_column_name,
             kp_column_name,
+            oxygen_column_name,
             pcm_column_name,
+            qin_column_name,
             rd_norm_column_name,
+            total_pressure_column_name,
             vcmax_norm_column_name,
-            vpmax_norm_column_name,
-            POm,
-            gbs,
-            Rm_frac,
-            alpha_psii
+            vpmax_norm_column_name
         )
     }
 
-    # Return the results
-    return(list(
-        parameters = replicate_identifiers,
-        fits = replicate_exdf
-    ))
+    # Return the results, including indicators of unreliable parameter estimates
+    identify_c4_unreliable_points(
+        replicate_identifiers,
+        replicate_exdf,
+        fits_interpolated,
+        remove_unreliable_param
+    )
 }

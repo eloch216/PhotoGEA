@@ -63,7 +63,7 @@ PERFORM_CALCULATIONS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 
 # Decide whether to calculate stats
-CALCULATE_STATS <- TRUE
+CALCULATE_STATS <- FALSE
 
 # Indicate whether a `plot` column is present
 HAS_PLOT_INFO <- TRUE
@@ -85,8 +85,8 @@ if (PERFORM_CALCULATIONS) {
 #
 # These numbers have been chosen for a sequence with 12 measurements. Here we
 # want to keep all of them.
-NUM_OBS_IN_SEQ <- 12
-MEASUREMENT_NUMBERS_TO_REMOVE <- c()
+NUM_OBS_IN_SEQ <- 11
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,2,3,4,5,6)
 POINT_FOR_BOX_PLOTS <- 9
 
 ###                                                                        ###
@@ -147,11 +147,15 @@ if (PERFORM_CALCULATIONS) {
     # Factorize ID columns
     combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
     combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
+    
+    combined_info <- calculate_total_pressure(combined_info)
+    
+    combined_info <- calculate_gas_properties(combined_info)
 
     combined_info <- calculate_wue(combined_info)
 
     # Check the data for any issues before proceeding with additional analysis
-    check_licor_data(
+    check_response_curve_data(
         combined_info,
         c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ
@@ -213,7 +217,7 @@ x_q <- all_samples[[QIN_COLUMN_NAME]]
 x_s <- all_samples[['seq_num']]
 x_e <- all_samples[[EVENT_COLUMN_NAME]]
 
-q_lim <- c(-100, 2100)
+q_lim <- c(-100, 500)
 a_lim <- c(-10, 50)
 etr_lim <- c(0, 325)
 
@@ -288,7 +292,7 @@ multi_gsci_curves <- xyplot(
     xlab = "Incident PPFD (micromol / m^2 / s)",
     ylab = "Stomatal conductance to water (mol / m^2 / s)",
     ylim = c(0, 0.8),
-    xlim = c(-100, 2100),
+    xlim = c(-100, 500),
     par.settings = list(
         superpose.line = list(col = multi_curve_colors()),
         superpose.symbol = list(col = multi_curve_colors())

@@ -53,7 +53,7 @@
 # several light response curves that can be identified by the 'species' and
 # 'plot' columns.
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Exclude points from each response curve in the data where the leaf temperature

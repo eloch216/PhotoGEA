@@ -5,16 +5,16 @@
 \title{Generate an error function for C3 A-Ci curve fitting}
 
 \description{
-  Creates a function that returns an error value (the sum of squared residuals)
-  representing the amount of agreement between modeled and measured \code{An}
-  values.
+  Creates a function that returns an error value (the negative of the natural
+  logarithm of the likelihood) representing the amount of agreement between
+  modeled and measured \code{An} values.
 }
 
 \usage{
   error_function_c3_aci(
     replicate_exdf,
     fit_options = list(),
-    POc = 210000,
+    sd_A = 1,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -24,6 +24,7 @@
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -51,12 +52,13 @@
     \code{replicate_exdf}.
   }
 
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
+  \item{sd_A}{
+    The standard deviation of the measured values of the net CO2 assimilation
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
+    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
+    called \code{sd_A} with appropriate units. A numeric value supplied here
+    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
+    exists.
   }
 
   \item{atp_use}{
@@ -106,6 +108,12 @@
     \code{mmol mol^(-1)}.
   }
 
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
+  }
+
   \item{rd_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
@@ -136,12 +144,12 @@
 }
 
 \details{
-  When fitting A-Ci curves, it is necessary to define a function that calculates
-  the sum of squared residuals for a given set of \code{alpha_g},
-  \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
-  \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
-  This function will be passed to an optimization algorithm which will determine
-  the values that produce the smallest error.
+  When fitting A-Ci curves using a maximum likelihood approach, it is necessary
+  to define a function that calculates the likelihood of a given set of
+  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
+  and \code{Vcmax_at_25} values by comparing a model prediction to a measured
+  curve. This function will be passed to an optimization algorithm which will
+  determine the values that produce the largest likelihood.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
@@ -149,6 +157,12 @@
   parameters are \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
   \code{Vcmax_at_25}. This behavior can be changed via the \code{fit_options}
   argument.
+
+  For practical reasons, the function actually returns values of \code{-ln(L)},
+  where \code{L} is the likelihood. The logarithm of \code{L} is simpler to
+  calculate than \code{L} itself, and the minus sign converts the problem from
+  a maximization to a minimization, which is important because most optimizers
+  are designed to minimize a value.
 
   Sometimes an optimizer will choose biologically unreasonable parameter values
   that nevertheless produce good fits to the supplied assimilation values. A
@@ -180,7 +194,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c3_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c3_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -215,20 +229,19 @@ error_fcn <- error_function_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, Tp = 15, Vcmax_at_25 = 100
-error_fcn(c(200, 1, 15, 100))
+# Evaluate the error for J_at_25 = 236, Rd_at_25 = 4e-8, Tp = 22.7, Vcmax_at_25 = 147
+error_fcn(c(236, 4e-8, 22.7, 147))
 
-# Make a plot of error vs. Tp when the other parameters are fixed to the values
-# above. As Tp increases, it eventually stops limiting the assimilation rate
-# and its value stops influencing the error.
-tpu_error_fcn <- function(Tp) {error_fcn(c(200, 1, Tp, 100))}
-tpu_seq <- seq(15, 25)
+# Make a plot of likelihood vs. Vcmax when other parameters are fixed to the
+# values above.
+vcmax_error_fcn <- function(Vcmax) {error_fcn(c(236, 4e-8, 22.7, Vcmax))}
+vcmax_seq <- seq(135, 152, length.out = 41)
 
 lattice::xyplot(
-  sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,
+  exp(-sapply(vcmax_seq, vcmax_error_fcn)) ~ vcmax_seq,
   type = 'b',
-  xlab = 'Tp (micromol / m^2 / s)',
-  ylab = 'Sum of squared residuals'
+  xlab = 'Vcmax_at_25 (micromol / m^2 / s)',
+  ylab = 'Negative log likelihood (dimensionless)'
 )
 }
 

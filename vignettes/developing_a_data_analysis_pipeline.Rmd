@@ -166,14 +166,13 @@ Typically, best results are achieved using a mix of multiple forms of
 validation. The `PhotoGEA` package includes several functions to help with data
 validation:
 
-- `check_licor_data`: If a data set represents multiple "response curves"
-  measured by a Licor, this function can be used to make sure that each response
+- `check_response_curve_data`: If a data set represents multiple
+  "response curves," this function can be used to make sure that each response
   curve can be properly located and that all curves follow the same sequence of
   "driving" variable values.
 - `organize_response_curve_data`: Again, if a data set represents multiple
-  "response curves" measured by a Licor, this function can be used to remove
-  certain points from each curve and to reorder the data in a convenient way for
-  plotting.
+  "response curves," this function can be used to remove certain points from
+  each curve and to reorder the data in a convenient way for plotting.
 - `identify_tdl_cycles`: If a data set represents measurements from a tunable
   diode laser, this function can be used to identify complete cycles within the
   data as the gas handling system periodically measures gas from multiple lines.
@@ -251,9 +250,6 @@ data set:
   measurement chamber.
 - `estimate_operating_point`: Estimates internal CO~2~ concentrations and
   assimilation rates under atmospheric CO~2~ concentrations.
-
-(This list is not exhaustive; instead, it only includes functions for which
-documentation has been written.)
 
 These functions generally treat each row in an `exdf` object as an independent
 observation, and so they can be applied to objects that include data from many

@@ -74,7 +74,7 @@ GET_INFO_FROM_FILENAME <- FALSE
 # points along the time sequence of measurements.
 #
 #
-NUM_OBS_IN_SEQ <- 420
+NUM_OBS_IN_SEQ <- 390
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
@@ -258,7 +258,7 @@ if (PERFORM_CALCULATIONS) {
     }
 
     # Check the data for any issues before proceeding with additional analysis
-    check_licor_data(
+    check_response_curve_data(
         combined_info,
         c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
         NUM_OBS_IN_SEQ

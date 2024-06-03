@@ -181,14 +181,14 @@ identical(exdf_1, exdf_2)
 
 Sometimes this method is more convenient than the previous one.
 
-## Reading From a File
+## Reading From an Instrument Log File
 
 As an example of the third method, we will create an extended data frame from a
 Microsoft Excel file containing Licor measurements.
 
 ```{r}
 exdf_3 <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 ```
 
@@ -198,6 +198,29 @@ we can confirm that it is indeed a properly-defined `exdf` object:
 ```{r}
 is.exdf(exdf_3, TRUE)
 ```
+
+# Writing to and Reading From CSV Files
+
+Any `exdf` object can be saved to a CSV file using the `write.csv.exdf`
+function. For example, the Licor log file discussed above can be saved to a CSV
+file as follows:
+
+```{r, eval = FALSE}
+write.csv.exdf(exdf_3, file = 'ball_berry_1.csv')
+```
+
+CSV files created using `write.csv.exdf` can be read later using
+`read.csv.exdf`, which will create an `exdf` object from the information in the
+file. For example, the CSV file created with the last command can be read as
+follows:
+
+```{r, eval = FALSE}
+exdf_4 <- read.csv.exdf('ball_berry_1.csv')
+```
+
+Writing an `exdf` to a CSV file and then reading it again preserves all of its
+information, including categories, units, and column names. Because of this, the
+`exdf_4` should be identical to `exdf_3`.
 
 # Extracting Information from Extended Data Frames
 
@@ -420,8 +443,8 @@ The following is an example of code that accomplishes these steps:
 ```{r}
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE),
-  system.file('extdata', 'ball_berry_2.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx'),
+  PhotoGEA_example_file_path('ball_berry_2.xlsx')
 )
 
 # Load each file, storing the result in a list

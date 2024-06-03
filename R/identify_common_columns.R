@@ -17,8 +17,9 @@ identify_common_columns.data.frame <- function(...) {
 
     # Create a list where each entry is a data frame of all the column names
     # from one element of `df_list`
-    all_column_list <-
-        lapply(df_list, function(x) {data.frame(n = colnames(x))})
+    all_column_list <- lapply(df_list, function(x) {
+        data.frame(n = colnames(x), stringsAsFactors = FALSE)
+    })
 
     # Combine the column names into a data frame with one column (`n`)
     all_column_df <- do.call(rbind, all_column_list)
@@ -51,8 +52,9 @@ identify_common_columns.exdf  <- function(...) {
 
     # Create a list where each entry is a data frame of all the "fancy" column
     # names from one element of `exdf_list`
-    all_column_list <-
-        lapply(exdf_list, function(x) {data.frame(n = fancy_column_names(x))})
+    all_column_list <- lapply(exdf_list, function(x) {
+        data.frame(n = fancy_column_names(x), stringsAsFactors = FALSE)
+    })
 
     # Combine the column names into a data frame with one column (`n`)
     all_column_df <- do.call(rbind, all_column_list)

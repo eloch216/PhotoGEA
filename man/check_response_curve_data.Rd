@@ -1,6 +1,6 @@
-\name{check_licor_data}
+\name{check_response_curve_data}
 
-\alias{check_licor_data}
+\alias{check_response_curve_data}
 
 \title{Check response curve data for common issues}
 
@@ -10,7 +10,7 @@
 }
 
 \usage{
-  check_licor_data(
+  check_response_curve_data(
     licor_exdf,
     identifier_columns,
     expected_npts = 0,
@@ -94,20 +94,20 @@
 # identified by the values of its 'species' and 'plot' columns. Since these are
 # light-response curves, each one follows a pre-set sequence of `Qin` values.
 licor_file <- read_gasex_file(
-  system.file('extdata', 'ball_berry_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
 # Make sure there are no infinite values and that all curves have the same
 # number of points
-check_licor_data(licor_file, c('species', 'plot'))
+check_response_curve_data(licor_file, c('species', 'plot'))
 
 # Make sure there are no inifinite values and that all curves have 7 points
-check_licor_data(licor_file, c('species', 'plot'), 7)
+check_response_curve_data(licor_file, c('species', 'plot'), 7)
 
 # Make sure there are no infinite values, that all curves have 7 points, and
 # that the values of the `Qin` column follow the same sequence in all curves
 # (to within 1.0 micromol / m^2 / s)
-check_licor_data(licor_file, c('species', 'plot'), 7, 'Qin', 1.0)
+check_response_curve_data(licor_file, c('species', 'plot'), 7, 'Qin', 1.0)
 }
 
 \concept{exdf}

@@ -11,15 +11,17 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
 
     # If `units` or `categories` is NULL, replace it with a default data frame
     # that has the same names as `main_data` and one row where all entries are
-    # NA.
+    # NA. Make sure that all columns are treated as strings.
     if (is.null(units)) {
         units <- main_data[1, ]
+        units[] <- lapply(units, as.character)
         units[1, ] <- NA
         row.names(units) <- NULL
     }
 
     if (is.null(categories)) {
         categories <- main_data[1, ]
+        categories[] <- lapply(categories, as.character)
         categories[1, ] <- NA
         row.names(categories) <- NULL
     }
@@ -77,6 +79,14 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
             )
         }
     }
+
+    # Make sure the units and categories are treated as strings, including any
+    # missing values, which should be replaced by a string "NA"
+    units[1, ] <- as.character(units[1, ])
+    units[1, is.na(units[1, ])] <- "NA"
+
+    categories[1, ] <- as.character(categories[1, ])
+    categories[1, is.na(categories[1, ])] <- "NA"
 
     # Make the exdf object
     new_exdf <- list(
@@ -168,6 +178,77 @@ as.data.frame.exdf <- function(x, ...) {
 
     # Store the categories and units as the first rows of the data.frame
     return(rbind(x$categories, x$units, main_data))
+}
+
+# Write the contents of an exdf object to a CSV file
+write.csv.exdf <- function(x, file, ...) {
+    if (!is.exdf(x)) {
+        stop('write.csv.exdf requires an exdf object')
+    }
+
+    arg_list <- list(...)
+
+    forbidden_arg <- c('sep', 'dec', 'qmethod', 'row.names', 'col.names')
+
+    if (any(forbidden_arg %in% names(arg_list))) {
+        stop(
+            'The following arguments cannot be specified when calling ',
+            'write.csv.exdf: ', paste(forbidden_arg, collapse = ', ')
+        )
+    }
+
+    utils::write.table(
+        x,
+        file = file,
+        sep = ',',
+        dec = '.',
+        qmethod = 'double',
+        row.names = FALSE,
+        col.names = colnames(x)
+    )
+
+}
+
+# Read a CSV file that was created by calling `write.csv.exdf`. Notes about
+# reading the column names:
+# 1. We cannot use `read.csv` with `header = TRUE` to read the column names,
+#    because it will modify some of the names without any way to control this
+#    behavior.
+# 2. We cannot use `read.csv` with `nrows = 1, header = FALSE` to simply read
+#    the first line, since it will convert any column called `F` (which occurs
+#    in Licor files with chlorophyll fluorescence) to a logical `FALSE`.
+# 3. We cannot use `read.csv` with `nrows = 1, header = FALSE, tryLogical =
+#    FALSE` because the `tryLogical` argument is only available for R versions
+#    4.3.0 and above, and we do not want to exclude older R versions.
+read.csv.exdf <- function(file, ...) {
+    arg_list <- list(...)
+
+    forbidden_arg <- c('header', 'skip')
+
+    if (any(forbidden_arg %in% names(arg_list))) {
+        stop(
+            'The following arguments cannot be specified when calling ',
+            '`read.csv.exdf`: ', paste(forbidden_arg, collapse = ', ')
+        )
+    }
+
+    header <- readLines(file, n = 3)
+
+    header <- lapply(header, function(x) {
+        scan(textConnection(x), what = 'character', sep = ',', quote = '\"', quiet = TRUE)
+    })
+
+    cnames     <- header[[1]]
+    categories <- data.frame(t(header[[2]]), stringsAsFactors = FALSE)
+    units      <- data.frame(t(header[[3]]), stringsAsFactors = FALSE)
+
+    dataf <- utils::read.csv(file, header = FALSE, skip = 3, ...)
+
+    colnames(dataf)      <- cnames
+    colnames(units)      <- cnames
+    colnames(categories) <- cnames
+
+    exdf(dataf, units, categories, file_name = file)
 }
 
 # Define a helper function for making nice column names (used to improve `print`
@@ -279,7 +360,7 @@ cbind.exdf <- function(..., deparse.level = 1) {
 
     # Make sure there is one or more exdf object
     if (length(exdf_list) < 1) {
-        stop("rbind.exdf requires one or more exdf objects")
+        stop("cbind.exdf requires one or more exdf objects")
     }
 
     # Make sure all the objects are indeed exdf objects
@@ -307,8 +388,7 @@ rbind.exdf <- function(
     ...,
     deparse.level = 1,
     make.row.names = TRUE,
-    stringsAsFactors = FALSE,
-    factor.exclude = TRUE
+    stringsAsFactors = FALSE
 )
 {
     exdf_list <- list(...)
@@ -374,8 +454,7 @@ rbind.exdf <- function(
             list(
                 deparse.level = deparse.level,
                 make.row.names = make.row.names,
-                stringsAsFactors = stringsAsFactors,
-                factor.exclude = factor.exclude
+                stringsAsFactors = stringsAsFactors
             )
         )
     )

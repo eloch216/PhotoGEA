@@ -5,29 +5,35 @@
 \title{Generate an error function for C4 A-Ci curve fitting}
 
 \description{
-  Creates a function that returns an error value (the sum of squared residuals)
-  representing the amount of agreement between modeled and measured \code{An}
-  values.
+  Creates a function that returns an error value (the negative of the natural
+  logarithm of the likelihood) representing the amount of agreement between
+  modeled and measured \code{An} values.
 }
 
 \usage{
   error_function_c4_aci(
     replicate_exdf,
     fit_options = list(),
+    sd_A = 1,
+    absorptance = 0.85,
+    f_spectral = 0.15,
+    rho = 0.5,
+    theta = 0.7,
+    x_etr = 0.4,
     ao_column_name = 'ao',
     a_column_name = 'A',
     gamma_star_column_name = 'gamma_star',
+    jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
+    oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
+    qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm',
-    POm = 210000,
-    gbs = 0.003,
-    Rm_frac = 0.5,
-    alpha_psii = 0
+    vpmax_norm_column_name = 'Vpmax_norm'
   )
 }
 
@@ -50,6 +56,40 @@
     values in the \code{Vpmax_at_25} column of \code{replicate_exdf}.
   }
 
+  \item{sd_A}{
+    The standard deviation of the measured values of the net CO2 assimilation
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
+    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
+    called \code{sd_A} with appropriate units. A numeric value supplied here
+    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
+    exists.
+  }
+
+  \item{absorptance}{
+    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
+    (2021).
+  }
+
+  \item{f_spectral}{
+    The spectral quality adjustment factor (dimensionless). See Equation 35
+    from S. von Caemmerer (2021).
+  }
+
+  \item{rho}{
+    The fraction of light absorbed by photosystem II rather than photosystem I
+    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
+  }
+
+  \item{theta}{
+    An empirical curvature factor (dimensionless). See Equation 34 from S. von
+    Caemmerer (2021).
+  }
+
+  \item{x_etr}{
+    The fraction of whole-chain electron transport occurring in the mesophyll
+    (dimensionless). See Equation 29 from S. von Caemmerer (2021).
+  }
+
   \item{ao_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     dimensionless ratio of solubility and diffusivity of O2 to CO2.
@@ -63,6 +103,12 @@
   \item{gamma_star_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     dimensionless \code{gamma_star} values.
+  }
+
+  \item{jmax_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Jmax} values (with units of
+    \code{normalized to Jmax at its optimal temperature}).
   }
 
   \item{kc_column_name}{
@@ -81,14 +127,31 @@
     \code{microbar}.
   }
 
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
+  }
+
   \item{pcm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the partial
     pressure of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
+  \item{qin_column_name}{
+    The name of the column in \code{exdf_obj} that contains values of the
+    incident photosynthetically active flux density in
+    \code{micromol m^(-2) s^(-1)}.
+  }
+
   \item{rd_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{exdf_obj} that contains the total pressure
+    in \code{bar}.
   }
 
   \item{vcmax_norm_column_name}{
@@ -102,42 +165,27 @@
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
   }
-
-  \item{POm}{
-    The partial pressure of O2 in the mesophyll, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
-  }
-
-  \item{gbs}{
-    The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
-  }
-
-  \item{Rm_frac}{
-    The fraction of the total mitochondrial respiration that occurs in the
-    mesophyll.
-  }
-
-  \item{alpha_psii}{
-    The fraction of photosystem II activity in the bundle sheath.
-  }
 }
 
 \details{
   When fitting A-Ci curves, it is necessary to define a function that calculates
-  the sum of squared residuals for a given set of \code{Rd_at_25},
-  \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} values by comparing a
-  model prediction to a measured curve. This function will be passed to an
-  optimization algorithm which will determine the values that produce the
-  smallest error.
+  the likelihood of a given set of \code{alpha_psii}, \code{gbs},
+  \code{Jmax_at_opt}, \code{Rd_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
+  \code{Vpmax_at_25}, and \code{Vpr} values by comparing a model prediction to a
+  measured curve. This function will be passed to an optimization algorithm
+  which will determine the values that produce the smallest error.
 
   The \code{error_function_c4_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
   a subset of the available fitting parameters; by default, the fitting
   parameters are \code{Rd_at_25}, \code{Vcmax_at_25}, and \code{Vpmax_at_25}.
   This behavior can be changed via the \code{fit_options} argument.
+
+  For practical reasons, the function actually returns values of \code{-ln(L)},
+  where \code{L} is the likelihood. The logarithm of \code{L} is simpler to
+  calculate than \code{L} itself, and the minus sign converts the problem from
+  a maximization to a minimization, which is important because most optimizers
+  are designed to minimize a value.
 
   A penalty is added to the error value for any parameter combination where
   \code{An} is not a number, or where \code{\link{calculate_c4_assimilation}}
@@ -156,7 +204,7 @@
 \examples{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
-  system.file('extdata', 'c4_aci_1.xlsx', package = 'PhotoGEA', mustWork = TRUE)
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
 )
 
 # Define a new column that uniquely identifies each curve
@@ -173,6 +221,8 @@ licor_file <- organize_response_curve_data(
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
+
+licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
@@ -197,7 +247,7 @@ lattice::xyplot(
   sapply(vcmax_seq, vcmax_error_fcn) ~ vcmax_seq,
   type = 'b',
   xlab = 'Vcmax at 25 degrees C (micromol / m^2 / s)',
-  ylab = 'Sum of squared residuals'
+  ylab = 'Negative log likelihood (dimensionless)'
 )
 }
 

@@ -16,12 +16,13 @@
   calculate_c3_assimilation(
     exdf_obj,
     alpha_g,
+    alpha_old,
+    alpha_s,
     Gamma_star,
     J_at_25,
     Rd_at_25,
     Tp,
     Vcmax_at_25,
-    POc = 210000,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -30,6 +31,7 @@
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -42,12 +44,32 @@
   \item{exdf_obj}{An \code{exdf} object.}
 
   \item{alpha_g}{
-    A dimensionless parameter greater than or equal to 0 and less than or equal
-    to 1 that represents the fraction of glycolate carbon not returned to the
-    chloroplast. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not
-    a number, then there must be a column in \code{exdf_obj} called \code{alpha_g}
+    A dimensionless parameter where \code{0 <= alpha_g <= 1}, representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    glycine. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not a
+    number, then there must be a column in \code{exdf_obj} called \code{alpha_g}
     with appropriate units. A numeric value supplied here will overwrite the
     values in the \code{alpha_g} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{alpha_old}{
+    A dimensionless parameter where \code{0 <= alpha_old <= 1}, representing the
+    fraction of remaining glycolate carbon not returned to the chloroplast
+    after accounting for carbon released as CO2. \code{alpha_old} is often
+    assumed to be 0. If \code{alpha_old} is not a number, then there must be a
+    column in \code{exdf_obj} called \code{alpha_old} with appropriate units.
+    A numeric value supplied here will overwrite the values in the
+    \code{alpha_old} column of \code{exdf_obj} if it exists.
+  }
+
+  \item{alpha_s}{
+    A dimensionless parameter where \code{0 <= alpha_s <= 0.75 * (1 - alpha_g)}
+    representing the proportion of glycolate carbon taken out of the
+    photorespiratory pathway as serine. \code{alpha_s} is often assumed to be 0.
+    If \code{alpha_s} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{alpha_s} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{alpha_s} column
+    of \code{exdf_obj} if it exists.
   }
 
   \item{Gamma_star}{
@@ -92,14 +114,6 @@
     values in the \code{Vcmax_at_25} column of \code{exdf_obj} if it exists.
   }
 
-  \item{POc}{
-    The partial pressure of O2 in the chloroplast, expressed in \code{microbar}.
-    This is often assumed to be the ambient value. For air measurements, this
-    would be 21 percent O2, which is about 210000 microbar at standard
-    atmospheric pressure. For low oxygen measurements, this would be 2 percent
-    O2, which is about 20000 microbar.
-  }
-
   \item{atp_use}{
     The number of ATP molecules used per C3 cycle.
   }
@@ -142,6 +156,12 @@
     \code{mmol mol^(-1)}.
   }
 
+  \item{oxygen_column_name}{
+    The name of the column in \code{exdf_obj} that contains the concentration
+    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
+    the units must be \code{percent}.
+  }
+
   \item{rd_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
@@ -176,16 +196,26 @@
 }
 
 \details{
-  This function generally follows the Farquhar-von-Caemmerer-Berry model as
-  described in Lochocki and McGrath (in preparation). In this formulation, the
-  steady-state net CO2 assimilation rate \code{An} is calculated according to
+  \strong{The Busch et al. (2018) model:}
 
-  \code{An = (1 - Gamma_star / PCc) * Vc - Rd},
+  This function generally follows the Farquhar-von-Caemmerer-Berry model as
+  described in Busch et al. (2018) with a few modifications described below. In
+  this formulation, the steady-state net CO2 assimilation rate \code{An} is
+  calculated according to
+
+  \code{An = (1 - Gamma_star_ag / PCc) * Vc - Rd},
 
   where \code{Gamma_star} is the CO2 compensation point in the absence of day
-  respiration, \code{PCc} is the partial pressure of CO2 in the chloroplast,
-  \code{Vc} is the RuBP carboxylation rate, and \code{Rd} is the rate of day
-  respiration.
+  respiration, \code{Gamma_star_ag} is the effective value of \code{Gamma_star}
+  accounting for glycolate carbon remaining in the cytosol, \code{PCc} is the
+  partial pressure of CO2 in the chloroplast, \code{Vc} is the RuBP
+  carboxylation rate, and \code{Rd} is the rate of day respiration.
+  \code{Gamma_star_ag} is given by
+
+  \code{Gamma_star_ag = (1 - alpha_g) * Gamma_star},
+
+  where \code{alpha_g} is the fraction of glycolate carbon leaving the
+  photorespiratory pathway as glycine.
 
   The model considers three potential values of \code{Vc} that correspond to
   limitations set by three different processes: Rubisco activity, RuBP
@@ -201,25 +231,22 @@
 
   The RuBP-regeneration-limited carboxylation rate \code{Wj} is given by
 
-  \code{Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)},
+  \code{Wj = PCc * J / (4 * PCc + Gamma_star_ag * (8 + 16 * alpha_g + 8 * alpha_s))},
 
-  where \code{J} is the RuBP regeneration rate. Here we have allowed
-  \code{atp_use} and \code{nadph_use} to be variables rather than taking fixed
-  values (as they do in many sources). This is necessary because not all
-  descriptions of the FvCB model use the same values.
+  where \code{J} is the RuBP regeneration rate and \code{alpha_s} is the
+  fraction of glycolate carbon leaving the photorespiratory pathway as serine.
 
   The TPU-limited carboxylation rate is given by
 
-  \code{Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_g))},
+  \code{Wp = PCc * 3 * Tp / (PCc - Gamma_star_ag * (1 + 3 * alpha_g + 4 * alpha_s))},
 
-  where \code{Tp} is the maximum rate of triose phosphate utilization and
-  \code{0 <= alpha_g <= 1} is the fraction of glycolate carbon not returned to the
-  chloroplast. This equation only applies when
-  \code{PCc > Gamma_star * (1 + 3 * alpha_g)}; for smaller values of \code{PCc},
-  TPU cannot limit the RuBP carboxylation rate and \code{Wp = Inf}.
+  where \code{Tp} is the maximum rate of triose phosphate utilization. Note that
+  this equation only applies when \code{PCc > Gamma_star_ag * (1 + 3 * alpha_g +
+  4 * alpha_s)}; for smaller values of \code{PCc}, TPU cannot limit the RuBP
+  carboxylation rate and \code{Wp = Inf}. (Lochocki & McGrath, submitted).
 
-  The actual carboxylation rate is often chosen to be the smallest of the three
-  potential rates:
+  The actual carboxylation rate is typically chosen to be the smallest of the
+  three potential rates:
 
   \code{Vc = min{Wc, Wj, Wp}}.
 
@@ -258,14 +285,62 @@
   is also possible to calculate the net CO2 assimilation rates determined by
   Rubisco activity, RuBP regeneration, and Tp as follows:
 
-  \code{Ac = (1 - Gamma_star / PCc) * Wc - Rd}
+  \code{Ac = (1 - Gamma_star_ag / PCc) * Wc - Rd}
 
-  \code{Aj = (1 - Gamma_star / PCc) * Wj - Rd}
+  \code{Aj = (1 - Gamma_star_ag / PCc) * Wj - Rd}
 
-  \code{Ap = (1 - Gamma_star / PCc) * Wp - Rd}
+  \code{Ap = (1 - Gamma_star_ag / PCc) * Wp - Rd}
 
-  References:
+  \strong{The Busch model with nitrogen restrictions}:
+
+  Note that the implementation as described above does not currently facilitate
+  the inclusion of nitrogen limitations (Equations 15-21 in Busch et al.
+  (2018)).
+
+  \strong{The "old" model:}
+
+  In an older version of the model, \code{alpha_g} and \code{alpha_s} are
+  replaced with a single parameter \code{alpha_old}. Most publications refer to
+  this simply as \code{alpha}, but here we follow the notation of Busch et al.
+  (2018) for clarity. In this version, there is no disctinction between
+  \code{Gamma_star_ag} and \code{Gamma_star}. Other differences are as follows.
+
+  he RuBP-regeneration-limited carboxylation rate \code{Wj} is given by
+
+  \code{Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)},
+
+  Here we have allowed \code{atp_use} and \code{nadph_use} to be variables
+  rather than taking fixed values (as they do in many sources). This is
+  necessary because not all descriptions of the FvCB model use the same values,
+  where the different values are due to different assumptions about the energy
+  requirements of RuBP regeneration.
+
+  The TPU-limited carboxylation rate is given by
+
+  \code{Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_old))},
+
+  Note that this equation only applies when \code{PCc > Gamma_star * (1 +
+  3 * alpha_old)}; for smaller values of \code{PCc}, TPU cannot limit the RuBP
+  carboxylation rate and \code{Wp = Inf}. (Lochocki & McGrath, submitted).
+
+  \strong{Using either version of the model:}
+
+  When using \code{calculate_c3_assimilation}, it is possible to use either
+  version of the model. Setting \code{alpha_g} and \code{alpha_s} to zero is
+  equivalent to using the older version of the model, while setting
+  \code{alpha_old = 0} is equivalent to using the newer version of the model.
+  If all \code{alpha} parameters are zero, there is effectively no difference
+  between the two versions of the model. Attempting to set a nonzero
+  \code{alpha_old} if either \code{alpha_g} or \code{alpha_s} is nonzero is
+  forbidden since it would represent a mix between the two models; if such
+  values are passed as inputs, then an error will be thrown.
+
+  \strong{References:}
+
   \itemize{
+    \item Busch, Sage, & Farquhar, G. D. "Plants increase CO2 uptake by
+          assimilating nitrogen via the photorespiratory pathway." Nature Plants
+          4, 46–54 (2018) [\doi{10.1038/s41477-017-0065-x}].
     \item von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
           Publishing, 2000) [\doi{10.1071/9780643103405}].
     \item Collatz, G. J., Ball, J. T., Grivet, C. & Berry, J. A. "Physiological
@@ -277,6 +352,9 @@
           relationship between the Rubisco reaction mechanism and models of
           photosynthesis." Plant, Cell & Environment 13, 219–225 (1990)
           [\doi{10.1111/j.1365-3040.1990.tb01306.x}].
+    \item Lochocki & McGrath "Widely Used Variants of the
+          Farquhar-von-Caemmerer-Berry Model Can Cause Errors in Parameter
+          Estimates and Simulations." submitted.
   }
 }
 
@@ -303,19 +381,21 @@
 inputs <- exdf(data.frame(
   Cc = seq(1, 601, by = 6),
   Tleaf = 30,
-  total_pressure = 1
+  total_pressure = 1,
+  oxygen = 21
 ))
 
 inputs <- document_variables(
   inputs,
   c('', 'Cc',             'micromol mol^(-1)'),
   c('', 'Tleaf',          'degrees C'),
-  c('', 'total_pressure', 'bar')
+  c('', 'total_pressure', 'bar'),
+  c('', 'oxygen',         'percent')
 )
 
 inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 0, '', 150, 1, 12, 120)
+assim <- calculate_c3_assimilation(inputs, 0, 0, 0, '', 150, 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ Cc,

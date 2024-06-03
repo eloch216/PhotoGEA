@@ -14,7 +14,8 @@ residual_stats <- function(fit_residuals, units, nparam) {
         RSS = RSS,
         MSE = MSE,
         RMSE = RMSE,
-        RSE = RSE
+        RSE = RSE,
+        stringsAsFactors = FALSE
     ))
 
     document_variables(

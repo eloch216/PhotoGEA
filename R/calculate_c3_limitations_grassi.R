@@ -5,7 +5,6 @@
 
 calculate_c3_limitations_grassi <- function(
     exdf_obj,
-    POc = 210000, # microbar (typically this value is known from the experimental setup)
     atp_use = 4.0,
     nadph_use = 8.0,
     cc_column_name = 'Cc',
@@ -14,6 +13,7 @@ calculate_c3_limitations_grassi <- function(
     gsc_column_name = 'gsc',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
+    oxygen_column_name = 'oxygen',
     total_pressure_column_name = 'total_pressure',
     vcmax_column_name = 'Vcmax_tl',
     j_column_name = NULL
@@ -35,6 +35,7 @@ calculate_c3_limitations_grassi <- function(
     required_variables[[gsc_column_name]]            <- 'mol m^(-2) s^(-1)'
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
+    required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_column_name]]          <- 'micromol m^(-2) s^(-1)'
 
@@ -52,7 +53,7 @@ calculate_c3_limitations_grassi <- function(
     gsc        <- exdf_obj[, gsc_column_name]                                          # mol / m^2 / s
     Kc         <- exdf_obj[, kc_column_name] * 1e-6                                    # dimensionless from mol / mol
     Ko         <- exdf_obj[, ko_column_name] * 1e3                                     # dimensionless from mol / mol
-    O          <- POc * 1e-6 / exdf_obj[, total_pressure_column_name]                  # dimensionless from mol / mol
+    O          <- exdf_obj[, oxygen_column_name] * 1e-2                                # dimensionless from mol / mol
     Vcmax      <- exdf_obj[, vcmax_column_name] * 1e-6                                 # mol / m^2 / s
 
     J <- if (use_j) {

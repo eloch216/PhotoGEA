@@ -32,6 +32,71 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
+
+- Changed fitting method from least-squares to maximum likelihood in
+  `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`.
+  - We use a normal distribution for calculating the likelihood.
+  - Best-fit parameter values are determined with `sigma = 1`.
+  - Then the true value of the likelihood can be estimated using `sigma = RMSE`.
+  - Confidence intervals are also calculated using `sigma = RMSE`.
+  - Fitting functions include the Akaike information criterion (AIC) in their
+    outputs
+  - Default settings have been changed to always calculate confidence intervals
+    and remove unreliable parameter estimates, to use a more reliable (but
+    slower) optimizer, and to fit `alpha_old` (for C3 A-Ci and Variable J fits);
+    these settings will ensure more robust fitting results
+- Changed the C3 assimilation and Variable J equations to accommodate the new
+  alpha parameters from Busch et al. (2018)
+  - There are now three separate parameters: `alpha_old` (previously `alpha_g`),
+    `alpha_g`, and `alpha_s`
+  - If `alpha_old` is nonzero, then `alpha_g` and `alpha_s` must be zero.
+    Likewise, if `alpha_g` or `alpha_s` is nonzero, then `alpha_old` must be
+    zero. This will prevent users from mixing the two models together.
+- The fitting functions `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci` now
+  include a new output called `fits_interpolated` that contains values of the
+  predicted assimilation rates with a `Ci` step of 1 ppm.
+- New plotting functions have been added: `plot_c3_aci_fit` and
+  `plot_c4_aci_fit`. These functions use the new information in
+  `fits_interpolated` to make nice plots comparing the measured data and the
+  fits.
+- Now users can optionally ignore `NA` values when using `xyplot_avg_rc` and
+  `barchart_with_errorbars`
+- Changed `exclude_outliers` to make sure it doesn't exclude `NA` values
+- Specialized functions for writing `exdf` objects to `CSV` files and recreating
+  `exdf` objects from those files are now available: `write.csv.exdf` and
+  `read.csv.exdf`.
+- When determining the degree of trust in a best-fit parameter value, we now
+  consider parameters with an upper confidence limit of `Inf` to be unreliable.
+- Light- and electron-limited assimilation has been added to
+  `calculate_c4_assimilation`; now we have fully implemented the von Caemmerer
+  model equations. This also necessitated a new function for temperature
+  response calculations: `calculate_peaked_gaussian`.
+- New fitting parameters have been added to `fit_c4_aci`: `alpha_psii`, `gbs`,
+  `Jmax_at_opt` and `Rm_frac`.
+- It is now possible to remove unreliable parameter estimates when using
+  `fit_c4_aci`.
+- Tests have been updated to make sure the fitting functions can gracefully
+  handle a fit failure, even when estimating confidence intervals and/or
+  removing unreliable parameter estimates.
+- Added a new optimizer (`optimizer_hjkb`) and changed their default arguments
+  so a user must always specify the tolerance or number of generations.
+- All functions that require an O2 partial pressure now calculate it from the
+  total pressure and the oxygen concentration (expressed as a percentage).
+- A new option has been added to `read_licor_6800_Excel` and
+  `read_licor_6800_plaintext`: `get_oxygen`. When this input is `TRUE`,
+  `get_oxygen_from_preamble` will automatically be used to get the oxygen
+  percentage from the file's preamble when it is loaded.
+- A new option has been added to `read_gasex_file`: `standardize_columns`.
+- `read_licor_6800_plaintext` can now read log files that were closed and
+  reopened
+- Added a new function called `PhotoGEA_example_file_path` to avoid using
+  `system.file` in examples since `system.path` has been confusing for some
+  users
+- `check_licor_data` has been renamed to `check_response_curve_data` since it is
+  not limited to only Licor measurements
+- Specified a minimum supported R version: `3.6.0`.
+
 ## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
 
 - Added new options for adding penalties to the error function during Variable J
@@ -44,7 +109,7 @@ be directly added to this file to describe the related changes.
   - Unreliable parameter estimates can now be excluded; for example, if no
     points on a curve have An = Ap, the fit will return NA for TPU.
   - The initial guess functions (`initial_guess_c3_aci` and
-    `initial_guess_c3_variable_j`) can now accomodate user-supplied values of
+    `initial_guess_c3_variable_j`) can now accommodate user-supplied values of
     `alpha`.
 - Made a few improvements to all three nonlinear fitting functions
   (`fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`):

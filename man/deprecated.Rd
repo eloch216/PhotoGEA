@@ -3,6 +3,7 @@
 \alias{deprecated}
 \alias{read_tdl_file}
 \alias{read_licor_file}
+\alias{check_licor_data}
 
 \title{Deprecated functions}
 
@@ -16,6 +17,8 @@
   read_tdl_file(\dots)
 
   read_licor_file(\dots)
+
+  check_licor_data(\dots)
 }
 
 \arguments{
