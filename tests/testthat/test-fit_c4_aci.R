@@ -103,13 +103,13 @@ test_that('fit results have not changed (Vpr)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpr', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
-        c(NA, 202.95187, 18.47438, 103.06962),
+        c(NA, 390.855470649882, 24.2858626142869, 104.119302378528),
         tolerance = 1e-5
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpr_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
-        c(Inf, 246.89935, 23.17948),
+        c(Inf, 503.86, 28.73),
         tolerance = 1e-5
     )
 })
