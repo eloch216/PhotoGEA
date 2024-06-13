@@ -26,6 +26,7 @@ calculate_c4_assimilation <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 2,
     perform_checks = TRUE,
     return_exdf = TRUE
 )
@@ -95,23 +96,32 @@ calculate_c4_assimilation <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(alpha_psii < 0 | alpha_psii > 1, na.rm = TRUE)) {msg <- append(msg, 'alpha_psii must be >= 0 and <= 1')}
-    if (any(ao < 0, na.rm = TRUE))                          {msg <- append(msg, 'ao must be >= 0')}
-    if (any(Cm < 0, na.rm = TRUE))                          {msg <- append(msg, 'PCm must be >= 0')}
-    if (any(gamma_star < 0, na.rm = TRUE))                  {msg <- append(msg, 'gamma_star must be >= 0')}
-    if (any(gbs < 0, na.rm = TRUE))                         {msg <- append(msg, 'gbs must be >= 0')}
-    if (any(Jmax_at_opt < 0, na.rm = TRUE))                 {msg <- append(msg, 'Jmax_at_opt must be >= 0')}
-    if (any(Kc < 0, na.rm = TRUE))                          {msg <- append(msg, 'Kc must be >= 0')}
-    if (any(Ko < 0, na.rm = TRUE))                          {msg <- append(msg, 'Ko must be >= 0')}
-    if (any(Kp < 0, na.rm = TRUE))                          {msg <- append(msg, 'Kp must be >= 0')}
-    if (any(oxygen < 0, na.rm = TRUE))                      {msg <- append(msg, 'oxygen must be >= 0')}
-    if (any(pressure < 0, na.rm = TRUE))                    {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Rd_at_25 < 0, na.rm = TRUE))                    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(Rm_frac < 0 | Rm_frac > 1, na.rm = TRUE))       {msg <- append(msg, 'Rm_frac must be >= 0 and <= 1')}
-    if (any(Vcmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
-    if (any(Vpmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
-    if (any(Vpr < 0, na.rm = TRUE))                         {msg <- append(msg, 'Vpr must be >= 0')}
-    if (any(x_etr < 0 | x_etr > 1, na.rm = TRUE))           {msg <- append(msg, 'x_etr must be >= 0 and <= 1')}
+    # Always check parameters that cannot be fit
+    if (any(ao < 0, na.rm = TRUE))                {msg <- append(msg, 'ao must be >= 0')}
+    if (any(gamma_star < 0, na.rm = TRUE))        {msg <- append(msg, 'gamma_star must be >= 0')}
+    if (any(Kc < 0, na.rm = TRUE))                {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0, na.rm = TRUE))                {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(Kp < 0, na.rm = TRUE))                {msg <- append(msg, 'Kp must be >= 0')}
+    if (any(oxygen < 0, na.rm = TRUE))            {msg <- append(msg, 'oxygen must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE))          {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(x_etr < 0 | x_etr > 1, na.rm = TRUE)) {msg <- append(msg, 'x_etr must be >= 0 and <= 1')}
+
+    # Optionally check whether PCm is reasonable
+    if (hard_constraints >= 1) {
+        if (any(Cm < 0, na.rm = TRUE)) {msg <- append(msg, 'PCm must be >= 0')}
+    }
+
+    # Optionally check reasonableness of parameters that can be fit
+    if (hard_constraints >= 2) {
+        if (any(alpha_psii < 0 | alpha_psii > 1, na.rm = TRUE)) {msg <- append(msg, 'alpha_psii must be >= 0 and <= 1')}
+        if (any(gbs < 0, na.rm = TRUE))                         {msg <- append(msg, 'gbs must be >= 0')}
+        if (any(Jmax_at_opt < 0, na.rm = TRUE))                 {msg <- append(msg, 'Jmax_at_opt must be >= 0')}
+        if (any(Rd_at_25 < 0, na.rm = TRUE))                    {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+        if (any(Rm_frac < 0 | Rm_frac > 1, na.rm = TRUE))       {msg <- append(msg, 'Rm_frac must be >= 0 and <= 1')}
+        if (any(Vcmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+        if (any(Vpmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vpmax_at_25 must be >= 0')}
+        if (any(Vpr < 0, na.rm = TRUE))                         {msg <- append(msg, 'Vpr must be >= 0')}
+    }
 
     msg <- paste(msg, collapse = '. ')
 

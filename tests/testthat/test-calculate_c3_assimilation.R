@@ -18,6 +18,9 @@ inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
 inputs2 <- set_variable(inputs, 'alpha_g', 'dimensionless', '', 0.5)
 
+inputs3 <- inputs
+inputs3[, 'Cc'] <- inputs[, 'Cc'] - 50
+
 test_that('c3 assimilation works for numeric values of flexible inputs', {
     expect_silent(
         calculate_c3_assimilation(inputs, 0, 0, 0, 40, 150, 1, 12, 120)
@@ -93,5 +96,38 @@ test_that('alpha restrictions are enforced', {
     expect_error(
         calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, '', 150, 1, 12, 120, atp_use = 4.5, nadph_use = 10.5),
         'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero'
+    )
+})
+
+test_that('fitting parameter limits can be bypassed', {
+    expect_error(
+        calculate_c3_assimilation(inputs, -1, -1, -1, 40, 150, 1, 12, 120, hard_constraints = 2),
+        'alpha_g must be >= 0 and <= 1. alpha_old must be >= 0 and <= 1. alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)',
+        fixed = TRUE
+    )
+
+    expect_silent(
+        calculate_c3_assimilation(inputs, -1, -1, -1, -40, -150, -1, -12, -120, hard_constraints = 1)
+    )
+
+    expect_error(
+        calculate_c3_assimilation(inputs3, -1, -1, -1, 40, 150, 1, 12, 120, hard_constraints = 1),
+        'Cc must be >= 0'
+    )
+})
+
+test_that('Cc limits can be bypassed', {
+    expect_error(
+        calculate_c3_assimilation(inputs3, 0, 0, 0, 40, 150, 1, 12, 120, hard_constraints = 2),
+        'Cc must be >= 0'
+    )
+
+    expect_error(
+        calculate_c3_assimilation(inputs3, 0, 0, 0, 40, 150, 1, 12, 120, hard_constraints = 1),
+        'Cc must be >= 0'
+    )
+
+    expect_silent(
+        calculate_c3_assimilation(inputs3, 0, 0, 0, 40, 150, 1, 12, 120, hard_constraints = 0)
     )
 })

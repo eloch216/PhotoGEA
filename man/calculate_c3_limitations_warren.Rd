@@ -29,7 +29,8 @@
     oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    hard_constraints = 2
   )
 }
 
@@ -119,6 +120,11 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}}; see that function
+    for more details.
   }
 }
 

@@ -13,6 +13,7 @@ calculate_c3_variable_j <- function(
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
+    hard_constraints = 2,
     perform_checks = TRUE,
     return_exdf = TRUE
 )
@@ -67,19 +68,29 @@ calculate_c3_variable_j <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
+    # Always check parameters that cannot be fit, and make sure we are not
+    # mixing models
     mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
 
-    if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
-    if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
-    if (any(Ci < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Ci must be >= 0')}
-    if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(PhiPS2 < 0, na.rm = TRUE))                                   {msg <- append(msg, 'PhiPS2 must be >= 0')}
-    if (any(pressure < 0, na.rm = TRUE))                                 {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Qin < 0, na.rm = TRUE))                                      {msg <- append(msg, 'Qin must be >= 0')}
-    if (any(Rd_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(tau < 0, na.rm = TRUE))                                      {msg <- append(msg, 'tau must be >= 0')}
-    if (mixed_j_coeff)                                                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+    if (any(PhiPS2 < 0, na.rm = TRUE))   {msg <- append(msg, 'PhiPS2 must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE)) {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Qin < 0, na.rm = TRUE))      {msg <- append(msg, 'Qin must be >= 0')}
+    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+
+    # Optionally check whether Ci is reasonable
+    if (hard_constraints >= 1) {
+        if (any(Ci < 0, na.rm = TRUE)) {msg <- append(msg, 'Ci must be >= 0')}
+    }
+
+    # Optionally check reasonableness of parameters that can be fit
+    if (hard_constraints >= 2) {
+        if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
+        if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
+        if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
+        if (any(Rd_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+        if (any(tau < 0 | tau > 1, na.rm = TRUE))                            {msg <- append(msg, 'tau must be >= 0 and <= 1')}
+    }
 
     msg <- paste(msg, collapse = '. ')
 

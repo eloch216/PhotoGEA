@@ -30,6 +30,7 @@
     qin_column_name = 'Qin',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
+    hard_constraints = 2,
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -120,6 +121,11 @@
     in \code{bar}.
   }
 
+  \item{hard_constraints}{
+    An integer numerical value indicating which types of hard constraints to
+    place on the values of input parameters; see below for more details.
+  }
+
   \item{perform_checks}{
     A logical value indicating whether to check units for the required columns.
     This should almost always be \code{TRUE}. The option to disable these checks
@@ -199,6 +205,34 @@
   \code{J_F} are used along with Equation 7 from Harley et al. (1992) to
   calculate \code{gmc}. Finally, a 1D diffusion equation is used to calculate
   \code{Cc}.
+
+  \strong{Hard constraints:}
+
+  Most input parameters to the Variable J equations have hard constraints on
+  their values which are set by their biochemical or physical interpretation;
+  for example, \code{Rd} cannot be negative and \code{tau} must lie between 0
+  and 1. Yet, because of measurement noise, sometimes it is necessary to use
+  values outside these ranges when fitting an A-Ci curve with
+  \code{\link{fit_c3_variable_j}}. To accomodate different potential use cases,
+  it is possible to selectively apply these hard constraints by specifying
+  different values of the \code{hard_constraints} input argument:
+
+  \itemize{
+    \item \code{hard_constraints = 0}: Constraints are only placed on inputs
+          that are user-supplied and cannot be fit, such as \code{Qin}.
+
+    \item \code{hard_constraints = 1}: Includes the same constraints as when
+          \code{hard_constraints} is 0, with the additional constraint that
+          all \code{Ci} values must be non-negative.
+
+    \item \code{hard_constraints = 2}: Includes the same constraints as when
+          \code{hard_constraints} is 1, which additional constraints on the
+          parameters that can be fitted. For example, \code{Rd_at_25} must be
+          non-negative and \code{tau} must lie between 0 and 1.
+  }
+
+  If any input values violate any of the specified constraints, an error message
+  will be thrown.
 
   References:
   \itemize{

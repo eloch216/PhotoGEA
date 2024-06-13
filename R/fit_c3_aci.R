@@ -32,6 +32,7 @@ fit_c3_aci <- function(
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     error_threshold_factor = 0.147,
+    hard_constraints = 2,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = TRUE
 )
@@ -64,7 +65,8 @@ fit_c3_aci <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
-        cj_crossover_max
+        cj_crossover_max,
+        hard_constraints
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -152,6 +154,7 @@ fit_c3_aci <- function(
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )
 
@@ -199,6 +202,7 @@ fit_c3_aci <- function(
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )[, 'An']
 
@@ -253,6 +257,7 @@ fit_c3_aci <- function(
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )
 
@@ -379,7 +384,8 @@ fit_c3_aci <- function(
             total_pressure_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
-            cj_crossover_max
+            cj_crossover_max,
+            hard_constraints
         )(best_X[param_to_fit])
     }
 
@@ -439,7 +445,8 @@ fit_c3_aci <- function(
             total_pressure_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
-            cj_crossover_max
+            cj_crossover_max,
+            hard_constraints
         )
     }
 

@@ -17,7 +17,8 @@ calculate_c3_limitations_warren <- function(
     oxygen_column_name = 'oxygen',
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    hard_constraints = 2
 )
 {
     # Check inputs
@@ -95,6 +96,7 @@ calculate_c3_limitations_warren <- function(
             rd_norm_column_name = rd_norm_column_name,
             total_pressure_column_name = total_pressure_column_name,
             vcmax_norm_column_name = vcmax_norm_column_name,
+            hard_constraints = hard_constraints,
             perform_checks = FALSE,
             return_exdf = TRUE
         )[, 'An']

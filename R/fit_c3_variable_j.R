@@ -36,6 +36,7 @@ fit_c3_variable_j <- function(
     require_positive_gmc = 'all',
     gmc_max = Inf,
     error_threshold_factor = 0.147,
+    hard_constraints = 2,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = TRUE
 )
@@ -71,6 +72,7 @@ fit_c3_variable_j <- function(
         vcmax_norm_column_name,
         cj_crossover_min,
         cj_crossover_max,
+        hard_constraints,
         require_positive_gmc,
         gmc_max
     )
@@ -155,6 +157,7 @@ fit_c3_variable_j <- function(
         qin_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )
 
@@ -194,6 +197,7 @@ fit_c3_variable_j <- function(
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )
 
@@ -241,6 +245,7 @@ fit_c3_variable_j <- function(
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )[, 'An']
 
@@ -291,6 +296,7 @@ fit_c3_variable_j <- function(
         qin_column_name,
         rd_norm_column_name,
         total_pressure_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )
 
@@ -324,6 +330,7 @@ fit_c3_variable_j <- function(
         rd_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )
 
@@ -468,6 +475,7 @@ fit_c3_variable_j <- function(
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max,
+            hard_constraints,
             require_positive_gmc,
             gmc_max
         )(best_X[param_to_fit])
@@ -532,6 +540,7 @@ fit_c3_variable_j <- function(
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max,
+            hard_constraints,
             require_positive_gmc,
             gmc_max
         )

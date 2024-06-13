@@ -19,6 +19,7 @@ error_function_c3_variable_j <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    hard_constraints = 2,
     require_positive_gmc = 'all',
     gmc_max = Inf
 )
@@ -125,6 +126,7 @@ error_function_c3_variable_j <- function(
                     qin_column_name,
                     rd_norm_column_name,
                     total_pressure_column_name,
+                    hard_constraints,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )
@@ -134,7 +136,7 @@ error_function_c3_variable_j <- function(
             }
         )
 
-        if (is.null(vj) || any(is.na(vj$Cc)) || any(vj$Cc < 0)) {
+        if (is.null(vj) || any(is.na(vj$Cc))) {
             return(ERROR_PENALTY)
         }
 
@@ -178,6 +180,7 @@ error_function_c3_variable_j <- function(
                     rd_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,
+                    hard_constraints = hard_constraints,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )

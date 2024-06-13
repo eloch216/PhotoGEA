@@ -40,6 +40,7 @@
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     error_threshold_factor = 0.147,
+    hard_constraints = 2,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = TRUE
   )
@@ -192,6 +193,11 @@
   \item{error_threshold_factor}{
     To be passed to \code{\link{confidence_intervals_c3_aci}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}}; see that function
+    for more details.
   }
 
   \item{calculate_confidence_intervals}{

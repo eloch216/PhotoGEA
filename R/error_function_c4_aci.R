@@ -20,7 +20,8 @@ error_function_c4_aci <- function(
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 2
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -94,6 +95,7 @@ error_function_c4_aci <- function(
                     total_pressure_column_name,
                     vcmax_norm_column_name,
                     vpmax_norm_column_name,
+                    hard_constraints = hard_constraints,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )

@@ -16,7 +16,8 @@ error_function_c3_aci <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    hard_constraints = 2
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -93,6 +94,7 @@ error_function_c3_aci <- function(
                     rd_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,
+                    hard_constraints = hard_constraints,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )

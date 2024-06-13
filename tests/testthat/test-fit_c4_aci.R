@@ -28,6 +28,27 @@ test_that('fit failures are handled properly', {
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')])))
 })
 
+test_that('PCm limits can be bypassed', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- expect_silent(
+        fit_c4_aci(
+            one_curve_bad,
+            Ca_atmospheric = 420,
+            OPTIM_FUN = optimizer_nmkb(1e-7),
+            hard_constraints = 0,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = TRUE
+        )
+    )
+
+    expect_equal(unique(fit_res$fits[, 'c4_assimilation_msg']), '')
+    expect_equal(fit_res$parameters[, 'c4_assimilation_msg'], '')
+    expect_true(all(!is.na(fit_res$fits[, c('A_fit', 'Ac')])))
+})
+
 test_that('some fit settings cause warnings', {
     fit_res_warn <- expect_warning(
         fit_c4_aci(

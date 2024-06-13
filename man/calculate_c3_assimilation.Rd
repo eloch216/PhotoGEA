@@ -35,6 +35,7 @@
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    hard_constraints = 2,
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -176,6 +177,11 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{hard_constraints}{
+    An integer numerical value indicating which types of hard constraints to
+    place on the values of input parameters; see below for more details.
   }
 
   \item{perform_checks}{
@@ -334,6 +340,34 @@
   \code{alpha_old} if either \code{alpha_g} or \code{alpha_s} is nonzero is
   forbidden since it would represent a mix between the two models; if such
   values are passed as inputs, then an error will be thrown.
+
+  \strong{Hard constraints:}
+
+  Most input parameters to the FvCB model have hard constraints on their values
+  which are set by their biochemical or physical interpretation; for example,
+  \code{Vcmax} cannot be negative and \code{alpha_g} must lie between 0 and 1.
+  Yet, because of measurement noise, sometimes it is necessary to use values
+  outside these ranges when fitting an A-Ci curve with \code{\link{fit_c3_aci}}
+  or \code{\link{fit_c3_variable_j}}. To accomodate different potential use
+  cases, it is possible to selectively apply these hard constraints by
+  specifying different values of the \code{hard_constraints} input argument:
+
+  \itemize{
+    \item \code{hard_constraints = 0}: Constraints are only placed on inputs
+          that are user-supplied and cannot be fit, such as \code{Kc}.
+
+    \item \code{hard_constraints = 1}: Includes the same constraints as when
+          \code{hard_constraints} is 0, with the additional constraint that
+          all \code{Cc} values must be non-negative.
+
+    \item \code{hard_constraints = 2}: Includes the same constraints as when
+          \code{hard_constraints} is 1, which additional constraints on the
+          parameters that can be fitted. For example, \code{Vcmax_at_25} must be
+          non-negative and \code{alpha_g} must lie between 0 and 1.
+  }
+
+  If any input values violate any of the specified constraints, an error message
+  will be thrown.
 
   \strong{References:}
 

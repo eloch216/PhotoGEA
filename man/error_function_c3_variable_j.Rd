@@ -32,6 +32,7 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    hard_constraints = 2,
     require_positive_gmc = 'all',
     gmc_max = Inf
   )
@@ -155,6 +156,11 @@
     The maximim value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
     smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}} and
+    \code{\link{calculate_c3_variable_j}}; see those functions for more details.
   }
 
   \item{require_positive_gmc}{

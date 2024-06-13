@@ -24,6 +24,7 @@ calculate_c3_assimilation <- function(
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    hard_constraints = 2,
     perform_checks = TRUE,
     return_exdf = TRUE
 )
@@ -71,11 +72,6 @@ calculate_c3_assimilation <- function(
                 stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
             }
         })
-
-        # Make sure the Cc values are all positive
-        if (any(exdf_obj[, cc_column_name] <= 0)) {
-            stop('All Cc values must be positive')
-        }
     }
 
     # Retrieve values of flexible parameters as necessary
@@ -108,27 +104,37 @@ calculate_c3_assimilation <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
+    # Always check parameters that cannot be fit, and make sure we are not
+    # mixing models
     mixed_alpha <- any(alpha_old > 0, na.rm = TRUE) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
 
     mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
 
-    if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
-    if (any(alpha_old < 0 | alpha_old > 1, na.rm = TRUE))                {msg <- append(msg, 'alpha_old must be >= 0 and <= 1')}
-    if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
-    if (any(Cc < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Cc must be >= 0')}
-    if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(J_at_25 < 0, na.rm = TRUE))                                  {msg <- append(msg, 'J_at_25 must be >= 0')}
-    if (any(Kc < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Kc must be >= 0')}
-    if (any(Ko < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Ko must be >= 0')}
-    if (any(oxygen < 0, na.rm = TRUE))                                   {msg <- append(msg, 'oxygen must be >= 0')}
-    if (any(pressure < 0, na.rm = TRUE))                                 {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Rd_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(Tp < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Tp must be >= 0')}
-    if (any(Vcmax_at_25 < 0, na.rm = TRUE))                              {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
-    if (mixed_alpha)                                                     {msg <- append(msg, 'Cannot specify nonzero alpha_old and nonzero alpha_s or alpha_g')}
-    if (mixed_j_coeff)                                                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+    if (any(Kc < 0, na.rm = TRUE))       {msg <- append(msg, 'Kc must be >= 0')}
+    if (any(Ko < 0, na.rm = TRUE))       {msg <- append(msg, 'Ko must be >= 0')}
+    if (any(oxygen < 0, na.rm = TRUE))   {msg <- append(msg, 'oxygen must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE)) {msg <- append(msg, 'pressure must be >= 0')}
+    if (mixed_alpha)                     {msg <- append(msg, 'Cannot specify nonzero alpha_old and nonzero alpha_s or alpha_g')}
+    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+
+    # Optionally check whether Cc is reasonable
+    if (hard_constraints >= 1) {
+        if (any(Cc < 0, na.rm = TRUE)) {msg <- append(msg, 'Cc must be >= 0')}
+    }
+
+    # Optionally check reasonableness of parameters that can be fit
+    if (hard_constraints >= 2) {
+        if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
+        if (any(alpha_old < 0 | alpha_old > 1, na.rm = TRUE))                {msg <- append(msg, 'alpha_old must be >= 0 and <= 1')}
+        if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
+        if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
+        if (any(J_at_25 < 0, na.rm = TRUE))                                  {msg <- append(msg, 'J_at_25 must be >= 0')}
+        if (any(Rd_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Rd_at_25 must be >= 0')}
+        if (any(Tp < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Tp must be >= 0')}
+        if (any(Vcmax_at_25 < 0, na.rm = TRUE))                              {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
+    }
 
     msg <- paste(msg, collapse = '. ')
 

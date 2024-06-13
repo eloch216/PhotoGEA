@@ -41,6 +41,7 @@
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 2,
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -209,6 +210,11 @@
     \code{normalized to Vpmax at 25 degrees C}).
   }
 
+  \item{hard_constraints}{
+    An integer numerical value indicating which types of hard constraints to
+    place on the values of input parameters; see below for more details.
+  }
+
   \item{perform_checks}{
     A logical value indicating whether to check units for the required columns.
     This should almost always be \code{TRUE}. The option to disable these checks
@@ -363,6 +369,34 @@
   \code{Rm / Rd = Rm_frac} to be a variable (so that \code{Rm} is calculated
   from \code{Rd} according to \code{Rm = Rm_frac * Rd}). If \code{Rm_frac} is
   set to 1, then there is no distinction between \code{Rd} and \code{Rm}.
+
+  \strong{Hard constraints:}
+
+  Most input parameters to the C4 assimilation model have hard constraints on
+  their values which are set by their biochemical or physical interpretation;
+  for example, \code{Vcmax} cannot be negative and \code{alpha_psii} must lie
+  between 0 and 1. Yet, because of measurement noise, sometimes it is necessary
+  to use values outside these ranges when fitting an A-Ci curve with
+  \code{\link{fit_c4_aci}}. To accomodate different potential use cases, it is
+  possible to selectively apply these hard constraints by specifying different
+  values of the \code{hard_constraints} input argument:
+
+  \itemize{
+    \item \code{hard_constraints = 0}: Constraints are only placed on inputs
+          that are user-supplied and cannot be fit, such as \code{Kc}.
+
+    \item \code{hard_constraints = 1}: Includes the same constraints as when
+          \code{hard_constraints} is 0, with the additional constraint that
+          all \code{PCm} values must be non-negative.
+
+    \item \code{hard_constraints = 2}: Includes the same constraints as when
+          \code{hard_constraints} is 1, which additional constraints on the
+          parameters that can be fitted. For example, \code{Vcmax_at_25} must be
+          non-negative and \code{alpha_psii} must lie between 0 and 1.
+  }
+
+  If any input values violate any of the specified constraints, an error message
+  will be thrown.
 
   \strong{References}
 

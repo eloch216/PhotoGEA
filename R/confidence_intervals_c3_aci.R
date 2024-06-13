@@ -20,7 +20,8 @@ confidence_intervals_c3_aci <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    hard_constraints = 2
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -47,7 +48,8 @@ confidence_intervals_c3_aci <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
-        cj_crossover_max
+        cj_crossover_max,
+        hard_constraints
     )
 
     # Assemble lower, upper, and fit_options

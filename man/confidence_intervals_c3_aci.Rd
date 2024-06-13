@@ -33,7 +33,8 @@
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    hard_constraints = 2
   )
 }
 
@@ -151,6 +152,11 @@
     The maximim value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
     smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}}; see that function
+    for more details.
   }
 }
 

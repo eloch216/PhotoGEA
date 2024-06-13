@@ -44,6 +44,7 @@
     require_positive_gmc = 'all',
     gmc_max = Inf,
     error_threshold_factor = 0.147,
+    hard_constraints = 2,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = TRUE
   )
@@ -214,6 +215,11 @@
   \item{error_threshold_factor}{
     To be passed to \code{\link{confidence_intervals_c3_variable_j}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}} and
+    \code{\link{calculate_c3_variable_j}}; see those functions for more details.
   }
 
   \item{calculate_confidence_intervals}{

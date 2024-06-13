@@ -37,7 +37,8 @@
     rd_norm_column_name = 'Rd_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 2
   )
 }
 
@@ -175,6 +176,11 @@
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c4_assimilation}}; see that function
+    for more details.
   }
 }
 

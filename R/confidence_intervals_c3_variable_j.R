@@ -23,6 +23,7 @@ confidence_intervals_c3_variable_j <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
+    hard_constraints = 2,
     require_positive_gmc = 'all',
     gmc_max = Inf
 
@@ -55,6 +56,7 @@ confidence_intervals_c3_variable_j <- function(
         vcmax_norm_column_name,
         cj_crossover_min,
         cj_crossover_max,
+        hard_constraints,
         require_positive_gmc,
         gmc_max
     )
