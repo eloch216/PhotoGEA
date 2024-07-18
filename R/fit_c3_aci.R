@@ -448,6 +448,19 @@ fit_c3_aci <- function(
             cj_crossover_max,
             hard_constraints
         )
+
+        # Attach limits for the average leaf-temperature values of fitting parameters
+        J_tl_scale <- replicate_identifiers[, 'J_tl_avg'] / replicate_identifiers[, 'J_at_25']
+        replicate_identifiers[, 'J_tl_avg_lower'] <- replicate_identifiers[, 'J_at_25_lower'] * J_tl_scale
+        replicate_identifiers[, 'J_tl_avg_upper'] <- replicate_identifiers[, 'J_at_25_upper'] * J_tl_scale
+
+        Rd_tl_scale <- replicate_identifiers[, 'Rd_tl_avg'] / replicate_identifiers[, 'Rd_at_25']
+        replicate_identifiers[, 'Rd_tl_avg_lower'] <- replicate_identifiers[, 'Rd_at_25_lower'] * Rd_tl_scale
+        replicate_identifiers[, 'Rd_tl_avg_upper'] <- replicate_identifiers[, 'Rd_at_25_upper'] * Rd_tl_scale
+
+        Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
+        replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
+        replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
     }
 
     # Return the results, including indicators of unreliable parameter estimates

@@ -497,6 +497,23 @@ fit_c4_aci <- function(
             vpmax_norm_column_name,
             hard_constraints
         )
+
+        # Attach limits for the average leaf-temperature values of fitting parameters
+        Jmax_tl_scale <- replicate_identifiers[, 'Jmax_tl_avg'] / replicate_identifiers[, 'Jmax_at_25']
+        replicate_identifiers[, 'Jmax_tl_avg_lower'] <- replicate_identifiers[, 'Jmax_at_25_lower'] * Jmax_tl_scale
+        replicate_identifiers[, 'Jmax_tl_avg_upper'] <- replicate_identifiers[, 'Jmax_at_25_upper'] * Jmax_tl_scale
+
+        Rd_tl_scale <- replicate_identifiers[, 'Rd_tl_avg'] / replicate_identifiers[, 'Rd_at_25']
+        replicate_identifiers[, 'Rd_tl_avg_lower'] <- replicate_identifiers[, 'Rd_at_25_lower'] * Rd_tl_scale
+        replicate_identifiers[, 'Rd_tl_avg_upper'] <- replicate_identifiers[, 'Rd_at_25_upper'] * Rd_tl_scale
+
+        Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
+        replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
+        replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
+
+        Vpmax_tl_scale <- replicate_identifiers[, 'Vpmax_tl_avg'] / replicate_identifiers[, 'Vpmax_at_25']
+        replicate_identifiers[, 'Vpmax_tl_avg_lower'] <- replicate_identifiers[, 'Vpmax_at_25_lower'] * Vpmax_tl_scale
+        replicate_identifiers[, 'Vpmax_tl_avg_upper'] <- replicate_identifiers[, 'Vpmax_at_25_upper'] * Vpmax_tl_scale
     }
 
     # Return the results, including indicators of unreliable parameter estimates
