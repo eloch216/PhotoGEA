@@ -1,5 +1,5 @@
 # Specify default fit settings
-c3_variable_j_lower       <- list(alpha_g = -1, alpha_old = -1,    alpha_s = -1, Gamma_star = -200,     J_at_25 = -1000, Rd_at_25 = -100,  tau = -10,   Tp = -100,  Vcmax_at_25 = -1000)
+c3_variable_j_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  Gamma_star = -200,     J_at_25 = -1000, Rd_at_25 = -100,  tau = -10,   Tp = -100,  Vcmax_at_25 = -1000)
 c3_variable_j_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 10,    Tp = 100,   Vcmax_at_25 = 1000)
 c3_variable_j_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
 
