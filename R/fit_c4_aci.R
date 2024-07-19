@@ -499,9 +499,9 @@ fit_c4_aci <- function(
         )
 
         # Attach limits for the average leaf-temperature values of fitting parameters
-        Jmax_tl_scale <- replicate_identifiers[, 'Jmax_tl_avg'] / replicate_identifiers[, 'Jmax_at_25']
-        replicate_identifiers[, 'Jmax_tl_avg_lower'] <- replicate_identifiers[, 'Jmax_at_25_lower'] * Jmax_tl_scale
-        replicate_identifiers[, 'Jmax_tl_avg_upper'] <- replicate_identifiers[, 'Jmax_at_25_upper'] * Jmax_tl_scale
+        Jmax_tl_scale <- replicate_identifiers[, 'Jmax_tl_avg'] / replicate_identifiers[, 'Jmax_at_opt']
+        replicate_identifiers[, 'Jmax_tl_avg_lower'] <- replicate_identifiers[, 'Jmax_at_opt_lower'] * Jmax_tl_scale
+        replicate_identifiers[, 'Jmax_tl_avg_upper'] <- replicate_identifiers[, 'Jmax_at_opt_upper'] * Jmax_tl_scale
 
         Rd_tl_scale <- replicate_identifiers[, 'Rd_tl_avg'] / replicate_identifiers[, 'Rd_at_25']
         replicate_identifiers[, 'Rd_tl_avg_lower'] <- replicate_identifiers[, 'Rd_at_25_lower'] * Rd_tl_scale
