@@ -219,9 +219,9 @@
   ones that best reproduce the experimentally measured values of net
   assimilation. By default, the following options are used for the fits:
   \itemize{
-    \item \code{alpha_g}: lower = -10, upper = 10, fit_option = 0
-    \item \code{alpha_old}: lower = -10, upper = 10, fit_option = \code{'fit'}
-    \item \code{alpha_s}: lower = -10, upper = 10, fit_option = 0
+    \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
+    \item \code{alpha_old}: lower = 0, upper = 10, fit_option = \code{'fit'}
+    \item \code{alpha_s}: lower = 0, upper = 10, fit_option = 0
     \item \code{Gamma_star}: lower = -200, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = -1000, upper = 1000, fit_option = \code{'fit'}
     \item \code{Rd_at_25}: lower = -100, upper = 100, fit_option = \code{'fit'}

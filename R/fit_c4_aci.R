@@ -98,21 +98,6 @@ fit_c4_aci <- function(
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
 
-    # Check fitting options
-    nfit <-
-     sum(c(fit_options$Jmax_at_opt == 'fit', fit_options$Vcmax_at_25 == 'fit', fit_options$Vpr == 'fit'))
-
-    if (nfit > 1) {
-        msg <- paste0(
-            'The following C4 fit options have been selected:',
-            ' Jmax_at_opt: ', fit_options$Jmax_at_opt,
-            ', Vcmax_at_25: ', fit_options$Vcmax_at_25,
-            ', Vpr: ', fit_options$Vpr,
-            '. It is not recommended to fit more than one of Jmax_at_opt, Vcmax_at_25, and Vpr.'
-        )
-        warning(msg)
-    }
-
     # Get an initial guess for all the parameter values
     initial_guess_fun <- initial_guess_c4_aci(
         if (fit_options$alpha_psii == 'fit') {0.1}   else {fit_options$alpha_psii}, # alpha_psii
