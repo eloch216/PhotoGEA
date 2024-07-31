@@ -1,5 +1,5 @@
 # Specify default fit settings
-c4_aci_lower       <- list(alpha_psii = -10, gbs = -10,   Jmax_at_opt = -1000, Rd_at_25 = -100,  Rm_frac = -10, Vcmax_at_25 = -1000, Vpmax_at_25 = -1000, Vpr = -1000)
+c4_aci_lower       <- list(alpha_psii = -1,  gbs = -1,    Jmax_at_opt = -50,   Rd_at_25 = -10,   Rm_frac = -10, Vcmax_at_25 = -50,   Vpmax_at_25 = -50,   Vpr = -50)
 c4_aci_upper       <- list(alpha_psii = 10,  gbs = 10,    Jmax_at_opt = 1000,  Rd_at_25 = 100,   Rm_frac = 10,  Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
 c4_aci_fit_options <- list(alpha_psii = 0,   gbs = 0.003, Jmax_at_opt = 1000,  Rd_at_25 = 'fit', Rm_frac = 0.5, Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
 

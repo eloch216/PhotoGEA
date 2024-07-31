@@ -28,14 +28,15 @@ plot_c3_aci_fit <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]          <- unit_dictionary[['A']]
     required_variables[[cc_column_name]]         <- 'micromol mol^(-1)'
     required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
     required_variables[[identifier_column_name]] <- NA
 
-    check_required_variables(fit_results$fits, required_variables)
-
     check_required_variables(fit_results$fits_interpolated, required_variables)
+    
+    required_variables[[a_column_name]] <- unit_dictionary[['A']]
+
+    check_required_variables(fit_results$fits, required_variables)
 
     required_variables <- list()
     required_variables[['operating_Ci']]       <- 'micromol mol^(-1)'
