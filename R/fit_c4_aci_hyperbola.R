@@ -1,9 +1,9 @@
 # Specify default fit settings
-c4_aci_hyperbola_lower       <- list(c4_curvature = -10,   c4_respiration = -10,   c4_slope = -50,   Vmax = -50)
-c4_aci_hyperbola_upper       <- list(c4_curvature = 10,    c4_respiration = 100,   c4_slope = 1000,  Vmax = 1000)
-c4_aci_hyperbola_fit_options <- list(c4_curvature = 'fit', c4_respiration = 'fit', c4_slope = 'fit', Vmax = 'fit')
+c4_aci_hyperbola_lower       <- list(c4_curvature = -10,   c4_slope = -50,   rL = -10,   Vmax = -50)
+c4_aci_hyperbola_upper       <- list(c4_curvature = 10,    c4_slope = 1000,  rL = 100,   Vmax = 1000)
+c4_aci_hyperbola_fit_options <- list(c4_curvature = 'fit', c4_slope = 'fit', rL = 'fit', Vmax = 'fit')
 
-c4_aci_hyperbola_param <- c('c4_curvature', 'c4_respiration', 'c4_slope', 'Vmax')
+c4_aci_hyperbola_param <- c('c4_curvature', 'c4_slope', 'rL', 'Vmax')
 
 # Fitting function
 fit_c4_aci_hyperbola <- function(
@@ -78,8 +78,8 @@ fit_c4_aci_hyperbola <- function(
     aci <- calculate_c4_assimilation_hyperbola(
         replicate_exdf,
         best_X[1], # c4_curvature
-        best_X[2], # c4_respiration
-        best_X[3], # c4_slope
+        best_X[2], # c4_slope
+        best_X[3], # rL
         best_X[4], # Vmax
         ci_column_name,
         hard_constraints,
@@ -99,8 +99,8 @@ fit_c4_aci_hyperbola <- function(
         replicate_exdf,
         c(
             'c4_curvature',
-            'c4_respiration',
             'c4_slope',
+            'rL',
             'Vmax',
             ci_column_name
         ),
@@ -111,8 +111,8 @@ fit_c4_aci_hyperbola <- function(
     assim_interpolated <- calculate_c4_assimilation_hyperbola(
         replicate_exdf_interpolated,
         '', # c4_curvature
-        '', # c4_respiration
         '', # c4_slope
+        '', # rL
         '', # Vmax
         ci_column_name,
         hard_constraints,
@@ -177,8 +177,8 @@ fit_c4_aci_hyperbola <- function(
 
     # Attach the best-fit parameters to the identifiers
     replicate_identifiers[, 'c4_curvature']   <- best_X[1]
-    replicate_identifiers[, 'c4_respiration'] <- best_X[2]
-    replicate_identifiers[, 'c4_slope']       <- best_X[3]
+    replicate_identifiers[, 'c4_slope']       <- best_X[2]
+    replicate_identifiers[, 'rL']             <- best_X[3]
     replicate_identifiers[, 'Vmax']           <- best_X[4]
 
     # Also add fitting details
@@ -219,7 +219,7 @@ fit_c4_aci_hyperbola <- function(
     replicate_identifiers <- document_variables(
         replicate_identifiers,
         c('fit_c4_aci_hyperbola', 'c4_curvature',                  unit_dictionary$c4_curvature),
-        c('fit_c4_aci_hyperbola', 'c4_respiration',                unit_dictionary$c4_respiration),
+        c('fit_c4_aci_hyperbola', 'rL',                            unit_dictionary$rL),
         c('fit_c4_aci_hyperbola', 'c4_slope',                      unit_dictionary$c4_slope),
         c('fit_c4_aci_hyperbola', 'Vmax',                          unit_dictionary$Vmax),
         c('fit_c4_aci_hyperbola', 'convergence',                   ''),

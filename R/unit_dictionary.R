@@ -15,7 +15,6 @@ unit_dictionary <- list(
     alpha_psii     = dimensionless,
     alpha_s        = dimensionless,
     c4_curvature   = dimensionless,
-    c4_respiration = micromol_flux,
     c4_slope       = conductance, # this is not a conductance, but happens to have the same units as a conductance
     Ca             = micromol_fraction,
     Cc             = micromol_fraction,
@@ -35,6 +34,7 @@ unit_dictionary <- list(
     oxygen         = 'percent',
     Rd_at_25       = micromol_flux,
     Rd_norm        = 'normalized to Rd at 25 degrees C',
+    rL             = micromol_flux,
     Rm_frac        = dimensionless,
     S              = 'cm^2',
     tau            = dimensionless,

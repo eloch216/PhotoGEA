@@ -1,8 +1,8 @@
 calculate_c4_assimilation_hyperbola <- function(
     exdf_obj,
     c4_curvature,   # dimensionless      (typically this value is being fitted)
-    c4_respiration, # micromol / m^2 / s (typically this value is being fitted)
     c4_slope,       # mol / m^2 / s      (typically this value is being fitted)
+    rL,             # micromol / m^2 / s (typically this value is being fitted)
     Vmax,           # micromol / m^2 / s (typically this value is being fitted)
     ci_column_name = 'Ci',
     hard_constraints = 2,
@@ -21,7 +21,7 @@ calculate_c4_assimilation_hyperbola <- function(
 
         flexible_param <- list(
             c4_curvature = c4_curvature,
-            c4_respiration = c4_respiration,
+            rL = rL,
             c4_slope = c4_slope,
             Vmax = Vmax
         )
@@ -34,8 +34,8 @@ calculate_c4_assimilation_hyperbola <- function(
 
     # Retrieve values of flexible parameters as necessary
     if (!value_set(c4_curvature))   {c4_curvature   <- exdf_obj[, 'c4_curvature']}
-    if (!value_set(c4_respiration)) {c4_respiration <- exdf_obj[, 'c4_respiration']}
     if (!value_set(c4_slope))       {c4_slope       <- exdf_obj[, 'c4_slope']}
+    if (!value_set(rL))             {rL             <- exdf_obj[, 'rL']}
     if (!value_set(Vmax))           {Vmax           <- exdf_obj[, 'Vmax']}
 
     # Extract a few columns from the exdf object to make the equations easier to
@@ -53,9 +53,9 @@ calculate_c4_assimilation_hyperbola <- function(
     # Optionally check reasonableness of parameters that can be fit
     if (hard_constraints >= 2) {
         if (any(c4_curvature < 0 | c4_curvature > 1, na.rm = TRUE)) {msg <- append(msg, 'c4_curvature must be >= 0 and <= 1')}
-        if (any(Vmax < 0, na.rm = TRUE))                           {msg <- append(msg, 'Vmax must be >= 0')}
-        if (any(c4_respiration < 0, na.rm = TRUE))                  {msg <- append(msg, 'c4_respiration must be >= 0')}
         if (any(c4_slope < 0, na.rm = TRUE))                        {msg <- append(msg, 'c4_slope must be >= 0')}
+        if (any(rL < 0, na.rm = TRUE))                              {msg <- append(msg, 'rL must be >= 0')}
+        if (any(Vmax < 0, na.rm = TRUE))                            {msg <- append(msg, 'Vmax must be >= 0')}
     }
 
     msg <- paste(msg, collapse = '. ')
@@ -83,9 +83,9 @@ calculate_c4_assimilation_hyperbola <- function(
     })
 
     # Calculate net assimilation rates
-    Ainitial <- Vinitial - c4_respiration # micromol / m^2 / s
-    Amax     <- Vmax - c4_respiration     # micromol / m^2 / s
-    An       <- Ag - c4_respiration       # micromol / m^2 / s
+    Ainitial <- Vinitial - rL # micromol / m^2 / s
+    Amax     <- Vmax - rL     # micromol / m^2 / s
+    An       <- Ag - rL       # micromol / m^2 / s
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units
@@ -96,8 +96,8 @@ calculate_c4_assimilation_hyperbola <- function(
             Amax = Amax,
             An = An,
             c4_curvature = c4_curvature,
-            c4_respiration = c4_respiration,
             c4_slope = c4_slope,
+            rL = rL,
             Vinitial = Vinitial,
             Vmax = Vmax,
             c4_assimilation_hyperbola_msg = msg,
@@ -111,7 +111,7 @@ calculate_c4_assimilation_hyperbola <- function(
             c('calculate_c4_assimilation_hyperbola', 'Amax',                          unit_dictionary$Vmax),
             c('calculate_c4_assimilation_hyperbola', 'An',                            unit_dictionary$Vmax),
             c('calculate_c4_assimilation_hyperbola', 'c4_curvature',                  unit_dictionary$c4_curvature),
-            c('calculate_c4_assimilation_hyperbola', 'c4_respiration',                unit_dictionary$c4_respiration),
+            c('calculate_c4_assimilation_hyperbola', 'rL',                            unit_dictionary$rL),
             c('calculate_c4_assimilation_hyperbola', 'Vinitial',                      unit_dictionary$Vmax),
             c('calculate_c4_assimilation_hyperbola', 'Vmax',                          unit_dictionary$Vmax),
             c('calculate_c4_assimilation_hyperbola', 'c4_assimilation_hyperbola_msg', '')

@@ -43,8 +43,8 @@ error_function_c4_aci_hyperbola <- function(
                 calculate_c4_assimilation_hyperbola(
                     replicate_exdf,
                     X[1], # c4_curvature
-                    X[2], # c4_respiration
-                    X[3], # c4_slope
+                    X[2], # c4_slope
+                    X[3], # rL
                     X[4], # Vmax
                     ci_column_name,
                     hard_constraints = hard_constraints,
