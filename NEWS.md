@@ -32,6 +32,35 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to
+  fit an empirical hyperbola to C4 A-Ci curves, rather than the mechanistic
+  model used in `fit_c4_aci`.
+  - Several supporting functions were also added:
+    `calculate_c4_assimilation_hyperbola`,
+    `confidence_intervals_c4_aci_hyperbola`, `error_function_c4_aci_hyperbola`,
+    `initial_guess_c4_aci_hyperbola`, and `plot_c4_aci_hyperbola_fit`.
+  - Tests were also added for `fit_c4_aci_hyperbola` and
+    `calculate_c4_assimilation_hyperbola`
+- Added a new control option so users can set or bypass hard constraints on
+  parameter values when calculating assimilation rates
+  - The input is called `hard_constraints` and it takes a numerical value, where
+    higher values impose more constraints on parameter values. The highest value
+    is 2.
+  - Setting `hard_constraints` to 2 is equivalent to the default behavior in
+    previous versions of PhotoGEA.
+  - The default value in all functions that take it as an input is 2.
+  - It has been added to `calculate_c3_assimilation`, `calculate_c3_variable_j`,
+    `calculate_c4_assimilation`, and `calculate_c4_assimilation_hyperbola`, as
+    well as any functions that use these internally, such as
+    `calculate_c3_limitations_warren` and `fit_c3_aci`.
+- The default bounds for all the curve fitting functions have been expanded to
+  avoid biasing the results.
+- Confidence limits for parameters at leaf temperature have been added
+- A warning was removed from `fit_c4_aci`, which had previously suggested to
+  avoid fitting more than one of `Vcmax_at_25`, `Vpr`, and `Jmax_at_opt`.
+
 ## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
 
 - Changed fitting method from least-squares to maximum likelihood in
