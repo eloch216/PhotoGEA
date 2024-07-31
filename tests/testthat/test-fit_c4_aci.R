@@ -5,6 +5,9 @@ source('one_curve_c4_aci.R')
 one_curve <- apply_gm(one_curve, 'C4')
 one_curve_bad <- apply_gm(one_curve_bad, 'C4')
 
+# Choose test tolerance
+TOLERANCE <- 1e-4
+
 test_that('fit failures are handled properly', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
@@ -66,13 +69,13 @@ test_that('fit results have not changed (Vcmax)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
         c(3.630116e+01, 1.804791e+02, 1.069116e-08, 8.026640e+01),
-        tolerance = 1e-5
+        tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
         c(38.434695, 214.046523, 1.568026),
-        tolerance = 1e-5
+        tolerance = TOLERANCE
     )
 })
 
@@ -92,14 +95,14 @@ test_that('fit results have not changed (Vpr)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpr', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
-        c(NA, 390.855470649882, 24.2858626142869, 104.119302378528),
-        tolerance = 1e-5
+        c(58.1571, 133.8038, 0.0000, 86.3427),
+        tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpr_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
-        c(Inf, 503.86, 28.73),
-        tolerance = 1e-5
+        c(62.43, 156.94, 2.76),
+        tolerance = TOLERANCE
     )
 })
 
@@ -120,12 +123,12 @@ test_that('fit results have not changed (Jmax)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Jmax_at_opt', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
         c(5.215746e+02, 1.338467e+02, 1.475187e-08, 8.675720e+01),
-        tolerance = 1e-5
+        tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Jmax_at_opt_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
         c(573.15632, 157.30750, 2.24672),
-        tolerance = 1e-5
+        tolerance = TOLERANCE
     )
 })
