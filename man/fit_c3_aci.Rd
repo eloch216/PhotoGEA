@@ -222,11 +222,11 @@
     \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_old}: lower = 0, upper = 10, fit_option = \code{'fit'}
     \item \code{alpha_s}: lower = 0, upper = 10, fit_option = 0
-    \item \code{Gamma_star}: lower = -200, upper = 200, fit_option = \code{'column'}
-    \item \code{J_at_25}: lower = -1000, upper = 1000, fit_option = \code{'fit'}
-    \item \code{Rd_at_25}: lower = -100, upper = 100, fit_option = \code{'fit'}
-    \item \code{Tp}: lower = -100, upper = 100, fit_option = \code{'fit'}
-    \item \code{Vcmax_at_25}: lower = -1000, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Gamma_star}: lower = -20, upper = 200, fit_option = \code{'column'}
+    \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Rd_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
+    \item \code{Tp}: lower = -10, upper = 100, fit_option = \code{'fit'}
+    \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
   }
   With these settings, the "new" \code{alpha} parameters are set to 0, values of
   \code{Gamma_star} are taken from the \code{Gamma_star} column of

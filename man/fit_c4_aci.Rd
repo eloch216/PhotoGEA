@@ -242,14 +242,14 @@
   \code{Vpr} to find ones that best reproduce the experimentally measured values
   of net assimilation. By default, the following options are used for the fits:
   \itemize{
-    \item \code{alpha_psii}: lower = -10, upper = 10, fit_option = 0
-    \item \code{gbs}: lower = -10, upper = 10, fit_option = 0.003
-    \item \code{Jmax_at_opt}: lower = -1000, upper = 1000, fit_option = 1000
-    \item \code{Rd_at_25}: lower = -100, upper = 100, fit_option = \code{'fit'}
+    \item \code{alpha_psii}: lower = -1, upper = 10, fit_option = 0
+    \item \code{gbs}: lower = -1, upper = 10, fit_option = 0.003
+    \item \code{Jmax_at_opt}: lower = -50, upper = 1000, fit_option = 1000
+    \item \code{Rd_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Rm_frac}: lower = -10, upper = 10, fit_option = 0.5
-    \item \code{Vcmax_at_25}: lower = -1000, upper = 1000, fit_option = \code{'fit'}
-    \item \code{Vpmax_at_25}: lower = -1000, upper = 1000, fit_option = \code{'fit'}
-    \item \code{Vpr}: lower = -1000, upper = 1000, fit_option = 1000
+    \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Vpmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Vpr}: lower = -50, upper = 1000, fit_option = 1000
   }
   With these settings, \code{Jmax} and \code{Vpr} are set to 1000 (so net
   assimilation is essentially never limited by light or PEP carboxylase
