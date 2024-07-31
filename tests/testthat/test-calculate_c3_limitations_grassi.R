@@ -103,7 +103,7 @@ test_that('fit results have not changed', {
         OPTIM_FUN = optimizer_nmkb(1e-7),
         fit_options = list(alpha_old = 0),
         calculate_confidence_intervals = FALSE,
-        remove_unreliable_param = FALSE
+        remove_unreliable_param = 0
     )
 
     limit_res <- expect_silent(

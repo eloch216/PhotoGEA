@@ -15,7 +15,7 @@ test_that('fit failures are handled properly', {
             Ca_atmospheric = 420,
             OPTIM_FUN = optimizer_deoptim(200),
             calculate_confidence_intervals = TRUE,
-            remove_unreliable_param = TRUE
+            remove_unreliable_param = 2
         )
     )
 
@@ -41,7 +41,7 @@ test_that('Ci and Cc limits can be bypassed', {
             OPTIM_FUN = optimizer_deoptim(200),
             hard_constraints = 0,
             calculate_confidence_intervals = TRUE,
-            remove_unreliable_param = TRUE
+            remove_unreliable_param = 2
         )
     )
 
@@ -63,7 +63,7 @@ test_that('fit results have not changed (no alpha)', {
         fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
         OPTIM_FUN = optimizer_deoptim(200),
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = TRUE
+        remove_unreliable_param = 2
     )
 
     expect_equal(
@@ -90,7 +90,7 @@ test_that('fit results have not changed (alpha_old)', {
         fit_options = list(alpha_old = 'fit', alpha_g = 0, alpha_s = 0),
         OPTIM_FUN = optimizer_deoptim(200),
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = TRUE
+        remove_unreliable_param = 2
     )
 
     expect_equal(
@@ -117,7 +117,7 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit'),
         OPTIM_FUN = optimizer_deoptim(200),
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = TRUE
+        remove_unreliable_param = 2
     )
 
     expect_equal(

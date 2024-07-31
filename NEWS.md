@@ -57,7 +57,18 @@ be directly added to this file to describe the related changes.
     `calculate_c3_limitations_warren` and `fit_c3_aci`.
 - The default bounds for all the curve fitting functions have been expanded to
   avoid biasing the results.
-- Confidence limits for parameters at leaf temperature have been added
+- Confidence limits for parameters at leaf temperature have been added.
+- Options for identifying and removing unreliable parameter estimates have been
+  added. With this change, the `remove_unreliable_param` input argument must now
+  be a numeric value rather than a logical value.
+  - A value of 0 disables this feature (equivalent to `FALSE` in previous
+    versions of PhotoGEA).
+  - A value of 1 removes parameters (and their corresponding rates) if the
+    corresponding rate is never the smallest rate.
+  - A value of 2 removes parameters (and their corresponding rates) if the
+    corresponding rate is never the smallest rate, and removes parameters if the
+    the upper confidence limit is infinity (equivalent to `TRUE` in previous
+    versions of PhotoGEA).
 - A warning was removed from `fit_c4_aci`, which had previously suggested to
   avoid fitting more than one of `Vcmax_at_25`, `Vpr`, and `Jmax_at_opt`.
 

@@ -42,7 +42,7 @@
     error_threshold_factor = 0.147,
     hard_constraints = 2,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = TRUE
+    remove_unreliable_param = 2
   )
 }
 
@@ -206,8 +206,10 @@
   }
 
   \item{remove_unreliable_param}{
-    A logical value indicating whether or not to remove unreliable parameter
-    estimates; see below for details.
+    An integer value indicating the rules to use when identifying and removing
+    unreliable parameter estimates. A value of 2 is the most conservative
+    option. A value of 0 disables this feature, which is not typically
+    recommended. See below for more details.
   }
 }
 
@@ -279,16 +281,22 @@
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
   parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha} & \code{Tp})
-  will be unreliable. It is also possible that the upper limit of the confidence
-  interval for a parameter is infinity; this also indicates an unreliable
-  parameter estimate. These criteria are used to determine the reliability of
-  each parameter estimate, which is indicated in the \code{Vcmax_trust},
-  \code{J_trust}, \code{alpha_g_trust}, \code{alpha_old_trust},
-  \code{alpha_s_trust}, and \code{Tp_trust} columns of the output from
-  \code{fit_c3_aci}, where a value of \code{0} indicates an unreliable estimate
-  and \code{1} indicates a reliable estimate. If \code{remove_unreliable_param}
-  is \code{TRUE}, the values of any parameters deemed unreliable will be set to
-  \code{NA} in the outputs from \code{fit_c3_aci}.
+  will be unreliable. If \code{remove_unreliable_param} is 1 or larger, then
+  such parameter estimates (and the corresponding rates) will be replaced by
+  \code{NA} in the fitting results.
+
+  It is also possible that the upper limit of the confidence interval for a
+  parameter is infinity; this also indicates an unreliable parameter estimate.
+  If \code{remove_unreliable_param} is 2 or larger, then such parameter
+  estimates (but not the corresponding rates) will be replaced by \code{NA} in
+  the fitting results.
+
+  These criteria are used to determine the reliability of each parameter
+  estimate, which is indicated in the \code{Vcmax_trust}, \code{J_trust},
+  \code{alpha_g_trust}, \code{alpha_old_trust}, \code{alpha_s_trust}, and
+  \code{Tp_trust} columns of the output from \code{fit_c3_aci}, where a value of
+  \code{0} indicates an unreliable estimate and \code{1} indicates a reliable
+  estimate.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{Cc} from the atmospheric CO2

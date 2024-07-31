@@ -34,7 +34,7 @@ fit_c3_aci <- function(
     error_threshold_factor = 0.147,
     hard_constraints = 2,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = TRUE
+    remove_unreliable_param = 2
 )
 {
     if (!is.exdf(replicate_exdf)) {
