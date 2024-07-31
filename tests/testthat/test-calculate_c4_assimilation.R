@@ -31,7 +31,7 @@ test_that('c4 assimilation works for numeric values of flexible inputs', {
     )
 
     res <- expect_silent(
-        calculate_c4_assimilation(inputs, 0, 0.003, 400, 1, 0.5, 80, 120, 400)
+        calculate_c4_assimilation(inputs2, 0, 0.003, 400, 1, 0.5, 80, 120, 400)
     )
 
     # The alpha_psii value in inputs2 should be overwritten by the supplied
@@ -49,7 +49,7 @@ test_that('c4 assimilation works for non-numeric values of flexible inputs', {
         calculate_c4_assimilation(inputs2, '', 0.003, 400, 1, 0.5, 80, 120, 400)
     )
 
-    # The alpha_g value should be as in inputs2
+    # The alpha_psii value should be as in inputs2
     expect_equal(res[1, 'alpha_psii'], 0.5)
 })
 
