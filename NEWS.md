@@ -32,6 +32,12 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- Increased minimum required R version from `3.6.0` to `4.0.0`. The GitHub
+  actions testing setup no longer works for R < 4.0, so it has become too
+  difficult to guarantee compatability with an earlier version.
+
 ## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
 
 - Changed fitting method from least-squares to maximum likelihood in
