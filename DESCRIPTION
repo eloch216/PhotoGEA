@@ -10,7 +10,7 @@ Authors@R: c(
     person("Coralie E.", "Salesse-Smith", role = 'ctb'),
     person("PhotoGEA authors", role = "cph")
     )
-Depends: R (>= 3.6.0)
+Depends: R (>= 4.0.0)
 Imports:
     openxlsx,
     lattice,

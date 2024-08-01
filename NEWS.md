@@ -82,6 +82,9 @@ be directly added to this file to describe the related changes.
   mesophyll). The subscript `L` for "light" is more clear than `d` for "day,"
   since in some contexts `d` refers to "dark." One function name was modified
   during this process: `calculate_rd_laisk` became `calculate_RL_laisk`.
+- Increased minimum required R version from `3.6.0` to `4.0.0`. The GitHub
+  actions testing setup no longer works for R < 4.0, so it has become too
+  difficult to guarantee compatability with an earlier version.
 
 ## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
 
