@@ -50,6 +50,7 @@ test_that('fit results have not changed', {
     fit_res <- fit_c4_aci_hyperbola(
         one_curve,
         OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE
     )
 

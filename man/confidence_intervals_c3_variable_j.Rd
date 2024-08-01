@@ -37,8 +37,8 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    hard_constraints = 2,
-    require_positive_gmc = 'all',
+    hard_constraints = 0,
+    require_positive_gmc = 'positive_a',
     gmc_max = Inf
   )
 }

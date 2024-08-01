@@ -72,11 +72,16 @@ test_that('alpha restrictions are enforced', {
         'Cannot specify nonzero alpha_old and nonzero alpha_s or alpha_g'
     )
 
-    # alphas_s too high for supplied value of alpha_g
+    # alphas_s too high for supplied value of alpha_g (only when hard
+    # constraints are applied)
     expect_error(
-        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.5, '', 150, 1, 12, 120),
+        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.5, '', 150, 1, 12, 120, hard_constraints = 2),
         'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)',
         fixed = TRUE
+    )
+
+    expect_silent(
+        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.5, '', 150, 1, 12, 120)
     )
 
     # alpha_g and alpha_s nonzero and atp_use not 4

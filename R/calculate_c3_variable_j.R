@@ -13,7 +13,7 @@ calculate_c3_variable_j <- function(
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
-    hard_constraints = 2,
+    hard_constraints = 0,
     perform_checks = TRUE,
     return_exdf = TRUE
 )

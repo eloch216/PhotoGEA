@@ -4,7 +4,7 @@ error_function_c4_aci_hyperbola <- function(
     sd_A = 1,
     a_column_name = 'A',
     ci_column_name = 'Ci',
-    hard_constraints = 2
+    hard_constraints = 0
 )
 {
     # Assemble fit options; here we do not care about bounds

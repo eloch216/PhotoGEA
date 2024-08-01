@@ -50,7 +50,8 @@ be directly added to this file to describe the related changes.
     is 2.
   - Setting `hard_constraints` to 2 is equivalent to the default behavior in
     previous versions of PhotoGEA.
-  - The default value in all functions that take it as an input is 2.
+  - The default value in all functions that take it as an input is 0, which
+    imposes no hard constraints.
   - It has been added to `calculate_c3_assimilation`, `calculate_c3_variable_j`,
     `calculate_c4_assimilation`, and `calculate_c4_assimilation_hyperbola`, as
     well as any functions that use these internally, such as
@@ -69,8 +70,11 @@ be directly added to this file to describe the related changes.
     corresponding rate is never the smallest rate, and removes parameters if the
     the upper confidence limit is infinity (equivalent to `TRUE` in previous
     versions of PhotoGEA).
+  - The default value for all functions that have this option is 2.
 - A warning was removed from `fit_c4_aci`, which had previously suggested to
   avoid fitting more than one of `Vcmax_at_25`, `Vpr`, and `Jmax_at_opt`.
+- The default value of the `require_positive_gmc` input argument of the
+  `fit_c3_variable_j` function has been changed to `positive_a`.
 - The names of respiration rates were changed: `Rd` (the rate of day
   respiration) has been changed to `RL` (the rate of respiration in the light)
   and `Rm` (the rate of day respiration occurring in the mesophyll) has been

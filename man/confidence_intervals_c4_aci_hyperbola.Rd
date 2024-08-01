@@ -22,7 +22,7 @@
     error_threshold_factor = 0.147,
     a_column_name = 'A',
     ci_column_name = 'Ci',
-    hard_constraints = 2
+    hard_constraints = 0
   )
 }
 

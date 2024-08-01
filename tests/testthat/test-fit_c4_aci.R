@@ -18,6 +18,7 @@ test_that('fit failures are handled properly', {
             one_curve_bad,
             Ca_atmospheric = 420,
             OPTIM_FUN = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
         )
@@ -62,6 +63,7 @@ test_that('fit results have not changed (Vcmax)', {
         Ca_atmospheric = 420,
         fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_opt = 1000),
         OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
     )
@@ -89,6 +91,7 @@ test_that('fit results have not changed (Vpr)', {
         Ca_atmospheric = 420,
         fit_options = list(Vcmax_at_25 = 1000, Vpr = 'fit', Jmax_at_opt = 1000),
         OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
     )
@@ -116,6 +119,7 @@ test_that('fit results have not changed (Jmax)', {
         Ca_atmospheric = 420,
         fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_opt = 'fit'),
         OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
     )

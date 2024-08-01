@@ -40,7 +40,7 @@
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     error_threshold_factor = 0.147,
-    hard_constraints = 2,
+    hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2
   )

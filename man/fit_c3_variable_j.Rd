@@ -41,10 +41,10 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    require_positive_gmc = 'all',
+    require_positive_gmc = 'positive_a',
     gmc_max = Inf,
     error_threshold_factor = 0.147,
-    hard_constraints = 2,
+    hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2
   )

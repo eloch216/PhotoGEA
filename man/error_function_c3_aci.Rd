@@ -30,7 +30,7 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    hard_constraints = 2
+    hard_constraints = 0
   )
 }
 

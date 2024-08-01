@@ -24,7 +24,7 @@
     upper = list(),
     fit_options = list(),
     error_threshold_factor = 0.147,
-    hard_constraints = 2,
+    hard_constraints = 0,
     calculate_confidence_intervals = TRUE
   )
 }

@@ -25,7 +25,7 @@ confidence_intervals_c4_aci <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    hard_constraints = 2
+    hard_constraints = 0
 )
 {
     if (!is.exdf(replicate_exdf)) {

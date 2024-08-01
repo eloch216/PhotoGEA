@@ -29,6 +29,7 @@ test_that('fit failures are handled properly', {
             one_curve_bad,
             Ca_atmospheric = 420,
             OPTIM_FUN = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
         )
@@ -52,7 +53,7 @@ test_that('Cc limits can be bypassed', {
             one_curve_bad,
             Ca_atmospheric = 420,
             OPTIM_FUN = optimizer_nmkb(1e-7),
-            hard_constraint = 0,
+            hard_constraints = 0,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
         )
@@ -73,6 +74,7 @@ test_that('fit results have not changed (no alpha)', {
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
         OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
     )
@@ -101,6 +103,7 @@ test_that('fit results have not changed (alpha_old)', {
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 'fit', alpha_g = 0, alpha_s = 0),
         OPTIM_FUN = optimizer_deoptim(100),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
     )
@@ -129,6 +132,7 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit'),
         OPTIM_FUN = optimizer_deoptim(100),
+        hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
     )

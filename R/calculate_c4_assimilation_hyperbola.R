@@ -5,7 +5,7 @@ calculate_c4_assimilation_hyperbola <- function(
     rL,             # micromol / m^2 / s (typically this value is being fitted)
     Vmax,           # micromol / m^2 / s (typically this value is being fitted)
     ci_column_name = 'Ci',
-    hard_constraints = 2,
+    hard_constraints = 0,
     perform_checks = TRUE,
     return_exdf = TRUE
 )

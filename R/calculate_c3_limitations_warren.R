@@ -18,7 +18,7 @@ calculate_c3_limitations_warren <- function(
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    hard_constraints = 2
+    hard_constraints = 0
 )
 {
     # Check inputs

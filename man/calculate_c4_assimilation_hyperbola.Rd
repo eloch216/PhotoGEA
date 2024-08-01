@@ -20,7 +20,7 @@
     rL,
     Vmax,
     ci_column_name = 'Ci',
-    hard_constraints = 2,
+    hard_constraints = 0,
     perform_checks = TRUE,
     return_exdf = TRUE
   )

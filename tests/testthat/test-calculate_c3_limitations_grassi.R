@@ -81,7 +81,8 @@ test_that('fit failures are handled properly', {
     fit_res_bad <- fit_c3_aci(
         one_curve_bad,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2
     )
 
     limit_res_bad <- expect_no_error(
