@@ -1,7 +1,7 @@
 c4_arrhenius_no_temp <- list(
     Vcmax_norm = list(c = 0,               Ea = 0, units = 'normalized to Vcmax at 25 degrees C'),
     Vpmax_norm = list(c = 0,               Ea = 0, units = 'normalized to Vpmax at 25 degrees C'),
-    Rd_norm =    list(c = 0,               Ea = 0, units = 'normalized to Rd at 25 degrees C'),
+    RL_norm =    list(c = 0,               Ea = 0, units = 'normalized to RL at 25 degrees C'),
     Kc =         list(c = log(1210),       Ea = 0, units = 'microbar'),
     Ko =         list(c = log(292),        Ea = 0, units = 'mbar'),
     Kp =         list(c = log(82),         Ea = 0, units = 'microbar'),

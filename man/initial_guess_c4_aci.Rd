@@ -18,7 +18,7 @@
     alpha_psii,
     gbs,
     Rm_frac,
-    pcm_threshold_rm = 40,
+    pcm_threshold_rlm = 40,
     absorptance = 0.85,
     f_spectral = 0.15,
     rho = 0.5,
@@ -29,7 +29,7 @@
     kp_column_name = 'Kp',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
   )
@@ -60,9 +60,9 @@
     of \code{exdf_obj} if it exists.
   }
 
-  \item{pcm_threshold_rm}{
+  \item{pcm_threshold_rlm}{
     An upper cutoff value for the partial pressure of CO2 in the mesophyll (in
-    \code{microbar}) to be used when estimating \code{Rm}.
+    \code{microbar}) to be used when estimating \code{RLm}.
   }
 
   \item{absorptance}{
@@ -117,9 +117,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -136,7 +136,7 @@
 }
 
 \details{
-  Here we estimate values of \code{Jmax_at_opt}, \code{Rd_at_25},
+  Here we estimate values of \code{Jmax_at_opt}, \code{RL_at_25},
   \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} from a measured C4 CO2
   response curve. It is difficult to estimate values of \code{alpha_psii},
   \code{gbs}, and \code{Rm_frac} from a curve, so they must be supplied
@@ -147,23 +147,23 @@
   Any equation numbers referenced below are from this book.
 
   \itemize{
-    \item \strong{Estimating Rd}: An estimate for \code{Rm} can be obtained
+    \item \strong{Estimating RL}: An estimate for \code{RLm} can be obtained
           using Equation 4.26, which applies for low values of \code{PCm}. In
           this situation, \code{PCm + Kp} can be approximated by \code{Kp}, and
           Equation 4.26 simplifies to a linear relationship between the net
           assimilation \code{An} and \code{PCm}: \code{An =
-          (gbs + Vpmax / kP) * PCm - Rm}. So, to estimate \code{Rm}, we make a
+          (gbs + Vpmax / kP) * PCm - RLm}. So, to estimate \code{RLm}, we make a
           linear fit of \code{An} vs. \code{PCm} in the low \code{PCm} range
-          where this equation is expected to be valid. Then \code{Rm} is given
+          where this equation is expected to be valid. Then \code{RLm} is given
           by the negative of the intercept from the fit. In the C4 assimilation
-          model, we assume that \code{Rm = Rm_frac * Rd}, so we can also
-          estimate \code{Rd = Rm / Rm_frac} from this value.
+          model, we assume that \code{RLm = Rm_frac * RL}, so we can also
+          estimate \code{RL = RLm / Rm_frac} from this value.
     \item \strong{Estimating Vpmax}: An estimate for \code{Vpmax} can also be
           obtained from Equation 4.26. In this case, we simply solve the
           equation for \code{Vpmax} and use it to calculate a value of
           \code{Vpmax} at each point in the curve from the measured values of
           \code{An} and \code{PCm}, the input value of \code{gbs}, and the value
-          of \code{Rm} estimated above. In the PEP-carboxylation-limited range,
+          of \code{RLm} estimated above. In the PEP-carboxylation-limited range,
           the estimated values of \code{Vpmax} should be reasonable. In other
           parts of the curve, the assimilation rate is limited by other factors,
           so \code{An} will be smaller than the PEP-carboxylation-limited
@@ -171,13 +171,13 @@
           So, to make an overall estimate, we choose the largest estimated
           \code{Vpmax} value.
     \item \strong{Estimating Vcmax}: An estimate for \code{Vcmax} can be
-          obtained by solving \code{An = Vcmax - Rd} for \code{Vcmax}, similar
+          obtained by solving \code{An = Vcmax - RL} for \code{Vcmax}, similar
           to the method used to estimate \code{Vpmax}.
     \item \strong{Estimating Vpr}: An estimate for \code{Vpr} can be
-          obtained by solving \code{An = Vpr + gbs * PCm - Rm} for \code{Vpr},
+          obtained by solving \code{An = Vpr + gbs * PCm - RLm} for \code{Vpr},
           similar to the method used to estimate \code{Vpmax}.
     \item \strong{Estimating Jmax}: First, an estimate for \code{J} can be
-          obtained by solving \code{An = (1 - x_etr) * J / 3 - Rd} for \code{J}.
+          obtained by solving \code{An = (1 - x_etr) * J / 3 - RL} for \code{J}.
           Then, estimates of \code{Jmax} can be made from \code{J} and
           \code{Qin}. The largest value of \code{Jmax / Jmax_norm} is chosen as
           the best estimate for \code{Jmax_at_opt}.
@@ -199,7 +199,7 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C4 CO2 response curve. The return value of
   this function will be a numeric vector with eight elements, representing the
-  values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_opt}, \code{Rd_at_25},
+  values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_opt}, \code{RL_at_25},
   \code{rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} (in
   that order).
 }

@@ -4,5 +4,5 @@ c3_arrhenius_no_temp <- list(
     Gamma_star = list(c = log(36.944),  Ea = 0, units = 'micromol mol^(-1)'),
     Vcmax_norm = list(c = 0,            Ea = 0, units = 'normalized to Vcmax at 25 degrees C'),
     J_norm =     list(c = 0,            Ea = 0, units = 'normalized to J at 25 degrees C'),
-    Rd_norm =    list(c = 0,            Ea = 0, units = 'normalized to Rd at 25 degrees C')
+    RL_norm =    list(c = 0,            Ea = 0, units = 'normalized to RL at 25 degrees C')
 )

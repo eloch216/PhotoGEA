@@ -71,6 +71,13 @@ be directly added to this file to describe the related changes.
     versions of PhotoGEA).
 - A warning was removed from `fit_c4_aci`, which had previously suggested to
   avoid fitting more than one of `Vcmax_at_25`, `Vpr`, and `Jmax_at_opt`.
+- The names of respiration rates were changed: `Rd` (the rate of day
+  respiration) has been changed to `RL` (the rate of respiration in the light)
+  and `Rm` (the rate of day respiration occurring in the mesophyll) has been
+  changed to `RLm` (the rate of respiration in the light occurring in the
+  mesophyll). The subscript `L` for "light" is more clear than `d` for "day,"
+  since in some contexts `d` refers to "dark." One function name was modified
+  during this process: `calculate_rd_laisk` became `calculate_RL_laisk`.
 
 ## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
 

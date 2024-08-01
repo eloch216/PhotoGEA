@@ -138,11 +138,11 @@
   Rubisco activity; in other words, that the net CO2 assimilation rate is given
   by
 
-  \code{Ac = Vcmax * (Cc - Gamma_star) / (Cc + Km) - Rd},
+  \code{Ac = Vcmax * (Cc - Gamma_star) / (Cc + Km) - RL},
 
   where \code{Vcmax} is the maximum Rubisco carboxylation rate,
   \code{Gamma_star} is the CO2 compensation point in the absence of day
-  respiration, \code{Rd} is the day respiration rate, \code{Km} is the effective
+  respiration, \code{RL} is the day respiration rate, \code{Km} is the effective
   Michaelis-Menten constant for Rubisco carboxylation. In turn, \code{Km} is
   given by \code{Km = Kc * (1 + O / Ko)}, where \code{Kc} is the
   Michaelis-Menten constant for carboxylation, \code{Ko} is the Michaelis-Menten
@@ -185,7 +185,7 @@
   It is also possible to calculate \code{dAdC} when assimilation is limited by
   RuBP regeneration. In this case, we have
 
-  \code{Aj = J * (Cc - Gamma_star) / (4 * Cc + 8 * Gamma_star) - Rd},
+  \code{Aj = J * (Cc - Gamma_star) / (4 * Cc + 8 * Gamma_star) - RL},
 
   where \code{J} is the RuBP regeneration rate, and the limitation due to
   "biochemistry" actually refers to limitation due to the value of \code{J}

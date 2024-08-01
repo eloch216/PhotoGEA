@@ -650,7 +650,7 @@ rate. Here we will use 1.2 $\mu$mol m$^{-2}$ s$^{-1}$.
 # Set day respiration rate
 licor_data <- set_variable(
   licor_data,
-  'Rd',
+  'RL',
   'micromol m^(-2) s^(-1)',
   value = 1.2
 )

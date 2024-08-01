@@ -25,7 +25,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
@@ -100,9 +100,9 @@
     the units must be \code{percent}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -217,7 +217,7 @@
   This function calls \code{\link{calculate_c3_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
   vary the values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-  \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25} to find
+  \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} to find
   ones that best reproduce the experimentally measured values of net
   assimilation. By default, the following options are used for the fits:
   \itemize{
@@ -226,7 +226,7 @@
     \item \code{alpha_s}: lower = 0, upper = 10, fit_option = 0
     \item \code{Gamma_star}: lower = -20, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
-    \item \code{Rd_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
+    \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Tp}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
   }
@@ -326,12 +326,12 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C will be stored in
-                  the \code{J_at_25}, \code{Rd_at_25}, and \code{Vcmax_at_25}
+                  the \code{J_at_25}, \code{RL_at_25}, and \code{Vcmax_at_25}
                   columns.
             \item The other outputs from \code{\link{calculate_c3_assimilation}}
                   will be stored in columns with the usual names:
                   \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-                  \code{Tp}, \code{Vcmax_tl}, \code{Rd_tl}, \code{J_tl},
+                  \code{Tp}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
                   \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
                   \code{Aj}, and \code{Ap}.
           }
@@ -347,14 +347,14 @@
                   \code{n_Wp_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_g},
                   \code{alpha_old}, \code{alpha_s},
-                  \code{Tp}, \code{J_at_25}, \code{Rd_at_25}, and
+                  \code{Tp}, \code{J_at_25}, \code{RL_at_25}, and
                   \code{Vcmax_at_25} columns. If
                   \code{calculate_confidence_intervals} is \code{TRUE}, upper
                   and lower limits for each of these parameters will also be
                   included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  \code{J_tl_avg}, \code{Rd_tl_avg}, and \code{Vcmax_tl_avg}.
+                  \code{J_tl_avg}, \code{RL_tl_avg}, and \code{Vcmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.
@@ -439,8 +439,8 @@ col_to_keep <- c(
   'species', 'plot',                                       # identifiers
   'n_Wc_smallest', 'n_Wj_smallest', 'n_Wp_smallest',       # number of points where
                                                            #   each process is limiting
-  'Tp', 'J_at_25', 'Rd_at_25', 'Vcmax_at_25',              # parameters scaled to 25 degrees C
-  'J_tl_avg', 'Rd_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
+  'Tp', 'J_at_25', 'RL_at_25', 'Vcmax_at_25',              # parameters scaled to 25 degrees C
+  'J_tl_avg', 'RL_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
   'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
   'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats
   'convergence', 'convergence_msg', 'feval', 'optimum_val' # convergence info

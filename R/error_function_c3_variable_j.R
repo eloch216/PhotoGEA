@@ -14,7 +14,7 @@ error_function_c3_variable_j <- function(
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
@@ -54,7 +54,7 @@ error_function_c3_variable_j <- function(
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
     required_variables[[phips2_column_name]]         <- 'dimensionless'
     required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
-    required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
+    required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
@@ -116,7 +116,7 @@ error_function_c3_variable_j <- function(
                     X[1], # alpha_g
                     X[3], # alpha_s
                     X[4], # Gamma_star
-                    X[6], # Rd_at_25
+                    X[6], # RL_at_25
                     X[7], # tau
                     atp_use,
                     nadph_use,
@@ -124,7 +124,7 @@ error_function_c3_variable_j <- function(
                     ci_column_name,
                     phips2_column_name,
                     qin_column_name,
-                    rd_norm_column_name,
+                    rl_norm_column_name,
                     total_pressure_column_name,
                     hard_constraints,
                     perform_checks = FALSE,
@@ -165,7 +165,7 @@ error_function_c3_variable_j <- function(
                     X[3], # alpha_s
                     X[4], # Gamma_star
                     X[5], # J_at_25
-                    X[6], # Rd_at_25
+                    X[6], # RL_at_25
                     X[8], # Tp
                     X[9], # Vcmax_at_25
                     atp_use,
@@ -177,7 +177,7 @@ error_function_c3_variable_j <- function(
                     kc_column_name,
                     ko_column_name,
                     oxygen_column_name,
-                    rd_norm_column_name,
+                    rl_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,
                     hard_constraints = hard_constraints,

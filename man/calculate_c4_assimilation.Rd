@@ -18,7 +18,7 @@
     alpha_psii,
     gbs,
     Jmax_at_opt,
-    Rd_at_25,
+    RL_at_25,
     Rm_frac,
     Vcmax_at_25,
     Vpmax_at_25,
@@ -37,7 +37,7 @@
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
@@ -74,12 +74,12 @@
     in the \code{Jmax_at_opt} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Rd_at_25}{
+  \item{RL_at_25}{
     The total rate of mitochondrial respiration across the mesophyll and bundle
     sheath at 25 degrees C, expressed in \code{micromol m^(-2) s^(-1)}. If
-    \code{Rd_at_25} is not a number, then there must be a column in
-    \code{exdf_obj} called \code{Rd_at_25} with appropriate units. A numeric
-    value supplied here will overwrite the values in the \code{Rd_at_25} column
+    \code{RL_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{RL_at_25} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{RL_at_25} column
     of \code{exdf_obj} if it exists.
   }
 
@@ -188,9 +188,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -259,16 +259,16 @@
   The complicated equations above can be approximiated by simpler ones. For
   \code{Ac}, we can use Equation 4.25:
 
-  \code{Ac = min(Vp + gbs * PCm - Rm, Vcmax - Rd)}
+  \code{Ac = min(Vp + gbs * PCm - RLm, Vcmax - RL)}
 
   where \code{Vp} is the rate of PEP carboxylation, \code{gbs} is the bundle
   sheath conductance to CO2, \code{PCm} is the partial pressure of CO2 in the
-  mesophyll, \code{Rm} is the rate of mitochondrial respiration occuring in the
+  mesophyll, \code{RLm} is the rate of mitochondrial respiration occuring in the
   mesophyll, \code{Vcmax} is the maximum rate of Rubisco carboxylation, and
-  \code{Rd} is the rate of mitochondrial respiration occurring in the bundle
+  \code{RL} is the rate of mitochondrial respiration occurring in the bundle
   sheath and mesophyll. Essentially, the first term in the equation above
-  (\code{Vp + gbs * PCm - Rm}) can be thought of as a PEP-carboxylase-limited
-  assimilation rate \code{Ap}, while the second term (\code{Vcmax - Rd}) is a
+  (\code{Vp + gbs * PCm - RLm}) can be thought of as a PEP-carboxylase-limited
+  assimilation rate \code{Ap}, while the second term (\code{Vcmax - RL}) is a
   Rubisco-limited rate \code{Ar}.
 
   The PEP carboxylation rate \code{Vp} is calculated according to Equation 4.19:
@@ -284,9 +284,9 @@
 
   \code{Ac = min(Apc, Apr, Ar)}
 
-  where \code{Apc = Pcm * Vpmax / (PCm + Kp) + gbs * PCm - Rm} is the rate due
-  to carbon-limited PEP carboxylation, \code{Apr = Vpr + gbs * PCm - Rm} is the
-  rate due to regeneration-limited PEP carboxylation, and \code{Ar = Vcmax - Rd}
+  where \code{Apc = Pcm * Vpmax / (PCm + Kp) + gbs * PCm - RLm} is the rate due
+  to carbon-limited PEP carboxylation, \code{Apr = Vpr + gbs * PCm - RLm} is the
+  rate due to regeneration-limited PEP carboxylation, and \code{Ar = Vcmax - RL}
   is the rate due to Rubisco-limited assimilation.
 
   In the example at the end of this documentation page, we compare \code{Apc},
@@ -300,12 +300,12 @@
   To be more precise, the approximation is only reliable when \code{Vcmax} is
   much larger than \code{gbs * Kc * (1 + POm / Ko)}, which is rarely the case;
   otherwise, the limiting value of \code{An} at high \code{PCm} will be smaller
-  than \code{Ar = Vcmax - Rd}. Conversely, if \code{gbs} and \code{alpha_psii}
+  than \code{Ar = Vcmax - RL}. Conversely, if \code{gbs} and \code{alpha_psii}
   are both set to zero, then the approximation is exact.
 
   For \code{Aj}, the simplified version is Equation 4.45:
 
-  \code{Aj = min(x_etr * J / 2 - Rm + gbs * PCm, (1 - x_etr) * J / 3 - Rd)}
+  \code{Aj = min(x_etr * J / 2 - RLm + gbs * PCm, (1 - x_etr) * J / 3 - RL)}
 
   where \code{x_etr} is the fraction of whole-chain electron transport occurring
   in the mesophyll and \code{J} is the electron transport rate. We can therefore
@@ -315,8 +315,8 @@
 
   where \code{Ajm} is the mesophyll light-limited rate and \code{Ajbs} is the
   bundle sheath light-limited rate. These are given by
-  \code{Ajm = x_etr * J / 2 - Rm + gbs * PCm} and
-  \code{(1 - x_etr) * J / 3 - Rd} As in the case with \code{Ac}, this
+  \code{Ajm = x_etr * J / 2 - RLm + gbs * PCm} and
+  \code{(1 - x_etr) * J / 3 - RL} As in the case with \code{Ac}, this
   approximation is not exact.
 
   Combining these two simplifications, we can see that the overall net
@@ -340,7 +340,7 @@
   \code{Pcm} is very high, the approximate equation for \code{Ac} simplifies
   further to:
 
-  \code{Ac = min(Vpmax - Rm, Vpr - Rm, Vcmax - Rd)}
+  \code{Ac = min(Vpmax - RLm, Vpr - RLm, Vcmax - RL)}
 
   Since respiration costs are also generally much smaller than the maximum
   enzyme activity and regeneration rates, the enzyme-limited assimilation rate
@@ -354,21 +354,21 @@
   At lower values of \code{PCm}, enzyme-limited net assimilation is determined
   by CO2-limited PEP carboxylation according to:
 
-  \code{An = PCm * Vpmax / Kp - Rm}
+  \code{An = PCm * Vpmax / Kp - RLm}
 
   where we have approximated \code{gbs * PCm = 0} and \code{PCm + Kp = Kp}, as
   appropriate for small values of \code{Pcm}. Thus, we can see that for low CO2
   levels, assimilation is linearly related to \code{PCm} with a slope of
-  \code{Vpmax / Kp} and intercept of \code{-Rm}.
+  \code{Vpmax / Kp} and intercept of \code{-RLm}.
 
   \strong{Respiration}
 
-  Table 4.1 from von Caemmerer (2000) suggests that \code{Rd = 0.01 * Vcmax} and
-  \code{Rm = 0.5 * Rd}. To allow more flexibility, we allow \code{Rd} to be
+  Table 4.1 from von Caemmerer (2000) suggests that \code{RL = 0.01 * Vcmax} and
+  \code{RLm = 0.5 * RL}. To allow more flexibility, we allow \code{RL} to be
   specified independently of \code{Vcmax}, and we also consider the ratio of
-  \code{Rm / Rd = Rm_frac} to be a variable (so that \code{Rm} is calculated
-  from \code{Rd} according to \code{Rm = Rm_frac * Rd}). If \code{Rm_frac} is
-  set to 1, then there is no distinction between \code{Rd} and \code{Rm}.
+  \code{RLm / RL = Rm_frac} to be a variable (so that \code{RLm} is calculated
+  from \code{RL} according to \code{RLm = Rm_frac * RL}). If \code{Rm_frac} is
+  set to 1, then there is no distinction between \code{RL} and \code{RLm}.
 
   \strong{Hard constraints:}
 
@@ -420,8 +420,8 @@
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns: \code{alpha_psii},
           \code{gbs}, \code{Jmax_at_opt}, \code{Jmax_tl}, \code{J_tl},
-          \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl},
-          \code{Rm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc},
+          \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl},
+          \code{RLm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc},
           \code{Apr}, \code{Ap}, \code{Ar}, \code{Ajm}, \code{Ajbs}, \code{Ac},
           \code{Aj}, \code{An}, and \code{c4_assimilation_msg}. Most of these
           are calculated as described above, while several are copies of the

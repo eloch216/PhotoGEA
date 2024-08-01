@@ -2,7 +2,7 @@ initial_guess_c4_aci <- function(
     alpha_psii, # dimensionless
     gbs,        # mol / m^2 / s / bar
     Rm_frac,    # dimensionless
-    pcm_threshold_rm = 40,
+    pcm_threshold_rlm = 40,
     absorptance = 0.85,
     f_spectral = 0.15,
     rho = 0.5,
@@ -13,7 +13,7 @@ initial_guess_c4_aci <- function(
     kp_column_name = 'Kp',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
 )
@@ -31,7 +31,7 @@ initial_guess_c4_aci <- function(
         required_variables[[kp_column_name]]         <- 'microbar'
         required_variables[[pcm_column_name]]        <- "microbar"
         required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
-        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
+        required_variables[[rl_norm_column_name]]    <- 'normalized to RL at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
         required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
@@ -52,31 +52,31 @@ initial_guess_c4_aci <- function(
         if (value_set(gbs))        {rc_exdf[, 'gbs']        <- gbs}
         if (value_set(Rm_frac))    {rc_exdf[, 'Rm_frac']    <- Rm_frac}
 
-        # To estimate Rm, make a linear fit of A ~ PCm where PCm is below the
-        # threshold. The intercept from the fit should be -Rm. If there are not
-        # enough points to do the fit, just estimate Rm to be a typical value.
-        # Note: Rd and Rm have the same temperature dependence because
-        # Rm = Rd * Rm_frac.
-        rm_subset <- rc_exdf[rc_exdf[, pcm_column_name] <= pcm_threshold_rm, ] # a data frame
+        # To estimate RLm, make a linear fit of A ~ PCm where PCm is below the
+        # threshold. The intercept from the fit should be -RLm. If there are not
+        # enough points to do the fit, just estimate RLm to be a typical value.
+        # Note: RL and RLm have the same temperature dependence because
+        # RLm = RL * Rm_frac.
+        RLm_subset <- rc_exdf[rc_exdf[, pcm_column_name] <= pcm_threshold_rlm, ] # a data frame
 
-        rm_estimate <- if (nrow(rm_subset) > 1) {
-            mean_rm_norm <- mean(rm_subset[, rd_norm_column_name])
+        RLm_estimate <- if (nrow(RLm_subset) > 1) {
+            mean_rm_norm <- mean(RLm_subset[, rl_norm_column_name])
 
             rm_fit <-
-                stats::lm(rm_subset[, a_column_name] ~ rm_subset[, pcm_column_name])
+                stats::lm(RLm_subset[, a_column_name] ~ RLm_subset[, pcm_column_name])
 
             -rm_fit$coefficients[1] / mean_rm_norm
         } else {
             0.5
         }
 
-        # If Rm was estimated to be negative, reset it to a typical value
-        if (rm_estimate <= 0) {
-            rm_estimate <- 0.5
+        # If RLm was estimated to be negative, reset it to a typical value
+        if (RLm_estimate <= 0) {
+            RLm_estimate <- 0.5
         }
 
-        # Rm is determined by Rm = Rm_frac * Rd, so Rd = Rm / Rm_frac.
-        rd_estimate <- rm_estimate / mean(rc_exdf[, 'Rm_frac'])
+        # RLm is determined by RLm = Rm_frac * RL, so RL = RLm / Rm_frac.
+        RL_estimate <- RLm_estimate / mean(rc_exdf[, 'Rm_frac'])
 
         # To estimate Vpmax, we solve the equation for Apc (defined in the
         # documentation for calculate_c4_assimilation) for Vpmax and calculate
@@ -88,7 +88,7 @@ initial_guess_c4_aci <- function(
         # Vpmax values will be smaller. With this is mind, we choose the largest
         # value of Vpmax as our best estimate.
         vpmax_estimates <-
-            (rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]) *
+            (rc_exdf[, a_column_name] + RLm_estimate * rc_exdf[, rl_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]) *
             (rc_exdf[, pcm_column_name] + rc_exdf[, kp_column_name]) /
             rc_exdf[, pcm_column_name]
 
@@ -103,7 +103,7 @@ initial_guess_c4_aci <- function(
         # calculated for rubisco-limited assimilation, so the corresponding
         # Vcmax values will be smaller. With this in mind, we choose the largest
         # value of Vcmax as our best estimate.
-        vcmax_estimates <- (rc_exdf[, a_column_name] + rd_estimate * rc_exdf[, rd_norm_column_name])
+        vcmax_estimates <- (rc_exdf[, a_column_name] + RL_estimate * rc_exdf[, rl_norm_column_name])
 
         vcmax_estimates <- vcmax_estimates / rc_exdf[, vcmax_norm_column_name]
 
@@ -117,13 +117,13 @@ initial_guess_c4_aci <- function(
         # corresponding Vpr values will be smaller. With this in mind, we choose
         # the largest value of Vpr as our best estimate.
         vpr_estimates <-
-            rc_exdf[, a_column_name] + rm_estimate * rc_exdf[, rd_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]
+            rc_exdf[, a_column_name] + RLm_estimate * rc_exdf[, rl_norm_column_name] - rc_exdf[, 'gbs'] * rc_exdf[, pcm_column_name]
 
         # To estimate J, we solve the equation for Ajbs (defined in the
         # documentation for calculate_c4_assimilation) for J and calculate it
         # for each point in the response curve.
         j_estimates <-
-            3 * (rc_exdf[, a_column_name] + rd_estimate * rc_exdf[, rd_norm_column_name]) / (1 - x_etr)
+            3 * (rc_exdf[, a_column_name] + RL_estimate * rc_exdf[, rl_norm_column_name]) / (1 - x_etr)
 
         # Now we can estimate Jmax from each J estimate. We will choose the
         # largest estimate as with the other variables
@@ -143,7 +143,7 @@ initial_guess_c4_aci <- function(
             mean(rc_exdf[, 'alpha_psii']),
             mean(rc_exdf[, 'gbs']),
             max(jmax_estimates),
-            as.numeric(rd_estimate), # remove names
+            as.numeric(RL_estimate), # remove names
             mean(rc_exdf[, 'Rm_frac']),
             max(vcmax_estimates),
             max(vpmax_estimates),

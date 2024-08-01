@@ -22,7 +22,7 @@
           (\code{Vcmax}) normalized to its value at 25 degrees C.
     \item \code{Vpmax_norm}: The maximum rate of PEP carboxylase activity
           (\code{Vpmax}) normalized to its value at 25 degrees C.
-    \item \code{Rd_norm}: The respiration rate (\code{Rd}) normalized to the
+    \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to the
           value of \code{Vcmax} at 25 degrees C.
     \item \code{Kc}: The Michaelis-Menten constant for rubisco carboxylation.
     \item \code{Ko}: The Michaelis-Menten constant for rubisco oxygenation.
@@ -41,7 +41,7 @@
 }
 
 \source{
-  Some of these parameters (\code{Vcmax}, \code{Vpmax}, and \code{Rd}) are
+  Some of these parameters (\code{Vcmax}, \code{Vpmax}, and \code{RL}) are
   normalized to their values at 25 degrees C. These variables include
   \code{_norm} in their names to indicate this.
 

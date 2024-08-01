@@ -21,7 +21,7 @@ test_that('the nmkb optimizer works', {
         )
     )
 
-    expect_true(is.finite(fit_res$parameters[1, 'Rd_at_25']))
+    expect_true(is.finite(fit_res$parameters[1, 'RL_at_25']))
 })
 
 test_that('the hjkb optimizer works', {
@@ -35,7 +35,7 @@ test_that('the hjkb optimizer works', {
         )
     )
 
-    expect_true(is.finite(fit_res$parameters[1, 'Rd_at_25']))
+    expect_true(is.finite(fit_res$parameters[1, 'RL_at_25']))
 })
 
 test_that('the deoptim optimizer works', {
@@ -49,5 +49,5 @@ test_that('the deoptim optimizer works', {
         )
     )
 
-    expect_true(is.finite(fit_res$parameters[1, 'Rd_at_25']))
+    expect_true(is.finite(fit_res$parameters[1, 'RL_at_25']))
 })

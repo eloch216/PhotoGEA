@@ -25,7 +25,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
@@ -115,9 +115,9 @@
     the units must be \code{percent}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -152,7 +152,7 @@
 \details{
   When fitting A-Ci curves using a maximum likelihood approach, it is necessary
   to define a function that calculates the likelihood of a given set of
-  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
+  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25}, \code{Tp},
   and \code{Vcmax_at_25} values by comparing a model prediction to a measured
   curve. This function will be passed to an optimization algorithm which will
   determine the values that produce the largest likelihood.
@@ -160,7 +160,7 @@
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
   a subset of the available fitting parameters; by default, the fitting
-  parameters are \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
+  parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and
   \code{Vcmax_at_25}. This behavior can be changed via the \code{fit_options}
   argument.
 
@@ -194,7 +194,7 @@
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
   default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that order).
+  \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -235,7 +235,7 @@ error_fcn <- error_function_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 236, Rd_at_25 = 4e-8, Tp = 22.7, Vcmax_at_25 = 147
+# Evaluate the error for J_at_25 = 236, RL_at_25 = 4e-8, Tp = 22.7, Vcmax_at_25 = 147
 error_fcn(c(236, 4e-8, 22.7, 147))
 
 # Make a plot of likelihood vs. Vcmax when other parameters are fixed to the

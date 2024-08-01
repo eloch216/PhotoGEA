@@ -118,7 +118,7 @@ inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'T
 alpha_psii <- 0
 gbs <- 0.003
 Jmax_at_opt <- 400
-Rd_at_25 <- 1
+RL_at_25 <- 1
 Rm_frac <- 0.5
 Vcmax_at_25 <- 30
 Vpmax_at_25 <- 150
@@ -126,7 +126,7 @@ Vpr <- 80
 
 assim <- calculate_c4_assimilation(
   inputs,
-  alpha_psii, gbs, Jmax_at_opt, Rd_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+  alpha_psii, gbs, Jmax_at_opt, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
 )
 
 c4_col <- rev(multi_curve_colors()[1:4])
@@ -150,7 +150,7 @@ xyplot(
 (Note: this figure was generated using the `calculate_c4_assimilation` function
 from the `PhotoGEA` package, and it represents the photosynethetic response of a
 C~4~ leaf according to the model with
-`Rd_at_25` = `r Rd_at_25` `r assim$units$Rd_at_25`,
+`RL_at_25` = `r RL_at_25` `r assim$units$RL_at_25`,
 `Vpmax_at_25` = `r Vpmax_at_25` `r assim$units$Vpmax_at_25`,
 `Vcmax_at_25` = `r Vcmax_at_25` `r assim$units$Vcmax_at_25`,
 `Vpr` = `r Vpr` `r assim$units$Vpr`, and a leaf temperature of
@@ -159,7 +159,7 @@ taken from @von_caemmerer_updating_2021.)
 
 Thus, one of the most common reasons to measure an A-Ci curve is to interpret it
 in the context of this model. In other words, by fitting the model's equations
-to a measured curve, it is possible to estimate values for `Rd`, `Vpmax`,
+to a measured curve, it is possible to estimate values for `RL`, `Vpmax`,
 `Vcmax`, and `Vpr`. See the documentation for `calculate_c4_assimilation` for
 more information about these important quantities.
 
@@ -767,7 +767,7 @@ we only care about a few of them. We can view them as follows:
 ```{r c4_aci_parameters}
 # View the C4 parameters
 columns_for_viewing <-
-  c('instrument', 'species', 'plot', 'Rd_at_25', 'Vcmax_at_25', 'Vpmax_at_25')
+  c('instrument', 'species', 'plot', 'RL_at_25', 'Vcmax_at_25', 'Vpmax_at_25')
 
 c4_aci_parameters <-
   c4_aci_results$parameters[ , columns_for_viewing, TRUE]
@@ -785,7 +785,7 @@ c4_aci_averages <- basic_stats(c4_aci_results$parameters, 'species')
 # View the averages and errors
 columns_to_view <- c(
   'species',
-  'Rd_at_25_avg', 'Rd_at_25_stderr',
+  'RL_at_25_avg', 'RL_at_25_stderr',
   'Vcmax_at_25_avg', 'Vcmax_at_25_stderr',
   'Vpmax_at_25_avg', 'Vpmax_at_25_stderr'
 )

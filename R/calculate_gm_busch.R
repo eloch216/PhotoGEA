@@ -15,7 +15,7 @@ calculate_gm_busch <- function(
     delta_obs_growth_column_name = 'Delta_obs_growth',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
-    rd_column_name = 'Rd',
+    rl_column_name = 'RL',
     total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
 )
@@ -47,7 +47,7 @@ calculate_gm_busch <- function(
     required_variables[[delta_c13_r_column_name]]    <- 'ppt'
     required_variables[[delta_obs_tdl_column_name]]  <- 'ppt'
     required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
-    required_variables[[rd_column_name]]             <- 'micromol m^(-2) s^(-1)'
+    required_variables[[rl_column_name]]             <- 'micromol m^(-2) s^(-1)'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[t_column_name]]              <- 'dimensionless'
 
@@ -67,7 +67,7 @@ calculate_gm_busch <- function(
     Delta_obs_meas <- exdf_obj[, delta_obs_tdl_column_name]  # ppt
     Gamma_star     <- exdf_obj[, gamma_star_column_name]     # micromol / mol
     total_pressure <- exdf_obj[, total_pressure_column_name] # bar
-    Rd             <- exdf_obj[, rd_column_name]             # micromol / m^2 / s
+    RL             <- exdf_obj[, rl_column_name]             # micromol / m^2 / s
     t              <- exdf_obj[, t_column_name]              # dimensionless
 
     Delta_obs_growth <- if (e_star_equation == 20) {
@@ -112,7 +112,7 @@ calculate_gm_busch <- function(
 
     # Un-numbered equation following Equation 12 in Busch et al. (2020):
     # fractionation factor during ???
-    alpha_R <- 1 + (Rd / A) * (e_prime * 1e-3 / alpha_e) # dimensionless
+    alpha_R <- 1 + (RL / A) * (e_prime * 1e-3 / alpha_e) # dimensionless
 
     ##
     ## Calculate ternary corrections
@@ -144,7 +144,7 @@ calculate_gm_busch <- function(
         # CBB cycle.
 
         # Factors used in subsequent calculations
-        rd_a_factor <- Rd / (A + Rd)                                # dimensionless
+        rd_a_factor <- RL / (A + RL)                                # dimensionless
         alpha_factor <- alpha_b / alpha_e                           # dimensionless
         rd_a_alpha_e_factor <- rd_a_factor * alpha_factor * e_prime # ppt
 
@@ -168,7 +168,7 @@ calculate_gm_busch <- function(
         # the CBB cycle.
 
         # Factors used in subsequent calculations
-        rd_a_factor <- Rd / A                                       # dimensionless
+        rd_a_factor <- RL / A                                       # dimensionless
         alpha_factor <- alpha_b / (alpha_e * alpha_R)               # dimensionless
         rd_a_alpha_e_factor <- rd_a_factor * alpha_factor * e_prime # ppt
 

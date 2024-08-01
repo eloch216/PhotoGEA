@@ -4,5 +4,5 @@ c3_arrhenius_sharkey <- list(
     Gamma_star = list(c = 11.187  + PhotoGEA:::c_pa_to_ppm, Ea = 24.46, units = 'micromol mol^(-1)'),
     Vcmax_norm = list(c = 26.355,                           Ea = 65.33, units = 'normalized to Vcmax at 25 degrees C'),
     J_norm =     list(c = 17.71,                            Ea = 43.9,  units = 'normalized to J at 25 degrees C'),
-    Rd_norm =    list(c = 18.7145,                          Ea = 46.39, units = 'normalized to Rd at 25 degrees C')
+    RL_norm =    list(c = 18.7145,                          Ea = 46.39, units = 'normalized to RL at 25 degrees C')
 )

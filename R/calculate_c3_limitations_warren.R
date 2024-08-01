@@ -15,7 +15,7 @@ calculate_c3_limitations_warren <- function(
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 2
@@ -33,7 +33,7 @@ calculate_c3_limitations_warren <- function(
     required_variables[['alpha_s']]                  <- unit_dictionary[['alpha_s']]
     required_variables[['Gamma_star']]               <- unit_dictionary[['Gamma_star']]
     required_variables[['J_at_25']]                  <- unit_dictionary[['J_at_25']]
-    required_variables[['Rd_at_25']]                 <- unit_dictionary[['Rd_at_25']]
+    required_variables[['RL_at_25']]                 <- unit_dictionary[['RL_at_25']]
     required_variables[['Tp']]                       <- unit_dictionary[['Tp']]
     required_variables[['Vcmax_at_25']]              <- unit_dictionary[['Vcmax_at_25']]
     required_variables[[ca_column_name]]             <- unit_dictionary[['Ca']]
@@ -43,7 +43,7 @@ calculate_c3_limitations_warren <- function(
     required_variables[[kc_column_name]]             <- unit_dictionary[['Kc']]
     required_variables[[ko_column_name]]             <- unit_dictionary[['Ko']]
     required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
-    required_variables[[rd_norm_column_name]]        <- unit_dictionary[['Rd_norm']]
+    required_variables[[rl_norm_column_name]]        <- unit_dictionary[['RL_norm']]
     required_variables[[total_pressure_column_name]] <- unit_dictionary[['total_pressure']]
     required_variables[[vcmax_norm_column_name]]     <- unit_dictionary[['Vcmax_norm']]
 
@@ -81,7 +81,7 @@ calculate_c3_limitations_warren <- function(
             '', # alpha_s
             '', # Gamma_star
             '', # J_at_25
-            '', # Rd_at_25
+            '', # RL_at_25
             '', # Tp
             '', # Vcmax_at_25
             atp_use = atp_use,
@@ -93,7 +93,7 @@ calculate_c3_limitations_warren <- function(
             kc_column_name = kc_column_name,
             ko_column_name = ko_column_name,
             oxygen_column_name = oxygen_column_name,
-            rd_norm_column_name = rd_norm_column_name,
+            rl_norm_column_name = rl_norm_column_name,
             total_pressure_column_name = total_pressure_column_name,
             vcmax_norm_column_name = vcmax_norm_column_name,
             hard_constraints = hard_constraints,

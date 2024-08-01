@@ -145,7 +145,7 @@ variable `x` with `Ci` and the calculated value with the net assimilation `A`.
 One caveat is that `A` is generally negative when `Ci` is zero or very low, but
 the rectangular hyperbola never returns negative values. To get a better fit, it
 will be helpful to include respiration as a constant value subtracted from the
-hyperbola: `A = A_max * Ci / (Ci + Ci_half) - Rd`.
+hyperbola: `A = A_max * Ci / (Ci + Ci_half) - RL`.
 
 # General Suggestions for PhotoGEA Fitting Functions
 
@@ -208,7 +208,7 @@ fit_hyperbola <- function(
   replicate_exdf,
   a_column_name = 'A',
   ci_column_name = 'Ci',
-  initial_guess = list(A_max = 40, Ci_half = 100, Rd = 1)
+  initial_guess = list(A_max = 40, Ci_half = 100, RL = 1)
 )
 {
   ### Check inputs
@@ -234,7 +234,7 @@ fit_hyperbola <- function(
   # setting `aci_fit` to `NULL`.
   aci_fit <- tryCatch(
     {
-      stats::nls(A ~ A_max * Ci / (Ci + Ci_half) - Rd, start = initial_guess)
+      stats::nls(A ~ A_max * Ci / (Ci + Ci_half) - RL, start = initial_guess)
     },
     error = function(cond) {
       print('Having trouble fitting an A-Ci curve:')
@@ -260,8 +260,8 @@ fit_hyperbola <- function(
         A_max_err <- NA
         Ci_half <- NA
         Ci_half_err <- NA
-        Rd <- NA
-        Rd_err <- NA
+        RL <- NA
+        RL_err <- NA
         replicate_exdf[, paste0(a_column_name, '_fit')] <- NA
         replicate_exdf[, paste0(a_column_name, '_residuals')] <- NA
     } else {
@@ -270,11 +270,11 @@ fit_hyperbola <- function(
         A_max_err <- fit_summary$coefficients[1,2]
         Ci_half <- fit_summary$coefficients[2,1]
         Ci_half_err <- fit_summary$coefficients[2,2]
-        Rd <- fit_summary$coefficients[3,1]
-        Rd_err <- fit_summary$coefficients[3,2]
+        RL <- fit_summary$coefficients[3,1]
+        RL_err <- fit_summary$coefficients[3,2]
 
         replicate_exdf[, paste0(a_column_name, '_fit')] <-
-          A_max * Ci / (Ci + Ci_half) - Rd
+          A_max * Ci / (Ci + Ci_half) - RL
 
         replicate_exdf[, paste0(a_column_name, '_residuals')] <-
           fit_summary$residuals
@@ -305,8 +305,8 @@ fit_hyperbola <- function(
     replicate_identifiers[, 'A_max_err'] <- A_max_err
     replicate_identifiers[, 'Ci_half'] <- Ci_half
     replicate_identifiers[, 'Ci_half_err'] <- Ci_half_err
-    replicate_identifiers[, 'Rd'] <- Rd
-    replicate_identifiers[, 'Rd_err'] <- Rd_err
+    replicate_identifiers[, 'RL'] <- RL
+    replicate_identifiers[, 'RL_err'] <- RL_err
 
     # Document the columns that were added
     replicate_identifiers <- document_variables(
@@ -315,8 +315,8 @@ fit_hyperbola <- function(
         c('fit_hyperbola', 'A_max_err',   'micromol m^(-2) s^(-1)'),
         c('fit_hyperbola', 'Ci_half',     'micromol mol^(-1)'),
         c('fit_hyperbola', 'Ci_half_err', 'micromol mol^(-1)'),
-        c('fit_hyperbola', 'Rd',          'micromol m^(-2) s^(-1)'),
-        c('fit_hyperbola', 'Rd_err',      'micromol m^(-2) s^(-1)')
+        c('fit_hyperbola', 'RL',          'micromol m^(-2) s^(-1)'),
+        c('fit_hyperbola', 'RL_err',      'micromol m^(-2) s^(-1)')
     )
 
     return(list(
@@ -400,7 +400,7 @@ xyplot(
 
 # View the parameter values
 columns_for_viewing <-
-  c('instrument', 'species', 'plot', 'A_max', 'Ci_half', 'Rd', 'RMSE')
+  c('instrument', 'species', 'plot', 'A_max', 'Ci_half', 'RL', 'RMSE')
 
 c3_aci_parameters <-
   c3_aci_results$parameters[ , columns_for_viewing, TRUE]

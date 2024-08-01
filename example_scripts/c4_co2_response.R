@@ -311,10 +311,10 @@ if (PERFORM_CALCULATIONS) {
       ))
 
       REP_COLUMN_NAME <- 'plot'
-      
+
       combined_info[, UNIQUE_ID_COLUMN_NAME] <-
         paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
-      
+
       # Factorize ID columns
       combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
     }
@@ -386,7 +386,7 @@ if (PERFORM_CALCULATIONS) {
     ))
 
     fit_result$parameters[, 'Vmax_at_25'] <-
-      fit_result$parameters[, 'Vcmax_at_25'] - fit_result$parameters[, 'Rd_at_25']
+      fit_result$parameters[, 'Vcmax_at_25'] - fit_result$parameters[, 'RL_at_25']
 
     all_fit_parameters <- fit_result$parameters
     all_fits <- fit_result$fits
@@ -677,9 +677,9 @@ plot_param <- list(
   list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
   list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 120),  main = fitting_caption),
   list(Y = all_fit_parameters[['Vmax_at_25']],     X = x_p, xlab = xl, ylab = "Vmax at 25 C (micromol / m^2 / s)",                       ylim = c(0, 70),  main = fitting_caption),
-  list(Y = all_fit_parameters[['Rd_at_25']],       X = x_p, xlab = xl, ylab = "Rd at 25 C (micromol / m^2 / s)",                         ylim = c(0, 4),   main = fitting_caption),
+  list(Y = all_fit_parameters[['RL_at_25']],       X = x_p, xlab = xl, ylab = "RL at 25 C (micromol / m^2 / s)",                         ylim = c(0, 4),   main = fitting_caption),
   list(Y = all_samples_one_point[[A_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0, 70),   main = boxplot_caption),
-  list(Y = all_samples_one_point[[CI_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intercellular CO2 concentration (micromol / mol)",          ylim = c(0, 150),   main = boxplot_caption),
+  list(Y = all_samples_one_point[[CI_COLUMN_NAME]], X = x_s, xlab = xl, ylab = "Intercellular CO2 concentration (micromol / mol)",       ylim = c(0, 150),   main = boxplot_caption),
   list(Y = all_samples_one_point[['iWUE']],        X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", main = boxplot_caption)
 )
 
@@ -704,23 +704,23 @@ if (SAVE_CSV) {
   if (interactive() & .Platform$OS.type == "windows") {
     base_dir <- choose.dir(caption="Select folder for output files")
   }
-  
+
   all_samples_col <- c(
     UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME, 'iWUE', 'Ci', 'gsw', 'A'
   )
-  
+
   if (INCLUDE_FLUORESCENCE) {
     all_samples_col <- c(all_samples_col, PHIPS2_COLUMN_NAME)
   }
-  
+
   all_samples_one_point_subset <- all_samples_one_point[, all_samples_col]
-  
+
   param_col <- c(
-    UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME, 'Vmax_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25'
+    UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME, 'Vmax_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25'
   )
-  
+
   all_fit_parameters_subset <- all_fit_parameters[, param_col]
-  
+
   write.csv(all_samples_one_point, file = file.path(base_dir, 'all_samples_one_point.csv'), row.names = FALSE)
   write.csv(all_samples_one_point_subset, file = file.path(base_dir, 'all_samples_one_point_subset.csv'), row.names = FALSE)
   write.csv(all_fit_parameters, file = file.path(base_dir, 'all_fit_parameters.csv'), row.names = FALSE)

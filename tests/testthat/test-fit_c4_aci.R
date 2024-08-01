@@ -27,8 +27,8 @@ test_that('fit failures are handled properly', {
     expect_equal(fit_res_bad$parameters[, 'c4_assimilation_msg'], 'PCm must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Apr', 'Apc', 'Ar')])))
     expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Apr', 'Apc', 'Ar')])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25', 'AIC')])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')])))
 })
 
 test_that('PCm limits can be bypassed', {
@@ -67,13 +67,13 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
         c(3.630116e+01, 1.804791e+02, 1.069116e-08, 8.026640e+01),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(38.434695, 214.046523, 1.568026),
         tolerance = TOLERANCE
     )
@@ -94,13 +94,13 @@ test_that('fit results have not changed (Vpr)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpr', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Vpr', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
         c(58.1571, 133.8038, 0.0000, 86.3427),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpr_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
+        as.numeric(fit_res$parameters[1, c('Vpr_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(62.43, 156.94, 2.76),
         tolerance = TOLERANCE
     )
@@ -121,13 +121,13 @@ test_that('fit results have not changed (Jmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Jmax_at_opt', 'Vpmax_at_25', 'Rd_at_25', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Jmax_at_opt', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
         c(5.215746e+02, 1.338467e+02, 1.475187e-08, 8.675720e+01),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Jmax_at_opt_upper', 'Vpmax_at_25_upper', 'Rd_at_25_upper')]),
+        as.numeric(fit_res$parameters[1, c('Jmax_at_opt_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(573.15632, 157.30750, 2.24672),
         tolerance = TOLERANCE
     )

@@ -28,7 +28,7 @@
     delta_obs_growth_column_name = 'Delta_obs_growth',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
-    rd_column_name = 'Rd',
+    rl_column_name = 'RL',
     total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
   )
@@ -112,7 +112,7 @@
     \code{\link{calculate_gamma_star}} or \code{\link{calculate_arrhenius}}.
   }
 
-  \item{rd_column_name}{
+  \item{rl_column_name}{
     The name of the column in \code{exdf_obj} that contains the rate of day
     respiration in \code{micromol m^(-2) s^(-1)}.
   }
@@ -266,7 +266,7 @@ licor_data <- set_variable(
 # Set respiration (needed for calculate_gm_busch)
 licor_data <- set_variable(
   licor_data,
-  'Rd',
+  'RL',
   'micromol m^(-2) s^(-1)',
   value = 1.2
 )
