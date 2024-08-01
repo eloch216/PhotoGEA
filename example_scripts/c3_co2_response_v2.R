@@ -367,7 +367,7 @@ c3_aci_results <- consolidate(by(
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   OPTIM_FUN = optimizer_deoptim(200),
   calculate_confidence_intervals = TRUE,
-  remove_unreliable_param = TRUE
+  remove_unreliable_param = 2
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal

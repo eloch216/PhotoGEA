@@ -359,7 +359,7 @@ c3_aci_results <- consolidate(by(
   cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
   cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
   calculate_confidence_intervals = TRUE,
-  remove_unreliable_param = TRUE
+  remove_unreliable_param = 2
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
