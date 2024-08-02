@@ -69,24 +69,24 @@ solver <- if (USE_DEOPTIM_SOLVER) {
   optimizer_nmkb(1e-7)
 }
 
-# Decide whether to fit Tp and Rd
+# Decide whether to fit Tp and RL
 #
 # To disable TPU limitations: TP_VAL <- 40
 # To fit Tp: TP_VAL <- 'fit'
 #
-# To fix Rd to a single value: RD_VAL <- 1.234
-# To fix Rd to values from the `Rd_at_25` column: RD_VAL <- 'column'
-# To fit Rd: RD_VAL <- 'fit'
+# To fix RL to a single value: RL_VAL <- 1.234
+# To fix RL to values from the `RL_at_25` column: RL_VAL <- 'column'
+# To fit RL: RL_VAL <- 'fit'
 
 TP_VAL <- 40
-RD_VAL <- 'fit'
+RL_VAL <- 'fit'
 
 FIT_OPTIONS <- list(
-    Rd_at_25 = RD_VAL,
+    RL_at_25 = RL_VAL,
     Tp = TP_VAL
 )
 
-RD_TABLE <- list(
+RL_TABLE <- list(
   `WT` = 2.2,
   `20` = 2.8,
   `23` = 3.0,
@@ -195,8 +195,8 @@ if (MAKE_VALIDATION_PLOTS) {
       grid = TRUE,
       xlab = paste('PhiPS2 [', licor_data$units$PhiPS2, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
-    ))  
-  
+    ))
+
     # Plot all A-Ci curves in the data set
     dev.new()
     print(xyplot(
@@ -310,15 +310,15 @@ if (REMOVE_SPECIFIC_POINTS) {
 ### Extracting new pieces of information from the data
 ###
 
-# Specify Rd values, if necessary
+# Specify RL values, if necessary
 
-if (RD_VAL == 'column') {
+if (RL_VAL == 'column') {
   licor_data <- set_variable(
     licor_data,
-    'Rd_at_25',
+    'RL_at_25',
     units = 'micromol m^(-2) s^(-1)',
     id_column = EVENT_COLUMN_NAME,
-    value_table = RD_TABLE
+    value_table = RL_TABLE
   )
 }
 
@@ -359,7 +359,7 @@ c3_aci_results <- consolidate(by(
   cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
   cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
   calculate_confidence_intervals = TRUE,
-  remove_unreliable_param = TRUE
+  remove_unreliable_param = 2
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -614,7 +614,7 @@ all_samples_one_point <- all_samples[all_samples$seq_num == POINT_FOR_BOX_PLOTS,
 aci_parameters <- c3_aci_results$parameters$main_data
 if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
-    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'Tp', 'tau'
+    'Vcmax_at_25', 'RL_at_25', 'J_at_25', 'Tp', 'tau'
   )
 
   aci_parameters_list <- by(
@@ -669,7 +669,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = all_samples_one_point[, 'lm_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Warren) (dimensionless)",    ylim = c(0, 1.0), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'ls_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Warren) (dimensionless)",      ylim = c(0, 1.0), main = boxplot_caption),
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 450), main = fitting_caption),
-      list(Y = aci_parameters[, 'Rd_at_25'],                 X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 0.5), main = fitting_caption),
+      list(Y = aci_parameters[, 'RL_at_25'],                 X = x_v, xlab = xl, ylab = "RL at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 0.5), main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 500), main = fitting_caption),
       list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption),
       list(Y = aci_parameters[, 'tau'],                      X = x_v, xlab = xl, ylab = "tau (dimensionless)",                                                ylim = c(0, 1),   main = fitting_caption)

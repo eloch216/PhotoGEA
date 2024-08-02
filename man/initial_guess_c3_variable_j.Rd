@@ -33,7 +33,7 @@
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
   )
 }
@@ -78,7 +78,7 @@
 
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
-    \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
+    \code{micromol mol^(-1)} to be used when estimating \code{RL}.
   }
 
   \item{atp_use}{
@@ -139,9 +139,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -154,7 +154,7 @@
 \details{
   The variable J method is a fitting procedure for estimating values of
   \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{Gamma_star},
-  \code{J_at_25}, \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25}
+  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25}
   from a measured C3 CO2 response curve + chlorophyll fluorescence. For more
   information about these parameters, see the documentation at
   \code{\link{calculate_c3_variable_j}} and
@@ -177,7 +177,7 @@
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with nine elements, representing the
   values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{J_at_25},
-  \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
+  \code{RL_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
   order).
 }
 

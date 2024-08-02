@@ -1,4 +1,4 @@
-calculate_rd_laisk <- function(
+calculate_RL_laisk <- function(
     exdf_obj,
     curve_id_column_name,
     ci_lower = 40,  # ppm
@@ -8,7 +8,7 @@ calculate_rd_laisk <- function(
 )
 {
     if (!is.exdf(exdf_obj)) {
-        stop('calculate_rd_laisk requires an exdf object')
+        stop('calculate_RL_laisk requires an exdf object')
     }
 
     # Make sure the required variables are defined and have the correct units
@@ -53,7 +53,7 @@ calculate_rd_laisk <- function(
     Ci_star <- optim_result$par
 
     # Find the corresponding mean value of An
-    Rd <- -mean(laisk_eval_lms(linear_models, Ci_star))
+    RL <- -mean(laisk_eval_lms(linear_models, Ci_star))
 
     # Get the slope and intercept for each fit
     linear_model_info <- do.call(
@@ -75,7 +75,7 @@ calculate_rd_laisk <- function(
 
             tmp[, curve_id_column_name] <- names(linear_models)[i]
 
-            tmp$categories[1, ] <- 'calculate_rd_laisk'
+            tmp$categories[1, ] <- 'calculate_RL_laisk'
 
             tmp
         }
@@ -98,7 +98,7 @@ calculate_rd_laisk <- function(
 
             tmp[, paste0(a_column_name, '_fit')] <- as.numeric(x[['coefficients']][1]) + tmp[, ci_column_name] * as.numeric(x[['coefficients']][2])
 
-            tmp$categories[, paste0(a_column_name, '_fit')] <- 'calculate_rd_laisk'
+            tmp$categories[, paste0(a_column_name, '_fit')] <- 'calculate_RL_laisk'
 
             tmp[order(tmp[, ci_column_name]), , TRUE]
         })
@@ -106,7 +106,7 @@ calculate_rd_laisk <- function(
 
     list(
         Ci_star = Ci_star,
-        Rd = Rd,
+        RL = RL,
         parameters = linear_model_info,
         fits = exdf_with_fits
     )

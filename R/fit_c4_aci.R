@@ -1,9 +1,9 @@
 # Specify default fit settings
-c4_aci_lower       <- list(alpha_psii = 0, gbs = 0,     Jmax_at_opt = 0,    Rd_at_25 = 0,     Rm_frac = 0,   Vcmax_at_25 = 0,     Vpmax_at_25 = 0,     Vpr = 0)
-c4_aci_upper       <- list(alpha_psii = 1, gbs = 1,     Jmax_at_opt = 1000, Rd_at_25 = 100,   Rm_frac = 1,   Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
-c4_aci_fit_options <- list(alpha_psii = 0, gbs = 0.003, Jmax_at_opt = 1000, Rd_at_25 = 'fit', Rm_frac = 0.5, Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
+c4_aci_lower       <- list(alpha_psii = -1,  gbs = -1,    Jmax_at_opt = -50,   RL_at_25 = -10,   Rm_frac = -10, Vcmax_at_25 = -50,   Vpmax_at_25 = -50,   Vpr = -50)
+c4_aci_upper       <- list(alpha_psii = 10,  gbs = 10,    Jmax_at_opt = 1000,  RL_at_25 = 100,   Rm_frac = 10,  Vcmax_at_25 = 1000,  Vpmax_at_25 = 1000,  Vpr = 1000)
+c4_aci_fit_options <- list(alpha_psii = 0,   gbs = 0.003, Jmax_at_opt = 1000,  RL_at_25 = 'fit', Rm_frac = 0.5, Vcmax_at_25 = 'fit', Vpmax_at_25 = 'fit', Vpr = 1000)
 
-c4_aci_param <- c('alpha_psii', 'gbs', 'Jmax_at_opt', 'Rd_at_25', 'Rm_frac', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr')
+c4_aci_param <- c('alpha_psii', 'gbs', 'Jmax_at_opt', 'RL_at_25', 'Rm_frac', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr')
 
 # Fitting function
 fit_c4_aci <- function(
@@ -21,7 +21,7 @@ fit_c4_aci <- function(
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
@@ -36,8 +36,9 @@ fit_c4_aci <- function(
     upper = list(),
     fit_options = list(),
     error_threshold_factor = 0.147,
+    hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = TRUE
+    remove_unreliable_param = 2
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -69,10 +70,11 @@ fit_c4_aci <- function(
         oxygen_column_name,
         pcm_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
-        vpmax_norm_column_name
+        vpmax_norm_column_name,
+        hard_constraints
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -96,27 +98,12 @@ fit_c4_aci <- function(
     fit_options_vec <- luf$fit_options_vec
     param_to_fit <- luf$param_to_fit
 
-    # Check fitting options
-    nfit <-
-     sum(c(fit_options$Jmax_at_opt == 'fit', fit_options$Vcmax_at_25 == 'fit', fit_options$Vpr == 'fit'))
-
-    if (nfit > 1) {
-        msg <- paste0(
-            'The following C4 fit options have been selected:',
-            ' Jmax_at_opt: ', fit_options$Jmax_at_opt,
-            ', Vcmax_at_25: ', fit_options$Vcmax_at_25,
-            ', Vpr: ', fit_options$Vpr,
-            '. It is not recommended to fit more than one of Jmax_at_opt, Vcmax_at_25, and Vpr.'
-        )
-        warning(msg)
-    }
-
     # Get an initial guess for all the parameter values
     initial_guess_fun <- initial_guess_c4_aci(
         if (fit_options$alpha_psii == 'fit') {0.1}   else {fit_options$alpha_psii}, # alpha_psii
         if (fit_options$gbs == 'fit')        {0.003} else {fit_options$gbs},        # gbs
         if (fit_options$Rm_frac == 'fit')    {0.5}   else {fit_options$Rm_frac},    # gbs
-        40, # pcm_threshold_rm
+        40, # pcm_threshold_rlm
         absorptance,
         f_spectral,
         rho,
@@ -127,7 +114,7 @@ fit_c4_aci <- function(
         kp_column_name,
         pcm_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name
     )
@@ -152,7 +139,7 @@ fit_c4_aci <- function(
         best_X[1], # alpha_psii
         best_X[2], # gbs
         best_X[3], # Jmax_at_opt
-        best_X[4], # Rd_at_25
+        best_X[4], # RL_at_25
         best_X[5], # Rm_frac
         best_X[6], # Vcmax_at_25
         best_X[7], # Vpmax_at_25
@@ -171,10 +158,11 @@ fit_c4_aci <- function(
         oxygen_column_name,
         pcm_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )
 
@@ -202,7 +190,7 @@ fit_c4_aci <- function(
         best_X[1], # alpha_psii
         best_X[2], # gbs
         best_X[3], # Jmax_at_opt
-        best_X[4], # Rd_at_25
+        best_X[4], # RL_at_25
         best_X[5], # Rm_frac
         best_X[6], # Vcmax_at_25
         best_X[7], # Vpmax_at_25
@@ -221,10 +209,11 @@ fit_c4_aci <- function(
         oxygen_column_name,
         pcm_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )[, 'An']
 
@@ -238,7 +227,7 @@ fit_c4_aci <- function(
             'alpha_psii',
             'gbs',
             'Jmax_at_opt',
-            'Rd_at_25',
+            'RL_at_25',
             'Rm_frac',
             'Vcmax_at_25',
             'Vpmax_at_25',
@@ -253,7 +242,7 @@ fit_c4_aci <- function(
             oxygen_column_name,
             pcm_column_name,
             qin_column_name,
-            rd_norm_column_name,
+            rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
             vpmax_norm_column_name
@@ -267,7 +256,7 @@ fit_c4_aci <- function(
         '', # alpha_psii
         '', # gbs
         '', # Jmax_at_opt
-        '', # Rd_at_25
+        '', # RL_at_25
         '', # Rm_frac
         '', # Vcmax_at_25
         '', # Vpmax_at_25
@@ -286,10 +275,11 @@ fit_c4_aci <- function(
         oxygen_column_name,
         pcm_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )
 
@@ -363,7 +353,7 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'alpha_psii']  <- best_X[1]
     replicate_identifiers[, 'gbs']         <- best_X[2]
     replicate_identifiers[, 'Jmax_at_opt'] <- best_X[3]
-    replicate_identifiers[, 'Rd_at_25']    <- best_X[4]
+    replicate_identifiers[, 'RL_at_25']    <- best_X[4]
     replicate_identifiers[, 'Rm_frac']     <- best_X[5]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[6]
     replicate_identifiers[, 'Vpmax_at_25'] <- best_X[7]
@@ -372,7 +362,7 @@ fit_c4_aci <- function(
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'Jmax_tl_avg']  <- mean(replicate_exdf[, 'Jmax_tl'])
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
-    replicate_identifiers[, 'Rd_tl_avg']    <- mean(replicate_exdf[, 'Rd_tl'])
+    replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
 
@@ -419,10 +409,11 @@ fit_c4_aci <- function(
             oxygen_column_name,
             pcm_column_name,
             qin_column_name,
-            rd_norm_column_name,
+            rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
-            vpmax_norm_column_name
+            vpmax_norm_column_name,
+            hard_constraints
         )(best_X[param_to_fit])
     }
 
@@ -438,14 +429,14 @@ fit_c4_aci <- function(
         c('fit_c4_aci',               'alpha_psii',          unit_dictionary$alpha_psii),
         c('fit_c4_aci',               'gbs',                 unit_dictionary$gbs),
         c('fit_c4_aci',               'Jmax_at_opt',         'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Rd_at_25',            'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Rm_frac',             unit_dictionary$Rm_frac),
         c('fit_c4_aci',               'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpr',                 'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Jmax_tl_avg',         'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Rd_tl_avg',           'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
@@ -485,11 +476,29 @@ fit_c4_aci <- function(
             oxygen_column_name,
             pcm_column_name,
             qin_column_name,
-            rd_norm_column_name,
+            rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
-            vpmax_norm_column_name
+            vpmax_norm_column_name,
+            hard_constraints
         )
+
+        # Attach limits for the average leaf-temperature values of fitting parameters
+        Jmax_tl_scale <- replicate_identifiers[, 'Jmax_tl_avg'] / replicate_identifiers[, 'Jmax_at_opt']
+        replicate_identifiers[, 'Jmax_tl_avg_lower'] <- replicate_identifiers[, 'Jmax_at_opt_lower'] * Jmax_tl_scale
+        replicate_identifiers[, 'Jmax_tl_avg_upper'] <- replicate_identifiers[, 'Jmax_at_opt_upper'] * Jmax_tl_scale
+
+        RL_tl_scale <- replicate_identifiers[, 'RL_tl_avg'] / replicate_identifiers[, 'RL_at_25']
+        replicate_identifiers[, 'RL_tl_avg_lower'] <- replicate_identifiers[, 'RL_at_25_lower'] * RL_tl_scale
+        replicate_identifiers[, 'RL_tl_avg_upper'] <- replicate_identifiers[, 'RL_at_25_upper'] * RL_tl_scale
+
+        Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
+        replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
+        replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
+
+        Vpmax_tl_scale <- replicate_identifiers[, 'Vpmax_tl_avg'] / replicate_identifiers[, 'Vpmax_at_25']
+        replicate_identifiers[, 'Vpmax_tl_avg_lower'] <- replicate_identifiers[, 'Vpmax_at_25_lower'] * Vpmax_tl_scale
+        replicate_identifiers[, 'Vpmax_tl_avg_upper'] <- replicate_identifiers[, 'Vpmax_at_25_upper'] * Vpmax_tl_scale
     }
 
     # Return the results, including indicators of unreliable parameter estimates

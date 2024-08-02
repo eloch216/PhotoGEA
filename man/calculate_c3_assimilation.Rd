@@ -20,7 +20,7 @@
     alpha_s,
     Gamma_star,
     J_at_25,
-    Rd_at_25,
+    RL_at_25,
     Tp,
     Vcmax_at_25,
     atp_use = 4.0,
@@ -32,9 +32,10 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
+    hard_constraints = 0,
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -90,12 +91,12 @@
     of \code{exdf_obj} if it exists.
   }
 
-  \item{Rd_at_25}{
+  \item{RL_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Rd_at_25} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{Rd_at_25} with appropriate
+    \code{micromol m^(-2) s^(-1)}. If \code{RL_at_25} is not a number, then there
+    must be a column in \code{exdf_obj} called \code{RL_at_25} with appropriate
     units. A numeric value supplied here will overwrite the values in the
-    \code{Rd_at_25} column of \code{exdf_obj} if it exists.
+    \code{RL_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{Tp}{
@@ -162,9 +163,9 @@
     the units must be \code{percent}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -176,6 +177,11 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{hard_constraints}{
+    An integer numerical value indicating which types of hard constraints to
+    place on the values of input parameters; see below for more details.
   }
 
   \item{perform_checks}{
@@ -203,13 +209,13 @@
   this formulation, the steady-state net CO2 assimilation rate \code{An} is
   calculated according to
 
-  \code{An = (1 - Gamma_star_ag / PCc) * Vc - Rd},
+  \code{An = (1 - Gamma_star_ag / PCc) * Vc - RL},
 
   where \code{Gamma_star} is the CO2 compensation point in the absence of day
   respiration, \code{Gamma_star_ag} is the effective value of \code{Gamma_star}
   accounting for glycolate carbon remaining in the cytosol, \code{PCc} is the
   partial pressure of CO2 in the chloroplast, \code{Vc} is the RuBP
-  carboxylation rate, and \code{Rd} is the rate of day respiration.
+  carboxylation rate, and \code{RL} is the rate of respiration in the light.
   \code{Gamma_star_ag} is given by
 
   \code{Gamma_star_ag = (1 - alpha_g) * Gamma_star},
@@ -274,7 +280,7 @@
 
   In the equations above, several of the variables depend on the leaf
   temperature. In particular, the leaf-temperature-adjusted values of
-  \code{Vcmax}, \code{J}, and \code{Rd} are determined from their base values
+  \code{Vcmax}, \code{J}, and \code{RL} are determined from their base values
   at 25 degrees C and a temperature-dependent multiplicative factor.
 
   Also note that \code{PCc} is calculated from the chloroplastic CO2
@@ -285,11 +291,11 @@
   is also possible to calculate the net CO2 assimilation rates determined by
   Rubisco activity, RuBP regeneration, and Tp as follows:
 
-  \code{Ac = (1 - Gamma_star_ag / PCc) * Wc - Rd}
+  \code{Ac = (1 - Gamma_star_ag / PCc) * Wc - RL}
 
-  \code{Aj = (1 - Gamma_star_ag / PCc) * Wj - Rd}
+  \code{Aj = (1 - Gamma_star_ag / PCc) * Wj - RL}
 
-  \code{Ap = (1 - Gamma_star_ag / PCc) * Wp - Rd}
+  \code{Ap = (1 - Gamma_star_ag / PCc) * Wp - RL}
 
   \strong{The Busch model with nitrogen restrictions}:
 
@@ -335,6 +341,34 @@
   forbidden since it would represent a mix between the two models; if such
   values are passed as inputs, then an error will be thrown.
 
+  \strong{Hard constraints:}
+
+  Most input parameters to the FvCB model have hard constraints on their values
+  which are set by their biochemical or physical interpretation; for example,
+  \code{Vcmax} cannot be negative and \code{alpha_g} must lie between 0 and 1.
+  Yet, because of measurement noise, sometimes it is necessary to use values
+  outside these ranges when fitting an A-Ci curve with \code{\link{fit_c3_aci}}
+  or \code{\link{fit_c3_variable_j}}. To accomodate different potential use
+  cases, it is possible to selectively apply these hard constraints by
+  specifying different values of the \code{hard_constraints} input argument:
+
+  \itemize{
+    \item \code{hard_constraints = 0}: Constraints are only placed on inputs
+          that are user-supplied and cannot be fit, such as \code{Kc}.
+
+    \item \code{hard_constraints = 1}: Includes the same constraints as when
+          \code{hard_constraints} is 0, with the additional constraint that
+          all \code{Cc} values must be non-negative.
+
+    \item \code{hard_constraints = 2}: Includes the same constraints as when
+          \code{hard_constraints} is 1, which additional constraints on the
+          parameters that can be fitted. For example, \code{Vcmax_at_25} must be
+          non-negative and \code{alpha_g} must lie between 0 and 1.
+  }
+
+  If any input values violate any of the specified constraints, an error message
+  will be thrown.
+
   \strong{References:}
 
   \itemize{
@@ -364,7 +398,7 @@
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
           above: \code{alpha_g}, \code{Gamma_star}, \code{Tp}, \code{Vcmax_tl},
-          \code{Rd_tl}, \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An},
+          \code{RL_tl}, \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An},
           and \code{Vc}. The category for each of these new columns is
           \code{calculate_c3_assimilation} to indicate that they were created
           using this function.

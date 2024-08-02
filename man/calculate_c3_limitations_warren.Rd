@@ -27,9 +27,10 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    hard_constraints = 0
   )
 }
 
@@ -38,7 +39,7 @@
     An \code{exdf} object representing gas exchange data. Typically this should
     be an \code{exdf} object returned from \code{\link{fit_c3_aci}}; it will be
     expected to have columns for \code{alpha_g}, \code{Gamma_star},
-    \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
+    \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
   }
 
   \item{atp_use}{
@@ -104,9 +105,9 @@
     the units must be \code{percent}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -119,6 +120,11 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}}; see that function
+    for more details.
   }
 }
 

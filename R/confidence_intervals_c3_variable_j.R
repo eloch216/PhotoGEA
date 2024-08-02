@@ -18,12 +18,13 @@ confidence_intervals_c3_variable_j <- function(
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    require_positive_gmc = 'all',
+    hard_constraints = 0,
+    require_positive_gmc = 'positive_a',
     gmc_max = Inf
 
 )
@@ -50,11 +51,12 @@ confidence_intervals_c3_variable_j <- function(
         oxygen_column_name,
         phips2_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
         cj_crossover_max,
+        hard_constraints,
         require_positive_gmc,
         gmc_max
     )

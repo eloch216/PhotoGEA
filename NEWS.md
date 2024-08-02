@@ -34,6 +34,54 @@ be directly added to this file to describe the related changes.
 
 ## UNRELEASED
 
+- A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to
+  fit an empirical hyperbola to C4 A-Ci curves, rather than the mechanistic
+  model used in `fit_c4_aci`.
+  - Several supporting functions were also added:
+    `calculate_c4_assimilation_hyperbola`,
+    `confidence_intervals_c4_aci_hyperbola`, `error_function_c4_aci_hyperbola`,
+    `initial_guess_c4_aci_hyperbola`, and `plot_c4_aci_hyperbola_fit`.
+  - Tests were also added for `fit_c4_aci_hyperbola` and
+    `calculate_c4_assimilation_hyperbola`
+- Added a new control option so users can set or bypass hard constraints on
+  parameter values when calculating assimilation rates
+  - The input is called `hard_constraints` and it takes a numerical value, where
+    higher values impose more constraints on parameter values. The highest value
+    is 2.
+  - Setting `hard_constraints` to 2 is equivalent to the default behavior in
+    previous versions of PhotoGEA.
+  - The default value in all functions that take it as an input is 0, which
+    imposes no hard constraints.
+  - It has been added to `calculate_c3_assimilation`, `calculate_c3_variable_j`,
+    `calculate_c4_assimilation`, and `calculate_c4_assimilation_hyperbola`, as
+    well as any functions that use these internally, such as
+    `calculate_c3_limitations_warren` and `fit_c3_aci`.
+- The default bounds for all the curve fitting functions have been expanded to
+  avoid biasing the results.
+- Confidence limits for parameters at leaf temperature have been added.
+- Options for identifying and removing unreliable parameter estimates have been
+  added. With this change, the `remove_unreliable_param` input argument must now
+  be a numeric value rather than a logical value.
+  - A value of 0 disables this feature (equivalent to `FALSE` in previous
+    versions of PhotoGEA).
+  - A value of 1 removes parameters (and their corresponding rates) if the
+    corresponding rate is never the smallest rate.
+  - A value of 2 removes parameters (and their corresponding rates) if the
+    corresponding rate is never the smallest rate, and removes parameters if the
+    the upper confidence limit is infinity (equivalent to `TRUE` in previous
+    versions of PhotoGEA).
+  - The default value for all functions that have this option is 2.
+- A warning was removed from `fit_c4_aci`, which had previously suggested to
+  avoid fitting more than one of `Vcmax_at_25`, `Vpr`, and `Jmax_at_opt`.
+- The default value of the `require_positive_gmc` input argument of the
+  `fit_c3_variable_j` function has been changed to `positive_a`.
+- The names of respiration rates were changed: `Rd` (the rate of day
+  respiration) has been changed to `RL` (the rate of respiration in the light)
+  and `Rm` (the rate of day respiration occurring in the mesophyll) has been
+  changed to `RLm` (the rate of respiration in the light occurring in the
+  mesophyll). The subscript `L` for "light" is more clear than `d` for "day,"
+  since in some contexts `d` refers to "dark." One function name was modified
+  during this process: `calculate_rd_laisk` became `calculate_RL_laisk`.
 - Increased minimum required R version from `3.6.0` to `4.0.0`. The GitHub
   actions testing setup no longer works for R < 4.0, so it has become too
   difficult to guarantee compatability with an earlier version.

@@ -20,7 +20,7 @@
     alpha_g,
     alpha_s,
     Gamma_star,
-    Rd_at_25,
+    RL_at_25,
     tau,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -28,8 +28,9 @@
     ci_column_name = 'Ci',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    hard_constraints = 0,
     perform_checks = TRUE,
     return_exdf = TRUE
   )
@@ -65,12 +66,12 @@
     in the \code{Gamma_star} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Rd_at_25}{
+  \item{RL_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Rd_at_25} is not a number, then
-    there must be a column in \code{exdf_obj} called \code{Rd_at_25} with
+    \code{micromol m^(-2) s^(-1)}. If \code{RL_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{RL_at_25} with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Rd_at_25} column of \code{exdf_obj} if it exists.
+    in the \code{RL_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{tau}{
@@ -110,14 +111,19 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
     The name of the column in \code{exdf_obj} that contains the total pressure
     in \code{bar}.
+  }
+
+  \item{hard_constraints}{
+    An integer numerical value indicating which types of hard constraints to
+    place on the values of input parameters; see below for more details.
   }
 
   \item{perform_checks}{
@@ -142,12 +148,12 @@
   \code{Cc} and the mesophyll conductance to CO2 \code{gmc} from combined gas
   exchange and chlorophyll fluorescence measurements, and was originally
   described in Harley et al. (1992). The main idea is that along with \code{Cc},
-  the net CO2 assimilation rate (\code{An}), day respiration rate (\code{Rd}),
+  the net CO2 assimilation rate (\code{An}), day respiration rate (\code{RL}),
   and CO2 compensation point in the absence of day respiration
   (\code{Gamma_star}) determine the actual RuBP regeneration rate
   (\code{J_actual}) required to support the Calvin-Benson cycle:
 
-  \code{J_actual = (A + Rd) * (4 * Cc + 8 * Gamma_star) / (Cc - Gamma_star)}
+  \code{J_actual = (A + RL) * (4 * Cc + 8 * Gamma_star) / (Cc - Gamma_star)}
 
   This is Equation 6 in Harley et al. (1992). (Note: this equation can be
   derived by solving the equation for \code{Aj} from the FvCB model for
@@ -161,7 +167,7 @@
   conductance. The result is Equation 7 in Harley et al. (1992), which we do not
   reproduce here. The importance of Equation 7 is that it calculates \code{gmc}
   from several quantities that can be measured using gas exchange (\code{Ci},
-  \code{An}, and \code{Rd}), a quantity whose values can be known beforehand
+  \code{An}, and \code{RL}), a quantity whose values can be known beforehand
   (\code{Gamma_star}), and \code{J_actual} (which can be estimated from
   chlorophyll fluorescence measurements). Here we update Equation 7 to include
   \code{alpha_g} and \code{alpha_s} following Busch et al. (2018) (also see
@@ -200,6 +206,34 @@
   calculate \code{gmc}. Finally, a 1D diffusion equation is used to calculate
   \code{Cc}.
 
+  \strong{Hard constraints:}
+
+  Most input parameters to the Variable J equations have hard constraints on
+  their values which are set by their biochemical or physical interpretation;
+  for example, \code{RL} cannot be negative and \code{tau} must lie between 0
+  and 1. Yet, because of measurement noise, sometimes it is necessary to use
+  values outside these ranges when fitting an A-Ci curve with
+  \code{\link{fit_c3_variable_j}}. To accomodate different potential use cases,
+  it is possible to selectively apply these hard constraints by specifying
+  different values of the \code{hard_constraints} input argument:
+
+  \itemize{
+    \item \code{hard_constraints = 0}: Constraints are only placed on inputs
+          that are user-supplied and cannot be fit, such as \code{Qin}.
+
+    \item \code{hard_constraints = 1}: Includes the same constraints as when
+          \code{hard_constraints} is 0, with the additional constraint that
+          all \code{Ci} values must be non-negative.
+
+    \item \code{hard_constraints = 2}: Includes the same constraints as when
+          \code{hard_constraints} is 1, which additional constraints on the
+          parameters that can be fitted. For example, \code{RL_at_25} must be
+          non-negative and \code{tau} must lie between 0 and 1.
+  }
+
+  If any input values violate any of the specified constraints, an error message
+  will be thrown.
+
   References:
   \itemize{
     \item Harley, P. C., Loreto, F., Di Marco, G. & Sharkey, T. D. "Theoretical
@@ -223,7 +257,7 @@
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
           above: \code{J_F}, \code{gmc}, \code{Cc}, \code{tau}, and
-          \code{Rd_tl}. The category for each of these new columns is
+          \code{RL_tl}. The category for each of these new columns is
           \code{calculate_c3_variable_j} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
@@ -250,14 +284,14 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = 0,
-# tau = 0.2, and Rd = 0.5
+# tau = 0.2, and RL = 0.5
 vj_res <- calculate_c3_variable_j(licor_file, 0, 0, '', 1.5, 0.55)
 
 # Combine with original data
 licor_file <- cbind(licor_file, vj_res)
 
 # Plot mesophyll conductance against Cc. Note: this information is not very
-# meaningful since the values of tau and Rd used above are arbitrary.
+# meaningful since the values of tau and RL used above are arbitrary.
 lattice::xyplot(
   gmc ~ Cc | species_plot,
   data = licor_file$main_data,

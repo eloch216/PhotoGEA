@@ -1,5 +1,5 @@
 c3_arrhenius_bernacchi <- list(
-    Rd_norm =    list(c = 18.72, Ea = 46.39, units = 'normalized to Rd at 25 degrees C'),
+    RL_norm =    list(c = 18.72, Ea = 46.39, units = 'normalized to RL at 25 degrees C'),
     Vcmax_norm = list(c = 26.35, Ea = 65.33, units = 'normalized to Vcmax at 25 degrees C'),
     Vomax_norm = list(c = 22.98, Ea = 60.11, units = 'normalized to Vcmax at 25 degrees C'),
     Gamma_star = list(c = 19.02, Ea = 37.83, units = 'micromol mol^(-1)'),

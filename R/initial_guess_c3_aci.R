@@ -12,7 +12,7 @@ initial_guess_c3_aci <- function(
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
 )
 {
@@ -29,7 +29,7 @@ initial_guess_c3_aci <- function(
         required_variables[[j_norm_column_name]]     <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]         <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]         <- 'mmol mol^(-1)'
-        required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
+        required_variables[[rl_norm_column_name]]    <- 'normalized to RL at 25 degrees C'
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(
@@ -56,32 +56,32 @@ initial_guess_c3_aci <- function(
         rc_exdf[, 'Gamma_star_ag'] <-
             (1 - rc_exdf[, 'alpha_g']) * rc_exdf[, 'Gamma_star'] # micromol / mol
 
-        # To estimate Rd, first make a linear fit of A ~ Cc where Cc is below
+        # To estimate RL, first make a linear fit of A ~ Cc where Cc is below
         # the threshold. Then, evaluate the fit at Cc = Gamma_star_ag.
         # Gamma_star is temperature dependent and not necessarily constant
         # across the measured points, so use its average value across points
         # where Cc is below the threshold. If there are not enough points to do
-        # the fit, just estimate Rd to be a typical value.
-        rd_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rd, ] # a data frame
+        # the fit, just estimate RL to be a typical value.
+        RL_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rd, ] # a data frame
 
-        rd_estimate <- if (nrow(rd_subset) > 1) {
-            mean_gstar_rd <- mean(rd_subset[, 'Gamma_star_ag'])
-            mean_rd_norm <- mean(rd_subset[, rd_norm_column_name])
+        RL_estimate <- if (nrow(RL_subset) > 1) {
+            mean_gstar_rd <- mean(RL_subset[, 'Gamma_star_ag'])
+            mean_rl_norm <- mean(RL_subset[, rl_norm_column_name])
 
             rd_fit <-
-                stats::lm(rd_subset[, a_column_name] ~ rd_subset[, cc_column_name])
+                stats::lm(RL_subset[, a_column_name] ~ RL_subset[, cc_column_name])
 
-            -(rd_fit$coefficients[1] + rd_fit$coefficients[2] * mean_gstar_rd) / mean_rd_norm
+            -(rd_fit$coefficients[1] + rd_fit$coefficients[2] * mean_gstar_rd) / mean_rl_norm
         } else {
             1.0
         }
 
-        # Make sure rd_estimate has no names
-        rd_estimate <- as.numeric(rd_estimate)
+        # Make sure RL_estimate has no names
+        RL_estimate <- as.numeric(RL_estimate)
 
         # Calculate the RuBP carboxylation rate, which is used in several of the
         # next calculations.
-        Vc <- (rc_exdf[, a_column_name] + rd_estimate * rc_exdf[, rd_norm_column_name]) /
+        Vc <- (rc_exdf[, a_column_name] + RL_estimate * rc_exdf[, rl_norm_column_name]) /
             (1 - rc_exdf[, 'Gamma_star_ag'] / rc_exdf[, cc_column_name]) # micromol / m^2 / s
 
         # To estimate Vcmax, we solve Equation 2.20 for Vcmax and calculate it
@@ -92,7 +92,7 @@ initial_guess_c3_aci <- function(
         # and the calculated values of Vcmax will be smaller than the ones from
         # the Rubisco-limited range. With this in mind, we choose the largest
         # Vcmax value as our best estimate. In this calculation, we need a value
-        # of Rd, so we use the previously-estimated value.
+        # of RL, so we use the previously-estimated value.
         vcmax_estimates <- Vc *
             (rc_exdf[, cc_column_name] + rc_exdf[, kc_column_name] * (1 + rc_exdf[, oxygen_column_name] * 1e-2 / (1e-3 * rc_exdf[, ko_column_name]))) /
             rc_exdf[, cc_column_name]
@@ -126,7 +126,7 @@ initial_guess_c3_aci <- function(
             mean(rc_exdf[, 'alpha_s']),
             mean(rc_exdf[, 'Gamma_star_ag']),
             max(j_estimates),
-            rd_estimate,
+            RL_estimate,
             max(tpu_estimates),
             max(vcmax_estimates)
         )

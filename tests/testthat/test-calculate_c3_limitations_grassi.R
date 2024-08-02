@@ -81,7 +81,8 @@ test_that('fit failures are handled properly', {
     fit_res_bad <- fit_c3_aci(
         one_curve_bad,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        OPTIM_FUN = optimizer_nmkb(1e-7),
+        hard_constraints = 2
     )
 
     limit_res_bad <- expect_no_error(
@@ -103,7 +104,7 @@ test_that('fit results have not changed', {
         OPTIM_FUN = optimizer_nmkb(1e-7),
         fit_options = list(alpha_old = 0),
         calculate_confidence_intervals = FALSE,
-        remove_unreliable_param = FALSE
+        remove_unreliable_param = 0
     )
 
     limit_res <- expect_silent(
@@ -112,7 +113,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(limit_res[1, c('dAdC_rubisco', 'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi')]),
-        c(0.39900, 0.43480, 0.16148, 0.40372),
+        c(0.39891, 0.43476, 0.16147, 0.40378),
         tolerance = 1e-5
     )
 })

@@ -10,7 +10,7 @@ calculate_gm_ubierna <- function(
     delta_c13_r_column_name = 'delta_C13_r',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
     gamma_star_column_name = 'Gamma_star',
-    rd_column_name = 'Rd',
+    rl_column_name = 'RL',
     total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
 )
@@ -34,7 +34,7 @@ calculate_gm_ubierna <- function(
     required_variables[[delta_obs_tdl_column_name]]  <- 'ppt'
     required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
     required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[rd_column_name]]             <- 'micromol m^(-2) s^(-1)'
+    required_variables[[rl_column_name]]             <- 'micromol m^(-2) s^(-1)'
     required_variables[[t_column_name]]              <- 'dimensionless'
 
     check_required_variables(exdf_obj, required_variables)
@@ -49,7 +49,7 @@ calculate_gm_ubierna <- function(
     Delta_obs_tdl  <- exdf_obj[, delta_obs_tdl_column_name]  # ppt
     gstar          <- exdf_obj[, gamma_star_column_name]     # micromol / mol
     total_pressure <- exdf_obj[, total_pressure_column_name] # bar
-    Rd             <- exdf_obj[, rd_column_name]             # micromol / m^2 / s
+    RL             <- exdf_obj[, rl_column_name]             # micromol / m^2 / s
     t              <- exdf_obj[, t_column_name]              # dimensionless
 
     # Get the values of some constants that are defined in `constants.R`
@@ -100,7 +100,7 @@ calculate_gm_ubierna <- function(
 
     # Equation 33 for discrimination associated with day respiration
     Delta_e <-
-        t_factor_3 * (alpha_b / alpha_e) * e_prime * (Rd / (A + Rd)) *
+        t_factor_3 * (alpha_b / alpha_e) * e_prime * (RL / (A + RL)) *
         (ppCO2_i - Gamma_star) / ppCO2_s # ppt
 
     # Equation 34 for discrimination associated with photorespiration
@@ -112,7 +112,7 @@ calculate_gm_ubierna <- function(
 
     equation_top <-
         t_factor_3 *
-        (b_prime_3 - a_m - (alpha_b / alpha_e) * e_prime * (Rd / (A + Rd))) *
+        (b_prime_3 - a_m - (alpha_b / alpha_e) * e_prime * (RL / (A + RL))) *
         (A / ppCO2_s) # ppt * micromol / m^2 / s / bar
 
     gmc <- equation_top / Delta_difference * 1e-6 # mol / m^2 / s / bar
