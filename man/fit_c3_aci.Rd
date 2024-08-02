@@ -281,22 +281,22 @@
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
   parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha} & \code{Tp})
-  will be unreliable. If \code{remove_unreliable_param} is 1 or larger, then
-  such parameter estimates (and the corresponding rates) will be replaced by
-  \code{NA} in the fitting results.
+  will be severely unreliable. This will be indicated by a value of \code{0} in
+  the corresponding trust column(for example, \code{Vcmax_trust}). If
+  \code{remove_unreliable_param} is \code{1} or larger, then such parameter
+  estimates (and the corresponding rates) will be replaced by \code{NA} in the
+  fitting results.
 
   It is also possible that the upper limit of the confidence interval for a
-  parameter is infinity; this also indicates an unreliable parameter estimate.
-  If \code{remove_unreliable_param} is 2 or larger, then such parameter
+  parameter is infinity; this indicates a potentially unreliable parameter
+  estimate. This will be indicated by a value of \code{1} in the corresponding
+  trust column (for example, \code{Vcmax_trust}). If
+  \code{remove_unreliable_param} is \code{2} or larger, then such parameter
   estimates (but not the corresponding rates) will be replaced by \code{NA} in
   the fitting results.
 
-  These criteria are used to determine the reliability of each parameter
-  estimate, which is indicated in the \code{Vcmax_trust}, \code{J_trust},
-  \code{alpha_g_trust}, \code{alpha_old_trust}, \code{alpha_s_trust}, and
-  \code{Tp_trust} columns of the output from \code{fit_c3_aci}, where a value of
-  \code{0} indicates an unreliable estimate and \code{1} indicates a reliable
-  estimate.
+  The trust value for fully reliable parameter estimates is set to \code{2} and
+  they will never be replaced by \code{NA}.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{Cc} from the atmospheric CO2

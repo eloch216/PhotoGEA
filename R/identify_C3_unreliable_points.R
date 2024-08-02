@@ -23,10 +23,9 @@ identify_c3_unreliable_points <- function(
     remove_unreliable_param
 )
 {
-    if (!is.numeric(remove_unreliable_param)) {
-        stop('The `remove_unreliable_param` input argument must be a number')
-    }
-    
+    remove_unreliable_param <- as.numeric(remove_unreliable_param)
+    check_param_setting(remove_unreliable_param)
+
     # Determine the number of points where each potential carboxylation rate is
     # the smallest potential carboxylation rate
     parameters[, 'n_Wc_smallest'] <- n_C3_W_smallest(fits, 'Wc')
@@ -40,24 +39,24 @@ identify_c3_unreliable_points <- function(
 
     c_unreliable_npts <- parameters[, 'n_Wc_smallest'] < unreliable_n_threshold
     c_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
-    c_unreliable      <- (remove_unreliable_param >= 1 && c_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && c_unreliable_inf)
+    c_trust           <- trust_value(c_unreliable_npts, c_unreliable_inf)
+    c_remove          <- remove_estimate(c_trust, remove_unreliable_param)
 
     j_unreliable_npts <- parameters[, 'n_Wj_smallest'] < unreliable_n_threshold
     j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
-    j_unreliable      <- (remove_unreliable_param >= 1 && j_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && j_unreliable_inf)
+    j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
+    j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 
     p_unreliable_npts <- parameters[, 'n_Wp_smallest'] < unreliable_n_threshold
     p_unreliable_inf  <- 'Tp_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Tp_upper'])
-    p_unreliable      <- (remove_unreliable_param >= 1 && p_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && p_unreliable_inf)
+    p_trust           <- trust_value(p_unreliable_npts, p_unreliable_inf)
+    p_remove          <- remove_estimate(p_trust, remove_unreliable_param)
 
     # If we are unsure about Rubisco limitations, then the Vcmax estimates
     # should be flagged as unreliable. If necessary, remove Vcmax, Wc, and Ac.
-    parameters[, 'Vcmax_trust'] <- as.numeric(!c_unreliable)
+    parameters[, 'Vcmax_trust'] <- c_trust
 
-    if (c_unreliable) {
+    if (c_remove) {
         # Remove unreliable parameter estimates
         parameters[, 'Vcmax_at_25']        <- NA
         parameters[, 'Vcmax_tl_avg']       <- NA
@@ -77,9 +76,9 @@ identify_c3_unreliable_points <- function(
 
     # If we are unsure about RuBP regeneration limitations, then the J estimates
     # should be flagged as unreliable. If necessary, remove J, Wj, and Aj.
-    parameters[, 'J_trust'] <- as.numeric(!j_unreliable)
+    parameters[, 'J_trust'] <- j_trust
 
-    if (j_unreliable) {
+    if (j_remove) {
         # Remove unreliable parameter estimates
         parameters[, 'J_at_25']        <- NA
         parameters[, 'J_tl_avg']       <- NA
@@ -100,12 +99,12 @@ identify_c3_unreliable_points <- function(
     # If we are unsure about TPU limitations, then the Tp and alpha_g estimates
     # should be flagged as unreliable. If necessary, remove Tp, alpha_g, Wp, and
     # Ap.
-    parameters[, 'alpha_g_trust']   <- as.numeric(!p_unreliable)
-    parameters[, 'alpha_old_trust'] <- as.numeric(!p_unreliable)
-    parameters[, 'alpha_s_trust']   <- as.numeric(!p_unreliable)
-    parameters[, 'Tp_trust']        <- as.numeric(!p_unreliable)
+    parameters[, 'alpha_g_trust']   <- p_trust
+    parameters[, 'alpha_old_trust'] <- p_trust
+    parameters[, 'alpha_s_trust']   <- p_trust
+    parameters[, 'Tp_trust']        <- p_trust
 
-    if (p_unreliable) {
+    if (p_remove) {
         # Remove unreliable parameter estimates
         parameters[, 'alpha_g']   <- NA
         parameters[, 'alpha_old'] <- NA

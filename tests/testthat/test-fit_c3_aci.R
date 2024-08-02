@@ -90,6 +90,11 @@ test_that('fit results have not changed (no alpha)', {
         c(152.831071, 238.947894, 1.034651, Inf),
         tolerance = TOLERANCE
     )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
 })
 
 
@@ -119,6 +124,11 @@ test_that('fit results have not changed (alpha_old)', {
         c(152.8274, 238.9449, 1.0343, Inf),
         tolerance = TOLERANCE
     )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
 })
 
 
@@ -147,5 +157,10 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_upper')]),
         c(166.1669, 262.4657, 1.6696, Inf),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 1)
     )
 })

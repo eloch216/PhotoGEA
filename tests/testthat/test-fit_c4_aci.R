@@ -79,6 +79,11 @@ test_that('fit results have not changed (Vcmax)', {
         c(38.434695, 214.046523, 1.568026),
         tolerance = TOLERANCE
     )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        c(2, 2, 0, 0)
+    )
 })
 
 test_that('fit results have not changed (Vpr)', {
@@ -107,6 +112,11 @@ test_that('fit results have not changed (Vpr)', {
         c(62.43, 156.94, 2.76),
         tolerance = TOLERANCE
     )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        c(2, 1, 2, 0)
+    )
 })
 
 test_that('fit results have not changed (Jmax)', {
@@ -134,5 +144,10 @@ test_that('fit results have not changed (Jmax)', {
         as.numeric(fit_res$parameters[1, c('Jmax_at_opt_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(573.15632, 157.30750, 2.24672),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        c(2, 1, 0, 2)
     )
 })
