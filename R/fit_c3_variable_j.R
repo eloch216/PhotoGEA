@@ -8,7 +8,7 @@ c3_variable_j_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_
 # Fitting function
 fit_c3_variable_j <- function(
     replicate_exdf,
-    Ca_atmospheric,
+    Ca_atmospheric = NA,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',

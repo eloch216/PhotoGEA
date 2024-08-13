@@ -8,7 +8,7 @@ c4_aci_param <- c('alpha_psii', 'gbs', 'Jmax_at_opt', 'RL_at_25', 'Rm_frac', 'Vc
 # Fitting function
 fit_c4_aci <- function(
     replicate_exdf,
-    Ca_atmospheric,
+    Ca_atmospheric = NA,
     ao_column_name = 'ao',
     a_column_name = 'A',
     ca_column_name = 'Ca',

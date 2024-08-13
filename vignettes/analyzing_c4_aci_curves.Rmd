@@ -850,7 +850,6 @@ c4_aci_results_vpmax <- consolidate(by(
   licor_data_low_ci,                       # The `exdf` object containing the curves
   licor_data_low_ci[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                              # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420,                    # Used to estimate the operating point
   fit_options = list(
     Vcmax_at_25 = 1000,
     Vpr = 1000,
