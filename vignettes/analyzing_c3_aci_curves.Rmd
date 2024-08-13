@@ -327,13 +327,14 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_response_curve_data` function from
-`PhotoGEA`. Here we will supply the name of a column that should uniquely
+response curve. To do this, we can use the `check_response_curve_data` function
+from `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_response_curve_data`.)
+information, see the built-in help menu entry by typing
+`?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
@@ -533,9 +534,10 @@ In the plot, `A:OK` indicates whether `A` was stable (0 for no, 1 for yes),
 we are looking for points where `Stable` is 2. Otherwise, we can check the other
 traces to see whether `A` or `gsw` was unstable.
 
-Comparing these plots with the ones in [Plotting the _A-C~i~_ Curves], it seems that
-the unstable points correspond with some of the "odd-looking" points in the _A-C~i~_
-curves, so it is probably a good idea to remove them before fitting the data.
+Comparing these plots with the ones in [Plotting the _A-C~i~_ Curves], it seems
+that the unstable points correspond with some of the "odd-looking" points in the
+_A-C~i~_ curves, so it is probably a good idea to remove them before fitting the
+data.
 
 ## Cleaning the Licor Data
 
