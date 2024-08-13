@@ -82,6 +82,17 @@ be directly added to this file to describe the related changes.
   mesophyll). The subscript `L` for "light" is more clear than `d` for "day,"
   since in some contexts `d` refers to "dark." One function name was modified
   during this process: `calculate_rd_laisk` became `calculate_RL_laisk`.
+- The `basic_stats` function was updated so it can ignore `NA` values when
+  calculating averages and standard errors.
+- The `check_response_curve_data` function was updated so there is now an option
+  to create a warning rather than an error message when a problem is detected.
+- The `estimate_operating_point` function was updated so a value of `NA` for the
+  `Ca_atmospheric` input simply bypasses the operating point calculations. Along
+  with this, the default value for `Ca_atmospheric` was set to `NA` in the
+  `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci` functions. With these
+  changes, calculating the operating point is now optional.
+- The C3 and C4 A-Ci vignettes were updated to remove some outdated information
+  and to take advantage of the new fitting function `fit_c4_aci_hyperbola`.
 - Increased minimum required R version from `3.6.0` to `4.0.0`. The GitHub
   actions testing setup no longer works for R < 4.0, so it has become too
   difficult to guarantee compatability with an earlier version.
