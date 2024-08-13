@@ -13,7 +13,8 @@
 \usage{
   basic_stats(
     exdf_obj,
-    identifier_columns
+    identifier_columns,
+    na.rm = TRUE
   )
 }
 
@@ -25,6 +26,11 @@
   \item{identifier_columns}{
     The name(s) of one or more columns in a vector or list that can be used to
     split \code{exdf_obj} into chunks.
+  }
+
+  \item{na.rm}{
+    A logical value indicating whether or not to remove NA values before
+    calculating means and standard errors.
   }
 }
 
