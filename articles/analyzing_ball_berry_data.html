@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="PhotoGEA">
 <title>Analyzing Ball-Berry Data • PhotoGEA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,72 +14,54 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing Ball-Berry Data">
-<meta property="og:description" content="PhotoGEA">
-<meta property="og:image" content="https://eloch216.github.io/PhotoGEA/logo.svg">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing Ball-Berry Data">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
-    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
-    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
-    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
-    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -92,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing Ball-Berry Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/vignettes/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/analyzing_ball_berry_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/analyzing_ball_berry_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_ball_berry_data.Rmd</code></div>
     </div>
 
@@ -116,18 +97,25 @@ this vignette can be used to initialize your own script, as described in
 leaf’s stomata to its assimilation rate and local environmental
 conditions. Specifically, it predicts stomatal conductance to water
 vapor using the following equation:</p>
-<p><span class="math display">\[ g_{sw} = b_0 + b_1 * A_n * h_s / C_s
-\]</span></p>
-<p>where <span class="math inline">\(g_{sw}\)</span> is the stomatal
-conductance, <span class="math inline">\(A_n\)</span> is the net
-assimilation rate, <span class="math inline">\(h_s\)</span> is the
-relative humidity at the leaf surface, and <span class="math inline">\(C_s\)</span> is the CO<sub>2</sub> concentration
-at the leaf surface. The term <span class="math inline">\(A_n * h_s /
-C_s\)</span> is commonly referred to as the Ball-Berry index, and the
-model can be described as predicting a linear relationship between
-stomatal conductance and the Ball-Berry index. The intercept (<span class="math inline">\(b_0\)</span>) and slope (<span class="math inline">\(b_1\)</span>) of the linear relationship are
-referred to as the Ball-Berry parameters, and they describe the leaf’s
-stomatal response.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><mo>=</mo><msub><mi>b</mi><mn>0</mn></msub><mo>+</mo><msub><mi>b</mi><mn>1</mn></msub><mo>*</mo><msub><mi>A</mi><mi>n</mi></msub><mo>*</mo><msub><mi>h</mi><mi>s</mi></msub><mi>/</mi><msub><mi>C</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex"> g_{sw} = b_0 + b_1 * A_n * h_s / C_s </annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>
+is the stomatal conductance,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+is the net assimilation rate,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>s</mi></msub><annotation encoding="application/x-tex">h_s</annotation></semantics></math>
+is the relative humidity at the leaf surface, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>s</mi></msub><annotation encoding="application/x-tex">C_s</annotation></semantics></math>
+is the CO<sub>2</sub> concentration at the leaf surface. The term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>n</mi></msub><mo>*</mo><msub><mi>h</mi><mi>s</mi></msub><mi>/</mi><msub><mi>C</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">A_n * h_s / C_s</annotation></semantics></math>
+is commonly referred to as the Ball-Berry index, and the model can be
+described as predicting a linear relationship between stomatal
+conductance and the Ball-Berry index. The intercept
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mn>0</mn></msub><annotation encoding="application/x-tex">b_0</annotation></semantics></math>)
+and slope
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mn>1</mn></msub><annotation encoding="application/x-tex">b_1</annotation></semantics></math>)
+of the linear relationship are referred to as the Ball-Berry parameters,
+and they describe the leaf’s stomatal response.</p>
 <p>Although this model is certainly an oversimplification, it does
 encode some important stomatal responses. For example, when humidity is
 low, the stomata of a real plant tend to close, reducing stomatal
@@ -148,23 +136,31 @@ possible alternatives, see the following papers:</p>
 <p>Ball-Berry parameters are typically determined by measuring a
 Ball-Berry curve, where one or more of the environmental factors that
 influence the Ball-Berry index is systematically varied across a range
-of values. For each value, care is taken that <span class="math inline">\(A_n\)</span> and <span class="math inline">\(g_{sw}\)</span> have reached their steady-state
-values, and then <span class="math inline">\(A_n\)</span>, <span class="math inline">\(g_{sw}\)</span>, and other key pieces of
-information are recorded. Finally, a linear fit of the experimentally
-observed <span class="math inline">\(g_{sw}\)</span> as a function of
-the Ball-Berry index is performed to extract values for the Ball-Berry
-intercept and slope.</p>
+of values. For each value, care is taken that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>
+have reached their steady-state values, and then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>,
+and other key pieces of information are recorded. Finally, a linear fit
+of the experimentally observed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>
+as a function of the Ball-Berry index is performed to extract values for
+the Ball-Berry intercept and slope.</p>
 <p>Such photosynthetic gas exchange measurements are commonly performed
 using a Licor portable photosynthesis system such as the Li-6400 or
-Li-6800. These machines record values of <span class="math inline">\(A_n\)</span>, <span class="math inline">\(g_{sw}\)</span>, and many other important
-quantities. They produce two types of output files: plain-text and
-Microsoft Excel. It is often more convenient to work with the Excel
-files since the entries can be easily modified (for example, to remove
-an extraneous row or add a new column). On the other hand, it can be
-more difficult to access the file contents using other pieces of
-software such as R. However, the <code>PhotoGEA</code> package reduces
-this barrier by including tools for reading Licor Excel files in R,
-which will be demonstrated in the following section.</p>
+Li-6800. These machines record values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>,
+and many other important quantities. They produce two types of output
+files: plain-text and Microsoft Excel. It is often more convenient to
+work with the Excel files since the entries can be easily modified (for
+example, to remove an extraneous row or add a new column). On the other
+hand, it can be more difficult to access the file contents using other
+pieces of software such as R. However, the <code>PhotoGEA</code> package
+reduces this barrier by including tools for reading Licor Excel files in
+R, which will be demonstrated in the following section.</p>
 </div>
 </div>
 <div class="section level2">
@@ -189,10 +185,11 @@ Ball-Berry data measured using two Li-6800 instruments. The data is
 stored in Microsoft Excel files, and includes curves measured from two
 different crop species (tobacco and soybean) and several different plots
 of each. Each curve is a seven-point light response curve; in other
-words, the incident light intensity was varied to change <span class="math inline">\(A_n\)</span> and hence the Ball-Berry index.
-Although these two files are based on real data, noise was added to it
-since it is unpublished, so these files should only be used as
-examples.</p>
+words, the incident light intensity was varied to change
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+and hence the Ball-Berry index. Although these two files are based on
+real data, noise was added to it since it is unpublished, so these files
+should only be used as examples.</p>
 <p>The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained
 with <code>PhotoGEA_example_file_path</code>:</p>
@@ -305,19 +302,26 @@ or an unrealistic tolerance, we would get error messages:</p>
 <span><span class="co">#&gt; 6 ripe5 - soybean - 5a    7</span></span>
 <span><span class="co">#&gt; 7 ripe5 - soybean - 5c    7</span></span>
 <span><span class="co">#&gt; 8  ripe5 - tobacco - 5    7</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 8): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 8): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'species'</span>, <span class="fl">7</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1 soybean   42</span></span>
 <span><span class="co">#&gt; 2 tobacco   14</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 7): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 7): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">7</span>, <span class="st">'Qin'</span>, <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 7, : Point 1 from curve `ripe5 - soybean - 5a` has value `Qin = 2000.14`, but the average value for this point across all curves is `Qin = 2000`</span></span>
-<span><span class="co">#&gt;   Point 1 from curve `ripe5 - soybean - 5c` has value `Qin = 2000.12`, but the average value for this point across all curves is `Qin = 2000`</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "Point 1 from curve `ripe5 - soybean - 5a` has value `Qin = 2000.14`, but the average value for this point across all curves is `Qin = 2000`"      </span></span>
+<span><span class="co">#&gt;  [2] "Point 1 from curve `ripe5 - soybean - 5c` has value `Qin = 2000.12`, but the average value for this point across all curves is `Qin = 2000`"      </span></span>
+<span><span class="co">#&gt;  [3] "Point 2 from curve `ripe5 - soybean - 1` has value `Qin = 1100.11`, but the average value for this point across all curves is `Qin = 1099.965`"   </span></span>
+<span><span class="co">#&gt;  [4] "Point 3 from curve `ripe5 - soybean - 1` has value `Qin = 800.223`, but the average value for this point across all curves is `Qin = 800.043375`" </span></span>
+<span><span class="co">#&gt;  [5] "Point 3 from curve `ripe5 - tobacco - 5` has value `Qin = 800.176`, but the average value for this point across all curves is `Qin = 800.043375`" </span></span>
+<span><span class="co">#&gt;  [6] "Point 4 from curve `ripe4 - soybean - 5` has value `Qin = 650.108`, but the average value for this point across all curves is `Qin = 650.005`"    </span></span>
+<span><span class="co">#&gt;  [7] "Point 4 from curve `ripe5 - soybean - 1` has value `Qin = 650.115`, but the average value for this point across all curves is `Qin = 650.005`"    </span></span>
+<span><span class="co">#&gt;  [8] "Point 5 from curve `ripe4 - soybean - 1a` has value `Qin = 500.135`, but the average value for this point across all curves is `Qin = 500.026875`"</span></span>
+<span><span class="co">#&gt;  [9] "Point 6 from curve `ripe5 - soybean - 1` has value `Qin = 350.145`, but the average value for this point across all curves is `Qin = 350.04`"     </span></span>
+<span><span class="co">#&gt; [10] "Point 7 from curve `ripe4 - tobacco - 2` has value `Qin = 200.236`, but the average value for this point across all curves is `Qin = 200.0565`"</span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 7, : The curves do not all follow the same sequence of the driving variable.</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="qualitative-checks">Qualitative Checks<a class="anchor" aria-label="anchor" href="#qualitative-checks"></a>
@@ -335,7 +339,7 @@ check each curve for quality.</p>
 <div class="section level4">
 <h4 id="humidity-control">Humidity Control<a class="anchor" aria-label="anchor" href="#humidity-control"></a>
 </h4>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check humidity control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">RHcham</span> <span class="op">+</span> <span class="va">`Humidifier_%`</span> <span class="op">+</span> <span class="va">`Desiccant_%`</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -366,7 +370,7 @@ photosynthesis. In this plot, all the data looks good.</p>
 <div class="section level4">
 <h4 id="temperature-control">Temperature Control<a class="anchor" aria-label="anchor" href="#temperature-control"></a>
 </h4>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check temperature control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">+</span> <span class="va">Txchg</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -393,7 +397,7 @@ looks good.</p>
 <div class="section level4">
 <h4 id="co2-control">CO<sub>2</sub> Control<a class="anchor" aria-label="anchor" href="#co2-control"></a>
 </h4>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check CO2 control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_s</span> <span class="op">+</span> <span class="va">CO2_r</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -426,7 +430,7 @@ CO<sub>2</sub> plots.</p>
 <div class="section level4">
 <h4 id="stability">Stability<a class="anchor" aria-label="anchor" href="#stability"></a>
 </h4>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">`A:OK`</span> <span class="op">+</span> <span class="va">`gsw:OK`</span> <span class="op">+</span> <span class="va">Stable</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
@@ -468,7 +472,7 @@ remove them before proceeding with the Ball-Berry fitting.</p>
 <div class="section level4">
 <h4 id="light-response-curves">Light-Response Curves<a class="anchor" aria-label="anchor" href="#light-response-curves"></a>
 </h4>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check light-response curves</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Qin</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -510,7 +514,7 @@ stability criteria were satisfied. Sometimes, following this procedure,
 a curve will have very few stable points remaining; it is usually a good
 idea to automatically exclude any curve with fewer than three stable
 points.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only keep points where stability was achieved</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
@@ -521,7 +525,7 @@ points.</p>
 <p>Since we have identified a few curves that may not be acceptable for
 Ball-Berry fitting, we can remove them via the
 <code>remove_points</code> function from <code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a list of curves to remove from the data set</span></span>
 <span><span class="va">curves_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'ripe4 - soybean - 1a'</span>,</span>
@@ -543,10 +547,13 @@ individual points instead of entire curves; see its help entry by typing
 <p>Now that we have checked the data quality, we are ready to perform
 the fitting. As they are produced by the instruments, Licor data files
 do not include values of the Ball-Berry index; in fact, they do not even
-include values of <span class="math inline">\(h_s\)</span> and <span class="math inline">\(C_s\)</span> required to calculate the Ball-Berry
-index. However, the <code>PhotoGEA</code> package includes three
-functions to help with these calculations:
-<code>calculate_total_pressure</code>,
+include values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>s</mi></msub><annotation encoding="application/x-tex">h_s</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>s</mi></msub><annotation encoding="application/x-tex">C_s</annotation></semantics></math>
+required to calculate the Ball-Berry index. However, the
+<code>PhotoGEA</code> package includes three functions to help with
+these calculations: <code>calculate_total_pressure</code>,
 <code>calculate_gas_properties</code>, and
 <code>calculate_ball_berry_index</code>. Each of these requires an
 <code>exdf</code> object containing Licor data. The units for each
@@ -556,7 +563,7 @@ built-in help system by typing <code><a href="../reference/calculate_total_press
 <code><a href="../reference/calculate_gas_properties.html">?calculate_gas_properties</a></code>, or
 <code><a href="../reference/calculate_ball_berry_index.html">?calculate_ball_berry_index</a></code>. Here we will use them
 sequentially to calculate values of the Ball-Berry index:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
@@ -582,9 +589,10 @@ section of the <a href="working_with_extended_data_frames.html#processing-multip
 With Extended Data Frames</a> vignette.) Together, these functions will
 split apart the main data using the curve identifier column we defined
 before (<a href="#basic-checks">Basic Checks</a>), make a linear fit of
-<span class="math inline">\(g_{sw}\)</span> against the Ball-Berry
-index, and return the resulting parameters and fits:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>
+against the Ball-Berry index, and return the resulting parameters and
+fits:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit a linear model to the Ball-Berry data</span></span>
 <span><span class="va">ball_berry_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
@@ -599,7 +607,7 @@ making sure they look reasonable. As before, we can use
 <code>xyplot</code> from the <code>lattice</code> library to quickly
 make plots of all the fits, which are stored in
 <code>ball_berry_results$fits</code>, an <code>exdf</code> object:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the Ball-Berry fits</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gsw</span> <span class="op">+</span> <span class="va">gsw_fit</span> <span class="op">~</span> <span class="va">bb_index</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -623,7 +631,7 @@ make plots of all the fits, which are stored in
 which are stored in <code>ball_berry_results$parameters</code>, another
 <code>exdf</code> object. This object includes many columns but we only
 care about a few of them. We can view them as follows:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View the Ball-Berry parameters</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'bb_intercept'</span>, <span class="st">'bb_slope'</span>, <span class="st">'r_squared'</span><span class="op">)</span></span>
@@ -657,7 +665,7 @@ care about a few of them. We can view them as follows:</p>
 <p>Finally, we can extract average values of the Ball-Berry parameters
 for each species using the <code>basic_stats</code> function from
 <code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute the average and standard error for the Ball-Berry slope and intercept</span></span>
 <span><span class="co"># for each species</span></span>
 <span><span class="va">ball_berry_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span></span>
@@ -706,7 +714,7 @@ modified so they point to your Licor files. One way to do this in your
 own script is to simply write out relative or absolute paths to the
 files you wish to load. For example, you could replace the previous
 definition of <code>file_paths</code> with this one:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'myfile1.xlsx'</span>,        <span class="co"># `myfile1.xlsx` must be in the current working directory</span></span>
@@ -719,7 +727,7 @@ where you can interactively select a set of files. Sometimes this is
 more convenient than writing out file paths or names. For example, you
 could replace the previous definition of <code>file_paths</code> with
 this one:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Unfortunately, <code>choose_input_licor_files</code> is only
@@ -763,7 +771,7 @@ automatically choose them for you.</p>
 fitting results as <code>csv</code> files. For example, the following
 commands will allow you to interactively choose output filenames for the
 resulting <code>csv</code> files:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">ball_berry_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -778,7 +786,7 @@ copy/paste into a text file to initialize your own script. Annotation
 has also been added to clearly indicate the four steps involved in data
 analysis, as described in the <a href="developing_a_data_analysis_pipeline.html">Developing a Data
 Analysis Pipeline</a> vignette.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###</span></span>
 <span><span class="co">### PRELIMINARIES:</span></span>
 <span><span class="co">### Loading packages, defining constants, creating helping functions, etc.</span></span>
@@ -1021,7 +1029,7 @@ Environment</em> 16 (4): 341–49. <a href="https://doi.org/10.1111/j.1365-3040.
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -1032,15 +1040,15 @@ Environment</em> 16 (4): 341–49. <a href="https://doi.org/10.1111/j.1365-3040.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

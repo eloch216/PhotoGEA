@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="PhotoGEA">
 <title>Working With Extended Data Frames • PhotoGEA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,72 +14,54 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Working With Extended Data Frames">
-<meta property="og:description" content="PhotoGEA">
-<meta property="og:image" content="https://eloch216.github.io/PhotoGEA/logo.svg">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Working With Extended Data Frames">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
-    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
-    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
-    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
-    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -92,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Working With Extended Data Frames</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/vignettes/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/working_with_extended_data_frames.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/working_with_extended_data_frames.Rmd</code></a></small>
       <div class="d-none name"><code>working_with_extended_data_frames.Rmd</code></div>
     </div>
 
@@ -327,9 +308,8 @@ accessed from within R by typing <code><a href="../reference/extract.exdf.html">
 elements can be retrieved using <code>names</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">exdf_1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "main_data"  "units"      "categories"</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "main_data"  "units"      "categories"</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">exdf_3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "main_data"         "units"             "categories"       </span></span>
 <span><span class="co">#&gt; [4] "preamble"          "data_row"          "file_name"        </span></span>
@@ -340,12 +320,11 @@ required elements: <code>main_data</code>, <code>units</code>, and
 that were automatically created by the <code>read_gasex_file</code>
 function. Any of these top-level elements be accessed by name using the
 <code>$</code> and <code>[[</code> operators:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_1</span><span class="op">$</span><span class="va">units</span></span>
 <span><span class="co">#&gt;   A B</span></span>
-<span><span class="co">#&gt; 1 m s</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; 1 m s</span></span>
+<span></span>
 <span><span class="va">exdf_3</span><span class="op">[[</span><span class="st">'file_name'</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "/home/runner/work/_temp/Library/PhotoGEA/extdata/ball_berry_1.xlsx"</span></span></code></pre></div>
 </div>
@@ -356,24 +335,21 @@ function. Any of these top-level elements be accessed by name using the
 to an <code>exdf</code> object, they act directly on the object’s
 <code>main_data</code> element. For example, the following commands are
 equivalent ways to access the column names of <code>exdf_1</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exdf_1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "A" "B"</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "A" "B"</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exdf_1</span><span class="op">$</span><span class="va">main_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A" "B"</span></span></code></pre></div>
 <p>Likewise, the following commands are equivalent ways to extract the
 <code>A</code> column from <code>exdf_1</code> as a vector:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_1</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3 2 7 9</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 3 2 7 9</span></span>
+<span></span>
 <span><span class="va">exdf_1</span><span class="op">$</span><span class="va">main_data</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3 2 7 9</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 3 2 7 9</span></span>
+<span></span>
 <span><span class="va">exdf_1</span><span class="op">$</span><span class="va">main_data</span><span class="op">$</span><span class="va">A</span></span>
 <span><span class="co">#&gt; [1] 3 2 7 9</span></span></code></pre></div>
 <p>It is usually preferable to apply these functions to the
@@ -389,7 +365,7 @@ object. For example, we may wish to extract just the rows from
 greater than 5, keeping all the columns. This can be accomplished as
 follows, using a syntax that is nearly identical to the syntax of
 extracting a subset of a data frame:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_1</span><span class="op">[</span><span class="va">exdf_1</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">5</span>, , return_exdf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s)</span></span>
 <span><span class="co">#&gt; 3            7            1</span></span>
@@ -399,11 +375,10 @@ otherwise, the command will instead return a subset of the
 <code>exdf</code> object’s <code>main_data</code> element, as discussed
 in <a href="#accessing-the-main-data-frame">Accessing The Main Data
 Frame</a>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/is.exdf.html">is.exdf</a></span><span class="op">(</span><span class="va">exdf_1</span><span class="op">[</span><span class="va">exdf_1</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">5</span>, , <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">exdf_1</span><span class="op">[</span><span class="va">exdf_1</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">5</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
@@ -422,16 +397,15 @@ examples of both types of operations.</p>
 <code>[[&lt;-</code> and <code>$&lt;-</code> as with any list. As an
 example, we will change the <code>file_name</code> element of
 <code>exdf_3</code> and add a new top-level element:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_3</span><span class="op">$</span><span class="va">file_name</span> <span class="op">&lt;-</span> <span class="st">'new_file_name.xlsx'</span></span>
 <span></span>
 <span><span class="va">exdf_3</span><span class="op">[[</span><span class="st">'new_element'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></code></pre></div>
 <p>We can confirm the changes:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_3</span><span class="op">$</span><span class="va">file_name</span></span>
-<span><span class="co">#&gt; [1] "new_file_name.xlsx"</span></span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "new_file_name.xlsx"</span></span>
+<span></span>
 <span><span class="va">exdf_3</span><span class="op">$</span><span class="va">new_element</span></span>
 <span><span class="co">#&gt; [1] 5</span></span></code></pre></div>
 </div>
@@ -442,14 +416,14 @@ example, we will change the <code>file_name</code> element of
 object can be modified using the <code>[&lt;-</code> operator. For
 example, we could add 1 to each value in the <code>A</code> column of
 <code>exdf_2</code>:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_2</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">exdf_2</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span></span></code></pre></div>
 <p>We could also add a new column called <code>C</code>:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_2</span><span class="op">[</span>, <span class="st">'C'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">7</span></span></code></pre></div>
 <p>In this case, the units and category of the new column will be
 initialized to <code>NA</code>:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s) C [NA] (NA)</span></span>
 <span><span class="co">#&gt; 1            4            4           7</span></span>
@@ -464,7 +438,7 @@ set the value, units, and category of a column in an extended data frame
 in one step. Here we use this function to add a new column called
 <code>D</code> with units of <code>kg</code> and category
 <code>cat4</code> whose value is 20:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span><span class="va">exdf_2</span>, <span class="st">'D'</span>, <span class="st">'kg'</span>, <span class="st">'cat4'</span>, <span class="fl">20</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
@@ -481,7 +455,7 @@ typing <code><a href="../reference/set_variable.html">?set_variable</a></code>.<
 directly modify <code>main_data</code> because this can cause problems.
 For example, we could try adding another new column called
 <code>E</code> using the following code:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_2</span><span class="op">$</span><span class="va">main_data</span><span class="op">$</span><span class="va">E</span> <span class="op">&lt;-</span> <span class="fl">17</span></span></code></pre></div>
 <p>Now, <code>exdf_2</code> is no longer a properly defined
 <code>exdf</code> object because there is a <code>E</code> column in
@@ -492,19 +466,17 @@ prevent other functions from working properly; for example,
 This is a subtle problem that can only be detected using
 <code>is.exdf</code> with <code>consistency_check</code> set to
 <code>TRUE</code>:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s) C [NA] (NA) D [cat4] (kg) NA</span></span>
 <span><span class="co">#&gt; 1            4            4           7            20 17</span></span>
 <span><span class="co">#&gt; 2            3            5           7            20 17</span></span>
 <span><span class="co">#&gt; 3            8            1           7            20 17</span></span>
-<span><span class="co">#&gt; 4           10            8           7            20 17</span></span></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; 4           10            8           7            20 17</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/is.exdf.html">is.exdf</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/is.exdf.html">is.exdf</a></span><span class="op">(</span><span class="va">exdf_2</span>, <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in is.exdf(exdf_2, TRUE): `x$main_data`, `x$units`, and `x$categories`</span></span>
 <span><span class="co">#&gt; must have the same column names</span></span>
@@ -564,7 +536,7 @@ vertically stacked.
 </div>
 <p>The following is an example of code that accomplishes these
 steps:</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'ball_berry_1.xlsx'</span><span class="op">)</span>,</span>
@@ -592,7 +564,7 @@ Data</a> vignette.</p>
 <code>exdf</code> object, it’s easy to perform calculations on all of it
 at once. For example, we can calculate total pressure, additional gas
 properties, and the Ball-Berry index:</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
@@ -639,7 +611,7 @@ from one function call, as applied to one chunk. For more information,
 access the built-in help system entry by typing <code><a href="../reference/by.exdf.html">?by.exdf</a></code>.
 Here we show how <code>by</code> can be used to apply the Ball-Berry
 fitting procedure to each curve in <code>licor_data</code>:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">by_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                                          <span class="co"># exdf object</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span>, <span class="co"># identifier columns</span></span>
@@ -650,7 +622,7 @@ fitting procedure to each curve in <code>licor_data</code>:</p>
 <code>parameters</code>, so the return value from <code>by</code> is a
 complicated object: it is a list of lists of exdf objects; in other
 words, a nested list. We can see this structure as follows:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">by_result</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 8</span></span>
 <span><span class="co">#&gt;  $ soybean.1 :List of 2</span></span>
@@ -683,11 +655,11 @@ reorganized by separately combining all of the <code>fits</code> and
 with the <code>consolidate</code> function. This function will collect
 all of the second-level elements with the same names and combine them
 using <code>rbind</code>:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">consolidate_by_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="va">by_result</span><span class="op">)</span></span></code></pre></div>
 <p>We can now see that instead of a nested list, we have a list of two
 <code>exdf</code> objects:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">consolidate_by_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
 <span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  72 variables:</span></span>
@@ -696,7 +668,7 @@ using <code>rbind</code>:</p>
 <code>by</code> functions in the same line to make the code more
 concise. Afterwards, the elements from the resulting list can be
 separated to make additional analysis easier:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ball_berry_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span>,</span>
@@ -733,7 +705,7 @@ such as <code>event</code> or <code>species</code>. In this case, it is
 common to pass the <code>main_data</code> element of an
 <code>exdf</code> object as the <code>data</code> argument of
 <code><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">lattice::xyplot</a></code> since it only works with data frames:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gsw</span> <span class="op">~</span> <span class="va">bb_index</span> <span class="op">|</span> <span class="va">species</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">plot</span>,</span>
@@ -749,11 +721,11 @@ it is also possible to add them to the axis labels. This can be
 accomplished using the <code>paste0</code> function, which can create
 character strings from the values of variables. For example, we could
 create a string describing the <code>gsw</code> column as follows:</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Stomatal conductance to H2O ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gsw</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Stomatal conductance to H2O (mol m^(-2) s^(-1))"</span></span></code></pre></div>
 <p>These labels can then be included in the plot itself:</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gsw</span> <span class="op">~</span> <span class="va">bb_index</span> <span class="op">|</span> <span class="va">species</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">plot</span>,</span>
@@ -778,7 +750,7 @@ vignette.</p>
 </h2>
 <p>All S3 methods defined for the <code>exdf</code> class can be viewed
 using the <code>methods</code> function:</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/methods.html" class="external-link">methods</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">'exdf'</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] [                        [&lt;-                      as.data.frame           </span></span>
 <span><span class="co">#&gt;  [4] by                       cbind                    check_required_variables</span></span>
@@ -795,7 +767,7 @@ using the <code>methods</code> function:</p>
 include many examples of how <code>exdf</code> objects can be created
 and used while analyzing photosynthetic gas exchange data.</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -806,15 +778,15 @@ and used while analyzing photosynthetic gas exchange data.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

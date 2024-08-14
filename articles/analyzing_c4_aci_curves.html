@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="PhotoGEA">
 <title>Analyzing C4 A-Ci Curves • PhotoGEA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,72 +14,54 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C4 A-Ci Curves">
-<meta property="og:description" content="PhotoGEA">
-<meta property="og:image" content="https://eloch216.github.io/PhotoGEA/logo.svg">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C4 A-Ci Curves">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
-    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
-    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
-    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
-    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -92,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing C4 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/vignettes/analyzing_c4_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c4_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_c4_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c4_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c4_aci_curves.Rmd</code></div>
     </div>
 
@@ -102,139 +83,251 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>In this vignette, we will give an example showing how to analyze
-C<sub>4</sub> A-Ci data using the <code>PhotoGEA</code> package. The
-commands in this vignette can be used to initialize your own script, as
-described in <a href="#customizing-your-script">Customizing Your
-Script</a>.</p>
+C<sub>4</sub><em>A-C<sub>i</sub></em> data using the
+<code>PhotoGEA</code> package. The commands in this vignette can be used
+to initialize your own script, as described in <a href="#customizing-your-script">Customizing Your Script</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
 <div class="section level3">
-<h3 id="understanding-c4-a-ci-curves">Understanding C4 A-Ci Curves<a class="anchor" aria-label="anchor" href="#understanding-c4-a-ci-curves"></a>
+<h3 id="understanding-c4-a-ci-curves">Understanding C<sub>4</sub><em>A-C<sub>i</sub></em> Curves<a class="anchor" aria-label="anchor" href="#understanding-c4-a-ci-curves"></a>
 </h3>
-<p>An <em>A-Ci curve</em> (or <em>CO<sub>2</sub> response curve</em>) is
-a particular type of gas exchange measurement where a living leaf is
-exposed to varying concentrations of CO<sub>2</sub>. For each
-CO<sub>2</sub> concentration in the sequence, the net assimilation rate
-<span class="math inline">\(A_n\)</span>, stomatal conductance to
-H<sub>2</sub>O (<span class="math inline">\(g_{sw}\)</span>), and other
-important quantities are measured and recorded. Typically, other
-environmental variables such as temperature, humidity, and incident
-photosynthetically-active photon flux density are held constant during
-the measurement sequence so that changes in photosynthesis can be
-attributed to CO<sub>2</sub> alone.</p>
+<p>An <em>A-C<sub>i</sub> curve</em> (or <em>CO<sub>2</sub> response
+curve</em>) is a particular type of gas exchange measurement where a
+living leaf is exposed to varying concentrations of CO<sub>2</sub>. For
+each CO<sub>2</sub> concentration in the sequence, the net assimilation
+rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>),
+stomatal conductance to H<sub>2</sub>O
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>),
+intercellular CO<sub>2</sub> concentration
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>),
+and other important quantities are measured and recorded. Typically,
+other environmental variables such as temperature, humidity, and
+incident photosynthetically-active photon flux density (PPFD) are held
+constant during the measurement sequence so that changes in
+photosynthesis can be attributed to CO<sub>2</sub> alone.</p>
 <p>Because of their different cell structures and biochemical pathways,
 C<sub>3</sub> and C<sub>4</sub> plants have very different responses to
-CO<sub>2</sub>. Here, we will only be discussing C<sub>4</sub>
+CO<sub>2</sub>. Here, we will only be discussing C<sub>3</sub>
 plants.</p>
 <p>The full C<sub>4</sub> photosynthetic pathway is quite complicated,
 consisting of at least two hundred individual reactions, each of which
-may have an impact on a measured A-Ci curve. However, simplified models
-for photosynthesis are available and are much easier to understand and
-work with. These models tend to be based around PEP carboxylase and
-rubisco kinetics, describing how the net assimilation rate responds to
-the partial pressure of CO<sub>2</sub> in the mesophyll or bundle sheath
-cells. The most widely-used model is described in in <em>Biochemical
-Models of Leaf Photosynthesis</em> <span class="citation">(<a href="#ref-caemmerer_biochemical_2000">S. von Caemmerer
-2000</a>)</span>.</p>
+may have an impact on a measured <em>A-C<sub>i</sub></em> curve.
+However, simplified models for photosynthesis are available and are much
+easier to understand and work with. These models tend to be based around
+PEP carboxylase and rubisco kinetics, describing how the net
+assimilation rate responds to the partial pressure of CO<sub>2</sub> in
+the mesophyll or bundle sheath cells. The most widely-used model is
+described in in <em>Biochemical Models of Leaf Photosynthesis</em> <span class="citation">(<a href="#ref-caemmerer_biochemical_2000">S. von
+Caemmerer 2000</a>)</span>.</p>
 <p>This model provides a framework for understanding the changes in
-<span class="math inline">\(A_n\)</span> that occur as a C<sub>4</sub>
-plant is exposed to successively higher concentrations of
-CO<sub>2</sub>. Overall, the photosynthetic response to CO<sub>2</sub>
-under high light conditions can be divided into two separate ranges:</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+that occur as a C<sub>4</sub> plant is exposed to successively higher
+concentrations of CO<sub>2</sub>. Overall, the photosynthetic response
+to CO<sub>2</sub> under high light conditions can be understood as
+follows:</p>
 <ul>
-<li>For low levels of CO<sub>2</sub>, CO<sub>2</sub> assimilation is
-primarily limited by PEP carboxylation in the mesophyll cells.</li>
-<li>For high levels of CO<sub>2</sub>, CO<sub>2</sub> assimilation is
-primarily limited by rubisco activity in the bundle sheath cells (or
-possibly by the rate of PEP carboxylase regeneration).</li>
+<li><p>For low levels of CO<sub>2</sub>, CO<sub>2</sub> assimilation is
+primarily limited by PEP carboxylase activity in the mesophyll
+cells.</p></li>
+<li><p>For higher levels of CO<sub>2</sub>, CO<sub>2</sub> assimilation
+can be limited by Rubisco activity in the bundle sheath cells, PEP
+regeneration in the mesophyll cells, or light availability.</p></li>
 </ul>
 <p>More specifically, the model provides equations that calculate the
-net assimilation rate <span class="math inline">\(A_n\)</span> from the
-maximumum rate of PEP carboxylation (<span class="math inline">\(V_{p,max}\)</span>), the maximum rate of PEP
-carboxylase regeneration (<span class="math inline">\(V_{p,r}\)</span>),
-the maximum rate of rubisco activity (<span class="math inline">\(V_{c,max}\)</span>), the total rate of
-mitochondrial respiration in the mesophyll and bundle sheath cells
-(<span class="math inline">\(R_d\)</span>), the partial pressure of
-CO<sub>2</sub> in the mesophyll (<span class="math inline">\(P_{cm}\)</span>), and several other parameters.
-The full equations are quite complicated, but can be approximated by a
-simpler version where <span class="math inline">\(A_n\)</span> is given
-by the minimum of three separate enzyme-limited assimilation rates:</p>
+net assimilation rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+from the maximumum rate of PEP carboxylation
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mo>,</mo><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{p,max}</annotation></semantics></math>),
+the maximum rate of Rubisco activity
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mo>,</mo><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{c,max}</annotation></semantics></math>),
+the maximum rate of PEP carboxylase regeneration
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mo>,</mo><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">V_{p,r}</annotation></semantics></math>),
+the maximum electron transport rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">J_{max}</annotation></semantics></math>),
+the total rate of mitochondrial respiration across the mesophyll and
+bundle sheath cells
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>L</mi></msub><annotation encoding="application/x-tex">R_L</annotation></semantics></math>),
+the partial pressure of CO<sub>2</sub> in the mesophyll
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">P_{cm}</annotation></semantics></math>),
+and several other parameters. The full equations are quite complicated.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+is given by the smaller of the enzyme-limited rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math>)
+and the light-limited rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>).
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math>
+is co-limited by PEP carboxylase activity, Rubisco activity, and PEP
+regeneration, while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>
+is co-limited by electron transport in the mesophyll and bundle-sheath
+cells. Under certain circumstances (when bundle sheath conductance is
+zero and all photosystem II activity occurs in the mesophyll), then the
+complicated equations reduce to a simpler situation where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+is given by the minimum of five separate rates:</p>
 <ul>
-<li>The PEP-carboxylation-limited rate (<span class="math inline">\(A_{pc}\)</span>).</li>
-<li>The rubisco-limited rate (<span class="math inline">\(A_r\)</span>).</li>
-<li>The PEP-regeneration-limited rate (<span class="math inline">\(A_{pr}\)</span>).</li>
+<li><p>The PEP-carboxylase-limited rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">A_{pc}</annotation></semantics></math>)</p></li>
+<li><p>The Rubisco-limited rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>r</mi></msub><annotation encoding="application/x-tex">A_r</annotation></semantics></math>)</p></li>
+<li><p>The PEP-regeneration-limited rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">A_{pr}</annotation></semantics></math>)</p></li>
+<li><p>The electron-transport-limited rate in the mesophyll
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>j</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">A_{jm}</annotation></semantics></math>)</p></li>
+<li><p>The electron-transport-limited rate in the bundle sheath
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>j</mi><mi>b</mi><mi>s</mi></mrow></msub><annotation encoding="application/x-tex">A_{jbs}</annotation></semantics></math>)</p></li>
 </ul>
-<p>Using the equations that compose this model, it is possible to
-calculate plots like the one below, which illustrates the three
-different limiting rates and the overall net assimilation rate
-calculated using the full equations. The two distinct ranges can be
-identified as the initial part of the curve (where there is a roughly
-linear increase in <span class="math inline">\(A_n\)</span> with <span class="math inline">\(P_{cm}\)</span>) and the later part (where <span class="math inline">\(A_n\)</span> is nearly flat with very little
-dependence on <span class="math inline">\(P_{cm}\)</span>).</p>
+<p>The simplified version can be helpful for understanding the rough
+model behavior, but it is important to keep in mind that the real model
+is different, and that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+is generally not equal to the minimum of these five rates in the full
+model. The plot below shows an example of the full model output:</p>
 <p><img src="analyzing_c4_aci_curves_files/figure-html/unnamed-chunk-2-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>(Note: this figure was generated using the
 <code>calculate_c4_assimilation</code> function from the
 <code>PhotoGEA</code> package, and it represents the photosynethetic
 response of a C<sub>4</sub> leaf according to the model with
-<code>Rd_at_25</code> = 1 micromol m^(-2) s^(-1),
+<code>RL_at_25</code> = 1 micromol m^(-2) s^(-1),
 <code>Vpmax_at_25</code> = 150 micromol m^(-2) s^(-1),
 <code>Vcmax_at_25</code> = 30 micromol m^(-2) s^(-1), <code>Vpr</code> =
-80 micromol m^(-2) s^(-1), and a leaf temperature of 30 degrees C.
-Arrhenius temperature response parameters were taken from <span class="citation">S. von Caemmerer (<a href="#ref-von_caemmerer_updating_2021">2021</a>)</span>.)</p>
-<p>Thus, one of the most common reasons to measure an A-Ci curve is to
-interpret it in the context of this model. In other words, by fitting
-the model’s equations to a measured curve, it is possible to estimate
-values for <code>Rd</code>, <code>Vpmax</code>, <code>Vcmax</code>, and
-<code>Vpr</code>. See the documentation for
+80 micromol m^(-2) s^(-1), <code>Jmax_at_opt</code> = 400 micromol
+m^(-2) s^(-1), and a leaf temperature of 30 degrees C. Arrhenius
+temperature response parameters were taken from <span class="citation">Susanne von Caemmerer (<a href="#ref-von_caemmerer_updating_2021">2021</a>)</span>.)</p>
+<p>There are several important things to notice about this plot:</p>
+<ul>
+<li><p>For these conditions,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+is always equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math>.
+Thus, assimilation is enzyme-limited across the entire range of
+CO<sub>2</sub> values.</p></li>
+<li><p>The enzyme-limited rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math>
+is always smaller than either of the three rates related to individual
+enzymes
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">A_{pc}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">A_{pr}</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>r</mi></msub><annotation encoding="application/x-tex">A_r</annotation></semantics></math>).</p></li>
+<li><p>The light-limited rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>
+is always smaller than either of the two rates related to electron
+transport in individual cell types
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>j</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">A_{jm}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>j</mi><mi>b</mi></mrow></msub><annotation encoding="application/x-tex">A_{jb}</annotation></semantics></math>).</p></li>
+<li><p>The dependence of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>r</mi></msub><annotation encoding="application/x-tex">A_r</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">A_{pr}</annotation></semantics></math>
+on CO<sub>2</sub> concentration is very similar, where all three are
+nearly independent of CO<sub>2</sub>.</p></li>
+<li><p>The PEP-carboxylase-limited rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">A_{pc}</annotation></semantics></math>)
+is the only rate that approaches zero, which happens as the
+CO<sub>2</sub> concentration decreases.</p></li>
+<li><p>Regardless of which process may be limiting assimilation,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math><em>never</em> decreases as CO<sub>2</sub> increases.</p></li>
+</ul>
+<p>An important conclusion here is that PEP carboxylase always limits
+assimilation at low CO<sub>2</sub> concentrations, and that one or more
+of Rubisco activity, electron transport, and PEP regeneration limits
+assimilation at high CO<sub>2</sub> concentrations. These three
+processes each produce a plateau with a nearly flat response to
+CO<sub>2</sub>.</p>
+<p>One of the most common reasons to measure an <em>A-C<sub>i</sub></em>
+curve is to interpret it in the context of this model. In other words,
+by fitting the model’s equations to a measured curve, it is possible to
+estimate values for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>L</mi></msub><annotation encoding="application/x-tex">R_L</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{pmax}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">J_{max}</annotation></semantics></math>,
+and others. See the documentation for
 <code>calculate_c4_assimilation</code> for more information about these
 important quantities.</p>
-<p>As is evident from the figure above, rubisco activity and PEP
-regeneration limitations actually both produce a very similar end
-result, where <span class="math inline">\(A_n\)</span> becomes
-essentially flat as <span class="math inline">\(P_{cm}\)</span>
-increases. For this reason, it is practically impossible to distinguish
-between the two types of limiting rates when analyzing a C<sub>4</sub>
-A-Ci curve; if both limitations are considered simultaneously, it is not
-usually possible for an optimization algorithm to determine a unique
-solution. Because of this, it is common to set either <code>Vpr</code>
-or <code>Vcmax</code> to a high value when fitting (so it never becomes
-a limiting factor), and only allow the other to vary. In the rest of
-this document, we will be setting <code>Vpr = 800</code> and only
-allowing <code>Vcmax</code> to vary when performing fits; this is the
-default behavior of the <code>fit_c4_aci</code> function from the
-<code>PhotoGEA</code> package, which will be discussed later.</p>
+<p>From the discussion above, it is evident that determining the
+rate-limiting process at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+in a C<sub>4</sub><em>A-C<sub>i</sub></em> curve is difficult or
+impossible because the three potentially limiting processes each exhibit
+nearly identical responses to CO<sub>2</sub>. There are two main ways to
+deal with this issue:</p>
+<ul>
+<li><p>One way is to assume a particular limiting process based on
+outside information. For example, curves measured under high light
+conditions (where electron transport rates will be high), and at warm
+temperatures (where PEP regeneration rates will be high) are likely to
+be Rubisco-limited at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>.</p></li>
+<li><p>Another option is to use an empirical non-rectangular hyperbola
+to fit the curve. This enables estimates of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{max}</annotation></semantics></math>,
+the maximum rate of gross assimilation, which is related to the highest
+value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>n</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">A_{nmax}</annotation></semantics></math>)
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mrow><mi>n</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>=</mo><msub><mi>V</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>R</mi><mi>L</mi></msub></mrow><annotation encoding="application/x-tex">A_{nmax} = V_{max} - R_L</annotation></semantics></math>.
+This quantity has no meaningful mechanistic interpretation but can be
+used to compare assimilation rates between groups of plants. When taking
+this approach, values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{pmax}</annotation></semantics></math>
+can still be estimated from the low
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+part of the curve using the mechanistic model.</p></li>
+</ul>
+<p>These approaches will be demonstrated below in this vignette.</p>
 </div>
 <div class="section level3">
 <h3 id="practicalities">Practicalities<a class="anchor" aria-label="anchor" href="#practicalities"></a>
 </h3>
-<p>There are a few important practicalities to keep in mind when
+<p>There are a few other important practicalities to keep in mind when
 thinking about CO<sub>2</sub> response curves.</p>
-<p>One point is that C4 photosynthesis models generally predict the
-response of assimilation to the partial pressure of CO<sub>2</sub> in
-the mesophyll (<span class="math inline">\(P_{cm}\)</span>), but gas
-exchange measurements can only determine the CO<sub>2</sub>
-concentration in the leaf’s intercellular spaces (<span class="math inline">\(C_i\)</span>). Thus, an extra step is required
-when interpreting A-Ci curves. If the mesophyll conductance to
-CO<sub>2</sub> (<span class="math inline">\(g_{mc}\)</span>) and the
-total pressure (<span class="math inline">\(P\)</span>) are known, then
-it is possible to calculate values of <span class="math inline">\(P_{cm}\)</span> from <span class="math inline">\(A_n\)</span>, <span class="math inline">\(C_i\)</span>, <span class="math inline">\(P\)</span>, and <span class="math inline">\(g_{mc}\)</span>. Otherwise, it is also possible to
-assume an infinite mesophyll conductance; in this case, <span class="math inline">\(C_m = C_i\)</span>, and the estimated values of
-<code>Vcmax</code> and other parameters can be considered to be
-“effective values” describing the plant’s response to intercellular
-CO<sub>2</sub>.</p>
+<p>One point is that C<sub>4</sub> photosynthesis models generally
+predict the response of assimilation to the partial pressure of
+CO<sub>2</sub> in the mesophyll
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">P_{cm}</annotation></semantics></math>),
+but gas exchange measurements can only determine the CO<sub>2</sub>
+concentration in the leaf’s intercellular spaces
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>).
+Thus, an extra step is required when interpreting
+<em>A-C<sub>i</sub></em> curves. If the mesophyll conductance to
+CO<sub>2</sub>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>)
+and the total pressure
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>)
+are known, then it is possible to calculate values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">P_{cm}</annotation></semantics></math>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>.
+Otherwise, it is also possible to assume an infinite mesophyll
+conductance; in this case,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>m</mi></msub><mo>=</mo><msub><mi>C</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">C_m = C_i</annotation></semantics></math>,
+and the estimated values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+and other parameters can be considered to be “effective values”
+describing the plant’s response to intercellular CO<sub>2</sub>.</p>
 <p>Another important point is that plants generally do not appreciate
 being starved of CO<sub>2</sub>, so it is not usually possible to start
 a response curve at low CO<sub>2</sub> and proceed upwards. A more
 typical approach is to:</p>
 <ol style="list-style-type: decimal">
-<li>Begin at ambient atmospheric CO<sub>2</sub> levels.</li>
-<li>Decrease towards a low value.</li>
-<li>Return to ambient levels and wait for the plant to reacclimate; this
-waiting period is usually accomplished by logging several points at
-ambient CO<sub>2</sub> levels.</li>
-<li>Increase to higher values.</li>
+<li><p>Begin at ambient atmospheric CO<sub>2</sub> levels.</p></li>
+<li><p>Decrease towards a low value.</p></li>
+<li><p>Return to ambient levels and wait for the plant to reacclimate;
+this waiting period is usually accomplished by logging several points at
+ambient CO<sub>2</sub> levels.</p></li>
+<li><p>Increase to higher values.</p></li>
 </ol>
 <p>When taking this approach, it therefore becomes necessary to remove
 the extra points measured at ambient CO<sub>2</sub> levels and to
@@ -244,17 +337,20 @@ plotting or analyzing them.</p>
 <div class="section level3">
 <h3 id="the-data">The Data<a class="anchor" aria-label="anchor" href="#the-data"></a>
 </h3>
-<p>A-Ci curves are commonly measured using a Licor portable
-photosynthesis system such as the Li-6400 or Li-6800. These machines
-record values of <span class="math inline">\(A_n\)</span>, <span class="math inline">\(g_{sw}\)</span>, and many other important
-quantities. They produce two types of output files: plain-text and
-Microsoft Excel. It is often more convenient to work with the Excel
-files since the entries can be easily modified (for example, to remove
-an extraneous row or add a new column). On the other hand, it can be
-more difficult to access the file contents using other pieces of
-software such as R. However, the <code>PhotoGEA</code> package reduces
-this barrier by including tools for reading Licor Excel files in R,
-which will be demonstrated in the following section.</p>
+<p><em>A-C<sub>i</sub></em> curves are commonly measured using a
+portable photosynthesis system such as the Licor Li-6800. These machines
+record values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+and many other important quantities. They produce two types of output
+files: plain-text and Microsoft Excel. It is often more convenient to
+work with the Excel files since the entries can be easily modified (for
+example, to remove an extraneous row or add a new column). On the other
+hand, it can be more difficult to access the file contents using other
+pieces of software such as R. However, the <code>PhotoGEA</code> package
+reduces this barrier by including tools for reading Licor Excel files in
+R, which will be demonstrated in the following section.</p>
 </div>
 </div>
 <div class="section level2">
@@ -275,15 +371,17 @@ you can install it by typing
 <h2 id="loading-licor-data">Loading Licor Data<a class="anchor" aria-label="anchor" href="#loading-licor-data"></a>
 </h2>
 <p>The <code>PhotoGEA</code> package includes two files representing
-A-Ci curves measured using two Li-6800 instruments. The data is stored
-in Microsoft Excel files, and includes curves measured from two
-different crop species (tobacco and soybean) and several different plots
-of each. Each curve is a sixteen-point CO<sub>2</sub> response curve; in
-other words, the CO<sub>2</sub> concentration in the air surrounding the
-leaf was varied, and <span class="math inline">\(A_n\)</span> (among
-other variables) was measured at each CO<sub>2</sub> setpoint. Although
-these two files are based on real data, noise was added to it since it
-is unpublished, so these files should only be used as examples.</p>
+<em>A-C<sub>i</sub></em> curves measured using two Li-6800 instruments.
+The data is stored in Microsoft Excel files, and includes curves
+measured from two different crop species (sorghum and maize) and several
+different plots of each. Each curve is a sixteen-point CO<sub>2</sub>
+response curve; in other words, the CO<sub>2</sub> concentration in the
+air surrounding the leaf was varied, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+(among other variables) was measured at each CO<sub>2</sub> setpoint.
+Although these two files are based on real data, noise was added to it
+since it is unpublished, so these files should only be used as
+examples.</p>
 <p>The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained
 with <code>PhotoGEA_example_file_path</code>:</p>
@@ -392,28 +490,62 @@ we would get error messages:</p>
 <span><span class="co">#&gt; 3 ripe1 - sorghum - 3   16</span></span>
 <span><span class="co">#&gt; 4   ripe2 - maize - 2   16</span></span>
 <span><span class="co">#&gt; 5 ripe2 - sorghum - 3   16</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 15): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 15): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'species'</span>, <span class="fl">16</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1   maize   32</span></span>
 <span><span class="co">#&gt; 2 sorghum   48</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'Ci'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 16, : Point 1 from curve `ripe1 - maize - 5` has value `Ci = 95.1988547749169`, but the average value for this point across all curves is `Ci = 90.7350174923248`</span></span>
-<span><span class="co">#&gt;   Point 1 from curve `ripe2 - maize - 2` has value `Ci = 112.053645568057`, but the average value for this point across all curves is `Ci = 90.7350174923248`</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "Point 1 from curve `ripe1 - maize - 5` has value `Ci = 95.1988547749169`, but the average value for this point across all curves is `Ci = 90.7350174923248`"   </span></span>
+<span><span class="co">#&gt;  [2] "Point 1 from curve `ripe2 - maize - 2` has value `Ci = 112.053645568057`, but the average value for this point across all curves is `Ci = 90.7350174923248`"   </span></span>
+<span><span class="co">#&gt;  [3] "Point 2 from curve `ripe2 - maize - 2` has value `Ci = 78.3677266731031`, but the average value for this point across all curves is `Ci = 73.7774387072254`"   </span></span>
+<span><span class="co">#&gt;  [4] "Point 2 from curve `ripe2 - sorghum - 3` has value `Ci = 95.8971339710516`, but the average value for this point across all curves is `Ci = 73.7774387072254`" </span></span>
+<span><span class="co">#&gt;  [5] "Point 3 from curve `ripe2 - maize - 2` has value `Ci = 55.8461667809225`, but the average value for this point across all curves is `Ci = 50.2351057212952`"   </span></span>
+<span><span class="co">#&gt;  [6] "Point 3 from curve `ripe2 - sorghum - 3` has value `Ci = 54.2879832747398`, but the average value for this point across all curves is `Ci = 50.2351057212952`" </span></span>
+<span><span class="co">#&gt;  [7] "Point 4 from curve `ripe2 - maize - 2` has value `Ci = 36.3299652323122`, but the average value for this point across all curves is `Ci = 34.7296260746293`"   </span></span>
+<span><span class="co">#&gt;  [8] "Point 4 from curve `ripe2 - sorghum - 3` has value `Ci = 45.4786162389747`, but the average value for this point across all curves is `Ci = 34.7296260746293`" </span></span>
+<span><span class="co">#&gt;  [9] "Point 5 from curve `ripe1 - sorghum - 2` has value `Ci = 24.3220793641472`, but the average value for this point across all curves is `Ci = 22.6366731891658`" </span></span>
+<span><span class="co">#&gt; [10] "Point 5 from curve `ripe2 - maize - 2` has value `Ci = 25.3526198153885`, but the average value for this point across all curves is `Ci = 22.6366731891658`"   </span></span>
+<span><span class="co">#&gt; [11] "Point 5 from curve `ripe2 - sorghum - 3` has value `Ci = 26.5962217290156`, but the average value for this point across all curves is `Ci = 22.6366731891658`" </span></span>
+<span><span class="co">#&gt; [12] "Point 6 from curve `ripe2 - sorghum - 3` has value `Ci = 20.6924342276327`, but the average value for this point across all curves is `Ci = 18.2682597489262`" </span></span>
+<span><span class="co">#&gt; [13] "Point 7 from curve `ripe1 - sorghum - 2` has value `Ci = 13.0676593944446`, but the average value for this point across all curves is `Ci = 11.7476810069077`" </span></span>
+<span><span class="co">#&gt; [14] "Point 7 from curve `ripe2 - maize - 2` has value `Ci = 14.0971182401318`, but the average value for this point across all curves is `Ci = 11.7476810069077`"   </span></span>
+<span><span class="co">#&gt; [15] "Point 9 from curve `ripe1 - maize - 5` has value `Ci = 163.508148863318`, but the average value for this point across all curves is `Ci = 159.390938891699`"   </span></span>
+<span><span class="co">#&gt; [16] "Point 9 from curve `ripe1 - sorghum - 3` has value `Ci = 174.479049333262`, but the average value for this point across all curves is `Ci = 159.390938891699`" </span></span>
+<span><span class="co">#&gt; [17] "Point 9 from curve `ripe2 - maize - 2` has value `Ci = 170.055243344855`, but the average value for this point across all curves is `Ci = 159.390938891699`"   </span></span>
+<span><span class="co">#&gt; [18] "Point 10 from curve `ripe1 - maize - 5` has value `Ci = 147.168363231333`, but the average value for this point across all curves is `Ci = 134.474388889858`"  </span></span>
+<span><span class="co">#&gt; [19] "Point 10 from curve `ripe2 - maize - 2` has value `Ci = 151.178147014491`, but the average value for this point across all curves is `Ci = 134.474388889858`"  </span></span>
+<span><span class="co">#&gt; [20] "Point 10 from curve `ripe2 - sorghum - 3` has value `Ci = 147.942853301254`, but the average value for this point across all curves is `Ci = 134.474388889858`"</span></span>
+<span><span class="co">#&gt; [21] "Point 11 from curve `ripe1 - maize - 5` has value `Ci = 301.610571803461`, but the average value for this point across all curves is `Ci = 295.553484685722`"  </span></span>
+<span><span class="co">#&gt; [22] "Point 11 from curve `ripe1 - sorghum - 2` has value `Ci = 304.484438603537`, but the average value for this point across all curves is `Ci = 295.553484685722`"</span></span>
+<span><span class="co">#&gt; [23] "Point 11 from curve `ripe2 - maize - 2` has value `Ci = 314.766889542375`, but the average value for this point across all curves is `Ci = 295.553484685722`"  </span></span>
+<span><span class="co">#&gt; [24] "Point 11 from curve `ripe2 - sorghum - 3` has value `Ci = 300.976260955957`, but the average value for this point across all curves is `Ci = 295.553484685722`"</span></span>
+<span><span class="co">#&gt; [25] "Point 12 from curve `ripe2 - maize - 2` has value `Ci = 511.309867405833`, but the average value for this point across all curves is `Ci = 469.330015405697`"  </span></span>
+<span><span class="co">#&gt; [26] "Point 12 from curve `ripe2 - sorghum - 3` has value `Ci = 518.713451150252`, but the average value for this point across all curves is `Ci = 469.330015405697`"</span></span>
+<span><span class="co">#&gt; [27] "Point 13 from curve `ripe2 - maize - 2` has value `Ci = 706.802465420149`, but the average value for this point across all curves is `Ci = 621.735292472354`"  </span></span>
+<span><span class="co">#&gt; [28] "Point 13 from curve `ripe2 - sorghum - 3` has value `Ci = 684.288635299733`, but the average value for this point across all curves is `Ci = 621.735292472354`"</span></span>
+<span><span class="co">#&gt; [29] "Point 14 from curve `ripe1 - sorghum - 2` has value `Ci = 788.919450361277`, but the average value for this point across all curves is `Ci = 771.269382813732`"</span></span>
+<span><span class="co">#&gt; [30] "Point 14 from curve `ripe2 - maize - 2` has value `Ci = 862.408987557924`, but the average value for this point across all curves is `Ci = 771.269382813732`"  </span></span>
+<span><span class="co">#&gt; [31] "Point 14 from curve `ripe2 - sorghum - 3` has value `Ci = 846.664713504987`, but the average value for this point across all curves is `Ci = 771.269382813732`"</span></span>
+<span><span class="co">#&gt; [32] "Point 15 from curve `ripe1 - sorghum - 2` has value `Ci = 1019.63142264301`, but the average value for this point across all curves is `Ci = 980.559407812185`"</span></span>
+<span><span class="co">#&gt; [33] "Point 15 from curve `ripe2 - maize - 2` has value `Ci = 1141.71338971252`, but the average value for this point across all curves is `Ci = 980.559407812185`"  </span></span>
+<span><span class="co">#&gt; [34] "Point 15 from curve `ripe2 - sorghum - 3` has value `Ci = 1107.25473615995`, but the average value for this point across all curves is `Ci = 980.559407812185`"</span></span>
+<span><span class="co">#&gt; [35] "Point 16 from curve `ripe1 - sorghum - 2` has value `Ci = 1468.33923855058`, but the average value for this point across all curves is `Ci = 1251.98886936329`"</span></span>
+<span><span class="co">#&gt; [36] "Point 16 from curve `ripe2 - maize - 2` has value `Ci = 1381.01024312097`, but the average value for this point across all curves is `Ci = 1251.98886936329`"  </span></span>
+<span><span class="co">#&gt; [37] "Point 16 from curve `ripe2 - sorghum - 3` has value `Ci = 1350.65791359197`, but the average value for this point across all curves is `Ci = 1251.98886936329`"</span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 16, : The curves do not all follow the same sequence of the driving variable.</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="plotting-the-a-ci-curves">Plotting the A-Ci Curves<a class="anchor" aria-label="anchor" href="#plotting-the-a-ci-curves"></a>
+<h3 id="plotting-the-a-ci-curves">Plotting the <em>A-C<sub>i</sub></em> Curves<a class="anchor" aria-label="anchor" href="#plotting-the-a-ci-curves"></a>
 </h3>
 <p>One qualitative way to check the data is to simply create a plot of
-the A-Ci curves. In this situation, the <code>lattice</code> library
-makes it simple to include each curve as its own separate subplot of a
-figure. For example:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+the <em>A-C<sub>i</sub></em> curves. In this situation, the
+<code>lattice</code> library makes it simple to include each curve as
+its own separate subplot of a figure. For example:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot all A-Ci curves in the data set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -432,7 +564,7 @@ measuring the curves. As discussed in <a href="#practicalities">Practicalities</
 points logged at the same CO<sub>2</sub> concentration, and the points
 are not logged in order of ascending or descending concentration. In
 fact, the sequence of CO<sub>2</sub> setpoints is as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'ripe2 - maize - 2'</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span></span>
 <span><span class="co">#&gt;  [1]  400  300  200  150  100   75   50   20  400  400  600  800 1000 1200 1500</span></span>
 <span><span class="co">#&gt; [16] 1800</span></span></code></pre></div>
@@ -442,7 +574,7 @@ ambient CO<sub>2</sub> levels), and reorder the data so it is arranged
 from low to high values of <code>Ci</code>. This can be done using the
 <code>organize_response_curve</code> function from
 <code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
 <span>    <span class="va">licor_data</span>,</span>
@@ -451,7 +583,7 @@ from low to high values of <code>Ci</code>. This can be done using the
 <span>    <span class="st">'Ci'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now we can plot them again:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot all A-Ci curves in the data set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -468,11 +600,18 @@ from low to high values of <code>Ci</code>. This can be done using the
 that was intentionally added to the data. Nevertheless, there are a few
 points that we should probably exclude before attempting to fit the
 curves. One issue is that the model <em>never</em> predicts a decrease
-in <span class="math inline">\(A\)</span> when <span class="math inline">\(Ci\)</span> increases. So, it is usually a good
-idea to exclude any points at high <span class="math inline">\(Ci\)</span> where <span class="math inline">\(A\)</span> is observed to decrease. This dropoff
-in assimilation is due to one or more processes that are not captured by
-the model, and the fits will be unreliable. We will remove these points
-later, after we have made several other data quality checks.</p>
+in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>i</mi></mrow><annotation encoding="application/x-tex">Ci</annotation></semantics></math>
+increases. So, it is usually a good idea to exclude any points at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>i</mi></mrow><annotation encoding="application/x-tex">Ci</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+is observed to decrease by a large amount. This dropoff in assimilation
+is due to one or more processes that are not captured by the model, and
+the fits will be unreliable. We will remove these points later, after we
+have made several other data quality checks.</p>
 </div>
 <div class="section level3">
 <h3 id="additional-plots-for-qualitative-validation">Additional Plots for Qualitative Validation<a class="anchor" aria-label="anchor" href="#additional-plots-for-qualitative-validation"></a>
@@ -486,7 +625,7 @@ plots to check each curve for quality.</p>
 <div class="section level4">
 <h4 id="humidity-control">Humidity Control<a class="anchor" aria-label="anchor" href="#humidity-control"></a>
 </h4>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check humidity control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">RHcham</span> <span class="op">+</span> <span class="va">`Humidifier_%`</span> <span class="op">+</span> <span class="va">`Desiccant_%`</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -515,7 +654,7 @@ photosynthesis. In this plot, all the data looks good.</p>
 <div class="section level4">
 <h4 id="temperature-control">Temperature Control<a class="anchor" aria-label="anchor" href="#temperature-control"></a>
 </h4>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check temperature control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">+</span> <span class="va">Txchg</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -541,7 +680,7 @@ looks good.</p>
 <div class="section level4">
 <h4 id="co2-control">CO<sub>2</sub> Control<a class="anchor" aria-label="anchor" href="#co2-control"></a>
 </h4>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check CO2 control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_s</span> <span class="op">+</span> <span class="va">CO2_r</span> <span class="op">+</span> <span class="va">CO2_r_sp</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -572,7 +711,7 @@ looks good.</p>
 <div class="section level4">
 <h4 id="stability">Stability<a class="anchor" aria-label="anchor" href="#stability"></a>
 </h4>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check stability criteria</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">`A:OK`</span> <span class="op">+</span> <span class="va">`gsw:OK`</span> <span class="op">+</span> <span class="va">Stable</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -606,40 +745,29 @@ stable (0 for no, 1 for yes), <code>gsw:OK</code> indicates whether
 that were met. So, we are looking for points where <code>Stable</code>
 is 2. Otherwise, we can check the other traces to see whether
 <code>A</code> or <code>gsw</code> was unstable.</p>
-<p>Comparing these plots with the ones in <a href="#plotting-the-a-ci-curves">Plotting the A-Ci Curves</a>, it seems
-that the unstable points correspond with some of the “odd-looking”
-points in the A-Ci curves, so it is probably a good idea to remove them
-before fitting the data.</p>
+<p>Comparing these plots with the ones in <a href="#plotting-the-a-ci-curves">Plotting the <em>A-C<sub>i</sub></em>
+Curves</a>, it seems that none of the unstable points look particularly
+strange, so we will not remove them.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="cleaning-the-licor-data">Cleaning the Licor Data<a class="anchor" aria-label="anchor" href="#cleaning-the-licor-data"></a>
 </h3>
-<p>While checking over the plots in the previous sections, two issues
-were noticed: (1) some points were logged before stability was achieved
-and (2) some of the curves exhibit a decrease in <span class="math inline">\(A\)</span> at high values of <span class="math inline">\(C_i\)</span>. In this section, we will demonstrate
-how to remove the unstable and unusual points.</p>
-<p>The following command will keep only the points where
-<code>Stable</code> is exactly 2; this condition means that all of the
-stability criteria were satisfied. Sometimes, following this procedure,
-a curve will have very few stable points remaining; it is usually a good
-idea to automatically exclude any curve with fewer than three stable
-points.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Only keep points where stability was achieved</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
-<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
-<span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
-<p>Next, we can use the <code>remove_points</code> function from
-<code>PhotoGEA</code> to exclude the points where there is a decrease in
-<span class="math inline">\(A\)</span> at high <span class="math inline">\(C_i\)</span>. It just so happens that all of these
-points were measured by the <code>ripe1</code> instrument and occur at
-the highest CO<sub>2</sub> setpoint value, so it is easy to specify them
-all at once:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<p>While checking over the plots in the previous sections, we noticed
+that some of the curves exhibit a sharp decrease in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+at high values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>.</p>
+<p>We can use the <code>remove_points</code> function from
+<code>PhotoGEA</code> to exclude these points. It just so happens that
+all of these points where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+suddenly decreases at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+were measured by the <code>ripe1</code> instrument and occur at the
+highest CO<sub>2</sub> setpoint value, so it is easy to specify them all
+at once.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
@@ -654,11 +782,13 @@ all at once:</p>
 the fitting. In order to fit the curves, there are several required
 pieces of information that are not included in the Licor data files as
 produced by the instrument: temperature-dependent values of important
-photosynthetic parameters such as <span class="math inline">\(\gamma^*\)</span>, values of the total pressure,
-and values of the partial pressure of CO<sub>2</sub> in the mesophyll
-<span class="math inline">\(P_{cm}\)</span>. However, the
-<code>PhotoGEA</code> package includes four functions to help with these
-calculations: <code>calculate_arrhenius</code>,
+photosynthetic parameters such as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>γ</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\gamma^*</annotation></semantics></math>,
+values of the total pressure, and values of the partial pressure of
+CO<sub>2</sub> in the mesophyll
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">P_{cm}</annotation></semantics></math>.
+However, the <code>PhotoGEA</code> package includes four functions to
+help with these calculations: <code>calculate_arrhenius</code>,
 <code>calculate_peaked_gaussian</code>,
 <code>calculate_total_pressure</code>, and <code>apply_gm</code>. Each
 of these requires an <code>exdf</code> object containing Licor data. The
@@ -669,34 +799,27 @@ obtained from the built-in help system by typing
 <code><a href="../reference/calculate_total_pressure.html">?calculate_total_pressure</a></code>, or <code><a href="../reference/apply_gm.html">?apply_gm</a></code>.</p>
 <p>First, we can use <code>calculate_arrhenius</code> and
 <code>calculate_peaked_gaussian</code>:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate temperature-dependent values of C4 photosynthetic parameters</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c4_arrhenius_von_caemmerer</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_peaked_gaussian.html">calculate_peaked_gaussian</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c4_peaked_gaussian_von_caemmerer</span><span class="op">)</span></span></code></pre></div>
 <p>With these simple commands, we have used the leaf temperature from
-the Licor file to calculate values of several key C4 photosynthetic
-parameters (Vcmax_norm, Vpmax_norm, Rd_norm, Kc, Ko, Kp, gamma_star, ao,
-gmc and Jmax_norm) according to the temperature response parameters
-specified in <span class="citation">S. von Caemmerer (<a href="#ref-von_caemmerer_updating_2021">2021</a>)</span>. Notice that
+the Licor file to calculate values of several key C<sub>4</sub>
+photosynthetic parameters (Vcmax_norm, Vpmax_norm, RL_norm, Kc, Ko, Kp,
+gamma_star, ao, gmc and Jmax_norm) according to the temperature response
+parameters specified in <span class="citation">Susanne von Caemmerer (<a href="#ref-von_caemmerer_updating_2021">2021</a>)</span>. Notice that
 this command calculated values of the mesophyll conductance to CO2
-(<code>gmc</code>) in units of mol m<span class="math inline">\(^{-2}\)</span> s<span class="math inline">\(^{-1}\)</span> bar<span class="math inline">\(^{-1}\)</span>. These values were estmated for
-<em>Setaria viridis</em> and may not be appropriate for all C4 plants.
-They can easily be overwritten to another value; here we will set
-<code>gmc = 3.0 mol / m^2 / s / bar</code> for maize and
-<code>gmc = Inf</code> for sorghum; in this case, the sorghum parameters
-determined by the fitting process will be “effective” parameters.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Override default mesophyll conductance and specify different values for each</span></span>
-<span><span class="co"># species</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>,</span>
-<span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
-<span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maize <span class="op">=</span> <span class="fl">3.0</span>, sorghum <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+(<code>gmc</code>) in units of mol
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">^{-2}</annotation></semantics></math>
+s<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">^{-1}</annotation></semantics></math>
+bar<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">^{-1}</annotation></semantics></math>.
+These values were estmated for <em>Setaria viridis</em> and may not be
+appropriate for all C<sub>4</sub> plants. Nevertheless, we will use them
+here.</p>
 <p>Now we can use <code>calculate_total_pressure</code> and
 <code>apply_gm</code> to calculate <code>PCm</code>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
@@ -706,199 +829,358 @@ determined by the fitting process will be “effective” parameters.</p>
 <span>  <span class="st">'C4'</span> <span class="co"># Indicate C4 photosynthesis</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Together, these functions have added several new columns to
-<code>licor_data</code>, including <code>gmc</code>, ‘PCm’,
-‘gamma_star’, and others. With this information, we are now ready to
-perform the fitting procedure. For this operation, we can use the
-<code>fit_c4_aci</code> function from the <code>PhotoGEA</code> package,
-which fits a single response curve to extract the values of key
-photosynthetic parameters. To apply this function to each curve in a
-larger data set and then consolidate the results, we can use it in
-conjunction with <code>by</code> and <code>consolidate</code>, which are
-also part of <code>PhotoGEA</code>. (For more information about these
-functions, see the built-in help menu entries by typing
-<code><a href="../reference/fit_c4_aci.html">?fit_c4_aci</a></code>, <code><a href="../reference/by.exdf.html">?by.exdf</a></code>, or
+<code>licor_data</code>, including <code>gmc</code>, <code>PCm</code>,
+<code>gamma_star</code>, and others. With this information, we are now
+ready to fit the curves.</p>
+<p>Here we will demonstrate three different approaches to curve fitting.
+For these fits, we will be using the <code>fit_c4_aci</code> and
+<code>fit_c4_aci_hyperbola</code> functions from the
+<code>PhotoGEA</code> package, which each fit single response curves to
+estimate the values of key photosynthetic parameters.</p>
+<p>To apply these functions to each curve in a larger data set and then
+consolidate the results, we can use them in conjunction with
+<code>by</code> and <code>consolidate</code>, which are also part of
+<code>PhotoGEA</code>. (For more information about these functions, see
+the built-in help menu entries by typing <code><a href="../reference/fit_c4_aci.html">?fit_c4_aci</a></code>,
+<code><a href="../reference/fit_c4_aci_hyperbola.html">?fit_c4_aci_hyperbola</a></code>, <code><a href="../reference/by.exdf.html">?by.exdf</a></code>, or
 <code><a href="../reference/consolidate.html">?consolidate</a></code>, or check out the <em>Common Patterns</em>
 section of the <a href="working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame">Working
 With Extended Data Frames</a> vignette.) Together, these functions will
 split apart the main data using the curve identifier column we defined
-before (<a href="#basic-checks">Basic Checks</a>), fit each A-Ci curve
-using the model discussed in <a href="#understanding-c4-a-ci-curves">Understanding C4 A-Ci Curves</a>,
-and return the resulting parameters and fits:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Fit the C4 A-Ci curves</span></span>
-<span><span class="va">c4_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+before (<a href="#basic-checks">Basic Checks</a>), fit each
+<em>A-C<sub>i</sub></em> curve using the models discussed in <a href="#understanding-c4-a-ci-curves">Understanding C<sub>4</sub><em>A-C<sub>i</sub></em> Curves</a>, and return the resulting parameters
+and fits.</p>
+<p>For viewing the resulting fits, we will be using the
+<code>plot_c4_aci_fit</code> and <code>plot_c4_aci_hyperbola_fit</code>
+functions from <code>PhotoGEA</code>.</p>
+<div class="section level3">
+<h3 id="mechanistic-fit-assuming-rubisco-limitations">Mechanistic Fit, Assuming Rubisco Limitations<a class="anchor" aria-label="anchor" href="#mechanistic-fit-assuming-rubisco-limitations"></a>
+</h3>
+<p>To ensure that the fitted assimilation rates are limited by Rubisco
+activity at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+we can set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">V_{pr}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">J_{max}</annotation></semantics></math>
+to extremely high values, which will ensure that PEP regeneration and
+light availability are never limiting. At the same time, we will allow
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+to vary during the fit. This is the default behavior of
+<code>fit_c4_aci</code>, but here we will use the
+<code>fit_options</code> input argument to make it clear that we are
+requiring Rubisco limitations.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the mechanistic model, assuming Rubisco limitations</span></span>
+<span><span class="va">c4_aci_results_rubisco</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c4_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
-<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c4_aci`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Used to estimate the operating point</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Vcmax_at_25 <span class="op">=</span> <span class="st">'fit'</span>, Vpr <span class="op">=</span> <span class="fl">1000</span>, Jmax_at_opt <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Having made the fits, we can view the results:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot the C4 A-Ci fits that were made assuming Rubisco limitations</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_rubisco</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Ci'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Mechanistic fits assuming Rubisco limitations'</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_rubisco-1.png" width="720" style="display: block; margin: auto;"></p>
+<p>Overall, these fits look good. Note that because Rubisco activity and
+PEP carboxylase activity co-limit the net assimilation rate,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+is always smaller than either
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>r</mi></msub><annotation encoding="application/x-tex">A_r</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>p</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">A_{pc}</annotation></semantics></math>
+in these results.</p>
+</div>
 <div class="section level3">
-<h3 id="viewing-the-fitted-curves">Viewing the Fitted Curves<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-curves"></a>
+<h3 id="mechanistic-fit-assuming-light-limitations">Mechanistic Fit, Assuming Light Limitations<a class="anchor" aria-label="anchor" href="#mechanistic-fit-assuming-light-limitations"></a>
 </h3>
-<p>Having made the fits, it is now a good idea to visually check them,
-making sure they look reasonable. As before, we can use
-<code>xyplot</code> from the <code>lattice</code> library to quickly
-make plots of all the fits, which are stored in
-<code>c4_aci_results$fits</code>, an <code>exdf</code> object:</p>
+<p>To ensure that the fitted assimilation rates are limited by light at
+high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+we can set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">V_{pr}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+to extremely high values, which will ensure that PEP regeneration and
+Rubisco activity are never limiting. At the same time, we will allow
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">J_{max}</annotation></semantics></math>
+to vary during the fit. This can be done using the
+<code>fit_options</code> input argument to <code>fit_c4_aci</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the mechanistic model, assuming light limitations</span></span>
+<span><span class="va">c4_aci_results_light</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
+<span>  <span class="va">fit_c4_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Used to estimate the operating point</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Vcmax_at_25 <span class="op">=</span> <span class="fl">1000</span>, Vpr <span class="op">=</span> <span class="fl">1000</span>, Jmax_at_opt <span class="op">=</span> <span class="st">'fit'</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Having made the fits, we can view the results:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot the C4 A-Ci fits that were made assuming Rubisco limitations</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_light</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Ci'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Mechanistic fits assuming light limitations'</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_light-1.png" width="720" style="display: block; margin: auto;"></p>
+<p>Overall, these fits look good. Note that because electron transport
+and PEP carboxylase are independent in the model, there is a sharp
+transition from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>n</mi></msub><mo>=</mo><msub><mi>A</mi><mrow><mi>p</mi><mi>c</mi></mrow></msub></mrow><annotation encoding="application/x-tex">A_n = A_{pc}</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>n</mi></msub><mo>=</mo><msub><mi>A</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">A_n = A_j</annotation></semantics></math>
+in these fits, in contrast to the Rubisco fits above, where there is a
+smooth transition between limiting states.</p>
+</div>
+<div class="section level3">
+<h3 id="semi-empirical-fit">Semi-Empirical Fit<a class="anchor" aria-label="anchor" href="#semi-empirical-fit"></a>
+</h3>
+<p>We can also take an empirical approach to curve fitting, where we use
+a non-rectangular hyperbola instead of the mechanistic model.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the empirical model</span></span>
+<span><span class="va">c4_aci_results_hyperbola</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
+<span>  <span class="va">fit_c4_aci_hyperbola</span>              <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Having made the fits, we can view the results:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the C4 A-Ci fits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Plot the C4 A-Ci fits that were made using the empirical model</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_hyperbola_fit.html">plot_c4_aci_hyperbola_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_hyperbola</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Empirical fits using a hyperbola'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Note that in addition to the fitted values of <code>A</code>, the
-output also includes values of the individual limiting rates
-<code>Apc</code> and <code>Ar</code>, as well as the estimated operating
-point. We can also take a look at these using a built-in plotting
-function:</p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_hyperbola-1.png" width="720" style="display: block; margin: auto;"></p>
+<p>The hyperbola is used to estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{max}</annotation></semantics></math>,
+which characterizes the maximum gross assimilation rate that occurs at
+high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>=</mo><msub><mi>V</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>R</mi><mi>L</mi></msub></mrow><annotation encoding="application/x-tex">A_{max} =
+V_{max} - R_L</annotation></semantics></math> is the highest net
+assimilation rate. It is common to pair this with an estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{pmax}</annotation></semantics></math>
+made by fitting a mechanistic equation to the
+low-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+part of the curve:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>n</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>V</mi><mrow><mi>p</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>⋅</mo><msub><mi>C</mi><mi>i</mi></msub></mrow><mrow><msub><mi>C</mi><mi>i</mi></msub><mo>+</mo><msub><mi>K</mi><mi>p</mi></msub></mrow></mfrac><mo>−</mo><msub><mi>R</mi><mi>L</mi></msub></mrow><annotation encoding="application/x-tex">A_n = \frac{V_{pmax} \cdot C_i}{C_i + K_p} - R_L</annotation></semantics></math></p>
+<p>The full mechanistic model reduces to this particular equation when
+the following conditions are met:</p>
+<ul>
+<li><p>The bundle sheath conductance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>b</mi><mi>s</mi></mrow></msub><annotation encoding="application/x-tex">g_{bs}</annotation></semantics></math>)
+is zero.</p></li>
+<li><p>No photosystem II activity occurs in the bundle sheath
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>P</mi><mi>S</mi><mi>I</mi><mi>I</mi></mrow></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\alpha_{PSII} = 0</annotation></semantics></math>).</p></li>
+<li><p>The CO<sub>2</sub> concentration in the mesophyll is identical to
+the intercellular CO<sub>2</sub> concentration. This is the case when
+mesophyll conductance is infinitely large.</p></li>
+</ul>
+<p>Here we will fit this equation to just the measured points where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+is below 60 ppm. To do this, we will also need to recalculate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>C</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">PCm</annotation></semantics></math>
+using an infinite value of mesophyll conductance.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the C4 A-PCm fits (including limiting rates)</span></span>
-<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span><span class="va">c4_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_fit_aci_limiting-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Checking the residuals is also a powerful way to gauge the quality of
-a fit. The output from <code>fit_c4_aci</code> includes the residuals
-(calculated as <code>A - A_fit</code>) in its output, so it is easy to
-plot them:</p>
+<code class="sourceCode R"><span><span class="co"># Get a subset of the data where Ci is below the threshold value</span></span>
+<span><span class="va">licor_data_low_ci</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Ci'</span><span class="op">]</span> <span class="op">&lt;=</span> <span class="fl">60</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Set mesophyll conductance to infinity</span></span>
+<span><span class="va">licor_data_low_ci</span><span class="op">[</span>, <span class="st">'gmc'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">Inf</span></span>
+<span></span>
+<span><span class="co"># Recalculate PCm after changing mesophyll conductance</span></span>
+<span><span class="va">licor_data_low_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data_low_ci</span>,</span>
+<span>  <span class="st">'C4'</span> <span class="co"># Indicate C4 photosynthesis</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the mechanistic Vpmax equation</span></span>
+<span><span class="va">c4_aci_results_vpmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data_low_ci</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">licor_data_low_ci</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
+<span>  <span class="va">fit_c4_aci</span>,                              <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    Vcmax_at_25 <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    Vpr <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    Jmax_at_opt <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    alpha_psii <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    gbs <span class="op">=</span> <span class="fl">0</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Having made the fits, we can view the results:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the residuals</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Assimilation rate residual (measured - fitted)\n['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Plot the C4 A-Ci fits that were made to the low Ci part of the curves</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_vpmax</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Ci'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Mechanistic fits to the low Ci part of each curve'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_residuals-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>A good fit should produce small and randomly-distributed residuals;
-here there is no clear pattern to the residuals, so this model is able
-to reproduce the measured values fairly well.</p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_vpmax-1.png" width="720" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="examining-the-results">Examining the Results<a class="anchor" aria-label="anchor" href="#examining-the-results"></a>
 </h2>
 <div class="section level3">
-<h3 id="visualizing-average-fit-parameters">Visualizing Average Fit Parameters<a class="anchor" aria-label="anchor" href="#visualizing-average-fit-parameters"></a>
+<h3 id="accessing-best-fit-estimates-and-confidence-intervals">Accessing Best-Fit Estimates and Confidence Intervals<a class="anchor" aria-label="anchor" href="#accessing-best-fit-estimates-and-confidence-intervals"></a>
 </h3>
-<p>Having performed the fits, we can now take a look at the fitted
-parameter values, which are stored in
-<code>c4_aci_results$parameters</code>, another <code>exdf</code>
-object. One way to do this is by using the
-<code>barchart_with_errorbars</code> function from <code>PhotoGEA</code>
-to create barcharts of the average values for each species, such as the
-following example showing the fitted values of <code>Vpmax</code>:</p>
+<p>Each fit returns best-fit values and confidence limits for each
+parameter, which are stored in <code>parameters</code> element of the
+output list, another <code>exdf</code> object. These values can be
+viewed directly from R. For example, we can look at the estimated
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>p</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{pmax}</annotation></semantics></math>
+values from each mechanistic fit as follows:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Make a barchart showing average Vpmax values</span></span>
-<span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
-<span>  <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vpmax_at_25'</span><span class="op">]</span>,</span>
-<span>  <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">150</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Vpmax at 25 degrees C ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vpmax_at_25</span>, <span class="st">']'</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/vpmax_barchart-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Another option is to create box-whisper plots using the
-<code>bwplot</code> function from the <code>lattice</code> package. Here
-we use this function to show values of <code>Vcmax</code>:</p>
+<code class="sourceCode R"><span><span class="co"># Specify columns to view</span></span>
+<span><span class="va">vpmax_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Vpmax_at_25_lower'</span>,</span>
+<span>  <span class="st">'Vpmax_at_25'</span>,</span>
+<span>  <span class="st">'Vpmax_at_25_upper'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># View Vpmax values from the mechanistic fit that assumed Rubisco limitations</span></span>
+<span><span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="va">vpmax_columns</span><span class="op">]</span></span>
+<span><span class="co">#&gt;      curve_identifier Vpmax_at_25_lower Vpmax_at_25 Vpmax_at_25_upper</span></span>
+<span><span class="co">#&gt; 1   ripe1 - maize - 5          133.8529    158.2040          187.1139</span></span>
+<span><span class="co">#&gt; 2 ripe1 - sorghum - 2          123.4999    149.4453          179.5492</span></span>
+<span><span class="co">#&gt; 3 ripe1 - sorghum - 3          115.9223    124.2466          133.2167</span></span>
+<span><span class="co">#&gt; 4   ripe2 - maize - 2          135.7686    154.8675          176.9160</span></span>
+<span><span class="co">#&gt; 5 ripe2 - sorghum - 3          110.0679    131.1353          156.6364</span></span>
+<span></span>
+<span><span class="co"># View Vpmax values from the mechanistic fit that assumed light limitations</span></span>
+<span><span class="va">c4_aci_results_light</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="va">vpmax_columns</span><span class="op">]</span></span>
+<span><span class="co">#&gt;      curve_identifier Vpmax_at_25_lower Vpmax_at_25 Vpmax_at_25_upper</span></span>
+<span><span class="co">#&gt; 1   ripe1 - maize - 5          76.83576    90.42360         109.79465</span></span>
+<span><span class="co">#&gt; 2 ripe1 - sorghum - 2          85.68564   104.57110         123.45742</span></span>
+<span><span class="co">#&gt; 3 ripe1 - sorghum - 3          75.85697    83.65982          91.46284</span></span>
+<span><span class="co">#&gt; 4   ripe2 - maize - 2          91.95957    99.19943         108.64168</span></span>
+<span><span class="co">#&gt; 5 ripe2 - sorghum - 3          74.14162    85.45425          96.76730</span></span>
+<span></span>
+<span><span class="co"># View Vpmax values from the mechanistic fit to the low-Ci part of the curves</span></span>
+<span><span class="va">c4_aci_results_vpmax</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="va">vpmax_columns</span><span class="op">]</span></span>
+<span><span class="co">#&gt;      curve_identifier Vpmax_at_25_lower Vpmax_at_25 Vpmax_at_25_upper</span></span>
+<span><span class="co">#&gt; 1   ripe1 - maize - 5          75.32530    82.31016          89.29504</span></span>
+<span><span class="co">#&gt; 2 ripe1 - sorghum - 2          65.23357    70.17602          75.11849</span></span>
+<span><span class="co">#&gt; 3 ripe1 - sorghum - 3          70.41548    73.30350          76.19152</span></span>
+<span><span class="co">#&gt; 4   ripe2 - maize - 2          62.10453    64.47364          66.84276</span></span>
+<span><span class="co">#&gt; 5 ripe2 - sorghum - 3          55.37449    57.38421          59.39391</span></span></code></pre></div>
+<p>Here we can see that the estimates made from the mechanistic fit with
+Rubisco limitations are generally the largest, while those made from
+just the
+low-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+points are the lowest.</p>
+<p>Estimates of other parameters, such as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">J_{max}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{max}</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>L</mi></msub><annotation encoding="application/x-tex">R_L</annotation></semantics></math>
+can be accessed with similar commands.</p>
+</div>
+<div class="section level3">
+<h3 id="visualizing-average-best-fit-parameters">Visualizing Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#visualizing-average-best-fit-parameters"></a>
+</h3>
+<p>We can also visualize the best-fit parameters using plots. One way to
+do this is by using the <code>barchart_with_errorbars</code> function
+from <code>PhotoGEA</code> to create barcharts of the average values for
+each species. This function will ignore any <code>NA</code> values from
+curves where a parameter could not be reliably estimated, and the error
+bars will show the standard error of the mean for each species. Here we
+will take a look at the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+estimates.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Make a barchart showing average Vcmax values</span></span>
+<span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
+<span>  <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/vcmax_barchart-1.png" width="720" style="display: block; margin: auto;"></p>
+<p>Another option is to create box-whisper plots using the
+<code>bwplot</code> function from the <code>lattice</code> package:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a boxplot showing the distribution of Vcmax values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">Vcmax_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c4_aci_curves_files/figure-html/vcmax_bwplot-1.png" width="720" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
-<h3 id="accessing-raw-and-average-values-of-fit-parameters">Accessing Raw and Average Values of Fit Parameters<a class="anchor" aria-label="anchor" href="#accessing-raw-and-average-values-of-fit-parameters"></a>
+<h3 id="calculating-average-best-fit-parameters">Calculating Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#calculating-average-best-fit-parameters"></a>
 </h3>
-<p>We can also take a look at the raw numbers of the fitted parameters
-and their average values. The <code>c4_aci_results$parameters</code>
-object contains many columns but we only care about a few of them. We
-can view them as follows:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># View the C4 parameters</span></span>
-<span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vpmax_at_25'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">c4_aci_parameters</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c4_aci_parameters</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   instrument [UserDefCon] (NA) species [UserDefCon] (NA) plot [UserDefCon] (NA)</span></span>
-<span><span class="co">#&gt; 1                        ripe1                     maize                      5</span></span>
-<span><span class="co">#&gt; 2                        ripe1                   sorghum                      2</span></span>
-<span><span class="co">#&gt; 3                        ripe1                   sorghum                      3</span></span>
-<span><span class="co">#&gt; 4                        ripe2                     maize                      2</span></span>
-<span><span class="co">#&gt; 5                        ripe2                   sorghum                      3</span></span>
-<span><span class="co">#&gt;   Rd_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                       1.283882</span></span>
-<span><span class="co">#&gt; 2                                       5.050374</span></span>
-<span><span class="co">#&gt; 3                                       1.524639</span></span>
-<span><span class="co">#&gt; 4                                       5.209706</span></span>
-<span><span class="co">#&gt; 5                                       5.190287</span></span>
-<span><span class="co">#&gt;   Vcmax_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                          39.35246</span></span>
-<span><span class="co">#&gt; 2                                          51.38882</span></span>
-<span><span class="co">#&gt; 3                                          46.38557</span></span>
-<span><span class="co">#&gt; 4                                          42.73065</span></span>
-<span><span class="co">#&gt; 5                                          43.56997</span></span>
-<span><span class="co">#&gt;   Vpmax_at_25 [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         129.14170</span></span>
-<span><span class="co">#&gt; 2                                         103.80890</span></span>
-<span><span class="co">#&gt; 3                                          90.53412</span></span>
-<span><span class="co">#&gt; 4                                         127.71262</span></span>
-<span><span class="co">#&gt; 5                                         102.92699</span></span></code></pre></div>
-<p>Alternatively, we can extract average values of the parameters for
-each species using the <code>basic_stats</code> function from
-<code>PhotoGEA</code>:</p>
+<p>We can also calculate average values and standard errors of the
+best-fit parameters for each species using the <code>basic_stats</code>
+function from <code>PhotoGEA</code>:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute the average and standard error of each parameter for each species</span></span>
-<span><span class="va">c4_aci_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span><span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="st">'species'</span><span class="op">)</span></span>
+<span><span class="co"># from one of the mechanistic fits</span></span>
+<span><span class="va">c4_aci_averages_rubisco</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span><span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span>, <span class="st">'species'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View the averages and errors</span></span>
 <span><span class="va">columns_to_view</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'species'</span>,</span>
-<span>  <span class="st">'Rd_at_25_avg'</span>, <span class="st">'Rd_at_25_stderr'</span>,</span>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
-<span>  <span class="st">'Vpmax_at_25_avg'</span>, <span class="st">'Vpmax_at_25_stderr'</span></span>
+<span>  <span class="st">'Vpmax_at_25_avg'</span>, <span class="st">'Vpmax_at_25_stderr'</span>,</span>
+<span>  <span class="st">'RL_at_25_avg'</span>, <span class="st">'RL_at_25_stderr'</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c4_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   species [UserDefCon] (NA) Rd_at_25_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                     maize                                           3.246794</span></span>
-<span><span class="co">#&gt; 2                   sorghum                                           3.921767</span></span>
-<span><span class="co">#&gt;   Rd_at_25_stderr [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              1.962912</span></span>
-<span><span class="co">#&gt; 2                                              1.199244</span></span>
-<span><span class="co">#&gt;   Vcmax_at_25_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              41.04156</span></span>
-<span><span class="co">#&gt; 2                                              47.11479</span></span>
-<span><span class="co">#&gt;   Vcmax_at_25_stderr [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                 1.689095</span></span>
-<span><span class="co">#&gt; 2                                                 2.286369</span></span>
-<span><span class="co">#&gt;   Vpmax_at_25_avg [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              128.4272</span></span>
-<span><span class="co">#&gt; 2                                               99.0900</span></span>
-<span><span class="co">#&gt;   Vpmax_at_25_stderr [fit_c4_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                0.7145418</span></span>
-<span><span class="co">#&gt; 2                                                4.2855115</span></span></code></pre></div>
-<p>Of course, more advanced statistical tests to check for differences
-between groups can also be performed within R using other packages such
-as <code>onewaytests</code> or <code>DescTools</code>. Alternatively,
-the parameter values can be exported to a comma-separated-value (CSV)
-file and analyzed in another software environment like
-<code>jmp</code>.</p>
+<span></span>
+<span><span class="va">c4_aci_averages_rubisco</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span>
+<span><span class="co">#&gt;   species Vcmax_at_25_avg Vcmax_at_25_stderr Vpmax_at_25_avg Vpmax_at_25_stderr</span></span>
+<span><span class="co">#&gt; 1   maize        36.53579           2.628570        156.5358           1.668228</span></span>
+<span><span class="co">#&gt; 2 sorghum        38.39997           2.117231        134.9424           7.519182</span></span>
+<span><span class="co">#&gt;   RL_at_25_avg RL_at_25_stderr</span></span>
+<span><span class="co">#&gt; 1   -0.1333101        2.842192</span></span>
+<span><span class="co">#&gt; 2   -0.9351559        1.442296</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="other-ideas-for-synthesizing-results">Other Ideas for Synthesizing Results<a class="anchor" aria-label="anchor" href="#other-ideas-for-synthesizing-results"></a>
+</h3>
+<p>Statistical tests to check for differences between groups can be
+performed within R using other packages such as <code>onewaytests</code>
+or <code>DescTools</code>. Alternatively, the parameter values can be
+exported to a comma-separated-value (CSV) file and analyzed in another
+software environment like <code>jmp</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -971,18 +1253,25 @@ errors.</p>
 <p>You may need to change the axis limits in some or all of the plots.
 Alternatively, you can remove them, allowing <code>xyplot</code> to
 automatically choose them for you.</p>
+<p>You may also want to consider using the <code>pdf_print</code>
+function from <code>PhotoGEA</code> to save some or all of your plots as
+PDFs. See the help page for more info: <code><a href="../reference/pdf_print.html">?pdf_print</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="saving-results">Saving Results<a class="anchor" aria-label="anchor" href="#saving-results"></a>
 </h3>
-<p>You may want to use <code>write.csv</code> to save some or all of the
-fitting results as <code>csv</code> files. For example, the following
-commands will allow you to interactively choose output filenames for the
-resulting <code>csv</code> files:</p>
+<p>You may want to use <code>write.csv.exdf</code> to save some or all
+of the fitting results as CSV files. When writing the contents of an
+<code>exdf</code> object to a CSV file, using
+<code>write.csv.exdf</code> rather than <code>write.csv</code> will
+ensure that units are included with each column.</p>
+<p>For example, the following commands will save the results from one of
+the mechanistic fits, allowing you to interactively choose output
+filenames for the resulting CSV files:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c4_aci_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c4_aci_averages_rubisco</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1116,13 +1405,6 @@ Analysis Pipeline</a> vignette.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Only keep points where stability was achieved</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
-<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
-<span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
@@ -1140,14 +1422,6 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_peaked_gaussian.html">calculate_peaked_gaussian</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c4_peaked_gaussian_von_caemmerer</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Override default mesophyll conductance and specify different values for each</span></span>
-<span><span class="co"># species</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>,</span>
-<span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
-<span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maize <span class="op">=</span> <span class="fl">3.0</span>, sorghum <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
@@ -1157,38 +1431,118 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="st">'C4'</span> <span class="co"># Indicate C4 photosynthesis</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Fit the C4 A-Ci curves</span></span>
-<span><span class="va">c4_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span><span class="co">##</span></span>
+<span><span class="co">## Mechanistic fits, assuming Rubisco limitations</span></span>
+<span><span class="co">##</span></span>
+<span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the mechanistic model, assuming Rubisco limitations</span></span>
+<span><span class="va">c4_aci_results_rubisco</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c4_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
-<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c4_aci`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Used to estimate the operating point</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Vcmax_at_25 <span class="op">=</span> <span class="st">'fit'</span>, Vpr <span class="op">=</span> <span class="fl">1000</span>, Jmax_at_opt <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot the C4 A-Ci fits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span><span class="co"># Plot the C4 A-Ci fits that were made assuming Rubisco limitations</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_rubisco</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Ci'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Mechanistic fits assuming Rubisco limitations'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot the C4 A-PCm fits (including limiting rates)</span></span>
-<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span><span class="va">c4_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">##</span></span>
+<span><span class="co">## Mechanistic fits, assuming light limitations</span></span>
+<span><span class="co">##</span></span>
 <span></span>
-<span><span class="co"># Plot the residuals</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Assimilation rate residual (measured - fitted)\n['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the mechanistic model, assuming light limitations</span></span>
+<span><span class="va">c4_aci_results_light</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
+<span>  <span class="va">fit_c4_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Used to estimate the operating point</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Vcmax_at_25 <span class="op">=</span> <span class="fl">1000</span>, Vpr <span class="op">=</span> <span class="fl">1000</span>, Jmax_at_opt <span class="op">=</span> <span class="st">'fit'</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the C4 A-Ci fits that were made assuming Rubisco limitations</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_light</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Ci'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Mechanistic fits assuming light limitations'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##</span></span>
+<span><span class="co">## Semi-empirical fits</span></span>
+<span><span class="co">##</span></span>
+<span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the empirical model</span></span>
+<span><span class="va">c4_aci_results_hyperbola</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
+<span>  <span class="va">fit_c4_aci_hyperbola</span>              <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the C4 A-Ci fits that were made using the empirical model</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_hyperbola_fit.html">plot_c4_aci_hyperbola_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_hyperbola</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Empirical fits using a hyperbola'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get a subset of the data where Ci is below the threshold value</span></span>
+<span><span class="va">licor_data_low_ci</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Ci'</span><span class="op">]</span> <span class="op">&lt;=</span> <span class="fl">60</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Set mesophyll conductance to infinity</span></span>
+<span><span class="va">licor_data_low_ci</span><span class="op">[</span>, <span class="st">'gmc'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">Inf</span></span>
+<span></span>
+<span><span class="co"># Recalculate PCm after changing mesophyll conductance</span></span>
+<span><span class="va">licor_data_low_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data_low_ci</span>,</span>
+<span>  <span class="st">'C4'</span> <span class="co"># Indicate C4 photosynthesis</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C4 A-Ci curves with the mechanistic Vpmax equation</span></span>
+<span><span class="va">c4_aci_results_vpmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data_low_ci</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">licor_data_low_ci</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
+<span>  <span class="va">fit_c4_aci</span>,                              <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    Vcmax_at_25 <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    Vpr <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    Jmax_at_opt <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    alpha_psii <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    gbs <span class="op">=</span> <span class="fl">0</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the C4 A-Ci fits that were made to the low Ci part of the curves</span></span>
+<span><span class="fu"><a href="../reference/plot_c4_aci_fit.html">plot_c4_aci_fit</a></span><span class="op">(</span></span>
+<span>  <span class="va">c4_aci_results_vpmax</span>,</span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Ci'</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">'Mechanistic fits to the low Ci part of each curve'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">###</span></span>
@@ -1196,44 +1550,37 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">### Using plots and statistics to help draw conclusions from the data</span></span>
 <span><span class="co">###</span></span>
 <span></span>
-<span><span class="co"># Make a barchart showing average Vpmax values</span></span>
+<span><span class="co"># Make a barchart showing average Vcmax values</span></span>
 <span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
-<span>  <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vpmax_at_25'</span><span class="op">]</span>,</span>
-<span>  <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">150</span><span class="op">)</span>,</span>
+<span>  <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
+<span>  <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Vpmax at 25 degrees C ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vpmax_at_25</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make a boxplot showing the distribution of Vcmax values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">Vcmax_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ['</span>, <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># View the C4 parameters</span></span>
-<span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vpmax_at_25'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">c4_aci_parameters</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c4_aci_parameters</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Compute the average and standard error of each parameter for each species</span></span>
-<span><span class="va">c4_aci_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span><span class="va">c4_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="st">'species'</span><span class="op">)</span></span>
+<span><span class="co"># from one of the mechanistic fits</span></span>
+<span><span class="va">c4_aci_averages_rubisco</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span><span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span>, <span class="st">'species'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View the averages and errors</span></span>
 <span><span class="va">columns_to_view</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'species'</span>,</span>
-<span>  <span class="st">'Rd_at_25_avg'</span>, <span class="st">'Rd_at_25_stderr'</span>,</span>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
-<span>  <span class="st">'Vpmax_at_25_avg'</span>, <span class="st">'Vpmax_at_25_stderr'</span></span>
+<span>  <span class="st">'Vpmax_at_25_avg'</span>, <span class="st">'Vpmax_at_25_stderr'</span>,</span>
+<span>  <span class="st">'RL_at_25_avg'</span>, <span class="st">'RL_at_25_stderr'</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c4_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span></span>
+<span><span class="va">c4_aci_averages_rubisco</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1250,7 +1597,7 @@ Botany</em> 72 (17): 6003–17. <a href="https://doi.org/10.1093/jxb/erab266" cl
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -1261,15 +1608,15 @@ Botany</em> 72 (17): 6003–17. <a href="https://doi.org/10.1093/jxb/erab266" cl
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

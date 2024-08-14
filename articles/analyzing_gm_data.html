@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="PhotoGEA">
 <title>Analyzing Mesophyll Conductance Data • PhotoGEA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,72 +14,54 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing Mesophyll Conductance Data">
-<meta property="og:description" content="PhotoGEA">
-<meta property="og:image" content="https://eloch216.github.io/PhotoGEA/logo.svg">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing Mesophyll Conductance Data">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
-    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
-    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
-    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
-    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -92,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing Mesophyll Conductance Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/vignettes/analyzing_gm_data.Rmd" class="external-link"><code>vignettes/analyzing_gm_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_gm_data.Rmd" class="external-link"><code>vignettes/analyzing_gm_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_gm_data.Rmd</code></div>
     </div>
 
@@ -120,19 +101,23 @@ In the context of plant biology, a common approach is to hold a leaf or
 plant under controlled environmental conditions and measure isotope
 discrimination; models that predict discrimination can then be used to
 estimate key parameter values such as the mesophyll conductance to
-CO<sub>2</sub> (<span class="math inline">\(g_{mc}\)</span>) in
-C<sub>3</sub> plants or the bundle-sheath leakiness to CO<sub>2</sub>
-(<span class="math inline">\(\phi\)</span>) in C<sub>4</sub> plants.</p>
+CO<sub>2</sub>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>)
+in C<sub>3</sub> plants or the bundle-sheath leakiness to CO<sub>2</sub>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>)
+in C<sub>4</sub> plants.</p>
 <p>In general, this technique requires simultaneous measurements of the
-net CO<sub>2</sub> assimilation rate <span class="math inline">\(A_n\)</span>, the intercellular CO<sub>2</sub>
-concentration <span class="math inline">\(C_i\)</span>, the
-<sup>12</sup>C and <sup>13</sup>C concentrations in air before and after
-flowing over the leaf, and others. To make these measurements, a gas
-exchange measurement system (such as a Licor Li-6800) is combined with
-an isotope concentration measurement system, making this a challenging
-experimental technique. Although several methods are available for
-measuring the relative concentrations of <sup>12</sup>C and
-<sup>13</sup>C gas mixtures, tunable diode laser (TDL) absorption
+net CO<sub>2</sub> assimilation rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+the intercellular CO<sub>2</sub> concentration
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+the <sup>12</sup>C and <sup>13</sup>C concentrations in air before and
+after flowing over the leaf, and others. To make these measurements, a
+gas exchange measurement system (such as a Licor Li-6800) is combined
+with an isotope concentration measurement system, making this a
+challenging experimental technique. Although several methods are
+available for measuring the relative concentrations of <sup>12</sup>C
+and <sup>13</sup>C gas mixtures, tunable diode laser (TDL) absorption
 spectroscopy has emerged as one of the most popular due to its high
 sensitivity and relatively short measurement times <span class="citation">(<a href="#ref-salesse-smith_modifying_2022">Salesse-Smith, Driever, and
 Clarke 2022</a>)</span>.</p>
@@ -143,77 +128,121 @@ Clarke 2022</a>)</span>.</p>
 <em>fractionation</em>. Fractionation is a process where the relative
 abundance of one isotope differs between the product and the reactant of
 a chemical reaction. The term <em>fractionation</em> also refers to a
-measurable quantity <span class="math inline">\(\alpha\)</span> defined
-by <span class="math display">\[\alpha = \frac{R_r}{R_p},\]</span> where
-<span class="math inline">\(R_r\)</span> and <span class="math inline">\(R_p\)</span> are the ratios of isotope
-concentrations in the reactant and product, respectively. In the case of
-photosynthetic carbon isotope discrimination, <span class="math inline">\(\alpha^{13}C\)</span> is the fractionation of
-<sup>13</sup>C relative to <sup>12</sup>C, air is the reactant, plant
-carbon is the product, and the ratios are given by <sup>13</sup>C /
-<sup>12</sup>C. Because photosynthesis assimilates more <sup>12</sup>C
-than <sup>13</sup>C, <span class="math inline">\(R_p\)</span> is always
-smaller than <span class="math inline">\(R_r\)</span>, and <span class="math inline">\(\alpha^{13}C\)</span> is always greater than
-1.</p>
-<p>The isotope discrimination <span class="math inline">\(\Delta\)</span> is related to the isotope
-fractionation <span class="math inline">\(\alpha\)</span> according to
-<span class="math display">\[\Delta = \alpha - 1 = \frac{R_r -
-R_p}{R_p}.\]</span> So, in the case of photosynthetic carbon isotope
-discrimination, <span class="math inline">\(\Delta^{13}C\)</span> is
-always positive (because <span class="math inline">\(\alpha\)</span> is
-always greater than 1). The discrimination can also be expressed in
-terms of the isotopic composition <span class="math inline">\(\delta\)</span>, which is related to the isotope
-ratio <span class="math inline">\(R\)</span> by <span class="math inline">\(\delta = R - 1\)</span>: <span class="math display">\[\Delta^{13}C = \frac{\delta^{13}C_r -
-\delta^{13}C_p}{1 + \delta^{13}C_p}.\]</span> The isotopic compositions
-can be expressed relative to an international standard, making them the
-preferred way to express the relative abundance of different
-isotopes.</p>
+measurable quantity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+defined by
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mfrac><msub><mi>R</mi><mi>r</mi></msub><msub><mi>R</mi><mi>p</mi></msub></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">\alpha = \frac{R_r}{R_p},</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>r</mi></msub><annotation encoding="application/x-tex">R_r</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>p</mi></msub><annotation encoding="application/x-tex">R_p</annotation></semantics></math>
+are the ratios of isotope concentrations in the reactant and product,
+respectively. In the case of photosynthetic carbon isotope
+discrimination,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>α</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\alpha^{13}C</annotation></semantics></math>
+is the fractionation of <sup>13</sup>C relative to <sup>12</sup>C, air
+is the reactant, plant carbon is the product, and the ratios are given
+by <sup>13</sup>C / <sup>12</sup>C. Because photosynthesis assimilates
+more <sup>12</sup>C than <sup>13</sup>C,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>p</mi></msub><annotation encoding="application/x-tex">R_p</annotation></semantics></math>
+is always smaller than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>r</mi></msub><annotation encoding="application/x-tex">R_r</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>α</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\alpha^{13}C</annotation></semantics></math>
+is always greater than 1.</p>
+<p>The isotope discrimination
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Δ</mi><annotation encoding="application/x-tex">\Delta</annotation></semantics></math>
+is related to the isotope fractionation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+according to
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mo>=</mo><mi>α</mi><mo>−</mo><mn>1</mn><mo>=</mo><mfrac><mrow><msub><mi>R</mi><mi>r</mi></msub><mo>−</mo><msub><mi>R</mi><mi>p</mi></msub></mrow><msub><mi>R</mi><mi>p</mi></msub></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta = \alpha - 1 = \frac{R_r - R_p}{R_p}.</annotation></semantics></math>
+So, in the case of photosynthetic carbon isotope discrimination,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>
+is always positive (because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+is always greater than 1). The discrimination can also be expressed in
+terms of the isotopic composition
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>,
+which is related to the isotope ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>R</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\delta = R - 1</annotation></semantics></math>:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi><mo>=</mo><mfrac><mrow><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mi>r</mi></msub><mo>−</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mi>p</mi></msub></mrow><mrow><mn>1</mn><mo>+</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mi>p</mi></msub></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C = \frac{\delta^{13}C_r - \delta^{13}C_p}{1 + \delta^{13}C_p}.</annotation></semantics></math>
+The isotopic compositions can be expressed relative to an international
+standard, making them the preferred way to express the relative
+abundance of different isotopes.</p>
 <p>During photosynthetic carbon isotope discrimination measurements, it
-is not typically possible to actually measure <span class="math inline">\(\delta^{13}C_p\)</span> for a variety of reasons.
-Instead, <span class="math inline">\(\delta^{13}C\)</span> can be
-measured in the outgoing air from the leaf. Then, it is possible to
-relate the isotopic compositions of the incoming and outgoing air to and
-from the leaf (<span class="math inline">\(\delta^{13}C_{in}\)</span>
-and <span class="math inline">\(\delta^{13}C_{out}\)</span>,
-respectively) to <span class="math inline">\(\delta^{13}C_p\)</span>. In
-this case, the full equation for <span class="math inline">\(\Delta^{13}C\)</span> becomes <span class="math display">\[\Delta^{13}C = \frac{\xi (\delta^{13}C_{out} -
+is not typically possible to actually measure
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\delta^{13}C_p</annotation></semantics></math>
+for a variety of reasons. Instead,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\delta^{13}C</annotation></semantics></math>
+can be measured in the outgoing air from the leaf. Then, it is possible
+to relate the isotopic compositions of the incoming and outgoing air to
+and from the leaf
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\delta^{13}C_{in}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\delta^{13}C_{out}</annotation></semantics></math>,
+respectively) to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\delta^{13}C_p</annotation></semantics></math>.
+In this case, the full equation for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>
+becomes
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi><mo>=</mo><mfrac><mrow><mi>ξ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo>−</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo>−</mo><mi>ξ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo>−</mo><msup><mi>δ</mi><mn>13</mn></msup><msub><mi>C</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C = \frac{\xi (\delta^{13}C_{out} -
 \delta^{13}C_{in})}{1 + \delta^{13}C_{out} - \xi (\delta^{13}C_{out} -
-\delta^{13}C_{in})}.\]</span> Here, <span class="math inline">\(\xi\)</span> is defined by <span class="math display">\[\xi = \frac{C_{in}}{C_{in} -
-C_{out}},\]</span> where <span class="math inline">\(C_{in}\)</span> and
-<span class="math inline">\(C_{out}\)</span> are the <sup>12</sup>C
-concentrations in the incoming and outgoing air.</p>
-<p>In summary, the photosynthetic carbon isotope discrimination <span class="math inline">\(\Delta^{13}C\)</span> is an experimentally
-accessible quantity that reflects the degree of preference for
-<sup>12</sup>C during the process of photosynthesis. For more
-information about this discrimination and its measurement via TDL, see
-<span class="citation">Ubierna, Holloway-Phillips, and Farquhar (<a href="#ref-ubierna_using_2018">2018</a>)</span>.</p>
+\delta^{13}C_{in})}.</annotation></semantics></math> Here,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ξ</mi><annotation encoding="application/x-tex">\xi</annotation></semantics></math>
+is defined by
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>=</mo><mfrac><msub><mi>C</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mrow><msub><mi>C</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>−</mo><msub><mi>C</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">\xi = \frac{C_{in}}{C_{in} -
+C_{out}},</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">C_{in}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">C_{out}</annotation></semantics></math>
+are the <sup>12</sup>C concentrations in the incoming and outgoing
+air.</p>
+<p>In summary, the photosynthetic carbon isotope discrimination
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>
+is an experimentally accessible quantity that reflects the degree of
+preference for <sup>12</sup>C during the process of photosynthesis. For
+more information about this discrimination and its measurement via TDL,
+see <span class="citation">Ubierna, Holloway-Phillips, and Farquhar (<a href="#ref-ubierna_using_2018">2018</a>)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="isotope-discrimination-calculations">Isotope Discrimination Calculations<a class="anchor" aria-label="anchor" href="#isotope-discrimination-calculations"></a>
 </h3>
-<p>Values of <span class="math inline">\(\Delta^{13}C\)</span> can be
-predicted from knowledge of the photosynthetic chemical pathway, as
-first done by <span class="citation">Farquhar, O’Leary, and Berry (<a href="#ref-farquhar_relationship_1982">1982</a>)</span>. This approach
+<p>Values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>
+can be predicted from knowledge of the photosynthetic chemical pathway,
+as first done by <span class="citation">Farquhar, O’Leary, and Berry (<a href="#ref-farquhar_relationship_1982">1982</a>)</span>. This approach
 breaks down photosynthetic carbon assimilation into several steps
 including diffusion through air and liquid, and the binding of
 CO<sub>2</sub> to RuBP as catalyzed by Rubisco. Each step along the
 pathway has its own distinct fractionation. It is also necessary to
 include the release of carbon by photorespiration and day respiration,
 which also have their own associated fractionations. The entire equation
-relating <span class="math inline">\(\Delta^{13}C\)</span> to <span class="math inline">\(A_n\)</span>, <span class="math inline">\(C_i\)</span>, and other variables is different for
-C<sub>3</sub> and C<sub>4</sub> plants. These equations can also each be
-written in several different ways depending on assumptions made while
-deriving them. Due to these complexities, we do not reproduce the
-equations here. However, they can be found in many places, such as Box A
-in <span class="citation">Ubierna, Holloway-Phillips, and Farquhar (<a href="#ref-ubierna_using_2018">2018</a>)</span>.</p>
+relating
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+and other variables is different for C<sub>3</sub> and C<sub>4</sub>
+plants. These equations can also each be written in several different
+ways depending on assumptions made while deriving them. Due to these
+complexities, we do not reproduce the equations here. However, they can
+be found in many places, such as Box A in <span class="citation">Ubierna, Holloway-Phillips, and Farquhar (<a href="#ref-ubierna_using_2018">2018</a>)</span>.</p>
 <p>The most important aspect of these equations is that they can be
 solved for key parameters such as the mesophyll conductance to
 CO<sub>2</sub> (in C<sub>3</sub> plants) or the bundle-sheath leakiness
 to CO<sub>2</sub> (in C<sub>4</sub> plants). Then,
-experimentally-measured values of <span class="math inline">\(\Delta^{13}C\)</span> can be used to calculate
-values of <span class="math inline">\(g_{mc}\)</span> or <span class="math inline">\(\phi\)</span>. There are many subtelties to these
-calculations, such as uncertainties in the fractionation values due to
-photorespiration and day respiration. We will not attempt to discuss
-them all here, but more information can be found in <span class="citation">Busch et al. (<a href="#ref-busch_revisiting_2020">2020</a>)</span>.</p>
+experimentally-measured values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>
+can be used to calculate values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>.
+There are many subtelties to these calculations, such as uncertainties
+in the fractionation values due to photorespiration and day respiration.
+We will not attempt to discuss them all here, but more information can
+be found in <span class="citation">Busch et al. (<a href="#ref-busch_revisiting_2020">2020</a>)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="a-note-about-this-example">A Note About This Example<a class="anchor" aria-label="anchor" href="#a-note-about-this-example"></a>
@@ -439,9 +468,8 @@ we would get error messages:</p>
 <span><span class="co">#&gt;   curve_identifier npts</span></span>
 <span><span class="co">#&gt; 1       mickey - 1   12</span></span>
 <span><span class="co">#&gt; 2        pluto - 1   12</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 13): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 13): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'replicate'</span>, <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   replicate npts</span></span>
 <span><span class="co">#&gt; 1         1   24</span></span>
@@ -450,7 +478,7 @@ we would get error messages:</p>
 identifies sets of data, we can also perform additional organization
 using the <code>organize_response_curve_data</code> function from
 <code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Order by `Ci`.</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
@@ -497,7 +525,7 @@ already, it can often be determined by taking a look at the data via
 <code>View(tdl_files)</code>. Once this information is obtained,
 <code>identify_tdl_cycles</code> can be used to automatically assign a
 number to each measurement cycle:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Assign numbers to all full cycles in the TDL data set</span></span>
 <span><span class="va">tdl_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/identify_tdl_cycles.html">identify_tdl_cycles</a></span><span class="op">(</span></span>
 <span>  <span class="va">tdl_data</span>,</span>
@@ -548,7 +576,7 @@ With Extended Data Frames</a> vignette.) As with the previous function,
 many of the inputs here (such as
 <code>noaa_cylinder_isotope_ratio</code>) must be obtained from whoever
 is managing the TDL system being used:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use the data from the calibration valves to determine calibrated carbon</span></span>
 <span><span class="co"># concentrations from all valves in each TDL cycle</span></span>
 <span><span class="va">processed_tdl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
@@ -579,10 +607,11 @@ parameters that were determined while processing the data.</p>
 a key step is to combine TDL and gas exchange data that were measured at
 the same times. The function performs this operation by locating the TDL
 cycle whose timestamp is closest to each Licor file entry. Then, the
-<sup>12</sup>C, <sup>13</sup>C, total CO<sub>2</sub>, and <span class="math inline">\(\delta^{13}\)</span>C values measured by the TDL
-from the Licor’s sample and reference lines during that cycle are added
-to the gas exchange data as new columns.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<sup>12</sup>C, <sup>13</sup>C, total CO<sub>2</sub>, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>δ</mi><mn>13</mn></msup><annotation encoding="application/x-tex">\delta^{13}</annotation></semantics></math>C
+values measured by the TDL from the Licor’s sample and reference lines
+during that cycle are added to the gas exchange data as new columns.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pair the Licor and TDL data by locating the TDL cycle corresponding to each</span></span>
 <span><span class="co"># Licor measurement</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span></code></pre></div>
@@ -608,7 +637,7 @@ CO<sub>2</sub> concentration. As an example, we will first look at the
 temperature. For these measurements, the leaf temperature was set to 28
 degrees C, so it is a good idea to confirm that the leaf temperature was
 constant during the measurements.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the leaf temperature, grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -628,7 +657,7 @@ curve, but only deviates from the setpoint by 0.5 degrees C. This is an
 acceptable amount of variation and is not a reason for concern.</p>
 <p>We can also look at <code>CO2_r</code>, which should be 715 ppm for
 the first six points and 450 ppm for the following points.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot CO2_r, grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_r</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -652,7 +681,7 @@ measurement points.</p>
 <p>A key requisite for reliable mesophyll conductance values is that the
 TDL readings should be stable with time at each CO<sub>2</sub> setpoint.
 We can check this by looking at the calibrated TDL readings.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">Conc13C_Avg</span> <span class="op">~</span> <span class="va">elapsed_time</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">valve_number</span>,</span>
@@ -692,15 +721,16 @@ A-Ci Curves</a> vignette, or one of the other vignettes.</p>
 <p>Now, the <code>licor_data</code> <code>exdf</code> object includes
 the TDL measurements from the Licor sample and reference gas lines that
 correspond to each log point. This information can now be used to
-calculate <span class="math inline">\(\Delta^{13}C\)</span>, the
-photosynthetic isotope discrimination:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+calculate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Δ</mi><mn>13</mn></msup><mi>C</mi></mrow><annotation encoding="application/x-tex">\Delta^{13}C</annotation></semantics></math>,
+the photosynthetic isotope discrimination:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate isotope discrimination</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_isotope_discrimination.html">calculate_isotope_discrimination</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
 <p>We can also make a quick validity check here. Photosynthetic carbon
 isotope discrimination should be not vary too much at each
 CO<sub>2</sub> setpoint. We can check this with a plot.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the photosynthetic isotope discrimination, grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">Delta_obs_tdl</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -727,32 +757,42 @@ calculated the isotope discrimination values. There are just a few more
 steps required to calculate mesophyll conductance values. In particular,
 the mesophyll conductance equations require the following inputs:</p>
 <ul>
-<li>The rate of day respiration (<span class="math inline">\(R_d\)</span>).</li>
+<li>The rate of day respiration
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>d</mi></msub><annotation encoding="application/x-tex">R_d</annotation></semantics></math>).</li>
 <li>The CO<sub>2</sub> compensation point in the absence of day
-respiration (<span class="math inline">\(\Gamma^*\)</span>).</li>
-<li>The ternary correction factor (<span class="math inline">\(t\)</span>).</li>
+respiration
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>Γ</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\Gamma^*</annotation></semantics></math>).</li>
+<li>The ternary correction factor
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>).</li>
 <li>The observed photosynthetic carbon isotope discrimination under
-growth conditions (<span class="math inline">\(\Delta_{obs}^{growth}\)</span>).</li>
+growth conditions
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>Δ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow><mrow><mi>g</mi><mi>r</mi><mi>o</mi><mi>w</mi><mi>t</mi><mi>h</mi></mrow></msubsup><annotation encoding="application/x-tex">\Delta_{obs}^{growth}</annotation></semantics></math>).</li>
 </ul>
-<p>The value of day respiration <span class="math inline">\(R_d\)</span>
+<p>The value of day respiration
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>d</mi></msub><annotation encoding="application/x-tex">R_d</annotation></semantics></math>
 must be known from other measurements; typically it is determined by
 placing a leaf into a gas exchange measurement chamber with the light
 off, and measuring the steady-state net assimilation rate. Here we will
-use 1.2 <span class="math inline">\(\mu\)</span>mol m<span class="math inline">\(^{-2}\)</span> s<span class="math inline">\(^{-1}\)</span>.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+use 1.2
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>mol
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">^{-2}</annotation></semantics></math>
+s<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">^{-1}</annotation></semantics></math>.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set day respiration rate</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="st">'Rd'</span>,</span>
+<span>  <span class="st">'RL'</span>,</span>
 <span>  <span class="st">'micromol m^(-2) s^(-1)'</span>,</span>
 <span>  value <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>There are several possible approaches to choosing a value for <span class="math inline">\(\Gamma^*\)</span>. Here we will calculate its
-value from the leaf temperature and the Rubisco specificity using the
-<code>calculate_gamma_star</code> function from <code>PhotoGEA</code>,
-using 92 M M<span class="math inline">\(^{-1}\)</span> for the
-specificity.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<p>There are several possible approaches to choosing a value for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>Γ</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\Gamma^*</annotation></semantics></math>.
+Here we will calculate its value from the leaf temperature and the
+Rubisco specificity using the <code>calculate_gamma_star</code> function
+from <code>PhotoGEA</code>, using 92 M
+M<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">^{-1}</annotation></semantics></math>
+for the specificity.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set Rubisco specificity</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>    <span class="va">licor_data</span>,</span>
@@ -763,13 +803,14 @@ specificity.</p>
 <span></span>
 <span><span class="co"># Calculate Gamma_star</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gamma_star.html">calculate_gamma_star</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
-<p>The ternary correction factor <span class="math inline">\(t\)</span>
+<p>The ternary correction factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
 can be calculated using the <code>calculate_ternary_correction</code>
 function from <code>PhotoGEA</code>. This function has a few of its own
 requirements, which can be met by first calling
 <code>calculate_total_pressure</code> and
 <code>calculate_gas_properties</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate total pressure</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
@@ -778,19 +819,26 @@ requirements, which can be met by first calling
 <span></span>
 <span><span class="co"># Calculate t</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_ternary_correction.html">calculate_ternary_correction</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
-<p>Like <span class="math inline">\(R_d\)</span>, the observed
-photosynthetic isotope discrimination under growth conditions (<span class="math inline">\(\Delta_{obs}^{growth}\)</span>) must be measured
-from each leaf or plant species. Ideally, this would be determined by
-setting the ambient CO<sub>2</sub> concentration around the leaf to the
-ambient value and using the TDL to measure the photosynthetic isotope
-discrimination <span class="math inline">\(\Delta_{obs}\)</span>. In
-this data set, the first six points in each file have <code>CO2_r</code>
-set to 715 ppm, which produces a value of <span class="math inline">\(C_a\)</span> close to 420 ppm (the global
-atmospheric value at the time these measurements were made). Thus, we
-can use the average value of <span class="math inline">\(\Delta_{obs}\)</span> across the first six points
-as the value of <span class="math inline">\(\Delta_{obs}^{growth}\)</span> for each
-replicate.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<p>Like
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>d</mi></msub><annotation encoding="application/x-tex">R_d</annotation></semantics></math>,
+the observed photosynthetic isotope discrimination under growth
+conditions
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>Δ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow><mrow><mi>g</mi><mi>r</mi><mi>o</mi><mi>w</mi><mi>t</mi><mi>h</mi></mrow></msubsup><annotation encoding="application/x-tex">\Delta_{obs}^{growth}</annotation></semantics></math>)
+must be measured from each leaf or plant species. Ideally, this would be
+determined by setting the ambient CO<sub>2</sub> concentration around
+the leaf to the ambient value and using the TDL to measure the
+photosynthetic isotope discrimination
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow></msub><annotation encoding="application/x-tex">\Delta_{obs}</annotation></semantics></math>.
+In this data set, the first six points in each file have
+<code>CO2_r</code> set to 715 ppm, which produces a value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>a</mi></msub><annotation encoding="application/x-tex">C_a</annotation></semantics></math>
+close to 420 ppm (the global atmospheric value at the time these
+measurements were made). Thus, we can use the average value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow></msub><annotation encoding="application/x-tex">\Delta_{obs}</annotation></semantics></math>
+across the first six points as the value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>Δ</mi><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow><mrow><mi>g</mi><mi>r</mi><mi>o</mi><mi>w</mi><mi>t</mi><mi>h</mi></mrow></msubsup><annotation encoding="application/x-tex">\Delta_{obs}^{growth}</annotation></semantics></math>
+for each replicate.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set Delta_obs_growth</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
@@ -805,21 +853,22 @@ replicate.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now we are finally able to calculate values of mesophyll
 conductance!</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate mesophyll conductance</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_gm_busch.html">calculate_gm_busch</a></span><span class="op">(</span><span class="va">licor_data</span>, f <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p>In this example, we have found that the mesophyll conductance values
-are more reasonable with <span class="math inline">\(f\)</span> (the
-assumed fractionation due to day respiration) set to 0. In general,
-<span class="math inline">\(f\)</span> is typically not zero, and can be
-varied during analysis.</p>
+are more reasonable with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+(the assumed fractionation due to day respiration) set to 0. In general,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+is typically not zero, and can be varied during analysis.</p>
 </div>
 <div class="section level2">
 <h2 id="examining-the-results">Examining the Results<a class="anchor" aria-label="anchor" href="#examining-the-results"></a>
 </h2>
 <p>One way to view the results is to simply plot each calculated value
 of the mesophyll conductance.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the mesophyll conductance values, grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gmc</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -834,9 +883,10 @@ of the mesophyll conductance.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_gm_data_files/figure-html/plot_gm_1-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Another approach is to plot the average mesophyll conductance against
-the average <span class="math inline">\(C_i\)</span> for each
-CO<sub>2</sub> setpoint.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+the average
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
+for each CO<sub>2</sub> setpoint.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the average mesophyll conductance values against average Ci values,</span></span>
 <span><span class="co"># grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="../reference/xyplot_avg_rc.html">xyplot_avg_rc</a></span><span class="op">(</span></span>
@@ -872,7 +922,7 @@ specifically mentioned here.</p>
 your own files. One way to do this in your own script is to simply write
 out relative or absolute paths to the files you wish to load. For
 example, you could replace the previous definitions with these ones:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">licor_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'myfile1.xlsx'</span>,        <span class="co"># `myfile1.xlsx` must be in the current working directory</span></span>
@@ -890,7 +940,7 @@ example, you could replace the previous definitions with these ones:</p>
 windows where you can interactively select a set of files. Sometimes
 this is more convenient than writing out file paths or names. For
 example, you could replace the previous definitions with these ones:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">licor_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -905,8 +955,9 @@ Data Analysis Pipeline</a> vignette for more details.</p>
 <div class="section level3">
 <h3 id="mesophyll-conductance-calculations">Mesophyll Conductance Calculations<a class="anchor" aria-label="anchor" href="#mesophyll-conductance-calculations"></a>
 </h3>
-<p>Sometimes it may not be possible to estimate <span class="math inline">\(\Delta^{obs}_{growth}\)</span>. In this case, set
-<code>e_star_equation = 19</code> when calling
+<p>Sometimes it may not be possible to estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>Δ</mi><mrow><mi>g</mi><mi>r</mi><mi>o</mi><mi>w</mi><mi>t</mi><mi>h</mi></mrow><mrow><mi>o</mi><mi>b</mi><mi>s</mi></mrow></msubsup><annotation encoding="application/x-tex">\Delta^{obs}_{growth}</annotation></semantics></math>.
+In this case, set <code>e_star_equation = 19</code> when calling
 <code>calculate_gm_busch</code> or use <code>calculate_gm_ubierna</code>
 instead of <code>calculate_gm_busch</code>.</p>
 </div>
@@ -919,7 +970,7 @@ will allow you to interactively choose an output filename for a
 <code>csv</code> file containing the combined gas exchange and TDL data,
 along with the calculated values of isotope discrimination and mesophyll
 conductance:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -932,7 +983,7 @@ copy/paste into a text file to initialize your own script. Annotation
 has also been added to clearly indicate the four steps involved in data
 analysis, as described in the <a href="developing_a_data_analysis_pipeline.html">Developing a Data
 Analysis Pipeline</a> vignette.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###</span></span>
 <span><span class="co">### PRELIMINARIES:</span></span>
 <span><span class="co">### Loading packages, defining constants, creating helping functions, etc.</span></span>
@@ -1148,7 +1199,7 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co"># Set day respiration rate</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="st">'Rd'</span>,</span>
+<span>  <span class="st">'RL'</span>,</span>
 <span>  <span class="st">'micromol m^(-2) s^(-1)'</span>,</span>
 <span>  value <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span>
@@ -1226,7 +1277,7 @@ Discrimination in <span>C3</span> Plants Shows Respiration Rules When
 Photosynthesis Is Low.”</span> <em>Nature Plants</em> 6 (3): 245–58. <a href="https://doi.org/10.1038/s41477-020-0606-6" class="external-link">https://doi.org/10.1038/s41477-020-0606-6</a>.
 </div>
 <div id="ref-evans_temperature_2013" class="csl-entry">
-Evans, John R., and Susanne Von Caemmerer. 2013. <span>“Temperature
+Evans, John R., and Susanne von Caemmerer. 2013. <span>“Temperature
 Response of Carbon Isotope Discrimination and Mesophyll Conductance in
 Tobacco.”</span> <em>Plant, Cell &amp; Environment</em> 36 (4): 745–56.
 <a href="https://doi.org/10.1111/j.1365-3040.2012.02591.x" class="external-link">https://doi.org/10.1111/j.1365-3040.2012.02591.x</a>.
@@ -1257,7 +1308,7 @@ Covshoff, 155–96. Methods in <span>Molecular</span>
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -1268,15 +1319,15 @@ Covshoff, 155–96. Methods in <span>Molecular</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

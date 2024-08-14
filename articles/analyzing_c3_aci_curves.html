@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="PhotoGEA">
 <title>Analyzing C3 A-Ci Curves • PhotoGEA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,72 +14,54 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C3 A-Ci Curves">
-<meta property="og:description" content="PhotoGEA">
-<meta property="og:image" content="https://eloch216.github.io/PhotoGEA/logo.svg">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C3 A-Ci Curves">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
-    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
-    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
-    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
-    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -92,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing C3 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/vignettes/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c3_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c3_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c3_aci_curves.Rmd</code></div>
     </div>
 
@@ -102,118 +83,123 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>In this vignette, we will give an example showing how to analyze
-C<sub>3</sub> A-Ci data using the <code>PhotoGEA</code> package. The
-commands in this vignette can be used to initialize your own script, as
-described in <a href="#customizing-your-script">Customizing Your
-Script</a>.</p>
+C<sub>3</sub><em>A-C<sub>i</sub></em> data using the
+<code>PhotoGEA</code> package. The commands in this vignette can be used
+to initialize your own script, as described in <a href="#customizing-your-script">Customizing Your Script</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
 <div class="section level3">
-<h3 id="understanding-c3-a-ci-curves">Understanding C3 A-Ci Curves<a class="anchor" aria-label="anchor" href="#understanding-c3-a-ci-curves"></a>
+<h3 id="understanding-c3-a-ci-curves">Understanding C<sub>3</sub><em>A-C<sub>i</sub></em> Curves<a class="anchor" aria-label="anchor" href="#understanding-c3-a-ci-curves"></a>
 </h3>
-<p>An <em>A-Ci curve</em> (or <em>CO<sub>2</sub> response curve</em>) is
-a particular type of gas exchange measurement where a living leaf is
-exposed to varying concentrations of CO<sub>2</sub>. For each
-CO<sub>2</sub> concentration in the sequence, the net assimilation rate
-<span class="math inline">\(A_n\)</span>, stomatal conductance to
-H<sub>2</sub>O (<span class="math inline">\(g_{sw}\)</span>), and other
-important quantities are measured and recorded. Typically, other
-environmental variables such as temperature, humidity, and incident
-photosynthetically-active photon flux density are held constant during
-the measurement sequence so that changes in photosynthesis can be
-attributed to CO<sub>2</sub> alone.</p>
+<p>An <em>A-C<sub>i</sub> curve</em> (or <em>CO<sub>2</sub> response
+curve</em>) is a particular type of gas exchange measurement where a
+living leaf is exposed to varying concentrations of CO<sub>2</sub>. For
+each CO<sub>2</sub> concentration in the sequence, the net assimilation
+rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>),
+stomatal conductance to H<sub>2</sub>O
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>),
+intercellular CO<sub>2</sub> concentration
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>),
+and other important quantities are measured and recorded. Typically,
+other environmental variables such as temperature, humidity, and
+incident photosynthetically-active photon flux density (PPFD) are held
+constant during the measurement sequence so that changes in
+photosynthesis can be attributed to CO<sub>2</sub> alone.</p>
 <p>Because of their different cell structures and biochemical pathways,
 C<sub>3</sub> and C<sub>4</sub> plants have very different responses to
 CO<sub>2</sub>. Here, we will only be discussing C<sub>3</sub>
 plants.</p>
 <p>The full C<sub>3</sub> photosynthetic pathway is quite complicated,
 consisting of at least two hundred individual reactions, each of which
-may have an impact on a measured A-Ci curve. However, simplified models
-for photosynthesis are available and are much easier to understand and
-work with. These models tend to be based around Rubisco kinetics,
-describing how the net assimilation rate responds to the amount of
-CO<sub>2</sub> available in the chloroplast. The most widely-used model
-is typically referred to as the <em>Farquhar-von-Caemmerer-Berry</em>
-model (often shortened to the <em>FvCB model</em> or <em>Farquhar
-model</em>) after the three scientists who originally developed it. An
-excellent description of this model can be found in <em>Biochemical
-Models of Leaf Photosynthesis</em> <span class="citation">(<a href="#ref-caemmerer_biochemical_2000">Caemmerer 2000</a>)</span>,
-subject to a few additional considerations discussed in Lochocki and
-McGrath (in preparation).</p>
+may have an impact on a measured <em>A-C<sub>i</sub></em> curve.
+However, simplified models for photosynthesis are available and are much
+easier to understand and work with. These models tend to be based around
+Rubisco kinetics, describing how the net assimilation rate responds to
+the amount of CO<sub>2</sub> available in the chloroplast. The most
+widely-used model is typically referred to as the
+<em>Farquhar-von-Caemmerer-Berry</em> model (often shortened to the
+<em>FvCB model</em> or <em>Farquhar model</em>) after the three
+scientists who originally developed it. An excellent description of this
+model can be found in <em>Biochemical Models of Leaf Photosynthesis</em>
+<span class="citation">(<a href="#ref-caemmerer_biochemical_2000">Caemmerer 2000</a>)</span>,
+subject to a few additional considerations discussed <span class="citation">Lochocki and McGrath (<a href="#ref-lochocki_widely_2024">2024</a>)</span>.</p>
 <p>This model provides a framework for understanding the changes in
-<span class="math inline">\(A_n\)</span> that occur as a C<sub>3</sub>
-plant is exposed to successively higher concentrations of
-CO<sub>2</sub>. Overall, the photosynthetic response to CO<sub>2</sub>
-under high light conditions can be divided into three separate
-ranges:</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+that occur as a C<sub>3</sub> plant is exposed to successively higher
+concentrations of CO<sub>2</sub>. Overall, the photosynthetic response
+to CO<sub>2</sub> under high light conditions can be divided into three
+separate ranges:</p>
 <ul>
-<li>At low levels of CO<sub>2</sub> in the chloroplast, CO<sub>2</sub>
-assimilation is primarily limited by Rubisco activity.</li>
-<li>At intermediate levels of CO<sub>2</sub> in the chloroplast,
-CO<sub>2</sub> assimilation is primarily limited by RuBP
-regeneration.</li>
-<li>At high levels of CO<sub>2</sub> in the chloroplast, CO<sub>2</sub>
-assimilation is primarily limited by triose phosphate utilization.</li>
+<li><p>At low levels of CO<sub>2</sub> in the chloroplast,
+CO<sub>2</sub> assimilation is primarily limited by Rubisco activity;
+the maximum rate of Rubisco activity is denoted by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>.</p></li>
+<li><p>At intermediate levels of CO<sub>2</sub> in the chloroplast,
+CO<sub>2</sub> assimilation is primarily limited by RuBP regeneration;
+the rate of RuBP regeneration is denoted by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>.</p></li>
+<li><p>At high levels of CO<sub>2</sub> in the chloroplast,
+CO<sub>2</sub> assimilation is primarily limited by triose phosphate
+utilization (TPU); the maximum rate of TPU is denoted by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>p</mi></msub><annotation encoding="application/x-tex">T_p</annotation></semantics></math>.</p></li>
 </ul>
 <p>More specifically, the model provides equations for potential RuBP
-carboxylation rates that are each limited by one of three important
-processes:</p>
+carboxylation rates (as catalyzed by Rubisco) that are each limited by
+one of three important processes:</p>
 <ul>
-<li>The Rubisco-limited carboxylation rate (<span class="math inline">\(W_c\)</span>).</li>
-<li>The RuBP-regeneration-limited carboxylation rate (<span class="math inline">\(W_j\)</span>).</li>
-<li>The triose-phosphate-utilization-limited carboxylation rate (<span class="math inline">\(W_p\)</span>).</li>
+<li><p>The Rubisco-limited carboxylation rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>c</mi></msub><annotation encoding="application/x-tex">W_c</annotation></semantics></math>).</p></li>
+<li><p>The RuBP-regeneration-limited carboxylation rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>j</mi></msub><annotation encoding="application/x-tex">W_j</annotation></semantics></math>).</p></li>
+<li><p>The triose-phosphate-utilization-limited carboxylation rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>p</mi></msub><annotation encoding="application/x-tex">W_p</annotation></semantics></math>).</p></li>
 </ul>
 <p>Each of these rates depend on the CO<sub>2</sub> concentration in the
 chloroplast and other factors such as the incident light intensity. The
-actual RuBP carboxylation rate <span class="math inline">\(V_c\)</span>
+actual RuBP carboxylation rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>c</mi></msub><annotation encoding="application/x-tex">V_c</annotation></semantics></math>)
 for a particular set of conditions is taken to be the smallest of the
 three potential rates. Then, the net CO<sub>2</sub> assimilation rate
-<span class="math inline">\(A_n\)</span> can be calculated from <span class="math inline">\(V_c\)</span> by including carbon losses due to
-photorespiration and day respiration. It is also possible to calculate
-the potential assimilation rates corresponding to each potential
-carboxylation rate: <span class="math inline">\(A_c\)</span>, <span class="math inline">\(A_j\)</span>, and <span class="math inline">\(A_p\)</span>. Using the equations that compose
-this model, it is possible to calculate plots like the one below, which
-illustrates the three different assimilation ranges observed in a
-typical high-light A-Ci curve.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+can be calculated from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>c</mi></msub><annotation encoding="application/x-tex">V_c</annotation></semantics></math>
+by including carbon losses due to photorespiration and mitochondrial
+respiration; the rate of mitochondrial respiration in the light is
+denoted by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>L</mi></msub><annotation encoding="application/x-tex">R_L</annotation></semantics></math>.
+It is also possible to calculate the potential net assimilation rates
+corresponding to each potential carboxylation rate:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>p</mi></msub><annotation encoding="application/x-tex">A_p</annotation></semantics></math>.
+The plot below illustrates the three different assimilation ranges
+observed in a typical high-light <em>A-C<sub>i</sub></em> curve, as
+predicted by the FvCB model.</p>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-2-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>(Note: this figure was generated using the
+<p>(Note: This figure was generated using the
 <code>calculate_c3_assimilation</code> function from the
 <code>PhotoGEA</code> package, and it represents the photosynethetic
 response of a C<sub>3</sub> leaf according to the FvCB model with
 <code>Tp</code> = 18 micromol m^(-2) s^(-1), <code>J</code> = 200
-micromol m^(-2) s^(-1), <code>Rd</code> = 1.8 micromol m^(-2) s^(-1),
+micromol m^(-2) s^(-1), <code>RL</code> = 1.8 micromol m^(-2) s^(-1),
 <code>Vcmax</code> = 125 micromol m^(-2) s^(-1), and a leaf temperature
 of 30 degrees C. Arrhenius temperature response parameters were taken
 from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span>.)</p>
-<p>Thus, one of the most common reasons to measure an A-Ci curve is to
-interpret it in the context of this model. In other words, by fitting
-the model’s equations to a measured curve, it is possible to estimate
-values for <code>Tp</code>, <code>J</code>, <code>Rd</code>, and
-<code>Vcmax</code>. See the documentation for
-<code>calculate_c3_assimilation</code> for more information about these
-important quantities.</p>
-<p>One complication related to fitting is that the FvCB model calculates
-assimilation at the level of a single chloroplast; however, experimental
-gas exchange measurements are made by averaging the behavior of many
-different chloroplasts across a piece of leaf, which may each have
-different concentrations of CO<sub>2</sub>. Thus, the sharp transitions
-between Rubisco-limited, RuBP-regeneration-limited, and
-triose-phosphate-utilization-limited assimilation predicted by the model
-are rarely observed in practice, and there are instead regions of
-co-limited assimilation. This can be represented mathematically via two
-empirical “curvature” parameters, as discussed in the documentation for
-<code>calculate_c3_assimilation</code>. The following figure shows a
-CO<sub>2</sub> response curve calculated with both curvatures set to
-0.99 and other parameters identical to the ones used to generate the
-previous figure.</p>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-3-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Note that <code>An</code> calculated with
-<code>curvature &lt; 1</code> is generally lower than <code>An</code>
-with <code>curvature = 1</code> due to the presence of co-limitation;
-this can be seen by comparing this figure to the previous one (where
-<code>curvature = 1</code>).</p>
+<p>Thus, one of the most common reasons to measure an
+<em>A-C<sub>i</sub></em> curve is to interpret it in the context of this
+model. In other words, by fitting the model’s equations to a measured
+curve, it is possible to estimate values for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>p</mi></msub><annotation encoding="application/x-tex">T_p</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>L</mi></msub><annotation encoding="application/x-tex">R_L</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>.
+See the documentation for <code>calculate_c3_assimilation</code> for
+more information about these important quantities.</p>
 </div>
 <div class="section level3">
 <h3 id="practicalities">Practicalities<a class="anchor" aria-label="anchor" href="#practicalities"></a>
@@ -222,29 +208,41 @@ this can be seen by comparing this figure to the previous one (where
 thinking about CO<sub>2</sub> response curves.</p>
 <p>One point is that photosynthesis models generally predict the
 response of assimilation to the CO<sub>2</sub> concentration in the
-chloroplast (<span class="math inline">\(C_c\)</span>), but gas exchange
-measurements can only determine the CO<sub>2</sub> concentration in the
-leaf’s intercellular spaces (<span class="math inline">\(C_i\)</span>).
-Thus, an extra step is required when interpreting A-Ci curves. If the
-mesophyll conductance <span class="math inline">\(g_{mc}\)</span> to
-CO<sub>2</sub> is known, then it is possible to calculate values of
-<span class="math inline">\(C_c\)</span> from <span class="math inline">\(A_n\)</span>, <span class="math inline">\(C_i\)</span>, and <span class="math inline">\(g_{mc}\)</span>. Otherwise, it is typical to
-assume an infinite mesophyll conductance; in this case, <span class="math inline">\(C_c = C_i\)</span>, and the estimated values of
-<code>Vcmax</code> and other parameters can be considered to be
-“effective values” describing the plant’s response to intercellular
-CO<sub>2</sub> rather than the true enzyme response to chloroplastic
-CO<sub>2</sub>.</p>
+chloroplast
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>c</mi></msub><annotation encoding="application/x-tex">C_c</annotation></semantics></math>),
+but gas exchange measurements can only determine the CO<sub>2</sub>
+concentration in the leaf’s intercellular spaces
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>).
+Thus, an extra step is required when interpreting
+<em>A-C<sub>i</sub></em> curves. If the mesophyll conductance to
+CO<sub>2</sub> diffusion
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>)
+is known, then it is possible to calculate values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>c</mi></msub><annotation encoding="application/x-tex">C_c</annotation></semantics></math>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>.
+Otherwise, it is typical to assume an infinite mesophyll conductance; in
+this case,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>c</mi></msub><mo>=</mo><msub><mi>C</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">C_c = C_i</annotation></semantics></math>,
+and the estimated values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+and other parameters can be considered to be “effective values”
+describing the plant’s response to intercellular CO<sub>2</sub> rather
+than the true enzyme response to chloroplastic CO<sub>2</sub>.</p>
 <p>Another important point is that plants generally do not appreciate
 being starved of CO<sub>2</sub>, so it is not usually possible to start
 a response curve at low CO<sub>2</sub> and proceed upwards. A more
 typical approach is to:</p>
 <ol style="list-style-type: decimal">
-<li>Begin at ambient atmospheric CO<sub>2</sub> levels.</li>
-<li>Decrease towards a low value.</li>
-<li>Return to ambient levels and wait for the plant to reacclimate; this
-waiting period is usually accomplished by logging several points at
-ambient CO<sub>2</sub> levels.</li>
-<li>Increase to higher values.</li>
+<li><p>Begin at ambient atmospheric CO<sub>2</sub> levels.</p></li>
+<li><p>Decrease towards a low value.</p></li>
+<li><p>Return to ambient levels and wait for the plant to reacclimate;
+this waiting period is usually accomplished by logging several points at
+ambient CO<sub>2</sub> levels.</p></li>
+<li><p>Increase to higher values.</p></li>
 </ol>
 <p>When taking this approach, it therefore becomes necessary to remove
 the extra points measured at ambient CO<sub>2</sub> levels and to
@@ -254,17 +252,20 @@ plotting or analyzing them.</p>
 <div class="section level3">
 <h3 id="the-data">The Data<a class="anchor" aria-label="anchor" href="#the-data"></a>
 </h3>
-<p>A-Ci curves are commonly measured using a Licor portable
-photosynthesis system such as the Li-6400 or Li-6800. These machines
-record values of <span class="math inline">\(A_n\)</span>, <span class="math inline">\(g_{sw}\)</span>, and many other important
-quantities. They produce two types of output files: plain-text and
-Microsoft Excel. It is often more convenient to work with the Excel
-files since the entries can be easily modified (for example, to remove
-an extraneous row or add a new column). On the other hand, it can be
-more difficult to access the file contents using other pieces of
-software such as R. However, the <code>PhotoGEA</code> package reduces
-this barrier by including tools for reading Licor Excel files in R,
-which will be demonstrated in the following section.</p>
+<p><em>A-C<sub>i</sub></em> curves are commonly measured using a
+portable photosynthesis system such as the Licor Li-6800. These machines
+record values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>s</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">g_{sw}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>,
+and many other important quantities. They produce two types of output
+files: plain-text and Microsoft Excel. It is often more convenient to
+work with the Excel files since the entries can be easily modified (for
+example, to remove an extraneous row or add a new column). On the other
+hand, it can be more difficult to access the file contents using other
+pieces of software such as R. However, the <code>PhotoGEA</code> package
+reduces this barrier by including tools for reading Licor Excel files in
+R, which will be demonstrated in the following section.</p>
 </div>
 </div>
 <div class="section level2">
@@ -285,15 +286,17 @@ you can install it by typing
 <h2 id="loading-licor-data">Loading Licor Data<a class="anchor" aria-label="anchor" href="#loading-licor-data"></a>
 </h2>
 <p>The <code>PhotoGEA</code> package includes two files representing
-A-Ci curves measured using two Li-6800 instruments. The data is stored
-in Microsoft Excel files, and includes curves measured from two
-different crop species (tobacco and soybean) and several different plots
-of each. Each curve is a sixteen-point CO<sub>2</sub> response curve; in
-other words, the CO<sub>2</sub> concentration in the air surrounding the
-leaf was varied, and <span class="math inline">\(A_n\)</span> (among
-other variables) was measured at each CO<sub>2</sub> setpoint. Although
-these two files are based on real data, noise was added to it since it
-is unpublished, so these files should only be used as examples.</p>
+<em>A-C<sub>i</sub></em> curves measured using two Li-6800 instruments.
+The data is stored in Microsoft Excel files, and includes curves
+measured from two different crop species (tobacco and soybean) and
+several different plots of each. Each curve is a sixteen-point
+CO<sub>2</sub> response curve; in other words, the CO<sub>2</sub>
+concentration in the air surrounding the leaf was varied, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
+(among other variables) was measured at each CO<sub>2</sub> setpoint.
+Although these two files are based on real data, noise was added to it
+since it is unpublished, so these files should only be used as
+examples.</p>
 <p>The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained
 with <code>PhotoGEA_example_file_path</code>:</p>
@@ -403,29 +406,68 @@ we would get error messages:</p>
 <span><span class="co">#&gt; 4  ripe2 - soybean - 1   16</span></span>
 <span><span class="co">#&gt; 5 ripe2 - soybean - 5b   16</span></span>
 <span><span class="co">#&gt; 6  ripe2 - tobacco - 4   16</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 15): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 15): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'species'</span>, <span class="fl">16</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1 soybean   48</span></span>
 <span><span class="co">#&gt; 2 tobacco   48</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'Ci'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 16, : Point 1 from curve `ripe1 - tobacco - 1` has value `Ci = 251.525996944688`, but the average value for this point across all curves is `Ci = 237.742020686325`</span></span>
-<span><span class="co">#&gt;   Point 1 from curve `ripe1 - tobacco - 2` has value `Ci = 261.420818849899`, but the average value for this point across all curves is `Ci = 237.742020686325`</span></span>
-<span><span class="co">#&gt;   Point 1 from curve `ripe2 - tobacco - 4` has value `Ci = 268.023119478639`, but the average value for this point across all curves is `Ci = 237.742020686325`</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "Point 1 from curve `ripe1 - tobacco - 1` has value `Ci = 251.525996944688`, but the average value for this point across all curves is `Ci = 237.742020686325`"  </span></span>
+<span><span class="co">#&gt;  [2] "Point 1 from curve `ripe1 - tobacco - 2` has value `Ci = 261.420818849899`, but the average value for this point across all curves is `Ci = 237.742020686325`"  </span></span>
+<span><span class="co">#&gt;  [3] "Point 1 from curve `ripe2 - tobacco - 4` has value `Ci = 268.023119478639`, but the average value for this point across all curves is `Ci = 237.742020686325`"  </span></span>
+<span><span class="co">#&gt;  [4] "Point 2 from curve `ripe1 - soybean - 5a` has value `Ci = 189.778318756111`, but the average value for this point across all curves is `Ci = 187.890931847939`" </span></span>
+<span><span class="co">#&gt;  [5] "Point 2 from curve `ripe1 - tobacco - 2` has value `Ci = 190.364626604515`, but the average value for this point across all curves is `Ci = 187.890931847939`"  </span></span>
+<span><span class="co">#&gt;  [6] "Point 2 from curve `ripe2 - soybean - 1` has value `Ci = 195.64990814843`, but the average value for this point across all curves is `Ci = 187.890931847939`"   </span></span>
+<span><span class="co">#&gt;  [7] "Point 2 from curve `ripe2 - tobacco - 4` has value `Ci = 189.683389404078`, but the average value for this point across all curves is `Ci = 187.890931847939`"  </span></span>
+<span><span class="co">#&gt;  [8] "Point 3 from curve `ripe1 - tobacco - 2` has value `Ci = 140.739846550331`, but the average value for this point across all curves is `Ci = 138.989000725059`"  </span></span>
+<span><span class="co">#&gt;  [9] "Point 3 from curve `ripe2 - soybean - 1` has value `Ci = 142.312320467618`, but the average value for this point across all curves is `Ci = 138.989000725059`"  </span></span>
+<span><span class="co">#&gt; [10] "Point 3 from curve `ripe2 - soybean - 5b` has value `Ci = 143.562222433932`, but the average value for this point across all curves is `Ci = 138.989000725059`" </span></span>
+<span><span class="co">#&gt; [11] "Point 3 from curve `ripe2 - tobacco - 4` has value `Ci = 146.070064069876`, but the average value for this point across all curves is `Ci = 138.989000725059`"  </span></span>
+<span><span class="co">#&gt; [12] "Point 4 from curve `ripe2 - soybean - 5b` has value `Ci = 113.289686896819`, but the average value for this point across all curves is `Ci = 107.426766159492`" </span></span>
+<span><span class="co">#&gt; [13] "Point 4 from curve `ripe2 - tobacco - 4` has value `Ci = 109.855903103213`, but the average value for this point across all curves is `Ci = 107.426766159492`"  </span></span>
+<span><span class="co">#&gt; [14] "Point 5 from curve `ripe2 - tobacco - 4` has value `Ci = 85.5777210143503`, but the average value for this point across all curves is `Ci = 81.9169717791416`"  </span></span>
+<span><span class="co">#&gt; [15] "Point 6 from curve `ripe2 - tobacco - 4` has value `Ci = 69.6297854655665`, but the average value for this point across all curves is `Ci = 68.5175017770492`"  </span></span>
+<span><span class="co">#&gt; [16] "Point 7 from curve `ripe2 - tobacco - 4` has value `Ci = 56.8863754899374`, but the average value for this point across all curves is `Ci = 54.4173221075231`"  </span></span>
+<span><span class="co">#&gt; [17] "Point 8 from curve `ripe1 - tobacco - 1` has value `Ci = 38.2025072855919`, but the average value for this point across all curves is `Ci = 36.0525184649295`"  </span></span>
+<span><span class="co">#&gt; [18] "Point 8 from curve `ripe1 - tobacco - 2` has value `Ci = 37.1263965357958`, but the average value for this point across all curves is `Ci = 36.0525184649295`"  </span></span>
+<span><span class="co">#&gt; [19] "Point 9 from curve `ripe2 - soybean - 1` has value `Ci = 283.443935342356`, but the average value for this point across all curves is `Ci = 277.293550282807`"  </span></span>
+<span><span class="co">#&gt; [20] "Point 9 from curve `ripe2 - tobacco - 4` has value `Ci = 293.651577805789`, but the average value for this point across all curves is `Ci = 277.293550282807`"  </span></span>
+<span><span class="co">#&gt; [21] "Point 10 from curve `ripe1 - tobacco - 2` has value `Ci = 265.953774610768`, but the average value for this point across all curves is `Ci = 260.791607349089`" </span></span>
+<span><span class="co">#&gt; [22] "Point 10 from curve `ripe2 - soybean - 5b` has value `Ci = 278.939936070802`, but the average value for this point across all curves is `Ci = 260.791607349089`"</span></span>
+<span><span class="co">#&gt; [23] "Point 11 from curve `ripe1 - soybean - 5a` has value `Ci = 406.253997571488`, but the average value for this point across all curves is `Ci = 395.465043677258`"</span></span>
+<span><span class="co">#&gt; [24] "Point 11 from curve `ripe2 - soybean - 5b` has value `Ci = 408.560591466166`, but the average value for this point across all curves is `Ci = 395.465043677258`"</span></span>
+<span><span class="co">#&gt; [25] "Point 11 from curve `ripe2 - tobacco - 4` has value `Ci = 420.067730833784`, but the average value for this point across all curves is `Ci = 395.465043677258`" </span></span>
+<span><span class="co">#&gt; [26] "Point 12 from curve `ripe1 - tobacco - 1` has value `Ci = 547.105363904173`, but the average value for this point across all curves is `Ci = 508.989047311619`" </span></span>
+<span><span class="co">#&gt; [27] "Point 12 from curve `ripe1 - tobacco - 2` has value `Ci = 544.825019266542`, but the average value for this point across all curves is `Ci = 508.989047311619`" </span></span>
+<span><span class="co">#&gt; [28] "Point 12 from curve `ripe2 - soybean - 5b` has value `Ci = 540.706050036121`, but the average value for this point across all curves is `Ci = 508.989047311619`"</span></span>
+<span><span class="co">#&gt; [29] "Point 12 from curve `ripe2 - tobacco - 4` has value `Ci = 557.813796419447`, but the average value for this point across all curves is `Ci = 508.989047311619`" </span></span>
+<span><span class="co">#&gt; [30] "Point 13 from curve `ripe1 - tobacco - 1` has value `Ci = 695.552175120025`, but the average value for this point across all curves is `Ci = 640.742220104825`" </span></span>
+<span><span class="co">#&gt; [31] "Point 13 from curve `ripe1 - tobacco - 2` has value `Ci = 714.400660938829`, but the average value for this point across all curves is `Ci = 640.742220104825`" </span></span>
+<span><span class="co">#&gt; [32] "Point 13 from curve `ripe2 - soybean - 5b` has value `Ci = 648.296844649221`, but the average value for this point across all curves is `Ci = 640.742220104825`"</span></span>
+<span><span class="co">#&gt; [33] "Point 13 from curve `ripe2 - tobacco - 4` has value `Ci = 754.539509157309`, but the average value for this point across all curves is `Ci = 640.742220104825`" </span></span>
+<span><span class="co">#&gt; [34] "Point 14 from curve `ripe1 - tobacco - 1` has value `Ci = 873.847290736827`, but the average value for this point across all curves is `Ci = 764.016093410732`" </span></span>
+<span><span class="co">#&gt; [35] "Point 14 from curve `ripe1 - tobacco - 2` has value `Ci = 886.833187517944`, but the average value for this point across all curves is `Ci = 764.016093410732`" </span></span>
+<span><span class="co">#&gt; [36] "Point 14 from curve `ripe2 - tobacco - 4` has value `Ci = 955.187469706573`, but the average value for this point across all curves is `Ci = 764.016093410732`" </span></span>
+<span><span class="co">#&gt; [37] "Point 15 from curve `ripe1 - tobacco - 1` has value `Ci = 1174.23795813254`, but the average value for this point across all curves is `Ci = 994.214575601785`" </span></span>
+<span><span class="co">#&gt; [38] "Point 15 from curve `ripe1 - tobacco - 2` has value `Ci = 1162.50199383597`, but the average value for this point across all curves is `Ci = 994.214575601785`" </span></span>
+<span><span class="co">#&gt; [39] "Point 15 from curve `ripe2 - tobacco - 4` has value `Ci = 1234.06839380054`, but the average value for this point across all curves is `Ci = 994.214575601785`" </span></span>
+<span><span class="co">#&gt; [40] "Point 16 from curve `ripe1 - soybean - 5a` has value `Ci = 1376.24212413574`, but the average value for this point across all curves is `Ci = 1374.12936701593`"</span></span>
+<span><span class="co">#&gt; [41] "Point 16 from curve `ripe1 - tobacco - 1` has value `Ci = 1489.79307180783`, but the average value for this point across all curves is `Ci = 1374.12936701593`" </span></span>
+<span><span class="co">#&gt; [42] "Point 16 from curve `ripe1 - tobacco - 2` has value `Ci = 1469.9939278736`, but the average value for this point across all curves is `Ci = 1374.12936701593`"  </span></span>
+<span><span class="co">#&gt; [43] "Point 16 from curve `ripe2 - tobacco - 4` has value `Ci = 1509.57270639848`, but the average value for this point across all curves is `Ci = 1374.12936701593`"</span></span>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 16, : The curves do not all follow the same sequence of the driving variable.</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="plotting-the-a-ci-curves">Plotting the A-Ci Curves<a class="anchor" aria-label="anchor" href="#plotting-the-a-ci-curves"></a>
+<h3 id="plotting-the-a-ci-curves">Plotting the <em>A-C<sub>i</sub></em> Curves<a class="anchor" aria-label="anchor" href="#plotting-the-a-ci-curves"></a>
 </h3>
 <p>One qualitative way to check the data is to simply create a plot of
-the A-Ci curves. In this situation, the <code>lattice</code> library
-makes it simple to include each curve as its own separate subplot of a
-figure. For example:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+the <em>A-C<sub>i</sub></em> curves. In this situation, the
+<code>lattice</code> library makes it simple to include each curve as
+its own separate subplot of a figure. For example:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot all A-Ci curves in the data set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -444,7 +486,7 @@ measuring the curves. As discussed in <a href="#practicalities">Practicalities</
 points logged at the same CO<sub>2</sub> concentration, and the points
 are not logged in order of ascending or descending concentration. In
 fact, the sequence of CO<sub>2</sub> setpoints is as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'ripe2 - soybean - 1'</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span></span>
 <span><span class="co">#&gt;  [1]  400  300  200  150  100   75   50   20  400  400  600  800 1000 1200 1500</span></span>
 <span><span class="co">#&gt; [16] 1800</span></span></code></pre></div>
@@ -454,7 +496,7 @@ ambient CO<sub>2</sub> levels), and reorder the data so it is arranged
 from low to high values of <code>Ci</code>. This can be done using the
 <code>organize_response_curve</code> function from
 <code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
 <span>    <span class="va">licor_data</span>,</span>
@@ -463,7 +505,7 @@ from low to high values of <code>Ci</code>. This can be done using the
 <span>    <span class="st">'Ci'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now we can plot them again:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot all A-Ci curves in the data set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -475,16 +517,13 @@ from low to high values of <code>Ci</code>. This can be done using the
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-5-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>They still look a bit strange. Some of this is related to the noise
-that was intentionally added to the data. Nevertheless, there are a few
-points that we should probably exclude before attempting to fit the
-curves. One issue is that the model <em>never</em> predicts a decrease
-in <span class="math inline">\(A\)</span> when <span class="math inline">\(Ci\)</span> increases. So, it is usually a good
-idea to exclude any points at high <span class="math inline">\(Ci\)</span> where <span class="math inline">\(A\)</span> is observed to decrease. This dropoff
-in assimilation is due to one or more processes that are not captured by
-the model, and the fits will be unreliable. We will remove these points
-later, after we have made several other data quality checks.</p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-4-1.png" width="720" style="display: block; margin: auto;"></p>
+<p>They still look a bit strange, but this is related to the noise that
+was intentionally added to the data. Three curves exhibit a sharp and
+likely unrealistic downturn in assimilation at their highest values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>.
+These will pose a problem for fitting, and we will remove them later
+after making some other quality checks.</p>
 </div>
 <div class="section level3">
 <h3 id="additional-plots-for-qualitative-validation">Additional Plots for Qualitative Validation<a class="anchor" aria-label="anchor" href="#additional-plots-for-qualitative-validation"></a>
@@ -498,7 +537,7 @@ plots to check each curve for quality.</p>
 <div class="section level4">
 <h4 id="humidity-control">Humidity Control<a class="anchor" aria-label="anchor" href="#humidity-control"></a>
 </h4>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check humidity control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">RHcham</span> <span class="op">+</span> <span class="va">`Humidifier_%`</span> <span class="op">+</span> <span class="va">`Desiccant_%`</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -527,7 +566,7 @@ photosynthesis. In this plot, all the data looks good.</p>
 <div class="section level4">
 <h4 id="temperature-control">Temperature Control<a class="anchor" aria-label="anchor" href="#temperature-control"></a>
 </h4>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check temperature control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">+</span> <span class="va">Txchg</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -553,7 +592,7 @@ looks good.</p>
 <div class="section level4">
 <h4 id="co2-control">CO<sub>2</sub> Control<a class="anchor" aria-label="anchor" href="#co2-control"></a>
 </h4>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check CO2 control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_s</span> <span class="op">+</span> <span class="va">CO2_r</span> <span class="op">+</span> <span class="va">CO2_r_sp</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -584,7 +623,7 @@ looks good.</p>
 <div class="section level4">
 <h4 id="stability">Stability<a class="anchor" aria-label="anchor" href="#stability"></a>
 </h4>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a plot to check stability criteria</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">`A:OK`</span> <span class="op">+</span> <span class="va">`gsw:OK`</span> <span class="op">+</span> <span class="va">Stable</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -618,10 +657,10 @@ stable (0 for no, 1 for yes), <code>gsw:OK</code> indicates whether
 that were met. So, we are looking for points where <code>Stable</code>
 is 2. Otherwise, we can check the other traces to see whether
 <code>A</code> or <code>gsw</code> was unstable.</p>
-<p>Comparing these plots with the ones in <a href="#plotting-the-a-ci-curves">Plotting the A-Ci Curves</a>, it seems
-that the unstable points correspond with some of the “odd-looking”
-points in the A-Ci curves, so it is probably a good idea to remove them
-before fitting the data.</p>
+<p>Comparing these plots with the ones in <a href="#plotting-the-a-ci-curves">Plotting the <em>A-C<sub>i</sub></em>
+Curves</a>, it seems that the unstable points correspond with some of
+the “odd-looking” points in the <em>A-C<sub>i</sub></em> curves, so it
+is probably a good idea to remove them before fitting the data.</p>
 </div>
 </div>
 <div class="section level3">
@@ -629,15 +668,17 @@ before fitting the data.</p>
 </h3>
 <p>While checking over the plots in the previous sections, two issues
 were noticed: (1) some points were logged before stability was achieved
-and (2) some of the curves exhibit a decrease in <span class="math inline">\(A\)</span> at high values of <span class="math inline">\(C_i\)</span>. In this section, we will demonstrate
-how to remove the unstable and unusual points.</p>
+and (2) some curves have strange points at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>.
+In this section, we will demonstrate how to remove the unstable and
+unusual points.</p>
 <p>The following command will keep only the points where
 <code>Stable</code> is exactly 2; this condition means that all of the
 stability criteria were satisfied. Sometimes, following this procedure,
 a curve will have very few stable points remaining; it is usually a good
 idea to automatically exclude any curve with fewer than three stable
 points.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only keep points where stability was achieved</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
@@ -647,11 +688,13 @@ points.</p>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
 <p>Next, we can use the <code>remove_points</code> function from
 <code>PhotoGEA</code> to exclude the points where there is a decrease in
-<span class="math inline">\(A\)</span> at high <span class="math inline">\(C_i\)</span>. It just so happens that all of these
-points were measured by the <code>ripe1</code> instrument and occur at
-the highest CO<sub>2</sub> setpoint value, so it is easy to specify them
-all at once:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+at high
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>.
+It just so happens that all of these points were measured by the
+<code>ripe1</code> instrument and occur at the highest CO<sub>2</sub>
+setpoint value, so it is easy to specify them all at once:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
@@ -666,10 +709,13 @@ all at once:</p>
 the fitting. In order to fit the curves, there are several required
 pieces of information that are not included in the Licor data files as
 produced by the instrument: values of the total pressure, values of the
-chloroplast CO<sub>2</sub> concentration <span class="math inline">\(C_c\)</span>, and temperature-dependent values of
-important photosynthetic parameters such as <span class="math inline">\(\Gamma^*\)</span>. However, the
-<code>PhotoGEA</code> package includes three functions to help with
-these calculations: <code>calculate_total_pressure</code>,
+chloroplast CO<sub>2</sub> concentration
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>c</mi></msub><annotation encoding="application/x-tex">C_c</annotation></semantics></math>,
+and temperature-dependent values of important photosynthetic parameters
+such as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>Γ</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\Gamma^*</annotation></semantics></math>.
+However, the <code>PhotoGEA</code> package includes three functions to
+help with these calculations: <code>calculate_total_pressure</code>,
 <code>apply_gm</code>, and <code>calculate_arrhenius</code>. Each of
 these requires an <code>exdf</code> object containing Licor data. The
 units for each required column will be checked in an attempt to avoid
@@ -684,11 +730,12 @@ of mesophyll conductance can be specified using the
 will set <code>gmc = 1.0 mol / m^2 / s / bar</code> for tobacco and
 <code>gmc = Inf</code> for soybean; in this case, the soybean parameters
 determined by the fitting process will be “effective” parameters. Then
-we will calculate values of <span class="math inline">\(C_c\)</span>,
+we will calculate values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>c</mi></msub><annotation encoding="application/x-tex">C_c</annotation></semantics></math>,
 and use Arrhenius parameters from <span class="citation">Sharkey et al.
 (<a href="#ref-sharkey_fitting_2007">2007</a>)</span> to calculate the
 temperature-dependent inputs:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
@@ -705,11 +752,11 @@ temperature-dependent inputs:</p>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_sharkey</span><span class="op">)</span></span></code></pre></div>
 <p>Together, these functions add several new columns to
-<code>licor_data</code>, including <code>gmc</code>, ‘Cc’, ‘Gamma_star’,
-and others. With this information, we are now ready to perform the
-fitting procedure. For this operation, we can use the
-<code>fit_c3_aci</code> function from the <code>PhotoGEA</code> package,
-which fits a single response curve to extract the values of key
+<code>licor_data</code>, including <code>gmc</code>, <code>Cc</code>,
+<code>Gamma_star</code>, and others. With this information, we are now
+ready to perform the fitting procedure. For this operation, we can use
+the <code>fit_c3_aci</code> function from the <code>PhotoGEA</code>
+package, which fits a single response curve to extract the values of key
 photosynthetic parameters. To apply this function to each curve in a
 larger data set and then consolidate the results, we can use it in
 conjunction with <code>by</code> and <code>consolidate</code>, which are
@@ -720,108 +767,74 @@ functions, see the built-in help menu entries by typing
 section of the <a href="working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame">Working
 With Extended Data Frames</a> vignette.) Together, these functions will
 split apart the main data using the curve identifier column we defined
-before (<a href="#basic-checks">Basic Checks</a>), fit each A-Ci curve
-using the FvCB model discussed in <a href="#understanding-c3-a-ci-curves">Understanding C3 A-Ci Curves</a>,
-and return the resulting parameters and fits:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Fit the C3 A-Ci curves</span></span>
+before (<a href="#basic-checks">Basic Checks</a>), fit each
+<em>A-C<sub>i</sub></em> curve using the FvCB model discussed in <a href="#understanding-c3-a-ci-curves">Understanding C<sub>3</sub><em>A-C<sub>i</sub></em> Curves</a>, and return the resulting parameters
+and fits:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the C3 A-Ci curves</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
 <span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
 <span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Note that in this command, we specified
-<code>fixed = c(NA, NA, NA, NA)</code> when calling
-<code>fit_c3_aci</code>. By doing this, we are choosing to vary all four
-key photosynthetic parameters: <code>Tp</code>, <code>J</code>,
-<code>Rd</code>, and <code>Vcmax</code>. If <code>fixed</code> is not
-specified, it will take its default value:
-<code>c(Inf, NA, NA, NA)</code>. In that case, <code>Tp</code> would be
-fixed to a high value that essentially disables
-triose-phosphate-utilization-limited assimilation, and only
-<code>J</code>, <code>Rd</code>, and <code>Vcmax</code> would be
-varied.</p>
+<p>Note that in this command, we used the default fitting settings. In
+this case, we will vary all five key photosynthetic parameters:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>L</mi></msub><annotation encoding="application/x-tex">R_L</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>p</mi></msub><annotation encoding="application/x-tex">T_p</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msub><annotation encoding="application/x-tex">\alpha_{old}</annotation></semantics></math>.</p>
 <div class="section level3">
 <h3 id="viewing-the-fitted-curves">Viewing the Fitted Curves<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-curves"></a>
 </h3>
 <p>Having made the fits, it is now a good idea to visually check them,
-making sure they look reasonable. As before, we can use
-<code>xyplot</code> from the <code>lattice</code> library to quickly
-make plots of all the fits, which are stored in
-<code>c3_aci_results$fits</code>, an <code>exdf</code> object:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the C3 A-Ci fits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Note that in addition to the fitted values of <code>A</code>, the
-output also includes values of the potential limiting rates
-<code>Ac</code>, <code>Aj</code>, and <code>Ap</code>, as well as the
-estimated operating point. We can take a look at these using a built-in
-plotting function:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+making sure they look reasonable. This can be done using a built-in
+plotting function called <code>plot_c3_aci_fit</code>. In addition to
+the fitted values of <code>An</code>, the output also includes values of
+the potential limiting rates <code>Ac</code>, <code>Aj</code>, and
+<code>Ap</code>, as well as the estimated operating point.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">c3_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/fit_aci_limiting-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Considering these two plots, we can see that although the model is
-able to reproduce the observed <code>A</code> values fairly well, some
-output parameters may be less reliable than others. For example, the
-triose-phosphate-utilization-limited rate <code>Ap</code> is determined
-by the <code>Tp</code> parameter; for some of the curves, the
-assimilation rate is never limited by <code>Ap</code>, so the resulting
-“best-fit” values of <code>Tp</code> may not be meaningful for these
-curves.</p>
-<p>There is also one curve (<code>ripe2 - soybean - 1</code>) where the
-optimizer is possibly overestimating <code>J</code>, so <code>Aj</code>
-is never the limiting factor. To address this, it is possible to force
-the optimizer to only allow fits where <code>Aj</code> is less than
-<code>Ac</code> above a certain threshold value of <code>Cc</code>;
-essentially, this is a way to constrain the crossover from
-Rubisco-limited carboxylation to RuBP-regeneration-limited carboxylation
-to a limited range of <code>Cc</code> values. Adding this restriction
-can sometimes produce more reasonable fits.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Fit the C3 A-Ci curves</span></span>
-<span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
-<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
-<span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
-<span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
-<span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
-<span><span class="fu"><a href="../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">c3_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-6-1.png" width="720" style="display: block; margin: auto;"></p>
-<p>Here we can see that <code>Aj</code> is now significantly lower in
-the fit for <code>ripe2 - soybean - 1</code>; however, the fitted
-assimilation values are still never limited by <code>Aj</code>. There
-may be something pathological about this curve that will prevent us from
-ever getting a reasonable value for <code>J</code>. In other situations,
-this approach may be more successful. We can also notice that the fit
-for <code>ripe1 - soybean - 5a</code> is a little strange. Based on the
-values of <code>Ci</code> and <code>Cc</code>, it seems that this
-plant’s stomata did not fully open during the measurement, almost fully
-restricting the measured assimilation values to the Rubisco-limited
-range; there is nothing that can be done about this. It is also apparent
-that the <code>Tp</code> issue remains, and some curves are never
-triose-phosphate-utilization-limited; again, there is nothing that can
-really be done to address it besides measuring more A-Ci curves.</p>
+<p>In general, these fits look good. There are a few specific things to
+notice:</p>
+<ul>
+<li><p>The fitted values of <code>An</code> closely match the measured
+ones. This is a good sign.</p></li>
+<li><p>Each curve begins with a Rubisco-limited portion (where
+<code>An = Ac</code>). This is expected for light-saturated
+<em>A-C<sub>i</sub></em> curves.</p></li>
+<li><p>Some curves do not have values of <code>Aj</code>. This means
+that no points were identified as being limited by RuBP regeneration. It
+is not possible to estimate values of <code>J</code> from such
+curves.</p></li>
+<li><p>Some curves do not have values of <code>Ap</code>. This means
+that no points were identified as being limited by TPU. It is not
+possible to estimate values of <code>Tp</code> from such
+curves.</p></li>
+<li><p>One curve is almost entirely limited by Rubisco activity. Based
+on its values of <code>Ci</code>, it seems that this plant’s stomata did
+not fully open during the measurement, almost fully restricting the
+measured assimilation values to the Rubisco-limited range. For this
+curve, the optimizer identified just one point as being
+RuBP-regeneration-limited, so the associated value of <code>J</code> may
+not be reliable.</p></li>
+</ul>
+<p>It is typical that some parameters cannot be estimated from some
+<em>A-C<sub>i</sub></em> curves. This is an unavoidable consquence of
+the inherent variability between plant leaves.</p>
 <p>Checking the residuals is also a powerful way to gauge the quality of
 a fit. The output from <code>fit_c3_aci</code> includes the residuals
 (calculated as <code>A - A_fit</code>) in its output, so it is easy to
 plot them:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the residuals</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
@@ -842,16 +855,55 @@ to reproduce the measured values well.</p>
 <h2 id="examining-the-results">Examining the Results<a class="anchor" aria-label="anchor" href="#examining-the-results"></a>
 </h2>
 <div class="section level3">
-<h3 id="visualizing-average-fit-parameters">Visualizing Average Fit Parameters<a class="anchor" aria-label="anchor" href="#visualizing-average-fit-parameters"></a>
+<h3 id="accessing-best-fit-estimates-and-confidence-intervals">Accessing Best-Fit Estimates and Confidence Intervals<a class="anchor" aria-label="anchor" href="#accessing-best-fit-estimates-and-confidence-intervals"></a>
 </h3>
-<p>Having performed the fits, we can now take a look at the fitted
-parameter values, which are stored in
-<code>c3_aci_results$parameters</code>, another <code>exdf</code>
-object. One way to do this is by using the
-<code>barchart_with_errorbars</code> function from <code>PhotoGEA</code>
-to create barcharts of the average values for each species, such as the
-following example showing the fitted values of <code>Vcmax</code>:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<p>Each fit returns best-fit values and confidence limits for each
+parameter, which are stored in <code>c3_aci_results$parameters</code>,
+another <code>exdf</code> object. For example, we can look at the
+estimated
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>
+values from each curve as follows:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># View values of J from each fit</span></span>
+<span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'J_at_25_lower'</span>, <span class="st">'J_at_25'</span>, <span class="st">'J_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;       curve_identifier J_at_25_lower  J_at_25 J_at_25_upper</span></span>
+<span><span class="co">#&gt; 1 ripe1 - soybean - 5a      183.4704       NA           Inf</span></span>
+<span><span class="co">#&gt; 2  ripe1 - tobacco - 1      233.0200 240.2729      247.5259</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2      204.0791 211.6087      219.1383</span></span>
+<span><span class="co">#&gt; 4  ripe2 - soybean - 1      160.0126       NA           Inf</span></span>
+<span><span class="co">#&gt; 5 ripe2 - soybean - 5b      152.3074 160.9141      169.5208</span></span>
+<span><span class="co">#&gt; 6  ripe2 - tobacco - 4      166.3857       NA           Inf</span></span></code></pre></div>
+<p>Here we can see that some curves have an upper limit of infinity
+(<code>Inf</code>) and a best-fit value of “not available”
+(<code>NA</code>). Comparing this table to the figure showing the fits,
+we can see that these are the curves where one or fewer points are
+limited by RuBP regeneration. For these curves, values of <code>J</code>
+cannot be reliably estimated, so <code>fit_c3_aci</code> returns a value
+of <code>NA</code> for <code>J_at_25</code>.</p>
+<p>In contrast, each curve has an associated value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+with a finite confidence interval:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># View values of Vcmax from each fit</span></span>
+<span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'Vcmax_at_25_lower'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vcmax_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;       curve_identifier Vcmax_at_25_lower Vcmax_at_25 Vcmax_at_25_upper</span></span>
+<span><span class="co">#&gt; 1 ripe1 - soybean - 5a          96.90012   103.76130         111.42321</span></span>
+<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         143.54375   152.22336         166.48570</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         117.99127   126.80601         135.62073</span></span>
+<span><span class="co">#&gt; 4  ripe2 - soybean - 1         102.06632   108.82793         121.10386</span></span>
+<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         105.28716   122.01141         138.73517</span></span>
+<span><span class="co">#&gt; 6  ripe2 - tobacco - 4          89.34372    93.87686          99.47903</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="visualizing-average-best-fit-parameters">Visualizing Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#visualizing-average-best-fit-parameters"></a>
+</h3>
+<p>We can also visualize the best-fit parameters using plots. One way to
+do this is by using the <code>barchart_with_errorbars</code> function
+from <code>PhotoGEA</code> to create barcharts of the average values for
+each species. This function will ignore any <code>NA</code> values from
+curves where a parameter could not be reliably estimated, and the error
+bars will show the standard error of the mean for each species.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a barchart showing average Vcmax values</span></span>
 <span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
@@ -862,74 +914,25 @@ following example showing the fitted values of <code>Vcmax</code>:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/vcmax_barchart-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Another option is to create box-whisper plots using the
-<code>bwplot</code> function from the <code>lattice</code> package. Here
-we use this function to show values of <code>J</code>:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Make a boxplot showing the distribution of J values</span></span>
+<code>bwplot</code> function from the <code>lattice</code> package:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Make a boxplot showing the distribution of Vcmax values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">J_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
+<span>  <span class="va">Vcmax_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">180</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'J at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">J_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/j_bwplot-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/vcmax_bwplot-1.png" width="720" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
-<h3 id="accessing-raw-and-average-values-of-fit-parameters">Accessing Raw and Average Values of Fit Parameters<a class="anchor" aria-label="anchor" href="#accessing-raw-and-average-values-of-fit-parameters"></a>
+<h3 id="calculating-average-best-fit-parameters">Calculating Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#calculating-average-best-fit-parameters"></a>
 </h3>
-<p>We can also take a look at the raw numbers of the fitted parameters
-and their average values. The <code>c3_aci_results$parameters</code>
-object contains many columns but we only care about a few of them. We
-can view them as follows:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># View the C3 parameters</span></span>
-<span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_parameters</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   instrument [UserDefCon] (NA) species [UserDefCon] (NA) plot [UserDefCon] (NA)</span></span>
-<span><span class="co">#&gt; 1                        ripe1                   soybean                     5a</span></span>
-<span><span class="co">#&gt; 2                        ripe1                   tobacco                      1</span></span>
-<span><span class="co">#&gt; 3                        ripe1                   tobacco                      2</span></span>
-<span><span class="co">#&gt; 4                        ripe2                   soybean                      1</span></span>
-<span><span class="co">#&gt; 5                        ripe2                   soybean                     5b</span></span>
-<span><span class="co">#&gt; 6                        ripe2                   tobacco                      4</span></span>
-<span><span class="co">#&gt;   Vcmax_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                         103.76131</span></span>
-<span><span class="co">#&gt; 2                                         152.22329</span></span>
-<span><span class="co">#&gt; 3                                         126.80601</span></span>
-<span><span class="co">#&gt; 4                                         108.91878</span></span>
-<span><span class="co">#&gt; 5                                         122.01129</span></span>
-<span><span class="co">#&gt; 6                                          93.87769</span></span>
-<span><span class="co">#&gt;   J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      202.7476</span></span>
-<span><span class="co">#&gt; 2                                      240.2729</span></span>
-<span><span class="co">#&gt; 3                                      211.6087</span></span>
-<span><span class="co">#&gt; 4                                            NA</span></span>
-<span><span class="co">#&gt; 5                                      160.9142</span></span>
-<span><span class="co">#&gt; 6                                            NA</span></span>
-<span><span class="co">#&gt;   Rd_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                      0.8482917</span></span>
-<span><span class="co">#&gt; 2                                      2.3279143</span></span>
-<span><span class="co">#&gt; 3                                      1.9864791</span></span>
-<span><span class="co">#&gt; 4                                      2.1702846</span></span>
-<span><span class="co">#&gt; 5                                      2.7885614</span></span>
-<span><span class="co">#&gt; 6                                      1.5785789</span></span>
-<span><span class="co">#&gt;   Tp [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                       NA</span></span>
-<span><span class="co">#&gt; 2                                       NA</span></span>
-<span><span class="co">#&gt; 3                                       NA</span></span>
-<span><span class="co">#&gt; 4                                 12.99728</span></span>
-<span><span class="co">#&gt; 5                                       NA</span></span>
-<span><span class="co">#&gt; 6                                 14.97514</span></span></code></pre></div>
-<p>Alternatively, we can extract average values of the parameters for
-each species using the <code>basic_stats</code> function from
-<code>PhotoGEA</code>:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<p>We can also calculate average values and standard errors of the
+best-fit parameters for each species using the <code>basic_stats</code>
+function from <code>PhotoGEA</code>:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute the average and standard error of each parameter for each species</span></span>
 <span><span class="va">c3_aci_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="st">'species'</span><span class="op">)</span></span>
 <span></span>
@@ -938,43 +941,26 @@ each species using the <code>basic_stats</code> function from
 <span>  <span class="st">'species'</span>,</span>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
 <span>  <span class="st">'J_at_25_avg'</span>, <span class="st">'J_at_25_stderr'</span>,</span>
-<span>  <span class="st">'Rd_at_25_avg'</span>, <span class="st">'Rd_at_25_stderr'</span>,</span>
+<span>  <span class="st">'RL_at_25_avg'</span>, <span class="st">'RL_at_25_stderr'</span>,</span>
 <span>  <span class="st">'Tp_avg'</span>, <span class="st">'Tp_stderr'</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   species [UserDefCon] (NA)</span></span>
-<span><span class="co">#&gt; 1                   soybean</span></span>
-<span><span class="co">#&gt; 2                   tobacco</span></span>
-<span><span class="co">#&gt;   Vcmax_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              111.5638</span></span>
-<span><span class="co">#&gt; 2                                              124.3023</span></span>
-<span><span class="co">#&gt;   Vcmax_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                 5.431776</span></span>
-<span><span class="co">#&gt; 2                                                16.889382</span></span>
-<span><span class="co">#&gt;   J_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                NA</span></span>
-<span><span class="co">#&gt; 2                                                NA</span></span>
-<span><span class="co">#&gt;   J_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                                   NA</span></span>
-<span><span class="co">#&gt; 2                                                   NA</span></span>
-<span><span class="co">#&gt;   Rd_at_25_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                           1.935713</span></span>
-<span><span class="co">#&gt; 2                                           1.964324</span></span>
-<span><span class="co">#&gt;   Rd_at_25_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                             0.5722557</span></span>
-<span><span class="co">#&gt; 2                                             0.2165979</span></span>
-<span><span class="co">#&gt;   Tp_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                           NA</span></span>
-<span><span class="co">#&gt; 2                                           NA</span></span>
-<span><span class="co">#&gt;   Tp_stderr [fit_c3_aci] (micromol m^(-2) s^(-1))</span></span>
-<span><span class="co">#&gt; 1                                              NA</span></span>
-<span><span class="co">#&gt; 2                                              NA</span></span></code></pre></div>
-<p>Of course, more advanced statistical tests to check for differences
-between groups can also be performed within R using other packages such
-as <code>onewaytests</code> or <code>DescTools</code>. Alternatively,
-the parameter values can be exported to a comma-separated-value (CSV)
-file and analyzed in another software environment like
-<code>jmp</code>.</p>
+<span></span>
+<span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span>
+<span><span class="co">#&gt;   species Vcmax_at_25_avg Vcmax_at_25_stderr J_at_25_avg J_at_25_stderr</span></span>
+<span><span class="co">#&gt; 1 soybean        111.5335           5.439266    160.9141             NA</span></span>
+<span><span class="co">#&gt; 2 tobacco        124.3021          16.889650    225.9408       14.33209</span></span>
+<span><span class="co">#&gt;   RL_at_25_avg RL_at_25_stderr   Tp_avg Tp_stderr</span></span>
+<span><span class="co">#&gt; 1     1.934000       0.5719046 12.99084        NA</span></span>
+<span><span class="co">#&gt; 2     1.964341       0.2165851 14.97514        NA</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="other-ideas-for-synthesizing-results">Other Ideas for Synthesizing Results<a class="anchor" aria-label="anchor" href="#other-ideas-for-synthesizing-results"></a>
+</h3>
+<p>Statistical tests to check for differences between groups can be
+performed within R using other packages such as <code>onewaytests</code>
+or <code>DescTools</code>. Alternatively, the parameter values can be
+exported to a comma-separated-value (CSV) file and analyzed in another
+software environment like <code>jmp</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -994,7 +980,7 @@ modified so they point to your Licor files. One way to do this in your
 own script is to simply write out relative or absolute paths to the
 files you wish to load. For example, you could replace the previous
 definition of <code>file_paths</code> with this one:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'myfile1.xlsx'</span>,        <span class="co"># `myfile1.xlsx` must be in the current working directory</span></span>
@@ -1007,7 +993,7 @@ where you can interactively select a set of files. Sometimes this is
 more convenient than writing out file paths or names. For example, you
 could replace the previous definition of <code>file_paths</code> with
 this one:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Unfortunately, <code>choose_input_licor_files</code> is only
@@ -1035,42 +1021,29 @@ remove problematic points if they seem to cause problems with the
 fits.</p>
 </div>
 <div class="section level3">
-<h3 id="tp-limitations">Tp Limitations<a class="anchor" aria-label="anchor" href="#tp-limitations"></a>
-</h3>
-<p>In this example, we consider triose phosphate utilization as a factor
-that may possibly limit assimilation. However, as discussed in <a href="#fitting-licor-data">Fitting Licor Data</a>, it is also possible
-to remove this potential limitation from the model by fixing
-<code>Tp</code> to a high value and only fitting <code>J</code>,
-<code>Rd</code>, and <code>Vcmax</code>. Often it is wise to first try
-fitting a set of curves without <code>Tp</code> limitations, and only
-consider allowing <code>Tp</code> limitations if the resulting fits are
-not good.</p>
-</div>
-<div class="section level3">
-<h3 id="averages-and-standard-errors">Averages and Standard Errors<a class="anchor" aria-label="anchor" href="#averages-and-standard-errors"></a>
-</h3>
-<p>Depending on how your data is organized, you may want to change the
-column used to divide the data when calculating averages and standard
-errors.</p>
-</div>
-<div class="section level3">
 <h3 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a>
 </h3>
 <p>You may need to change the axis limits in some or all of the plots.
 Alternatively, you can remove them, allowing <code>xyplot</code> to
 automatically choose them for you.</p>
+<p>You may also want to consider using the <code>pdf_print</code>
+function from <code>PhotoGEA</code> to save some or all of your plots as
+PDFs. See the help page for more info: <code><a href="../reference/pdf_print.html">?pdf_print</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="saving-results">Saving Results<a class="anchor" aria-label="anchor" href="#saving-results"></a>
 </h3>
-<p>You may want to use <code>write.csv</code> to save some or all of the
-fitting results as <code>csv</code> files. For example, the following
-commands will allow you to interactively choose output filenames for the
-resulting <code>csv</code> files:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">c3_aci_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>You may want to use <code>write.csv.exdf</code> to save some or all
+of the fitting results as CSV files. When writing the contents of an
+<code>exdf</code> object to a CSV file, using
+<code>write.csv.exdf</code> rather than <code>write.csv</code> will
+ensure that units are included with each column.</p>
+<p>For example, the following commands will allow you to interactively
+choose output filenames for the resulting CSV files:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c3_aci_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1082,7 +1055,7 @@ copy/paste into a text file to initialize your own script. Annotation
 has also been added to clearly indicate the four steps involved in data
 analysis, as described in the <a href="developing_a_data_analysis_pipeline.html">Developing a Data
 Analysis Pipeline</a> vignette.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###</span></span>
 <span><span class="co">### PRELIMINARIES:</span></span>
 <span><span class="co">### Loading packages, defining constants, creating helping functions, etc.</span></span>
@@ -1204,6 +1177,10 @@ Analysis Pipeline</a> vignette.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">## IMPORTANT: When analyzing your own files, it is not advised to remove any</span></span>
+<span><span class="co">## points for the initial fits. Only remove unstable or unusual points if it is</span></span>
+<span><span class="co">## necessary in order to get good fits.</span></span>
+<span></span>
 <span><span class="co"># Only keep points where stability was achieved</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
@@ -1239,6 +1216,10 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_sharkey</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Fit the C3 A-Ci curves</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
@@ -1247,17 +1228,6 @@ Analysis Pipeline</a> vignette.</p>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot the C3 A-Ci fits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A</span> <span class="op">+</span> <span class="va">A_fit</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the residuals</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
@@ -1275,6 +1245,12 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">### Using plots and statistics to help draw conclusions from the data</span></span>
 <span><span class="co">###</span></span>
 <span></span>
+<span><span class="co"># View values of J from each fit</span></span>
+<span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'J_at_25_lower'</span>, <span class="st">'J_at_25'</span>, <span class="st">'J_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># View values of Vcmax from each fit</span></span>
+<span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'Vcmax_at_25_lower'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vcmax_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
 <span><span class="co"># Make a barchart showing average Vcmax values</span></span>
 <span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
 <span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
@@ -1284,23 +1260,14 @@ Analysis Pipeline</a> vignette.</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Make a boxplot showing the distribution of J values</span></span>
+<span><span class="co"># Make a boxplot showing the distribution of Vcmax values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">bwplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">J_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
+<span>  <span class="va">Vcmax_at_25</span> <span class="op">~</span> <span class="va">species</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">180</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'J at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">J_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># View the C3 parameters</span></span>
-<span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'instrument'</span>, <span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'J_at_25'</span>, <span class="st">'Rd_at_25'</span>, <span class="st">'Tp'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">c3_aci_parameters</span> <span class="op">&lt;-</span></span>
-<span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_parameters</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Compute the average and standard error of each parameter for each species</span></span>
 <span><span class="va">c3_aci_averages</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/basic_stats.html">basic_stats</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="st">'species'</span><span class="op">)</span></span>
@@ -1310,10 +1277,11 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="st">'species'</span>,</span>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
 <span>  <span class="st">'J_at_25_avg'</span>, <span class="st">'J_at_25_stderr'</span>,</span>
-<span>  <span class="st">'Rd_at_25_avg'</span>, <span class="st">'Rd_at_25_stderr'</span>,</span>
+<span>  <span class="st">'RL_at_25_avg'</span>, <span class="st">'RL_at_25_stderr'</span>,</span>
 <span>  <span class="st">'Tp_avg'</span>, <span class="st">'Tp_stderr'</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span></span>
+<span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1323,6 +1291,14 @@ Analysis Pipeline</a> vignette.</p>
 Caemmerer, S. von. 2000. <em>Biochemical <span>Models</span> of
 <span>Leaf</span> <span>Photosynthesis</span></em>. CSIRO Publishing. <a href="https://doi.org/10.1071/9780643103405" class="external-link">https://doi.org/10.1071/9780643103405</a>.
 </div>
+<div id="ref-lochocki_widely_2024" class="csl-entry">
+Lochocki, Edward B., and Justin M. McGrath. 2024. <span>“Widely
+<span>Used</span> <span>Variants</span> of the
+<span>Farquhar</span>-von-<span>Caemmerer</span>-<span>Berry</span>
+<span>Model</span> <span>Can</span> <span>Cause</span>
+<span>Errors</span> in <span>Parameter</span> <span>Estimation</span>
+and <span>Simulations</span>.”</span> <em>Under Review</em>.
+</div>
 <div id="ref-sharkey_fitting_2007" class="csl-entry">
 Sharkey, Thomas D., Carl J. Bernacchi, Graham D. Farquhar, and Eric L.
 Singsaas. 2007. <span>“Fitting Photosynthetic Carbon Dioxide Response
@@ -1331,7 +1307,7 @@ Environment</em> 30 (9): 1035–40. <a href="https://doi.org/10.1111/j.1365-3040
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -1342,15 +1318,15 @@ Environment</em> 30 (9): 1035–40. <a href="https://doi.org/10.1111/j.1365-3040
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

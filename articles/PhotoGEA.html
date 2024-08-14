@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="PhotoGEA">
 <title>Getting Started With PhotoGEA • PhotoGEA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,72 +14,54 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started With PhotoGEA">
-<meta property="og:description" content="PhotoGEA">
-<meta property="og:image" content="https://eloch216.github.io/PhotoGEA/logo.svg">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started With PhotoGEA">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     padding-top: 70px;
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item">
-  <a class="nav-link" href="../articles/PhotoGEA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="active nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a>
-    <a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a>
-    <a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a>
-    <a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a>
-    <a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a>
-    <a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a>
-    <a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/eloch216/PhotoGEA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -92,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Getting Started With PhotoGEA</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/HEAD/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
       <div class="d-none name"><code>PhotoGEA.Rmd</code></div>
     </div>
 
@@ -176,7 +157,8 @@ curve:</p>
 <span>    <span class="st">'CO2_r_sp'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Specify separate mesophyll conductance values for each species</span></span>
+<span><span class="co"># Specify separate mesophyll conductance values for each species; here we use</span></span>
+<span><span class="co"># arbitrary values since this is just an example</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>, <span class="st">'mol m^(-2) s^(-1) bar^(-1)'</span>,</span>
 <span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
@@ -192,6 +174,10 @@ curve:</p>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_bernacchi</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
+<span><span class="co"># results from this fit are always identical</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Fit all curves in the data set</span></span>
 <span><span class="va">aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
@@ -202,14 +188,13 @@ curve:</p>
 <p>When this document was generated, evaluating this code required the
 following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;  12.497   0.023  12.520</span></span></code></pre>
+<span><span class="co">#&gt;  13.126   0.050  13.176</span></span></code></pre>
 <p>The timing results may vary depending on the particular machine used
 to run the code. Nevertheless, this is a small time investment for an
-advanced algorithm that uses maximum likeliood fitting and
-derivative-free optimizers for robust fitting, and calculates confidence
-intervals to determine which estimated parameter values are
-reliable.</p>
-<p>This example contains 12 commands, so it certainly isn’t short;
+advanced algorithm that uses derivative-free optimizers for robust
+fitting and calculates nonparametric confidence intervals to determine
+which estimated parameter values are reliable.</p>
+<p>This example contains 13 commands, so it certainly isn’t short;
 however, a close look reveals that much of the commands are general and
 would apply to <em>any</em> set of C<sub>3</sub> response curves. In
 fact, only a few parts would need to be modified, such as the list of
@@ -221,17 +206,25 @@ work smarter, not harder!</p>
 <div class="section level3">
 <h3 id="viewing-the-results">Viewing the Results<a class="anchor" aria-label="anchor" href="#viewing-the-results"></a>
 </h3>
-<p>Having fit the response curves, it is also possible to view the fits
-and the extracted parameters. For example, we can plot the measured
-values of net assimilation (black circles), the fitted values of net
-assimilation (<code>An</code>), and each of the limiting assimilation
-rates calculated during the fitting procedure: the Rubisco limited rate
-(<code>Ac</code>), the RuBP regeneration limited rate (<code>Aj</code>),
-and the triose phosphate utilization limited rate (<code>Ap</code>).</p>
+<p>Having fit the response curves, it is also possible to view the fits,
+the parameter estimates, and their confidence intervals.
+<code>PhotoGEA</code> provides several tools for doing this, which
+enable users to check the fit quality and ensure that only reliable
+parameter estimates are used in subsequent analysis.</p>
+<p>We can plot the measured values of net assimilation (black circles),
+the fitted values of net assimilation (<code>An</code>), and each of the
+limiting assimilation rates calculated during the fitting procedure: the
+Rubisco limited rate (<code>Ac</code>), the RuBP regeneration limited
+rate (<code>Aj</code>), and the triose phosphate utilization (TPU)
+limited rate (<code>Ap</code>). This is a basic quality check where we
+can make sure that the fits make sense and look believable:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">aci_results</span>, <span class="st">'curve_id'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="PhotoGEA_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Another way to check the quality of the fits is to plot the
+<p>In this figure, some curves are missing one or more of the potential
+limiting rates. When this occurs, it means that no points in the curve
+were found to be limited by that process.</p>
+<p>Another way to check the overall quality of the fits is to plot the
 residuals, which should be randomly distributed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
@@ -244,10 +237,30 @@ residuals, which should be randomly distributed:</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate residual (measured - fitted)\n('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="PhotoGEA_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>It is also possible to plot one or more of the fitting parameters
-averaged across species in a bar chart with error bars; here we plot
-values of <code>Vcmax</code> at 25 degrees C.</p>
+<p>For individual parameters, we can take a look at the best-fit values
+and the associated confidence intervals. Here is an example showing
+values of <code>Tp</code>, the maximum rate of triose phosphate
+utilization.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_id'</span>, <span class="st">'Tp_lower'</span>, <span class="st">'Tp'</span>, <span class="st">'Tp_upper'</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;       curve_id  Tp_lower       Tp Tp_upper</span></span>
+<span><span class="co">#&gt; 1  soybean - 1 10.068918 10.75812 11.39151</span></span>
+<span><span class="co">#&gt; 2 soybean - 5a      -Inf       NA      Inf</span></span>
+<span><span class="co">#&gt; 3 soybean - 5b      -Inf       NA      Inf</span></span>
+<span><span class="co">#&gt; 4  tobacco - 1      -Inf       NA      Inf</span></span>
+<span><span class="co">#&gt; 5  tobacco - 2  3.654579       NA      Inf</span></span>
+<span><span class="co">#&gt; 6  tobacco - 4 12.959903 13.55359 14.14744</span></span></code></pre></div>
+<p>Some of these estimates have an upper limit of <code>Inf</code> and a
+best estimate of <code>NA</code>. A comparison with the fits shown above
+indicates that for these curves, insufficiently many points were found
+to be TPU-limited, preventing a reliable estimate of
+<code>Tp</code>.</p>
+<p>It is also possible to plot the best-fit values of a parameter
+averaged across subsets of the data in a bar chart, where the error bars
+represent the standard error of the mean. Any values of <code>NA</code>
+will be excluded. Here we plot values of <code>Vcmax</code> at 25
+degrees C for each species.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
 <span>  <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
 <span>  <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
@@ -255,7 +268,7 @@ values of <code>Vcmax</code> at 25 degrees C.</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -304,7 +317,7 @@ other packages to extend the processing capabilities of
 </li>
 </ul>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -315,15 +328,15 @@ other packages to extend the processing capabilities of
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
