@@ -243,7 +243,8 @@ if (PERFORM_CALCULATIONS) {
     check_response_curve_data(
         combined_info,
         c(EVENT_COLUMN_NAME, REP_COLUMN_NAME),
-        NUM_OBS_IN_SEQ
+        NUM_OBS_IN_SEQ,
+        error_on_failure = FALSE
     )
 
     # Organize the data, keeping only the desired measurement points
@@ -323,6 +324,9 @@ if (PERFORM_CALCULATIONS) {
     combined_info <-
       calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
 
+    combined_info <-
+      calculate_peaked_gaussian(combined_info, c4_peaked_gaussian_von_caemmerer)
+
     # Include gm values
     combined_info <- if (USE_GM_TABLE) {
       set_variable(
@@ -356,7 +360,6 @@ if (PERFORM_CALCULATIONS) {
     # Calculate intrinsic water-use efficiency
     combined_info <- calculate_wue(combined_info)
 
-
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
@@ -373,6 +376,10 @@ if (PERFORM_CALCULATIONS) {
       )$main_data
     }
 
+    # The default solver uses randomness, so set a seed to ensure these fitting
+    # results are the same every time
+    set.seed(1234)
+
     # Perform A-Ci fits
     fit_result <- consolidate(by(
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
@@ -380,9 +387,7 @@ if (PERFORM_CALCULATIONS) {
         fit_c4_aci,
         OPTIM_FUN = solver,
         Ca_atmospheric = 420,
-        alpha_psii = 0,
-        gbs = 0,
-        Rm_frac = 1
+        fit_options = list(alpha_psii = 0, gbs = 0, Rm_frac = 1)
     ))
 
     fit_result$parameters[, 'Vmax_at_25'] <-

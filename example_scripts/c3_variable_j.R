@@ -169,11 +169,12 @@ licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
 # Check data
-#check_response_curve_data(
-#  licor_data,
-#  'curve_identifier',
-#  driving_column = 'CO2_r_sp'
-#)
+check_response_curve_data(
+  licor_data,
+  'curve_identifier',
+  driving_column = 'CO2_r_sp',
+  error_on_failure = FALSE
+)
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -352,14 +353,8 @@ c3_aci_results <- consolidate(by(
   fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   OPTIM_FUN = solver,                           # The optimization algorithm to use
-  lower = list(tau = 0.2),
-  upper = list(tau = 0.6),
   fit_options = FIT_OPTIONS,
-  gmc_max = MAX_GM,
-  cj_crossover_min = 20,                        # Wj must be > Wc when Cc < this value (ppm)
-  cj_crossover_max = 800,                       # Wj must be < Wc when Cc > this value (ppm)
-  calculate_confidence_intervals = TRUE,
-  remove_unreliable_param = 2
+  gmc_max = MAX_GM
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
