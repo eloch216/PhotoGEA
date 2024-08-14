@@ -27,12 +27,13 @@
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    require_positive_gmc = 'all',
+    hard_constraints = 0,
+    require_positive_gmc = 'positive_a',
     gmc_max = Inf
   )
 }
@@ -129,9 +130,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -157,6 +158,11 @@
     restriction will not be applied.
   }
 
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}} and
+    \code{\link{calculate_c3_variable_j}}; see those functions for more details.
+  }
+
   \item{require_positive_gmc}{
     A character string specifying the method to be used for requiring positive
     values of mesophyll conductance. Can be \code{'none'}, \code{'all'}, or
@@ -173,7 +179,7 @@
   When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
   method, it is necessary to define a function that calculates the likelihood
   of a given set of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25},
-  \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} values by
+  \code{RL_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} values by
   comparing a model prediction to a measured curve. This function will be passed
   to an optimization algorithm which will determine the values that produce the
   smallest error.
@@ -181,7 +187,7 @@
   The \code{error_function_c3_variable_j} returns such a function, which is
   based on a particular replicate and a set of fitting options. It is possible
   to just fit a subset of the available fitting parameters; by default, the
-  fitting parameters are \code{J_at_25}, \code{Rd_at_25}, \code{Tp},
+  fitting parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp},
   \code{tau}, and \code{Vcmax_at_25}. This behavior can be changed via the
   \code{fit_options} argument.
 
@@ -238,7 +244,7 @@
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
   default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{Rd_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
+  \code{RL_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
   order).
 }
 
@@ -271,7 +277,7 @@ error_fcn <- error_function_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, Rd_at_25 = 1, tau = 0.5, Tp = 15,
+# Evaluate the error for J_at_25 = 200, RL_at_25 = 1, tau = 0.5, Tp = 15,
 # Vcmax_at_25 = 100
 error_fcn(c(200, 1, 0.5, 15, 100))
 

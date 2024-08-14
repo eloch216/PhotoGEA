@@ -17,10 +17,11 @@ error_function_c4_aci <- function(
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 0
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -45,7 +46,7 @@ error_function_c4_aci <- function(
     required_variables[[kp_column_name]]         <- 'microbar'
     required_variables[[pcm_column_name]]        <- 'microbar'
     required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
-    required_variables[[rd_norm_column_name]]    <- 'normalized to Rd at 25 degrees C'
+    required_variables[[rl_norm_column_name]]    <- 'normalized to RL at 25 degrees C'
     required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
 
@@ -71,7 +72,7 @@ error_function_c4_aci <- function(
                     X[1], # alpha_psii
                     X[2], # gbs
                     X[3], # Jmax_at_opt
-                    X[4], # Rd_at_25
+                    X[4], # RL_at_25
                     X[5], # Rm_frac
                     X[6], # Vcmax_at_25
                     X[7], # Vpmax_at_25
@@ -90,10 +91,11 @@ error_function_c4_aci <- function(
                     oxygen_column_name,
                     pcm_column_name,
                     qin_column_name,
-                    rd_norm_column_name,
+                    rl_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,
                     vpmax_norm_column_name,
+                    hard_constraints = hard_constraints,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )

@@ -27,7 +27,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
   )
 }
@@ -72,7 +72,7 @@
 
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
-    \code{micromol mol^(-1)} to be used when estimating \code{Rd}.
+    \code{micromol mol^(-1)} to be used when estimating \code{RL}.
   }
 
   \item{atp_use}{
@@ -116,9 +116,9 @@
     the units must be \code{percent}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -129,7 +129,7 @@
 }
 
 \details{
-  Here we estimate values of \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and
+  Here we estimate values of \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and
   \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult to
   estimate values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, and
   \code{Gamma_star} from a curve, so they must be supplied beforehand. For more
@@ -137,16 +137,16 @@
   \code{\link{calculate_c3_assimilation}}.
 
   \itemize{
-    \item \strong{Estimating Rd}: Regardless of which process is limiting at low
-          \code{Cc}, it is always true that \code{An = -Rd} when
+    \item \strong{Estimating RL}: Regardless of which process is limiting at low
+          \code{Cc}, it is always true that \code{An = -RL} when
           \code{Cc = Gamma_star_ag}. Here we make a linear fit of the measured
           \code{An} vs. \code{Cc} values, and evaluate it at at
-          \code{Cc = Gamma_star_ag} to estimate \code{Rd}. If the linear fit
-          predicts a negative value for \code{Rd}, we use a typical value
+          \code{Cc = Gamma_star_ag} to estimate \code{RL}. If the linear fit
+          predicts a negative value for \code{RL}, we use a typical value
           instead (0.5 \code{micromol m^(-2) s^(-1)}).
-    \item \strong{Estimating Vc}: Once an estimate for \code{Rd} has been found,
+    \item \strong{Estimating Vc}: Once an estimate for \code{RL} has been found,
           the RuBP carboxylation rate \code{Vc} can be estimated using
-          \code{Vc = (An + Rd) / (1 - Gamma_star_ag / Cc)}. This is useful for
+          \code{Vc = (An + RL) / (1 - Gamma_star_ag / Cc)}. This is useful for
           the remaining parameter estimates.
     \item \strong{Estimating Vcmax}: An estimate for \code{Vcmax} can be
           obtained by solving the equation for \code{Wc} for \code{Vcmax}, and
@@ -162,7 +162,7 @@
           approach followed for \code{Vcmax}.
   }
 
-  For the parameter values estimated above, the values of \code{Rd_norm},
+  For the parameter values estimated above, the values of \code{RL_norm},
   \code{Vcmax_norm}, and \code{J_norm} are used to convert the values at leaf
   temperature to the values at 25 degrees C.
 }
@@ -172,7 +172,7 @@
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with eight elements, representing the
   values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{Gamma_star},
-  \code{J_at_25}, \code{Rd_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that
+  \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that
   order).
 }
 

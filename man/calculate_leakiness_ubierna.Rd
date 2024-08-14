@@ -23,7 +23,7 @@
     csurface_column_name = 'Csurface',
     delta_c13_r_column_name = 'delta_C13_r',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
-    rd_column_name = 'Rd',
+    rl_column_name = 'RL',
     t_column_name = 't'
   )
 }
@@ -74,7 +74,7 @@
     discrimination values in \code{ppt}.
   }
 
-  \item{rd_column_name}{
+  \item{rl_column_name}{
     The name of the column in \code{exdf_obj} that contains the rate of day
     respiration in \code{micromol m^(-2) s^(-1)}.
   }

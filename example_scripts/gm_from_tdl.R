@@ -396,7 +396,7 @@ if (PERFORM_CALCULATIONS) {
     # Specify respiration values
     licor_files <- set_variable(
         licor_files,
-        'Rd',
+        'RL',
         'micromol m^(-2) s^(-1)',
         'gm_from_tdl',
         abs(DEFAULT_RESPIRATION), # this is the default value of respiration

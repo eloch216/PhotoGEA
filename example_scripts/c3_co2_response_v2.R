@@ -174,7 +174,13 @@ if (CO2_CONTROL == 'CO2_s_sp') {
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-#check_response_curve_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+check_response_curve_data(
+    licor_data,
+    'curve_identifier',
+    NUM_OBS_IN_SEQ,
+    'CO2_r_sp',
+    error_on_failure = FALSE
+)
 
 # Remove points with duplicated CO2 setpoint values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -359,15 +365,16 @@ licor_data <- calculate_wue(licor_data)
 # Truncate the Ci range for fitting
 licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]
 
+# The default solver uses randomness, so set a seed to ensure these fitting
+# results are the same every time
+set.seed(1234)
+
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
-  OPTIM_FUN = optimizer_deoptim(200),
-  calculate_confidence_intervals = TRUE,
-  remove_unreliable_param = TRUE
+  Ca_atmospheric = 420                          # The atmospheric CO2 concentration
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -535,7 +542,7 @@ aci_parameters <- c3_aci_results$parameters$main_data
 
 if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
-    'Vcmax_at_25', 'Rd_at_25', 'J_at_25', 'Tp'
+    'Vcmax_at_25', 'RL_at_25', 'J_at_25', 'Tp'
   )
 
   aci_parameters_list <- by(
@@ -594,9 +601,9 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = all_samples_one_point[, 'lm_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Warren) (dimensionless)",    ylim = c(0, 1.0), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'ls_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Warren) (dimensionless)",      ylim = c(0, 1.0), main = boxplot_caption),
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 200), main = fitting_caption),
-      list(Y = aci_parameters[, 'Rd_at_25'],                 X = x_v, xlab = xl, ylab = "Rd at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 3),   main = fitting_caption),
+      list(Y = aci_parameters[, 'RL_at_25'],                 X = x_v, xlab = xl, ylab = "RL at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 3),   main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 225), main = fitting_caption),
-      list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                           ylim = c(0, 30),  main = fitting_caption)
+      list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                            ylim = c(0, 30),  main = fitting_caption)
     )
 
     if (INCLUDE_FLUORESCENCE) {

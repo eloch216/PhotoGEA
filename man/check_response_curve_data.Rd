@@ -16,7 +16,8 @@
     expected_npts = 0,
     driving_column = NULL,
     driving_column_tolerance = 1.0,
-    col_to_ignore_for_inf = 'gmc'
+    col_to_ignore_for_inf = 'gmc',
+    error_on_failure = TRUE
   )
 }
 
@@ -58,13 +59,23 @@
     ignored when performing this check. To completely disable this check, set
     \code{col_to_ignore_for_inf} to \code{NULL}.
   }
+
+  \item{error_on_failure}{
+    A logical value indicating whether to send an error message when an issue is
+    detected. See details below.
+  }
 }
 
 \details{
   This function makes a few basic checks to ensure that the Licor data includes
-  the expected information and does not include any mistakes. If a problem is
-  detected, it will be silent with no return value. It will perform the
-  following checks, some of which are optional:
+  the expected information and does not include any mistakes. If no problems are
+  detected, this function will be silent with no return value. If a problem is
+  detected and \code{error_on_failure} is \code{TRUE}, then it will print
+  information about the issue and throw an error; if a problem is detected and
+  \code{error_on_failure} is \code{FALSE}, then it will print information and
+  only throw a warning.
+
+  This function will perform the following checks, some of which are optional:
   \itemize{
     \item If \code{col_to_ignore_for_inf} is not \code{NULL}, no numeric columns
           in \code{licor_exdf} should have infinite values, with the exception

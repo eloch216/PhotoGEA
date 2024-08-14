@@ -29,11 +29,12 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    hard_constraints = 0
   )
 }
 
@@ -125,9 +126,9 @@
     the units must be \code{percent}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -151,6 +152,11 @@
     The maximim value of \code{Cc} (in ppm) where \code{Wj} is allowed to be
     smaller than \code{Wc}. If \code{cj_crossover_max} is set to \code{NA}, this
     restriction will not be applied.
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c3_assimilation}}; see that function
+    for more details.
   }
 }
 

@@ -118,7 +118,8 @@
   If \code{Ca_atmospheric} is outside the range of \code{Ca} values in
   \code{aci_exdf}, then the operating point cannot be reasonably estimated; in
   this case, a warning occurs and all calculated return values are set to
-  \code{NA}.
+  \code{NA}. If \code{Ca_atmospheric} is \code{NA}, all calculated return values
+  are set to \code{NA} but no warning occurs.
 }
 
 \examples{

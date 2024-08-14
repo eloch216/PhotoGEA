@@ -21,10 +21,11 @@ confidence_intervals_c4_aci <- function(
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 0
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -52,10 +53,11 @@ confidence_intervals_c4_aci <- function(
         oxygen_column_name,
         pcm_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
-        vpmax_norm_column_name
+        vpmax_norm_column_name,
+        hard_constraints
     )
 
     # Assemble lower, upper, and fit_options

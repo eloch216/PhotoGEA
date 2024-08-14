@@ -18,7 +18,7 @@
   List with 7 named elements that each represent a variable whose
   temperature-dependent value can be calculated using the Arrhenius equation:
   \itemize{
-    \item \code{Rd_norm}: The respiration rate (\code{Rd}) normalized to its
+    \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to its
           value at 25 degrees C.
     \item \code{Vcmax_norm}: The maximum rate of rubisco carboxylation
           (\code{Vcmax}) normalized to its value at 25 degrees C.
@@ -42,7 +42,7 @@
 }
 
 \source{
-  Some of these parameters (\code{Rd}, \code{Vcmax}, and \code{J}) are
+  Some of these parameters (\code{RL}, \code{Vcmax}, and \code{J}) are
   normalized to their values at 25 degrees C. \code{Vomax} is normalized to the
   value of \code{Vcmax} at 25 degrees C. These variables include \code{_norm} in
   their names to indicate this.

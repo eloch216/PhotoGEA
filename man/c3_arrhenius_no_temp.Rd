@@ -27,7 +27,7 @@
           (\code{Vcmax}) normalized to its value at 25 degrees C.
     \item \code{J_norm}: The electron transport rate (\code{J}) normalized to
           its value at 25 degrees C.
-    \item \code{Rd_norm}: The respiration rate (\code{Rd}) normalized to its
+    \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to its
           value at 25 degrees C.
   }
 
@@ -40,7 +40,7 @@
 }
 
 \source{
-  Some of these parameters (\code{Rd}, \code{Vcmax}, and \code{J}) are
+  Some of these parameters (\code{RL}, \code{Vcmax}, and \code{J}) are
   normalized to their values at 25 degrees C. These variables include
   \code{_norm} in their names to indicate this.
 

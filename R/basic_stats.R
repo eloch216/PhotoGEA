@@ -1,4 +1,4 @@
-basic_stats_chunk <- function(exdf_chunk) {
+basic_stats_chunk <- function(exdf_chunk, na.rm) {
     # Find the identifier columns and their names
     id_columns <- identifier_columns(exdf_chunk)
     id_column_names <- colnames(id_columns)
@@ -16,7 +16,7 @@ basic_stats_chunk <- function(exdf_chunk) {
     mean_list <- lapply(other_column_names, function(x) {
         column <- exdf_chunk[ , x]
         if (is.numeric(column)) {
-            mean(exdf_chunk[ , x])
+            mean(column, na.rm = na.rm)
         } else {
             NA
         }
@@ -27,14 +27,28 @@ basic_stats_chunk <- function(exdf_chunk) {
     sd_list <- lapply(other_column_names, function(x) {
         column <- exdf_chunk[ , x]
         if (is.numeric(column)) {
-            stats::sd(exdf_chunk[ , x])
+            stats::sd(column, na.rm = na.rm)
+        } else {
+            NA
+        }
+    })
+
+    # Get the number of non-NA points in all the non-id columns
+    n_list <- lapply(other_column_names, function(x) {
+        column <- exdf_chunk[ , x]
+        if (is.numeric(column)) {
+            if (na.rm) {
+                length(column[!is.na(column)])
+            } else {
+                length(column)
+            }
         } else {
             NA
         }
     })
 
     # Get the standard error of the mean for all the non-id columns
-    stderr_list <- lapply(sd_list, function(x) {x / sqrt(nrow(exdf_chunk))})
+    stderr_list <- lapply(seq_along(n_list), function(i) {sd_list[[i]] / sqrt(n_list[[i]])})
     names(stderr_list) <- paste0(other_column_names, '_stderr')
 
     # Create new exdf objects for the means and standard errors
@@ -58,7 +72,8 @@ basic_stats_chunk <- function(exdf_chunk) {
 
 basic_stats <- function(
     exdf_obj,
-    identifier_columns
+    identifier_columns,
+    na.rm = TRUE
 )
 {
     if (!is.exdf(exdf_obj)) {
@@ -79,7 +94,7 @@ basic_stats <- function(
     split_exdf <- split(exdf_obj, f, drop = TRUE)
 
     # Calculate the basic stats
-    stats_list <- lapply(split_exdf, basic_stats_chunk)
+    stats_list <- lapply(split_exdf, function(x) {basic_stats_chunk(x, na.rm)})
 
     # Restrict to common column names
     common_columns <- do.call(identify_common_columns, stats_list)

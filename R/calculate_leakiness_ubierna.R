@@ -8,7 +8,7 @@ calculate_leakiness_ubierna <- function(
     csurface_column_name = 'Csurface',
     delta_c13_r_column_name = 'delta_C13_r',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
-    rd_column_name = 'Rd',
+    rl_column_name = 'RL',
     t_column_name = 't'
 )
 {
@@ -25,7 +25,7 @@ calculate_leakiness_ubierna <- function(
     required_variables[[csurface_column_name]]      <- 'micromol mol^(-1)'
     required_variables[[delta_c13_r_column_name]]   <- 'ppt'
     required_variables[[delta_obs_tdl_column_name]] <- 'ppt'
-    required_variables[[rd_column_name]]            <- 'micromol m^(-2) s^(-1)'
+    required_variables[[rl_column_name]]            <- 'micromol m^(-2) s^(-1)'
     required_variables[[t_column_name]]             <- 'dimensionless'
 
     check_required_variables(exdf_obj, required_variables)
@@ -38,7 +38,7 @@ calculate_leakiness_ubierna <- function(
     CO2_s         <- exdf_obj[, co2_s_column_name]         # micromol / mol
     delta_C13_r   <- exdf_obj[, delta_c13_r_column_name]   # ppt
     Delta_obs_tdl <- exdf_obj[, delta_obs_tdl_column_name] # ppt
-    Rd            <- exdf_obj[, rd_column_name]            # micromol / m^2 / s
+    RL            <- exdf_obj[, rl_column_name]            # micromol / m^2 / s
     t             <- exdf_obj[, t_column_name]             # dimensionless
 
     # Get the values of some constants that are defined in `constants.R`
@@ -47,9 +47,9 @@ calculate_leakiness_ubierna <- function(
     delta_13c_growth <- ISOTOPE_CONSTANTS$delta_Ca_growth # ppt
     s                <- ISOTOPE_CONSTANTS$s               # ppt
 
-    # Rm is assumed to be proportional to Rd
+    # RLm is assumed to be proportional to RL
     Rm_frac <- 0.5
-    Rm <- Rd * Rm_frac # micromol / m^2 / s
+    RLm <- RL * Rm_frac # micromol / m^2 / s
 
     # Equation 21 from Ubierna et al. (2013). e_prime is the fractionation
     # during decarboxylation including measurement artefacts
@@ -60,9 +60,9 @@ calculate_leakiness_ubierna <- function(
     # photorespiratory fractionations
     phi_i_top <-
         ((1 - t) * Delta_obs_tdl * CO2_s - a_bar * (CO2_s - Ci)) / ((1 + t) * Ci) -
-        b_prime_4 + e_prime * Rm / (A + 0.5 * Rd) # ppt
+        b_prime_4 + e_prime * RLm / (A + 0.5 * RL) # ppt
 
-    phi_i_bottom <- b_prime_3 - s + e_prime * (Rm / (A + 0.5 * Rd) - Rd / (A + Rd)) # ppt
+    phi_i_bottom <- b_prime_3 - s + e_prime * (RLm / (A + 0.5 * RL) - RL / (A + RL)) # ppt
 
     phi_i <- phi_i_top / phi_i_bottom # dimensionless
 

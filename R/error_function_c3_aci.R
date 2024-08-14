@@ -12,11 +12,12 @@ error_function_c3_aci <- function(
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
-    cj_crossover_max = NA
+    cj_crossover_max = NA,
+    hard_constraints = 0
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -38,7 +39,7 @@ error_function_c3_aci <- function(
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
     required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
-    required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
+    required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
@@ -78,7 +79,7 @@ error_function_c3_aci <- function(
                     X[3], # alpha_s
                     X[4], # Gamma_star
                     X[5], # J_at_25
-                    X[6], # Rd_at_25
+                    X[6], # RL_at_25
                     X[7], # Tp
                     X[8], # Vcmax_at_25
                     atp_use,
@@ -90,9 +91,10 @@ error_function_c3_aci <- function(
                     kc_column_name,
                     ko_column_name,
                     oxygen_column_name,
-                    rd_norm_column_name,
+                    rl_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,
+                    hard_constraints = hard_constraints,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )

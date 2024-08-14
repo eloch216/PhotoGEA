@@ -1,14 +1,14 @@
 # Specify default fit settings
-c3_variable_j_lower       <- list(alpha_g = 0, alpha_old = 0,     alpha_s = 0,    Gamma_star = 0,        J_at_25 = 0,     Rd_at_25 = 0,     tau = 0,     Tp = 0,     Vcmax_at_25 = 0)
-c3_variable_j_upper       <- list(alpha_g = 1, alpha_old = 1,     alpha_s = 0.75, Gamma_star = 200,      J_at_25 = 1000,  Rd_at_25 = 100,   tau = 1,     Tp = 40,    Vcmax_at_25 = 1000)
-c3_variable_j_fit_options <- list(alpha_g = 0, alpha_old = 'fit', alpha_s = 0,    Gamma_star = 'column', J_at_25 = 'fit', Rd_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
+c3_variable_j_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  Gamma_star = -20,      J_at_25 = -50,   RL_at_25 = -10,   tau = -10,   Tp = -10,   Vcmax_at_25 = -50)
+c3_variable_j_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, Gamma_star = 200,      J_at_25 = 1000,  RL_at_25 = 100,   tau = 10,    Tp = 100,   Vcmax_at_25 = 1000)
+c3_variable_j_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  Gamma_star = 'column', J_at_25 = 'fit', RL_at_25 = 'fit', tau = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
 
-c3_variable_j_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'Rd_at_25', 'tau', 'Tp', 'Vcmax_at_25')
+c3_variable_j_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_variable_j <- function(
     replicate_exdf,
-    Ca_atmospheric,
+    Ca_atmospheric = NA,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
@@ -19,7 +19,7 @@ fit_c3_variable_j <- function(
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
@@ -33,11 +33,12 @@ fit_c3_variable_j <- function(
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    require_positive_gmc = 'all',
+    require_positive_gmc = 'positive_a',
     gmc_max = Inf,
     error_threshold_factor = 0.147,
+    hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = TRUE
+    remove_unreliable_param = 2
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -66,11 +67,12 @@ fit_c3_variable_j <- function(
         oxygen_column_name,
         phips2_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
         cj_crossover_max,
+        hard_constraints,
         require_positive_gmc,
         gmc_max
     )
@@ -121,7 +123,7 @@ fit_c3_variable_j <- function(
         oxygen_column_name,
         phips2_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         vcmax_norm_column_name
     )
 
@@ -145,7 +147,7 @@ fit_c3_variable_j <- function(
         best_X[1], # alpha_g
         best_X[3], # alpha_s
         best_X[4], # Gamma_star
-        best_X[6], # Rd_at_25
+        best_X[6], # RL_at_25
         best_X[7], # tau
         atp_use,
         nadph_use,
@@ -153,8 +155,9 @@ fit_c3_variable_j <- function(
         ci_column_name,
         phips2_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )
 
@@ -165,8 +168,8 @@ fit_c3_variable_j <- function(
     vj[, 'atp_use']    <- NULL
     vj[, 'Gamma_star'] <- NULL
     vj[, 'nadph_use']  <- NULL
-    vj[, 'Rd_at_25']   <- NULL
-    vj[, 'Rd_tl']      <- NULL
+    vj[, 'RL_at_25']   <- NULL
+    vj[, 'RL_tl']      <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -179,7 +182,7 @@ fit_c3_variable_j <- function(
         best_X[3], # alpha_s
         best_X[4], # Gamma_star
         best_X[5], # J_at_25
-        best_X[6], # Rd_at_25
+        best_X[6], # RL_at_25
         best_X[8], # Tp
         best_X[9], # Vcmax_at_25
         atp_use,
@@ -191,9 +194,10 @@ fit_c3_variable_j <- function(
         kc_column_name,
         ko_column_name,
         oxygen_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )
 
@@ -226,7 +230,7 @@ fit_c3_variable_j <- function(
         best_X[3], # alpha_s
         best_X[4], # Gamma_star
         best_X[5], # J_at_25
-        best_X[6], # Rd_at_25
+        best_X[6], # RL_at_25
         best_X[8], # Tp
         best_X[9], # Vcmax_at_25
         atp_use,
@@ -238,9 +242,10 @@ fit_c3_variable_j <- function(
         kc_column_name,
         ko_column_name,
         oxygen_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )[, 'An']
 
@@ -256,7 +261,7 @@ fit_c3_variable_j <- function(
             'alpha_s',
             'Gamma_star',
             'J_at_25',
-            'Rd_at_25',
+            'RL_at_25',
             'tau',
             'Tp',
             'Vcmax_at_25',
@@ -268,7 +273,7 @@ fit_c3_variable_j <- function(
             oxygen_column_name,
             phips2_column_name,
             qin_column_name,
-            rd_norm_column_name,
+            rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name
         ),
@@ -281,7 +286,7 @@ fit_c3_variable_j <- function(
         '', # alpha_g
         '', # alpha_s
         '', # Gamma_star
-        '', # Rd_at_25
+        '', # RL_at_25
         '', # tau
         atp_use,
         nadph_use,
@@ -289,16 +294,17 @@ fit_c3_variable_j <- function(
         ci_column_name,
         phips2_column_name,
         qin_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
+        hard_constraints,
         perform_checks = FALSE
     )
 
     vj_interpolated[, 'atp_use']    <- NULL
     vj_interpolated[, 'Gamma_star'] <- NULL
     vj_interpolated[, 'nadph_use']  <- NULL
-    vj_interpolated[, 'Rd_at_25']   <- NULL
-    vj_interpolated[, 'Rd_tl']      <- NULL
+    vj_interpolated[, 'RL_at_25']   <- NULL
+    vj_interpolated[, 'RL_tl']      <- NULL
 
     replicate_exdf_interpolated <- cbind(replicate_exdf_interpolated, vj_interpolated)
 
@@ -309,7 +315,7 @@ fit_c3_variable_j <- function(
         '', # alpha_s
         '', # Gamma_star
         '', # J_at_25
-        '', # Rd_at_25
+        '', # RL_at_25
         '', # Tp
         '', # Vcmax_at_25
         atp_use,
@@ -321,9 +327,10 @@ fit_c3_variable_j <- function(
         kc_column_name,
         ko_column_name,
         oxygen_column_name,
-        rd_norm_column_name,
+        rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
+        hard_constraints = hard_constraints,
         perform_checks = FALSE
     )
 
@@ -412,14 +419,14 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'alpha_s']     <- best_X[3]
     replicate_identifiers[, 'Gamma_star']  <- best_X[4]
     replicate_identifiers[, 'J_at_25']     <- best_X[5]
-    replicate_identifiers[, 'Rd_at_25']    <- best_X[6]
+    replicate_identifiers[, 'RL_at_25']    <- best_X[6]
     replicate_identifiers[, 'tau']         <- best_X[7]
     replicate_identifiers[, 'Tp']          <- best_X[8]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[9]
 
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
-    replicate_identifiers[, 'Rd_tl_avg']    <- mean(replicate_exdf[, 'Rd_tl'])
+    replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
 
     # Also add fitting details
@@ -463,11 +470,12 @@ fit_c3_variable_j <- function(
             oxygen_column_name,
             phips2_column_name,
             qin_column_name,
-            rd_norm_column_name,
+            rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max,
+            hard_constraints,
             require_positive_gmc,
             gmc_max
         )(best_X[param_to_fit])
@@ -486,8 +494,8 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'Gamma_star',          'micromol mol^(-1)'),
         c('fit_c3_variable_j',        'J_at_25',             'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'J_tl_avg',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'Rd_at_25',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'Rd_tl_avg',           'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'RL_at_25',            'micromol m^(-2) s^(-1)'),
+        c('fit_c3_variable_j',        'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'tau',                 'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Tp',                  'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
@@ -527,14 +535,28 @@ fit_c3_variable_j <- function(
             oxygen_column_name,
             phips2_column_name,
             qin_column_name,
-            rd_norm_column_name,
+            rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max,
+            hard_constraints,
             require_positive_gmc,
             gmc_max
         )
+
+        # Attach limits for the average leaf-temperature values of fitting parameters
+        J_tl_scale <- replicate_identifiers[, 'J_tl_avg'] / replicate_identifiers[, 'J_at_25']
+        replicate_identifiers[, 'J_tl_avg_lower'] <- replicate_identifiers[, 'J_at_25_lower'] * J_tl_scale
+        replicate_identifiers[, 'J_tl_avg_upper'] <- replicate_identifiers[, 'J_at_25_upper'] * J_tl_scale
+
+        RL_tl_scale <- replicate_identifiers[, 'RL_tl_avg'] / replicate_identifiers[, 'RL_at_25']
+        replicate_identifiers[, 'RL_tl_avg_lower'] <- replicate_identifiers[, 'RL_at_25_lower'] * RL_tl_scale
+        replicate_identifiers[, 'RL_tl_avg_upper'] <- replicate_identifiers[, 'RL_at_25_upper'] * RL_tl_scale
+
+        Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
+        replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
+        replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
     }
 
     # Return the results, including indicators of unreliable parameter estimates

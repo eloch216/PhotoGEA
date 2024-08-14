@@ -3,7 +3,7 @@ calculate_c3_variable_j <- function(
     alpha_g,    # dimensionless      (this value is sometimes being fitted)
     alpha_s,    # dimensionless      (this value is sometimes being fitted)
     Gamma_star, # micromol / mol     (this value is sometimes being fitted)
-    Rd_at_25,   # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
+    RL_at_25,   # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     tau,        # dimensionless      (typically this value is being fitted)
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -11,8 +11,9 @@ calculate_c3_variable_j <- function(
     ci_column_name = 'Ci',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    hard_constraints = 0,
     perform_checks = TRUE,
     return_exdf = TRUE
 )
@@ -28,14 +29,14 @@ calculate_c3_variable_j <- function(
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[phips2_column_name]]         <- 'dimensionless'
         required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
-        required_variables[[rd_norm_column_name]]        <- 'normalized to Rd at 25 degrees C'
+        required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
 
         flexible_param <- list(
             alpha_g = alpha_g,
             alpha_s = alpha_s,
             Gamma_star = Gamma_star,
-            Rd_at_25 = Rd_at_25,
+            RL_at_25 = RL_at_25,
             tau = tau
         )
 
@@ -49,7 +50,7 @@ calculate_c3_variable_j <- function(
     if (!value_set(alpha_g))    {alpha_g     <- exdf_obj[, 'alpha_g']}
     if (!value_set(alpha_s))    {alpha_s     <- exdf_obj[, 'alpha_s']}
     if (!value_set(Gamma_star)) {Gamma_star <- exdf_obj[, 'Gamma_star']}
-    if (!value_set(Rd_at_25))   {Rd_at_25   <- exdf_obj[, 'Rd_at_25']}
+    if (!value_set(RL_at_25))   {RL_at_25   <- exdf_obj[, 'RL_at_25']}
     if (!value_set(tau))        {tau        <- exdf_obj[, 'tau']}
 
     # Extract a few columns from the exdf object to make the equations easier to
@@ -62,24 +63,34 @@ calculate_c3_variable_j <- function(
     PhiPS2 <- exdf_obj[, phips2_column_name]                    # dimensionless
     Qin    <- exdf_obj[, qin_column_name]                       # micromol / m^2 / s
 
-    Rd_tl <- Rd_at_25 * exdf_obj[, rd_norm_column_name]         # micromol / m^2 / s
+    RL_tl <- RL_at_25 * exdf_obj[, rl_norm_column_name]         # micromol / m^2 / s
 
     # Make sure key inputs have reasonable values
     msg <- character()
 
+    # Always check parameters that cannot be fit, and make sure we are not
+    # mixing models
     mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
 
-    if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
-    if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
-    if (any(Ci < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Ci must be >= 0')}
-    if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
-    if (any(PhiPS2 < 0, na.rm = TRUE))                                   {msg <- append(msg, 'PhiPS2 must be >= 0')}
-    if (any(pressure < 0, na.rm = TRUE))                                 {msg <- append(msg, 'pressure must be >= 0')}
-    if (any(Qin < 0, na.rm = TRUE))                                      {msg <- append(msg, 'Qin must be >= 0')}
-    if (any(Rd_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Rd_at_25 must be >= 0')}
-    if (any(tau < 0, na.rm = TRUE))                                      {msg <- append(msg, 'tau must be >= 0')}
-    if (mixed_j_coeff)                                                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+    if (any(PhiPS2 < 0, na.rm = TRUE))   {msg <- append(msg, 'PhiPS2 must be >= 0')}
+    if (any(pressure < 0, na.rm = TRUE)) {msg <- append(msg, 'pressure must be >= 0')}
+    if (any(Qin < 0, na.rm = TRUE))      {msg <- append(msg, 'Qin must be >= 0')}
+    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+
+    # Optionally check whether Ci is reasonable
+    if (hard_constraints >= 1) {
+        if (any(Ci < 0, na.rm = TRUE)) {msg <- append(msg, 'Ci must be >= 0')}
+    }
+
+    # Optionally check reasonableness of parameters that can be fit
+    if (hard_constraints >= 2) {
+        if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
+        if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
+        if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
+        if (any(RL_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'RL_at_25 must be >= 0')}
+        if (any(tau < 0 | tau > 1, na.rm = TRUE))                            {msg <- append(msg, 'tau must be >= 0 and <= 1')}
+    }
 
     msg <- paste(msg, collapse = '. ')
 
@@ -101,7 +112,7 @@ calculate_c3_variable_j <- function(
 
     # Calculate gmc (mesophyll conductance to CO2) using Equation 7 from Harley
     # et al. (1992)
-    AnRd <- An + Rd_tl # micromol / m^2 / s
+    AnRd <- An + RL_tl # micromol / m^2 / s
 
     gmc_top <- Gamma_star_ag * (J_F + (nadph_use + 16 * alpha_g + 8 * alpha_s) * AnRd) # microbar * micromol / m^2 / s
 
@@ -127,9 +138,9 @@ calculate_c3_variable_j <- function(
             alpha_s = alpha_s,
             Gamma_star = Gamma_star,
             Gamma_star_ag = Gamma_star_ag,
-            Rd_at_25 = Rd_at_25,
+            RL_at_25 = RL_at_25,
             tau = tau,
-            Rd_tl = Rd_tl,
+            RL_tl = RL_tl,
             J_F = J_F,
             gmc = gmc,
             Cc = Cc,
@@ -147,9 +158,9 @@ calculate_c3_variable_j <- function(
             c('calculate_c3_variable_j', 'alpha_s',            'dimensionless'),
             c('calculate_c3_variable_j', 'Gamma_star',         'micromol mol^(-1)'),
             c('calculate_c3_variable_j', 'Gamma_star_ag',      'microbar'),
-            c('calculate_c3_variable_j', 'Rd_at_25',           'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_variable_j', 'RL_at_25',           'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'tau',                'dimensionless'),
-            c('calculate_c3_variable_j', 'Rd_tl',              'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_variable_j', 'RL_tl',              'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'J_F',                'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'gmc',                'mol m^(-2) s^(-1) bar^(-1)'),
             c('calculate_c3_variable_j', 'Cc',                 'micromol mol^(-1)'),

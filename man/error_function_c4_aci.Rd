@@ -30,10 +30,11 @@
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 0
   )
 }
 
@@ -50,8 +51,8 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{replicate_exdf} of the same name; and a numeric value means
     that the parameter will be set to that value. For example,
-    \code{fit_options = list(Rd_at_25 = 0, Vcmax_at_25 = 'fit',
-    Vpmax_at_25 = 'column')} means that \code{Rd_at_25} will be set to 0,
+    \code{fit_options = list(RL_at_25 = 0, Vcmax_at_25 = 'fit',
+    Vpmax_at_25 = 'column')} means that \code{RL_at_25} will be set to 0,
     \code{Vcmax_at_25} will be fit, and \code{Vpmax_at_25} will be set to the
     values in the \code{Vpmax_at_25} column of \code{replicate_exdf}.
   }
@@ -144,9 +145,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -165,12 +166,17 @@
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
   }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c4_assimilation}}; see that function
+    for more details.
+  }
 }
 
 \details{
   When fitting A-Ci curves, it is necessary to define a function that calculates
   the likelihood of a given set of \code{alpha_psii}, \code{gbs},
-  \code{Jmax_at_opt}, \code{Rd_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
+  \code{Jmax_at_opt}, \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
   \code{Vpmax_at_25}, and \code{Vpr} values by comparing a model prediction to a
   measured curve. This function will be passed to an optimization algorithm
   which will determine the values that produce the smallest error.
@@ -178,7 +184,7 @@
   The \code{error_function_c4_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
   a subset of the available fitting parameters; by default, the fitting
-  parameters are \code{Rd_at_25}, \code{Vcmax_at_25}, and \code{Vpmax_at_25}.
+  parameters are \code{RL_at_25}, \code{Vcmax_at_25}, and \code{Vpmax_at_25}.
   This behavior can be changed via the \code{fit_options} argument.
 
   For practical reasons, the function actually returns values of \code{-ln(L)},
@@ -197,7 +203,7 @@
   vector representing values of the parameters to be fitted (which are specified
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
-  default settings, \code{guess} should contain values of \code{Rd_at_25},
+  default settings, \code{guess} should contain values of \code{RL_at_25},
   \code{Vcmax_at_25}, and \code{Vpmax_at_25} (in that order).
 }
 
@@ -235,7 +241,7 @@ error_fcn <- error_function_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE]
 )
 
-# Evaluate the error for Rd_at_25 = 0, Vcmax_at_25 = 35, Vpmax_at_25 = 180
+# Evaluate the error for RL_at_25 = 0, Vcmax_at_25 = 35, Vpmax_at_25 = 180
 error_fcn(c(0, 35, 180))
 
 # Make a plot of error vs. Vcmax_at_25 when the other parameters are fixed to

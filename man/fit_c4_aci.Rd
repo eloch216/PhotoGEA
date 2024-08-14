@@ -16,7 +16,7 @@
 \usage{
   fit_c4_aci(
     replicate_exdf,
-    Ca_atmospheric,
+    Ca_atmospheric = NA,
     ao_column_name = 'ao',
     a_column_name = 'A',
     ca_column_name = 'Ca',
@@ -29,7 +29,7 @@
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
@@ -44,8 +44,9 @@
     upper = list(),
     fit_options = list(),
     error_threshold_factor = 0.147,
+    hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = TRUE
+    remove_unreliable_param = 2
   )
 }
 
@@ -57,7 +58,7 @@
   \item{Ca_atmospheric}{
     The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
     this will be used by \code{\link{estimate_operating_point}} to estimate the
-    operating point.
+    operating point. A value of \code{NA} disables this feature.
   }
 
   \item{ao_column_name}{
@@ -123,9 +124,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -206,8 +207,8 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{exdf_obj} of the same name; and a numeric value means that
     the parameter will be set to that value. For example, \code{fit_options =
-    list(Rd_at_25 = 0, Vcmax_at_25 = 'fit', Vpr = 'column')} means that
-    \code{Rd_at_25} will be set to 0, \code{Vcmax_at_25} will be fit, and
+    list(RL_at_25 = 0, Vcmax_at_25 = 'fit', Vpr = 'column')} means that
+    \code{RL_at_25} will be set to 0, \code{Vcmax_at_25} will be fit, and
     \code{Vpr} will be set to the values in the \code{Vpr} column of
     \code{exdf_obj}.
   }
@@ -217,14 +218,21 @@
     \code{calculate_confidence_intervals} is \code{TRUE}.
   }
 
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c4_assimilation}}; see that function
+    for more details.
+  }
+
   \item{calculate_confidence_intervals}{
     A logical value indicating whether or not to estimate confidence intervals
     for the fitting parameters using \code{\link{confidence_intervals_c4_aci}}.
   }
 
   \item{remove_unreliable_param}{
-    A logical value indicating whether or not to remove unreliable parameter
-    estimates; see below for details.
+    An integer value indicating the rules to use when identifying and removing
+    unreliable parameter estimates. A value of 2 is the most conservative
+    option. A value of 0 disables this feature, which is not typically
+    recommended. See below for more details.
   }
 }
 
@@ -232,27 +240,28 @@
   This function calls \code{\link{calculate_c4_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
   vary the values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_opt},
-  \code{Rd_at_25}, \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
+  \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
   \code{Vpr} to find ones that best reproduce the experimentally measured values
   of net assimilation. By default, the following options are used for the fits:
   \itemize{
-    \item \code{alpha_psii}: lower = 0, upper = 1, fit_option = 0
-    \item \code{gbs}: lower = 0, upper = 1, fit_option = 0.003
-    \item \code{Jmax_at_opt}: lower = 0, upper = 1000, fit_option = 1000
-    \item \code{Rd_at_25}: lower = 0, upper = 100, fit_option = \code{'fit'}
-    \item \code{Rm_frac}: lower = 0, upper = 1, fit_option = 0.5
-    \item \code{Vcmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
-    \item \code{Vpmax_at_25}: lower = 0, upper = 1000, fit_option = \code{'fit'}
-    \item \code{Vpr}: lower = 0, upper = 1000, fit_option = 1000
+    \item \code{alpha_psii}: lower = -1, upper = 10, fit_option = 0
+    \item \code{gbs}: lower = -1, upper = 10, fit_option = 0.003
+    \item \code{Jmax_at_opt}: lower = -50, upper = 1000, fit_option = 1000
+    \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
+    \item \code{Rm_frac}: lower = -10, upper = 10, fit_option = 0.5
+    \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Vpmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Vpr}: lower = -50, upper = 1000, fit_option = 1000
   }
   With these settings, \code{Jmax} and \code{Vpr} are set to 1000 (so net
   assimilation is essentially never limited by light or PEP carboxylase
   regeneration), \code{alpha_psii}, \code{gbs}, and \code{Rm_frac} are set to
   default values used in von Caemmerer (2000), and the other parameters are fit
-  during the process (see \code{fit_options} above).
+  during the process (see \code{fit_options} above). The bounds are chosen
+  liberally to avoid any bias.
 
   An initial guess for the parameters is generated by calling
-  \code{\link{initial_guess_c4_aci}} with the \code{pcm_threshold_rm} argument
+  \code{\link{initial_guess_c4_aci}} with the \code{pcm_threshold_rlm} argument
   set to 40 microbar. Note that any fixed values specified in the fit options
   will override the values returned by the guessing function.
 
@@ -280,16 +289,25 @@
   Sometimes the optimizer may choose a set of parameter values where one of the
   potential limiting rates \code{Vpc} or \code{Vpr} is never the smallest rate.
   In this case, the corresponding parameter estimates (\code{Vpmax} or
-  \code{Vpr}) will be unreliable. It is also possible that the upper limit of
-  the confidence interval for a parameter is infinity; this also indicates an
-  unreliable parameter estimate. These criteria are used to determine the
-  reliability of each parameter estimate, which is indicated in the
-  \code{Vpmax_trust}, \code{Vpr_trust}, and \code{Vcmax_trust} columns of the
-  output from \code{fit_c4_aci}, where a value of \code{0} indicates an
-  unreliable estimate and \code{1} indicates a reliable estimate. If
-  \code{remove_unreliable_param} is \code{TRUE}, the values of any parameters
-  deemed unreliable will be set to \code{NA} in the outputs from
-  \code{fit_c4_aci}.
+  \code{Vpr}) will be unreliable. Likewise, it may happen that one of \code{Ac}
+  or \code{Aj} is never the smallest rate. In this case the corresponding
+  parameter estimates (\code{Vpmax}, \code{Vpr}, and \code{Vcmax}, or
+  \code{Jmax}) will be unreliable. If \code{remove_unreliable_param} is 1 or
+  larger, then such parameter estimates (and the corresponding rates) will be
+  replaced by \code{NA} in the fitting results.
+
+
+  It is also possible that the upper limit of the confidence interval for a
+  parameter is infinity; this also indicates an unreliable parameter estimate.
+  If \code{remove_unreliable_param} is 2 or larger, then such parameter
+  estimates (but not the corresponding rates) will be replaced by \code{NA} in
+  the fitting results.
+
+  These criteria are used to determine the reliability of each parameter
+  estimate, which is indicated in the \code{Vpmax_trust}, \code{Vpr_trust}, and
+  \code{Vcmax_trust} columns of the output from \code{fit_c4_aci}, where a value
+  of \code{0} indicates an unreliable estimate and \code{1} indicates a reliable
+  estimate.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of `\code{PCm} from the atmospheric CO2
@@ -320,12 +338,12 @@
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C (or the optimal
                   temperature) will be stored in the \code{Jmax_at_opt},
-                  \code{Rd_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
+                  \code{RL_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
                   and \code{Vpr} columns.
             \item The other outputs from \code{\link{calculate_c4_assimilation}}
                   will be stored in columns with the usual names:
                   \code{alpha_psii}, \code{gbs}, \code{Rm_Frac},
-                  \code{Vcmax_tl}, \code{Vpmax_tl}, \code{Rd_tl}, \code{Rm_tl},
+                  \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl}, \code{RLm_tl},
                   \code{Vp}, \code{Apc}, \code{Apr}, \code{Ap}, \code{Ar},
                   \code{Ajm}, \code{Ajbs}, \code{Ac}, and \code{Aj}.
           }
@@ -339,7 +357,7 @@
                   the smallest potential carboxylation rate are stored in the
                   \code{n_Vpc_smallest} and \code{n_Vpr_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_psii},
-                  \code{gbs}, \code{Jmax_at_opt} \code{Rd_at_25},
+                  \code{gbs}, \code{Jmax_at_opt} \code{RL_at_25},
                   \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
                   \code{Vpr} columns. If \code{calculate_confidence_intervals}
                   is \code{TRUE}, upper and lower limits for each of these
@@ -347,7 +365,7 @@
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{J_tl_avg}, \code{Jmax_tl_avg},
-                  \code{Rd_tl_avg}, \code{Vcmax_tl_avg}, and
+                  \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
                   \code{Vpmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_PCm}, \code{operating_Ci},
@@ -419,8 +437,8 @@ aci_results <- consolidate(by(
 # View the fitting parameters for each species / plot
 col_to_keep <- c(
   'species', 'plot',                                       # identifiers
-  'Rd_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr',         # parameters scaled to 25 degrees C
-  'Rd_tl_avg', 'Vcmax_tl_avg', 'Vpmax_tl_avg',             # average temperature-dependent values
+  'RL_at_25', 'Vcmax_at_25', 'Vpmax_at_25', 'Vpr',         # parameters scaled to 25 degrees C
+  'RL_tl_avg', 'Vcmax_tl_avg', 'Vpmax_tl_avg',             # average temperature-dependent values
   'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
   'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats
   'convergence', 'convergence_msg', 'feval', 'optimum_val' # convergence info

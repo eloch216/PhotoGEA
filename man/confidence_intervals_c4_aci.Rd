@@ -34,10 +34,11 @@
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
-    rd_norm_column_name = 'Rd_norm',
+    rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    hard_constraints = 0
   )
 }
 
@@ -155,9 +156,9 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{rd_norm_column_name}{
+  \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
-    \code{Rd} values (with units of \code{normalized to Rd at 25 degrees C}).
+    \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -175,6 +176,11 @@
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
+  }
+
+  \item{hard_constraints}{
+    To be passed to \code{\link{calculate_c4_assimilation}}; see that function
+    for more details.
   }
 }
 
