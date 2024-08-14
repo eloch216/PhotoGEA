@@ -6,7 +6,8 @@ check_response_curve_data <- function(
     expected_npts = 0,
     driving_column = NULL,
     driving_column_tolerance = 1.0,
-    col_to_ignore_for_inf = 'gmc'
+    col_to_ignore_for_inf = 'gmc',
+    error_on_failure = TRUE
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -65,7 +66,10 @@ check_response_curve_data <- function(
         !all(curve_npts == expected_npts)
     }
 
+    # If there is a problem with the curve counts, print them and notify the
+    # user
     if (npt_problem) {
+        # Print
         npts_df <- do.call(rbind, lapply(split_exdf, function(x) {
             unique(x[ , as.character(identifier_columns)])
         }))
@@ -74,7 +78,14 @@ check_response_curve_data <- function(
         npts_df$npts <- as.numeric(curve_npts)
         row.names(npts_df) <- NULL
         print(npts_df)
-        stop('One or more curves does not have the expected number of points.')
+
+        msg <- 'One or more curves does not have the expected number of points.'
+
+        if (error_on_failure) {
+            stop(msg)
+        } else {
+            warning(msg)
+        }
     }
 
     # Check the driving column to see if it takes the same values in each curve
@@ -101,9 +112,17 @@ check_response_curve_data <- function(
                     driving_column, ' = ', col_mean, '`'
                 ))
             }
+        }
 
-            if (length(msg) > 0) {
-                stop(paste(msg, collapse='\n  '))
+        if (length(msg) > 0) {
+            print(msg)
+
+            new_msg <- 'The curves do not all follow the same sequence of the driving variable.'
+
+            if (error_on_failure) {
+                stop(new_msg)
+            } else {
+                warning(new_msg)
             }
         }
     }

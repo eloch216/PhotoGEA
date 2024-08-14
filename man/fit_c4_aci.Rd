@@ -16,7 +16,7 @@
 \usage{
   fit_c4_aci(
     replicate_exdf,
-    Ca_atmospheric,
+    Ca_atmospheric = NA,
     ao_column_name = 'ao',
     a_column_name = 'A',
     ca_column_name = 'Ca',
@@ -58,7 +58,7 @@
   \item{Ca_atmospheric}{
     The atmospheric CO2 concentration (with units of \code{micromol mol^(-1)});
     this will be used by \code{\link{estimate_operating_point}} to estimate the
-    operating point.
+    operating point. A value of \code{NA} disables this feature.
   }
 
   \item{ao_column_name}{

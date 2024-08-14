@@ -97,7 +97,8 @@ licor_data <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify separate mesophyll conductance values for each species
+# Specify separate mesophyll conductance values for each species; here we use
+# arbitrary values since this is just an example
 licor_data <- set_variable(
   licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
   id_column = 'species',
@@ -112,6 +113,10 @@ licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
+
+# The default optimizer uses randomness, so we will set a seed to ensure the
+# results from this fit are always identical
+set.seed(1234)
 
 # Fit all curves in the data set
 aci_results <- consolidate(by(
@@ -137,11 +142,11 @@ timing
 
 The timing results may vary depending on the particular machine used to run the
 code. Nevertheless, this is a small time investment for an advanced algorithm
-that uses maximum likeliood fitting and derivative-free optimizers for robust
-fitting, and calculates confidence intervals to determine which estimated
-parameter values are reliable.
+that uses derivative-free optimizers for robust fitting and calculates
+nonparametric confidence intervals to determine which estimated parameter values
+are reliable.
 
-This example contains 12 commands, so it certainly isn't short; however, a close
+This example contains 13 commands, so it certainly isn't short; however, a close
 look reveals that much of the commands are general and would apply to _any_ set
 of C~3~ response curves. In fact, only a few parts would need to be modified,
 such as the list of files to read, the curve identifier, and the value of
@@ -151,19 +156,28 @@ harder!
 
 ## Viewing the Results
 
-Having fit the response curves, it is also possible to view the fits and the
-extracted parameters. For example, we can plot the measured values of net
-assimilation (black circles), the fitted values of net assimilation (`An`), and
-each of the limiting assimilation rates calculated during the fitting procedure:
-the Rubisco limited rate (`Ac`), the RuBP regeneration limited rate (`Aj`), and
-the triose phosphate utilization limited rate (`Ap`).
+Having fit the response curves, it is also possible to view the fits, the
+parameter estimates, and their confidence intervals. `PhotoGEA` provides several
+tools for doing this, which enable users to check the fit quality and ensure
+that only reliable parameter estimates are used in subsequent analysis.
+
+We can plot the measured values of net assimilation (black circles), the fitted
+values of net assimilation (`An`), and each of the limiting assimilation rates
+calculated during the fitting procedure: the Rubisco limited rate (`Ac`), the
+RuBP regeneration limited rate (`Aj`), and the triose phosphate utilization
+(TPU) limited rate (`Ap`). This is a basic quality check where we can make sure
+that the fits make sense and look believable:
 
 ```{r}
 plot_c3_aci_fit(aci_results, 'curve_id', 'Ci', ylim = c(-10, 80))
 ```
 
-Another way to check the quality of the fits is to plot the residuals, which
-should be randomly distributed:
+In this figure, some curves are missing one or more of the potential limiting
+rates. When this occurs, it means that no points in the curve were found to be
+limited by that process.
+
+Another way to check the overall quality of the fits is to plot the residuals,
+which should be randomly distributed:
 
 ```{r}
 xyplot(
@@ -177,9 +191,23 @@ xyplot(
 )
 ```
 
-It is also possible to plot one or more of the fitting parameters averaged
-across species in a bar chart with error bars; here we plot values of `Vcmax` at
-25 degrees C.
+For individual parameters, we can take a look at the best-fit values and the
+associated confidence intervals. Here is an example showing values of `Tp`, the
+maximum rate of triose phosphate utilization.
+
+```{r}
+aci_results$parameters[, c('curve_id', 'Tp_lower', 'Tp', 'Tp_upper')]
+```
+
+Some of these estimates have an upper limit of `Inf` and a best estimate of
+`NA`. A comparison with the fits shown above indicates that for these curves,
+insufficiently many points were found to be TPU-limited, preventing a reliable
+estimate of `Tp`.
+
+It is also possible to plot the best-fit values of a parameter averaged across
+subsets of the data in a bar chart, where the error bars represent the standard
+error of the mean. Any values of `NA` will be excluded. Here we plot values of
+`Vcmax` at 25 degrees C for each species.
 
 ```{r}
 barchart_with_errorbars(
