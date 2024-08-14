@@ -112,17 +112,17 @@ check_response_curve_data <- function(
                     driving_column, ' = ', col_mean, '`'
                 ))
             }
+        }
 
-            if (length(msg) > 0) {
-                print(msg)
+        if (length(msg) > 0) {
+            print(msg)
 
-                new_msg <- 'The curves do not all follow the same sequence of the driving variable.'
+            new_msg <- 'The curves do not all follow the same sequence of the driving variable.'
 
-                if (error_on_failure) {
-                    stop(new_msg)
-                } else {
-                    warning(new_msg)
-                }
+            if (error_on_failure) {
+                stop(new_msg)
+            } else {
+                warning(new_msg)
             }
         }
     }
