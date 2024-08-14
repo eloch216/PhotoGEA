@@ -32,7 +32,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
 - A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to
   fit an empirical hyperbola to C4 A-Ci curves, rather than the mechanistic

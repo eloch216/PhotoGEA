@@ -16,8 +16,6 @@
 **a**nalysis) is an R package that provides a suite of tools for
 loading, processing, and analyzing photosynthetic gas exchange data.
 
-This package is still under rapid development.
-
 ### Installation
 
 The easiest way to install `PhotoGEA` is to type the following from
