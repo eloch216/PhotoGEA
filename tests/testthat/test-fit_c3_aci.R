@@ -43,6 +43,20 @@ test_that('fit failures are handled properly', {
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_upper')])))
 })
 
+test_that('Parameter reliability settings are checked', {
+    expect_error(
+        fit_c3_aci(
+            one_curve_bad,
+            Ca_atmospheric = 420,
+            OPTIM_FUN = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = 10
+        ),
+        '`remove_unreliable_param` must be 0, 1, or 2'
+    )
+})
+
 test_that('Cc limits can be bypassed', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
@@ -90,8 +104,12 @@ test_that('fit results have not changed (no alpha)', {
         c(152.831071, 238.947894, 1.034651, Inf),
         tolerance = TOLERANCE
     )
-})
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
+})
 
 test_that('fit results have not changed (alpha_old)', {
     # Set a seed before fitting since there is randomness involved with the
@@ -105,12 +123,12 @@ test_that('fit results have not changed (alpha_old)', {
         OPTIM_FUN = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 0
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp', 'AIC')]),
-        c(145.33294, 232.83111, 0.35509, NA, 61.13031),
+        c(145.33294, 232.83111, 0.35509, 38.1683, 61.13031),
         tolerance = TOLERANCE
     )
 
@@ -119,8 +137,12 @@ test_that('fit results have not changed (alpha_old)', {
         c(152.8274, 238.9449, 1.0343, Inf),
         tolerance = TOLERANCE
     )
-})
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
+})
 
 test_that('fit results have not changed (alpha_g and alpha_s)', {
     # Set a seed before fitting since there is randomness involved with the
@@ -134,12 +156,12 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         OPTIM_FUN = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 1
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp', 'AIC')]),
-        c(160.572, 254.807, 1.084, NA, 56.184),
+        c(160.572, 254.807, 1.084, 20.0224, 56.184),
         tolerance = TOLERANCE
     )
 
@@ -147,5 +169,10 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_upper')]),
         c(166.1669, 262.4657, 1.6696, Inf),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 1)
     )
 })

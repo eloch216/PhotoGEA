@@ -32,6 +32,12 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- The parameter trust values have been changed from logical values (`TRUE` or
+  `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
+  unreliability, potential unreliability, and full reliability, respectively.
+
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
 - A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to
