@@ -176,3 +176,28 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         c(2, 2, 1)
     )
 })
+
+test_that('fit results have not changed (pseudo-FvCB)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c3_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7),
+        use_pseudo_fvcb_equations = TRUE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp', 'AIC')]),
+        c(138.37, 226.84, -0.75, NA, 66.62),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_upper')]),
+        c(147.65, 235.43, 0.09, Inf),
+        tolerance = TOLERANCE
+    )
+})

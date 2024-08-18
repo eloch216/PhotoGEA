@@ -34,7 +34,8 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    hard_constraints = 0
+    hard_constraints = 0,
+    \dots
   )
 }
 
@@ -157,6 +158,10 @@
   \item{hard_constraints}{
     To be passed to \code{\link{calculate_c3_assimilation}}; see that function
     for more details.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
   }
 }
 

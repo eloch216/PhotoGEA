@@ -38,7 +38,8 @@ fit_c3_variable_j <- function(
     error_threshold_factor = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = 2
+    remove_unreliable_param = 2,
+    ...
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -74,7 +75,8 @@ fit_c3_variable_j <- function(
         cj_crossover_max,
         hard_constraints,
         require_positive_gmc,
-        gmc_max
+        gmc_max,
+        ...
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -198,7 +200,8 @@ fit_c3_variable_j <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         hard_constraints = hard_constraints,
-        perform_checks = FALSE
+        perform_checks = FALSE,
+        ...
     )
 
     # Remove a few columns so they don't get repeated
@@ -246,7 +249,8 @@ fit_c3_variable_j <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         hard_constraints = hard_constraints,
-        perform_checks = FALSE
+        perform_checks = FALSE,
+        ...
     )[, 'An']
 
     # Append the fitting results to the original exdf object
@@ -331,7 +335,8 @@ fit_c3_variable_j <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         hard_constraints = hard_constraints,
-        perform_checks = FALSE
+        perform_checks = FALSE,
+        ...
     )
 
     fits_interpolated <- cbind(
@@ -477,7 +482,8 @@ fit_c3_variable_j <- function(
             cj_crossover_max,
             hard_constraints,
             require_positive_gmc,
-            gmc_max
+            gmc_max,
+            ...
         )(best_X[param_to_fit])
     }
 
@@ -542,7 +548,8 @@ fit_c3_variable_j <- function(
             cj_crossover_max,
             hard_constraints,
             require_positive_gmc,
-            gmc_max
+            gmc_max,
+            ...
         )
 
         # Attach limits for the average leaf-temperature values of fitting parameters

@@ -17,7 +17,8 @@ error_function_c3_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    hard_constraints = 0
+    hard_constraints = 0,
+    ...
 )
 {
     # Assemble fit options; here we do not care about bounds
@@ -96,7 +97,8 @@ error_function_c3_aci <- function(
                     vcmax_norm_column_name,
                     hard_constraints = hard_constraints,
                     perform_checks = FALSE,
-                    return_exdf = FALSE
+                    return_exdf = FALSE,
+                    ...
                 )
             },
             error = function(e) {

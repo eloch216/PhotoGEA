@@ -37,7 +37,8 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
-    return_exdf = TRUE
+    return_exdf = TRUE,
+    \dots
   )
 }
 
@@ -198,6 +199,10 @@
     intended to be used when  \code{\link{fit_c3_aci}} calls this function,
     since creating an \code{exdf} object to return will slow down the fitting
     procedure.
+  }
+
+  \item{\dots}{
+    Optional arguments; see below.
   }
 }
 
@@ -368,6 +373,15 @@
 
   If any input values violate any of the specified constraints, an error message
   will be thrown.
+
+  \strong{Optional arguments:}
+
+  If an input argument called \code{use_pseudo_fvcb_equations} is supplied and
+  its value is \code{TRUE}, then the pseudo-FvCB model will be used in place of
+  the true FvCB model. In this case, \code{An} will be calculated as
+  \code{An = min{Ac, Aj, Ap}}. In general, using the pseudo-FvCB model is not
+  recommended. This option should only be used to investigate errors that may
+  occur when using the pseudo-FvCB model.
 
   \strong{References:}
 

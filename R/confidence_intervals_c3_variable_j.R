@@ -25,7 +25,8 @@ confidence_intervals_c3_variable_j <- function(
     cj_crossover_max = NA,
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
-    gmc_max = Inf
+    gmc_max = Inf,
+    ...
 
 )
 {
@@ -58,7 +59,8 @@ confidence_intervals_c3_variable_j <- function(
         cj_crossover_max,
         hard_constraints,
         require_positive_gmc,
-        gmc_max
+        gmc_max,
+        ...
     )
 
     # Assemble lower, upper, and fit_options

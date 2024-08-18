@@ -34,7 +34,8 @@
     cj_crossover_max = NA,
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
-    gmc_max = Inf
+    gmc_max = Inf,
+    \dots
   )
 }
 
@@ -172,6 +173,10 @@
   \item{gmc_max}{
     The maximum value of mesophyll conductance that should be considered to be
     acceptable. See below for more details.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
   }
 }
 

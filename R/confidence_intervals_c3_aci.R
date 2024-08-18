@@ -21,7 +21,8 @@ confidence_intervals_c3_aci <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    hard_constraints = 0
+    hard_constraints = 0,
+    ...
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -49,7 +50,8 @@ confidence_intervals_c3_aci <- function(
         vcmax_norm_column_name,
         cj_crossover_min,
         cj_crossover_max,
-        hard_constraints
+        hard_constraints,
+        ...
     )
 
     # Assemble lower, upper, and fit_options

@@ -26,9 +26,12 @@ calculate_c3_assimilation <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
-    return_exdf = TRUE
+    return_exdf = TRUE,
+    ...
 )
 {
+    optional_args <- list(...)
+
     if (perform_checks) {
         if (!is.exdf(exdf_obj)) {
             stop('calculate_c3_assimilation requires an exdf object')
@@ -202,6 +205,15 @@ calculate_c3_assimilation <- function(
     Aj <- photo_resp_factor * Wj - RL_tl
     Ap <- photo_resp_factor * Wp - RL_tl
     An <- photo_resp_factor * Wcjp - RL_tl
+
+    # Possibly use the pseudo-FvCB equations
+    use_pseudo <- 'use_pseudo_fvcb_equations' %in% names(optional_args) &&
+        optional_args[['use_pseudo_fvcb_equations']]
+
+    if (use_pseudo) {
+        Ap[Ap == -Inf] <- Inf
+        An <- pmin(Ac, Aj, Ap, na.rm = TRUE)
+    }
 
     if (return_exdf) {
         # Make a new exdf object from the calculated variables and make sure units

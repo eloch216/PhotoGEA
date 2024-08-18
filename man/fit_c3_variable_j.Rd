@@ -46,7 +46,8 @@
     error_threshold_factor = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = 2
+    remove_unreliable_param = 2,
+    \dots
   )
 }
 
@@ -233,6 +234,10 @@
     unreliable parameter estimates. A value of 2 is the most conservative
     option. A value of 0 disables this feature, which is not typically
     recommended. See below for more details.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
   }
 }
 
