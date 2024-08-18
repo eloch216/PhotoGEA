@@ -371,10 +371,9 @@
     \item \code{parameters}: An \code{exdf} object including the identifiers,
           fitting parameters, and convergence information for the A-Ci curve:
           \itemize{
-            \item The number of points where \code{Wc}, \code{Wj}, and \code{Wp}
-                  are each the smallest potential carboxylation are stored in
-                  the \code{n_Wc_smallest}, \code{n_Wj_smallest}, and
-                  \code{n_Wp_smallest} columns.
+            \item The number of points where \code{An = Ac}, \code{An = Aj}, and
+                  \code{An = Ap} are stored in the \code{n_Ac_limiting},
+                  \code{n_Aj_limiting}, and \code{n_Ap_limiting} columns.
             \item The best-fit values are stored in the \code{alpha_g},
                   \code{alpha_old}, \code{alpha_s}, \code{tau}, \code{Tp},
                   \code{J_at_25}, \code{RL_at_25}, and \code{Vcmax_at_25}
@@ -452,7 +451,7 @@ aci_results <- consolidate(by(
 # View the fitting parameters for each species / plot
 col_to_keep <- c(
   'species', 'plot',                                       # identifiers
-  'n_Wc_smallest', 'n_Wj_smallest', 'n_Wp_smallest',       # number of points where
+  'n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting',       # number of points where
                                                            #   each process is limiting
   'tau', 'Tp',                                             # parameters with temperature response
   'J_at_25', 'RL_at_25', 'Vcmax_at_25',                    # parameters scaled to 25 degrees C

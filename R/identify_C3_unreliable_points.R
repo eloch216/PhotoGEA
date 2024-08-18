@@ -4,14 +4,14 @@
 # Helping function for determining the number of points in a calculated CO2
 # response curve where a potential limiting carboxylation rate is actually the
 # smallest carboxylation rate
-n_C3_W_smallest <- function(c3_assim, w_name, tol = 1e-3) {
+n_C3_A_limiting <- function(c3_assim, an_name, a_name, tol = 1e-3) {
     if (!is.exdf(c3_assim)) {
         stop('c3_assim must be an exdf object')
     }
 
-    min_W <- pmin(c3_assim[, 'Wc'], c3_assim[, 'Wj'], c3_assim[, 'Wp'], na.rm = TRUE)
-
-    rel_diff <- abs((c3_assim[, w_name] - min_W) / min_W)
+    rel_diff <-
+        abs(c3_assim[, a_name] - c3_assim[, an_name]) /
+            pmax(1e-10, abs(c3_assim[, an_name]))
 
     sum(!is.na(rel_diff) & rel_diff <= tol)
 }
@@ -20,7 +20,8 @@ identify_c3_unreliable_points <- function(
     parameters,
     fits,
     fits_interpolated,
-    remove_unreliable_param
+    remove_unreliable_param,
+    a_column_name
 )
 {
     remove_unreliable_param <- as.numeric(remove_unreliable_param)
@@ -28,26 +29,28 @@ identify_c3_unreliable_points <- function(
 
     # Determine the number of points where each potential carboxylation rate is
     # the smallest potential carboxylation rate
-    parameters[, 'n_Wc_smallest'] <- n_C3_W_smallest(fits, 'Wc')
-    parameters[, 'n_Wj_smallest'] <- n_C3_W_smallest(fits, 'Wj')
-    parameters[, 'n_Wp_smallest'] <- n_C3_W_smallest(fits, 'Wp')
+    a_fit_name <- paste0(a_column_name, '_fit')
+
+    parameters[, 'n_Ac_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Ac')
+    parameters[, 'n_Aj_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Aj')
+    parameters[, 'n_Ap_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Ap')
 
     # We cannot be sure if a potential limitating process is present in the data
     # if it limits carboxylation at too few points, or if the upper limit of the
     # confidence interval for its related model parameter is infinite
     unreliable_n_threshold <- 1
 
-    c_unreliable_npts <- parameters[, 'n_Wc_smallest'] < unreliable_n_threshold
+    c_unreliable_npts <- parameters[, 'n_Ac_limiting'] < unreliable_n_threshold
     c_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
     c_trust           <- trust_value(c_unreliable_npts, c_unreliable_inf)
     c_remove          <- remove_estimate(c_trust, remove_unreliable_param)
 
-    j_unreliable_npts <- parameters[, 'n_Wj_smallest'] < unreliable_n_threshold
+    j_unreliable_npts <- parameters[, 'n_Aj_limiting'] < unreliable_n_threshold
     j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
     j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
     j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 
-    p_unreliable_npts <- parameters[, 'n_Wp_smallest'] < unreliable_n_threshold
+    p_unreliable_npts <- parameters[, 'n_Ap_limiting'] < unreliable_n_threshold
     p_unreliable_inf  <- 'Tp_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Tp_upper'])
     p_trust           <- trust_value(p_unreliable_npts, p_unreliable_inf)
     p_remove          <- remove_estimate(p_trust, remove_unreliable_param)
@@ -131,9 +134,9 @@ identify_c3_unreliable_points <- function(
     # Document the columns that were added to the parameter object
     parameters <- document_variables(
         parameters,
-        c('identify_c3_unreliable_points', 'n_Wc_smallest',           ''),
-        c('identify_c3_unreliable_points', 'n_Wj_smallest',           ''),
-        c('identify_c3_unreliable_points', 'n_Wp_smallest',           ''),
+        c('identify_c3_unreliable_points', 'n_Ac_limiting',           ''),
+        c('identify_c3_unreliable_points', 'n_Aj_limiting',           ''),
+        c('identify_c3_unreliable_points', 'n_Ap_limiting',           ''),
         c('identify_c3_unreliable_points', 'Vcmax_trust',             ''),
         c('identify_c3_unreliable_points', 'J_trust',                 ''),
         c('identify_c3_unreliable_points', 'alpha_g_trust',           ''),

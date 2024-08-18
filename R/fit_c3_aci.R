@@ -475,6 +475,7 @@ fit_c3_aci <- function(
         replicate_identifiers,
         replicate_exdf,
         fits_interpolated,
-        remove_unreliable_param
+        remove_unreliable_param,
+        a_column_name
     )
 }

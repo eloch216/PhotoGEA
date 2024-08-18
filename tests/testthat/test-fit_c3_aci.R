@@ -105,6 +105,13 @@ test_that('fit results have not changed (no alpha)', {
         tolerance = TOLERANCE
     )
 
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(9, 4, 0))
+
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 0)
@@ -137,6 +144,13 @@ test_that('fit results have not changed (alpha_old)', {
         c(152.8274, 238.9449, 1.0343, Inf),
         tolerance = TOLERANCE
     )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(9, 4, 0))
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
@@ -171,6 +185,13 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         tolerance = TOLERANCE
     )
 
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(8, 4, 1))
+
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 1)
@@ -194,6 +215,13 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         c(138.37, 226.84, -0.75, NA, 66.62),
         tolerance = TOLERANCE
     )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(7, 6, 0))
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_upper')]),
