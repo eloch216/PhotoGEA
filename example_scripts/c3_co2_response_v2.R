@@ -174,7 +174,13 @@ if (CO2_CONTROL == 'CO2_s_sp') {
 licor_data <- remove_points(licor_data, list(event = c('15', '37')))
 
 # Make sure the data meets basic requirements
-#check_response_curve_data(licor_data, 'curve_identifier', NUM_OBS_IN_SEQ, 'CO2_r_sp')
+check_response_curve_data(
+    licor_data,
+    'curve_identifier',
+    NUM_OBS_IN_SEQ,
+    'CO2_r_sp',
+    error_on_failure = FALSE
+)
 
 # Remove points with duplicated CO2 setpoint values and order by `Ci`
 licor_data <- organize_response_curve_data(
@@ -359,15 +365,16 @@ licor_data <- calculate_wue(licor_data)
 # Truncate the Ci range for fitting
 licor_data_for_fitting <- licor_data[licor_data[, 'Ci'] <= MAX_CI, , TRUE]
 
+# The default solver uses randomness, so set a seed to ensure these fitting
+# results are the same every time
+set.seed(1234)
+
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
-  OPTIM_FUN = optimizer_deoptim(200),
-  calculate_confidence_intervals = TRUE,
-  remove_unreliable_param = 2
+  Ca_atmospheric = 420                          # The atmospheric CO2 concentration
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal

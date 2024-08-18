@@ -24,22 +24,23 @@ knitr::opts_chunk$set(
 
 # Overview
 
-In this vignette, we will give an example showing how to analyze C~3~ A-Ci data
+In this vignette, we will give an example showing how to analyze C~3~ _A-C~i~_ data
 using the `PhotoGEA` package. The commands in this vignette can be used to
 initialize your own script, as described in [Customizing Your Script].
 
 # Background
 
-## Understanding C3 A-Ci Curves
+## Understanding C~3~ _A-C~i~_ Curves
 
-An _A-Ci curve_ (or _CO~2~ response curve_) is a particular type of gas exchange
-measurement where a living leaf is exposed to varying concentrations of CO~2~.
-For each CO~2~ concentration in the sequence, the net assimilation rate $A_n$,
-stomatal conductance to H~2~O ($g_{sw}$), and other important quantities are
-measured and recorded. Typically, other environmental variables such as
-temperature, humidity, and incident photosynthetically-active photon flux
-density are held constant during the measurement sequence so that changes in
-photosynthesis can be attributed to CO~2~ alone.
+An _A-C~i~ curve_ (or _CO~2~ response curve_) is a particular type of gas
+exchange measurement where a living leaf is exposed to varying concentrations of
+CO~2~. For each CO~2~ concentration in the sequence, the net assimilation rate
+($A_n$), stomatal conductance to H~2~O ($g_{sw}$), intercellular CO~2~
+concentration ($C_i$), and other important quantities are measured and recorded.
+Typically, other environmental variables such as temperature, humidity, and
+incident photosynthetically-active photon flux density (PPFD) are held constant
+during the measurement sequence so that changes in photosynthesis can be
+attributed to CO~2~ alone.
 
 Because of their different cell structures and biochemical pathways, C~3~ and
 C~4~ plants have very different responses to CO~2~. Here, we will only be
@@ -47,16 +48,16 @@ discussing C~3~ plants.
 
 The full C~3~ photosynthetic pathway is quite complicated, consisting of at
 least two hundred individual reactions, each of which may have an impact on a
-measured A-Ci curve. However, simplified models for photosynthesis are available
-and are much easier to understand and work with. These models tend to be based
-around Rubisco kinetics, describing how the net assimilation rate responds to
-the amount of CO~2~ available in the chloroplast. The most widely-used model is
-typically referred to as the _Farquhar-von-Caemmerer-Berry_ model (often
-shortened to the _FvCB model_ or _Farquhar model_) after the three scientists
-who originally developed it. An excellent description of this model can be found
-in _Biochemical Models of Leaf Photosynthesis_ [@caemmerer_biochemical_2000],
-subject to a few additional considerations discussed in Lochocki and McGrath (in
-preparation).
+measured _A-C~i~_ curve. However, simplified models for photosynthesis are
+available and are much easier to understand and work with. These models tend to
+be based around Rubisco kinetics, describing how the net assimilation rate
+responds to the amount of CO~2~ available in the chloroplast. The most
+widely-used model is typically referred to as the _Farquhar-von-Caemmerer-Berry_
+model (often shortened to the _FvCB model_ or _Farquhar model_) after the three
+scientists who originally developed it. An excellent description of this model
+can be found in _Biochemical Models of Leaf Photosynthesis_
+[@caemmerer_biochemical_2000], subject to a few additional considerations
+discussed @lochocki_widely_2024.
 
 This model provides a framework for understanding the changes in $A_n$ that
 occur as a C~3~ plant is exposed to successively higher concentrations of CO~2~.
@@ -64,29 +65,38 @@ Overall, the photosynthetic response to CO~2~ under high light conditions can be
 divided into three separate ranges:
 
 - At low levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
-  limited by Rubisco activity.
-- At intermediate levels of CO~2~ in the chloroplast, CO~2~ assimilation is
-  primarily limited by RuBP regeneration.
-- At high levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
-  limited by triose phosphate utilization.
+  limited by Rubisco activity; the maximum rate of Rubisco activity is denoted
+  by $V_{cmax}$.
 
-More specifically, the model provides equations for potential RuBP
-carboxylation rates that are each limited by one of three important processes:
+- At intermediate levels of CO~2~ in the chloroplast, CO~2~ assimilation is
+  primarily limited by RuBP regeneration; the rate of RuBP regeneration is
+  denoted by $J$.
+
+- At high levels of CO~2~ in the chloroplast, CO~2~ assimilation is primarily
+  limited by triose phosphate utilization (TPU); the maximum rate of TPU is
+  denoted by $T_p$.
+
+More specifically, the model provides equations for potential RuBP carboxylation
+rates (as catalyzed by Rubisco) that are each limited by one of three important
+processes:
 
 - The Rubisco-limited carboxylation rate ($W_c$).
+
 - The RuBP-regeneration-limited carboxylation rate ($W_j$).
+
 - The triose-phosphate-utilization-limited carboxylation rate ($W_p$).
 
 Each of these rates depend on the CO~2~ concentration in the chloroplast and
 other factors such as the incident light intensity. The actual RuBP
-carboxylation rate $V_c$ for a particular set of conditions is taken to be the
+carboxylation rate ($V_c$) for a particular set of conditions is taken to be the
 smallest of the three potential rates. Then, the net CO~2~ assimilation rate
 $A_n$ can be calculated from $V_c$ by including carbon losses due to
-photorespiration and day respiration. It is also possible to calculate the
-potential assimilation rates corresponding to each potential carboxylation rate:
-$A_c$, $A_j$, and $A_p$. Using the equations that compose this model, it is
-possible to calculate plots like the one below, which illustrates the three
-different assimilation ranges observed in a typical high-light A-Ci curve.
+photorespiration and mitochondrial respiration; the rate of mitochondrial
+respiration in the light is denoted by $R_L$. It is also possible to calculate
+the potential net assimilation rates corresponding to each potential
+carboxylation rate: $A_c$, $A_j$, and $A_p$. The plot below illustrates the
+three different assimilation ranges observed in a typical high-light _A-C~i~_
+curve, as predicted by the FvCB model.
 
 ```{r, echo = FALSE}
 library(PhotoGEA)
@@ -121,26 +131,24 @@ Vcmax <- 125
 
 assim <- calculate_c3_assimilation(inputs, alpha_g, alpha_old, alpha_s, '', J, RL, Tp, Vcmax)
 
-c3_col <- rev(multi_curve_colors()[1:4])
-
 xyplot(
-  Ac + Aj + Ap + An ~ Cc,
+  An + Ac + Aj + Ap ~ Cc,
   data = cbind(inputs, assim)$main_data,
   type = 'l',
+  lwd = c(4, 2, 2, 2),
+  lty = c(1, 2, 2, 2),
   grid = TRUE,
   auto = TRUE,
   xlab = paste('Chloroplast CO2 concentration [', inputs$units$Cc, ']'),
   ylab = paste('Assimilation rate [', assim$units$An, ']'),
   par.settings = list(
-    superpose.line = list(col = c3_col),
-    superpose.symbol = list(col = c3_col, pch = 16)
+    superpose.line = list(col = multi_curve_colors()),
+    superpose.symbol = list(col = multi_curve_colors())
   )
 )
-
-curvature <- 0.99
 ```
 
-(Note: this figure was generated using the `calculate_c3_assimilation` function
+(Note: This figure was generated using the `calculate_c3_assimilation` function
 from the `PhotoGEA` package, and it represents the photosynethetic response of a
 C~3~ leaf according to the FvCB model with `Tp` = `r Tp` `r assim$units$Tp`,
 `J` = `r J` `r assim$units$J_tl`, `RL` = `r RL` `r assim$units$RL_tl`,
@@ -148,58 +156,12 @@ C~3~ leaf according to the FvCB model with `Tp` = `r Tp` `r assim$units$Tp`,
 `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response parameters were
 taken from @sharkey_fitting_2007.)
 
-Thus, one of the most common reasons to measure an A-Ci curve is to interpret it
-in the context of this model. In other words, by fitting the model's equations
-to a measured curve, it is possible to estimate values for `Tp`, `J`, `RL`, and
-`Vcmax`. See the documentation for `calculate_c3_assimilation` for more
-information about these important quantities.
-
-One complication related to fitting is that the FvCB model calculates
-assimilation at the level of a single chloroplast; however, experimental gas
-exchange measurements are made by averaging the behavior of many different
-chloroplasts across a piece of leaf, which may each have different
-concentrations of CO~2~. Thus, the sharp transitions between Rubisco-limited,
-RuBP-regeneration-limited, and triose-phosphate-utilization-limited assimilation
-predicted by the model are rarely observed in practice, and there are instead
-regions of co-limited assimilation. This can be represented mathematically via
-two empirical "curvature" parameters, as discussed in the documentation for
-`calculate_c3_assimilation`. The following figure shows a CO~2~ response curve
-calculated with both curvatures set to `r curvature` and other parameters
-identical to the ones used to generate the previous figure.
-
-```{r, echo = FALSE}
-assim_curvature <- calculate_c3_assimilation(
-  inputs,
-  alpha_g,
-  alpha_old,
-  alpha_s,
-  '',
-  J,
-  RL,
-  Tp,
-  Vcmax,
-  curvature_cj = curvature,
-  curvature_cjp = curvature
-)
-
-xyplot(
-  Ac + Aj + Ap + An ~ Cc,
-  data = cbind(inputs, assim_curvature)$main_data,
-  type = 'l',
-  grid = TRUE,
-  auto = TRUE,
-  xlab = paste('Chloroplast CO2 concentration [', inputs$units$Cc, ']'),
-  ylab = paste('Assimilation rate [', assim_curvature$units$An, ']'),
-  par.settings = list(
-    superpose.line = list(col = c3_col),
-    superpose.symbol = list(col = c3_col, pch = 16)
-  )
-)
-```
-
-Note that `An` calculated with `curvature < 1` is generally lower than `An` with
-`curvature = 1` due to the presence of co-limitation; this can be seen by
-comparing this figure to the previous one (where `curvature = 1`).
+Thus, one of the most common reasons to measure an _A-C~i~_ curve is to
+interpret it in the context of this model. In other words, by fitting the
+model's equations to a measured curve, it is possible to estimate values for
+$T_p$, $J$, $R_L$, and $V_{cmax}$. See the documentation for
+`calculate_c3_assimilation` for more information about these important
+quantities.
 
 ## Practicalities
 
@@ -210,22 +172,26 @@ One point is that photosynthesis models generally predict the response of
 assimilation to the CO~2~ concentration in the chloroplast ($C_c$), but gas
 exchange measurements can only determine the CO~2~ concentration in the leaf's
 intercellular spaces ($C_i$). Thus, an extra step is required when interpreting
-A-Ci curves. If the mesophyll conductance $g_{mc}$ to CO~2~ is known, then it is
-possible to calculate values of $C_c$ from $A_n$, $C_i$, and $g_{mc}$.
-Otherwise, it is typical to assume an infinite mesophyll conductance; in this
-case, $C_c = C_i$, and the estimated values of `Vcmax` and other parameters can
-be considered to be "effective values" describing the plant's response to
-intercellular CO~2~ rather than the true enzyme response to chloroplastic CO~2~.
+_A-C~i~_ curves. If the mesophyll conductance to CO~2~ diffusion ($g_{mc}$) is
+known, then it is possible to calculate values of $C_c$ from $A_n$, $C_i$, and
+$g_{mc}$. Otherwise, it is typical to assume an infinite mesophyll conductance;
+in this case, $C_c = C_i$, and the estimated values of $V_{cmax}$ and other
+parameters can be considered to be "effective values" describing the plant's
+response to intercellular CO~2~ rather than the true enzyme response to
+chloroplastic CO~2~.
 
 Another important point is that plants generally do not appreciate being starved
 of CO~2~, so it is not usually possible to start a response curve at low CO~2~
 and proceed upwards. A more typical approach is to:
 
 1. Begin at ambient atmospheric CO~2~ levels.
+
 2. Decrease towards a low value.
+
 3. Return to ambient levels and wait for the plant to reacclimate; this waiting
    period is usually accomplished by logging several points at ambient CO~2~
    levels.
+
 4. Increase to higher values.
 
 When taking this approach, it therefore becomes necessary to remove the extra
@@ -234,15 +200,16 @@ their CO~2~ values before plotting or analyzing them.
 
 ## The Data
 
-A-Ci curves are commonly measured using a Licor portable photosynthesis system
-such as the Li-6400 or Li-6800. These machines record values of $A_n$, $g_{sw}$,
-and many other important quantities. They produce two types of output files:
-plain-text and Microsoft Excel. It is often more convenient to work with the
-Excel files since the entries can be easily modified (for example, to remove an
-extraneous row or add a new column). On the other hand, it can be more difficult
-to access the file contents using other pieces of software such as R. However,
-the `PhotoGEA` package reduces this barrier by including tools for reading Licor
-Excel files in R, which will be demonstrated in the following section.
+_A-C~i~_ curves are commonly measured using a portable photosynthesis system
+such as the Licor Li-6800. These machines record values of $A_n$, $g_{sw}$,
+$C_i$, and many other important quantities. They produce two types of output
+files: plain-text and Microsoft Excel. It is often more convenient to work with
+the Excel files since the entries can be easily modified (for example, to remove
+an extraneous row or add a new column). On the other hand, it can be more
+difficult to access the file contents using other pieces of software such as R.
+However, the `PhotoGEA` package reduces this barrier by including tools for
+reading Licor Excel files in R, which will be demonstrated in the following
+section.
 
 # Loading Packages
 
@@ -260,7 +227,7 @@ typing `install.packages('lattice')`.
 
 # Loading Licor Data
 
-The `PhotoGEA` package includes two files representing A-Ci curves measured
+The `PhotoGEA` package includes two files representing _A-C~i~_ curves measured
 using two Li-6800 instruments. The data is stored in Microsoft Excel files, and
 includes curves measured from two different crop species (tobacco and soybean)
 and several different plots of each. Each curve is a sixteen-point CO~2~
@@ -360,13 +327,14 @@ licor_data[ , 'curve_identifier'] <-
 ```
 
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_response_curve_data` function from
-`PhotoGEA`. Here we will supply the name of a column that should uniquely
+response curve. To do this, we can use the `check_response_curve_data` function
+from `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_response_curve_data`.)
+information, see the built-in help menu entry by typing
+`?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
@@ -385,9 +353,9 @@ check_response_curve_data(licor_data, 'species', 16)
 check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
-## Plotting the A-Ci Curves
+## Plotting the _A-C~i~_ Curves
 
-One qualitative way to check the data is to simply create a plot of the A-Ci
+One qualitative way to check the data is to simply create a plot of the _A-C~i~_
 curves. In this situation, the `lattice` library makes it simple to include each
 curve as its own separate subplot of a figure. For example:
 
@@ -437,14 +405,11 @@ Now we can plot them again:
 <<plot_aci>>
 ```
 
-They still look a bit strange. Some of this is related to the noise that was
-intentionally added to the data. Nevertheless, there are a few points that we
-should probably exclude before attempting to fit the curves. One issue is that
-the model _never_ predicts a decrease in $A$ when $Ci$ increases. So, it is
-usually a good idea to exclude any points at high $Ci$ where $A$ is observed to
-decrease. This dropoff in assimilation is due to one or more processes that are
-not captured by the model, and the fits will be unreliable. We will remove these
-points later, after we have made several other data quality checks.
+They still look a bit strange, but this is related to the noise that was
+intentionally added to the data. Three curves exhibit a sharp and likely
+unrealistic downturn in assimilation at their highest values of $C_i$. These
+will pose a problem for fitting, and we will remove them later after making some
+other quality checks.
 
 ## Additional Plots for Qualitative Validation
 
@@ -569,16 +534,17 @@ In the plot, `A:OK` indicates whether `A` was stable (0 for no, 1 for yes),
 we are looking for points where `Stable` is 2. Otherwise, we can check the other
 traces to see whether `A` or `gsw` was unstable.
 
-Comparing these plots with the ones in [Plotting the A-Ci Curves], it seems that
-the unstable points correspond with some of the "odd-looking" points in the A-Ci
-curves, so it is probably a good idea to remove them before fitting the data.
+Comparing these plots with the ones in [Plotting the _A-C~i~_ Curves], it seems
+that the unstable points correspond with some of the "odd-looking" points in the
+_A-C~i~_ curves, so it is probably a good idea to remove them before fitting the
+data.
 
 ## Cleaning the Licor Data
 
 While checking over the plots in the previous sections, two issues were noticed:
-(1) some points were logged before stability was achieved and (2) some of the
-curves exhibit a decrease in $A$ at high values of $C_i$. In this section, we
-will demonstrate how to remove the unstable and unusual points.
+(1) some points were logged before stability was achieved and (2) some curves
+have strange points at high $C_i$. In this section, we will demonstrate how to
+remove the unstable and unusual points.
 
 The following command will keep only the points where `Stable` is exactly 2;
 this condition means that all of the stability criteria were satisfied.
@@ -652,7 +618,7 @@ licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)
 ```
 
 Together, these functions add several new columns to `licor_data`, including
-`gmc`, 'Cc', 'Gamma_star', and others. With this information, we are now ready
+`gmc`, `Cc`, `Gamma_star`, and others. With this information, we are now ready
 to perform the fitting procedure. For this operation, we can use the
 `fit_c3_aci` function from the `PhotoGEA` package, which fits a single response
 curve to extract the values of key photosynthetic parameters. To apply this
@@ -663,11 +629,15 @@ menu entries by typing `?fit_c3_aci`, `?by.exdf`, or `?consolidate`, or check
 out the _Common Patterns_ section of the
 [Working With Extended Data Frames](working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
 vignette.) Together, these functions will split apart the main data using
-the curve identifier column we defined before ([Basic Checks]), fit each A-Ci
-curve using the FvCB model discussed in [Understanding C3 A-Ci Curves], and
+the curve identifier column we defined before ([Basic Checks]), fit each _A-C~i~_
+curve using the FvCB model discussed in [Understanding C~3~ _A-C~i~_ Curves], and
 return the resulting parameters and fits:
 
 ```{r fit_c3_aci}
+# The default optimizer uses randomness, so we will set a seed to ensure the
+# results from this fit are always identical
+set.seed(1234)
+
 # Fit the C3 A-Ci curves
 c3_aci_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
@@ -677,85 +647,49 @@ c3_aci_results <- consolidate(by(
 ))
 ```
 
-Note that in this command, we specified `fixed = c(NA, NA, NA, NA)` when calling
-`fit_c3_aci`. By doing this, we are choosing to vary all four key photosynthetic
-parameters: `Tp`, `J`, `RL`, and `Vcmax`. If `fixed` is not specified, it will
-take its default value: `c(Inf, NA, NA, NA)`. In that case, `Tp` would be fixed
-to a high value that essentially disables triose-phosphate-utilization-limited
-assimilation, and only `J`, `RL`, and `Vcmax` would be varied.
+Note that in this command, we used the default fitting settings. In this case,
+we will vary all five key photosynthetic parameters: $R_L$, $V_{cmax}$, $J$,
+$T_p$, and $\alpha_{old}$.
 
 ## Viewing the Fitted Curves
 
 Having made the fits, it is now a good idea to visually check them, making sure
-they look reasonable. As before, we can use `xyplot` from the `lattice` library
-to quickly make plots of all the fits, which are stored in
-`c3_aci_results$fits`, an `exdf` object:
-
-```{r plot_fits}
-# Plot the C3 A-Ci fits
-xyplot(
-  A + A_fit ~ Ci | curve_identifier,
-  data = c3_aci_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
-  ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')')
-)
-```
-
-Note that in addition to the fitted values of `A`, the output also includes
-values of the potential limiting rates `Ac`, `Aj`, and `Ap`, as well as the
-estimated operating point. We can take a look at these using a built-in plotting
-function:
+they look reasonable. This can be done using a built-in plotting function called
+`plot_c3_aci_fit`. In addition to the fitted values of `An`, the output also
+includes values of the potential limiting rates `Ac`, `Aj`, and `Ap`, as well as
+the estimated operating point.
 
 ```{r fit_aci_limiting}
 # Plot the C3 A-Cc fits (including limiting rates)
 plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Ci', ylim = c(-10, 80))
 ```
 
-Considering these two plots, we can see that although the model is able to
-reproduce the observed `A` values fairly well, some output parameters may be
-less reliable than others. For example, the triose-phosphate-utilization-limited
-rate `Ap` is determined by the `Tp` parameter; for some of the curves, the
-assimilation rate is never limited by `Ap`, so the resulting "best-fit" values
-of `Tp` may not be meaningful for these curves.
+In general, these fits look good. There are a few specific things to notice:
 
-There is also one curve (`ripe2 - soybean - 1`) where the optimizer is possibly
-overestimating `J`, so `Aj` is never the limiting factor. To address this, it is
-possible to force the optimizer to only allow fits where `Aj` is less than `Ac`
-above a certain threshold value of `Cc`; essentially, this is a way to constrain
-the crossover from Rubisco-limited carboxylation to RuBP-regeneration-limited
-carboxylation to a limited range of `Cc` values. Adding this restriction can
-sometimes produce more reasonable fits.
+- The fitted values of `An` closely match the measured ones. This is a good
+  sign.
 
-```{r}
-# Fit the C3 A-Ci curves
-c3_aci_results <- consolidate(by(
-  licor_data,                       # The `exdf` object containing the curves
-  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420,             # Additional argument passed to `fit_c3_aci`
-  cj_crossover_min = 100,           # Wj must be > Wc when Cc < 100 ppm
-  cj_crossover_max = 550            # Wj must be < Wc when Cc > 550 ppm
-))
+- Each curve begins with a Rubisco-limited portion (where `An = Ac`). This is
+  expected for light-saturated _A-C~i~_ curves.
 
-<<fit_aci_limiting>>
-```
+- Some curves do not have values of `Aj`. This means that no points were
+  identified as being limited by RuBP regeneration. It is not possible to
+  estimate values of `J` from such curves.
 
-Here we can see that `Aj` is now significantly lower in the fit for
-`ripe2 - soybean - 1`; however, the fitted assimilation values are still never
-limited by `Aj`. There may be something pathological about this curve that will
-prevent us from ever getting a reasonable value for `J`. In other situations,
-this approach may be more successful. We can also notice that the fit for
-`ripe1 - soybean - 5a` is a little strange. Based on the values of `Ci` and
-`Cc`, it seems that this plant's stomata did not fully open during the
-measurement, almost fully restricting the measured assimilation values to the
-Rubisco-limited range; there is nothing that can be done about this. It is also
-apparent that the `Tp` issue remains, and some curves are never
-triose-phosphate-utilization-limited; again, there is nothing that can really be
-done to address it besides measuring more A-Ci curves.
+- Some curves do not have values of `Ap`. This means that no points were
+  identified as being limited by TPU. It is not possible to
+  estimate values of `Tp` from such curves.
+
+- One curve is almost entirely limited by Rubisco activity. Based on its values
+  of `Ci`, it seems that this plant's stomata did not fully open during the
+  measurement, almost fully restricting the measured assimilation values to the
+  Rubisco-limited range. For this curve, the optimizer identified just one point
+  as being RuBP-regeneration-limited, so the associated value of `J` may not be
+  reliable.
+
+It is typical that some parameters cannot be estimated from some _A-C~i~_
+curves. This is an unavoidable consquence of the inherent variability between
+plant leaves.
 
 Checking the residuals is also a powerful way to gauge the quality of a fit. The
 output from `fit_c3_aci` includes the residuals (calculated as `A - A_fit`) in
@@ -780,13 +714,38 @@ measured values well.
 
 # Examining the Results
 
-## Visualizing Average Fit Parameters
+## Accessing Best-Fit Estimates and Confidence Intervals
 
-Having performed the fits, we can now take a look at the fitted parameter
-values, which are stored in `c3_aci_results$parameters`, another `exdf` object.
-One way to do this is by using the `barchart_with_errorbars` function from
-`PhotoGEA` to create barcharts of the average values for each species, such as
-the following example showing the fitted values of `Vcmax`:
+Each fit returns best-fit values and confidence limits for each parameter, which
+are stored in `c3_aci_results$parameters`, another `exdf` object. For example,
+we can look at the estimated $J$ values from each curve as follows:
+
+```{r view_j_lim}
+# View values of J from each fit
+c3_aci_results$parameters[, c('curve_identifier', 'J_at_25_lower', 'J_at_25', 'J_at_25_upper')]
+```
+
+Here we can see that some curves have an upper limit of infinity (`Inf`) and a
+best-fit value of "not available" (`NA`). Comparing this table to the figure
+showing the fits, we can see that these are the curves where one or fewer points
+are limited by RuBP regeneration. For these curves, values of `J` cannot be
+reliably estimated, so `fit_c3_aci` returns a value of `NA` for `J_at_25`.
+
+In contrast, each curve has an associated value of $V_{cmax}$ with a finite
+confidence interval:
+
+```{r view_vcmax_lim}
+# View values of Vcmax from each fit
+c3_aci_results$parameters[, c('curve_identifier', 'Vcmax_at_25_lower', 'Vcmax_at_25', 'Vcmax_at_25_upper')]
+```
+
+## Visualizing Average Best-Fit Parameters
+
+We can also visualize the best-fit parameters using plots. One way to do this is
+by using the `barchart_with_errorbars` function from `PhotoGEA` to create
+barcharts of the average values for each species. This function will ignore any
+`NA` values from curves where a parameter could not be reliably estimated, and
+the error bars will show the standard error of the mean for each species.
 
 ```{r vcmax_barchart}
 # Make a barchart showing average Vcmax values
@@ -800,38 +759,23 @@ barchart_with_errorbars(
 ```
 
 Another option is to create box-whisper plots using the `bwplot` function from
-the `lattice` package. Here we use this function to show values of `J`:
+the `lattice` package:
 
-```{r j_bwplot}
-# Make a boxplot showing the distribution of J values
+```{r vcmax_bwplot}
+# Make a boxplot showing the distribution of Vcmax values
 bwplot(
-  J_at_25 ~ species,
+  Vcmax_at_25 ~ species,
   data = c3_aci_results$parameters$main_data,
-  ylim = c(0, 300),
+  ylim = c(0, 180),
   xlab = 'Species',
-  ylab = paste0('J at 25 degrees C (', c3_aci_results$parameters$units$J_at_25, ')')
+  ylab = paste0('Vcmax at 25 degrees C (', c3_aci_results$parameters$units$Vcmax_at_25, ')')
 )
 ```
 
-## Accessing Raw and Average Values of Fit Parameters
+## Calculating Average Best-Fit Parameters
 
-We can also take a look at the raw numbers of the fitted parameters and their
-average values. The `c3_aci_results$parameters` object contains many columns but
-we only care about a few of them. We can view them as follows:
-
-```{r c3_aci_parameters}
-# View the C3 parameters
-columns_for_viewing <-
-  c('instrument', 'species', 'plot', 'Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp')
-
-c3_aci_parameters <-
-  c3_aci_results$parameters[ , columns_for_viewing, TRUE]
-
-print(c3_aci_parameters)
-```
-
-Alternatively, we can extract average values of the parameters for each species
-using the `basic_stats` function from `PhotoGEA`:
+We can also calculate average values and standard errors of the best-fit
+parameters for each species using the `basic_stats` function from `PhotoGEA`:
 
 ```{r calculate_stats}
 # Compute the average and standard error of each parameter for each species
@@ -845,14 +789,16 @@ columns_to_view <- c(
   'RL_at_25_avg', 'RL_at_25_stderr',
   'Tp_avg', 'Tp_stderr'
 )
-print(c3_aci_averages[ , columns_to_view, TRUE])
+
+c3_aci_averages[ , columns_to_view]
 ```
 
-Of course, more advanced statistical tests to check for differences between
-groups can also be performed within R using other packages such as `onewaytests`
-or `DescTools`. Alternatively, the parameter values can be exported to a
-comma-separated-value (CSV) file and analyzed in another software environment
-like `jmp`.
+## Other Ideas for Synthesizing Results
+
+Statistical tests to check for differences between groups can be performed
+within R using other packages such as `onewaytests` or `DescTools`.
+Alternatively, the parameter values can be exported to a comma-separated-value
+(CSV) file and analyzed in another software environment like `jmp`.
 
 # Customizing Your Script
 
@@ -907,36 +853,30 @@ unstable points before performing the fits. Often, it is helpful to not perform
 any data cleaning at first, and then remove problematic points if they seem to
 cause problems with the fits.
 
-## Tp Limitations
-
-In this example, we consider triose phosphate utilization as a factor that may
-possibly limit assimilation. However, as discussed in [Fitting Licor Data], it
-is also possible to remove this potential limitation from the model by fixing
-`Tp` to a high value and only fitting `J`, `RL`, and `Vcmax`. Often it is wise
-to first try fitting a set of curves without `Tp` limitations, and only
-consider allowing `Tp` limitations if the resulting fits are not good.
-
-## Averages and Standard Errors
-
-Depending on how your data is organized, you may want to change the column used
-to divide the data when calculating averages and standard errors.
-
 ## Plots
 
 You may need to change the axis limits in some or all of the plots.
 Alternatively, you can remove them, allowing `xyplot` to automatically choose
 them for you.
 
+You may also want to consider using the `pdf_print` function from `PhotoGEA` to
+save some or all of your plots as PDFs. See the help page for more info:
+`?pdf_print`.
+
 ## Saving Results
 
-You may want to use `write.csv` to save some or all of the fitting results as
-`csv` files. For example, the following commands will allow you to interactively
-choose output filenames for the resulting `csv` files:
+You may want to use `write.csv.exdf` to save some or all of the fitting results
+as CSV files. When writing the contents of an `exdf` object to a CSV file,
+using `write.csv.exdf` rather than `write.csv` will ensure that units are
+included with each column.
+
+For example, the following commands will allow you to interactively
+choose output filenames for the resulting CSV files:
 
 ```{r saving_csv_files, eval = FALSE}
-write.csv(c3_aci_results$fits, file.choose(), row.names = FALSE)
-write.csv(c3_aci_results$parameters, file.choose(), row.names = FALSE)
-write.csv(c3_aci_averages, file.choose(), row.names = FALSE)
+write.csv.exdf(c3_aci_results$fits, file.choose())
+write.csv.exdf(c3_aci_results$parameters, file.choose())
+write.csv.exdf(c3_aci_averages, file.choose())
 ```
 
 # Commands From This Document
@@ -992,6 +932,10 @@ vignette.
 
 <<plot_stability>>
 
+## IMPORTANT: When analyzing your own files, it is not advised to remove any
+## points for the initial fits. Only remove unstable or unusual points if it is
+## necessary in order to get good fits.
+
 <<remove_unstable_points>>
 
 <<remove_points>>
@@ -1014,11 +958,13 @@ vignette.
 ### Using plots and statistics to help draw conclusions from the data
 ###
 
+<<view_j_lim>>
+
+<<view_vcmax_lim>>
+
 <<vcmax_barchart>>
 
-<<j_bwplot>>
-
-<<c3_aci_parameters>>
+<<vcmax_bwplot>>
 
 <<calculate_stats>>
 
