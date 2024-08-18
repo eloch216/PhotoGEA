@@ -32,6 +32,12 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- The parameter trust values have been changed from logical values (`TRUE` or
+  `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
+  unreliability, potential unreliability, and full reliability, respectively.
+
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
 - A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to
@@ -71,9 +77,6 @@ be directly added to this file to describe the related changes.
     the upper confidence limit is infinity (equivalent to `TRUE` in previous
     versions of PhotoGEA).
   - The default value for all functions that have this option is 2.
-- The parameter trust values have been changed from logical values (`TRUE` or
-  `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
-  unreliability, potential unreliability, and full reliability, respectively.
 - A warning was removed from `fit_c4_aci`, which had previously suggested to
   avoid fitting more than one of `Vcmax_at_25`, `Vpr`, and `Jmax_at_opt`.
 - The default value of the `require_positive_gmc` input argument of the
