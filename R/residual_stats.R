@@ -1,4 +1,7 @@
 residual_stats <- function(fit_residuals, units, nparam) {
+    # Only use points that are not NA
+    fit_residuals <- fit_residuals[!is.na(fit_residuals)]
+
     npts <- length(fit_residuals)
     dof <- npts - nparam
 

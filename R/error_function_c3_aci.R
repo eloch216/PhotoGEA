@@ -21,6 +21,13 @@ error_function_c3_aci <- function(
     ...
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('error_function_c3_aci requires an exdf object')
+    }
+
+    # Only use points designated for fitting
+    replicate_exdf <- replicate_exdf[points_for_fitting(replicate_exdf), , TRUE]
+
     # Assemble fit options; here we do not care about bounds
     luf <- assemble_luf(
         c3_aci_param,

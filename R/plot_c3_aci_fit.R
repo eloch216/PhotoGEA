@@ -33,7 +33,7 @@ plot_c3_aci_fit <- function(
     required_variables[[identifier_column_name]] <- NA
 
     check_required_variables(fit_results$fits_interpolated, required_variables)
-    
+
     required_variables[[a_column_name]] <- unit_dictionary[['A']]
 
     check_required_variables(fit_results$fits, required_variables)
@@ -65,7 +65,9 @@ plot_c3_aci_fit <- function(
         xlab = paste(x_name, '[', fit_results$fits_interpolated$units[[x_name]], ']'),
         ylab = paste(
             'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
-            ']\n(black circles: measured data; red circle: estimated operating point)'
+            ']\n(filled black circles: measured data used for fits',
+            '\nopen black circles: measured data excluded from fits',
+            '\nfilled red circle: estimated operating point)'
         ),
         curve_ids = fit_results$fits_interpolated[, identifier_column_name],
         panel = function(...) {
@@ -82,6 +84,8 @@ plot_c3_aci_fit <- function(
             curve_data <-
                 fit_results$fits[fit_results$fits[, identifier_column_name] == curve_id, ]
 
+            used_for_fit <- points_for_fitting(curve_data)
+
             # Plot the operating point, if desired
             if (plot_operating_point) {
                 lattice::panel.points(
@@ -93,9 +97,15 @@ plot_c3_aci_fit <- function(
 
             # Plot the measured data points
             lattice::panel.points(
-                curve_data[, a_column_name] ~ curve_data[, x_name],
+                curve_data[used_for_fit, a_column_name] ~ curve_data[used_for_fit, x_name],
                 col = 'black',
                 pch = 16
+            )
+
+            lattice::panel.points(
+                curve_data[!used_for_fit, a_column_name] ~ curve_data[!used_for_fit, x_name],
+                col = 'black',
+                pch = 1
             )
         },
         ...

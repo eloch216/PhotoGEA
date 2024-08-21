@@ -571,7 +571,8 @@ highest CO~2~ setpoint value, so it is easy to specify them all at once:
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
 licor_data <- remove_points(
   licor_data,
-  list(instrument = 'ripe1', CO2_r_sp = 1800)
+  list(instrument = 'ripe1', CO2_r_sp = 1800),
+  method = 'exclude'
 )
 ```
 
