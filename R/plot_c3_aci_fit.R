@@ -3,6 +3,7 @@ plot_c3_aci_fit <- function(
     identifier_column_name,
     x_name,
     plot_operating_point = TRUE,
+    plot_RL = FALSE,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -67,13 +68,10 @@ plot_c3_aci_fit <- function(
             'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
             ']\n(filled black circles: measured data used for fits',
             '\nopen black circles: measured data excluded from fits',
-            '\nfilled red circle: estimated operating point)'
+            '\nopen red circle: estimated operating point)'
         ),
         curve_ids = fit_results$fits_interpolated[, identifier_column_name],
         panel = function(...) {
-            # Plot the fit lines
-            lattice::panel.xyplot(...)
-
             # Get info about this curve
             args <- list(...)
             curve_id <- args$curve_ids[args$subscripts][1]
@@ -84,16 +82,23 @@ plot_c3_aci_fit <- function(
             curve_data <-
                 fit_results$fits[fit_results$fits[, identifier_column_name] == curve_id, ]
 
+            curve_data_interpolated <-
+                fit_results$fits_interpolated[fit_results$fits_interpolated[, identifier_column_name] == curve_id, ]
+
             used_for_fit <- points_for_fitting(curve_data)
 
-            # Plot the operating point, if desired
-            if (plot_operating_point) {
-                lattice::panel.points(
-                    curve_parameters[1, 'operating_An_model'] ~ curve_parameters[1, operating_x],
-                    col = 'red',
-                    pch = 16
+            # Plot -RL, if desired
+            if (plot_RL) {
+                lattice::panel.lines(
+                    -curve_data_interpolated$RL_tl ~ curve_data_interpolated[, x_name],
+                    lty = 2,
+                    col = 'black',
+                    lwd = 1
                 )
             }
+
+            # Plot the fit lines
+            lattice::panel.xyplot(...)
 
             # Plot the measured data points
             lattice::panel.points(
@@ -107,6 +112,15 @@ plot_c3_aci_fit <- function(
                 col = 'black',
                 pch = 1
             )
+
+            # Plot the operating point, if desired
+            if (plot_operating_point) {
+                lattice::panel.points(
+                    curve_parameters[1, 'operating_An_model'] ~ curve_parameters[1, operating_x],
+                    col = 'red',
+                    pch = 1
+                )
+            }
         },
         ...
     )
