@@ -62,13 +62,13 @@ plot_c4_aci_hyperbola_fit <- function(
 
             # Plot the measured data points
             lattice::panel.points(
-                curve_data[used_for_fit, a_column_name] ~ curve_data[used_for_fit, x_name],
+                curve_data[used_for_fit, a_column_name] ~ curve_data[used_for_fit, ci_column_name],
                 col = 'black',
                 pch = 16
             )
 
             lattice::panel.points(
-                curve_data[!used_for_fit, a_column_name] ~ curve_data[!used_for_fit, x_name],
+                curve_data[!used_for_fit, a_column_name] ~ curve_data[!used_for_fit, ci_column_name],
                 col = 'black',
                 pch = 1
             )

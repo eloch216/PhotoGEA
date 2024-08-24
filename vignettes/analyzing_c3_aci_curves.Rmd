@@ -660,7 +660,7 @@ they look reasonable. This can be done using a built-in plotting function called
 includes values of the potential limiting rates `Ac`, `Aj`, and `Ap`, as well as
 the estimated operating point.
 
-```{r fit_aci_limiting}
+```{r plot_fits}
 # Plot the C3 A-Cc fits (including limiting rates)
 plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Ci', ylim = c(-10, 80))
 ```
