@@ -15,8 +15,8 @@
 \usage{
   fit_ball_berry(
     replicate_exdf,
-    gsw_column_name = 'gsw',
-    bb_index_column_name = 'bb_index'
+    bb_index_column_name = 'bb_index',
+    gsw_column_name = 'gsw'
   )
 }
 
@@ -25,14 +25,14 @@
     An \code{exdf} object representing one Ball-Berry curve.
   }
 
-  \item{gsw_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the stomatal
-    conductance to water vapor in \code{mol m^(-2) s^(-1)}.
-  }
-
   \item{bb_index_column_name}{
     The name of the column in \code{replicate_exdf} that contains the Ball-Berry
     index in \code{mol m^(-2) s^(-1)}.
+  }
+
+  \item{gsw_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the stomatal
+    conductance to water vapor in \code{mol m^(-2) s^(-1)}.
   }
 }
 
@@ -143,16 +143,7 @@ col_to_keep <- c('species', 'plot', 'species_plot', 'bb_intercept', 'bb_slope', 
 bb_results$parameters[ , col_to_keep]
 
 # View the fits for each species / plot
-lattice::xyplot(
-  gsw_fit + gsw ~ bb_index | species_plot,
-  data = bb_results$fit$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste0('Ball-Berry index (', licor_file$units$bb_index, ')'),
-  ylab = paste0('Stomatal conductance (', licor_file$units$gsw, ')')
-)
+plot_ball_berry_fit(bb_results, 'species_plot')
 }
 
 \concept{exdf}
