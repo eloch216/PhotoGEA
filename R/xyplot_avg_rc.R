@@ -9,6 +9,7 @@ xyplot_avg_rc <- function(
     eb_length = 0.05,
     eb_lwd = 1,
     na.rm = TRUE,
+    subset = rep_len(TRUE, length(Y)),
     ...
 )
 {
@@ -20,6 +21,9 @@ xyplot_avg_rc <- function(
         group_identifier = group_identifier,
         stringsAsFactors = FALSE
     )
+
+    # Keep only the desired subset
+    tdf <- tdf[subset, ]
 
     # Remove NA if necessary
     if (na.rm) {
