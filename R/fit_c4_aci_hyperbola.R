@@ -144,13 +144,7 @@ fit_c4_aci_hyperbola <- function(
     }
 
     # Add a column for the residuals
-    replicate_exdf <- set_variable(
-        replicate_exdf,
-        paste0(a_column_name, '_residuals'),
-        replicate_exdf$units[[a_column_name]],
-        'fit_c4_aci_hyperbola',
-        replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
-    )
+    replicate_exdf <- calculate_residuals(replicate_exdf, a_column_name)
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)

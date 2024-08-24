@@ -65,13 +65,12 @@ plot_c4_aci_fit <- function(
         xlab = paste(x_name, '[', fit_results$fits_interpolated$units[[x_name]], ']'),
         ylab = paste(
             'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
-            ']\n(black circles: measured data; red circle: estimated operating point)'
+            ']\n(filled black circles: measured data used for fits',
+            '\nopen black circles: measured data excluded from fits',
+            '\nopen red circle: estimated operating point)'
         ),
         curve_ids = fit_results$fits_interpolated[, identifier_column_name],
         panel = function(...) {
-            # Plot the fit lines
-            lattice::panel.xyplot(...)
-
             # Get info about this curve
             args <- list(...)
             curve_id <- args$curve_ids[args$subscripts][1]
@@ -82,20 +81,31 @@ plot_c4_aci_fit <- function(
             curve_data <-
                 fit_results$fits[fit_results$fits[, identifier_column_name] == curve_id, ]
 
+            used_for_fit <- points_for_fitting(curve_data)
+
+            # Plot the fit lines
+            lattice::panel.xyplot(...)
+
             # Plot the operating point, if desired
             if (plot_operating_point) {
                 lattice::panel.points(
                     curve_parameters[1, 'operating_An_model'] ~ curve_parameters[1, operating_x],
                     col = 'red',
-                    pch = 16
+                    pch = 1
                 )
             }
 
             # Plot the measured data points
             lattice::panel.points(
-                curve_data[, a_column_name] ~ curve_data[, x_name],
+                curve_data[used_for_fit, a_column_name] ~ curve_data[used_for_fit, x_name],
                 col = 'black',
                 pch = 16
+            )
+
+            lattice::panel.points(
+                curve_data[!used_for_fit, a_column_name] ~ curve_data[!used_for_fit, x_name],
+                col = 'black',
+                pch = 1
             )
         },
         ...
