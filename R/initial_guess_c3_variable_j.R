@@ -24,6 +24,9 @@ initial_guess_c3_variable_j <- function(
             stop("initial_guess_c3_variable_j requires an exdf object")
         }
 
+        # Only use points designated for fitting
+        rc_exdf <- rc_exdf[points_for_fitting(rc_exdf), , TRUE]
+
         # Make sure the required variables are defined and have the correct
         # units. Here we only need to check a few of them; initial_guess_c3_aci
         # will check the rest.

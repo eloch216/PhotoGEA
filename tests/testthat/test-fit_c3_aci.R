@@ -105,6 +105,11 @@ test_that('fit results have not changed (no alpha)', {
         tolerance = TOLERANCE
     )
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 4, 9)
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
@@ -190,6 +195,11 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         tolerance = TOLERANCE
     )
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 6, 7)
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
@@ -221,6 +231,11 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         tolerance = TOLERANCE
     )
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 5, 8)
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
@@ -249,6 +264,9 @@ test_that('removing and excluding points produce the same fit results', {
         list(seq_num = pts_to_remove),
         method = 'exclude'
     )
+
+    expect_equal(nrow(one_curve_remove), 10)
+    expect_equal(nrow(one_curve_exclude), 13)
 
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer

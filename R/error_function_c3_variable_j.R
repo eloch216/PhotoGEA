@@ -25,6 +25,13 @@ error_function_c3_variable_j <- function(
     ...
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('error_function_c3_variable_j requires an exdf object')
+    }
+
+    # Only use points designated for fitting
+    replicate_exdf <- replicate_exdf[points_for_fitting(replicate_exdf), , TRUE]
+
     # Make sure options are okay
     require_positive_gmc <- tolower(require_positive_gmc)
     if (!require_positive_gmc %in% c('none', 'all', 'positive_a')) {

@@ -81,6 +81,11 @@ test_that('fit results have not changed (no alpha)', {
         tolerance = TOLERANCE
     )
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 5, 8)
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
@@ -120,6 +125,11 @@ test_that('fit results have not changed (alpha_old)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_upper')]),
         c(250.388, 258.740, 1.912, 0.412, Inf),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 6, 7)
     )
 
     lim_info <-
@@ -163,6 +173,11 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         tolerance = TOLERANCE
     )
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 7, 6)
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
@@ -194,6 +209,11 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         tolerance = TOLERANCE
     )
 
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 6, 7)
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
@@ -207,3 +227,77 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         tolerance = TOLERANCE
     )
 })
+
+test_that('removing and excluding points produce the same fit results', {
+    pts_to_remove <- c(3, 5, 13)
+
+    one_curve_remove <- remove_points(
+        one_curve,
+        list(seq_num = pts_to_remove),
+        method = 'remove'
+    )
+
+    one_curve_exclude <- remove_points(
+        one_curve,
+        list(seq_num = pts_to_remove),
+        method = 'exclude'
+    )
+
+    expect_equal(nrow(one_curve_remove), 10)
+    expect_equal(nrow(one_curve_exclude), 13)
+
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res_remove <- fit_c3_variable_j(
+        one_curve_remove,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_deoptim(200)
+    )
+
+    set.seed(1234)
+
+    fit_res_exclude <- fit_c3_variable_j(
+        one_curve_exclude,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_deoptim(200)
+    )
+
+    # Check that results haven't changed
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        c(246.33, 257.59, 1.92, 0.41, NA, 35.56),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(10, 6, 4)
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('RSS', 'RMSE')]),
+        c(6.178, 0.786),
+        tolerance = TOLERANCE
+    )
+
+    # Check that remove/exclude results are the same
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res_exclude$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('npts', 'nparam', 'dof')]),
+        as.numeric(fit_res_exclude$parameters[1, c('npts', 'nparam', 'dof')])
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('RSS', 'RMSE')]),
+        as.numeric(fit_res_exclude$parameters[1, c('RSS', 'RMSE')]),
+        tolerance = TOLERANCE
+    )
+})
+

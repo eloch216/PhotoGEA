@@ -81,6 +81,11 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 3, 10)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
         c(2, 2, 0, 0)
     )
@@ -111,6 +116,11 @@ test_that('fit results have not changed (Vpr)', {
         as.numeric(fit_res$parameters[1, c('Vpr_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(62.43, 156.94, 2.76),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 3, 10)
     )
 
     expect_equal(
@@ -147,7 +157,86 @@ test_that('fit results have not changed (Jmax)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 3, 10)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
         c(2, 1, 0, 2)
     )
 })
+
+test_that('removing and excluding points produce the same fit results', {
+    pts_to_remove <- c(3, 5, 13)
+
+    one_curve_remove <- remove_points(
+        one_curve,
+        list(seq_num = pts_to_remove),
+        method = 'remove'
+    )
+
+    one_curve_exclude <- remove_points(
+        one_curve,
+        list(seq_num = pts_to_remove),
+        method = 'exclude'
+    )
+
+    expect_equal(nrow(one_curve_remove), 10)
+    expect_equal(nrow(one_curve_exclude), 13)
+
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res_remove <- fit_c4_aci(
+        one_curve_remove,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7)
+    )
+
+    set.seed(1234)
+
+    fit_res_exclude <- fit_c4_aci(
+        one_curve_exclude,
+        Ca_atmospheric = 420,
+        OPTIM_FUN = optimizer_nmkb(1e-7)
+    )
+
+    # Check that results haven't changed
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
+        c(37.01, 211.08, 0.70, 57.67),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(10, 3, 7)
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('RSS', 'RMSE')]),
+        c(102.677, 3.204),
+        tolerance = TOLERANCE
+    )
+
+    # Check that remove/exclude results are the same
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
+        as.numeric(fit_res_exclude$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('npts', 'nparam', 'dof')]),
+        as.numeric(fit_res_exclude$parameters[1, c('npts', 'nparam', 'dof')])
+    )
+
+    expect_equal(
+        as.numeric(fit_res_remove$parameters[1, c('RSS', 'RMSE')]),
+        as.numeric(fit_res_exclude$parameters[1, c('RSS', 'RMSE')]),
+        tolerance = TOLERANCE
+    )
+})
+
