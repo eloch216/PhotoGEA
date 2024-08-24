@@ -14,6 +14,7 @@ unit_dictionary <- list(
     alpha_old      = dimensionless,
     alpha_psii     = dimensionless,
     alpha_s        = dimensionless,
+    bb_index       = conductance,
     c4_curvature   = dimensionless,
     c4_slope       = conductance, # this is not a conductance, but happens to have the same units as a conductance
     Ca             = micromol_fraction,
@@ -25,6 +26,7 @@ unit_dictionary <- list(
     Flow           = 'micromol s^(-1)',
     Gamma_star     = micromol_fraction,
     gbs            = conductance_bar,
+    gsw            = conductance,
     H2O_r          = millimol_fraction,
     H2O_s          = millimol_fraction,
     J_at_25        = micromol_flux,
