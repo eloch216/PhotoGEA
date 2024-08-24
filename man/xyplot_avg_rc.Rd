@@ -21,6 +21,7 @@
     eb_length = 0.05,
     eb_lwd = 1,
     na.rm = TRUE,
+    subset = rep_len(TRUE, length(Y)),
     ...
   )
 }
@@ -60,6 +61,11 @@
     calculating means and standard errors.
   }
 
+  \item{subset}{
+    A logical vector (of the same length as \code{Y}) indicating which points to
+    include in the final plot.
+  }
+
   \item{\dots}{Additional arguments to be passed to \code{lattice::xyplot}.}
 }
 
@@ -70,6 +76,12 @@
   curves for each group. Error bars are determined by calculating the standard
   errors of \code{X} and \code{Y} at each value of the \code{point_identifier}
   across groups defined by \code{group_identifier}.
+
+  If points were excluded from the data set using \code{\link{remove_points}}
+  with \code{method = 'exclude'}, then the \code{include_when_fitting} column
+  should be passed to \code{xyplot_avg_rc} as the \code{subset} input argument;
+  this will ensure that the excluded points are not used when calculating
+  average response curves.
 }
 
 \value{
@@ -97,6 +109,26 @@ xyplot_avg_rc(
   licor_file[, 'Qin'],
   licor_file[, 'seq_num'],
   licor_file[, 'species'],
+  ylim = c(0, 50),
+  xlab = paste0('Incident PPFD (', licor_file$units$Qin, ')'),
+  ylab = paste0('Average net assimilation (', licor_file$units$A, ')'),
+  auto = TRUE,
+  grid = TRUE
+)
+
+# Exclude a few points from the data set and re-plot the average curves
+licor_file <- remove_points(
+  licor_file,
+  list(obs = c(5, 10, 18)),
+  method = 'exclude'
+)
+
+xyplot_avg_rc(
+  licor_file[, 'A'],
+  licor_file[, 'Qin'],
+  licor_file[, 'seq_num'],
+  licor_file[, 'species'],
+  subset = licor_file[, 'include_when_fitting'],
   ylim = c(0, 50),
   xlab = paste0('Incident PPFD (', licor_file$units$Qin, ')'),
   ylab = paste0('Average net assimilation (', licor_file$units$A, ')'),
