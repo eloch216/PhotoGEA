@@ -55,7 +55,7 @@ remove_points <- function(exdf_obj, ..., method = 'remove') {
 
         # Truncate the exdf to just the points that don't meet the condition, or
         # exclude those points from any subsequent fits
-        exdf_obj <- if (method == 'remove') {
+        exdf_obj <- if (tolower(method) == 'remove') {
             exdf_obj[points_to_keep, , TRUE]
         } else {
             exdf_obj[!points_to_keep, 'include_when_fitting'] <- FALSE

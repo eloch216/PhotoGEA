@@ -11,11 +11,11 @@
 }
 
 \usage{
-  exclude_outliers(x, col_for_analysis, INDICES)
+  exclude_outliers(x, col_for_analysis, INDICES, method = 'exclude')
 
-  \method{exclude_outliers}{data.frame}(x, col_for_analysis, INDICES)
+  \method{exclude_outliers}{data.frame}(x, col_for_analysis, INDICES, method = 'exclude')
 
-  \method{exclude_outliers}{exdf}(x, col_for_analysis, INDICES)
+  \method{exclude_outliers}{exdf}(x, col_for_analysis, INDICES, method = 'exclude')
 }
 
 \arguments{
@@ -28,10 +28,24 @@
   \item{INDICES}{
     A factor or list of factors that each \code{nrow(x)} elements.
   }
+
+  \item{method}{
+    Specify whether to remove rows from \code{x} (\code{'remove'}) or to replace
+    outlier values of \code{col_for_analysis} with \code{NA} (\code{'exclude'}).
+  }
 }
 
 \value{
-  A copy of \code{X} where outliers have been removed.
+  This function returns an object formed from \code{x}, where the results
+  depend on on the value of \code{method}.
+
+  When \code{method} is \code{'remove'}, the returned object is a modified copy
+  of \code{x} where all rows in which the value of \code{col_for_analysis} is an
+  outlier have been removed.
+
+  When \code{method} is \code{'exclude'}, the returned object is a modified copy
+  of \code{x} where all outlier values of \code{col_for_analysis} have been
+  replaced with \code{NA}.
 }
 
 \details{
@@ -56,12 +70,13 @@ licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
-# Exclude points from each response curve in the data where the leaf temperature
+# Remove points from each response curve in the data where the leaf temperature
 # is determined to be an outlier
 licor_file_clean <- exclude_outliers(
   licor_file,
   'TleafCnd',
-  list(licor_file[, 'species'], licor_file[, 'plot'])
+  list(licor_file[, 'species'], licor_file[, 'plot']),
+  method = 'remove'
 )
 
 # Check to see how many points remain after removing outliers
