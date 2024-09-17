@@ -83,7 +83,7 @@ fit_ball_berry <- function(
         c('fit_ball_berry', 'bb_slope',         'dimensionless'),
         c('fit_ball_berry', 'bb_slope_err',     'dimensionless'),
         c('fit_ball_berry', 'r_squared',        ''),
-        c('fit_ball_berry', 'p_vale',           '')
+        c('fit_ball_berry', 'p_value',          '')
     )
 
     # Return the results
