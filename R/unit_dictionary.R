@@ -23,6 +23,7 @@ unit_dictionary <- list(
     CO2_r          = micromol_fraction,
     CO2_s          = micromol_fraction,
     CorrFact       = NA,
+    Csurface       = micromol_fraction,
     Flow           = 'micromol s^(-1)',
     Gamma_star     = micromol_fraction,
     gbs            = conductance_bar,
@@ -34,9 +35,9 @@ unit_dictionary <- list(
     Kc             = micromol_fraction,
     Ko             = millimol_fraction,
     oxygen         = 'percent',
+    rL             = micromol_flux,
     RL_at_25       = micromol_flux,
     RL_norm        = 'normalized to RL at 25 degrees C',
-    rL             = micromol_flux,
     Rm_frac        = dimensionless,
     S              = 'cm^2',
     tau            = dimensionless,
@@ -45,6 +46,7 @@ unit_dictionary <- list(
     Vcmax_at_25    = micromol_flux,
     Vcmax_norm     = 'normalized to Vcmax at 25 degrees C',
     Vmax           = micromol_flux,
+    VPDleaf        = 'kPa',
     Vpmax_at_25    = micromol_flux,
     Vpr            = micromol_flux
 )
