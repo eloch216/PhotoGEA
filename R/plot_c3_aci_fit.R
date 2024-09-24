@@ -3,7 +3,7 @@ plot_c3_aci_fit <- function(
     identifier_column_name,
     x_name,
     plot_operating_point = TRUE,
-    plot_RL = FALSE,
+    plot_Ad = FALSE,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -47,29 +47,44 @@ plot_c3_aci_fit <- function(
     check_required_variables(fit_results$parameters, required_variables)
 
     # Choose line settings
-    assim_cols <- multi_curve_colors()[1:4]
+    assim_cols <- multi_curve_colors()[1:5]
     assim_cols[1] <- '#676767'
 
     line_settings <- list(
         col = assim_cols,
-        lwd = c(4, 2, 2, 2),
-        lty = c(1, 5, 5, 5)
+        lwd = c(4, 2, 2, 2, 2),
+        lty = c(1, 5, 5, 5, 2)
+    )
+
+    # Specify the y-axis label
+    y_label <- paste0(
+        'Net CO2 assimilation rate [ ', fit_results$fits_interpolated$units[['An']],
+        ' ]\n(filled black circles: measured data used for fits',
+        '\nopen black circles: measured data excluded from fits'
+    )
+
+    y_label <- paste0(
+        y_label,
+        if (plot_operating_point) {
+            '\nopen red circle: estimated operating point)'
+        } else {
+            ')'
+        }
     )
 
     # Plot the fits, operating point, and raw data
     lattice::xyplot(
-        An + Ac + Aj + Ap ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name],
+        if (plot_Ad) {
+            An + Ac + Aj + Ap + Ad ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name]
+        } else {
+            An + Ac + Aj + Ap ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name]
+        },
         data = fit_results$fits_interpolated$main_data,
         type = 'l',
         par.settings = list(superpose.line = line_settings),
         auto.key = list(space = 'right', lines = TRUE, points = FALSE),
         xlab = paste(x_name, '[', fit_results$fits_interpolated$units[[x_name]], ']'),
-        ylab = paste(
-            'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
-            ']\n(filled black circles: measured data used for fits',
-            '\nopen black circles: measured data excluded from fits',
-            '\nopen red circle: estimated operating point)'
-        ),
+        ylab = y_label,
         curve_ids = fit_results$fits_interpolated[, identifier_column_name],
         panel = function(...) {
             # Get info about this curve
@@ -86,16 +101,6 @@ plot_c3_aci_fit <- function(
                 fit_results$fits_interpolated[fit_results$fits_interpolated[, identifier_column_name] == curve_id, ]
 
             used_for_fit <- points_for_fitting(curve_data)
-
-            # Plot -RL, if desired
-            if (plot_RL) {
-                lattice::panel.lines(
-                    -curve_data_interpolated$RL_tl ~ curve_data_interpolated[, x_name],
-                    lty = 2,
-                    col = 'black',
-                    lwd = 1
-                )
-            }
 
             # Plot the fit lines
             lattice::panel.xyplot(...)

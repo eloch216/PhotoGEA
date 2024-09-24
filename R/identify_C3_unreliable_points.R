@@ -34,6 +34,7 @@ identify_c3_unreliable_points <- function(
     parameters[, 'n_Ac_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Ac')
     parameters[, 'n_Aj_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Aj')
     parameters[, 'n_Ap_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Ap')
+    parameters[, 'n_Ad_limiting'] <- n_C3_A_limiting(fits, a_fit_name, 'Ad')
 
     # We cannot be sure if a potential limitating process is present in the data
     # if it limits carboxylation at too few points, or if the upper limit of the
@@ -137,6 +138,7 @@ identify_c3_unreliable_points <- function(
         c('identify_c3_unreliable_points', 'n_Ac_limiting',           ''),
         c('identify_c3_unreliable_points', 'n_Aj_limiting',           ''),
         c('identify_c3_unreliable_points', 'n_Ap_limiting',           ''),
+        c('identify_c3_unreliable_points', 'n_Ad_limiting',           ''),
         c('identify_c3_unreliable_points', 'Vcmax_trust',             ''),
         c('identify_c3_unreliable_points', 'J_trust',                 ''),
         c('identify_c3_unreliable_points', 'alpha_g_trust',           ''),

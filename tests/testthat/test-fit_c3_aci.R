@@ -121,6 +121,11 @@ test_that('fit results have not changed (no alpha)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 0)
     )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
+    )
 })
 
 test_that('fit results have not changed (alpha_old)', {
@@ -165,6 +170,11 @@ test_that('fit results have not changed (alpha_old)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 0)
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
     )
 })
 
@@ -211,6 +221,11 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 1)
     )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
+    )
 })
 
 test_that('fit results have not changed (pseudo-FvCB)', {
@@ -247,6 +262,11 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_upper')]),
         c(147.65, 235.43, 0.09, Inf),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        'use_pseudo_fvcb_equations = TRUE'
     )
 })
 
