@@ -376,12 +376,33 @@
 
   \strong{Optional arguments:}
 
-  If an input argument called \code{use_pseudo_fvcb_equations} is supplied and
-  its value is \code{TRUE}, then the pseudo-FvCB model will be used in place of
-  the true FvCB model. In this case, \code{An} will be calculated as
-  \code{An = min{Ac, Aj, Ap}}. In general, using the pseudo-FvCB model is not
-  recommended. This option should only be used to investigate errors that may
-  occur when using the pseudo-FvCB model.
+  \itemize{
+    \item \strong{use_min_A}: If an input argument called \code{use_min_A} is
+          supplied and its value is \code{TRUE}, then the "minimum assimilation"
+          variant of the FvCB model will be used. In this case, \code{An} will
+          be calculated as \code{An = min{Ac, Aj, Ap}}. In general, using this
+          variant is not recommended.It should only be used to investigate
+          errors that may occur when using the minimal assimilation rate rather
+          than the minimal carboxylation rate.
+    \item \strong{TPU_threshold}: If an input argument called
+          \code{TPU_threshold} is supplied and its numeric value is not
+          \code{NULL}, then TPU limitations will only be allowed for values of
+          \code{Cc} above this threshold. This threshold will be used in place
+          of the values discussed in the equations above. In general, using this
+          option is not recommended. It should only be used to investigate
+          errors that may occur when using a fixed TPU threshold.
+    \item \strong{use_FRL}: If an input argument called \code{use_FRL} is
+          supplied and its value is \code{TRUE}, then \code{An} will always be
+          set to \code{Ac} for \code{Cc < Gamma_star}. This "forced Rubisco
+          limitation" can only be used along with the "minimum assimilation"
+          variant (\code{use_min_A = TRUE}).
+    \item \strong{consider_depletion}: If an input argument called
+          \code{consider_depletion} is supplied and its value is \code{TRUE},
+          then RuBP depletion will be considered to be an additional potential
+          limiting process. In this case, \code{Vc} will be calculated as
+          \code{Vc = min{Wc, Wj, Wp, Wd}}, where \code{Wd} is zero when
+          \code{Cc < Gamma_star} and \code{Inf} otherwise.
+  }
 
   \strong{References:}
 

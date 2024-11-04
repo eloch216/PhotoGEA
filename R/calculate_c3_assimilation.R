@@ -32,10 +32,10 @@ calculate_c3_assimilation <- function(
 {
     optional_args <- list(...)
 
-    consider_depletion <- get_optional_argument(optional_args, 'consider_depletion',        FALSE)
-    TPU_threshold      <- get_optional_argument(optional_args, 'TPU_threshold',             NULL)
-    use_FRL            <- get_optional_argument(optional_args, 'use_FRL',                   FALSE)
-    use_pseudo         <- get_optional_argument(optional_args, 'use_pseudo_fvcb_equations', FALSE)
+    consider_depletion <- get_optional_argument(optional_args, 'consider_depletion', FALSE)
+    TPU_threshold      <- get_optional_argument(optional_args, 'TPU_threshold',      NULL)
+    use_FRL            <- get_optional_argument(optional_args, 'use_FRL',            FALSE)
+    use_min_A          <- get_optional_argument(optional_args, 'use_min_A',          FALSE)
 
     if (perform_checks) {
         if (!is.exdf(exdf_obj)) {
@@ -230,7 +230,7 @@ calculate_c3_assimilation <- function(
     An <- photo_resp_factor * Wcjp - RL_tl
 
     # Possibly use the pseudo-FvCB model or one of its variants
-    if (use_pseudo) {
+    if (use_min_A) {
         # Recalculate Ap (micromol / m^2 / s)
         Ap <- (PCc - Gamma_star_ag) * 3 * Tp /
             (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)) - RL_tl

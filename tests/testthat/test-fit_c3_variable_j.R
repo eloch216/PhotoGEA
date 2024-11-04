@@ -200,7 +200,7 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         one_curve,
         Ca_atmospheric = 420,
         OPTIM_FUN = optimizer_deoptim(200),
-        use_pseudo_fvcb_equations = TRUE
+        use_min_A = TRUE
     )
 
     expect_equal(
