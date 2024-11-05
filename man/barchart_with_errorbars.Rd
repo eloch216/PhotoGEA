@@ -20,6 +20,7 @@
     eb_lwd = 1,
     eb_col = 'black',
     na.rm = TRUE,
+    remove_outliers = FALSE,
     ...
   )
 
@@ -43,6 +44,11 @@
   \item{na.rm}{
     A logical value indicating whether or not to remove NA values before
     calculating means and standard errors.
+  }
+
+  \item{remove_outliers}{
+    A logical value indicating whether or not to remove outliers using
+    \code{\link{exclude_outliers}} before calculating means and standard errors.
   }
 
   \item{\dots}{

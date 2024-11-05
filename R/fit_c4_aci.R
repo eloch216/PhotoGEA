@@ -311,20 +311,14 @@ fit_c4_aci <- function(
     # Include the atmospheric CO2 concentration
     replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
 
-    # Add a column for the residuals
-    replicate_exdf <- set_variable(
-        replicate_exdf,
-        paste0(a_column_name, '_residuals'),
-        replicate_exdf$units[[a_column_name]],
-        'fit_c4_aci',
-        replicate_exdf[, a_column_name] - replicate_exdf[, paste0(a_column_name, '_fit')]
-    )
-
     # Document the new columns that were added
     replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_c4_aci', 'Ca_atmospheric', 'micromol mol^(-1)')
     )
+
+    # Add a column for the residuals
+    replicate_exdf <- calculate_residuals(replicate_exdf, a_column_name)
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)

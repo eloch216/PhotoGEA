@@ -571,7 +571,8 @@ highest CO~2~ setpoint value, so it is easy to specify them all at once:
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
 licor_data <- remove_points(
   licor_data,
-  list(instrument = 'ripe1', CO2_r_sp = 1800)
+  list(instrument = 'ripe1', CO2_r_sp = 1800),
+  method = 'exclude'
 )
 ```
 
@@ -659,7 +660,7 @@ they look reasonable. This can be done using a built-in plotting function called
 includes values of the potential limiting rates `Ac`, `Aj`, and `Ap`, as well as
 the estimated operating point.
 
-```{r fit_aci_limiting}
+```{r plot_fits}
 # Plot the C3 A-Cc fits (including limiting rates)
 plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Ci', ylim = c(-10, 80))
 ```

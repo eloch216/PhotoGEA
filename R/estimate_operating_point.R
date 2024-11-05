@@ -20,6 +20,9 @@ estimate_operating_point <- function(
         stop('`type` must be "c3" or "c4"')
     }
 
+    # Only use points designated for fitting
+    aci_exdf <- aci_exdf[points_for_fitting(aci_exdf), , TRUE]
+
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
     required_variables[[a_column_name]]  <- 'micromol m^(-2) s^(-1)'

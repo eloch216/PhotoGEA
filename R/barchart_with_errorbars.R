@@ -5,6 +5,7 @@ barchart_with_errorbars <- function(
     eb_lwd = 1,
     eb_col = 'black',
     na.rm = TRUE,
+    remove_outliers = FALSE,
     ...
 )
 {
@@ -13,6 +14,15 @@ barchart_with_errorbars <- function(
         to_keep <- !is.na(Y)
         X <- X[to_keep]
         Y <- Y[to_keep]
+    }
+
+    # Remove outliers if necessary
+    if (remove_outliers) {
+        exclude_df <-
+            exclude_outliers(data.frame(x = X, y = Y), 'y', X, method = 'remove')
+
+        Y = exclude_df[['y']]
+        X = exclude_df[['x']]
     }
 
     # Get the mean, standard deviation, and number of replicates for each unique

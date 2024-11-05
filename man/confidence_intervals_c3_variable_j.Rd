@@ -39,7 +39,8 @@
     cj_crossover_max = NA,
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
-    gmc_max = Inf
+    gmc_max = Inf,
+    \dots
   )
 }
 
@@ -178,6 +179,10 @@
 
   \item{gmc_max}{
     To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
   }
 }
 

@@ -21,9 +21,17 @@ error_function_c3_variable_j <- function(
     cj_crossover_max = NA,
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
-    gmc_max = Inf
+    gmc_max = Inf,
+    ...
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('error_function_c3_variable_j requires an exdf object')
+    }
+
+    # Only use points designated for fitting
+    replicate_exdf <- replicate_exdf[points_for_fitting(replicate_exdf), , TRUE]
+
     # Make sure options are okay
     require_positive_gmc <- tolower(require_positive_gmc)
     if (!require_positive_gmc %in% c('none', 'all', 'positive_a')) {
@@ -182,7 +190,8 @@ error_function_c3_variable_j <- function(
                     vcmax_norm_column_name,
                     hard_constraints = hard_constraints,
                     perform_checks = FALSE,
-                    return_exdf = FALSE
+                    return_exdf = FALSE,
+                    ...
                 )
             },
             error = function(e) {

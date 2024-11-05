@@ -42,12 +42,11 @@ plot_c4_aci_hyperbola_fit <- function(
         xlab = paste(ci_column_name, '[', fit_results$fits_interpolated$units[[ci_column_name]], ']'),
         ylab = paste(
             'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
-            ']\n(black circles: measured data)'
+            ']\n(filled black circles: measured data used for fits',
+            '\nopen black circles: measured data excluded from fits)'
         ),
         curve_ids = fit_results$fits_interpolated[, identifier_column_name],
         panel = function(...) {
-            # Plot the fit lines
-            lattice::panel.xyplot(...)
 
             # Get info about this curve
             args <- list(...)
@@ -56,11 +55,22 @@ plot_c4_aci_hyperbola_fit <- function(
             curve_data <-
                 fit_results$fits[fit_results$fits[, identifier_column_name] == curve_id, ]
 
+            used_for_fit <- points_for_fitting(curve_data)
+
+            # Plot the fit lines
+            lattice::panel.xyplot(...)
+
             # Plot the measured data points
             lattice::panel.points(
-                curve_data[, a_column_name] ~ curve_data[, ci_column_name],
+                curve_data[used_for_fit, a_column_name] ~ curve_data[used_for_fit, ci_column_name],
                 col = 'black',
                 pch = 16
+            )
+
+            lattice::panel.points(
+                curve_data[!used_for_fit, a_column_name] ~ curve_data[!used_for_fit, ci_column_name],
+                col = 'black',
+                pch = 1
             )
         },
         ...

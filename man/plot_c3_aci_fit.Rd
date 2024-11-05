@@ -15,6 +15,7 @@
     identifier_column_name,
     x_name,
     plot_operating_point = TRUE,
+    plot_Ad = FALSE,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -42,6 +43,11 @@
 
   \item{plot_operating_point}{
     A logical value indicating whether to plot the operating point.
+  }
+
+  \item{plot_Ad}{
+    A logical value indicating whether to plot the RuBP-depletion-limited net
+    CO2 assimilation rate (\code{Ad}).
   }
 
   \item{a_column_name}{

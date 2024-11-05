@@ -617,7 +617,8 @@ highest CO~2~ setpoint value, so it is easy to specify them all at once.
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
 licor_data <- remove_points(
   licor_data,
-  list(instrument = 'ripe1', CO2_r_sp = 1800)
+  list(instrument = 'ripe1', CO2_r_sp = 1800),
+  method = 'exclude'
 )
 ```
 
@@ -1107,6 +1108,10 @@ vignette.
 <<plot_co2>>
 
 <<plot_stability>>
+
+## IMPORTANT: When analyzing your own files, it is not advised to remove any
+## points for the initial fits. Only remove unstable or unusual points if it is
+## necessary in order to get good fits.
 
 <<remove_unstable_points>>
 

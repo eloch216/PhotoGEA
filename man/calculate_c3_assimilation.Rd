@@ -37,7 +37,8 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
-    return_exdf = TRUE
+    return_exdf = TRUE,
+    \dots
   )
 }
 
@@ -198,6 +199,10 @@
     intended to be used when  \code{\link{fit_c3_aci}} calls this function,
     since creating an \code{exdf} object to return will slow down the fitting
     procedure.
+  }
+
+  \item{\dots}{
+    Optional arguments; see below.
   }
 }
 
@@ -368,6 +373,39 @@
 
   If any input values violate any of the specified constraints, an error message
   will be thrown.
+
+  \strong{Optional arguments:}
+
+  \itemize{
+    \item \strong{use_min_A}: If an input argument called \code{use_min_A} is
+          supplied and its value is \code{TRUE}, then the "minimum assimilation"
+          variant of the FvCB model will be used. In this case, \code{An} will
+          be calculated as \code{An = min{Ac, Aj, Ap}}. In general, using this
+          variant is not recommended.It should only be used to investigate
+          errors that may occur when using the minimal assimilation rate rather
+          than the minimal carboxylation rate.
+    \item \strong{TPU_threshold}: If an input argument called
+          \code{TPU_threshold} is supplied and its numeric value is not
+          \code{NULL}, then TPU limitations will only be allowed for values of
+          \code{Cc} above this threshold. This threshold will be used in place
+          of the values discussed in the equations above. In general, using this
+          option is not recommended. It should only be used to investigate
+          errors that may occur when using a fixed TPU threshold.
+    \item \strong{use_FRL}: If an input argument called \code{use_FRL} is
+          supplied and its value is \code{TRUE}, then \code{An} will always be
+          set to \code{Ac} for \code{Cc < Gamma_star}. This "forced Rubisco
+          limitation" can only be used along with the "minimum assimilation"
+          variant (\code{use_min_A = TRUE}).
+    \item \strong{consider_depletion}: If an input argument called
+          \code{consider_depletion} is supplied and its value is \code{TRUE},
+          then RuBP depletion will be considered to be an additional potential
+          limiting process. In this case, \code{Vc} will be calculated as
+          \code{Vc = min{Wc, Wj, Wp, Wd}}, where \code{Wd} is zero when
+          \code{Cc < Gamma_star} and \code{Inf} otherwise. Note that the value
+          of \code{Wd} (and \code{Ad = (1 - Gamma_star / PCc) * Wd - RL}) will
+          always be returned, regardless of whether RuBP depletion is considered
+          when calculating \code{An}.
+  }
 
   \strong{References:}
 

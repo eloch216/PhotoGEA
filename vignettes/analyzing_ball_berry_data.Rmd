@@ -396,26 +396,27 @@ them before proceeding with the Ball-Berry fitting.
 While checking over the plots in [Qualitative Checks], two issues were noticed:
 (1) some points were logged before stability was achieved and (2) some of the
 curves look abnormal. In this section, we will demonstrate how to remove the
-unstable points and the weird curves.
+unstable points and the weird curves using the `remove_points` function from
+`PhotoGEA`.
 
-The following command will keep only the points where `Stable` is exactly 2;
-this condition means that all of the stability criteria were satisfied.
-Sometimes, following this procedure, a curve will have very few stable points
-remaining; it is usually a good idea to automatically exclude any curve with
-fewer than three stable points.
+The following command will remove points where `Stable` is 0 or 1, keeping only
+the points where `Stable` is 2; this condition means that all of the stability
+criteria were satisfied.
 
 ```{r remove_unstable_points}
 # Only keep points where stability was achieved
-licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
-
-# Remove any curves that have fewer than three remaining points
-npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
-ids_to_keep <- names(npts[npts > 2])
-licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+licor_data <- remove_points(
+  licor_data,
+  list(Stable = c(0, 1)),
+  method = 'exclude'
+)
 ```
 
 Since we have identified a few curves that may not be acceptable for Ball-Berry
 fitting, we can remove them via the `remove_points` function from `PhotoGEA`:
+
+The following command will remove all points from the curves that are not
+acceptable for Ball-Berry fitting:
 
 ```{r remove_curves}
 # Define a list of curves to remove from the data set
@@ -426,13 +427,12 @@ curves_to_remove <- c(
 )
 
 # Remove them
-licor_data <-
-  remove_points(licor_data, list(curve_identifier = curves_to_remove))
+licor_data <- remove_points(
+  licor_data,
+  list(curve_identifier = curves_to_remove),
+  method = 'remove'
+)
 ```
-
-Note that `remove_points` can also be used to exclude individual points instead
-of entire curves; see its help entry by typing `?remove_points` for more
-information.
 
 # Fitting Licor Data
 
@@ -488,24 +488,13 @@ ball_berry_results <- consolidate(by(
 ## Viewing the Fitted Curves
 
 Having made the fits, it is now a good idea to visually check them, making sure
-they look reasonable. As before, we can use `xyplot` from the `lattice` library
-to quickly make plots of all the fits, which are stored in
-`ball_berry_results$fits`, an `exdf` object:
+they look reasonable. For this, we can use the `plot_ball_berry_fits` function
+from `PhotoGEA`, which will also show the points that were excluded from the
+fits during the data cleaning step:
 
 ```{r plot_fits}
 # Plot the Ball-Berry fits
-xyplot(
-  gsw + gsw_fit ~ bb_index | curve_identifier,
-  data = ball_berry_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE,
-  grid = TRUE,
-  xlab = paste0('Ball-Berry index (', ball_berry_results$fits$units$bb_index, ')'),
-  ylab = paste0('Stomatal conductance to H2O (', ball_berry_results$fits$units$gsw, ')'),
-  ylim = c(0, 0.8),
-  xlim = c(0, 0.1)
-)
+plot_ball_berry_fit(ball_berry_results, 'curve_identifier')
 ```
 
 All these fits look good!
@@ -673,6 +662,10 @@ vignette.
 <<plot_stability>>
 
 <<plot_assimilation>>
+
+## IMPORTANT: When analyzing your own files, it is not advised to remove any
+## points for the initial fits. Only remove unstable or unusual points if it is
+## necessary in order to get good fits.
 
 <<remove_unstable_points>>
 
