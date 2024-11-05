@@ -593,12 +593,11 @@ the built-in help system by typing `?calculate_total_pressure`, `?apply_gm`, or
 
 Another important consideration is that `apply_gm` requires values of the
 mesophyll conductance to CO~2~. Values of mesophyll conductance can be specified
-using the `set_variable` function from `PhotoGEA`. Here we will set
-`gmc = 1.0 mol / m^2 / s / bar` for tobacco and `gmc = Inf` for soybean; in this
-case, the soybean parameters determined by the fitting process will be
-"effective" parameters. Then we will calculate values of $C_c$, and use
-Arrhenius parameters from @sharkey_fitting_2007 to calculate the
-temperature-dependent inputs:
+using the `set_variable` function from `PhotoGEA`. A common choice is to set
+mesophyll conductance to infinity, in which case FvCB model parameters
+determined during the fitting process will be "effective" parameters. Then we
+will calculate values of $C_c$, and use Arrhenius parameters from
+@sharkey_fitting_2007 to calculate the temperature-dependent inputs:
 
 ```{r prepare_for_fitting}
 # Calculate total pressure in the Licor chamber
@@ -606,9 +605,7 @@ licor_data <- calculate_total_pressure(licor_data)
 
 # Specify separate mesophyll conductance values for each species
 licor_data <- set_variable(
-  licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
-  id_column = 'species',
-  value_table = list(tobacco = 1.0, soybean = Inf)
+  licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
 )
 
 # Calculate Cc

@@ -56,6 +56,8 @@ be directly added to this file to describe the related changes.
   plotting function was also added (`plot_ball_berry_fit`).
 - A function was added for fitting the Medlyn conductance model (as an
   alternative to the Ball-Berry model): `fit_medlyn`
+- Update input argument checks for several functions: `check_required_columns`
+  and `set_variable`
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
