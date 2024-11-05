@@ -32,7 +32,7 @@ test_that('c4 assimilation works for numeric values of flexible inputs', {
 test_that('c4 assimilation works for non-numeric values of flexible inputs', {
     expect_error(
         calculate_c4_assimilation_hyperbola(inputs, '', 0.5, 1.0, 65),
-        'The following columns are undefined: c4_curvature'
+        'The following required columns are not present: c4_curvature'
     )
 
     res <- expect_silent(

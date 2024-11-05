@@ -42,7 +42,7 @@ test_that('c3 assimilation works for numeric values of flexible inputs', {
 test_that('c3 assimilation works for non-numeric values of flexible inputs', {
     expect_error(
         calculate_c3_assimilation(inputs, '', 0, 0, '', 150, 1, 12, 120),
-        'The following columns are undefined: alpha_g'
+        'The following required columns are not present: alpha_g'
     )
 
     res <- expect_silent(

@@ -42,7 +42,7 @@ test_that('c4 assimilation works for numeric values of flexible inputs', {
 test_that('c4 assimilation works for non-numeric values of flexible inputs', {
     expect_error(
         calculate_c4_assimilation(inputs, '', 0.003, 400, 1, 0.5, 80, 120, 400),
-        'The following columns are undefined: alpha_psii'
+        'The following required columns are not present: alpha_psii'
     )
 
     res <- expect_silent(

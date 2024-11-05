@@ -48,7 +48,8 @@ calculate_c3_limitations_warren <- function(
     required_variables[[total_pressure_column_name]] <- unit_dictionary[['total_pressure']]
     required_variables[[vcmax_norm_column_name]]     <- unit_dictionary[['Vcmax_norm']]
 
-    check_required_variables(exdf_obj, required_variables)
+    # Don't throw an error if some columns are all NA
+    check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
 
     # Extract key variables to make the following equations simpler
     Ca <- exdf_obj[, ca_column_name]    # micromol / mol
