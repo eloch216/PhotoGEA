@@ -51,7 +51,7 @@ test_that('common mistakes are caught', {
             id_column = 'species',
             value_table = Inf
         ),
-        '`value_table` must be a list'
+        'When a `value_table` is supplied, it must be a list'
     )
 
     expect_error(
@@ -62,7 +62,7 @@ test_that('common mistakes are caught', {
             id_column = 'species',
             value_table = list(0.9, soybean = 1.1)
         ),
-        'All elements of `value_table` must have names'
+        'When a `value_table` is supplied, all of its elements must have names'
     )
 
     expect_error(
@@ -73,7 +73,7 @@ test_that('common mistakes are caught', {
             id_column = 'species',
             value_table = list(0.9, 1.1)
         ),
-        'All elements of `value_table` must have names'
+        'When a `value_table` is supplied, all of its elements must have names'
     )
 
     expect_error(
@@ -83,7 +83,7 @@ test_that('common mistakes are caught', {
             'mol m^(-2) s^(-1) bar^(-1)',
             value_table = list(maize = 0.9, soybean = 1.1)
         ),
-        'An `id_column` must be supplied when using a `value_table`'
+        'When a `value_table` is supplied, an `id_column` must also be supplied'
     )
 
 })
