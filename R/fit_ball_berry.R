@@ -33,7 +33,7 @@ fit_ball_berry <- function(
 
     # Get the p-value
     f_stat <- summary(linear_fit)$fstatistic
-    p_value <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+    p_value <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
 
     # Calculate the fit line and add it to replicate_exdf
     replicate_exdf[, paste0(gsw_column_name, '_fit')] <-

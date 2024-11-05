@@ -48,16 +48,20 @@ fit_medlyn <- function(
     replicate_exdf[, paste0(gsw_column_name, '_fit')] <-
         g0 + 1.6 * (1 + g1 / sqrt(VPDleaf)) * A / Csurface
 
+    # Add the Medlyn index to replicate_exdf
+    replicate_exdf[, 'medlyn_index'] <- A / (Csurface * sqrt(VPDleaf))
+
     # Add columns for the best-fit parameter values
     replicate_exdf[, 'medlyn_g0'] <- g0
-    replicate_exdf[, 'mdelyn_g1'] <- g1
+    replicate_exdf[, 'medlyn_g1'] <- g1
 
     # Document the columns that were added
     replicate_exdf <- document_variables(
         replicate_exdf,
         c('fit_medlyn', paste0(gsw_column_name, '_fit'), 'mol m^(-2) s^(-1)'),
         c('fit_medlyn', 'medlyn_g0',                     'mol m^(-2) s^(-1)'),
-        c('fit_medlyn', 'medlyn_g1',                     '(kPa)^(0.5)')
+        c('fit_medlyn', 'medlyn_g1',                     '(kPa)^(0.5)'),
+        c('fit_medlyn', 'medlyn_index',                  'mol m^(-2) s^(-1) (kPa)^(0.5)')
     )
 
     # Add a column for the residuals

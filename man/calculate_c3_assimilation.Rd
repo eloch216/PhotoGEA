@@ -401,7 +401,10 @@
           then RuBP depletion will be considered to be an additional potential
           limiting process. In this case, \code{Vc} will be calculated as
           \code{Vc = min{Wc, Wj, Wp, Wd}}, where \code{Wd} is zero when
-          \code{Cc < Gamma_star} and \code{Inf} otherwise.
+          \code{Cc < Gamma_star} and \code{Inf} otherwise. Note that the value
+          of \code{Wd} (and \code{Ad = (1 - Gamma_star / PCc) * Wd - RL}) will
+          always be returned, regardless of whether RuBP depletion is considered
+          when calculating \code{An}.
   }
 
   \strong{References:}

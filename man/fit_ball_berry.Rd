@@ -85,6 +85,8 @@
   the experimentally observed stomatal conductances as a function of the
   Ball-Berry index is performed to extract estimates for the Ball-Berry
   intercept and slope.
+  
+  This function uses \code{\link[stats]{lm}} to perform the fit.
 
   This function assumes that \code{replicate_exdf} represents a single
   Ball-Berry curve. To fit multiple curves at once, this function is often used
@@ -98,13 +100,17 @@
           the fitted values of stomatal conductance. The fitted values will be
           stored in a column whose name is determined by appending
           \code{'_fits'} to the end of \code{gsw_column_name}; typically, this
-          will be \code{'gsw_fits'}. Also includes values of the Ball-Berry
-          slope and intercept.
+          will be \code{'gsw_fits'}. Also includes residuals in the
+          \code{gsw_residuals} column and values of the Ball-Berry slope and
+          intercept.
     \item \code{parameters}: An \code{exdf} object including the fitting
-          parameters and R-squared values for each Ball-Berry curve. The
-          Ball-Berry intercept is stored in the \code{bb_intercept} column, the
-          Ball-Berry slope is stored in the \code{bb_slope} column, and the
-          R-squared value for the fit is stored in the \code{r_squared} column.
+          parameters and R-squared values. The Ball-Berry intercept is stored in
+          the \code{bb_intercept} column and the Ball-Berry slope is stored in
+          the \code{bb_slope} column. Their standard errors are stored in the
+          \code{bb_intercept_err} and \code{bb_slope_err} columns. The R-squared
+          value and p-value for the fit are stored in the \code{r_squared} and
+          \code{p_value} columns. Other statistical descriptors of the fit as
+          calculated by \code{\link{residual_stats}} are also included.
   }
 }
 

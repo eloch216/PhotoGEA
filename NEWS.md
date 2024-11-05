@@ -37,6 +37,25 @@ be directly added to this file to describe the related changes.
 - The parameter trust values have been changed from logical values (`TRUE` or
   `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
   unreliability, potential unreliability, and full reliability, respectively.
+- Added several optional input arguments to `calculate_c3_assimilation` that
+  allow variants of the FvCB model to be used: `use_min_A`, `TPU_threshold`,
+  `use_FRL`, and `consider_depletion`. These can also be specified when fitting
+  curves.
+- The behavior of `identify_c3_unreliable_pts` was modified to make it
+  compatible with the new `use_min_A` option.
+- A new option was added to `remove_points`, allowing users to exclude points
+  from any subsequent fits rather than completely removing them.
+  - `plot_c3_aci_fit` and the other fit plotting functions have been altered to
+    distinguish between points included in or excluded from the fit.
+  - `xyplot_avg_rc` has been altered to exclude such points when calculating
+    average values
+- Outliers can now be excluded automatically when creating a barchart using
+  `barchart_with_errorbars`
+- More information is now included in the output from `fit_ball_berry`: standard
+  error for each fitted parameter, and the p-value for the fit. A dedicated
+  plotting function was also added (`plot_ball_berry_fit`).
+- A function was added for fitting the Medlyn conductance model (as an
+  alternative to the Ball-Berry model): `fit_medlyn`
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
