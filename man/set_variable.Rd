@@ -17,7 +17,7 @@
     category = NULL,
     value = NA,
     id_column = NULL,
-    value_table = list()
+    value_table = NULL
   )
 }
 
@@ -42,8 +42,15 @@
 }
 
 \details{
-  This function attempts to set the value of a new or existing column in an
-  \code{exdf} object according to the following rules:
+  There are two main "modes" for setting the value of the new column: it can be
+  set to a fixed value (using the \code{value} input argument), or it can be set
+  according to the values of another column (using the \code{id_column} and
+  \code{value_table} input arguments). The latter method is useful when
+  different values must be specified for different treatments within the data
+  set.
+
+  In greater detail, this function attempts to set the value of a new or
+  existing column in an \code{exdf} object according to the following rules:
   \itemize{
     \item The value of the \code{name} column of \code{exdf_obj} will be set to
           \code{value}; this assignment follows the usual rules; in other words,
