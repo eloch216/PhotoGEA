@@ -1,9 +1,3 @@
-# Define a few useful constants for the Arrhenius function
-ideal_gas_constant <- 8.3145e-3  # kJ / mol / k
-absolute_zero <- -273.15         # degrees C
-f <- ideal_gas_constant * (25 - absolute_zero)
-c_pa_to_ppm <- log(1e6 / 101325)
-
 # Define a helping function that calculates one peaked Gaussian factor
 peaked_gaussian <- function(
     t_opt, # degrees C
