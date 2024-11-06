@@ -322,10 +322,10 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate temperature-dependent values of C4 parameters
     combined_info <-
-      calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
+      calculate_temperature_response_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
 
     combined_info <-
-      calculate_peaked_gaussian(combined_info, c4_peaked_gaussian_von_caemmerer)
+      calculate_temperature_response_gaussian(combined_info, c4_peaked_gaussian_von_caemmerer)
 
     # Include gm values
     combined_info <- if (USE_GM_TABLE) {

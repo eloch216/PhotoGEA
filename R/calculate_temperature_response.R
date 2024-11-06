@@ -1,8 +1,3 @@
-temperature_response_functions <- list(
-    arrhenius = calculate_arrhenius,
-    gaussian = calculate_peaked_gaussian
-)
-
 calculate_temperature_response <- function(
     exdf_obj,
     temperature_response_parameters,
@@ -40,15 +35,15 @@ calculate_temperature_response <- function(
         }
 
         # Get the temperature response function itself
-        if (!type %in% names(temperature_response_functions)) {
+        trf <- switch(type,
+            arrhenius = calculate_temperature_response_arrhenius,
+            gaussian = calculate_temperature_response_gaussian,
             stop(paste0(
-                'Unsupported `type` value: `', param[['type']],
-                '`. The available options are: ',
-                paste(names(temperature_response_functions), collapse = ', ')
+                'Temperature response parameter set named `', param_names[i],
+                '` specifies an unsupported `type` value: `', param[['type']],
+                '`. The available options are: arrhenius, gaussian.'
             ))
-        }
-
-        trf <- temperature_response_functions[[type]]
+        )
 
         # Apply the temperature response function
         param_info <- list(param)

@@ -465,7 +465,7 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
+inputs <- calculate_temperature_response_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
 assim <- calculate_c3_assimilation(inputs, 0, 0, 0, '', 150, 1, 12, 120)
 

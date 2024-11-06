@@ -16,14 +16,14 @@ arrhenius <- function(
     return(exp(scaling - activation_energy / (ideal_gas_constant * temperature_k)))
 }
 
-calculate_arrhenius <- function(
+calculate_temperature_response_arrhenius <- function(
     exdf_obj,
     arrhenius_parameters,
     tleaf_column_name = 'TleafCnd'
 )
 {
     if (!is.exdf(exdf_obj)) {
-        stop("calculate_arrhenius requires an exdf object")
+        stop("calculate_temperature_response_arrhenius requires an exdf object")
     }
 
     # Make sure the required variables are defined and have the correct units
@@ -54,7 +54,7 @@ calculate_arrhenius <- function(
             exdf_obj,
             param_names[i],
             param$units,
-            'calculate_arrhenius',
+            'calculate_temperature_response_arrhenius',
             arrhenius(param$c, param$Ea, leaf_temperature)
         )
     }

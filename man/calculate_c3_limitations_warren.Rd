@@ -83,21 +83,23 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
     Typically these are the leaf-temperature dependent values calculated using
-    \code{\link{calculate_arrhenius}}.
+    \code{\link{calculate_temperature_response_arrhenius}}.
   }
 
   \item{kc_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     \code{micromol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_arrhenius}}.
+    values calculated using
+    \code{\link{calculate_temperature_response_arrhenius}}.
   }
 
   \item{ko_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_arrhenius}}.
+    values calculated using
+    \code{\link{calculate_temperature_response_arrhenius}}.
   }
 
   \item{oxygen_column_name}{
@@ -129,7 +131,8 @@
   }
 
   \item{\dots}{
-    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
+    Additional arguments to be passed to
+    \code{\link{calculate_c3_assimilation}}.
   }
 }
 
@@ -252,7 +255,7 @@ licor_file <- calculate_gas_properties(licor_file)
 licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Fit all curves in the data set. Here we use a faster optimizer than the
 # default one to ensure the example runs quickly.

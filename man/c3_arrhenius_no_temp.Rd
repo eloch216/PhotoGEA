@@ -9,7 +9,7 @@
 \description{
   Arrhenius parameters that specify a flat temperature response (in other words,
   no dependence on temperature) for important C3 photosynthetic parameters,
-  intended to be passed to the \code{\link{calculate_arrhenius}} function.
+  intended to be passed to the \code{\link{calculate_temperature_response_arrhenius}} function.
 }
 
 \usage{c3_arrhenius_no_temp}

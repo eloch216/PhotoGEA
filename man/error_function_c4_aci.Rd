@@ -226,9 +226,9 @@ licor_file <- organize_response_curve_data(
 )
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
+licor_file <- calculate_temperature_response_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
 
-licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+licor_file <- calculate_temperature_response_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)

@@ -203,7 +203,7 @@ licor_file <- organize_response_curve_data(
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Create the guessing function; here we set all alpha values to 0 and use the
 # temperature-dependent values of Gamma_star calculated above

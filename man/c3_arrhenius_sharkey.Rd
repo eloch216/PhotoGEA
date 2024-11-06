@@ -9,7 +9,7 @@
 \description{
   Arrhenius parameters describing the temperature response of important C3
   photosynthetic parameters, intended to be passed to the
-  \code{\link{calculate_arrhenius}} function.
+  \code{\link{calculate_temperature_response_arrhenius}} function.
 }
 
 \usage{c3_arrhenius_sharkey}

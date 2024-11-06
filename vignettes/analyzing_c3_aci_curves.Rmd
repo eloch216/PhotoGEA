@@ -119,7 +119,7 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
+inputs <- calculate_temperature_response_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
 
 alpha_g <- 0
 alpha_old <- 0
@@ -585,11 +585,11 @@ values of the total pressure, values of the chloroplast CO~2~ concentration
 $C_c$, and temperature-dependent values of important photosynthetic parameters
 such as $\Gamma^*$. However, the `PhotoGEA` package includes three functions to
 help with these calculations: `calculate_total_pressure`, `apply_gm`, and
-`calculate_arrhenius`. Each of these requires an `exdf` object containing Licor
+`calculate_temperature_response_arrhenius`. Each of these requires an `exdf` object containing Licor
 data. The units for each required column will be checked in an attempt to avoid
 unit-related errors. More information about these functions can be obtained from
 the built-in help system by typing `?calculate_total_pressure`, `?apply_gm`, or
-`?calculate_arrhenius`.
+`?calculate_temperature_response_arrhenius`.
 
 Another important consideration is that `apply_gm` requires values of the
 mesophyll conductance to CO~2~. Values of mesophyll conductance can be specified
@@ -612,7 +612,7 @@ licor_data <- set_variable(
 licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)
+licor_data <- calculate_temperature_response_arrhenius(licor_data, c3_arrhenius_sharkey)
 ```
 
 Together, these functions add several new columns to `licor_data`, including

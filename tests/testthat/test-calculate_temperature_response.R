@@ -19,7 +19,7 @@ test_that('temperature response is calculated properly', {
         test_exdf,
         list(
           Kc = list(type = 'Arrhenius', c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'),
-          Jmax = list(type = 'Gaussian', t_opt = 43, sigma = 16, units = 'micromol m^(-2) s^(-1)')
+          Jmax = list(type = 'Gaussian', optimum_rate = 1, t_opt = 43, sigma = 16, units = 'micromol m^(-2) s^(-1)')
         )
     )
 
@@ -50,7 +50,7 @@ test_that('mistakes are caught', {
             test_exdf,
             list(Kc = list(type = 'bad_type', units = 'micromol mol^(-1)'))
         ),
-        'Unsupported `type` value: `bad_type`. The available options are: arrhenius, gaussian'
+        'Temperature response parameter set named `Kc` specifies an unsupported `type` value: `bad_type`. The available options are: arrhenius, gaussian.'
     )
 
     expect_error(
@@ -74,6 +74,6 @@ test_that('mistakes are caught', {
             test_exdf,
             list(Jmax = list(type = 'Gaussian', t_opt = 43, units = 'micromol m^(-2) s^(-1)'))
         ),
-        'Peaked Gaussian parameter named `Jmax` has the following elements: type, t_opt, units; elements named `t_opt`, `sigma`, and `units` are required.'
+        'Gaussian parameter named `Jmax` has the following elements: type, t_opt, units; elements named `optimum_rate`, `t_opt`, `sigma`, and `units` are required.'
     )
 })

@@ -221,7 +221,7 @@ data set:
 
 - `apply_gm`: Calculates values of the chloroplast or mesophyll CO~2~
   concentration.
-- `calculate_arrhenius`: Calculates temperature-dependent values of
+- `calculate_temperature_response_arrhenius`: Calculates temperature-dependent values of
   photosynthetic parameters using Arrhenius exponents.
 - `calculate_ball_berry_index`: Calculates the Ball-Berry index from values of
   net assimilation, relative humidity at the leaf surface, and CO~2~

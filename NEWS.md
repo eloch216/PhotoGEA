@@ -163,7 +163,7 @@ be directly added to this file to describe the related changes.
 - Light- and electron-limited assimilation has been added to
   `calculate_c4_assimilation`; now we have fully implemented the von Caemmerer
   model equations. This also necessitated a new function for temperature
-  response calculations: `calculate_peaked_gaussian`.
+  response calculations: `calculate_temperature_response_gaussian`.
 - New fitting parameters have been added to `fit_c4_aci`: `alpha_psii`, `gbs`,
   `Jmax_at_opt` and `Rm_frac`.
 - It is now possible to remove unreliable parameter estimates when using
@@ -547,7 +547,7 @@ be directly added to this file to describe the related changes.
     (`calculate_c3_assimilation`).
   - A function for fitting C3 CO2 response curves (`fit_c3_aci`).
   - A function for setting `exdf` column values (`set_variable`).
-  - A function for calculating Arrhenius exponents (`calculate_arrhenius`).
+  - A function for calculating Arrhenius exponents (`calculate_temperature_response_arrhenius`).
 - Modified the behavior of several functions:
   - Added an option for a more thorough check in `is.exdf`.
   - `organize_response_curve_data` now has a specification for points to remove

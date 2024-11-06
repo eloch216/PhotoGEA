@@ -1,6 +1,6 @@
-\name{calculate_arrhenius}
+\name{calculate_temperature_response_arrhenius}
 
-\alias{calculate_arrhenius}
+\alias{calculate_temperature_response_arrhenius}
 
 \title{Calculate temperature-dependent values using Arrhenius equations}
 
@@ -12,7 +12,7 @@
 }
 
 \usage{
-  calculate_arrhenius(
+  calculate_temperature_response_arrhenius(
     exdf_obj,
     arrhenius_parameters,
     tleaf_column_name = 'TleafCnd'
@@ -63,12 +63,13 @@
   values can be easily determined from a linear fit of \code{log(rate)} against
   \code{1 / (R * T)}; \code{c} is the y-intercept and \code{-Ea} is the slope.
 
-  In \code{calculate_arrhenius}, the scaling factor (\code{c}), activation
-  energy (\code{Ea}), and units (\code{units}) for a variable must be specified
-  as elements of a list, which itself is a named element of
-  \code{arrhenius_parameters}. For example, if a variable called \code{Kc} has
-  \code{c = 38.05}, {Ea = 79.43}, and units of \code{micromol mol^(-1)}, the
-  \code{arrhenius_parameters} argument could be specified as follows:
+  In \code{calculate_temperature_response_arrhenius}, the scaling factor
+  (\code{c}), activation energy (\code{Ea}), and units (\code{units}) for a
+  variable must be specified as elements of a list, which itself is a named
+  element of \code{arrhenius_parameters}. For example, if a variable called
+  \code{Kc} has \code{c = 38.05}, {Ea = 79.43}, and units of
+  \code{micromol mol^(-1)}, the \code{arrhenius_parameters} argument could be
+  specified as follows:
   \code{list(Kc = list(c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'))}. It
   is rare to directly specify the Arrhenius parameters; instead, it is more
   typical to use one of the pre-set values such as
@@ -100,8 +101,9 @@
   for each element of \code{arrhenius_parameters}, where the
   temperature-dependent values of these new columns are determined using the
   temperature values specified by the \code{tleaf_column_name} column. The
-  category of each of these new columns is \code{calculate_arrhenius} to
-  indicate that they were created using this function.
+  category of each of these new columns is
+  \code{calculate_temperature_response_arrhenius} to indicate that they were
+  created using this function.
 }
 
 \examples{
@@ -110,7 +112,7 @@ licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_sharkey)
+licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_sharkey)
 
 licor_file$units$Kc      # View the units of the new `Kc` column
 licor_file$categories$Kc # View the category of the new `Kc` column

@@ -9,7 +9,7 @@
 \description{
   Arrhenius parameters describing the temperature response of important C4
   photosynthetic parameters, intended to be passed to the
-  \code{\link{calculate_arrhenius}} function.
+  \code{\link{calculate_temperature_response_arrhenius}} function.
 }
 
 \usage{c4_arrhenius_von_caemmerer}
@@ -54,7 +54,7 @@
   that publication, the overall scaling for each parameter is specified by its
   value at 25 degrees C; the scaling factors are determined from this
   information as described in the documentation for
-  \code{\link{calculate_arrhenius}}.
+  \code{\link{calculate_temperature_response_arrhenius}}.
 
   References:
 

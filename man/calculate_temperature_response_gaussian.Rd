@@ -1,6 +1,6 @@
-\name{calculate_peaked_gaussian}
+\name{calculate_temperature_response_gaussian}
 
-\alias{calculate_peaked_gaussian}
+\alias{calculate_temperature_response_gaussian}
 
 \title{Calculate temperature-dependent values using Gaussian equations}
 
@@ -12,9 +12,9 @@
 }
 
 \usage{
-  calculate_peaked_gaussian(
+  calculate_temperature_response_gaussian(
     exdf_obj,
-    peaked_gaussian_parameters,
+    gaussian_parameters,
     tleaf_column_name = 'TleafCnd'
   )
 }
@@ -25,7 +25,7 @@
     measurement system.
   }
 
-  \item{peaked_gaussian_parameters}{
+  \item{gaussian_parameters}{
     A list of named lists. Each list element should describe the optimal
     temperature in \code{degrees C} (\code{t_opt}), the "width" in
     \code{degrees C} (\code{sigma}), and the units (\code{units}) for a variable
@@ -43,7 +43,7 @@
   A Gaussian equation is sometimes used to model the temperature dependence of
   a biochemical rate parameter. Typically this is expressed by
 
-  (1) \code{rate = optimal_rate * exp(-(T - T_opt)^2 / sigma^2)}
+  \code{rate = optimal_rate * exp(-(T - T_opt)^2 / sigma^2)}
 
   where \code{optimal_rate} is the highest rate which occurs at the optimal
   temperature \code{T_opt}, \code{T} is the current temperature, and
@@ -51,34 +51,28 @@
   described as the difference in temperature away from the optimal value at
   which the rate falls to 37 percent (\code{1/e}) of its maximum.
 
-  The \code{calculate_peaked_gaussian} function only calculates the temperature
-  response part of equation (1):
-
-  (2) \code{exp(-(T - T_opt)^2 / sigma^2)}
-
-  Thus, it returns dimensionless scaling factors that are normalized to the
-  optimal rate.
-
-  In \code{calculate_peaked_gaussian}, the optimal temperature (\code{t_opt}),
-  width (\code{sigma}), and units (\code{units}) for a variable must be specified
-  as elements of a list, which itself is a named element of
-  \code{peaked_gaussian_parameters}. For example, if a variable called
-  \code{Jmax} has \code{t_opt = 43}, {sigma = 26}, and units of
-  \code{micromol mol^(-1)}, the \code{peaked_gaussian_parameters} argument could
-  be specified as follows:
-  \code{list(Jmax_norm = list(t_opt = 43, sigma = 26, units = 'normalized to Jmax at its optimal temperature'))}.
-  It is rare to directly specify these parameters directly; instead, it is more
-  typical to use one of the pre-set values such as
+  In \code{calculate_temperature_response_gaussian}, the optimal rate
+  (\code{optimal_rate}), optimal temperature (\code{t_opt}),
+  width (\code{sigma}), and units (\code{units}) for a variable must be
+  specified as elements of a list, which itself is a named element of
+  \code{gaussian_parameters}. For example, if a variable called
+  \code{Jmax} has \code{optimal_rate = 1}, \code{t_opt = 43}, {sigma = 26}, and
+  units of \code{micromol mol^(-1)}, the \code{gaussian_parameters} argument
+  could be specified as follows:
+  \code{list(Jmax_norm = list(optimal_rate = 1, t_opt = 43, sigma = 26, units =
+  'micromol mol^(-1)'))}. It is rare to specify these parameters directly;
+  instead, it is more typical to use one of the pre-set values such as
   \code{\link{c4_peaked_gaussian_von_caemmerer}}.
 }
 
 \value{
   An \code{exdf} object based on \code{exdf_obj} that includes one new column
-  for each element of \code{peaked_gaussian_parameters}, where the
+  for each element of \code{gaussian_parameters}, where the
   temperature-dependent values of these new columns are determined using the
   temperature values specified by the \code{tleaf_column_name} column. The
-  category of each of these new columns is \code{calculate_peaked_gaussian} to
-  indicate that they were created using this function.
+  category of each of these new columns is
+  \code{calculate_temperature_response_gaussian} to indicate that they were
+  created using this function.
 }
 
 \examples{
@@ -87,7 +81,7 @@ licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
-licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+licor_file <- calculate_temperature_response_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
 
 licor_file$units$Jmax_norm      # View the units of the new `Jmax_norm` column
 licor_file$categories$Jmax_norm # View the category of the new `Jmax_norm` column

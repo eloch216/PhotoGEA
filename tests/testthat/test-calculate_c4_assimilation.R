@@ -16,9 +16,9 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
 
-inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
 
 inputs2 <- set_variable(inputs, 'alpha_psii', 'dimensionless', '', 0.5)
 

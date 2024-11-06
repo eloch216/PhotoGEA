@@ -50,9 +50,11 @@
   be used to calculate the temperature response:
   \itemize{
     \item When \code{type} is \code{'Arrhenius'}, the
-          \code{\link{calculate_arrhenius}} function will be used.
+          \code{\link{calculate_temperature_response_arrhenius}} function will
+          be used.
     \item When \code{type} is \code{'Gaussian'}, the
-          \code{\link{calculate_peaked_gaussian}} function will be used.
+          \code{\link{calculate_temperature_response_gaussian}} function will
+          be used.
   }
 
   Values of \code{type} are not case-sensitive.
@@ -63,8 +65,8 @@
   for each element of \code{temperature_response_parameters}, where the
   temperature-dependent values of these new columns are determined using the
   temperature values specified by the \code{tleaf_column_name} column. The
-  category of each of these new columns is \code{calculate_temperature_response} to
-  indicate that they were created using this function.
+  category of each of these new columns is \code{calculate_temperature_response}
+  to indicate that they were created using this function.
 }
 
 \examples{
@@ -88,8 +90,19 @@ licor_file <- read_gasex_file(
 # defined as follows:
 
 trp <- list(
-  Kc = list(type = 'Arrhenius', c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'),
-  Jmax = list(type = 'Gaussian', t_opt = 43, sigma = 16, units = 'micromol m^(-2) s^(-1)')
+  Kc = list(
+    type = 'Arrhenius',
+    c = 38.05,
+    Ea = 79.43,
+    units = 'micromol mol^(-1)'
+  ),
+  Jmax = list(
+    type = 'Gaussian',
+    optimum_rate = 4,
+    t_opt = 43,
+    sigma = 16,
+    units = 'micromol m^(-2) s^(-1)'
+  )
 )
 
 # Now we can calculate the values of Kc and Jmax at the measured leaf

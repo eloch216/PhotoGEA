@@ -112,7 +112,7 @@ licor_data <- calculate_total_pressure(licor_data)
 licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_bernacchi)
+licor_data <- calculate_temperature_response_arrhenius(licor_data, c3_arrhenius_bernacchi)
 
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical

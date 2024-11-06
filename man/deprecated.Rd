@@ -4,6 +4,8 @@
 \alias{read_tdl_file}
 \alias{read_licor_file}
 \alias{check_licor_data}
+\alias{calculate_arrhenius}
+\alias{calculate_peaked_gaussian}
 
 \title{Deprecated functions}
 
@@ -19,6 +21,10 @@
   read_licor_file(\dots)
 
   check_licor_data(\dots)
+
+  calculate_arrhenius(\dots)
+
+  calculate_peaked_gaussian(\dots)
 }
 
 \arguments{

@@ -233,7 +233,7 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_bernacchi)
 
 # Define an error function for one curve from the set
 error_fcn <- error_function_c3_aci(

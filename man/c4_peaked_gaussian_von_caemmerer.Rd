@@ -9,7 +9,7 @@
 \description{
   Peaked Gaussian parameters describing the temperature response of important C4
   photosynthetic parameters, intended to be passed to the
-  \code{\link{calculate_peaked_gaussian}} function.
+  \code{\link{calculate_temperature_response_gaussian}} function.
 }
 
 \usage{c4_peaked_gaussian_von_caemmerer}
