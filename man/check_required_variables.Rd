@@ -11,11 +11,11 @@
 }
 
 \usage{
-  check_required_variables(x, required_variables)
+  check_required_variables(x, required_variables, check_NA = TRUE)
 
-  \method{check_required_variables}{data.frame}(x, required_variables)
+  \method{check_required_variables}{data.frame}(x, required_variables, check_NA = TRUE)
 
-  \method{check_required_variables}{exdf}(x, required_variables)
+  \method{check_required_variables}{exdf}(x, required_variables, check_NA = TRUE)
 }
 
 \arguments{
@@ -23,6 +23,11 @@
 
   \item{required_variables}{
     A set of variables that must each be included in \code{x} as columns.
+  }
+
+  \item{check_NA}{
+    A logical value indicating whether to check for columns that are all
+    \code{NA}; see below.
   }
 }
 
@@ -40,7 +45,16 @@
   column specifies the corresponding units for that column. If the value is
   \code{NA}, no unit checking will be performed.
 
-  If any required variables are missing, an informative error will be thrown.
+  The required variables will be checked as follows:
+  \itemize{
+    \item If any required variable columns are missing from the table, an
+          informative error message will be thrown.
+    \item If \code{check_NA} is \code{TRUE} and any required variable columns
+          are entirely \code{NA}, an informative error message will be thrown.
+    \item If any required variable colums have incorrect units, an informative
+          error message will be thrown. (Only applies to \code{exdf} objects.)
+  }
+
   Otherwise, \code{check_required_variables} will have no output and produce no
   messages.
 

@@ -19,7 +19,8 @@ plot_ball_berry_fit <- function(
     required_variables[[bb_index_column_name]]   <- unit_dictionary[['bb_index']]
     required_variables[[identifier_column_name]] <- NA
 
-    check_required_variables(fit_results$fits, required_variables)
+    # Don't throw an error if some columns are all NA
+    check_required_variables(fit_results$fits, required_variables, check_NA = FALSE)
 
     # Choose line settings
     line_settings <- list(

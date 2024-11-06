@@ -5,11 +5,28 @@ set_variable <- function(
     category = NULL,
     value = NA,
     id_column = NULL,
-    value_table = list()
+    value_table = NULL
 )
 {
     if (!is.exdf(exdf_obj)) {
-        stop("set_variable requires an exdf object")
+        stop('set_variable requires an exdf object')
+    }
+
+    # Check for some potential issues with the inputs
+    if (!is.null(value_table)) {
+        if (!is.list(value_table)) {
+            stop('When a `value_table` is supplied, it must be a list')
+        }
+
+        tnames <- names(value_table)
+
+        if (is.null(tnames) || any(tnames == '')) {
+            stop('When a `value_table` is supplied, all of its elements must have names')
+        }
+    }
+
+    if (is.null(id_column) && !is.null(value_table)) {
+        stop('When a `value_table` is supplied, an `id_column` must also be supplied')
     }
 
     # Set the value of the column
@@ -32,7 +49,7 @@ set_variable <- function(
     if (!is.null(id_column)) {
         required_variables <- list()
         required_variables[[id_column]] <- NA
-        check_required_variables(exdf_obj, required_variables)
+        check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
 
         for (i in seq_along(value_table)) {
             exdf_obj[as.character(exdf_obj[, id_column]) == names(value_table)[i], name] <- value_table[[i]]

@@ -271,6 +271,8 @@ response curves or sets of response curves:
   chlorophyll fluorescence data.
 - `fit_c4_aci`: Calculates a nonlinear fit of net CO2 assimilation vs. the
   partial pressure of CO~2~ in the mesophyll.
+- `fit_medlyn`: Calculates a nonlinear fit of stomatal conductance to H~2~O
+  using the Medlyn model.
 
 These functions generally assume that the input `exdf` object represents a
 single response curve, and they return both the optimized parameter values and
