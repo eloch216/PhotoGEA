@@ -122,13 +122,11 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
-
-inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
 
 alpha_psii <- 0
 gbs <- 0.003
-Jmax_at_opt <- 400
+Jmax_at_25 <- 250
 RL_at_25 <- 1
 Rm_frac <- 0.5
 Vcmax_at_25 <- 30
@@ -137,7 +135,7 @@ Vpr <- 80
 
 assim <- calculate_c4_assimilation(
   inputs,
-  alpha_psii, gbs, Jmax_at_opt, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+  alpha_psii, gbs, Jmax_at_25, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
 )
 
 xyplot(
@@ -166,7 +164,7 @@ C~4~ leaf according to the model with
 `Vpmax_at_25` = `r Vpmax_at_25` `r assim$units$Vpmax_at_25`,
 `Vcmax_at_25` = `r Vcmax_at_25` `r assim$units$Vcmax_at_25`,
 `Vpr` = `r Vpr` `r assim$units$Vpr`,
-`Jmax_at_opt` = `r Jmax_at_opt` `r assim$units$Jmax_at_opt`, and a leaf
+`Jmax_at_25` = `r Jmax_at_25` `r assim$units$Jmax_at_25`, and a leaf
 temperature of `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response
 parameters were taken from @von_caemmerer_updating_2021.)
 
@@ -629,33 +627,29 @@ In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
 temperature-dependent values of important photosynthetic parameters such as
 $\gamma^*$, values of the total pressure, and values of the partial pressure of
-CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes four
-functions to help with these calculations: `calculate_arrhenius`,
-`calculate_peaked_gaussian`, `calculate_total_pressure`, and `apply_gm`. Each of
-these requires an `exdf` object containing Licor data. The units for each
-required column will be checked in an attempt to avoid unit-related errors. More
-information about these functions can be obtained from the built-in help system
-by typing `?calculate_arrhenius`, `?calculate_total_pressure`, or `?apply_gm`.
+CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes three
+functions to help with these calculations: `calculate_temperature_response`,
+`calculate_total_pressure`, and `apply_gm`. Each of these requires an `exdf`
+object containing Licor data. The units for each required column will be checked
+in an attempt to avoid unit-related errors. More information about these
+functions can be obtained from the built-in help system by typing
+`?calculate_temperature_response`, `?calculate_total_pressure`, or `?apply_gm`.
 
-First, we can use `calculate_arrhenius` and `calculate_peaked_gaussian`:
+First, we can use `calculate_temperature_response`:
 
 ```{r calculate_t_response}
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_data <- calculate_arrhenius(licor_data, c4_arrhenius_von_caemmerer)
-
-licor_data <- calculate_peaked_gaussian(licor_data, c4_peaked_gaussian_von_caemmerer)
+licor_data <- calculate_temperature_response(licor_data, c4_temperature_param_vc)
 ```
 
 With these simple commands, we have used the leaf temperature from the Licor
 file to calculate values of several key C~4~ photosynthetic parameters
-(`r paste(names(c4_arrhenius_von_caemmerer), collapse = ', ')` and
-`r paste(names(c4_peaked_gaussian_von_caemmerer), collapse = ', ')`) according
-to the temperature response parameters specified in
-@von_caemmerer_updating_2021. Notice that this command calculated values of the
-mesophyll conductance to CO2 (`gmc`) in units of
-mol m$^{-2}$ s$^{-1}$ bar$^{-1}$. These values were estmated for
-_Setaria viridis_ and may not be appropriate for all C~4~ plants. Nevertheless,
-we will use them here.
+(`r paste(names(c4_temperature_param_vc), collapse = ', ')` according to the
+temperature response parameters specified in @von_caemmerer_updating_2021.
+Notice that this command calculated values of the mesophyll conductance to CO2
+(`gmc`) in units of mol m$^{-2}$ s$^{-1}$ bar$^{-1}$. These values were estmated
+for _Setaria viridis_ and may not be appropriate for all C~4~ plants.
+Nevertheless, we will use them here.
 
 Now we can use `calculate_total_pressure` and `apply_gm` to calculate `PCm`:
 
@@ -714,7 +708,7 @@ c4_aci_results_rubisco <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_opt = 1000)
+  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_25 = 1000)
 ))
 ```
 
@@ -754,7 +748,7 @@ c4_aci_results_light <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_opt = 'fit')
+  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_25 = 'fit')
 ))
 ```
 
@@ -854,7 +848,7 @@ c4_aci_results_vpmax <- consolidate(by(
   fit_options = list(
     Vcmax_at_25 = 1000,
     Vpr = 1000,
-    Jmax_at_opt = 1000,
+    Jmax_at_25 = 1000,
     alpha_psii = 0,
     gbs = 0
   )

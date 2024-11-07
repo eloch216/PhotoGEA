@@ -15,10 +15,12 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
-
-licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+# Calculate temperature-dependent values of C4 photosynthetic parameters. Here
+# we modify the scaling of Jmax_norm so it equals 1 at the optimal temperature.
+licor_file <- calculate_temperature_response(
+    licor_file,
+     within(c4_temperature_param_vc, {Jmax_norm$optimum_rate = 1})
+)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)

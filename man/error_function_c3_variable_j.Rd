@@ -29,6 +29,7 @@
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
@@ -52,19 +53,19 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{replicate_exdf} of the same name; and a numeric value means
     that the parameter will be set to that value. For example,
-    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')}
+    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp_at_25 = 'column')}
     means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
-    and \code{Tp} will be set to the values in the \code{Tp} column of
-    \code{replicate_exdf}.
+    and \code{Tp_at_25} will be set to the values in the \code{Tp_at_25} column
+    of \code{replicate_exdf}.
   }
 
   \item{sd_A}{
     The standard deviation of the measured values of the net CO2 assimilation
-    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
-    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
-    called \code{sd_A} with appropriate units. A numeric value supplied here
-    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
-    exists.
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If \code{sd_A} is
+    not a number, then there must be a column in \code{replicate_exdf} called
+    \code{sd_A} with appropriate units. A numeric value supplied here will
+    overwrite the values in the \code{sd_A} column of \code{replicate_exdf} if
+    it exists.
   }
 
   \item{atp_use}{
@@ -115,9 +116,9 @@
   }
 
   \item{oxygen_column_name}{
-    The name of the column in \code{exdf_obj} that contains the concentration
-    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
-    the units must be \code{percent}.
+    The name of the column in \code{replicate_exdf} that contains the
+    concentration of O2 in the ambient air, expressed as a percentage (commonly
+    21\% or 2\%); the units must be \code{percent}.
   }
 
   \item{phips2_column_name}{
@@ -139,6 +140,11 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{replicate_exdf} that contains the total
     pressure in \code{bar}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -184,7 +190,7 @@
   When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
   method, it is necessary to define a function that calculates the likelihood
   of a given set of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25},
-  \code{RL_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} values by
+  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} values by
   comparing a model prediction to a measured curve. This function will be passed
   to an optimization algorithm which will determine the values that produce the
   smallest error.
@@ -192,7 +198,7 @@
   The \code{error_function_c3_variable_j} returns such a function, which is
   based on a particular replicate and a set of fitting options. It is possible
   to just fit a subset of the available fitting parameters; by default, the
-  fitting parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp},
+  fitting parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25},
   \code{tau}, and \code{Vcmax_at_25}. This behavior can be changed via the
   \code{fit_options} argument.
 
@@ -249,7 +255,7 @@
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
   default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{RL_at_25}, \code{tau}, \code{Tp}, and \code{Vcmax_at_25} (in that
+  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in that
   order).
 }
 
@@ -275,27 +281,27 @@ licor_file <- organize_response_curve_data(
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Define an error function for one curve from the set
 error_fcn <- error_function_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, RL_at_25 = 1, tau = 0.5, Tp = 15,
+# Evaluate the error for J_at_25 = 200, RL_at_25 = 1, tau = 0.5, Tp_at_25 = 15,
 # Vcmax_at_25 = 100
 error_fcn(c(200, 1, 0.5, 15, 100))
 
-# Make a plot of error vs. Tp when the other parameters are fixed to the values
-# above. As Tp increases, it eventually stops limiting the assimilation rate
-# and its value stops influencing the error.
-tpu_error_fcn <- function(Tp) {error_fcn(c(200, 1, 0.5, Tp, 100))}
+# Make a plot of error vs. Tp_at_25 when the other parameters are fixed to the
+# values above. As Tp_at_25 increases, it eventually stops limiting the
+# assimilation rate and its value stops influencing the error.
+tpu_error_fcn <- function(Tp_at_25) {error_fcn(c(200, 1, 0.5, Tp_at_25, 100))}
 tpu_seq <- seq(5, 25)
 
 lattice::xyplot(
   sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,
   type = 'b',
-  xlab = 'Tp (micromol / m^2 / s)',
+  xlab = 'Tp at 25 degrees C (micromol / m^2 / s)',
   ylab = 'Negative log likelihood (dimensionless)'
 )
 }

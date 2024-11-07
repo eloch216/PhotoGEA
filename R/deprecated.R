@@ -23,3 +23,21 @@ check_licor_data <- function(...) {
         'use that function instead.'
     )
 }
+
+calculate_arrhenius <- function(...) {
+    stop(
+        '`calculate_arrhenius` is deprecated and will be removed in a future ',
+        'release. It has been renamed to ',
+        '`calculate_temperature_response_arrhenius`. Please use that function',
+        'instead.'
+    )
+}
+
+calculate_peaked_gaussian <- function(...) {
+    stop(
+        '`calculate_peaked_gaussuan` is deprecated and will be removed in a ',
+        'future release. It has been renamed to ',
+        '`calculate_temperature_response_gaussian`. Please use that function',
+        'instead.'
+    )
+}

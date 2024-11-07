@@ -10,7 +10,7 @@ calculate_c3_assimilation <- function(
     Gamma_star,   # micromol / mol     (this value is sometimes being fitted)
     J_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     RL_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
-    Tp,           # micromol / m^2 / s (typically this value is being fitted)
+    Tp_at_25,     # micromol / m^2 / s (typically this value is being fitted)
     Vcmax_at_25,  # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -23,6 +23,7 @@ calculate_c3_assimilation <- function(
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
@@ -51,6 +52,7 @@ calculate_c3_assimilation <- function(
         required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
+        required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(
@@ -60,7 +62,7 @@ calculate_c3_assimilation <- function(
             Gamma_star = Gamma_star,
             J_at_25 = J_at_25,
             RL_at_25 = RL_at_25,
-            Tp = Tp,
+            Tp_at_25 = Tp_at_25,
             Vcmax_at_25 = Vcmax_at_25
         )
 
@@ -89,7 +91,7 @@ calculate_c3_assimilation <- function(
     if (!value_set(Gamma_star))  {Gamma_star  <- exdf_obj[, 'Gamma_star']}
     if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
     if (!value_set(RL_at_25))    {RL_at_25    <- exdf_obj[, 'RL_at_25']}
-    if (!value_set(Tp))          {Tp          <- exdf_obj[, 'Tp']}
+    if (!value_set(Tp_at_25))    {Tp_at_25    <- exdf_obj[, 'Tp_at_25']}
     if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
 
     # Extract a few columns from the exdf object to make the equations easier to
@@ -105,9 +107,10 @@ calculate_c3_assimilation <- function(
     Kc <- exdf_obj[, kc_column_name] * pressure                 # microbar
     Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
 
+    J_tl     <- J_at_25 * exdf_obj[, j_norm_column_name]         # micromol / m^2 / s
+    RL_tl    <- RL_at_25 * exdf_obj[, rl_norm_column_name]       # micromol / m^2 / s
+    Tp_tl    <- Tp_at_25 * exdf_obj[, tp_norm_column_name]       # micromol / m^2 / s
     Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
-    RL_tl <- RL_at_25 * exdf_obj[, rl_norm_column_name]          # micromol / m^2 / s
-    J_tl <- J_at_25 * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
 
     # Make sure key inputs have reasonable values
     msg <- character()
@@ -140,7 +143,7 @@ calculate_c3_assimilation <- function(
         if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
         if (any(J_at_25 < 0, na.rm = TRUE))                                  {msg <- append(msg, 'J_at_25 must be >= 0')}
         if (any(RL_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'RL_at_25 must be >= 0')}
-        if (any(Tp < 0, na.rm = TRUE))                                       {msg <- append(msg, 'Tp must be >= 0')}
+        if (any(Tp_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'Tp_at_25 must be >= 0')}
         if (any(Vcmax_at_25 < 0, na.rm = TRUE))                              {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
     }
 
@@ -169,7 +172,7 @@ calculate_c3_assimilation <- function(
     # TPU-limited carboxylation (micromol / m^2 / s). Note that when alpha_g =
     # alpha_s = 0, this equation is identical to Equation 8 from Busch et al.
     # (2018). When alpha_old = 0, it is identical to Equation 14.
-    Wp <- PCc * 3 * Tp / (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s))
+    Wp <- PCc * 3 * Tp_tl / (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s))
 
     # Apply a TPU threshold
     if (is.null(TPU_threshold)) {
@@ -232,7 +235,7 @@ calculate_c3_assimilation <- function(
     # Possibly use the pseudo-FvCB model or one of its variants
     if (use_min_A) {
         # Recalculate Ap (micromol / m^2 / s)
-        Ap <- (PCc - Gamma_star_ag) * 3 * Tp /
+        Ap <- (PCc - Gamma_star_ag) * 3 * Tp_tl /
             (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)) - RL_tl
 
         # Apply a TPU threshold
@@ -267,10 +270,11 @@ calculate_c3_assimilation <- function(
             Gamma_star_ag = Gamma_star_ag,
             J_at_25 = J_at_25,
             RL_at_25 = RL_at_25,
-            Tp = Tp,
+            Tp_at_25 = Tp_at_25,
             Vcmax_at_25 = Vcmax_at_25,
             J_tl = J_tl,
             RL_tl = RL_tl,
+            Tp_tl = Tp_tl,
             Vcmax_tl = Vcmax_tl,
             Ac = Ac,
             Aj = Aj,
@@ -300,10 +304,11 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'Gamma_star_ag',         'microbar'),
             c('calculate_c3_assimilation', 'J_at_25',               'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'RL_at_25',              'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Tp_at_25',              'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vcmax_at_25',           'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'Tp',                    'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'J_tl',                  'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'RL_tl',                 'micromol m^(-2) s^(-1)'),
+            c('calculate_c3_assimilation', 'Tp_tl',                 'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vcmax_tl',              'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Ac',                    'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Aj',                    'micromol m^(-2) s^(-1)'),

@@ -27,6 +27,7 @@
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
     atp_use = 4.0,
@@ -96,9 +97,9 @@
   }
 
   \item{oxygen_column_name}{
-    The name of the column in \code{exdf_obj} that contains the concentration
-    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
-    the units must be \code{percent}.
+    The name of the column in \code{replicate_exdf} that contains the
+    concentration of O2 in the ambient air, expressed as a percentage (commonly
+    21\% or 2\%); the units must be \code{percent}.
   }
 
   \item{rl_norm_column_name}{
@@ -109,6 +110,11 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{replicate_exdf} that contains the total
     pressure in \code{bar}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -171,12 +177,12 @@
     element must be \code{'fit'}, \code{'column'}, or a numeric value. A value
     of \code{'fit'} means that the parameter will be fit; a value of
     \code{'column'} means that the value of the parameter will be taken from a
-    column in \code{exdf_obj} of the same name; and a numeric value means that
-    the parameter will be set to that value. For example, \code{fit_options =
-    list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')} means that
-    \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit, and
-    \code{Tp} will be set to the values in the \code{Tp} column of
-    \code{exdf_obj}.
+    column in \code{replicate_exdf} of the same name; and a numeric value means
+    that the parameter will be set to that value. For example,
+    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp_at_25 = 'column')}
+    means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
+    and \code{Tp_at_25} will be set to the values in the \code{Tp_at_25} column
+    of \code{replicate_exdf}.
   }
 
   \item{cj_crossover_min}{
@@ -222,8 +228,8 @@
   This function calls \code{\link{calculate_c3_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
   vary the values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-  \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} to find
-  ones that best reproduce the experimentally measured values of net
+  \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25} to
+  find ones that best reproduce the experimentally measured values of net
   assimilation. By default, the following options are used for the fits:
   \itemize{
     \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
@@ -232,7 +238,7 @@
     \item \code{Gamma_star}: lower = -20, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
-    \item \code{Tp}: lower = -10, upper = 100, fit_option = \code{'fit'}
+    \item \code{Tp_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
   }
   With these settings, the "new" \code{alpha} parameters are set to 0, values of
@@ -276,11 +282,10 @@
   necessarily cause changes in its outputs. This is related to the final step in
   the calculations, where the overall assimilation rate is taken to be the
   minimum of three enzyme-limited rates. For example, if the assimilation rate
-  is never TPU-limited, modifying \code{Tp} will not change the model's
+  is never TPU-limited, modifying \code{Tp_at_25} will not change the model's
   outputs. For this reason, derivative-based optimizers tend to struggle when
   fitting C3 A-Ci curves. Best results are obtained using derivative-free
-  methods. It has been found that \code{dfoptim::nmkb} is often able to find a
-  good fit.
+  methods.
 
   Sometimes the optimizer may choose a set of parameter values where one or more
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
@@ -331,12 +336,12 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C will be stored in
-                  the \code{J_at_25}, \code{RL_at_25}, and \code{Vcmax_at_25}
-                  columns.
+                  the \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+                  \code{Vcmax_at_25} columns.
             \item The other outputs from \code{\link{calculate_c3_assimilation}}
                   will be stored in columns with the usual names:
                   \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-                  \code{Tp}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
+                  \code{Tp_tl}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
                   \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
                   \code{Aj}, and \code{Ap}.
           }
@@ -351,14 +356,15 @@
                   \code{n_Aj_limiting}, and \code{n_Ap_limiting} columns.
             \item The best-fit values are stored in the \code{alpha_g},
                   \code{alpha_old}, \code{alpha_s},
-                  \code{Tp}, \code{J_at_25}, \code{RL_at_25}, and
+                  \code{Tp_at_25}, \code{J_at_25}, \code{RL_at_25}, and
                   \code{Vcmax_at_25} columns. If
                   \code{calculate_confidence_intervals} is \code{TRUE}, upper
                   and lower limits for each of these parameters will also be
                   included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  \code{J_tl_avg}, \code{RL_tl_avg}, and \code{Vcmax_tl_avg}.
+                  \code{J_tl_avg}, \code{RL_tl_avg}, \code{Tp_tl_avg}, and
+                  \code{Vcmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.
@@ -408,7 +414,7 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # For these examples, we will use a faster (but sometimes less reliable)
 # optimizer so they run faster
@@ -443,7 +449,7 @@ col_to_keep <- c(
   'species', 'plot',                                       # identifiers
   'n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting',       # number of points where
                                                            #   each process is limiting
-  'Tp', 'J_at_25', 'RL_at_25', 'Vcmax_at_25',              # parameters scaled to 25 degrees C
+  'Tp_at_25', 'J_at_25', 'RL_at_25', 'Vcmax_at_25',        # parameters scaled to 25 degrees C
   'J_tl_avg', 'RL_tl_avg', 'Vcmax_tl_avg',                 # average temperature-dependent values
   'operating_Ci', 'operating_An', 'operating_An_model',    # operating point info
   'dof', 'RSS', 'MSE', 'RMSE', 'RSE',                      # residual stats

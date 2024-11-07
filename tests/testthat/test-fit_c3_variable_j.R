@@ -26,8 +26,8 @@ test_that('fit failures are handled properly', {
     expect_equal(fit_res_bad$parameters[, 'c3_variable_j_msg'], 'Ci must be >= 0. tau must be >= 0 and <= 1')
     expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Ac', 'Aj', 'Ap', 'gmc', 'Cc')])))
     expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Ac', 'Aj', 'Ap', 'gmc', 'Cc')])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp', 'tau', 'AIC')])))
-    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp', 'tau_upper')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'tau', 'AIC')])))
+    expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'tau_upper')])))
 })
 
 test_that('Ci and Cc limits can be bypassed', {
@@ -70,13 +70,13 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(240.718, 254.101, 1.885, 0.405, NA, 38.416),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_upper')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_at_25_upper')]),
         c(247.455, 256.611, 1.892, 0.409, Inf),
         tolerance = TOLERANCE
     )
@@ -116,13 +116,13 @@ test_that('fit results have not changed (alpha_old)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(243.821, 256.166, 1.901, 0.409, NA, 40.429),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_upper')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_at_25_upper')]),
         c(250.388, 258.740, 1.912, 0.412, Inf),
         tolerance = TOLERANCE
     )
@@ -162,13 +162,13 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(223.833, 264.193, 1.798, 0.422, NA, 43.052),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_upper')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_at_25_upper')]),
         c(230.9429, 267.1610, 2.4567, 0.4251, Inf),
         tolerance = TOLERANCE
     )
@@ -204,7 +204,7 @@ test_that('fit results have not changed (pseudo-FvCB)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(319.868, 313.808, 2.441, 0.500, NA, 47.966),
         tolerance = TOLERANCE
     )
@@ -222,7 +222,7 @@ test_that('fit results have not changed (pseudo-FvCB)', {
     expect_equal(lim_info, c(7, 6, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_upper')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'tau_upper', 'Tp_at_25_upper')]),
         c(331.800, 317.787, 2.445, 0.505, Inf),
         tolerance = TOLERANCE
     )
@@ -266,7 +266,7 @@ test_that('removing and excluding points produce the same fit results', {
 
     # Check that results haven't changed
     expect_equal(
-        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(246.33, 257.59, 1.92, 0.41, NA, 35.56),
         tolerance = TOLERANCE
     )
@@ -284,8 +284,8 @@ test_that('removing and excluding points produce the same fit results', {
 
     # Check that remove/exclude results are the same
     expect_equal(
-        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
-        as.numeric(fit_res_exclude$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp', 'AIC')]),
+        as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
+        as.numeric(fit_res_exclude$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         tolerance = TOLERANCE
     )
 

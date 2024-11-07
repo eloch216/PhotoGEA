@@ -98,7 +98,7 @@
   \item{jmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
-    \code{normalized to Jmax at its optimal temperature}).
+    \code{normalized to Jmax at 25 degrees C}).
   }
 
   \item{kp_column_name}{
@@ -136,7 +136,7 @@
 }
 
 \details{
-  Here we estimate values of \code{Jmax_at_opt}, \code{RL_at_25},
+  Here we estimate values of \code{Jmax_at_25}, \code{RL_at_25},
   \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} from a measured C4 CO2
   response curve. It is difficult to estimate values of \code{alpha_psii},
   \code{gbs}, and \code{Rm_frac} from a curve, so they must be supplied
@@ -180,7 +180,7 @@
           obtained by solving \code{An = (1 - x_etr) * J / 3 - RL} for \code{J}.
           Then, estimates of \code{Jmax} can be made from \code{J} and
           \code{Qin}. The largest value of \code{Jmax / Jmax_norm} is chosen as
-          the best estimate for \code{Jmax_at_opt}.
+          the best estimate for \code{Jmax_at_25}.
   }
 
   Note that a key assumption underlying this approach is that the net
@@ -199,7 +199,7 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C4 CO2 response curve. The return value of
   this function will be a numeric vector with eight elements, representing the
-  values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_opt}, \code{RL_at_25},
+  values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_25}, \code{RL_at_25},
   \code{rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} (in
   that order).
 }
@@ -223,9 +223,7 @@ licor_file <- organize_response_curve_data(
 )
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
-
-licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)

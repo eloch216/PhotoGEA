@@ -1,22 +1,24 @@
-\name{c4_arrhenius_no_temp}
+\name{c4_temperature_param_flat}
 
 \docType{data}
 
-\alias{c4_arrhenius_no_temp}
+\alias{c4_temperature_param_flat}
 
-\title{C4 Arrhenius parameters with no temperature dependence}
+\title{C4 temperature response parameters for a flat response}
 
 \description{
-  Arrhenius parameters that specify a flat temperature response (in other words,
-  no dependence on temperature) for important C4 photosynthetic parameters,
-  intended to be passed to the \code{\link{calculate_arrhenius}} function.
+  Parameters that specify a flat temperature response (in other words, no
+  dependence on temperature) for important C4 photosynthetic parameters,
+  intended to be passed to the \code{\link{calculate_temperature_response}}
+  function.
 }
 
-\usage{c4_arrhenius_no_temp}
+\usage{c4_temperature_param_flat}
 
 \format{
-  List with 9 named elements that each represent a variable whose
-  temperature-dependent value can be calculated using the Arrhenius equation:
+  List with 10 named elements that each represent a variable whose
+  temperature-dependent value can be calculated using either an Arrhenius or
+  Gaussian equation:
   \itemize{
     \item \code{Vcmax_norm}: The maximum rate of rubisco carboxylation
           (\code{Vcmax}) normalized to its value at 25 degrees C.
@@ -30,10 +32,24 @@
     \item \code{gamma_star}: Half the reciprocal of rubisco specificity.
     \item \code{ao}: The ratio of solubility and diffusivity of O2 to CO2.
     \item \code{gmc}: The mesophyll conductance to CO2 diffusion.
+    \item \code{Jmax_norm}: The maximum rate of RuBP regneration \code{Jmax}
+          normalized to its value at its optimal temperature.
   }
 
-  In turn, each of these elements is a list with 3 named elements:
+  The \code{Jmax_norm} parameter is calculated using a Gaussian function and
+  hence its corresponding list element is itself a list with 4 named elements:
   \itemize{
+    \item \code{type}: the type of temperature response (\code{'Gaussian'})
+    \item \code{optimum_rate}: the largest value this parameter can take.
+    \item \code{t_opt}: the temperature where the optimum occurs in
+          \code{degrees C}.
+    \item \code{sigma}: the width of the Gaussian in \code{degrees C}.
+    \item \code{units}: the units of the corresponding variable.
+  }
+
+  Each of the remaining elements is a list with 4 named elements:
+  \itemize{
+    \item \code{type}: the type of temperature response (\code{'Arrhenius'})
     \item \code{c}: the (dimensionless) Arrhenius scaling factor.
     \item \code{Ea}: the activation energy in \code{kJ / mol}.
     \item \code{units}: the units of the corresponding variable.
@@ -53,7 +69,7 @@
   that the values will not depend on temperature. The Arrhenius scaling factors
   \code{c} are chosen to reproduce the parameter values at 25 degrees C as
   specified in von Caemmerer (2021).
-  (See \code{\link{c4_arrhenius_von_caemmerer}}.)
+  (See \code{\link{c4_temperature_param_vc}}.)
 
   References:
 

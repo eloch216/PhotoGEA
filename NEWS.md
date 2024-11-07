@@ -58,6 +58,32 @@ be directly added to this file to describe the related changes.
   alternative to the Ball-Berry model): `fit_medlyn`
 - Update input argument checks for several functions: `check_required_columns`
   and `set_variable`
+- The system for specifying temperature response parameters and calculating
+  temperature-dependent values of key photosynthetic parameters has been been
+  revamped to make it more flexible and easier to use:
+  - `calculate_arrhenius` and `calculate_peaked_gaussian` have been renamed to
+    `calculate_temperature_response_arrhenius` and
+    `calculate_temperature_response_gaussian` to better reflect their purpose.
+  - A new type of temperature response has been added:
+    `calculate_temperature_response_johnson`.
+  - When calculating C3 assimilation rates or fitting C3 A-Ci curves, `Tp` is
+    now specified at 25 degrees C and follows a temperature response function,
+    as was already done for `Vcmax`, `J`, and `RL`.
+  - When calculating C4 assimilation rates or fitting C4 A-Ci curves, `Jmax` is
+    now specified at 25 degrees C, rather than at its optimum value, for
+    consistency with the other parameters that can be fit in PhotoGEA.
+  - A central function for calculating temperature responses has been added:
+    `calculate_temperature_response`. It internally calls the other functions,
+    so users can just use this single function.
+  - The `c4_arrhenius_von_caemmerer` and `c4_peaked_gaussian_von_caemmerer` have
+    been consolidated into a single list suitable for use with
+    `calculate_temperature_response`, caled `c4_temperature_param_vc`.
+  - The `c3_arrhenius_sharkey` and `c3_arrhenius_bernacchi` lists now include a
+    Johnson-Eyring-Williams reponse for `Tp` and have been renamed to
+    `c3_temperature_param_sharkey` and `c3_temperature_param_bernacchi` since
+    they are no longer pure list of Arrhenius parameters.
+  - These changes may not be compatible with scripts written for earlier
+    versions of PhotoGEA.
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 

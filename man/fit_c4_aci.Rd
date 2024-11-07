@@ -89,7 +89,7 @@
   \item{jmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
-    \code{normalized to Jmax at its optimal temperature}).
+    \code{normalized to Jmax at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -239,14 +239,14 @@
 \details{
   This function calls \code{\link{calculate_c4_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_opt},
+  vary the values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_25},
   \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
   \code{Vpr} to find ones that best reproduce the experimentally measured values
   of net assimilation. By default, the following options are used for the fits:
   \itemize{
     \item \code{alpha_psii}: lower = -1, upper = 10, fit_option = 0
     \item \code{gbs}: lower = -1, upper = 10, fit_option = 0.003
-    \item \code{Jmax_at_opt}: lower = -50, upper = 1000, fit_option = 1000
+    \item \code{Jmax_at_25}: lower = -50, upper = 1000, fit_option = 1000
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Rm_frac}: lower = -10, upper = 10, fit_option = 0.5
     \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
@@ -337,7 +337,7 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C (or the optimal
-                  temperature) will be stored in the \code{Jmax_at_opt},
+                  temperature) will be stored in the \code{Jmax_at_25},
                   \code{RL_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
                   and \code{Vpr} columns.
             \item The other outputs from \code{\link{calculate_c4_assimilation}}
@@ -357,7 +357,7 @@
                   the smallest potential carboxylation rate are stored in the
                   \code{n_Vpc_smallest} and \code{n_Vpr_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_psii},
-                  \code{gbs}, \code{Jmax_at_opt} \code{RL_at_25},
+                  \code{gbs}, \code{Jmax_at_25} \code{RL_at_25},
                   \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
                   \code{Vpr} columns. If \code{calculate_confidence_intervals}
                   is \code{TRUE}, upper and lower limits for each of these
@@ -404,9 +404,7 @@ licor_file <- organize_response_curve_data(
 )
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
-
-licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)

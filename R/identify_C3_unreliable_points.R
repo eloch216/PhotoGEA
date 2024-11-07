@@ -52,7 +52,7 @@ identify_c3_unreliable_points <- function(
     j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 
     p_unreliable_npts <- parameters[, 'n_Ap_limiting'] < unreliable_n_threshold
-    p_unreliable_inf  <- 'Tp_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Tp_upper'])
+    p_unreliable_inf  <- 'Tp_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Tp_at_25_upper'])
     p_trust           <- trust_value(p_unreliable_npts, p_unreliable_inf)
     p_remove          <- remove_estimate(p_trust, remove_unreliable_param)
 
@@ -110,15 +110,21 @@ identify_c3_unreliable_points <- function(
 
     if (p_remove) {
         # Remove unreliable parameter estimates
-        parameters[, 'alpha_g']   <- NA
-        parameters[, 'alpha_old'] <- NA
-        parameters[, 'alpha_s']   <- NA
-        parameters[, 'Tp']        <- NA
-        fits[, 'alpha_g']         <- NA
-        fits[, 'alpha_old']       <- NA
-        fits[, 'alpha_s']         <- NA
-        fits[, 'Tp']              <- NA
-        fits_interpolated[, 'Tp'] <- NA
+        parameters[, 'alpha_g']          <- NA
+        parameters[, 'alpha_old']        <- NA
+        parameters[, 'alpha_s']          <- NA
+        parameters[, 'Tp_at_25']         <- NA
+        parameters[, 'Tp_tl_avg']        <- NA
+        fits[, 'alpha_g']                <- NA
+        fits[, 'alpha_old']              <- NA
+        fits[, 'alpha_s']                <- NA
+        fits[, 'Tp_at_25']               <- NA
+        fits[, 'Tp_tl']                  <- NA
+        fits_interpolated[, 'alpha_g']   <- NA
+        fits_interpolated[, 'alpha_old'] <- NA
+        fits_interpolated[, 'alpha_s']   <- NA
+        fits_interpolated[, 'Tp_at_25']  <- NA
+        fits_interpolated[, 'Tp_tl']     <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (p_unreliable_npts) {

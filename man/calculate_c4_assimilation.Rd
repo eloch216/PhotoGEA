@@ -17,7 +17,7 @@
     exdf_obj,
     alpha_psii,
     gbs,
-    Jmax_at_opt,
+    Jmax_at_25,
     RL_at_25,
     Rm_frac,
     Vcmax_at_25,
@@ -66,12 +66,12 @@
     \code{exdf_obj} if it exists.
   }
 
-  \item{Jmax_at_opt}{
-    The RuBP regeneration rate at its optimal temperature, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Jmax_at_opt} is not a number, then
-    there must be a column in \code{exdf_obj} called \code{Jmax_at_opt} with
+  \item{Jmax_at_25}{
+    The RuBP regeneration rate at 25 degrees C, expressed in
+    \code{micromol m^(-2) s^(-1)}. If \code{Jmax_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Jmax_at_25} with
     appropriate units. A numeric value supplied here will override the values
-    in the \code{Jmax_at_opt} column of \code{exdf_obj} if it exists.
+    in the \code{Jmax_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{RL_at_25}{
@@ -153,7 +153,7 @@
   \item{jmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
-    \code{normalized to Jmax at its optimal temperature}).
+    \code{normalized to Jmax at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -419,7 +419,7 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns: \code{alpha_psii},
-          \code{gbs}, \code{Jmax_at_opt}, \code{Jmax_tl}, \code{J_tl},
+          \code{gbs}, \code{Jmax_at_25}, \code{Jmax_tl}, \code{J_tl},
           \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl},
           \code{RLm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc},
           \code{Apr}, \code{Ap}, \code{Ar}, \code{Ajm}, \code{Ajbs}, \code{Ac},
@@ -457,11 +457,9 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
 
-inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
-
-assim <- calculate_c4_assimilation(inputs, 0, 0.003, 400, 1, 0.5, 40, 200, 80)
+assim <- calculate_c4_assimilation(inputs, 0, 0.003, 250, 1, 0.5, 40, 200, 80)
 
 # Now we can plot Ac, Apr, Apc, and Ar. From this plot, we can see that
 # replacing the complicated quadratic equation with a simple minimum yields

@@ -54,7 +54,7 @@
     The name of the column in \code{exdf_obj} that contains the
     \code{Gamma_star} values in \code{micromol mol^(-1)}. Typically these are
     the leaf-temperature dependent values calculated using
-    \code{\link{calculate_arrhenius}}.
+    \code{\link{calculate_temperature_response}}.
   }
 
   \item{gmc_column_name}{
@@ -72,14 +72,14 @@
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     \code{micromol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_arrhenius}}.
+    values calculated using \code{\link{calculate_temperature_response}}.
   }
 
   \item{ko_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_arrhenius}}.
+    values calculated using \code{\link{calculate_temperature_response}}.
   }
 
   \item{oxygen_column_name}{
@@ -226,9 +226,10 @@
 \value{
   This function returns an \code{exdf} object based on \code{exdf_obj} but with
   several new columns representing the partial derivatives and limiting factors
-  discussed above: \code{dAdC_rubisco}, \code{ls_rubisco_grassi}, \code{lm_rubisco_grassi},
-  and \code{lb_rubisco_grassi}. If \code{j_column_name} is not \code{NULL}, the output
-  will also include \code{dAdC_j}, \code{ls_j_grassi}, \code{lm_j_grassi}, and \code{lb_j_grassi}.
+  discussed above: \code{dAdC_rubisco}, \code{ls_rubisco_grassi},
+  \code{lm_rubisco_grassi}, and \code{lb_rubisco_grassi}. If
+  \code{j_column_name} is not \code{NULL}, the output will also include
+  \code{dAdC_j}, \code{ls_j_grassi}, \code{lm_j_grassi}, and \code{lb_j_grassi}.
 }
 
 \examples{
@@ -265,7 +266,7 @@ licor_file <- calculate_gas_properties(licor_file)
 licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Fit all curves in the data set. Here we use a faster optimizer than the
 # default one to ensure the example runs quickly.

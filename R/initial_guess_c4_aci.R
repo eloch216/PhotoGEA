@@ -30,7 +30,7 @@ initial_guess_c4_aci <- function(
         # units
         required_variables <- list()
         required_variables[[a_column_name]]          <- "micromol m^(-2) s^(-1)"
-        required_variables[[jmax_norm_column_name]]  <- 'normalized to Jmax at its optimal temperature'
+        required_variables[[jmax_norm_column_name]]  <- unit_dictionary[['Jmax_norm']]
         required_variables[[kp_column_name]]         <- 'microbar'
         required_variables[[pcm_column_name]]        <- "microbar"
         required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'

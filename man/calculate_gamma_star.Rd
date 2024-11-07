@@ -105,7 +105,8 @@
   the leaf temperature is only used to determine the values of the two Henry's
   constants. Sometimes it is necessary to calculate the temperature-dependent
   value of the specificity using an Arrhenius equation; this can be accomplished
-  via the \code{\link{calculate_arrhenius}} function from PhotoGEA.
+  via the \code{\link{calculate_temperature_response_arrhenius}} function from
+  PhotoGEA.
 
   Finally, it is important to note that \code{Gamma_star} can also be directly
   calculated using an Arrhenius equation, rather than using the oxygen
@@ -243,7 +244,7 @@ arrhenius_info <- list(
 
 # Get temperature-dependent values of Rubisco parameters using Arrhenius
 # equations
-exdf_obj <- calculate_arrhenius(
+exdf_obj <- calculate_temperature_response_arrhenius(
   exdf_obj,
   arrhenius_info
 )

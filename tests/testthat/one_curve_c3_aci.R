@@ -18,8 +18,12 @@ licor_file <- organize_response_curve_data(
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
-# Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+# Calculate temperature-dependent values of C3 photosynthetic parameters. Here
+# use the "Bernacchi" option, but override the Tp response with a flat one.
+licor_file <- calculate_temperature_response(
+    licor_file,
+    within(c3_temperature_param_bernacchi, {Tp_norm = c3_temperature_param_flat$Tp_norm})
+)
 
 # Get just one curve
 one_curve <- licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]

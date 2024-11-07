@@ -28,6 +28,7 @@
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
   )
 }
@@ -121,6 +122,11 @@
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
+  \item{tp_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
+  }
+
   \item{vcmax_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
     \code{Vcmax} values (with units of
@@ -129,9 +135,9 @@
 }
 
 \details{
-  Here we estimate values of \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and
-  \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult to
-  estimate values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, and
+  Here we estimate values of \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25},
+  and \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult
+  to estimate values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, and
   \code{Gamma_star} from a curve, so they must be supplied beforehand. For more
   information about these parameters, see the documentation for
   \code{\link{calculate_c3_assimilation}}.
@@ -172,8 +178,8 @@
   \code{exdf} object representing one C3 CO2 response curve. The return value of
   this function will be a numeric vector with eight elements, representing the
   values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{Gamma_star},
-  \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that
-  order).
+  \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in
+  that order).
 }
 
 \examples{
@@ -207,7 +213,7 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Create the guessing function; here we set all alpha values to 0 and use the
 # temperature-dependent values of Gamma_star calculated above
