@@ -115,7 +115,7 @@ licor_file <- read_gasex_file(
 
 licor_file <- calculate_temperature_response_arrhenius(
   licor_file,
-  c3_temperature_param_sharkey
+  list(Kc = c3_temperature_param_sharkey$Kc)
 )
 
 licor_file$units$Kc      # View the units of the new `Kc` column

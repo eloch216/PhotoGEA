@@ -19,7 +19,8 @@ test_that('temperature response is calculated properly', {
         test_exdf,
         list(
           Kc = list(type = 'Arrhenius', c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'),
-          Jmax = list(type = 'Gaussian', optimum_rate = 1, t_opt = 43, sigma = 16, units = 'micromol m^(-2) s^(-1)')
+          Jmax = list(type = 'Gaussian', optimum_rate = 1, t_opt = 43, sigma = 16, units = 'micromol m^(-2) s^(-1)'),
+          Tp_norm = list(type = 'Johnson', c = 21.46, Ha = 53.1, Hd = 201.8, S = 0.65, units = 'normalized to Tp at 25 degrees C')
         )
     )
 
@@ -32,6 +33,12 @@ test_that('temperature response is calculated properly', {
     expect_equal(
         as.numeric(tr_res[, 'Jmax']),
         c(0.1266401, 0.5167706),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(tr_res[, 'Tp_norm']),
+        c(0.7150624, 1.2863480),
         tolerance = TOLERANCE
     )
 })

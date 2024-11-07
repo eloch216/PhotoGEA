@@ -38,10 +38,11 @@ calculate_temperature_response <- function(
         trf <- switch(type,
             arrhenius = calculate_temperature_response_arrhenius,
             gaussian = calculate_temperature_response_gaussian,
+            johnson = calculate_temperature_response_johnson,
             stop(paste0(
                 'Temperature response parameter set named `', param_names[i],
                 '` specifies an unsupported `type` value: `', param[['type']],
-                '`. The available options are: arrhenius, gaussian.'
+                '`. The available options are: arrhenius, gaussian, and johnson.'
             ))
         )
 

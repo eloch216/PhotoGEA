@@ -4,5 +4,6 @@ c3_temperature_param_sharkey <- list(
     Gamma_star = list(type = 'Arrhenius', c = 11.187  + PhotoGEA:::c_pa_to_ppm, Ea = 24.46, units = 'micromol mol^(-1)'),
     Vcmax_norm = list(type = 'Arrhenius', c = 26.355,                           Ea = 65.33, units = 'normalized to Vcmax at 25 degrees C'),
     J_norm =     list(type = 'Arrhenius', c = 17.71,                            Ea = 43.9,  units = 'normalized to J at 25 degrees C'),
-    RL_norm =    list(type = 'Arrhenius', c = 18.7145,                          Ea = 46.39, units = 'normalized to RL at 25 degrees C')
+    RL_norm =    list(type = 'Arrhenius', c = 18.7145,                          Ea = 46.39, units = 'normalized to RL at 25 degrees C'),
+    Tp_norm =    list(type = 'Johnson',   c = 21.46, Ha = 53.1, Hd = 201.8, S = 0.65,       units = 'normalized to Tp at 25 degrees C')
 )
