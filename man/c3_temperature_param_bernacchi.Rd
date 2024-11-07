@@ -61,6 +61,14 @@
   function and refer to it as \code{J} for compatibility with
   \code{\link{c3_temperature_param_sharkey}}.
 
+  The Bernacchi papers from the early 2000s do not specify a temperature
+  response for \code{Tp}, so we instead use the Johnson-Eyring-Williams
+  response from Sharkey et al. (2007). Another option would be to use a flat
+  temperature response; in other words, to assume that \code{Tp} is constant
+  with temperature. This could be done with the following code, which takes the
+  flat response parameters from \code{\link{c3_temperature_param_flat}}:
+  \code{within(c3_temperature_param_bernacchi, {Tp_norm = c3_temperature_param_flat$Tp_norm})}
+
   The Arrhenius parameters for the other variables were obtained from Bernacchi
   et al. (2001).
 
@@ -68,14 +76,19 @@
 
   \itemize{
     \item Bernacchi, C. J., Singsaas, E. L., Pimentel, C., Jr, A. R. P. & Long,
-    S. P. "Improved temperature response functions for models of Rubisco-limited
-    photosynthesis" Plant, Cell & Environment 24, 253–259 (2001)
-    [\doi{10.1111/j.1365-3040.2001.00668.x}].
+          S. P. "Improved temperature response functions for models of
+          Rubisco-limited photosynthesis" Plant, Cell & Environment 24, 253–259
+          (2001) [\doi{10.1111/j.1365-3040.2001.00668.x}].
 
     \item Bernacchi, C. J., Pimentel, C. & Long, S. P. "In vivo temperature
-    response functions of parameters required to model RuBP-limited
-    photosynthesis" Plant, Cell & Environment 26, 1419–1430 (2003)
-    [\doi{10.1046/j.0016-8025.2003.01050.x}].
+          response functions of parameters required to model RuBP-limited
+          photosynthesis" Plant, Cell & Environment 26, 1419–1430 (2003)
+          [\doi{10.1046/j.0016-8025.2003.01050.x}].
+
+    \item Sharkey, T. D., Bernacchi, C. J., Farquhar, G. D. & Singsaas, E. L.
+          "Fitting photosynthetic carbon dioxide response curves for C3 leaves"
+          Plant, Cell & Environment 30, 1035–1040 (2007)
+          [\doi{10.1111/j.1365-3040.2007.01710.x}].
   }
 }
 

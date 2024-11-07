@@ -6,5 +6,5 @@ c3_temperature_param_bernacchi <- list(
     Kc =         list(type = 'Arrhenius', c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'),
     Ko =         list(type = 'Arrhenius', c = 20.30, Ea = 36.38, units = 'mmol mol^(-1)'),
     J_norm =     list(type = 'Arrhenius', c = 17.57, Ea = 43.5,  units = 'normalized to J at 25 degrees C'),
-    Tp_norm =    list(type = 'Arrhenius', c = 0,     Ea = 0,     units = 'normalized to Tp at 25 degrees C')
+    Tp_norm =    list(type = 'Johnson',   c = 21.46, Ha = 53.1, Hd = 201.8, S = 0.65, units = 'normalized to Tp at 25 degrees C')
 )
