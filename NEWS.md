@@ -58,6 +58,32 @@ be directly added to this file to describe the related changes.
   alternative to the Ball-Berry model): `fit_medlyn`
 - Update input argument checks for several functions: `check_required_columns`
   and `set_variable`
+- The system for specifying temperature response parameters and calculating
+  temperature-dependent values of key photosynthetic parameters has been been
+  revamped to make it more flexible and easier to use:
+  - `calculate_arrhenius` and `calculate_peaked_gaussian` have been renamed to
+    `calculate_temperature_response_arrhenius` and
+    `calculate_temperature_response_gaussian` to better reflect their purpose.
+  - A new type of temperature response has been added:
+    `calculate_temperature_response_johnson`.
+  - When calculating C3 assimilation rates or fitting C3 A-Ci curves, `Tp` is
+    now specified at 25 degrees C and follows a temperature response function,
+    as was already done for `Vcmax`, `J`, and `RL`.
+  - When calculating C4 assimilation rates or fitting C4 A-Ci curves, `Jmax` is
+    now specified at 25 degrees C, rather than at its optimum value, for
+    consistency with the other parameters that can be fit in PhotoGEA.
+  - A central function for calculating temperature responses has been added:
+    `calculate_temperature_response`. It internally calls the other functions,
+    so users can just use this single function.
+  - The `c4_arrhenius_von_caemmerer` and `c4_peaked_gaussian_von_caemmerer` have
+    been consolidated into a single list suitable for use with
+    `calculate_temperature_response`, caled `c4_temperature_param_vc`.
+  - The `c3_arrhenius_sharkey` and `c3_arrhenius_bernacchi` lists now include a
+    Johnson-Eyring-Williams reponse for `Tp` and have been renamed to
+    `c3_temperature_param_sharkey` and `c3_temperature_param_bernacchi` since
+    they are no longer pure list of Arrhenius parameters.
+  - These changes may not be compatible with scripts written for earlier
+    versions of PhotoGEA.
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
@@ -163,7 +189,7 @@ be directly added to this file to describe the related changes.
 - Light- and electron-limited assimilation has been added to
   `calculate_c4_assimilation`; now we have fully implemented the von Caemmerer
   model equations. This also necessitated a new function for temperature
-  response calculations: `calculate_temperature_response_gaussian`.
+  response calculations: `calculate_peaked_gaussian`.
 - New fitting parameters have been added to `fit_c4_aci`: `alpha_psii`, `gbs`,
   `Jmax_at_opt` and `Rm_frac`.
 - It is now possible to remove unreliable parameter estimates when using
@@ -547,7 +573,7 @@ be directly added to this file to describe the related changes.
     (`calculate_c3_assimilation`).
   - A function for fitting C3 CO2 response curves (`fit_c3_aci`).
   - A function for setting `exdf` column values (`set_variable`).
-  - A function for calculating Arrhenius exponents (`calculate_temperature_response_arrhenius`).
+  - A function for calculating Arrhenius exponents (`calculate_arrhenius`).
 - Modified the behavior of several functions:
   - Added an option for a more thorough check in `is.exdf`.
   - `organize_response_curve_data` now has a specification for points to remove
