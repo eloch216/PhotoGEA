@@ -54,7 +54,7 @@ test_that('c4 assimilation works for non-numeric values of flexible inputs', {
 test_that('fitting parameter limits can be bypassed', {
     expect_error(
         calculate_c4_assimilation(inputs, 0, -0.003, -400, 1, 0.5, 80, 120, 400, hard_constraints = 2),
-        'gbs must be >= 0. Jmax_at_opt must be >= 0',
+        'gbs must be >= 0. Jmax_at_25 must be >= 0',
         fixed = TRUE
     )
 

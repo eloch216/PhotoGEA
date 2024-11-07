@@ -32,6 +32,7 @@ unit_dictionary <- list(
     H2O_s          = millimol_fraction,
     J_at_25        = micromol_flux,
     J_norm         = 'normalized to J at 25 degrees C',
+    Jmax_norm      = 'normalized to Jmax at 25 degrees C',
     Kc             = micromol_fraction,
     Ko             = millimol_fraction,
     oxygen         = 'percent',

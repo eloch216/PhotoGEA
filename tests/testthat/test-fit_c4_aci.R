@@ -61,7 +61,7 @@ test_that('fit results have not changed (Vcmax)', {
     fit_res <- fit_c4_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_opt = 1000),
+        fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_25 = 1000),
         OPTIM_FUN = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -99,7 +99,7 @@ test_that('fit results have not changed (Vpr)', {
     fit_res <- fit_c4_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 1000, Vpr = 'fit', Jmax_at_opt = 1000),
+        fit_options = list(Vcmax_at_25 = 1000, Vpr = 'fit', Jmax_at_25 = 1000),
         OPTIM_FUN = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -137,7 +137,7 @@ test_that('fit results have not changed (Jmax)', {
     fit_res <- fit_c4_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_opt = 'fit'),
+        fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_25 = 'fit'),
         OPTIM_FUN = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -145,13 +145,13 @@ test_that('fit results have not changed (Jmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Jmax_at_opt', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
+        as.numeric(fit_res$parameters[1, c('Jmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
         c(5.215746e+02, 1.338467e+02, 1.475187e-08, 8.675720e+01),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Jmax_at_opt_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
+        as.numeric(fit_res$parameters[1, c('Jmax_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(573.15632, 157.30750, 2.24672),
         tolerance = TOLERANCE
     )

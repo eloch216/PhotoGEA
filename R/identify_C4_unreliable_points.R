@@ -73,7 +73,7 @@ identify_c4_unreliable_points <- function(
     r_remove          <- remove_estimate(r_trust, remove_unreliable_param)
 
     j_unreliable_npts <- parameters[, 'n_Aj_smallest'] < unreliable_n_threshold
-    j_unreliable_inf  <- 'Jmax_at_opt' %in% colnames(parameters) && !is.finite(parameters[, 'Jmax_at_opt'])
+    j_unreliable_inf  <- 'Jmax_at_25' %in% colnames(parameters) && !is.finite(parameters[, 'Jmax_at_25_upper'])
     j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
     j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 
@@ -147,13 +147,13 @@ identify_c4_unreliable_points <- function(
 
     if (j_remove) {
         # Remove unreliable parameter estimates
-        parameters[, 'Jmax_at_opt']        <- NA
+        parameters[, 'Jmax_at_25']        <- NA
         parameters[, 'Jmax_tl_avg']        <- NA
         parameters[, 'J_tl_avg']           <- NA
-        fits[, 'Jmax_at_opt']              <- NA
+        fits[, 'Jmax_at_25']              <- NA
         fits[, 'Jmax_tl']                  <- NA
         fits[, 'J_tl']                     <- NA
-        fits_interpolated[, 'Jmax_at_opt'] <- NA
+        fits_interpolated[, 'Jmax_at_25'] <- NA
         fits_interpolated[, 'Jmax_tl']     <- NA
         fits_interpolated[, 'J_tl']        <- NA
 

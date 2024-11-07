@@ -47,7 +47,7 @@ error_function_c4_aci <- function(
     required_variables[[ao_column_name]]         <- 'dimensionless'
     required_variables[[a_column_name]]          <- 'micromol m^(-2) s^(-1)'
     required_variables[[gamma_star_column_name]] <- 'dimensionless'
-    required_variables[[jmax_norm_column_name]]  <- 'normalized to Jmax at its optimal temperature'
+    required_variables[[jmax_norm_column_name]]  <- unit_dictionary[['Jmax_norm']]
     required_variables[[kc_column_name]]         <- 'microbar'
     required_variables[[ko_column_name]]         <- 'mbar'
     required_variables[[kp_column_name]]         <- 'microbar'
@@ -78,7 +78,7 @@ error_function_c4_aci <- function(
                     replicate_exdf,
                     X[1], # alpha_psii
                     X[2], # gbs
-                    X[3], # Jmax_at_opt
+                    X[3], # Jmax_at_25
                     X[4], # RL_at_25
                     X[5], # Rm_frac
                     X[6], # Vcmax_at_25

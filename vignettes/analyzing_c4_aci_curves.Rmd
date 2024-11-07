@@ -126,7 +126,7 @@ inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf
 
 alpha_psii <- 0
 gbs <- 0.003
-Jmax_at_opt <- 400
+Jmax_at_25 <- 250
 RL_at_25 <- 1
 Rm_frac <- 0.5
 Vcmax_at_25 <- 30
@@ -135,7 +135,7 @@ Vpr <- 80
 
 assim <- calculate_c4_assimilation(
   inputs,
-  alpha_psii, gbs, Jmax_at_opt, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+  alpha_psii, gbs, Jmax_at_25, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
 )
 
 xyplot(
@@ -164,7 +164,7 @@ C~4~ leaf according to the model with
 `Vpmax_at_25` = `r Vpmax_at_25` `r assim$units$Vpmax_at_25`,
 `Vcmax_at_25` = `r Vcmax_at_25` `r assim$units$Vcmax_at_25`,
 `Vpr` = `r Vpr` `r assim$units$Vpr`,
-`Jmax_at_opt` = `r Jmax_at_opt` `r assim$units$Jmax_at_opt`, and a leaf
+`Jmax_at_25` = `r Jmax_at_25` `r assim$units$Jmax_at_25`, and a leaf
 temperature of `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response
 parameters were taken from @von_caemmerer_updating_2021.)
 
@@ -708,7 +708,7 @@ c4_aci_results_rubisco <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_opt = 1000)
+  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_25 = 1000)
 ))
 ```
 
@@ -748,7 +748,7 @@ c4_aci_results_light <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_opt = 'fit')
+  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_25 = 'fit')
 ))
 ```
 
@@ -848,7 +848,7 @@ c4_aci_results_vpmax <- consolidate(by(
   fit_options = list(
     Vcmax_at_25 = 1000,
     Vpr = 1000,
-    Jmax_at_opt = 1000,
+    Jmax_at_25 = 1000,
     alpha_psii = 0,
     gbs = 0
   )

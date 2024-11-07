@@ -71,8 +71,10 @@
   information as described in the documentation for
   \code{\link{calculate_temperature_response_arrhenius}}.
 
-  The Gaussian parameters for \code{Jmax_norm} are also obtained from von
-  Caemmerer (2021).
+  The Gaussian parameters (\code{t_opt} and \code{sigma}) for \code{Jmax_norm}
+  are also obtained from von Caemmerer (2021). The value of \code{optimum_rate}
+  is chosen such that \code{Jmax_norm} is equal to 1 at a temperature of 25
+  degrees C.
 
   References:
 
