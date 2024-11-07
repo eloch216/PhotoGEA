@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  Gamma_star = -20,      J_at_25 = -50,   RL_at_25 = -10,   Tp = -10,   Vcmax_at_25 = -50)
-c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, Gamma_star = 200,      J_at_25 = 1000,  RL_at_25 = 100,   Tp = 100,   Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  Gamma_star = 'column', J_at_25 = 'fit', RL_at_25 = 'fit', Tp = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  Gamma_star = -20,      J_at_25 = -50,   RL_at_25 = -10,   Tp_at_25 = -10,   Vcmax_at_25 = -50)
+c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, Gamma_star = 200,      J_at_25 = 1000,  RL_at_25 = 100,   Tp_at_25 = 100,   Vcmax_at_25 = 1000)
+c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  Gamma_star = 'column', J_at_25 = 'fit', RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
 
-c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'RL_at_25', 'Tp', 'Vcmax_at_25')
+c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'Gamma_star', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_aci <- function(
@@ -19,6 +19,7 @@ fit_c3_aci <- function(
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
     atp_use = 4.0,
@@ -64,6 +65,7 @@ fit_c3_aci <- function(
         oxygen_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
+        tp_norm_column_name,
         vcmax_norm_column_name,
         cj_crossover_min,
         cj_crossover_max,
@@ -116,6 +118,7 @@ fit_c3_aci <- function(
         ko_column_name,
         oxygen_column_name,
         rl_norm_column_name,
+        tp_norm_column_name,
         vcmax_norm_column_name
     )
 
@@ -142,7 +145,7 @@ fit_c3_aci <- function(
         best_X[4], # Gamma_star
         best_X[5], # J_at_25
         best_X[6], # RL_at_25
-        best_X[7], # Tp
+        best_X[7], # Tp_at_25
         best_X[8], # Vcmax_at_25
         atp_use,
         nadph_use,
@@ -155,6 +158,7 @@ fit_c3_aci <- function(
         oxygen_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
+        tp_norm_column_name,
         vcmax_norm_column_name,
         hard_constraints = hard_constraints,
         perform_checks = FALSE,
@@ -191,7 +195,7 @@ fit_c3_aci <- function(
         best_X[4], # Gamma_star
         best_X[5], # J_at_25
         best_X[6], # RL_at_25
-        best_X[7], # Tp
+        best_X[7], # Tp_at_25
         best_X[8], # Vcmax_at_25
         atp_use,
         nadph_use,
@@ -204,6 +208,7 @@ fit_c3_aci <- function(
         oxygen_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
+        tp_norm_column_name,
         vcmax_norm_column_name,
         hard_constraints = hard_constraints,
         perform_checks = FALSE,
@@ -223,7 +228,7 @@ fit_c3_aci <- function(
             'Gamma_star',
             'J_at_25',
             'RL_at_25',
-            'Tp',
+            'Tp_at_25',
             'Vcmax_at_25',
             cc_column_name,
             ci_column_name,
@@ -233,6 +238,7 @@ fit_c3_aci <- function(
             oxygen_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
+            tp_norm_column_name,
             vcmax_norm_column_name
         ),
         ci_column_name,
@@ -247,7 +253,7 @@ fit_c3_aci <- function(
         '', # Gamma_star
         '', # J_at_25
         '', # RL_at_25
-        '', # Tp
+        '', # Tp_at_25
         '', # Vcmax_at_25
         atp_use,
         nadph_use,
@@ -260,6 +266,7 @@ fit_c3_aci <- function(
         oxygen_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
+        tp_norm_column_name,
         vcmax_norm_column_name,
         hard_constraints = hard_constraints,
         perform_checks = FALSE,
@@ -333,12 +340,13 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'Gamma_star']  <- best_X[4]
     replicate_identifiers[, 'J_at_25']     <- best_X[5]
     replicate_identifiers[, 'RL_at_25']    <- best_X[6]
-    replicate_identifiers[, 'Tp']          <- best_X[7]
+    replicate_identifiers[, 'Tp_at_25']    <- best_X[7]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[8]
 
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
     replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
+    replicate_identifiers[, 'Tp_tl_avg']    <- mean(replicate_exdf[, 'Tp_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
 
     # Also add fitting details
@@ -381,6 +389,7 @@ fit_c3_aci <- function(
             oxygen_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
+            tp_norm_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max,
@@ -406,7 +415,8 @@ fit_c3_aci <- function(
         c('fit_c3_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'Tp',                  'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Tp_at_25',            'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Tp_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
@@ -443,6 +453,7 @@ fit_c3_aci <- function(
             oxygen_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
+            tp_norm_column_name,
             vcmax_norm_column_name,
             cj_crossover_min,
             cj_crossover_max,
@@ -458,6 +469,10 @@ fit_c3_aci <- function(
         RL_tl_scale <- replicate_identifiers[, 'RL_tl_avg'] / replicate_identifiers[, 'RL_at_25']
         replicate_identifiers[, 'RL_tl_avg_lower'] <- replicate_identifiers[, 'RL_at_25_lower'] * RL_tl_scale
         replicate_identifiers[, 'RL_tl_avg_upper'] <- replicate_identifiers[, 'RL_at_25_upper'] * RL_tl_scale
+
+        Tp_tl_scale <- replicate_identifiers[, 'Tp_tl_avg'] / replicate_identifiers[, 'Tp_at_25']
+        replicate_identifiers[, 'Tp_tl_avg_lower'] <- replicate_identifiers[, 'Tp_at_25_lower'] * Tp_tl_scale
+        replicate_identifiers[, 'Tp_tl_avg_upper'] <- replicate_identifiers[, 'Tp_at_25_upper'] * Tp_tl_scale
 
         Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
         replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale

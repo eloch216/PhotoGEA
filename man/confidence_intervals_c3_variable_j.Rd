@@ -34,6 +34,7 @@
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
@@ -152,6 +153,11 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{replicate_exdf} that contains the total
     pressure in \code{bar}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{

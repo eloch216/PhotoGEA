@@ -16,6 +16,7 @@ initial_guess_c3_variable_j <- function(
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
 )
 {
@@ -71,6 +72,7 @@ initial_guess_c3_variable_j <- function(
             ko_column_name,
             oxygen_column_name,
             rl_norm_column_name,
+            tp_norm_column_name,
             vcmax_norm_column_name
         )
 
@@ -87,7 +89,7 @@ initial_guess_c3_variable_j <- function(
             c3_guess[5], # J_at_25
             c3_guess[6], # RL_at_25
             tau_guess,   # tau
-            c3_guess[7], # Tp
+            c3_guess[7], # Tp_at_25
             c3_guess[8]  # Vcmax_at_25
         )
     }

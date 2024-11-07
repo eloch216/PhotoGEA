@@ -21,7 +21,7 @@
     Gamma_star,
     J_at_25,
     RL_at_25,
-    Tp,
+    Tp_at_25,
     Vcmax_at_25,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -34,6 +34,7 @@
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
@@ -94,18 +95,18 @@
 
   \item{RL_at_25}{
     The respiration rate at 25 degrees C, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{RL_at_25} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{RL_at_25} with appropriate
-    units. A numeric value supplied here will overwrite the values in the
-    \code{RL_at_25} column of \code{exdf_obj} if it exists.
+    \code{micromol m^(-2) s^(-1)}. If \code{RL_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{RL_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{RL_at_25} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Tp}{
-    The maximum rate of triphosphate utilization, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Tp} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{Tp} with appropriate
-    units. A numeric value supplied here will overwrite the values in the
-    \code{Tp} column of \code{exdf_obj} if it exists.
+  \item{Tp_at_25}{
+    The maximum rate of triphosphate utilization at 25 degrees C, expressed in
+    \code{micromol m^(-2) s^(-1)}. If \code{Tp_at_25} is not a number, then
+    there must be a column in \code{exdf_obj} called \code{Tp_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Tp_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{Vcmax_at_25}{
@@ -172,6 +173,11 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{exdf_obj} that contains the total pressure
     in \code{bar}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -294,7 +300,7 @@
 
   In addition to the carboxylation and assimilation rates already mentioned, it
   is also possible to calculate the net CO2 assimilation rates determined by
-  Rubisco activity, RuBP regeneration, and Tp as follows:
+  Rubisco activity, RuBP regeneration, and TPU as follows:
 
   \code{Ac = (1 - Gamma_star_ag / PCc) * Wc - RL}
 
@@ -435,11 +441,11 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
-          above: \code{alpha_g}, \code{Gamma_star}, \code{Tp}, \code{Vcmax_tl},
-          \code{RL_tl}, \code{J_tl}, \code{Ac}, \code{Aj}, \code{Ap}, \code{An},
-          and \code{Vc}. The category for each of these new columns is
-          \code{calculate_c3_assimilation} to indicate that they were created
-          using this function.
+          above: \code{alpha_g}, \code{Gamma_star}, \code{Tp_tl},
+          \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl}, \code{Ac}, \code{Aj},
+          \code{Ap}, \code{An}, and \code{Vc}. The category for each of these
+          new columns is \code{calculate_c3_assimilation} to indicate that they
+          were created using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
           the following named elements: \code{An}, \code{Ac}, \code{Aj}, and
           \code{Ap}. Each element is a numeric vector.

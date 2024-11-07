@@ -192,17 +192,17 @@ xyplot(
 ```
 
 For individual parameters, we can take a look at the best-fit values and the
-associated confidence intervals. Here is an example showing values of `Tp`, the
+associated confidence intervals. Here is an example showing values of `Tp_at_25`, the
 maximum rate of triose phosphate utilization.
 
 ```{r}
-aci_results$parameters[, c('curve_id', 'Tp_lower', 'Tp', 'Tp_upper')]
+aci_results$parameters[, c('curve_id', 'Tp_at_25_lower', 'Tp_at_25', 'Tp_at_25_upper')]
 ```
 
 Some of these estimates have an upper limit of `Inf` and a best estimate of
 `NA`. A comparison with the fits shown above indicates that for these curves,
 insufficiently many points were found to be TPU-limited, preventing a reliable
-estimate of `Tp`.
+estimate of `Tp_at_25`.
 
 It is also possible to plot the best-fit values of a parameter averaged across
 subsets of the data in a bar chart, where the error bars represent the standard

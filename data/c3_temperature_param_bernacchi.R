@@ -5,5 +5,6 @@ c3_temperature_param_bernacchi <- list(
     Gamma_star = list(type = 'Arrhenius', c = 19.02, Ea = 37.83, units = 'micromol mol^(-1)'),
     Kc =         list(type = 'Arrhenius', c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'),
     Ko =         list(type = 'Arrhenius', c = 20.30, Ea = 36.38, units = 'mmol mol^(-1)'),
-    J_norm =     list(type = 'Arrhenius', c = 17.57, Ea = 43.5,  units = 'normalized to J at 25 degrees C')
+    J_norm =     list(type = 'Arrhenius', c = 17.57, Ea = 43.5,  units = 'normalized to J at 25 degrees C'),
+    Tp_norm =    list(type = 'Arrhenius', c = 0,     Ea = 0,     units = 'normalized to Tp at 25 degrees C')
 )

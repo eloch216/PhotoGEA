@@ -29,6 +29,7 @@
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     \dots
@@ -117,6 +118,11 @@
     The name of the column in \code{exdf_obj} that contains the total pressure
     in \code{bar}. Typically this is calculated using
     \code{\link{calculate_total_pressure}}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{

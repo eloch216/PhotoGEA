@@ -15,7 +15,7 @@
 \usage{c3_temperature_param_bernacchi}
 
 \format{
-  List with 7 named elements that each represent a variable whose
+  List with 8 named elements that each represent a variable whose
   temperature-dependent value can be calculated using the Arrhenius equation:
   \itemize{
     \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to its
@@ -31,6 +31,8 @@
     \item \code{Ko}: The Michaelis-Menten constant for rubisco oxygenation.
     \item \code{J_norm}: The electron transport rate (\code{J}) normalized to
           its value at 25 degrees C.
+    \item \code{Tp_norm}: The maximum rate of triose phosphate utilization
+          (\code{Tp}) normalized to its value at 25 degrees C.
   }
 
   In turn, each of these elements is a list with 4 named elements:
@@ -43,10 +45,10 @@
 }
 
 \source{
-  Some of these parameters (\code{RL}, \code{Vcmax}, and \code{J}) are
-  normalized to their values at 25 degrees C. \code{Vomax} is normalized to the
-  value of \code{Vcmax} at 25 degrees C. These variables include \code{_norm} in
-  their names to indicate this.
+  Some of these parameters (\code{RL}, \code{Vcmax}, \code{J}, and \code{Tp})
+  are normalized to their values at 25 degrees C. \code{Vomax} is normalized to
+  the value of \code{Vcmax} at 25 degrees C. These variables include
+  \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Gamma_star}, \code{Kc}, and \code{Ko}) are not
   normalized because they are assumed to not vary significantly between species.

@@ -27,6 +27,7 @@
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
@@ -48,19 +49,19 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{replicate_exdf} of the same name; and a numeric value means
     that the parameter will be set to that value. For example,
-    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')}
+    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp_at_25 = 'column')}
     means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
-    and \code{Tp} will be set to the values in the \code{Tp} column of
-    \code{replicate_exdf}.
+    and \code{Tp_at_25} will be set to the values in the \code{Tp_at_25} column
+    of \code{replicate_exdf}.
   }
 
   \item{sd_A}{
     The standard deviation of the measured values of the net CO2 assimilation
-    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
-    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
-    called \code{sd_A} with appropriate units. A numeric value supplied here
-    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
-    exists.
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If \code{sd_A} is
+    not a number, then there must be a column in \code{replicate_exdf} called
+    \code{sd_A} with appropriate units. A numeric value supplied here will
+    overwrite the values in the \code{sd_A} column of \code{replicate_exdf} if
+    it exists.
   }
 
   \item{atp_use}{
@@ -111,9 +112,9 @@
   }
 
   \item{oxygen_column_name}{
-    The name of the column in \code{exdf_obj} that contains the concentration
-    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
-    the units must be \code{percent}.
+    The name of the column in \code{replicate_exdf} that contains the
+    concentration of O2 in the ambient air, expressed as a percentage (commonly
+    21\% or 2\%); the units must be \code{percent}.
   }
 
   \item{rl_norm_column_name}{
@@ -124,6 +125,11 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{replicate_exdf} that contains the total
     pressure in \code{bar}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -157,15 +163,15 @@
 \details{
   When fitting A-Ci curves using a maximum likelihood approach, it is necessary
   to define a function that calculates the likelihood of a given set of
-  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25}, \code{Tp},
-  and \code{Vcmax_at_25} values by comparing a model prediction to a measured
-  curve. This function will be passed to an optimization algorithm which will
-  determine the values that produce the largest likelihood.
+  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, and \code{Vcmax_at_25} values by comparing a model prediction
+  to a measured curve. This function will be passed to an optimization algorithm
+  which will determine the values that produce the largest likelihood.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
   a subset of the available fitting parameters; by default, the fitting
-  parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and
+  parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
   \code{Vcmax_at_25}. This behavior can be changed via the \code{fit_options}
   argument.
 
@@ -199,7 +205,7 @@
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
   default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that order).
+  \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -240,7 +246,7 @@ error_fcn <- error_function_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 236, RL_at_25 = 4e-8, Tp = 22.7, Vcmax_at_25 = 147
+# Evaluate the error for J_at_25 = 236, RL_at_25 = 4e-8, Tp_at_25 = 22.7, Vcmax_at_25 = 147
 error_fcn(c(236, 4e-8, 22.7, 147))
 
 # Make a plot of likelihood vs. Vcmax when other parameters are fixed to the

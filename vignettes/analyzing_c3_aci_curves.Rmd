@@ -785,7 +785,7 @@ columns_to_view <- c(
   'Vcmax_at_25_avg', 'Vcmax_at_25_stderr',
   'J_at_25_avg', 'J_at_25_stderr',
   'RL_at_25_avg', 'RL_at_25_stderr',
-  'Tp_avg', 'Tp_stderr'
+  'Tp_at_25_avg', 'Tp_at_25_stderr'
 )
 
 c3_aci_averages[ , columns_to_view]

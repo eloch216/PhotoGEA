@@ -13,6 +13,7 @@ initial_guess_c3_aci <- function(
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
 )
 {
@@ -33,6 +34,7 @@ initial_guess_c3_aci <- function(
         required_variables[[kc_column_name]]         <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]         <- 'mmol mol^(-1)'
         required_variables[[rl_norm_column_name]]    <- 'normalized to RL at 25 degrees C'
+        required_variables[[tp_norm_column_name]]    <- unit_dictionary[['Tp_norm']]
         required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(
@@ -116,22 +118,22 @@ initial_guess_c3_aci <- function(
         # each point in the response curve. Negative values should not be
         # considered, so we replace them by 0. Then we choose the largest value
         # as the best estimate.
-        tpu_estimates <- Vc *
+        tp_estimates <- Vc *
             (rc_exdf[, cc_column_name] - (1 + 3 * rc_exdf[, 'alpha_old'] + 3 * rc_exdf[, 'alpha_g'] + 4 * rc_exdf[, 'alpha_s']) * rc_exdf[, 'Gamma_star_ag']) /
             (3 * rc_exdf[, cc_column_name])
 
-        tpu_estimates <- pmax(tpu_estimates, 0)
+        tp_estimates <- pmax(tp_estimates, 0) / rc_exdf[, tp_norm_column_name]
 
         # Return the estimates
         c(
-            mean(rc_exdf[, 'alpha_g']),
-            mean(rc_exdf[, 'alpha_old']),
-            mean(rc_exdf[, 'alpha_s']),
-            mean(rc_exdf[, 'Gamma_star_ag']),
-            max(j_estimates),
-            RL_estimate,
-            max(tpu_estimates),
-            max(vcmax_estimates)
+            mean(rc_exdf[, 'alpha_g']),       # alpha_g
+            mean(rc_exdf[, 'alpha_old']),     # alpha_old
+            mean(rc_exdf[, 'alpha_s']),       # alpha_s
+            mean(rc_exdf[, 'Gamma_star_ag']), # Gamma_star
+            max(j_estimates),                 # J_at_25
+            RL_estimate,                      # RL_at_25
+            max(tp_estimates),                # Tp_at_25
+            max(vcmax_estimates)              # Vcmax_at_25
         )
     }
 }
