@@ -542,7 +542,7 @@ aci_parameters <- c3_aci_results$parameters$main_data
 
 if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
-    'Vcmax_at_25', 'RL_at_25', 'J_at_25', 'Tp'
+    'Vcmax_at_25', 'RL_at_25', 'J_at_25', 'Tp_at_25'
   )
 
   aci_parameters_list <- by(
@@ -603,7 +603,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 200), main = fitting_caption),
       list(Y = aci_parameters[, 'RL_at_25'],                 X = x_v, xlab = xl, ylab = "RL at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 3),   main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 225), main = fitting_caption),
-      list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                            ylim = c(0, 30),  main = fitting_caption)
+      list(Y = aci_parameters[, 'Tp_at_25'],                 X = x_v, xlab = xl, ylab = "Tp at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 30),  main = fitting_caption)
     )
 
     if (INCLUDE_FLUORESCENCE) {
