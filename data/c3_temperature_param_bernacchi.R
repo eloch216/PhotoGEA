@@ -1,4 +1,4 @@
-c3_arrhenius_bernacchi <- list(
+c3_temperature_param_bernacchi <- list(
     RL_norm =    list(type = 'Arrhenius', c = 18.72, Ea = 46.39, units = 'normalized to RL at 25 degrees C'),
     Vcmax_norm = list(type = 'Arrhenius', c = 26.35, Ea = 65.33, units = 'normalized to Vcmax at 25 degrees C'),
     Vomax_norm = list(type = 'Arrhenius', c = 22.98, Ea = 60.11, units = 'normalized to Vcmax at 25 degrees C'),

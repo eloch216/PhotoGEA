@@ -457,9 +457,7 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_temperature_response_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
-
-inputs <- calculate_temperature_response_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
 
 assim <- calculate_c4_assimilation(inputs, 0, 0.003, 400, 1, 0.5, 40, 200, 80)
 

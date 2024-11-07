@@ -330,7 +330,7 @@ licor_data <- calculate_total_pressure(licor_data)
 licor_data <- calculate_gas_properties(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_data <- calculate_temperature_response_arrhenius(licor_data, c3_arrhenius_sharkey)
+licor_data <- calculate_temperature_response(licor_data, c3_temperature_param_sharkey)
 
 # Calculate intrinsic water-use efficiency
 licor_data <- calculate_wue(licor_data)

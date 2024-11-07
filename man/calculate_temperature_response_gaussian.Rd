@@ -6,9 +6,9 @@
 
 \description{
   Calculate leaf-temperature-dependent values of various parameters using
-  Gaussian equations. This function can accomodate alternative names for the
-  leaf temperature column. It also checks the units of the leaf temperature
-  column and will produce an error of the units are not correct.
+  Gaussian equations. It is rare for users to call this function directly;
+  instead, it is used internally by
+  \code{\link{calculate_temperature_response}}.
 }
 
 \usage{
@@ -60,9 +60,11 @@
   units of \code{micromol mol^(-1)}, the \code{gaussian_parameters} argument
   could be specified as follows:
   \code{list(Jmax_norm = list(optimal_rate = 1, t_opt = 43, sigma = 26, units =
-  'micromol mol^(-1)'))}. It is rare to specify these parameters directly;
-  instead, it is more typical to use one of the pre-set values such as
-  \code{\link{c4_peaked_gaussian_von_caemmerer}}.
+  'micromol mol^(-1)'))}.
+
+  It is rare to specify these parameters directly; instead, it is more typical
+  to use one of the pre-set values such as those included in
+  \code{\link{c4_temperature_param_vc}}.
 }
 
 \value{
@@ -81,7 +83,10 @@ licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
-licor_file <- calculate_temperature_response_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+licor_file <- calculate_temperature_response_gaussian(
+  licor_file,
+  list(Jmax_norm = c4_temperature_param_vc$Jmax_norm)
+)
 
 licor_file$units$Jmax_norm      # View the units of the new `Jmax_norm` column
 licor_file$categories$Jmax_norm # View the category of the new `Jmax_norm` column

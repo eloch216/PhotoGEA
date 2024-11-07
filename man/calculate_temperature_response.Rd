@@ -58,6 +58,10 @@
   }
 
   Values of \code{type} are not case-sensitive.
+
+  It is rare to directly specify these parameters; instead, it is more typical
+  to use one of the pre-set values such as those included in
+  \code{\link{c3_temperature_param_sharkey}}.
 }
 
 \value{

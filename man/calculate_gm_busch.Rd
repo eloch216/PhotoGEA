@@ -110,7 +110,7 @@
     point in the absence of day respiration in \code{micromol mol^(-1)}.  Values
     of \code{Gamma_star} are typically calculated using
     \code{\link{calculate_gamma_star}} or
-    \code{\link{calculate_temperature_response_arrhenius}}.
+    \code{\link{calculate_temperature_response}}.
   }
 
   \item{rl_column_name}{

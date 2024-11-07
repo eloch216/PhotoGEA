@@ -240,7 +240,7 @@ licor_file <- organize_response_curve_data(
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Fit just one curve from the data set
 one_result <- fit_c3_variable_j(

@@ -14,7 +14,7 @@ inputs <- document_variables(
   c('', 'total_pressure', 'bar')
 )
 
-inputs <- calculate_temperature_response_arrhenius(inputs, c3_arrhenius_sharkey, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, 'Tleaf')
 
 inputs2 <- set_variable(inputs, 'alpha_g', 'dimensionless', '', 0.5)
 

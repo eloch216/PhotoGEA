@@ -1,18 +1,18 @@
-\name{c3_arrhenius_sharkey}
+\name{c3_temperature_param_sharkey}
 
 \docType{data}
 
-\alias{c3_arrhenius_sharkey}
+\alias{c3_temperature_param_sharkey}
 
-\title{C3 Arrhenius parameters from Sharkey et al.}
+\title{C3 temperature response parameters from Sharkey et al.}
 
 \description{
-  Arrhenius parameters describing the temperature response of important C3
-  photosynthetic parameters, intended to be passed to the
-  \code{\link{calculate_temperature_response_arrhenius}} function.
+  Parameters describing the temperature response of important C3 photosynthetic
+  parameters, intended to be passed to the
+  \code{\link{calculate_temperature_response}} function.
 }
 
-\usage{c3_arrhenius_sharkey}
+\usage{c3_temperature_param_sharkey}
 
 \format{
   List with 6 named elements that each represent a variable whose
@@ -31,8 +31,9 @@
           value at 25 degrees C.
   }
 
-  In turn, each of these elements is a list with 3 named elements:
+  In turn, each of these elements is a list with 4 named elements:
   \itemize{
+    \item \code{type}: the type of temperature response (\code{'Arrhenius'})
     \item \code{c}: the (dimensionless) Arrhenius scaling factor.
     \item \code{Ea}: the activation energy in \code{kJ / mol}.
     \item \code{units}: the units of the corresponding variable.
@@ -51,7 +52,8 @@
   publication, gas concentrations are expressed as partial pressures (in
   \code{Pa} or \code{kPa}) rather than mole fractions (\code{micromol / mol} or
   \code{mmol / mol}). However, for consistency with
-  \code{\link{c3_arrhenius_bernacchi}}, here we prefer to use mole fractions.
+  \code{\link{c3_temperature_param_bernacchi}}, here we prefer to use mole
+  fractions.
 
   To convert a concentration expressed as a partial pressure (\code{P}; in
   \code{Pa}) to a concentration expressed as a mole fraction (\code{C}; in

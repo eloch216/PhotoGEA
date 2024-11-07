@@ -6,9 +6,9 @@
 
 \description{
   Calculate leaf-temperature-dependent values of various parameters using
-  Arrhenius equations. This function can accomodate alternative names for the
-  leaf temperature column. It also checks the units of the leaf temperature
-  column and will produce an error of the units are not correct.
+  Arrhenius equations. It is rare for users to call this function directly;
+  instead, it is used internally by
+  \code{\link{calculate_temperature_response}}.
 }
 
 \usage{
@@ -70,10 +70,11 @@
   \code{Kc} has \code{c = 38.05}, {Ea = 79.43}, and units of
   \code{micromol mol^(-1)}, the \code{arrhenius_parameters} argument could be
   specified as follows:
-  \code{list(Kc = list(c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'))}. It
-  is rare to directly specify the Arrhenius parameters; instead, it is more
-  typical to use one of the pre-set values such as
-  \code{\link{c3_arrhenius_sharkey}}.
+  \code{list(Kc = list(c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'))}.
+
+  It is rare to directly specify the Arrhenius parameters; instead, it is more
+  typical to use one of the pre-set values such as those included in
+  \code{\link{c3_temperature_param_sharkey}}.
 
   Sometimes a publication will specify the value of a variable at 25 degrees C
   instead of the Arrhenius scaling factor \code{c}. In this case, there is a
@@ -112,7 +113,10 @@ licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
-licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_sharkey)
+licor_file <- calculate_temperature_response_arrhenius(
+  licor_file,
+  c3_temperature_param_sharkey
+)
 
 licor_file$units$Kc      # View the units of the new `Kc` column
 licor_file$categories$Kc # View the category of the new `Kc` column

@@ -1,4 +1,4 @@
-c3_arrhenius_sharkey <- list(
+c3_temperature_param_sharkey <- list(
     Kc =         list(type = 'Arrhenius', c = 35.9774 + PhotoGEA:::c_pa_to_ppm, Ea = 80.99, units = 'micromol mol^(-1)'),
     Ko =         list(type = 'Arrhenius', c = 12.3772 + PhotoGEA:::c_pa_to_ppm, Ea = 23.72, units = 'mmol mol^(-1)'),
     Gamma_star = list(type = 'Arrhenius', c = 11.187  + PhotoGEA:::c_pa_to_ppm, Ea = 24.46, units = 'micromol mol^(-1)'),

@@ -1,18 +1,18 @@
-\name{c3_arrhenius_bernacchi}
+\name{c3_temperature_param_bernacchi}
 
 \docType{data}
 
-\alias{c3_arrhenius_bernacchi}
+\alias{c3_temperature_param_bernacchi}
 
-\title{C3 Arrhenius parameters from Bernacchi et al.}
+\title{C3 temperature response parameters from Bernacchi et al.}
 
 \description{
-  Arrhenius parameters describing the temperature response of important C3
-  photosynthetic parameters, intended to be passed to the
-  \code{\link{calculate_temperature_response_arrhenius}} function.
+  Parameters describing the temperature response of important C3 photosynthetic
+  parameters, intended to be passed to the
+  \code{\link{calculate_temperature_response}} function.
 }
 
-\usage{c3_arrhenius_bernacchi}
+\usage{c3_temperature_param_bernacchi}
 
 \format{
   List with 7 named elements that each represent a variable whose
@@ -33,8 +33,9 @@
           its value at 25 degrees C.
   }
 
-  In turn, each of these elements is a list with 3 named elements:
+  In turn, each of these elements is a list with 4 named elements:
   \itemize{
+    \item \code{type}: the type of temperature response (\code{'Arrhenius'})
     \item \code{c}: the (dimensionless) Arrhenius scaling factor.
     \item \code{Ea}: the activation energy in \code{kJ / mol}.
     \item \code{units}: the units of the corresponding variable.
@@ -56,7 +57,7 @@
   reports values of \code{Jmax}, here we assume that both \code{Jmax} and the
   light-dependent values of \code{J} follow the same temperature response
   function and refer to it as \code{J} for compatibility with
-  \code{\link{c3_arrhenius_sharkey}}.
+  \code{\link{c3_temperature_param_sharkey}}.
 
   The Arrhenius parameters for the other variables were obtained from Bernacchi
   et al. (2001).

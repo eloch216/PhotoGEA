@@ -281,7 +281,7 @@ licor_file[, 'species_plot'] <-
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_temperature_response_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = 0,
 # tau = 0.2, and RL = 0.5
