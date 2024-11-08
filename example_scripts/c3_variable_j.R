@@ -19,7 +19,7 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1, 8, 9)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -29,7 +29,7 @@ MAKE_ANALYSIS_PLOTS <- TRUE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -78,7 +78,7 @@ solver <- if (USE_DEOPTIM_SOLVER) {
 # To fix RL to values from the `RL_at_25` column: RL_VAL <- 'column'
 # To fit RL: RL_VAL <- 'fit'
 
-TP_VAL <- 40
+TP_VAL <- 'fit'
 RL_VAL <- 'fit'
 
 FIT_OPTIONS <- list(
@@ -92,6 +92,14 @@ RL_TABLE <- list(
   `23` = 3.0,
   `25` = 3.03
 )
+
+# Set axis limits
+ci_lim <- c(-50, 1500)
+cc_lim <- c(-20, 500)
+a_lim <- c(-10, 70)
+gsw_lim <- c(0, 0.7)
+phi_lim <- c(0, 0.4)
+gmc_lim <- c(0, 0.3)
 
 ###
 ### TRANSLATION:
@@ -184,6 +192,31 @@ licor_data <- organize_response_curve_data(
     'Ci'
 )
 
+if (REQUIRE_STABILITY) {
+  # Only keep points where stability was achieved
+  licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+  
+  # Remove any curves that have fewer than three remaining points
+  npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+  ids_to_keep <- names(npts[npts > 2])
+  licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+}
+
+if (REMOVE_SPECIFIC_POINTS) {
+  # Remove specific points
+  licor_data <- remove_points(
+    licor_data,
+    list(event = '32', replicate = 1, CO2_r_sp = 220),
+    list(event = '17', replicate = 4, CO2_r_sp = 220),
+    list(event = '122', replicate = 4, CO2_r_sp = 600),
+    list(event = '36', replicate = 6, CO2_r_sp = 320),
+    list(event = '17', replicate = 7, CO2_r_sp = 500),
+    list(event = '10', replicate = 8, CO2_r_sp = 420),
+    list(event = '10', replicate = 8, CO2_r_sp = 220),
+    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+  )
+}
+
 if (MAKE_VALIDATION_PLOTS) {
     # Plot all PhiPS2-Ci curves in the data set
     dev.new()
@@ -194,8 +227,9 @@ if (MAKE_VALIDATION_PLOTS) {
       pch = 16,
       auto = TRUE,
       grid = TRUE,
-      xlab = paste('PhiPS2 [', licor_data$units$PhiPS2, ']'),
-      ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+      xlim = ci_lim,
+      xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+      ylab = paste('PhiPS2 [', licor_data$units$PhiPS2, ']')
     ))
 
     # Plot all A-Ci curves in the data set
@@ -207,11 +241,13 @@ if (MAKE_VALIDATION_PLOTS) {
       pch = 16,
       auto = TRUE,
       grid = TRUE,
+      xlim = ci_lim,
+      ylim = a_lim,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
 
-    # Plot all A-Cu curves, grouped by event
+    # Plot all A-Ci curves, grouped by event
     dev.new()
     print(xyplot(
       A ~ Ci | event,
@@ -221,6 +257,8 @@ if (MAKE_VALIDATION_PLOTS) {
       pch = 16,
       auto = TRUE,
       grid = TRUE,
+      xlim = ci_lim,
+      ylim = a_lim,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
@@ -277,42 +315,12 @@ if (MAKE_VALIDATION_PLOTS) {
     ))
 }
 
-if (REQUIRE_STABILITY) {
-    # Only keep points where stability was achieved
-    licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
-
-    # Remove any curves that have fewer than three remaining points
-    npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
-    ids_to_keep <- names(npts[npts > 2])
-    licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
-}
-
-if (REMOVE_SPECIFIC_POINTS) {
-    # Remove specific points
-    licor_data <- remove_points(
-      licor_data,
-      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
-      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
-      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
-      list(curve_identifier = '20 3 6', seq_num = c(15)),
-      list(curve_identifier = '25 3 3', seq_num = c(16)),
-      list(curve_identifier = '25 2 4', seq_num = c(3)),
-      list(curve_identifier = 'WT 3 10', seq_num = c(1, 2)),
-      list(curve_identifier = 'WT 4 3', seq_num = c(1:17)),
-      list(curve_identifier = '20 6 3', seq_num = c(1:17)),
-      list(curve_identifier = '25 3 3', seq_num = c(1:17))
-      #list(curve_identifier = 'WT 2 5', seq_num = 6) # has a different CO2 setpoint
-      #list(curve_identifier = c('14 1 2'))
-    )
-}
-
 ###
 ### PROCESSING:
 ### Extracting new pieces of information from the data
 ###
 
 # Specify RL values, if necessary
-
 if (RL_VAL == 'column') {
   licor_data <- set_variable(
     licor_data,
@@ -402,65 +410,11 @@ cat('\n')
 if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 A-Cc fits (including limiting rates)
     dev.new()
-    print(xyplot(
-      A + Ac + Aj + Ap + A_fit ~ Cc | curve_identifier,
-      data = c3_aci_results$fits$main_data,
-      type = 'b',
-      pch = 16,
-      auto.key = list(space = 'right'),
-      grid = TRUE,
-      xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
-      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
-      par.settings = list(
-        superpose.line = list(col = multi_curve_line_colors()),
-        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-      ),
-      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
-      panel = function(...) {
-        panel.xyplot(...)
-        args <- list(...)
-        curve_id <- args$curve_ids[args$subscripts][1]
-        fit_param <-
-          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
-        panel.points(
-            fit_param$operating_An_model ~ fit_param$operating_Cc,
-            type = 'p',
-            col = 'black',
-            pch = 1
-        )
-      }
-    ))
+    print(plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Cc', xlim = cc_lim, ylim = a_lim))
 
     # Plot the C3 A-Ci fits (including limiting rates)
     dev.new()
-    print(xyplot(
-      A + Ac + Aj + Ap + A_fit ~ Ci | curve_identifier,
-      data = c3_aci_results$fits$main_data,
-      type = 'b',
-      pch = 16,
-      auto.key = list(space = 'right'),
-      grid = TRUE,
-      xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
-      ylab = paste0('Net CO2 assimilation rate (', c3_aci_results$fits$units$A, ')'),
-      par.settings = list(
-        superpose.line = list(col = multi_curve_line_colors()),
-        superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-      ),
-      curve_ids = c3_aci_results$fits[, 'curve_identifier'],
-      panel = function(...) {
-        panel.xyplot(...)
-        args <- list(...)
-        curve_id <- args$curve_ids[args$subscripts][1]
-        fit_param <-
-          c3_aci_results$parameters[c3_aci_results$parameters[, 'curve_identifier'] == curve_id, ]
-        panel.points(
-          fit_param$operating_An_model ~ fit_param$operating_Ci,
-          type = 'p',
-          col = 'black',
-          pch = 1
-        )
-      }
-    ))
+    print(plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Ci', xlim = ci_lim, ylim = a_lim))
 
     # Plot the C3 A-Ci fits (including potential rates)
     dev.new()
@@ -686,13 +640,6 @@ if (MAKE_ANALYSIS_PLOTS) {
     x_cc <- all_samples[, 'Cc']
     x_s <- all_samples[, 'seq_num']
     x_e <- all_samples[, EVENT_COLUMN_NAME]
-
-    ci_lim <- c(-50, 1500)
-    cc_lim <- c(-20, 500)
-    a_lim <- c(-10, 55)
-    gsw_lim <- c(0, 0.7)
-    phi_lim <- c(0, 0.4)
-    gmc_lim <- c(0, 0.3)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Chloroplast [CO2] (ppm)"
