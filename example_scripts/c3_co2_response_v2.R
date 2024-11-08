@@ -61,6 +61,10 @@ GM_TABLE <- list(
   `14` = 0.541
 )
 
+# Decide whether to use soybean Rubisco Arrhenius parameters; otherwise,
+# tobacco parameters (the default) will be used
+USE_SOYBEAN_RUBISCO <- TRUE
+
 # Decide whether to override the Gamma_star value calculated from Arrhenius
 # equations
 OVERRIDE_GAMMA_STAR <- FALSE
@@ -355,7 +359,22 @@ licor_data <- calculate_gas_properties(licor_data)
 licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_data <- calculate_temperature_response(licor_data, c3_temperature_param_sharkey)
+c3_temperature_param <- if (USE_SOYBEAN_RUBISCO) {
+    # These Arrhenius parameters are estimated from the supplemental data of
+    # Orr et al. (2016)
+    within(c3_temperature_param_sharkey, {
+        Gamma_star$c = 14.12718424
+        Gamma_star$Ea = 26.00388519
+        Kc$c = 42.3821705
+        Kc$Ea = 90.47626014
+        Ko$c = 12.78425777
+        Ko$Ea = 16.5650822
+    })
+} else {
+    c3_temperature_param_sharkey
+}
+
+licor_data <- calculate_temperature_response(licor_data, c3_temperature_param)
 
 # Manually override Gamma_star, if desired
 if (OVERRIDE_GAMMA_STAR) {
