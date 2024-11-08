@@ -17,8 +17,8 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 16
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10, 16)
+NUM_OBS_IN_SEQ <- 17
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -41,7 +41,7 @@ POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
 PERFORM_STATS_TESTS <- FALSE
@@ -171,7 +171,7 @@ if (CO2_CONTROL == 'CO2_s_sp') {
 }
 
 # Remove certain events
-licor_data <- remove_points(licor_data, list(event = c('15', '37')))
+#licor_data <- remove_points(licor_data, list(event = c('32', '36', '26')))
 
 # Make sure the data meets basic requirements
 check_response_curve_data(
@@ -198,7 +198,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      auto.key = list(space = 'right'),
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
@@ -225,7 +225,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      auto.key = list(space = 'right'),
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Stomatal conductance to H2O [', licor_data$units$gsw, ']')
@@ -301,18 +301,21 @@ if (REMOVE_SPECIFIC_POINTS) {
     # Remove specific points
     licor_data <- remove_points(
       licor_data,
-      #list(event = 'TGx2014-49FZ', replicate = '34'),
-      #list(event = 'TTGx2002-3DM', replicate = '35'),
-      #list(event = 'LD11-2170', replicate = '27', seq_num = c('8','17'))
-      #list(event = 'WT', replicate = 9, CO2_r_sp = 800),
-      #list(event = '25', replicate = 4, CO2_r_sp = 200)
-      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
-      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
-      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
-      list(curve_identifier = '20 3 6', seq_num = c(15)),
-      list(curve_identifier = '25 3 3', seq_num = c(16)),
-      list(curve_identifier = '25 2 4', seq_num = c(3))
-
+      #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500),
+      #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500),
+      #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 800),
+      #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
+      #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
+      #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
+      list(event = '32', replicate = 1, CO2_r_sp = 220),
+      list(event = '17', replicate = 4, CO2_r_sp = 220),
+      list(event = '122', replicate = 4, CO2_r_sp = 600),
+      list(event = '36', replicate = 6, CO2_r_sp = 320),
+      list(event = '17', replicate = 7, CO2_r_sp = 500),
+      list(event = '10', replicate = 8, CO2_r_sp = 420),
+      list(event = '10', replicate = 8, CO2_r_sp = 220),
+      list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+      #list(curve_identifier = '10 5 6', seq_num = c(2))
     )
 }
 
@@ -593,7 +596,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     xl <- "Genotype"
 
     plot_param <- list(
-      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 50),  main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 65),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'],              X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",            ylim = c(0, 100), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'ls_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Grassi) (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'lm_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Grassi) (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
@@ -610,7 +613,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         plot_param <- c(
             plot_param,
             list(
-                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.5), main = boxplot_caption),
+                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.6), main = boxplot_caption),
                 list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 350), main = boxplot_caption)
             )
         )
@@ -633,11 +636,11 @@ if (MAKE_ANALYSIS_PLOTS) {
     x_s <- all_samples[, 'seq_num']
     x_e <- all_samples[, EVENT_COLUMN_NAME]
 
-    ci_lim <- c(-50, 1700)
-    cc_lim <- c(-50, 1700)
+    ci_lim <- c(-50, 1500)
+    cc_lim <- c(-50, 1500)
     a_lim <- c(-10, 65)
-    gsw_lim <- c(0, 0.7)
-    phi_lim <- c(0, 0.5)
+    gsw_lim <- c(0, 0.9)
+    phi_lim <- c(0, 0.6)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Chloroplast [CO2] (ppm)"

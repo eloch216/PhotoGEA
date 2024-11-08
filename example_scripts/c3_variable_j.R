@@ -19,7 +19,7 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(7,8,9,10,16,17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
