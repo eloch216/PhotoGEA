@@ -86,7 +86,7 @@ test_that('fit results have not changed (no alpha)', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
+        fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0, alpha_t = 0),
         OPTIM_FUN = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -136,7 +136,7 @@ test_that('fit results have not changed (alpha_old)', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(alpha_old = 'fit', alpha_g = 0, alpha_s = 0),
+        fit_options = list(alpha_old = 'fit', alpha_g = 0, alpha_s = 0, alpha_t = 0),
         OPTIM_FUN = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -186,7 +186,7 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit'),
+        fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit', alpha_t = 0),
         OPTIM_FUN = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -220,6 +220,56 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 1)
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
+    )
+})
+
+test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c3_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit', alpha_t = 'fit'),
+        OPTIM_FUN = optimizer_deoptim(100),
+        hard_constraints = 2,
+        calculate_confidence_intervals = TRUE,
+        remove_unreliable_param = 1
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
+        c(159.271704, 253.817406, 1.559827, NA, 59.614932),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper')]),
+        c(167.240166, 261.007015, 1.996194, Inf),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 7, 6)
+    )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(8, 5, 0))
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
     )
 
     expect_equal(
