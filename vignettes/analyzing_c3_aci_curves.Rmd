@@ -124,12 +124,13 @@ inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, '
 alpha_g <- 0
 alpha_old <- 0
 alpha_s <- 0
+alpha_t <- 0
 J <- 200
 RL <- 1.8
 Tp <- 18
 Vcmax <- 125
 
-assim <- calculate_c3_assimilation(inputs, alpha_g, alpha_old, alpha_s, '', J, RL, Tp, Vcmax)
+assim <- calculate_c3_assimilation(inputs, alpha_g, alpha_old, alpha_s, alpha_t, '', J, RL, Tp, Vcmax)
 
 xyplot(
   An + Ac + Aj + Ap ~ Cc,

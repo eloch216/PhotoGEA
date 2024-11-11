@@ -2,6 +2,7 @@ initial_guess_c3_variable_j <- function(
     alpha_g,
     alpha_old,
     alpha_s,
+    alpha_t,
     Gamma_star,
     cc_threshold_rd = 100,
     atp_use = 4.0,
@@ -61,6 +62,7 @@ initial_guess_c3_variable_j <- function(
             alpha_g,
             alpha_old,
             alpha_s,
+            alpha_t,
             Gamma_star,
             cc_threshold_rd,
             atp_use,
@@ -85,12 +87,13 @@ initial_guess_c3_variable_j <- function(
             c3_guess[1], # alpha_g
             c3_guess[2], # alpha_old
             c3_guess[3], # alpha_s
-            c3_guess[4], # Gamma_star
-            c3_guess[5], # J_at_25
-            c3_guess[6], # RL_at_25
+            c3_guess[4], # alpha_t
+            c3_guess[5], # Gamma_star
+            c3_guess[6], # J_at_25
+            c3_guess[7], # RL_at_25
             tau_guess,   # tau
-            c3_guess[7], # Tp_at_25
-            c3_guess[8]  # Vcmax_at_25
+            c3_guess[8], # Tp_at_25
+            c3_guess[9]  # Vcmax_at_25
         )
     }
 }

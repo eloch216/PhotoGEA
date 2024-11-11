@@ -2,6 +2,7 @@ initial_guess_c3_aci <- function(
     alpha_g,    # dimensionless
     alpha_old,  # dimensionless
     alpha_s,    # dimensionless
+    alpha_t,    # dimensionless
     Gamma_star, # micromol / mol
     cc_threshold_rd = 100,
     atp_use = 4.0,
@@ -41,6 +42,7 @@ initial_guess_c3_aci <- function(
             alpha_g = alpha_g,
             alpha_old = alpha_old,
             alpha_s = alpha_s,
+            alpha_t = alpha_t,
             Gamma_star = Gamma_star
         )
 
@@ -49,20 +51,20 @@ initial_guess_c3_aci <- function(
 
         check_required_variables(rc_exdf, required_variables)
 
-        # Include values of alpha_g and Gamma_star in the exdf if they are not
+        # Include values of flexible parameters in the exdf if they are not
         # already present
         if (value_set(alpha_g))    {rc_exdf[, 'alpha_g']    <- alpha_g}
         if (value_set(alpha_old))  {rc_exdf[, 'alpha_old']  <- alpha_old}
         if (value_set(alpha_s))    {rc_exdf[, 'alpha_s']    <- alpha_s}
+        if (value_set(alpha_t))    {rc_exdf[, 'alpha_t']    <- alpha_t}
         if (value_set(Gamma_star)) {rc_exdf[, 'Gamma_star'] <- Gamma_star}
 
-        # Get the effective value of Gamma_star, accounting for carbon remaining
-        # in the cytosol as glycine
-        rc_exdf[, 'Gamma_star_ag'] <-
-            (1 - rc_exdf[, 'alpha_g']) * rc_exdf[, 'Gamma_star'] # micromol / mol
+        # Get the effective value of Gamma_star
+        rc_exdf[, 'Gamma_star_agt'] <-
+            (1 - rc_exdf[, 'alpha_g'] + 2 * rc_exdf[, 'alpha_t']) * rc_exdf[, 'Gamma_star'] # micromol / mol
 
         # To estimate RL, first make a linear fit of A ~ Cc where Cc is below
-        # the threshold. Then, evaluate the fit at Cc = Gamma_star_ag.
+        # the threshold. Then, evaluate the fit at Cc = Gamma_star_agt.
         # Gamma_star is temperature dependent and not necessarily constant
         # across the measured points, so use its average value across points
         # where Cc is below the threshold. If there are not enough points to do
@@ -70,7 +72,7 @@ initial_guess_c3_aci <- function(
         RL_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rd, ] # a data frame
 
         RL_estimate <- if (nrow(RL_subset) > 1) {
-            mean_gstar_rd <- mean(RL_subset[, 'Gamma_star_ag'])
+            mean_gstar_rd <- mean(RL_subset[, 'Gamma_star_agt'])
             mean_rl_norm <- mean(RL_subset[, rl_norm_column_name])
 
             rd_fit <-
@@ -87,7 +89,7 @@ initial_guess_c3_aci <- function(
         # Calculate the RuBP carboxylation rate, which is used in several of the
         # next calculations.
         Vc <- (rc_exdf[, a_column_name] + RL_estimate * rc_exdf[, rl_norm_column_name]) /
-            (1 - rc_exdf[, 'Gamma_star_ag'] / rc_exdf[, cc_column_name]) # micromol / m^2 / s
+            (1 - rc_exdf[, 'Gamma_star_agt'] / rc_exdf[, cc_column_name]) # micromol / m^2 / s
 
         # To estimate Vcmax, we solve Equation 2.20 for Vcmax and calculate it
         # for each point in the response curve. Vcmax values calculated this way
@@ -109,7 +111,7 @@ initial_guess_c3_aci <- function(
         # point in the response curve. Then we choose the largest value as the
         # best estimate.
         j_estimates <- Vc *
-            (atp_use * rc_exdf[, cc_column_name] + rc_exdf[, 'Gamma_star_ag'] * (nadph_use + 16 * rc_exdf[, 'alpha_g'] + 8 * rc_exdf[, 'alpha_s'])) /
+            (atp_use * rc_exdf[, cc_column_name] + rc_exdf[, 'Gamma_star_agt'] * (nadph_use + 16 * rc_exdf[, 'alpha_g'] - 8 * rc_exdf[, 'alpha_t'] + 8 * rc_exdf[, 'alpha_s'])) /
             rc_exdf[, cc_column_name]
 
         j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]
@@ -119,21 +121,22 @@ initial_guess_c3_aci <- function(
         # considered, so we replace them by 0. Then we choose the largest value
         # as the best estimate.
         tp_estimates <- Vc *
-            (rc_exdf[, cc_column_name] - (1 + 3 * rc_exdf[, 'alpha_old'] + 3 * rc_exdf[, 'alpha_g'] + 4 * rc_exdf[, 'alpha_s']) * rc_exdf[, 'Gamma_star_ag']) /
+            (rc_exdf[, cc_column_name] - (1 + 3 * rc_exdf[, 'alpha_old'] + 3 * rc_exdf[, 'alpha_g'] + 6 * rc_exdf[, 'alpha_t'] + 4 * rc_exdf[, 'alpha_s']) * rc_exdf[, 'Gamma_star_agt']) /
             (3 * rc_exdf[, cc_column_name])
 
         tp_estimates <- pmax(tp_estimates, 0) / rc_exdf[, tp_norm_column_name]
 
         # Return the estimates
         c(
-            mean(rc_exdf[, 'alpha_g']),       # alpha_g
-            mean(rc_exdf[, 'alpha_old']),     # alpha_old
-            mean(rc_exdf[, 'alpha_s']),       # alpha_s
-            mean(rc_exdf[, 'Gamma_star_ag']), # Gamma_star
-            max(j_estimates),                 # J_at_25
-            RL_estimate,                      # RL_at_25
-            max(tp_estimates),                # Tp_at_25
-            max(vcmax_estimates)              # Vcmax_at_25
+            mean(rc_exdf[, 'alpha_g']),        # alpha_g
+            mean(rc_exdf[, 'alpha_old']),      # alpha_old
+            mean(rc_exdf[, 'alpha_s']),        # alpha_s
+            mean(rc_exdf[, 'alpha_t']),        # alpha_t
+            mean(rc_exdf[, 'Gamma_star_agt']), # Gamma_star
+            max(j_estimates),                  # J_at_25
+            RL_estimate,                       # RL_at_25
+            max(tp_estimates),                 # Tp_at_25
+            max(vcmax_estimates)               # Vcmax_at_25
         )
     }
 }

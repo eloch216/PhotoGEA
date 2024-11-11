@@ -251,14 +251,16 @@
   This function calls \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}} to calculate values of net
   assimilation. The user-supplied optimization function is used to vary the
-  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{J_at_25},
-  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} to find
-  ones that best reproduce the experimentally measured values of net
-  assimilation. By default, the following options are used for the fits:
+  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25} to find ones that best reproduce the experimentally
+  measured values of net assimilation. By default, the following options are
+  used for the fits:
   \itemize{
     \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_old}: lower = 0, upper = 10, fit_option = \code{'fit'}
     \item \code{alpha_s}: lower = 0, upper = 10, fit_option = 0
+    \item \code{alpha_t}: lower = 0, upper = 10, fit_option = 0
     \item \code{Gamma_star}: lower = -20, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
@@ -286,6 +288,9 @@
           \code{initial_guess_c3_aci} is set to \code{0.3 * (1 - alpha_g)};
           otherwise, the argument is set to the value specified by the fit
           options.
+    \item if \code{alpha_t} is being fit, the \code{alpha_t} argument of
+          \code{initial_guess_c3_aci} is set to 0; otherwise, the argument is
+          set to the value specified by the fit options.
     \item If \code{Gamma_star} is being fit, the \code{Gamma_star} argument of
           \code{initial_guess_c3_aci} is set to 40; otherwise, the argument is
           set to the value specified by the fit options.
@@ -360,14 +365,15 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C will be stored in
-                  the \code{J_at_25}, \code{RL_at_25}, and \code{Vcmax_at_25}
-                  columns.
+                  the \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+                  \code{Vcmax_at_25} columns.
             \item The other outputs from \code{\link{calculate_c3_variable_j}}
                   and \code{\link{calculate_c3_assimilation}} will be stored in
                   columns with the usual names: \code{alpha_g},
-                  \code{alpha_old}, \code{alpha_s}, \code{tau}, \code{Tp_tl},
-                  \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl}, \code{Ac},
-                  \code{Aj}, \code{Ap}, \code{gmc}, \code{J_F}, and \code{Cc}.
+                  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{tau},
+                  \code{Tp_tl}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
+                  \code{Ac}, \code{Aj}, \code{Ap}, \code{gmc}, \code{J_F}, and
+                  \code{Cc}.
           }
     \item \code{fits_interpolated}: An \code{exdf} object including the
           calculated assimilation rates at a fine spacing of \code{Ci} values
@@ -379,15 +385,16 @@
                   \code{An = Ap} are stored in the \code{n_Ac_limiting},
                   \code{n_Aj_limiting}, and \code{n_Ap_limiting} columns.
             \item The best-fit values are stored in the \code{alpha_g},
-                  \code{alpha_old}, \code{alpha_s}, \code{tau}, \code{Tp_at_25},
-                  \code{J_at_25}, \code{RL_at_25}, and \code{Vcmax_at_25}
-                  columns. If \code{calculate_confidence_intervals} is
-                  \code{TRUE}, upper and lower limits for each of these
-                  parameters will also be included.
+                  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{tau},
+                  \code{Tp_at_25}, \code{J_at_25}, \code{RL_at_25}, and
+                  \code{Vcmax_at_25} columns. If
+                  \code{calculate_confidence_intervals} is \code{TRUE}, upper
+                  and lower limits for each of these parameters will also be
+                  included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{J_tl_avg}, \code{RL_tl_avg},
-                  and \code{Vcmax_tl_avg}.
+                  \code{Tp_tl_avg}, and \code{Vcmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.

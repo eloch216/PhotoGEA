@@ -33,6 +33,7 @@ calculate_c3_limitations_warren <- function(
     required_variables[['alpha_g']]                  <- unit_dictionary[['alpha_g']]
     required_variables[['alpha_old']]                <- unit_dictionary[['alpha_old']]
     required_variables[['alpha_s']]                  <- unit_dictionary[['alpha_s']]
+    required_variables[['alpha_t']]                  <- unit_dictionary[['alpha_t']]
     required_variables[['Gamma_star']]               <- unit_dictionary[['Gamma_star']]
     required_variables[['J_at_25']]                  <- unit_dictionary[['J_at_25']]
     required_variables[['RL_at_25']]                 <- unit_dictionary[['RL_at_25']]
@@ -83,6 +84,7 @@ calculate_c3_limitations_warren <- function(
             '', # alpha_g
             '', # alpha_old
             '', # alpha_s
+            '', # alpha_t
             '', # Gamma_star
             '', # J_at_25
             '', # RL_at_25

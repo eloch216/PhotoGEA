@@ -19,6 +19,7 @@
     exdf_obj,
     alpha_g,
     alpha_s,
+    alpha_t,
     Gamma_star,
     RL_at_25,
     tau,
@@ -56,6 +57,15 @@
     \code{exdf_obj} called \code{alpha_s} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{alpha_s} column
     of \code{exdf_obj} if it exists.
+  }
+
+  \item{alpha_t}{
+    A dimensionless parameter where \code{0 <= alpha_t <= 1} representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    CH2-THF. \code{alpha_t} is often assumed to be 0. If \code{alpha_t} is not a
+    number, then there must be a column in \code{exdf_obj} called \code{alpha_t}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha_t} column of \code{exdf_obj} if it exists.
   }
 
   \item{Gamma_star}{
@@ -283,9 +293,9 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
-# Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = 0,
+# Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = alpha_t = 0,
 # tau = 0.2, and RL = 0.5
-vj_res <- calculate_c3_variable_j(licor_file, 0, 0, '', 1.5, 0.55)
+vj_res <- calculate_c3_variable_j(licor_file, 0, 0, 0, '', 1.5, 0.55)
 
 # Combine with original data
 licor_file <- cbind(licor_file, vj_res)

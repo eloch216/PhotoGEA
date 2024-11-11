@@ -106,6 +106,7 @@ identify_c3_unreliable_points <- function(
     parameters[, 'alpha_g_trust']   <- p_trust
     parameters[, 'alpha_old_trust'] <- p_trust
     parameters[, 'alpha_s_trust']   <- p_trust
+    parameters[, 'alpha_t_trust']   <- p_trust
     parameters[, 'Tp_trust']        <- p_trust
 
     if (p_remove) {
@@ -113,16 +114,19 @@ identify_c3_unreliable_points <- function(
         parameters[, 'alpha_g']          <- NA
         parameters[, 'alpha_old']        <- NA
         parameters[, 'alpha_s']          <- NA
+        parameters[, 'alpha_t']          <- NA
         parameters[, 'Tp_at_25']         <- NA
         parameters[, 'Tp_tl_avg']        <- NA
         fits[, 'alpha_g']                <- NA
         fits[, 'alpha_old']              <- NA
         fits[, 'alpha_s']                <- NA
+        fits[, 'alpha_t']                <- NA
         fits[, 'Tp_at_25']               <- NA
         fits[, 'Tp_tl']                  <- NA
         fits_interpolated[, 'alpha_g']   <- NA
         fits_interpolated[, 'alpha_old'] <- NA
         fits_interpolated[, 'alpha_s']   <- NA
+        fits_interpolated[, 'alpha_t']   <- NA
         fits_interpolated[, 'Tp_at_25']  <- NA
         fits_interpolated[, 'Tp_tl']     <- NA
 
@@ -148,6 +152,9 @@ identify_c3_unreliable_points <- function(
         c('identify_c3_unreliable_points', 'Vcmax_trust',             ''),
         c('identify_c3_unreliable_points', 'J_trust',                 ''),
         c('identify_c3_unreliable_points', 'alpha_g_trust',           ''),
+        c('identify_c3_unreliable_points', 'alpha_old_trust',         ''),
+        c('identify_c3_unreliable_points', 'alpha_s_trust',           ''),
+        c('identify_c3_unreliable_points', 'alpha_t_trust',           ''),
         c('identify_c3_unreliable_points', 'Tp_trust',                ''),
         c('identify_c3_unreliable_points', 'remove_unreliable_param', '')
     )
