@@ -87,6 +87,8 @@ be directly added to this file to describe the related changes.
 - `read_licor_6800_Excel` now checks to make sure the `A` and `gsw` columns are
   not all zero; if these columns are all zero, this indicates that the Excel
   file needs to be "calculated," and a relevant message is sent to the user.
+- The C3 assimilation model and C3 A-Ci fits have been updated to include
+  another parameter related to TPU: `alpha_t`
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
