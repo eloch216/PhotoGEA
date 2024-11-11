@@ -84,6 +84,9 @@ be directly added to this file to describe the related changes.
     they are no longer pure list of Arrhenius parameters.
   - These changes may not be compatible with scripts written for earlier
     versions of PhotoGEA.
+- `read_licor_6800_Excel` now checks to make sure the `A` and `gsw` columns are
+  not all zero; if these columns are all zero, this indicates that the Excel
+  file needs to be "calculated," and a relevant message is sent to the user.
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
