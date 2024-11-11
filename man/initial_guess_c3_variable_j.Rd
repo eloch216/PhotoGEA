@@ -20,6 +20,7 @@
     alpha_g,
     alpha_old,
     alpha_s,
+    alpha_t,
     Gamma_star,
     cc_threshold_rd = 100,
     atp_use = 4.0,
@@ -67,6 +68,15 @@
     \code{rc_exdf} called \code{alpha_s} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{alpha_s} column
     of \code{rc_exdf} if it exists.
+  }
+
+  \item{alpha_t}{
+    A dimensionless parameter where \code{0 <= alpha_t <= 1} representing the
+    proportion of glycolate carbon taken out of the photorespiratory pathway as
+    CH2-THF. \code{alpha_t} is often assumed to be 0. If \code{alpha_t} is not a
+    number, then there must be a column in \code{rc_exdf} called \code{alpha_t}
+    with appropriate units. A numeric value supplied here will overwrite the
+    values in the \code{alpha_t} column of \code{rc_exdf} if it exists.
   }
 
   \item{Gamma_star}{
@@ -159,11 +169,11 @@
 
 \details{
   The variable J method is a fitting procedure for estimating values of
-  \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{Gamma_star},
-  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
-  \code{Vcmax_at_25} from a measured C3 CO2 response curve + chlorophyll
-  fluorescence. For more information about these parameters, see the
-  documentation at \code{\link{calculate_c3_variable_j}} and
+  \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+  \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25}, \code{tau},
+  \code{Tp_at_25}, and \code{Vcmax_at_25} from a measured C3 CO2 response curve
+  + chlorophyll fluorescence. For more information about these parameters, see
+  the documentation at \code{\link{calculate_c3_variable_j}} and
   \code{\link{calculate_c3_assimilation}}.
 
   Here, we make an estimate for \code{tau} by noting that gas exchange
@@ -181,10 +191,10 @@
 \value{
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
-  this function will be a numeric vector with nine elements, representing the
-  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{J_at_25},
-  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in that
-  order).
+  this function will be a numeric vector with ten elements, representing the
+  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -214,7 +224,7 @@ licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_be
 # Create the guessing function; here we set all alpha values to 0 and use the
 # temperature-dependent values of Gamma_star calculated above
 guessing_func <-
-  initial_guess_c3_variable_j(alpha_g = 0, alpha_old = 0, alpha_s = 0, Gamma_star = '')
+  initial_guess_c3_variable_j(alpha_g = 0, alpha_old = 0, alpha_s = 0, alpha_t = 0, Gamma_star = '')
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -226,11 +236,14 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
-    x <- cbind(x, calculate_c3_variable_j(x, param[1], param[3], param[4], param[6], param[7]))
+    x <- cbind(
+      x,
+      calculate_c3_variable_j(x, param[1], param[3], param[4], param[5], param[7], param[8])
+    )
     cbind(x,
       calculate_c3_assimilation(
         x,
-        param[1], param[2], param[3], param[4], param[5], param[6], param[8], param[9]
+        param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[9], param[10]
       )
     )
   }

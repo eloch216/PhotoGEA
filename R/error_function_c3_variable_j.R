@@ -125,9 +125,10 @@ error_function_c3_variable_j <- function(
                     fitting_exdf,
                     X[1], # alpha_g
                     X[3], # alpha_s
-                    X[4], # Gamma_star
-                    X[6], # RL_at_25
-                    X[7], # tau
+                    X[4], # alpha_t
+                    X[5], # Gamma_star
+                    X[7], # RL_at_25
+                    X[8], # tau
                     atp_use,
                     nadph_use,
                     a_column_name,
@@ -170,14 +171,15 @@ error_function_c3_variable_j <- function(
             {
                 calculate_c3_assimilation(
                     fitting_exdf,
-                    X[1], # alpha_g
-                    X[2], # alpha_old
-                    X[3], # alpha_s
-                    X[4], # Gamma_star
-                    X[5], # J_at_25
-                    X[6], # RL_at_25
-                    X[8], # Tp_at_25
-                    X[9], # Vcmax_at_25
+                    X[1],  # alpha_g
+                    X[2],  # alpha_old
+                    X[3],  # alpha_s
+                    X[4],  # alpha_t
+                    X[5],  # Gamma_star
+                    X[6],  # J_at_25
+                    X[7],  # RL_at_25
+                    X[9],  # Tp_at_25
+                    X[10], # Vcmax_at_25
                     atp_use,
                     nadph_use,
                     curvature_cj,

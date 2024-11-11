@@ -1,12 +1,9 @@
-# Note: Equation numbers in the code below refer to the numbered equations in
-# Busch, Sage, & Farquhar, G. D. "Plants increase CO2 uptake by ssimilating
-# nitrogen via the photorespiratory pathway." Nature Plants 4, 46–54 (2018)
-# doi: 10.1038/s41477-017-0065-x
 calculate_c3_assimilation <- function(
     exdf_obj,
     alpha_g,      # dimensionless      (this value is sometimes being fitted)
     alpha_old,    # dimensionless      (this value is sometimes being fitted)
     alpha_s,      # dimensionless      (this value is sometimes being fitted)
+    alpha_t,      # dimensionless      (this value is sometimes being fitted)
     Gamma_star,   # micromol / mol     (this value is sometimes being fitted)
     J_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     RL_at_25,     # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
@@ -59,6 +56,7 @@ calculate_c3_assimilation <- function(
             alpha_g = alpha_g,
             alpha_old = alpha_old,
             alpha_s = alpha_s,
+            alpha_t = alpha_t,
             Gamma_star = Gamma_star,
             J_at_25 = J_at_25,
             RL_at_25 = RL_at_25,
@@ -88,6 +86,7 @@ calculate_c3_assimilation <- function(
     if (!value_set(alpha_g))     {alpha_g     <- exdf_obj[, 'alpha_g']}
     if (!value_set(alpha_old))   {alpha_old   <- exdf_obj[, 'alpha_old']}
     if (!value_set(alpha_s))     {alpha_s     <- exdf_obj[, 'alpha_s']}
+    if (!value_set(alpha_t))     {alpha_t     <- exdf_obj[, 'alpha_t']}
     if (!value_set(Gamma_star))  {Gamma_star  <- exdf_obj[, 'Gamma_star']}
     if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
     if (!value_set(RL_at_25))    {RL_at_25    <- exdf_obj[, 'RL_at_25']}
@@ -118,17 +117,17 @@ calculate_c3_assimilation <- function(
     # Always check parameters that cannot be fit, and make sure we are not
     # mixing models
     mixed_alpha <- any(alpha_old > 0, na.rm = TRUE) &&
-        (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
+        (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE) || any(alpha_t > 0, na.rm = TRUE))
 
     mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
-        (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE))
+        (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE) || any(alpha_t > 0, na.rm = TRUE))
 
     if (any(Kc < 0, na.rm = TRUE))       {msg <- append(msg, 'Kc must be >= 0')}
     if (any(Ko < 0, na.rm = TRUE))       {msg <- append(msg, 'Ko must be >= 0')}
     if (any(oxygen < 0, na.rm = TRUE))   {msg <- append(msg, 'oxygen must be >= 0')}
     if (any(pressure < 0, na.rm = TRUE)) {msg <- append(msg, 'pressure must be >= 0')}
-    if (mixed_alpha)                     {msg <- append(msg, 'Cannot specify nonzero alpha_old and nonzero alpha_s or alpha_g')}
-    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_s or alpha_s are nonzero')}
+    if (mixed_alpha)                     {msg <- append(msg, 'Cannot specify nonzero alpha_old and nonzero alpha_g / alpha_s / alpha_t')}
+    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_g / alpha_s / alpha_t are nonzero')}
 
     # Optionally check whether Cc is reasonable
     if (hard_constraints >= 1) {
@@ -139,7 +138,9 @@ calculate_c3_assimilation <- function(
     if (hard_constraints >= 2) {
         if (any(alpha_g < 0 | alpha_g > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_g must be >= 0 and <= 1')}
         if (any(alpha_old < 0 | alpha_old > 1, na.rm = TRUE))                {msg <- append(msg, 'alpha_old must be >= 0 and <= 1')}
-        if (any(alpha_s < 0 | alpha_s > 0.75 * (1 - alpha_g), na.rm = TRUE)) {msg <- append(msg, 'alpha_s must be >= 0 and <= 0.75 * (1 - alpha_g)')}
+        if (any(alpha_s < 0 | alpha_s > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_s must be >= 0 and <= 1')}
+        if (any(alpha_t < 0 | alpha_t > 1, na.rm = TRUE))                    {msg <- append(msg, 'alpha_t must be >= 0 and <= 1')}
+        if (any(alpha_g + 2 * alpha_t + 4 * alpha_s / 3 > 1, na.rm = TRUE))  {msg <- append(msg, 'alpha_g + 2 * alpha_t + 4 * alpha_s / 3 must be <= 1')}
         if (any(Gamma_star < 0, na.rm = TRUE))                               {msg <- append(msg, 'Gamma_star must be >= 0')}
         if (any(J_at_25 < 0, na.rm = TRUE))                                  {msg <- append(msg, 'J_at_25 must be >= 0')}
         if (any(RL_at_25 < 0, na.rm = TRUE))                                 {msg <- append(msg, 'RL_at_25 must be >= 0')}
@@ -156,28 +157,22 @@ calculate_c3_assimilation <- function(
         }
     }
 
-    # Get the effective value of Gamma_star, accounting for carbon remaining in
-    # the cytosol as glycine. Note that when alpha_g = 0,
-    # Gamma_star_ag = Gamma_star.
-    Gamma_star_ag <- (1 - alpha_g) * Gamma_star * pressure # microbar
+    # Get the effective value of Gamma_star
+    Gamma_star_agt <- (1 - alpha_g + 2 * alpha_t) * Gamma_star * pressure # microbar
 
     # Rubisco-limited carboxylation (micromol / m^2 / s)
     Wc <- PCc * Vcmax_tl / (PCc + Kc * (1.0 + POc / Ko))
 
-    # RuBP-regeneration-limited carboxylation (micromol / m^2 / s). Note that
-    # when alpha_g = alpha_s = 0, this equation is identical to Equation 7 from
-    # Busch et al. (2018); otherwise, it is identical to Equation 13.
-    Wj <- PCc * J_tl / (PCc * atp_use + Gamma_star_ag * (nadph_use + 16 * alpha_g + 8 * alpha_s))
+    # RuBP-regeneration-limited carboxylation (micromol / m^2 / s)
+    Wj <- PCc * J_tl / (PCc * atp_use + Gamma_star_agt * (nadph_use + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s))
 
-    # TPU-limited carboxylation (micromol / m^2 / s). Note that when alpha_g =
-    # alpha_s = 0, this equation is identical to Equation 8 from Busch et al.
-    # (2018). When alpha_old = 0, it is identical to Equation 14.
-    Wp <- PCc * 3 * Tp_tl / (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s))
+    # TPU-limited carboxylation (micromol / m^2 / s)
+    Wp <- PCc * 3 * Tp_tl / (PCc - Gamma_star_agt * (1 + 3 * alpha_old + 3 * alpha_g + 6 * alpha_t + 4 * alpha_s))
 
     # Apply a TPU threshold
     if (is.null(TPU_threshold)) {
         # Use the threshold determined from biochemistry
-        Wp[PCc <= Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)] <- Inf
+        Wp[PCc <= Gamma_star_agt * (1 + 3 * alpha_old + 3 * alpha_g + 6 * alpha_t + 4 * alpha_s)] <- Inf
     } else {
         # Use an arbitrary threshold
         Wp[PCc <= TPU_threshold] <- Inf
@@ -186,7 +181,7 @@ calculate_c3_assimilation <- function(
     # Carboxylation rate limited by Rubisco deactivation or RuBP depletion
     # (micromol / m^2 / s).
     Wd <- rep_len(0, length(PCc))
-    Wd[PCc > Gamma_star_ag] <- Inf
+    Wd[PCc > Gamma_star_agt] <- Inf
 
     # Overall carboxylation rate
     Wcjp <- if (curvature_cj == 1 && curvature_cjp == 1) {
@@ -225,7 +220,7 @@ calculate_c3_assimilation <- function(
 
     # Calculate corresponding net CO2 assimilations by accounting for
     # photorespiration and day respiration
-    photo_resp_factor <- 1.0 - Gamma_star_ag / PCc # dimensionless
+    photo_resp_factor <- 1.0 - Gamma_star_agt / PCc # dimensionless
     Ac <- photo_resp_factor * Wc - RL_tl
     Aj <- photo_resp_factor * Wj - RL_tl
     Ap <- photo_resp_factor * Wp - RL_tl
@@ -235,13 +230,13 @@ calculate_c3_assimilation <- function(
     # Possibly use the pseudo-FvCB model or one of its variants
     if (use_min_A) {
         # Recalculate Ap (micromol / m^2 / s)
-        Ap <- (PCc - Gamma_star_ag) * 3 * Tp_tl /
-            (PCc - Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)) - RL_tl
+        Ap <- (PCc - Gamma_star_agt) * 3 * Tp_tl /
+            (PCc - Gamma_star_agt * (1 + 3 * alpha_old + 3 * alpha_g + 6 * alpha_t + 4 * alpha_s)) - RL_tl
 
         # Apply a TPU threshold
         if (is.null(TPU_threshold)) {
             # Use the threshold determined from biochemistry
-            Ap[PCc <= Gamma_star_ag * (1 + 3 * alpha_old + 3 * alpha_g + 4 * alpha_s)] <- Inf
+            Ap[PCc <= Gamma_star_agt * (1 + 3 * alpha_old + 3 * alpha_g + 6 * alpha_t + 4 * alpha_s)] <- Inf
         } else {
             # Use an arbitrary threshold
             Ap[PCc <= TPU_threshold] <- Inf
@@ -249,8 +244,8 @@ calculate_c3_assimilation <- function(
 
         # Possibly force Rubisco limitations below Gamma_star
         if (use_FRL) {
-            Aj[PCc < Gamma_star_ag] <- Inf
-            Ap[PCc < Gamma_star_ag] <- Inf
+            Aj[PCc < Gamma_star_agt] <- Inf
+            Ap[PCc < Gamma_star_agt] <- Inf
         }
 
         An <- pmin(Ac, Aj, Ap, na.rm = TRUE)
@@ -266,8 +261,9 @@ calculate_c3_assimilation <- function(
             alpha_g = alpha_g,
             alpha_old = alpha_old,
             alpha_s = alpha_s,
+            alpha_t = alpha_t,
             Gamma_star = Gamma_star,
-            Gamma_star_ag = Gamma_star_ag,
+            Gamma_star_agt = Gamma_star_agt,
             J_at_25 = J_at_25,
             RL_at_25 = RL_at_25,
             Tp_at_25 = Tp_at_25,
@@ -300,8 +296,9 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'alpha_g',               'dimensionless'),
             c('calculate_c3_assimilation', 'alpha_old',             'dimensionless'),
             c('calculate_c3_assimilation', 'alpha_s',               'dimensionless'),
+            c('calculate_c3_assimilation', 'alpha_t',               'dimensionless'),
             c('calculate_c3_assimilation', 'Gamma_star',            'micromol mol^(-1)'),
-            c('calculate_c3_assimilation', 'Gamma_star_ag',         'microbar'),
+            c('calculate_c3_assimilation', 'Gamma_star_agt',        'microbar'),
             c('calculate_c3_assimilation', 'J_at_25',               'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'RL_at_25',              'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Tp_at_25',              'micromol m^(-2) s^(-1)'),

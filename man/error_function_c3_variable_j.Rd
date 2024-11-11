@@ -189,10 +189,11 @@
 \details{
   When fitting A-Ci + chlorophyll fluorescence curves using the Variable J
   method, it is necessary to define a function that calculates the likelihood
-  of a given set of \code{alpha_g}, \code{Gamma_star}, \code{J_at_25},
-  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} values by
-  comparing a model prediction to a measured curve. This function will be passed
-  to an optimization algorithm which will determine the values that produce the
+  of a given set of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
+  \code{alpha_t}, \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25},
+  \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} values by comparing a
+  model prediction to a measured curve. This function will be passed to an
+  optimization algorithm which will determine the values that produce the
   smallest error.
 
   The \code{error_function_c3_variable_j} returns such a function, which is
