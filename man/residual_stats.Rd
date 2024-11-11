@@ -52,7 +52,7 @@
           sqrt(RSS / dof)}, where \code{dof = n - nparam} is the number of
           degrees of freedom involved in the fit.
     \item The Akaike information criterion \code{AIC} is given by \code{AIC =
-          npts * (log(2 * pi) + 1) + npts * log(MSE) + 2 * nparam}.
+          npts * (log(2 * pi) + 1) + npts * log(MSE) + 2 * (nparam + 1)}.
   }
 
   For a given model, the \code{RMSE} is usually a good way to compare the

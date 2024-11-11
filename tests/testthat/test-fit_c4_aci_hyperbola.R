@@ -59,7 +59,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('c4_curvature', 'c4_slope', 'rL', 'Vmax', 'AIC')]),
-        c(0.697636, 1.010108, 1.322194, 65.126933, 72.003838),
+        c(0.697636, 1.010108, 1.322194, 65.126933, 74.003838),
         tolerance = TOLERANCE
     )
 
@@ -112,7 +112,7 @@ test_that('removing and excluding points produce the same fit results', {
     # Check that results haven't changed
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('c4_curvature', 'c4_slope', 'rL', 'Vmax', 'AIC')]),
-        c(0.657, 1.205, 3.004, 67.773, 51.612),
+        c(0.657, 1.205, 3.004, 67.773, 53.612),
         tolerance = TOLERANCE
     )
 

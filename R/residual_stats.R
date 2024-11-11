@@ -10,7 +10,7 @@ residual_stats <- function(fit_residuals, units, nparam) {
     RMSE <- sqrt(MSE)
     RSE <- if (dof > 0) {sqrt(RSS / dof)} else {NA}
 
-    AIC <- npts * (log(2 * pi) + 1) + npts * log(MSE) + 2 * nparam
+    AIC <- npts * (log(2 * pi) + 1) + npts * log(MSE) + 2 * (nparam + 1)
 
     result <- exdf(data.frame(
         npts = npts,

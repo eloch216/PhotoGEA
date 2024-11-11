@@ -71,7 +71,7 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(240.718, 254.101, 1.885, 0.405, NA, 38.416),
+        c(240.718, 254.101, 1.885, 0.405, NA, 40.416),
         tolerance = TOLERANCE
     )
 
@@ -117,7 +117,7 @@ test_that('fit results have not changed (alpha_old)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(243.821, 256.166, 1.901, 0.409, NA, 40.429),
+        c(243.821, 256.166, 1.901, 0.409, NA, 42.429),
         tolerance = TOLERANCE
     )
 
@@ -163,7 +163,7 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(223.833, 264.193, 1.798, 0.422, NA, 43.052),
+        c(223.833, 264.193, 1.798, 0.422, NA, 45.052),
         tolerance = TOLERANCE
     )
 
@@ -205,7 +205,7 @@ test_that('fit results have not changed (pseudo-FvCB)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(319.868, 313.808, 2.441, 0.500, NA, 47.966),
+        c(319.868, 313.808, 2.441, 0.500, NA, 49.966),
         tolerance = TOLERANCE
     )
 
@@ -267,7 +267,7 @@ test_that('removing and excluding points produce the same fit results', {
     # Check that results haven't changed
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(246.33, 257.59, 1.92, 0.41, NA, 35.56),
+        c(246.33, 257.59, 1.92, 0.41, NA, 37.56),
         tolerance = TOLERANCE
     )
 

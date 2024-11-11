@@ -95,7 +95,7 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA, 59.1303101),
+        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101),
         tolerance = TOLERANCE
     )
 
@@ -145,7 +145,7 @@ test_that('fit results have not changed (alpha_old)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(145.33294, 232.83111, 0.35509, 38.1683, 61.13031),
+        c(145.33294, 232.83111, 0.35509, 38.1683, 63.13031),
         tolerance = TOLERANCE
     )
 
@@ -195,7 +195,7 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(160.572, 254.807, 1.084, 20.0224, 56.184),
+        c(160.572, 254.807, 1.084, 20.0224, 58.184),
         tolerance = TOLERANCE
     )
 
@@ -245,7 +245,7 @@ test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(159.271704, 253.817406, 1.559827, NA, 59.614932),
+        c(159.271704, 253.817406, 1.559827, NA, 61.614932),
         tolerance = TOLERANCE
     )
 
@@ -292,7 +292,7 @@ test_that('fit results have not changed (pseudo-FvCB)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(138.37, 226.84, -0.75, NA, 66.62),
+        c(138.37, 226.84, -0.75, NA, 68.62),
         tolerance = TOLERANCE
     )
 
@@ -359,7 +359,7 @@ test_that('removing and excluding points produce the same fit results', {
     # Check that results haven't changed
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(145.1034379, 234.0332835, 0.4648526, NA, 50.7739136),
+        c(145.1034379, 234.0332835, 0.4648526, NA, 52.7739136),
         tolerance = TOLERANCE
     )
 
