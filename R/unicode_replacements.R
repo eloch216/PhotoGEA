@@ -5,6 +5,7 @@
 UNICODE_REPLACEMENTS <- data.frame(
     rbind(
         c("<ce><94>",               "Delta"),
+        c("<ce><b1>",               "alpha"),
         c("<e2><81><bb><c2><b2>",   "^(-2)"),
         c("<e2><81><bb><c2><b9>",   "^(-1)"),
         c("<c2><b5>",               "micro"),

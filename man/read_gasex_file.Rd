@@ -139,8 +139,7 @@
   R, since any data entry determined from a formula will be read as 0. To fix
   this issue for a Licor Excel file, open it in in Excel, go to the
   \code{Formulas} menu, and choose \code{Calculate Now}. (Alternatively, press
-  F9.) Then save the file and close it. See
-  \href{https://github.com/tidyverse/readxl/issues/495}{GitHub issue 495 from the readxl package}
+  F9.) Then save the file and close it. See \code{\link{read_licor_6800_Excel}}
   for more details.
 }
 

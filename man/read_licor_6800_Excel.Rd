@@ -14,6 +14,7 @@
     file_name,
     column_name = 'obs',
     get_oxygen = TRUE,
+    check_for_zero = c('A', 'gsw'),
     \dots
   )
 }
@@ -33,6 +34,11 @@
     file's preamble using \code{\link{get_oxygen_from_preamble}}.
   }
 
+  \item{check_for_zero}{
+    The names of columns whose values should not all be zero; see below for
+    details.
+  }
+
   \item{\dots}{
     Additional arguments; currently unused.
   }
@@ -46,19 +52,36 @@
   Unfortunately, base R does not have any functionality for reading Excel files,
   so here the \code{openxlsx} package is used.
 
-  \code{read_licor_6800_Excel} looks for a particular data column in order to
-  identify the start of the data table within the contents of the Licor file.
-  Rows above the main data table are assumed to be part of the preamble (or
-  header), which are broken into pairs of rows representing names and values.
+  \code{read_licor_6800_Excel} looks for a particular data column
+  (\code{column_name}) in order to identify the start of the data table within
+  the contents of the Licor file. Rows above the main data table are assumed to
+  be part of the preamble (or header), which are broken into pairs of rows
+  representing names and values.
 
-  \strong{IMPORTANT NOTE ABOUT LICOR EXCEL FILES}: by default, Licor Excel files
-  do not "calculate" formula values. This causes a problem when reading them in
-  R, since any data entry determined from a formula will be read as 0. To fix
-  this issue for a Licor Excel file, open it in in Excel, go to the
-  \code{Formulas} menu, and choose \code{Calculate Now}. (Alternatively, press
-  F9.) Then save the file and close it. See
-  \href{https://github.com/tidyverse/readxl/issues/495}{GitHub issue 495 from the readxl package}
-  for more details.
+  \strong{"Calculating" formula values}: By default, Licor Excel files do not
+  "calculate" formula values. This causes a problem when reading them in R,
+  since any data entry determined from a formula will be read as 0. To fix this
+  issue for a Licor Excel file, open it in in Excel, go to the \code{Formulas}
+  menu, and choose \code{Calculate Now}. (Alternatively, press F9.) Then save
+  the file and close it. See these articles for more information about this
+  issue:
+  \itemize{
+    \item \href{https://github.com/ycphs/openxlsx/issues/261}{GitHub issue 261 from the openxlsx package}
+    \item \href{https://github.com/JanMarvin/openxlsx2/issues/863}{GitHub issue 863 from the openxlsx2 package}
+    \item \href{https://github.com/tidyverse/readxl/issues/495}{GitHub issue 495 from the readxl package}
+  }
+
+  \code{read_licor_6800_Excel} attempts to detect this issue by checking the
+  values of key columns (specified by the \code{check_for_zero} input argument).
+  If any of these columns are all 0, then an error message will be sent. This
+  feature can be disabled by setting \code{check_for_zero = c()} when calling
+  \code{read_licor_6800_Excel} or \code{read_gasex_file}.
+
+  \strong{File structure}: Not that this function is not foolproof and may not
+  be able to read some LI-6800 log files. For example, this function assumes
+  that the logged points are contained in a single table. If user constants are
+  logged as rows rather than columns, the file will instead contain multiple
+  tables, and this function will not be able to read it.
 }
 
 \value{
