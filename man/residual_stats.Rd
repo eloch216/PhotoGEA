@@ -7,10 +7,10 @@
 \description{
   Calculates several key statistics from the residuals of of a fit: the residual
   sum of squares (\code{RSS}), the mean squared error (\code{MSE}), the root
-  mean squared error (\code{RMSE}), and the residual standard error
-  (\code{RSE}). This function is used internally by several fitting functions in
-  the \code{PhotoGEA} package, such as \code{\link{fit_ball_berry}} and
-  \code{\link{fit_c3_aci}}.
+  mean squared error (\code{RMSE}), the residual standard error (\code{RSE}),
+  and the Akaike information criterion (\code{AIC}). This function is used
+  internally by all fitting functions in the \code{PhotoGEA} package, such as
+  \code{\link{fit_ball_berry}} and \code{\link{fit_c3_aci}}.
 }
 
 \usage{
@@ -51,18 +51,32 @@
     \item The residual standard error \code{RSE} is given by \code{RSE =
           sqrt(RSS / dof)}, where \code{dof = n - nparam} is the number of
           degrees of freedom involved in the fit.
+    \item The Akaike information criterion \code{AIC} is given by \code{AIC =
+          npts * (log(2 * pi) + 1) + npts * log(MSE) + 2 * nparam}.
   }
 
   For a given model, the \code{RMSE} is usually a good way to compare the
   quality of different fits. When trying to decide which model best fits the
-  measured data, the \code{RSE} may be a more appropriate metric since it
+  measured data, the \code{AIC} may be a more appropriate metric since it
   controls for the number of parameters in the model.
+
+  The AIC definition used here is appropriate for the results of maximum
+  likelihood fitting with equal variance, or minimum least squares fitting. For
+  more details about the AIC equation above and its relation to the more general
+  definition of AIC, see Section 2 of Banks & Joyner (2017).
+
+  \strong{References}:
+
+  Banks, H. T. & Joyner, M. L. "AIC under the framework of least squares
+  estimation." Applied Mathematics Letters 74, 33–45 (2017)
+  [\doi{10.1016/j.aml.2017.05.005}].
+
 }
 
 \value{
   An \code{exdf} object with one row and the following columns: \code{npts} (the
   number of residual values), \code{nparam}, \code{dof}, \code{RSS}, \code{MSE},
-  \code{RMSE}, and \code{RSE}.
+  \code{RMSE}, \code{RSE}, \code{AIC}.
 }
 
 \examples{
