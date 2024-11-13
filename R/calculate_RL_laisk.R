@@ -80,6 +80,27 @@ calculate_RL_laisk <- function(
             tmp
         }
     ))
+    
+    # Add Ci_star and RL to the other parameters
+    linear_model_info <- set_variable(
+        linear_model_info,
+        'Ci_star',
+        exdf_obj$units[[ci_column_name]],
+        'calculate_RL_laisk',
+        Ci_star
+    )
+    
+    linear_model_info <- set_variable(
+      linear_model_info,
+      'RL',
+      exdf_obj$units[[a_column_name]],
+      'calculate_RL_laisk',
+      RL
+    )
+    
+    # Add identifying information
+    replicate_identifiers <- identifier_columns(exdf_obj)
+    linear_model_info <- cbind(replicate_identifiers, linear_model_info)
 
     # Attach the fits to the exdf subset
     exdf_with_fits <- do.call(
@@ -105,8 +126,6 @@ calculate_RL_laisk <- function(
     )
 
     list(
-        Ci_star = Ci_star,
-        RL = RL,
         parameters = linear_model_info,
         fits = exdf_with_fits
     )

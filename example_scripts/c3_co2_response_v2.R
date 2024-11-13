@@ -31,7 +31,7 @@ SAVE_TO_PDF <- FALSE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -44,7 +44,7 @@ POINT_FOR_BOX_PLOTS <- 1
 REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
-PERFORM_STATS_TESTS <- FALSE
+PERFORM_STATS_TESTS <- TRUE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
@@ -81,7 +81,7 @@ CO2_s_seq <- c(420, 320, 220, 150, 100, 75, 50, 20, 420, 420, 500, 600, 800, 100
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- FALSE
+SAVE_CSV <- TRUE
 
 ###
 ### TRANSLATION:
@@ -194,6 +194,38 @@ licor_data <- organize_response_curve_data(
     'Ci'
 )
 
+if (REQUIRE_STABILITY) {
+  # Only keep points where stability was achieved
+  licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+  
+  # Remove any curves that have fewer than three remaining points
+  npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+  ids_to_keep <- names(npts[npts > 2])
+  licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+}
+
+if (REMOVE_SPECIFIC_POINTS) {
+  # Remove specific points
+  licor_data <- remove_points(
+    licor_data,
+    #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500),
+    #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500),
+    #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 800),
+    #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
+    #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
+    #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
+    list(event = '32', replicate = 1, CO2_r_sp = 220),
+    list(event = '17', replicate = 4, CO2_r_sp = 220),
+    list(event = '122', replicate = 4, CO2_r_sp = 600),
+    list(event = '36', replicate = 6, CO2_r_sp = 320),
+    list(event = '17', replicate = 7, CO2_r_sp = 500),
+    list(event = '10', replicate = 8, CO2_r_sp = 420),
+    list(event = '10', replicate = 8, CO2_r_sp = 220),
+    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+    #list(curve_identifier = '10 5 6', seq_num = c(2))
+  )
+}
+
 if (MAKE_VALIDATION_PLOTS) {
     # Plot all A-Ci curves in the data set
     dev.new()
@@ -289,38 +321,6 @@ if (MAKE_VALIDATION_PLOTS) {
     ))
 
   #Make a plot to check stability criteria insert here
-}
-
-if (REQUIRE_STABILITY) {
-    # Only keep points where stability was achieved
-    licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
-
-    # Remove any curves that have fewer than three remaining points
-    npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
-    ids_to_keep <- names(npts[npts > 2])
-    licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
-}
-
-if (REMOVE_SPECIFIC_POINTS) {
-    # Remove specific points
-    licor_data <- remove_points(
-      licor_data,
-      #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500),
-      #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500),
-      #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 800),
-      #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
-      #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
-      #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
-      list(event = '32', replicate = 1, CO2_r_sp = 220),
-      list(event = '17', replicate = 4, CO2_r_sp = 220),
-      list(event = '122', replicate = 4, CO2_r_sp = 600),
-      list(event = '36', replicate = 6, CO2_r_sp = 320),
-      list(event = '17', replicate = 7, CO2_r_sp = 500),
-      list(event = '10', replicate = 8, CO2_r_sp = 420),
-      list(event = '10', replicate = 8, CO2_r_sp = 220),
-      list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
-      #list(curve_identifier = '10 5 6', seq_num = c(2))
-    )
 }
 
 ###
@@ -731,6 +731,10 @@ if (PERFORM_STATS_TESTS) {
 if (SAVE_CSV) {
 
   if (AVERAGE_OVER_PLOTS) {
+    write.csv(all_samples, file.path(base_dir, "all_samples_plot_avg.csv"), row.names=FALSE)
+    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
+    write.csv(aci_parameters, file.path(base_dir, "aci_parameters_plot_avg.csv"), row.names=FALSE)
+    
     tmp <- by(
       all_samples,
       all_samples$curve_identifier,
@@ -752,10 +756,11 @@ if (SAVE_CSV) {
     tmp <- do.call(rbind, tmp)
 
     write.csv(tmp, file.path(base_dir, 'for_jmp_plot_avg.csv'), row.names=FALSE)
-    write.csv(all_samples, file.path(base_dir, "all_samples_plot_avg.csv"), row.names=FALSE)
-    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
-    write.csv(aci_parameters, file.path(base_dir, "aci_parameters_plot_avg.csv"), row.names=FALSE)
   } else {
+    write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
+    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)
+    write.csv(aci_parameters, file.path(base_dir, "aci_parameters.csv"), row.names=FALSE)
+    
     tmp <- by(
       all_samples,
       all_samples$curve_identifier,
@@ -780,8 +785,5 @@ if (SAVE_CSV) {
     tmp <- do.call(rbind, tmp)
 
     write.csv(tmp, file.path(base_dir, 'for_jmp.csv'), row.names=FALSE)
-    write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
-    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)
-    write.csv(aci_parameters, file.path(base_dir, "aci_parameters.csv"), row.names=FALSE)
   }
 }

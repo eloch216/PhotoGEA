@@ -19,7 +19,7 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1, 8, 9)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(7, 8, 9, 10)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -56,18 +56,17 @@ AVERAGE_OVER_PLOTS <- FALSE
 # Decide whether to save CSV outputs
 SAVE_CSV <- FALSE
 
-# Decide which solver to use
-USE_DEOPTIM_SOLVER <- TRUE
+# Decide which solver to use. The options for `solver_type` are 'deoptim',
+# 'nmkb', or 'hjkb'.
+SOLVER_TYPE <- 'deoptim'
 
-solver <- if (USE_DEOPTIM_SOLVER) {
-  # This is the default solver for the variable J fitting method; it is a little
-  # bit slower, but less likely to fail
-  optimizer_deoptim(400)
-} else {
-  # This is the default solver for the regular C3 A-Ci curve fitting method; it
-  # is a little bit faster, but may sometimes fail for some curves
-  optimizer_nmkb(1e-7)
-}
+solver <- switch(
+  SOLVER_TYPE,
+  deoptim = optimizer_deoptim(400),
+  nmkb = optimizer_nmkb(1e-7),
+  hjkb = optimizer_hjkb(1e-7),
+  stop('unsupported optimizer option')
+)
 
 # Decide whether to use soybean Rubisco Arrhenius parameters; otherwise,
 # tobacco parameters (the default) will be used
@@ -83,7 +82,7 @@ USE_SOYBEAN_RUBISCO <- TRUE
 # To fit RL: RL_VAL <- 'fit'
 
 TP_VAL <- 'fit'
-RL_VAL <- 'fit'
+RL_VAL <- 1.5
 
 FIT_OPTIONS <- list(
     RL_at_25 = RL_VAL,
@@ -103,7 +102,7 @@ cc_lim <- c(-20, 500)
 a_lim <- c(-10, 70)
 gsw_lim <- c(0, 0.7)
 phi_lim <- c(0, 0.4)
-gmc_lim <- c(0, 0.3)
+gmc_lim <- c(-0.1, 0.8)
 
 ###
 ### TRANSLATION:
@@ -217,7 +216,9 @@ if (REMOVE_SPECIFIC_POINTS) {
     list(event = '17', replicate = 7, CO2_r_sp = 500),
     list(event = '10', replicate = 8, CO2_r_sp = 420),
     list(event = '10', replicate = 8, CO2_r_sp = 220),
-    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+    list(event = 'WT', replicate = 6, CO2_r_sp = 1500),
+    list(event = 'WT', replicate = 7, seq_num = 10),
+    list(event = '10', replicate = 8, seq_num = 5)
   )
 }
 
@@ -250,7 +251,7 @@ if (MAKE_VALIDATION_PLOTS) {
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
-
+    
     # Plot all A-Ci curves, grouped by event
     dev.new()
     print(xyplot(
@@ -259,7 +260,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      #auto = TRUE,
       grid = TRUE,
       xlim = ci_lim,
       ylim = a_lim,
@@ -381,6 +382,9 @@ c3_aci_results <- consolidate(by(
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   OPTIM_FUN = solver,                           # The optimization algorithm to use
   fit_options = FIT_OPTIONS,
+  lower = list(RL_at_25 = 0),
+  upper = list(tau = 0.65, Vcmax_at_25 = 280),
+  hard_constraints = 1, # 0 is default, 1 prevents negative Cc, 2 imposes strongest limitations (e.g. 0 < alpha < 1)
   gmc_max = MAX_GM
 ))
 
@@ -501,6 +505,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       pch = 16,
       auto = TRUE,
       grid = TRUE,
+      ylim = gmc_lim,
       xlab = paste0('Chloroplast CO2 concentration (', c3_aci_results$fits$units$Cc, ')'),
       ylab = paste0('Mesophyll conductance (', c3_aci_results$fits$units$gmc, ')')
     ))
@@ -514,7 +519,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       pch = 16,
       auto = TRUE,
       grid = TRUE,
-      ylim = c(-0.1, 0.6),
+      ylim = gmc_lim,
       xlab = paste0('Intercellular CO2 concentration (', c3_aci_results$fits$units$Ci, ')'),
       ylab = paste0('Mesophyll conductance (', c3_aci_results$fits$units$gmc, ')')
     ))
@@ -637,7 +642,7 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = all_samples_one_point[, 'lm_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Warren) (dimensionless)",    ylim = c(0, 1.0), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'ls_warren'],         X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Warren) (dimensionless)",      ylim = c(0, 1.0), main = boxplot_caption),
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 450), main = fitting_caption),
-      list(Y = aci_parameters[, 'RL_at_25'],                 X = x_v, xlab = xl, ylab = "RL at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 0.5), main = fitting_caption),
+      list(Y = aci_parameters[, 'RL_at_25'],                 X = x_v, xlab = xl, ylab = "RL at 25 degrees C (micromol / m^2 / s)",                            ylim = c(-5, 5), main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 500), main = fitting_caption),
       list(Y = aci_parameters[, 'Tp_at_25'],                 X = x_v, xlab = xl, ylab = "Tp at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 30),  main = fitting_caption),
       list(Y = aci_parameters[, 'tau'],                      X = x_v, xlab = xl, ylab = "tau (dimensionless)",                                                ylim = c(0, 1),   main = fitting_caption)

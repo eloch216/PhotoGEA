@@ -39,12 +39,17 @@ PERFORM_CALCULATIONS <- TRUE
 
 PERFORM_STATS_TESTS <- TRUE
 
-SAVE_RESULTS <- TRUE
+SAVE_RESULTS <- FALSE
 MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
 
 USE_BUSCH_GM <- TRUE
+
+# When using the Busch equations, we can choose how to estimate e_star. Equation
+# 19 is the "old" way, while equation 20 is the newer, more accurate method.
+# Using equation 20 requires an estimate of Delta_obs_growth.
+E_STAR_EQUATION <- 20
 
 # Specify a default respiration
 DEFAULT_RESPIRATION <- 1.81
@@ -52,14 +57,16 @@ DEFAULT_RESPIRATION <- 1.81
 # Specify respiration values for each event; these will override the default.
 # To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  'WT' = 1.225
+  'not_real_event' = 100000
+  #'WT' = 1.225
   #'8' = 2.02,
   #'10' = 1.94,
   #'14' = 2.08
 )
 
 #RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
-RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
+#RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
+RUBISCO_SPECIFICITY_AT_TLEAF <- 99.6 # Orr et al. (2016), soybean, in vitro, 25 C
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
@@ -360,16 +367,6 @@ if (PERFORM_CALCULATIONS) {
 
     licor_files <- lapply(licor_files, get_oxygen_from_preamble)
 
-    licor_files <- lapply(licor_files, function(x) {set_variable(
-        x,
-        'respiration',
-        'micromol m^(-2) s^(-1)',
-        'gm_from_tdl',
-        abs(DEFAULT_RESPIRATION),       # this is the default value of respiration
-        id_column = 'event',            # the default value can be overridden for certain events
-        value_table = RESPIRATION_TABLE # override default for certain events
-    )})
-
     licor_files <- lapply(licor_files, function(x) {
         get_sample_valve_from_filename(x, list(
             '13' = 12, # ERML TDL
@@ -429,11 +426,27 @@ if (PERFORM_CALCULATIONS) {
     licor_files <- calculate_gamma_star(licor_files)
 
     licor_files <- if (USE_BUSCH_GM) {
-        # Here we use Equation 19 for e_star because we don't have values for
-        # delta_obs_growth
+        if (E_STAR_EQUATION == 20) {
+          # Here we assume that all measurements have been made at the typical
+          # growth CO2 concentration
+          Delta_obs_growth_table <- as.list(tapply(
+            licor_files[, 'Delta_obs_tdl'],
+            licor_files[, 'event_replicate'],
+            mean
+          ))
+          
+          licor_files <- set_variable(
+            licor_files,
+            'Delta_obs_growth',
+            'ppt',
+            id_column = 'event_replicate',
+            value_table = Delta_obs_growth_table
+          )
+        }
+      
         calculate_gm_busch(
             licor_files,
-            e_star_equation = 19
+            e_star_equation = E_STAR_EQUATION
         )
     } else {
         calculate_gm_ubierna(licor_files)
@@ -623,6 +636,29 @@ if (SAVE_RESULTS) {
     write.csv(rep_stats$main_data, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
     write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
 }
+
+###                                   ###
+### MAKE VALIDATION PLOTS, IF DESIRED ###
+###                                   ###
+
+# These plots might be useful for detecting Delta_obs_tdl outliers
+pdf_print(
+  xyplot(
+      licor_files[, 'Delta_obs_tdl'] ~ licor_files[, 'event_replicate'],
+      ylab = paste('Delta_obs_tdl [', licor_files$units$Delta_obs_tdl, ']'),
+      xlab = 'Replicate',
+      scales = list(x = list(rot = 45))
+  )
+)
+
+pdf_print(
+  bwplot(
+    licor_files[, 'Delta_obs_tdl'] ~ licor_files[, 'event_replicate'],
+    ylab = paste('Delta_obs_tdl [', licor_files$units$Delta_obs_tdl, ']'),
+    xlab = 'Replicate',
+    scales = list(x = list(rot = 45))
+  )
+)
 
 ###                            ###
 ### MAKE TDL PLOTS, IF DESIRED ###
