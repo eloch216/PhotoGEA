@@ -100,7 +100,6 @@ laisk_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   calculate_RL_laisk,               # The function to apply to each chunk of `licor_data`
-  'PPFD',
   ci_lower = 0,
   ci_upper = 100
 ))
@@ -110,21 +109,21 @@ pdf_print(
   xyplot(
     A ~ Ci | curve_identifier,
     group = PPFD,
-    data = laisk_results$fits$main_data,
+    data = laisk_results$first_fits$main_data,
     type = 'p',
     pch = 16,
     auto.key = list(space = 'right'),
-    curve_ids = laisk_results$fits[, 'curve_identifier'],
+    curve_ids = laisk_results$first_fits[, 'curve_identifier'],
     panel = function(...) {
       # Get info about this curve
       args <- list(...)
       curve_id <- args$curve_ids[args$subscripts][1]
-      
+
       curve_data <-
-        laisk_results$fits[laisk_results$fits[, 'curve_identifier'] == curve_id, ]
-      
+        laisk_results$first_fits[laisk_results$first_fits[, 'curve_identifier'] == curve_id, ]
+
       panel.lines(curve_data$A_fit ~ curve_data$Ci, col = 'black')
-        
+
       panel.xyplot(...)
     }
   )
@@ -135,7 +134,7 @@ pdf_print(
   xyplot(
     laisk_intercept ~ laisk_slope | curve_identifier,
     group = PPFD,
-    data = laisk_results$parameters$main_data,
+    data = laisk_results$first_fit_parameters$main_data,
     grid = TRUE,
     auto.key = list(space = 'right'),
     par.settings = list(
@@ -143,10 +142,10 @@ pdf_print(
     ),
     xlim = c(0, 0.2),
     ylim = c(-10, 0.5),
-    xlab = paste('Slope [', laisk_results$parameters$units$laisk_slope, ']'),
-    ylab = paste('Intercept [', laisk_results$parameters$units$laisk_intercept, ']')
+    xlab = paste('Slope [', laisk_results$first_fit_parameters$units$laisk_slope, ']'),
+    ylab = paste('Intercept [', laisk_results$first_fit_parameters$units$laisk_intercept, ']')
   )
 )
 
 # Print Ci_star and RL
-print(unique(laisk_results$parameters[, c('curve_identifier', 'Ci_star', 'RL')]))
+print(unique(laisk_results$first_fit_parameters[, c('curve_identifier', 'Ci_star', 'RL')]))
