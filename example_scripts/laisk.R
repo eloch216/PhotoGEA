@@ -72,24 +72,6 @@ check_response_curve_data(
 # Remove the high CO2 points
 licor_data <- remove_points(licor_data, list(CO2_r_sp = SETPOINT_TO_REMOVE))
 
-# Make an initial plot
-pdf_print(
-  xyplot(
-    A ~ Ci | curve_identifier,
-    group = PPFD,
-    data = licor_data$main_data,
-    auto.key = list(space = 'right'),
-    type = 'b',
-    pch = 16,
-    xlab = paste('Ci [', licor_data$units$Ci, ']'),
-    ylab = paste('A [', licor_data$units$A, ']'),
-    xlim = c(0, 100),
-    ylim = c(-2, 3),
-    main = 'A-Ci curves grouped by PPFD'
-  ),
-  width = 10
-)
-
 ###
 ### PROCESSING:
 ### Extracting new pieces of information from the data
@@ -104,7 +86,7 @@ laisk_results <- consolidate(by(
   ci_upper = 100
 ))
 
-# Plot the individual fits (this plot needs help!)
+# Plot the individual fits
 pdf_print(
   xyplot(
     A ~ Ci | curve_identifier,
@@ -114,6 +96,10 @@ pdf_print(
     pch = 16,
     auto.key = list(space = 'right'),
     curve_ids = laisk_results$first_fits[, 'curve_identifier'],
+    xlab = paste('Ci [', laisk_results$first_fits$units$Ci, ']'),
+    ylab = paste('A [', laisk_results$first_fits$units$A, ']'),
+    xlim = c(0, 80),
+    ylim = c(-1.5, 2),
     panel = function(...) {
       # Get info about this curve
       args <- list(...)
@@ -122,10 +108,16 @@ pdf_print(
       curve_data <-
         laisk_results$first_fits[laisk_results$first_fits[, 'curve_identifier'] == curve_id, ]
 
-      panel.lines(curve_data$A_fit ~ curve_data$Ci, col = 'black')
+      ppfd_vals <- unique(curve_data[, 'PPFD'])
+
+      for (qin in ppfd_vals) {
+        ppfd_curve_data <- curve_data[curve_data[, 'PPFD'] == qin, ]
+        panel.lines(ppfd_curve_data$A_fit ~ ppfd_curve_data$Ci, col = 'black')
+      }
 
       panel.xyplot(...)
-    }
+    },
+    main = 'A-Ci curves grouped by PPFD'
   )
 )
 
@@ -134,18 +126,31 @@ pdf_print(
   xyplot(
     laisk_intercept ~ laisk_slope | curve_identifier,
     group = PPFD,
-    data = laisk_results$first_fit_parameters$main_data,
-    grid = TRUE,
+    data = laisk_results$second_fits$main_data,
     auto.key = list(space = 'right'),
     par.settings = list(
       superpose.symbol = list(col = multi_curve_colors(), pch = 16)
     ),
     xlim = c(0, 0.2),
-    ylim = c(-10, 0.5),
-    xlab = paste('Slope [', laisk_results$first_fit_parameters$units$laisk_slope, ']'),
-    ylab = paste('Intercept [', laisk_results$first_fit_parameters$units$laisk_intercept, ']')
+    ylim = c(-8, 0),
+    xlab = paste('Slope [', laisk_results$second_fits$units$laisk_slope, ']'),
+    ylab = paste('Intercept [', laisk_results$second_fits$units$laisk_intercept, ']'),
+    curve_ids = laisk_results$second_fits[, 'curve_identifier'],
+    panel = function(...) {
+      # Get info about this curve
+      args <- list(...)
+      curve_id <- args$curve_ids[args$subscripts][1]
+
+      curve_data <-
+        laisk_results$second_fits[laisk_results$second_fits[, 'curve_identifier'] == curve_id, ]
+
+      panel.lines(curve_data$laisk_intercept_fit ~ curve_data$laisk_slope, col = 'black')
+
+      panel.xyplot(...)
+    },
+    main = 'Second-stage Laisk fits'
   )
 )
 
 # Print Ci_star and RL
-print(unique(laisk_results$first_fit_parameters[, c('curve_identifier', 'Ci_star', 'RL')]))
+print(laisk_results$second_fit_parameters[, c('curve_identifier', 'Ci_star', 'RL')])

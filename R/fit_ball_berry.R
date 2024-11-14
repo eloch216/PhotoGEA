@@ -32,7 +32,7 @@ fit_ball_berry <- function(
     r_squared        <- fit_summary[['r.squared']]
 
     # Get the p-value
-    f_stat <- summary(linear_fit)$fstatistic
+    f_stat <- fit_summary$fstatistic
     p_value <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
 
     # Calculate the fit line and add it to replicate_exdf

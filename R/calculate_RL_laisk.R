@@ -41,16 +41,31 @@ calculate_RL_laisk <- function(
     first_fit_parameters <- do.call(
         rbind,
         lapply(seq_along(first_linear_models), function(i) {
+            # Extract the fit results
             x <- first_linear_models[[i]]
+            fit_summary <- summary(x)
+            fit_coeff <- fit_summary[['coefficients']]
+
+            # Get the p-value
+            f_stat <- fit_summary$fstatistic
+            p_value <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
 
             tmp <- exdf(
                 data.frame(
-                    laisk_intercept = as.numeric(x[['coefficients']][1]),
-                    laisk_slope = as.numeric(x[['coefficients']][2])
+                    laisk_intercept     = fit_coeff[1, 1],
+                    laisk_intercept_err = fit_coeff[1, 2],
+                    laisk_slope         = fit_coeff[2, 1],
+                    laisk_slope_err     = fit_coeff[2, 2],
+                    r_squared           = fit_summary[['r.squared']],
+                    p_value             = p_value
                 ),
                 units = data.frame(
-                    laisk_intercept = 'micromol m^(-2) s^(-1)',
-                    laisk_slope = 'mol m^(-2) s^(-1)',
+                    laisk_intercept     = 'micromol m^(-2) s^(-1)',
+                    laisk_intercept_err = 'micromol m^(-2) s^(-1)',
+                    laisk_slope         = 'mol m^(-2) s^(-1)',
+                    laisk_slope_err     = 'mol m^(-2) s^(-1)',
+                    r_squared           = '',
+                    p_value             = '',
                     stringsAsFactors = FALSE
                 )
             )
@@ -75,9 +90,8 @@ calculate_RL_laisk <- function(
             tmp <- replicate_exdf_subset[replicate_exdf_subset[, ppfd_column_name] == names(first_linear_models)[i], , TRUE]
 
             tmp2 <- tmp[1, , TRUE]
-            tmp2$main_data[1, ] <- NA
             tmp2[1, ci_column_name] <- 0
-            tmp2[1, ppfd_column_name] <- names(first_linear_models)[i]
+            tmp2[1, a_column_name] <- NA
 
             tmp <- rbind(tmp, tmp2)
 
@@ -89,58 +103,58 @@ calculate_RL_laisk <- function(
         })
     )
 
-    # Create an error function based on the standard deviation of A values
-    # estimated from each fit for a particular value of Ci
-    sd_error_fcn <- function(Ci) {
-        stats::sd(laisk_eval_lms(first_linear_models, Ci))^2
-    }
+    # Now we make a second linear fit of the slope vs. intercept
+    second_linear_model <-
+        stats::lm(first_fit_parameters[, 'laisk_intercept'] ~ first_fit_parameters[, 'laisk_slope'])
 
-    # Find the value of Ci that minimizes the standard deviation of the
-    # predicted A values across all the curves in the set
-    optim_result <- stats::optim(
-        ci_lower,
-        sd_error_fcn,
-        method = 'Brent',
-        lower = 0,
-        upper = ci_upper
+    # Extract the fit results
+    fit_summary <- summary(second_linear_model)
+    fit_coeff <- fit_summary[['coefficients']]
+
+    # Get the p-value
+    f_stat <- fit_summary$fstatistic
+    p_value <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+
+    # Get the slope and intercept
+    second_fit_parameters <- exdf(
+        data.frame(
+            RL        = -fit_coeff[1, 1],
+            RL_err    = fit_coeff[1, 2],
+            Ci_star   = -fit_coeff[2, 1],
+            Ci_star   = fit_coeff[2, 2],
+            r_squared = fit_summary[['r.squared']],
+            p_value   = p_value
+        ),
+        units = data.frame(
+            RL          = 'micromol m^(-2) s^(-1)',
+            RL_err      = 'micromol m^(-2) s^(-1)',
+            Ci_star     = 'micromol mol^(-1)',
+            Ci_star_err = 'micromol mol^(-1)',
+            r_squared           = '',
+            p_value             = '',
+            stringsAsFactors = FALSE
+        )
     )
 
-    Ci_star <- optim_result$par
+    # Add identifying information to the fit parameters
+    second_fit_parameters <- cbind(replicate_identifiers, second_fit_parameters)
 
-    # Find the corresponding mean value of An
-    RL <- -mean(laisk_eval_lms(first_linear_models, Ci_star))
+    # Attach the fit to the first fit parameters
+    second_fits <- first_fit_parameters
 
-    # Add Ci_star and RL to the other parameters
-    first_fit_parameters <- set_variable(
-        first_fit_parameters,
-        'Ci_star',
-        replicate_exdf$units[[ci_column_name]],
+    second_fits <- set_variable(
+        second_fits,
+        'laisk_intercept_fit',
+        second_fits$units[['laisk_intercept']],
         'calculate_RL_laisk',
-        Ci_star
+        as.numeric(second_linear_model[['coefficients']][1]) + second_fits[, 'laisk_slope'] * as.numeric(second_linear_model[['coefficients']][2])
     )
 
-    first_fit_parameters <- set_variable(
-      first_fit_parameters,
-      'RL',
-      replicate_exdf$units[[a_column_name]],
-      'calculate_RL_laisk',
-      RL
-    )
-
+    # Return all the results
     list(
         first_fit_parameters = first_fit_parameters,
-        first_fits = first_fits
+        first_fits = first_fits,
+        second_fit_parameters = second_fit_parameters,
+        second_fits = second_fits
     )
-}
-
-# Helping function that evaluates a collection of linear models at a particular
-# value of Ci to predict corresponding values of An
-laisk_eval_lms <- function(
-    lms, # A list of linear models of A ~ Ci
-    Ci   # A value of Ci
-)
-{
-    sapply(lms, function(x) {
-      as.numeric(x[['coefficients']][1]) + Ci * as.numeric(x[['coefficients']][2])
-    })
 }

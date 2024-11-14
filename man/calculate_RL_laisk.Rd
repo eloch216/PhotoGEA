@@ -2,10 +2,10 @@
 
 \alias{calculate_RL_laisk}
 
-\title{Calculate RL using the Laisk method}
+\title{Calculate RL and Ci_star using the Laisk method}
 
 \description{
-  Uses the Laisk method to estimate \code{CiStar} and \code{RL}. This function
+  Uses the Laisk method to estimate \code{Ci_star} and \code{RL}. This function
   can accomodate alternative colum names for the variables taken from log files
   in case they change at some point in the future. This function also checks the
   units of each required column and will produce an error if any units are
@@ -14,21 +14,19 @@
 
 \usage{
   calculate_RL_laisk(
-    exdf_obj,
-    curve_id_column_name,
-    ci_lower = 40,
-    ci_upper = 120,
+    replicate_exdf,
+    ci_lower = 40,  # ppm
+    ci_upper = 120, # ppm
     a_column_name = 'A',
-    ci_column_name = 'Ci'
+    ci_column_name = 'Ci',
+    ppfd_column_name = 'PPFD'
   )
 }
 
 \arguments{
-  \item{exdf_obj}{An \code{exdf} object.}
-
-  \item{curve_id_column_name}{
-    The name of the column in \code{exdf_obj} that can be used to split it into
-    individual response curves.
+  \item{replicate_exdf}{
+    An \code{exdf} object containing multiple A-Ci curves measured at different
+    levels of incident photosynthetically active photon flux density (PPFD).
   }
 
   \item{ci_lower}{
@@ -42,18 +40,23 @@
   }
 
   \item{a_column_name}{
-    The name of the column in \code{exdf_obj} that contains the net CO2
+    The name of the column in \code{replicate_exdf} that contains the net CO2
     assimilation rate \code{An} in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{ci_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{replicate_exdf} that contains the
     intercellular CO2 concentration \code{Ci} in \code{micromol mol^(-1)}.
+  }
+
+  \item{ppfd_column_name}{
+    The name of the column in \code{replicate_exdf} that can be used to split it
+    into individual response curves.
   }
 }
 
 \details{
-  The Laisk method is a way to estimate \code{RL} and \code{CiStar} for a C3
+  The Laisk method is a way to estimate \code{RL} and \code{Ci_star} for a C3
   plant. Definitions of these quantities and a description of the theory
   underpinning this method is given below.
 
@@ -64,20 +67,21 @@
   where \code{Vc} is the rate of RuBP carboxylation, \code{Rp} is the rate of
   carbon loss due to photorespiration, and \code{RL} is the rate of carbon loss
   due to non-photorespiratory respiration (also known as the rate of day
-  respiration). Because RuBP carboxylation and photorespiration both occur due
+  respiration, the rate of mitochondrial respiration, or the rate of respiration
+  in the light). Because RuBP carboxylation and photorespiration both occur due
   to Rubisco activity, these rates are actually proportional to each other:
 
-  \code{Rp = Vc * GammaStar / Cc},
+  \code{Rp = Vc * Gamma_star / Cc},
 
   where \code{Cc} is the CO2 concentration in the chloroplast (where Rubisco is
-  located) and \code{GammaStar} will be discussed below. Using this expression,
+  located) and \code{Gamma_star} will be discussed below. Using this expression,
   the net CO2 assimilation rate can be written as
 
-  \code{An = Vc * (1 - GammaStar / Cc) - RL}.
+  \code{An = Vc * (1 - Gamma_star / Cc) - RL}.
 
-  When \code{Cc} is equal to \code{GammaStar}, the net assimilation rate is
-  equal to \code{-RL}. For this reason, \code{GammaStar} is usually referred to
-  as the CO2 compensation point in the absence of day respiration.
+  When \code{Cc} is equal to \code{Gamma_star}, the net assimilation rate is
+  equal to \code{-RL}. For this reason, \code{Gamma_star} is usually referred to
+  as the CO2 compensation point in the absence of mitochondrial respiration.
 
   In general, \code{Cc} is related to the intercellular CO2 concentration
   \code{Ci} according to
@@ -85,51 +89,80 @@
   \code{Ci = Cc + An / gmc},
 
   where \code{gmc} is the mesophyll conductance to CO2 diffusion. When \code{Cc}
-  is equal to \code{GammaStar}, we therefore have
-  \code{Ci = GammaStar - RL / gmc}. This special value of \code{Ci} is referred
-  to as \code{CiStar}, and can be understood as the value of \code{Ci} where
-  \code{Cc = GammaStar} and \code{An = -RL}. Note that the values of
-  \code{GammaStar} and \code{CiStar} depend on Rubisco properties, mesophyll
+  is equal to \code{Gamma_star}, we therefore have
+  \code{Ci = Gamma_star - RL / gmc}. This special value of \code{Ci} is referred
+  to as \code{Ci_star}, and can be understood as the value of \code{Ci} where
+  \code{Cc = Gamma_star} and \code{An = -RL}. Note that the values of
+  \code{Gamma_star} and \code{Ci_star} depend on Rubisco properties, mesophyll
   conductance, and the ambient O2 concentration, but not on the incident light
   intensity.
 
   These observations suggest a method for estimating \code{RL} from a leaf:
   Measure \code{An} vs. \code{Ci} curves at several light intensities, and find
   the value of \code{Ci} where the curves intersect with each other. This will
-  be \code{CiStar}, and the corresponding value of \code{An} will be equal to
+  be \code{Ci_star}, and the corresponding value of \code{An} will be equal to
   \code{-RL}.
 
   In practice, it is unlikely that the measured curves will all exactly
-  intersect at a single point. In \code{calculate_RL_laisk}, the value of
-  \code{CiStar} is chosen as the value of \code{Ci} that minimizes the variance
-  of the corresponding \code{An} values. It is also unlikely that any of the
-  measured points exactly correspond to \code{Ci = CiStar}, so
-  \code{calculate_RL_laisk} uses a linear fit of each curve at low \code{Ci} to
-  find \code{An} at arbitrary values of \code{Ci}.
+  intersect at a single point. A method for dealing with this issue was
+  developed in Walker & Ort (2015) and described in more detail in Busch et al.
+  (2024). Briefly, a linear fit is first made to each A-Ci curve, enabling the
+  calculation of an intercept-slope curve. Then another linear fit is made to
+  the intercept-slope curve. The intercept of this fit is equal to \code{-RL}
+  and its slope is equal to \code{-Ci_star}.
 
   Note: it is possible that \code{RL} depends on incident light intensity, an
-  issue which complicates the application of the Laisk method.
+  issue which complicates the application of the Laisk method. See the
+  references for more details.
 
-  References:
+  \strong{References}:
 
-  Yin, X., Sun, Z., Struik, P. C. & Gu, J. "Evaluating a new method to estimate
-  the rate of leaf respiration in the light by analysis of combined gas exchange
-  and chlorophyll fluorescence measurements." Journal of Experimental Botany 62,
-  3489–3499 (2011) [\doi{10.1093/jxb/err038}].
+  \itemize{
+    \item Yin, X., Sun, Z., Struik, P. C. & Gu, J. "Evaluating a new method to
+          estimate the rate of leaf respiration in the light by analysis of
+          combined gas exchange and chlorophyll fluorescence measurements."
+          Journal of Experimental Botany 62, 3489–3499 (2011)
+          [\doi{10.1093/jxb/err038}].
+    \item Walker, B. J. & Ort, D. R. "Improved method for measuring the
+          apparent CO2 photocompensation point resolves the impact of multiple
+          internal conductances to CO2 to net gas exchange." Plant, Cell &
+          Environment 38, 2462–2474 (2015)
+          [\doi{10.1111/pce.12562}].
+    \item Busch, F. A. et al. "A guide to photosynthetic gas exchang
+          measurements: Fundamental principles, best practice and potential
+          pitfalls." Plant, Cell & Environment 47, 3344–3364 (2024)
+          [\doi{10.1111/pce.14815}].
+  }
+
+
 }
 
 \value{
   This function returns a list with the following named elements:
   \itemize{
-    \item \code{Ci_star}: The estimated value of \code{CiStar}.
-    \item \code{RL}: The estimated value of \code{RL}.
-    \item \code{parameters}: An \code{exdf} object with the slope and intercept
-          of each linear fit used to estimate \code{Ci_star} and \code{RL}.
-    \item \code{fits}: An \code{exdf} object based on \code{exdf_obj} that also
-          includes the fitted values of \code{An} in a new column whose name is
-          \code{a_column_name} followed by \code{_fit} (for example,
-          \code{A_fit}).
+    \item \code{first_fit_parameters}: An \code{exdf} object with the slope (and
+          its standard error), intercept (and its standard error), R-squared
+          value, and p-value for each linear fit of A vs. Ci. These are included
+          as the \code{laisk_slope}, \code{laisk_slope_err},
+          \code{laisk_intercept}, \code{laisk_intercept_err}, \code{r_squared},
+          and \code{p_value} columns.
+    \item \code{first_fits}: An \code{exdf} object based on
+          \code{replicate_exdf} that also includes the fitted values of
+          \code{An} in a new column whose name is \code{a_column_name} followed
+          by \code{_fit} (for example, \code{A_fit}). The fits are extrapolated
+          to \code{Ci = 0} so they can be visually checked for a common
+          intersection point.
+    \item \code{second_fit_parameters}: An \code{exdf} object with \code{RL}
+          (and its standard error), \code{Ci_Star} (and its standard error) as
+          estimated from a linear fit of \code{laisk_intercept} vs.
+          \code{laisk_slope}. Also includes the R-squared and p-value of the
+          fit.
+    \item \code{second_fit_parameters}: An \code{exdf} object based on
+          \code{first_fit_parameters} that also includes fitted values of
+          \code{laisk_intercept} in the \code{laisk_intercept_fit} column.
   }
+  As noted above, the estimated values of \code{RL} and \code{Ci_star} are
+  included in the \code{second_fit_parameters} element of the returned list.
 }
 
 \examples{
@@ -153,40 +186,14 @@ licor_file <- organize_response_curve_data(
 # Apply the Laisk method. Note: this is a bad example because these curves were
 # measured at the same light intensity, but from different species. Because of
 # this, the results are not meaningful.
-laisk_results <- calculate_RL_laisk(licor_file, 'species_plot', 20, 150)
+laisk_results <- calculate_RL_laisk(
+  licor_file, 20, 150,
+  ppfd_column_name = 'species_plot'
+)
 
 # Get estimated values
-print(laisk_results$RL)
-print(laisk_results$Ci_star)
-
-# Plot each curve and overlay the calculated point of intersection as a filled
-# red circle
-lattice::xyplot(
-  A ~ Ci,
-  group = species_plot,
-  data = laisk_results$fits$main_data,
-  type = 'b',
-  auto = TRUE,
-  panel = function(...) {
-      lattice::panel.xyplot(...)
-      lattice::panel.points(
-          -laisk_results$RL ~ laisk_results$Ci_star,
-          type = 'p',
-          col = 'red',
-          pch = 16
-      )
-  }
-)
-
-# Plot each curve and its linear fit
-lattice::xyplot(
-  A_fit + A ~ Ci | species_plot,
-  data = laisk_results$fits$main_data,
-  type = 'b',
-  pch = 16,
-  auto = TRUE
-)
-
+print(laisk_results$second_fit_parameters[, 'RL'])
+print(laisk_results$second_fit_parameters[, 'Ci_star'])
 }
 
 \concept{exdf}
