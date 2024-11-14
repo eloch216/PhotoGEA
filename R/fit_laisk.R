@@ -118,12 +118,12 @@ fit_laisk <- function(
     # Get the slope and intercept
     second_fit_parameters <- exdf(
         data.frame(
-            RL        = -fit_coeff[1, 1],
-            RL_err    = fit_coeff[1, 2],
-            Ci_star   = -fit_coeff[2, 1],
-            Ci_star   = fit_coeff[2, 2],
-            r_squared = fit_summary[['r.squared']],
-            p_value   = p_value
+            RL          = -fit_coeff[1, 1],
+            RL_err      = fit_coeff[1, 2],
+            Ci_star     = -fit_coeff[2, 1],
+            Ci_star_err = fit_coeff[2, 2],
+            r_squared   = fit_summary[['r.squared']],
+            p_value     = p_value
         ),
         units = data.frame(
             RL          = 'micromol m^(-2) s^(-1)',
