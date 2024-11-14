@@ -155,6 +155,7 @@ export(plot_ball_berry_fit)
 export(plot_c3_aci_fit)
 export(plot_c4_aci_fit)
 export(plot_c4_aci_hyperbola_fit)
+export(plot_laisk_fit)
 export(xyplot_avg_rc)
 
 # Deprecated functions

@@ -194,6 +194,13 @@ laisk_results <- calculate_RL_laisk(
 # Get estimated values
 print(laisk_results$second_fit_parameters[, 'RL'])
 print(laisk_results$second_fit_parameters[, 'Ci_star'])
+
+# Plot the linear fits of A vs. Ci
+plot_laisk_fit(laisk_results, 'instrument', 'first', ppfd_column_name = 'species_plot')
+
+# Plot the linear fits of Laisk intercept vs. Laisk slope
+plot_laisk_fit(laisk_results, 'instrument', 'second', ppfd_column_name = 'species_plot')
+
 }
 
 \concept{exdf}
