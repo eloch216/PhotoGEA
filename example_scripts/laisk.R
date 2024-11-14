@@ -55,11 +55,6 @@ licor_data[, 'PPFD'] <- round(licor_data[, 'Qin'])
 licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
-licor_data[, 'PPFD'] <- factor(
-    licor_data[, 'PPFD'],
-    levels = sort(unique(licor_data[, 'PPFD']))
-)
-
 # Make sure the data meets basic requirements (each curve has the same number of
 # points and the same sequence of PPFD values)
 check_response_curve_data(
@@ -72,24 +67,6 @@ check_response_curve_data(
 # Remove the high CO2 points
 licor_data <- remove_points(licor_data, list(CO2_r_sp = SETPOINT_TO_REMOVE))
 
-# Make an initial plot
-pdf_print(
-  xyplot(
-    A ~ Ci | curve_identifier,
-    group = PPFD,
-    data = licor_data$main_data,
-    auto.key = list(space = 'right'),
-    type = 'b',
-    pch = 16,
-    xlab = paste('Ci [', licor_data$units$Ci, ']'),
-    ylab = paste('A [', licor_data$units$A, ']'),
-    xlim = c(0, 100),
-    ylim = c(-2, 3),
-    main = 'A-Ci curves grouped by PPFD'
-  ),
-  width = 10
-)
-
 ###
 ### PROCESSING:
 ### Extracting new pieces of information from the data
@@ -99,54 +76,34 @@ pdf_print(
 laisk_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  calculate_RL_laisk,               # The function to apply to each chunk of `licor_data`
-  'PPFD',
+  fit_laisk,                        # The function to apply to each chunk of `licor_data`
   ci_lower = 0,
   ci_upper = 100
 ))
 
-# Plot the individual fits (this plot needs help!)
+# Plot the individual fits
 pdf_print(
-  xyplot(
-    A ~ Ci | curve_identifier,
-    group = PPFD,
-    data = laisk_results$fits$main_data,
-    type = 'p',
-    pch = 16,
-    auto.key = list(space = 'right'),
-    curve_ids = laisk_results$fits[, 'curve_identifier'],
-    panel = function(...) {
-      # Get info about this curve
-      args <- list(...)
-      curve_id <- args$curve_ids[args$subscripts][1]
-      
-      curve_data <-
-        laisk_results$fits[laisk_results$fits[, 'curve_identifier'] == curve_id, ]
-      
-      panel.lines(curve_data$A_fit ~ curve_data$Ci, col = 'black')
-        
-      panel.xyplot(...)
-    }
-  )
+    plot_laisk_fit(
+        laisk_results,
+        'curve_identifier',
+        'first',
+        xlim = c(0, 80),
+        ylim = c(-1.5, 2),
+        main = 'A-Ci curves grouped by PPFD'
+    )
 )
 
 # Plot the intercepts and slopes
 pdf_print(
-  xyplot(
-    laisk_intercept ~ laisk_slope | curve_identifier,
-    group = PPFD,
-    data = laisk_results$parameters$main_data,
-    grid = TRUE,
-    auto.key = list(space = 'right'),
-    par.settings = list(
-      superpose.symbol = list(col = multi_curve_colors(), pch = 16)
-    ),
-    xlim = c(0, 0.2),
-    ylim = c(-10, 0.5),
-    xlab = paste('Slope [', laisk_results$parameters$units$laisk_slope, ']'),
-    ylab = paste('Intercept [', laisk_results$parameters$units$laisk_intercept, ']')
-  )
+    plot_laisk_fit(
+        laisk_results,
+        'curve_identifier',
+        'second',
+        xlim = c(0, 0.2),
+        ylim = c(-8, 0),
+        main = 'Second-stage Laisk fits'
+    )
 )
 
 # Print Ci_star and RL
-print(unique(laisk_results$parameters[, c('curve_identifier', 'Ci_star', 'RL')]))
+print(laisk_results$second_fit_parameters[, c('curve_identifier', 'Ci_star', 'RL')])

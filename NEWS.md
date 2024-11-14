@@ -89,6 +89,13 @@ be directly added to this file to describe the related changes.
   file needs to be "calculated," and a relevant message is sent to the user.
 - The C3 assimilation model and C3 A-Ci fits have been updated to include
   another parameter related to TPU: `alpha_t`
+- Revamped the Laisk fitting function:
+  - Renamed the function from `calculate_RL_laisk` to `fit_laisk` since a
+    fitting procedure is used, and the method also estimates `Ci_star` in
+    addition to `RL`.
+  - Used the method described in Walker & Ort (2015) and Busch et al. (2024)
+  - Added a plotting function for displaying the results of a Laisk fit:
+    `plot_laisk_fit`.
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 

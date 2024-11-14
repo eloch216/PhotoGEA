@@ -25,7 +25,7 @@
 
 \arguments{
   \item{fit_results}{
-    A list of three \code{exdf} objects names \code{fits}, \code{parameters},
+    A list of three \code{exdf} objects named \code{fits}, \code{parameters},
     and \code{fits_interpolated}, as calculated by \code{\link{fit_c3_aci}}.
   }
 
@@ -51,20 +51,21 @@
   }
 
   \item{a_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the net
-    assimilation in \code{micromol m^(-2) s^(-1)}; should be the same value that
-    was passed to \code{fit_c3_aci}.
+    The name of the columns in the elements of \code{fit_results} that contain
+    the net assimilation in \code{micromol m^(-2) s^(-1)}; should be the same
+    value that was passed to \code{fit_c3_aci} or \code{fit_c3_variable_j}.
   }
 
   \item{cc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    The name of the columns in the elements of \code{fit_results} that contain
+    the chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{ci_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    intercellular CO2 concentration in \code{micromol mol^(-1)}; should be the
-    same value that was passed to \code{fit_c3_aci}.
+    The name of the columns in the elements of \code{fit_results} that contain
+    the intercellular CO2 concentration in \code{micromol mol^(-1)}; should be
+    the same value that was passed to \code{fit_c3_aci} or
+    \code{fit_c3_variable_j}.
   }
 
   \item{\dots}{
