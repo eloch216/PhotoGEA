@@ -1,6 +1,6 @@
-\name{calculate_RL_laisk}
+\name{fit_laisk}
 
-\alias{calculate_RL_laisk}
+\alias{fit_laisk}
 
 \title{Calculate RL and Ci_star using the Laisk method}
 
@@ -13,7 +13,7 @@
 }
 
 \usage{
-  calculate_RL_laisk(
+  fit_laisk(
     replicate_exdf,
     ci_lower = 40,  # ppm
     ci_upper = 120, # ppm
@@ -186,7 +186,7 @@ licor_file <- organize_response_curve_data(
 # Apply the Laisk method. Note: this is a bad example because these curves were
 # measured at the same light intensity, but from different species. Because of
 # this, the results are not meaningful.
-laisk_results <- calculate_RL_laisk(
+laisk_results <- fit_laisk(
   licor_file, 20, 150,
   ppfd_column_name = 'species_plot'
 )

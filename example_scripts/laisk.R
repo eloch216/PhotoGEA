@@ -76,7 +76,7 @@ licor_data <- remove_points(licor_data, list(CO2_r_sp = SETPOINT_TO_REMOVE))
 laisk_results <- consolidate(by(
   licor_data,                       # The `exdf` object containing the curves
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  calculate_RL_laisk,               # The function to apply to each chunk of `licor_data`
+  fit_laisk,                        # The function to apply to each chunk of `licor_data`
   ci_lower = 0,
   ci_upper = 100
 ))

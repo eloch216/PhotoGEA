@@ -14,7 +14,7 @@ plot_laisk_fit <- function(
         !is.exdf(fit_results$first_fits) ||
         !is.exdf(fit_results$second_fit_parameters) ||
         !is.exdf(fit_results$second_fits)) {
-        stop('fit_results must be the output from calculate_RL_laisk')
+        stop('fit_results must be the output from fit_laisk')
     }
 
     # Make sure the plot type is acceptable

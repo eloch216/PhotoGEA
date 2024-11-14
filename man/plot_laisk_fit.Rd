@@ -5,8 +5,7 @@
 \title{Plot the results of a C3 CO2 response curve fit}
 
 \description{
-  Plots the output from \code{\link{calculate_RL_laisk}} or
-  \code{\link{fit_c3_variable_j}}.
+  Plots the output from \code{\link{fit_laisk}}.
 }
 
 \usage{
@@ -27,7 +26,7 @@
     A list of four \code{exdf} objects named \code{first_fits},
     \code{first_fit_parameters}, \code{second_fits},
     and \code{second_fit_parameters}, as calculated by
-    \code{\link{calculate_RL_laisk}}.
+    \code{\link{fit_laisk}}.
   }
 
   \item{identifier_column_name}{
@@ -48,13 +47,13 @@
   \item{a_column_name}{
     The name of the columns in the elements of \code{fit_results} that contain
     the net assimilation in \code{micromol m^(-2) s^(-1)}; should be the same
-    value that was passed to \code{calculate_RL_laisk}.
+    value that was passed to \code{fit_laisk}.
   }
 
   \item{ci_column_name}{
     The name of the column in \code{fit_results} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}; should be the
-    same value that was passed to \code{calculate_RL_laisk}.
+    same value that was passed to \code{fit_laisk}.
   }
 
   \item{\dots}{
@@ -67,7 +66,7 @@
   fit. It is typically used for displaying several fits at once, in which case
   \code{fit_results} is actually the output from calling
   \code{\link{consolidate}} on a list created by calling \code{\link{by.exdf}}
-  with \code{FUN = calculate_RL_laisk}.
+  with \code{FUN = fit_laisk}.
 
   Because the Laisk fitting process involves two sets of linear fits, there are
   two possible graphs that can be created. When \code{plot_type} is
@@ -76,7 +75,7 @@
   \code{plot_type} is \code{'second'}, this function will plot the Laisk
   intercept vs. Laisk slope from the results of the first fits, along with a
   linear fit of Laisk intercept vs. Laisk slope. See
-  \code{\link{calculate_RL_laisk}} for more details.
+  \code{\link{fit_laisk}} for more details.
 
   Internally, this function uses \code{\link[lattice]{xyplot}} to perform the
   plotting. Optionally, additional arguments can be passed to \code{xyplot}.
@@ -84,8 +83,8 @@
   \code{main}, and \code{grid}, since many other \code{xyplot} arguments will be
   set internally (such as \code{xlab}, \code{ylab}, \code{auto}, and others).
 
-  See the help file for \code{\link{calculate_RL_laisk}} for an example using
-  this function.
+  See the help file for \code{\link{fit_laisk}} for an example using this
+  function.
 }
 
 
@@ -94,7 +93,7 @@
 }
 
 \examples{
-# See the help file for calculate_RL_laisk for an example using this function.
+# See the help file for fit_laisk for an example using this function.
 }
 
 \concept{exdf}

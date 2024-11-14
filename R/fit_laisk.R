@@ -1,4 +1,4 @@
-calculate_RL_laisk <- function(
+fit_laisk <- function(
     replicate_exdf,
     ci_lower = 40,  # ppm
     ci_upper = 120, # ppm
@@ -8,7 +8,7 @@ calculate_RL_laisk <- function(
 )
 {
     if (!is.exdf(replicate_exdf)) {
-        stop('calculate_RL_laisk requires an exdf object')
+        stop('fit_laisk requires an exdf object')
     }
 
     # Make sure the required variables are defined and have the correct units
@@ -76,7 +76,7 @@ calculate_RL_laisk <- function(
         }
     ))
 
-    first_fit_parameters$categories[1, ] <- 'calculate_RL_laisk'
+    first_fit_parameters$categories[1, ] <- 'fit_laisk'
 
     # Add identifying information to the fit parameters
     first_fit_parameters <- cbind(replicate_identifiers, first_fit_parameters)
@@ -97,7 +97,7 @@ calculate_RL_laisk <- function(
 
             tmp[, paste0(a_column_name, '_fit')] <- as.numeric(x[['coefficients']][1]) + tmp[, ci_column_name] * as.numeric(x[['coefficients']][2])
 
-            tmp$categories[, paste0(a_column_name, '_fit')] <- 'calculate_RL_laisk'
+            tmp$categories[, paste0(a_column_name, '_fit')] <- 'fit_laisk'
 
             tmp[order(tmp[, ci_column_name]), , TRUE]
         })
@@ -130,11 +130,13 @@ calculate_RL_laisk <- function(
             RL_err      = 'micromol m^(-2) s^(-1)',
             Ci_star     = 'micromol mol^(-1)',
             Ci_star_err = 'micromol mol^(-1)',
-            r_squared           = '',
-            p_value             = '',
+            r_squared   = '',
+            p_value     = '',
             stringsAsFactors = FALSE
         )
     )
+
+    second_fit_parameters$categories[1, ] <- 'second_fit_parameters'
 
     # Add identifying information to the fit parameters
     second_fit_parameters <- cbind(replicate_identifiers, second_fit_parameters)
@@ -146,7 +148,7 @@ calculate_RL_laisk <- function(
         second_fits,
         'laisk_intercept_fit',
         second_fits$units[['laisk_intercept']],
-        'calculate_RL_laisk',
+        'fit_laisk',
         as.numeric(second_linear_model[['coefficients']][1]) + second_fits[, 'laisk_slope'] * as.numeric(second_linear_model[['coefficients']][2])
     )
 
