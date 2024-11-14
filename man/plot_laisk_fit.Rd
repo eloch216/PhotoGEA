@@ -51,9 +51,15 @@
   }
 
   \item{ci_column_name}{
-    The name of the column in \code{fit_results} that contains the
-    intercellular CO2 concentration in \code{micromol mol^(-1)}; should be the
-    same value that was passed to \code{fit_laisk}.
+    The name of the column in the elements of \code{fit_results} that contain
+    the intercellular CO2 concentration in \code{micromol mol^(-1)}; should be
+    the same value that was passed to \code{fit_laisk}.
+  }
+
+  \item{ppfd_column_name}{
+    The name of the column in the elements of \code{fit_results} that can be
+    used to split the data into individual response curves; should be the same
+    value that was passed to \code{fit_laisk}.
   }
 
   \item{\dots}{

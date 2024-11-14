@@ -51,7 +51,11 @@
 
   \item{ppfd_column_name}{
     The name of the column in \code{replicate_exdf} that can be used to split it
-    into individual response curves.
+    into individual response curves. Typically the individial curves are
+    measured at different values of incident light, but the log entries for
+    \code{'Qin'} are not all exactly the same. It is advised to create a new
+    column called \code{'PPFD'} with rounded values. For example,
+    \code{licor_data[, 'PPFD'] <- round(licor_data[, 'Qin'])}.
   }
 }
 
