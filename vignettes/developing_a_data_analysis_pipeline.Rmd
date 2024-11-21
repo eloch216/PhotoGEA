@@ -135,7 +135,10 @@ xyplot(
   type = 'b',
   pch = 16,
   auto = TRUE,
-  grid = TRUE
+  grid = TRUE,
+  xlab = 'X',
+  ylab = 'Y',
+  auto.key = list(space = 'top', text = c('linear fit', 'observed'))
 )
 ```
 
