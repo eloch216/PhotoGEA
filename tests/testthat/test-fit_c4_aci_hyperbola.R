@@ -12,7 +12,7 @@ test_that('fit failures are handled properly', {
     fit_res_bad <- expect_silent(
         fit_c4_aci_hyperbola(
             one_curve_bad,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 2,
             calculate_confidence_intervals = TRUE
         )
@@ -34,7 +34,7 @@ test_that('Ci limits can be bypassed', {
     fit_res <- expect_silent(
         fit_c4_aci_hyperbola(
             one_curve_bad,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 0,
             calculate_confidence_intervals = TRUE
         )
@@ -52,7 +52,7 @@ test_that('fit results have not changed', {
 
     fit_res <- fit_c4_aci_hyperbola(
         one_curve,
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE
     )
@@ -99,14 +99,14 @@ test_that('removing and excluding points produce the same fit results', {
 
     fit_res_remove <- fit_c4_aci_hyperbola(
         one_curve_remove,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     set.seed(1234)
 
     fit_res_exclude <- fit_c4_aci_hyperbola(
         one_curve_exclude,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     # Check that results haven't changed

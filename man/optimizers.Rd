@@ -9,7 +9,7 @@
 
 \description{
   These functions return optimizers that meet requirements for the
-  \code{OPTIM_FUN} input argument of \code{\link{fit_c3_aci}},
+  \code{optim_fun} input argument of \code{\link{fit_c3_aci}},
   \code{\link{fit_c3_variable_j}}, and \code{\link{fit_c4_aci}}. Essentially,
   they are wrappers for optimizers from other libraries that serve to
   standardize their inputs and outputs.

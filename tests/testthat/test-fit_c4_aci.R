@@ -17,7 +17,7 @@ test_that('fit failures are handled properly', {
         fit_c4_aci(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
@@ -41,7 +41,7 @@ test_that('PCm limits can be bypassed', {
         fit_c4_aci(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 0,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
@@ -62,7 +62,7 @@ test_that('fit results have not changed (Vcmax)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_25 = 1000),
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
@@ -100,7 +100,7 @@ test_that('fit results have not changed (Vpr)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(Vcmax_at_25 = 1000, Vpr = 'fit', Jmax_at_25 = 1000),
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
@@ -138,7 +138,7 @@ test_that('fit results have not changed (Jmax)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_25 = 'fit'),
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
@@ -192,7 +192,7 @@ test_that('removing and excluding points produce the same fit results', {
     fit_res_remove <- fit_c4_aci(
         one_curve_remove,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     set.seed(1234)
@@ -200,7 +200,7 @@ test_that('removing and excluding points produce the same fit results', {
     fit_res_exclude <- fit_c4_aci(
         one_curve_exclude,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     # Check that results haven't changed

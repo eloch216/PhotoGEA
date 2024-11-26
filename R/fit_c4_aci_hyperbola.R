@@ -11,7 +11,7 @@ fit_c4_aci_hyperbola <- function(
     a_column_name = 'A',
     ci_column_name = 'Ci',
     sd_A = 'RMSE',
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    optim_fun = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -63,7 +63,7 @@ fit_c4_aci_hyperbola <- function(
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
-    optim_result <- OPTIM_FUN(
+    optim_result <- optim_fun(
         initial_guess[param_to_fit],
         total_error_fcn,
         lower = lower_complete[param_to_fit],

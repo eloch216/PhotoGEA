@@ -19,7 +19,7 @@
     a_column_name = 'A',
     ci_column_name = 'Ci',
     sd_A = 'RMSE',
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    optim_fun = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -50,7 +50,7 @@
     option is \code{'RMSE'}.
   }
 
-  \item{OPTIM_FUN}{
+  \item{optim_fun}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
@@ -126,7 +126,7 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c4_aci_hyperbola}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above.  The
+  \code{optim_fun}, starting from the initial guess described above.  The
   \code{\link{optimizer_nmkb}} optimizer is used by default since it has been
   found to reliably return great fits. However, it is a fast optimizer that can
   get stuck in local minima. If it seems to be returning bad fits, consider

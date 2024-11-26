@@ -380,7 +380,7 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
-  OPTIM_FUN = solver,                           # The optimization algorithm to use
+  optim_fun = solver,                           # The optimization algorithm to use
   fit_options = FIT_OPTIONS,
   lower = list(RL_at_25 = 0),
   upper = list(tau = 0.65, Vcmax_at_25 = 280),

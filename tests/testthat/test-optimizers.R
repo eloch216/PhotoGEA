@@ -17,7 +17,7 @@ test_that('the nmkb optimizer works', {
         fit_c3_aci(
             one_curve,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_nmkb(1e-5)
+            optim_fun = optimizer_nmkb(1e-5)
         )
     )
 
@@ -31,7 +31,7 @@ test_that('the hjkb optimizer works', {
         fit_c3_aci(
             one_curve,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_hjkb(1e-5)
+            optim_fun = optimizer_hjkb(1e-5)
         )
     )
 
@@ -45,7 +45,7 @@ test_that('the deoptim optimizer works', {
         fit_c3_aci(
             one_curve,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_deoptim(20)
+            optim_fun = optimizer_deoptim(20)
         )
     )
 

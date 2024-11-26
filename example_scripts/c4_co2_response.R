@@ -377,7 +377,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
         fit_c4_aci,
-        OPTIM_FUN = solver,
+        optim_fun = solver,
         Ca_atmospheric = 420,
         fit_options = list(alpha_psii = 0, gbs = 0, Rm_frac = 1)
     ))

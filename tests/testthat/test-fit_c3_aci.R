@@ -28,7 +28,7 @@ test_that('fit failures are handled properly', {
         fit_c3_aci(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
@@ -48,7 +48,7 @@ test_that('Parameter reliability settings are checked', {
         fit_c3_aci(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 10
@@ -66,7 +66,7 @@ test_that('Cc limits can be bypassed', {
         fit_c3_aci(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_nmkb(1e-7),
+            optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 0,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
@@ -87,7 +87,7 @@ test_that('fit results have not changed (no alpha)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0, alpha_t = 0),
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
@@ -137,7 +137,7 @@ test_that('fit results have not changed (alpha_old)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 'fit', alpha_g = 0, alpha_s = 0, alpha_t = 0),
-        OPTIM_FUN = optimizer_deoptim(100),
+        optim_fun = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 0
@@ -187,7 +187,7 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit', alpha_t = 0),
-        OPTIM_FUN = optimizer_deoptim(100),
+        optim_fun = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 1
@@ -237,7 +237,7 @@ test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit', alpha_t = 'fit'),
-        OPTIM_FUN = optimizer_deoptim(100),
+        optim_fun = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 1
@@ -286,7 +286,7 @@ test_that('fit results have not changed (pseudo-FvCB)', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         use_min_A = TRUE
     )
 
@@ -345,7 +345,7 @@ test_that('removing and excluding points produce the same fit results', {
     fit_res_remove <- fit_c3_aci(
         one_curve_remove,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     set.seed(1234)
@@ -353,7 +353,7 @@ test_that('removing and excluding points produce the same fit results', {
     fit_res_exclude <- fit_c3_aci(
         one_curve_exclude,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     # Check that results haven't changed

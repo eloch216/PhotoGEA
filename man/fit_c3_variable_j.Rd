@@ -36,7 +36,7 @@
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(400),
+    optim_fun = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -166,7 +166,7 @@
     \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
   }
 
-  \item{OPTIM_FUN}{
+  \item{optim_fun}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
@@ -305,7 +305,7 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c3_variable_j}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above. The
+  \code{optim_fun}, starting from the initial guess described above. The
   \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
   found to reliably return great fits. However, it is a slow optimizer. If speed
   is important, consider reducing the number of generations or using
@@ -451,7 +451,7 @@ optimizer <- optimizer_nmkb(1e-7)
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 )
 }
 
@@ -461,7 +461,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 ))
 
 # View the fitting parameters for each species / plot

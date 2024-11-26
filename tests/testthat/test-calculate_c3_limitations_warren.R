@@ -24,7 +24,7 @@ test_that('fit failures are handled properly', {
     fit_res_bad <- fit_c3_aci(
         one_curve_bad,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     limit_res_bad <- expect_no_error(
@@ -43,7 +43,7 @@ test_that('fit results have not changed', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         fit_options = list(alpha_old = 0),
         calculate_confidence_intervals = FALSE,
         remove_unreliable_param = 0

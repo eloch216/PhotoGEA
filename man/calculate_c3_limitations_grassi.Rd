@@ -275,7 +275,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_aci,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb(1e-7)
+  optim_fun = optimizer_nmkb(1e-7)
 ))
 
 # Get a subset of fitting results corresponding to the first measured point

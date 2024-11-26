@@ -26,7 +26,7 @@ fit_c3_aci <- function(
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(200),
+    optim_fun = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -127,7 +127,7 @@ fit_c3_aci <- function(
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
-    optim_result <- OPTIM_FUN(
+    optim_result <- optim_fun(
         initial_guess[param_to_fit],
         total_error_fcn,
         lower = lower_complete[param_to_fit],

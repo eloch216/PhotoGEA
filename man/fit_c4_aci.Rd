@@ -39,7 +39,7 @@
     rho = 0.5,
     theta = 0.7,
     x_etr = 0.4,
-    OPTIM_FUN = optimizer_deoptim(200),
+    optim_fun = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -177,7 +177,7 @@
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
   }
 
-  \item{OPTIM_FUN}{
+  \item{optim_fun}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
@@ -267,7 +267,7 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c4_aci}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above.  The
+  \code{optim_fun}, starting from the initial guess described above.  The
   \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
   found to reliably return great fits. However, it is a slow optimizer. If speed
   is important, consider reducing the number of generations or using
@@ -420,7 +420,7 @@ optimizer <- optimizer_nmkb(1e-7)
 one_result <- fit_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 )
 
 # Fit all curves in the data set (it is more common to do this)
@@ -429,7 +429,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c4_aci,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 ))
 
 # View the fitting parameters for each species / plot
