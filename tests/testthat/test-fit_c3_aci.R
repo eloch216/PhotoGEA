@@ -263,6 +263,61 @@ test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
     )
 })
 
+
+test_that('fit results have not changed (gmc with temperature dependence)', {
+    # Redo the temperature calculations
+    one_curve_t <- calculate_temperature_response(one_curve, c3_temperature_param_sharkey)
+
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c3_aci(
+        one_curve_t,
+        Ca_atmospheric = 420,
+        fit_options = list(gmc_at_25 = 'fit'),
+        optim_fun = optimizer_deoptim(100),
+        hard_constraints = 2,
+        calculate_confidence_intervals = TRUE,
+        remove_unreliable_param = 0
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'alpha_old', 'gmc_at_25', 'AIC')]),
+        c(134.329626, 236.395612, 2.227642, 45.224713, 0.292880, 9.720798, 67.454335),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'alpha_old_upper', 'gmc_at_25_upper')]),
+        c(141.4003596, 242.9683848, 2.9652952, Inf, 0.9999473, Inf),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 6, 7)
+    )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(9, 4, 0))
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
+    )
+})
+
+
 test_that('fit results have not changed (pseudo-FvCB)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer

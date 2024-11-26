@@ -28,6 +28,7 @@ unit_dictionary <- list(
     Gamma_star     = micromol_fraction,
     gbs            = conductance_bar,
     gmc            = conductance_bar,
+    gmc_norm       = 'normalized to gmc at 25 degrees C',
     gsw            = conductance,
     H2O_r          = millimol_fraction,
     H2O_s          = millimol_fraction,

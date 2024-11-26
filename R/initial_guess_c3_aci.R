@@ -4,12 +4,13 @@ initial_guess_c3_aci <- function(
     alpha_s,    # dimensionless
     alpha_t,    # dimensionless
     Gamma_star, # micromol / mol
-    gmc,        # mol / m^2 / s / bar
+    gmc_at_25,  # mol / m^2 / s / bar
     cc_threshold_rd = 100,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -33,6 +34,7 @@ initial_guess_c3_aci <- function(
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
         required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
@@ -47,7 +49,7 @@ initial_guess_c3_aci <- function(
             alpha_s = alpha_s,
             alpha_t = alpha_t,
             Gamma_star = Gamma_star,
-            gmc = gmc
+            gmc_at_25 = gmc_at_25
         )
 
         required_variables <-
@@ -62,17 +64,18 @@ initial_guess_c3_aci <- function(
         if (value_set(alpha_s))    {rc_exdf[, 'alpha_s']    <- alpha_s}
         if (value_set(alpha_t))    {rc_exdf[, 'alpha_t']    <- alpha_t}
         if (value_set(Gamma_star)) {rc_exdf[, 'Gamma_star'] <- Gamma_star}
-        if (value_set(gmc))        {rc_exdf[, 'gmc']        <- gmc}
+        if (value_set(gmc_at_25))  {rc_exdf[, 'gmc_at_25']  <- gmc_at_25}
 
         # Get values of Cc
         rc_exdf <- apply_gm(
             rc_exdf,
-            gmc,
+            gmc_at_25,
             'C3',
             FALSE,
             a_column_name,
             '',
             ci_column_name,
+            gmc_norm_column_name,
             total_pressure_column_name
         )
 
@@ -152,7 +155,7 @@ initial_guess_c3_aci <- function(
             mean(rc_exdf[, 'alpha_s']),        # alpha_s
             mean(rc_exdf[, 'alpha_t']),        # alpha_t
             mean(rc_exdf[, 'Gamma_star_agt']), # Gamma_star
-            mean(rc_exdf[, 'gmc']),            # gmc
+            mean(rc_exdf[, 'gmc_at_25']),      # gmc_at_25
             max(j_estimates),                  # J_at_25
             RL_estimate,                       # RL_at_25
             max(tp_estimates),                 # Tp_at_25

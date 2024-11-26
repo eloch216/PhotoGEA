@@ -8,6 +8,7 @@ error_function_c3_aci <- function(
     curvature_cjp = 1.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -44,6 +45,7 @@ error_function_c3_aci <- function(
     required_variables <- list()
     required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
     required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
+    required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
     required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
@@ -108,6 +110,7 @@ error_function_c3_aci <- function(
                     '',
                     ci_column_name,
                     total_pressure_column_name,
+                    gmc_norm_column_name,
                     perform_checks = FALSE,
                     return_exdf = FALSE
                 )

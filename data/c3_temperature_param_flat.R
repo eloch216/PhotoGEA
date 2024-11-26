@@ -5,5 +5,6 @@ c3_temperature_param_flat <- list(
     Vcmax_norm = list(type = 'Arrhenius', c = 0,            Ea = 0, units = 'normalized to Vcmax at 25 degrees C'),
     J_norm =     list(type = 'Arrhenius', c = 0,            Ea = 0, units = 'normalized to J at 25 degrees C'),
     RL_norm =    list(type = 'Arrhenius', c = 0,            Ea = 0, units = 'normalized to RL at 25 degrees C'),
+    gmc_norm =   list(type = 'Arrhenius', c = 0,            Ea = 0, units = 'normalized to gmc at 25 degrees C'),
     Tp_norm =    list(type = 'Arrhenius', c = 0,            Ea = 0, units = 'normalized to Tp at 25 degrees C')
 )

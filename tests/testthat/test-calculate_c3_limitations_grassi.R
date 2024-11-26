@@ -2,7 +2,7 @@ example_exdf <- exdf(
     data.frame(
         Cc             = seq(10, 400, length.out = 3),
         Gamma_star     = 40,
-        gmc            = 0.5,
+        gmc_tl         = 0.5,
         gsc            = 0.8,
         J_tl           = 200,
         Kc             = 270,
@@ -15,7 +15,7 @@ example_exdf <- exdf(
     units = data.frame(
         Cc             = 'micromol mol^(-1)',
         Gamma_star     = 'micromol mol^(-1)',
-        gmc            = 'mol m^(-2) s^(-1) bar^(-1)',
+        gmc_tl         = 'mol m^(-2) s^(-1) bar^(-1)',
         gsc            = 'mol m^(-2) s^(-1)',
         J_tl           = 'micromol m^(-2) s^(-1)',
         Kc             = 'micromol mol^(-1)',
@@ -86,7 +86,7 @@ test_that('fit results have not changed', {
         one_curve,
         Ca_atmospheric = 420,
         optim_fun = optimizer_nmkb(1e-7),
-        fit_options = list(alpha_old = 0, gmc = 1.0),
+        fit_options = list(alpha_old = 0, gmc_at_25 = 1.0),
         calculate_confidence_intervals = FALSE,
         remove_unreliable_param = 0
     )

@@ -1,11 +1,12 @@
 apply_gm <- function(
     exdf_obj,
-    gmc = '', # mol / m^2 / s / bar (this value is sometimes being fitted)
+    gmc_at_25 = '', # mol / m^2 / s / bar (this value is sometimes being fitted)
     photosynthesis_type = 'C3',
     calculate_drawdown = TRUE,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     total_pressure_column_name = 'total_pressure',
     perform_checks = TRUE,
     return_exdf = TRUE
@@ -20,6 +21,7 @@ apply_gm <- function(
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary[[gmc_norm_column_name]]
         required_variables[[total_pressure_column_name]] <- 'bar'
 
         if (calculate_drawdown) {
@@ -27,7 +29,7 @@ apply_gm <- function(
         }
 
         flexible_param <- list(
-            gmc = gmc
+            gmc_at_25 = gmc_at_25
         )
 
         required_variables <-
@@ -37,11 +39,14 @@ apply_gm <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
-    if (!value_set(gmc)) {gmc <- exdf_obj[, 'gmc']}
+    if (!value_set(gmc_at_25)) {gmc_at_25 <- exdf_obj[, 'gmc_at_25']}
+
+    # Calculate gmc at leaf temperature
+    gmc_tl <- gmc_at_25 * exdf_obj[, gmc_norm_column_name] # mol / m^2 / s / bar
 
     # Calculate internal CO2 concentration and partial pressure
     internal_c <- exdf_obj[, ci_column_name] - exdf_obj[, a_column_name] /
-                    (gmc * exdf_obj[, total_pressure_column_name]) # micromol / mol
+                    (gmc_tl * exdf_obj[, total_pressure_column_name]) # micromol / mol
 
     internal_c_pressure <- internal_c * exdf_obj[, total_pressure_column_name] # microbar
 
@@ -63,13 +68,15 @@ apply_gm <- function(
         # Store results and document new columns
         exdf_obj[, c_column_name]  <- internal_c
         exdf_obj[, pc_column_name] <- internal_c_pressure
-        exdf_obj[, 'gmc']          <- gmc
+        exdf_obj[, 'gmc_at_25']    <- gmc_at_25
+        exdf_obj[, 'gmc_tl']       <- gmc_tl
 
         exdf_obj <- document_variables(
             exdf_obj,
             c('apply_gm', c_column_name,          'micromol mol^(-1)'),
             c('apply_gm', pc_column_name,         'microbar'),
-            c('apply_gm', 'gmc',                  'mol m^(-2) s^(-1) bar^(-1)')
+            c('apply_gm', 'gmc_at_25',            'mol m^(-2) s^(-1) bar^(-1)'),
+            c('apply_gm', 'gmc_tl',               'mol m^(-2) s^(-1) bar^(-1)')
         )
 
         if (calculate_drawdown) {

@@ -50,6 +50,16 @@ initial_guess_c3_variable_j <- function(
         # Get an estimate of tau from the Licor estimate of ETR
         tau_guess <- mean(ETR / (PhiPS2 * Qin))
 
+        # Set gmc_norm to 1
+        gmc_norm_column_name <- 'gmc_norm'
+
+        rc_exdf <- set_variable(
+            rc_exdf,
+            gmc_norm_column_name,
+            unit_dictionary[['gmc_norm']],
+            value = 1
+        )
+
         # Get a function that makes an initial guess for the C3 parameters,
         # setting gmc = Inf so Cc = Ci
         c3_guess_func <- initial_guess_c3_aci(
@@ -64,6 +74,7 @@ initial_guess_c3_variable_j <- function(
             nadph_use,
             a_column_name,
             ci_column_name,
+            gmc_norm_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,

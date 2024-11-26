@@ -7,6 +7,6 @@ c4_temperature_param_vc <- list(
     Kp =         list(type = 'Arrhenius', c = log(82) + 38.3 / PhotoGEA:::f,         Ea = 38.3, units = 'microbar'),
     gamma_star = list(type = 'Arrhenius', c = log(0.5 / 1310) + 31.1 / PhotoGEA:::f, Ea = 31.1, units = 'dimensionless'),
     ao =         list(type = 'Arrhenius', c = log(0.047) + 1.63 / PhotoGEA:::f,      Ea = 1.63, units = 'dimensionless'),
-    gmc =        list(type = 'Arrhenius', c = log(1) + 49.8 / PhotoGEA:::f,          Ea = 49.8, units = 'mol m^(-2) s^(-1) bar^(-1)'),
+    gmc_norm =   list(type = 'Arrhenius', c = 49.8 / PhotoGEA:::f,                   Ea = 49.8, units = 'normalized to gmc at 25 degrees C'),
     Jmax_norm =  list(type = 'Gaussian', optimum_rate = exp((25 - 43)^2 / 26^2), t_opt = 43, sigma = 26, units = 'normalized to Jmax at 25 degrees C')
 )

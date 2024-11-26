@@ -29,7 +29,7 @@ test_that('fit results have not changed', {
         one_curve,
         Ca_atmospheric = 420,
         optim_fun = optimizer_nmkb(1e-7),
-        fit_options = list(alpha_old = 0, gmc = 1.0),
+        fit_options = list(alpha_old = 0, gmc_at_25 = 1.0),
         calculate_confidence_intervals = FALSE,
         remove_unreliable_param = 0
     )

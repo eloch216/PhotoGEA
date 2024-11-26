@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  alpha_t = 0,  Gamma_star = -20,      gmc = -1,  J_at_25 = -50,   RL_at_25 = -10,   Tp_at_25 = -10,   Vcmax_at_25 = -50)
-c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, alpha_t = 10, Gamma_star = 200,      gmc = 10,  J_at_25 = 1000,  RL_at_25 = 100,   Tp_at_25 = 100,   Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  alpha_t = 0,  Gamma_star = 'column', gmc = Inf, J_at_25 = 'fit', RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  alpha_t = 0,  Gamma_star = -20,      gmc_at_25 = -1,  J_at_25 = -50,   RL_at_25 = -10,   Tp_at_25 = -10,   Vcmax_at_25 = -50)
+c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, alpha_t = 10, Gamma_star = 200,      gmc_at_25 = 10,  J_at_25 = 1000,  RL_at_25 = 100,   Tp_at_25 = 100,   Vcmax_at_25 = 1000)
+c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  alpha_t = 0,  Gamma_star = 'column', gmc_at_25 = Inf, J_at_25 = 'fit', RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
 
-c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'alpha_t', 'Gamma_star', 'gmc', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Vcmax_at_25')
+c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'alpha_t', 'Gamma_star', 'gmc_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_aci <- function(
@@ -12,6 +12,7 @@ fit_c3_aci <- function(
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -58,6 +59,7 @@ fit_c3_aci <- function(
         curvature_cjp,
         a_column_name,
         ci_column_name,
+        gmc_norm_column_name,
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
@@ -103,7 +105,7 @@ fit_c3_aci <- function(
     alpha_s_guess    <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
     alpha_t_guess    <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
     gamma_star_guess <- if (fit_options$Gamma_star == 'fit') {40}                     else {fit_options$Gamma_star}
-    gmc_guess        <- if (fit_options$gmc == 1.0) {Inf}                             else {fit_options$gmc}
+    gmc_guess        <- if (fit_options$gmc == 'fit') {1.0}                           else {fit_options$gmc_at_25}
 
     initial_guess_fun <- initial_guess_c3_aci(
         alpha_g_guess,
@@ -117,6 +119,7 @@ fit_c3_aci <- function(
         nadph_use,
         a_column_name,
         ci_column_name,
+        gmc_norm_column_name,
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
@@ -144,12 +147,13 @@ fit_c3_aci <- function(
     # Get the corresponding values of Cc at the best guess
     replicate_exdf <- apply_gm(
         replicate_exdf,
-        best_X[6], # gmc
+        best_X[6], # gmc_at_25
         'C3',
         TRUE,
         a_column_name,
         ca_column_name,
         ci_column_name,
+        gmc_norm_column_name,
         total_pressure_column_name,
         perform_checks = FALSE
     )
@@ -363,13 +367,14 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'alpha_s']     <- best_X[3]
     replicate_identifiers[, 'alpha_t']     <- best_X[4]
     replicate_identifiers[, 'Gamma_star']  <- best_X[5]
-    replicate_identifiers[, 'gmc']         <- best_X[6]
+    replicate_identifiers[, 'gmc_at_25']   <- best_X[6]
     replicate_identifiers[, 'J_at_25']     <- best_X[7]
     replicate_identifiers[, 'RL_at_25']    <- best_X[8]
     replicate_identifiers[, 'Tp_at_25']    <- best_X[9]
     replicate_identifiers[, 'Vcmax_at_25'] <- best_X[10]
 
     # Attach the average leaf-temperature values of fitting parameters
+    replicate_identifiers[, 'gmc_tl_avg']   <- mean(replicate_exdf[, 'gmc_tl'])
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
     replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
     replicate_identifiers[, 'Tp_tl_avg']    <- mean(replicate_exdf[, 'Tp_tl'])
@@ -409,6 +414,7 @@ fit_c3_aci <- function(
             curvature_cjp,
             a_column_name,
             ci_column_name,
+            gmc_norm_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
@@ -432,7 +438,8 @@ fit_c3_aci <- function(
         c('fit_c3_aci',               'alpha_s',             'dimensionless'),
         c('fit_c3_aci',               'alpha_t',             'dimensionless'),
         c('fit_c3_aci',               'Gamma_star',          'micromol mol^(-1)'),
-        c('fit_c3_aci',               'gmc',                 'mol mol^(-2) s^(-1) bar^(-1)'),
+        c('fit_c3_aci',               'gmc_at_25',           'mol mol^(-2) s^(-1) bar^(-1)'),
+        c('fit_c3_aci',               'gmc_tl_avg',          'mol mol^(-2) s^(-1) bar^(-1)'),
         c('fit_c3_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
@@ -468,6 +475,7 @@ fit_c3_aci <- function(
             curvature_cjp,
             a_column_name,
             ci_column_name,
+            gmc_norm_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
@@ -483,6 +491,10 @@ fit_c3_aci <- function(
         )
 
         # Attach limits for the average leaf-temperature values of fitting parameters
+        gmc_tl_scale <- replicate_identifiers[, 'gmc_tl_avg'] / replicate_identifiers[, 'gmc_at_25']
+        replicate_identifiers[, 'gmc_tl_avg_lower'] <- replicate_identifiers[, 'gmc_at_25_lower'] * gmc_tl_scale
+        replicate_identifiers[, 'gmc_tl_avg_upper'] <- replicate_identifiers[, 'gmc_at_25_upper'] * gmc_tl_scale
+
         J_tl_scale <- replicate_identifiers[, 'J_tl_avg'] / replicate_identifiers[, 'J_at_25']
         replicate_identifiers[, 'J_tl_avg_lower'] <- replicate_identifiers[, 'J_at_25_lower'] * J_tl_scale
         replicate_identifiers[, 'J_tl_avg_upper'] <- replicate_identifiers[, 'J_at_25_upper'] * J_tl_scale

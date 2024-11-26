@@ -31,23 +31,13 @@
     \item \code{Kp}: The Michaelis-Menten constant of PEP carboxylase.
     \item \code{gamma_star}: Half the reciprocal of rubisco specificity.
     \item \code{ao}: The ratio of solubility and diffusivity of O2 to CO2.
-    \item \code{gmc}: The mesophyll conductance to CO2 diffusion.
+    \item \code{gmc_norm}: The mesophyll conductance to CO2 diffusion normalized
+          to its value at 25 degrees C.
     \item \code{Jmax_norm}: The maximum rate of RuBP regneration \code{Jmax}
           normalized to its value at its optimal temperature.
   }
 
-  The \code{Jmax_norm} parameter is calculated using a Gaussian function and
-  hence its corresponding list element is itself a list with 4 named elements:
-  \itemize{
-    \item \code{type}: the type of temperature response (\code{'Gaussian'})
-    \item \code{optimum_rate}: the largest value this parameter can take.
-    \item \code{t_opt}: the temperature where the optimum occurs in
-          \code{degrees C}.
-    \item \code{sigma}: the width of the Gaussian in \code{degrees C}.
-    \item \code{units}: the units of the corresponding variable.
-  }
-
-  Each of the remaining elements is a list with 4 named elements:
+  Each of these is a list with 4 named elements:
   \itemize{
     \item \code{type}: the type of temperature response (\code{'Arrhenius'})
     \item \code{c}: the (dimensionless) Arrhenius scaling factor.
@@ -57,9 +47,9 @@
 }
 
 \source{
-  Some of these parameters (\code{Vcmax}, \code{Vpmax}, and \code{RL}) are
-  normalized to their values at 25 degrees C. These variables include
-  \code{_norm} in their names to indicate this.
+  Some of these parameters (\code{Vcmax}, \code{Vpmax}, \code{RL}, \code{gmc},
+  and \code{Jmax}) are normalized to their values at 25 degrees C. These
+  variables include \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Kc}, \code{Ko}, \code{Kp}, \code{gamma_star},
   \code{ao}, and \code{gmc}) are not normalized because they are assumed to not
