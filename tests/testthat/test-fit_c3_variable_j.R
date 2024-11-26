@@ -1,6 +1,9 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
+# Load helping function
+source('get_duplicated_colnames.R')
+
 # Choose test tolerance
 TOLERANCE <- 1e-4
 
@@ -71,6 +74,16 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(240.718, 254.101, 1.885, 0.405, NA, 40.416),
         tolerance = TOLERANCE
@@ -115,6 +128,16 @@ test_that('fit results have not changed (alpha_old)', {
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2,
         check_j = FALSE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
@@ -165,6 +188,16 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
         c(223.833, 264.193, 1.798, 0.422, NA, 45.052),
         tolerance = TOLERANCE
@@ -205,6 +238,16 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         optim_fun = optimizer_deoptim(200),
         use_min_A = TRUE,
         check_j = FALSE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(

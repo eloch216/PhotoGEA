@@ -1,6 +1,9 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
+# Load helping function
+source('get_duplicated_colnames.R')
+
 # Choose test tolerance
 TOLERANCE <- 1e-4
 
@@ -79,6 +82,16 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
         c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101),
         tolerance = TOLERANCE
@@ -126,6 +139,16 @@ test_that('fit results have not changed (alpha_old)', {
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 0
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
@@ -179,6 +202,16 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
         c(160.572, 254.807, 1.084, 20.0224, 58.184),
         tolerance = TOLERANCE
@@ -226,6 +259,16 @@ test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 1
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
@@ -283,6 +326,16 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'alpha_old', 'gmc_at_25', 'AIC')]),
         c(134.329626, 236.395612, 2.227642, 45.224713, 0.292880, 9.720798, 67.454335),
         tolerance = TOLERANCE
@@ -328,6 +381,16 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         Ca_atmospheric = 420,
         optim_fun = optimizer_nmkb(1e-7),
         use_min_A = TRUE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(

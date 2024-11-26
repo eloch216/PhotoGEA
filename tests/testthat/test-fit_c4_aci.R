@@ -1,6 +1,9 @@
 # Get test curves to use
 source('one_curve_c4_aci.R')
 
+# Load helping function
+source('get_duplicated_colnames.R')
+
 # Calculate PCm
 one_curve <- apply_gm(one_curve, gmc_at_25 = 1, photosynthesis_type = 'C4')
 one_curve_bad <- apply_gm(one_curve_bad, gmc_at_25 = 1, photosynthesis_type = 'C4')
@@ -69,6 +72,16 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
         c(3.630116e+01, 1.804791e+02, 1.069116e-08, 8.226640e+01),
         tolerance = TOLERANCE
@@ -107,6 +120,16 @@ test_that('fit results have not changed (Vpr)', {
     )
 
     expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpr', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
         c(58.1571, 133.8038, 0.0000, 88.3427),
         tolerance = TOLERANCE
@@ -142,6 +165,16 @@ test_that('fit results have not changed (Jmax)', {
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
         remove_unreliable_param = 2
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(

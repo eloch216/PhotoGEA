@@ -162,7 +162,7 @@ calculate_c3_variable_j <- function(
             c('calculate_c3_variable_j', 'alpha_s',            'dimensionless'),
             c('calculate_c3_variable_j', 'alpha_t',            'dimensionless'),
             c('calculate_c3_variable_j', 'Gamma_star',         'micromol mol^(-1)'),
-            c('calculate_c3_variable_j', 'Gamma_star_agt',      'microbar'),
+            c('calculate_c3_variable_j', 'Gamma_star_agt',     'microbar'),
             c('calculate_c3_variable_j', 'RL_at_25',           'micromol m^(-2) s^(-1)'),
             c('calculate_c3_variable_j', 'tau',                'dimensionless'),
             c('calculate_c3_variable_j', 'RL_tl',              'micromol m^(-2) s^(-1)'),

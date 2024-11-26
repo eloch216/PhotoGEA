@@ -1,6 +1,9 @@
 # Get test curves to use
 source('one_curve_c4_aci.R')
 
+# Load helping function
+source('get_duplicated_colnames.R')
+
 # Choose test tolerance
 TOLERANCE <- 1e-4
 
@@ -55,6 +58,16 @@ test_that('fit results have not changed', {
         optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(

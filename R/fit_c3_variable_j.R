@@ -178,11 +178,15 @@ fit_c3_variable_j <- function(
     vj$categories[1,] <- 'fit_c3_variable_j'
 
     # Remove a few columns so they don't get repeated
-    vj[, 'atp_use']    <- NULL
-    vj[, 'Gamma_star'] <- NULL
-    vj[, 'nadph_use']  <- NULL
-    vj[, 'RL_at_25']   <- NULL
-    vj[, 'RL_tl']      <- NULL
+    vj[, 'alpha_g']        <- NULL
+    vj[, 'alpha_s']        <- NULL
+    vj[, 'alpha_t']        <- NULL
+    vj[, 'atp_use']        <- NULL
+    vj[, 'Gamma_star']     <- NULL
+    vj[, 'Gamma_star_agt'] <- NULL
+    vj[, 'nadph_use']      <- NULL
+    vj[, 'RL_at_25']       <- NULL
+    vj[, 'RL_tl']          <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
