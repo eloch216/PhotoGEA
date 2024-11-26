@@ -22,7 +22,9 @@
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gmc_column_name = 'gmc',
-    total_pressure_column_name = 'total_pressure'
+    total_pressure_column_name = 'total_pressure',
+    perform_checks = TRUE,
+    return_exdf = TRUE
   )
 }
 
@@ -64,6 +66,22 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{licor_exdf} that contains the total pressure
     in \code{bar}.
+  }
+
+  \item{perform_checks}{
+    A logical value indicating whether to check units for the required columns.
+    This should almost always be \code{TRUE}. The option to disable these checks
+    is only intended to be used when \code{\link{fit_c3_aci}} calls this
+    function, since performing these checks many times repeatedly slows down the
+    fitting procedure.
+  }
+
+  \item{return_exdf}{
+    A logical value indicating whether to return an \code{exdf} object. This
+    should almost always be \code{TRUE}. The option to return a vector is mainly
+    intended to be used when  \code{\link{fit_c3_aci}} calls this function,
+    since creating an \code{exdf} object to return will slow down the fitting
+    procedure.
   }
 }
 
@@ -133,12 +151,19 @@
 }
 
 \value{
-  An \code{exdf} object based on \code{licor_exdf} that includes the following
-  additional columns, calculated as described above: \code{Pci} and \code{Ci}
-  (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
-  \code{drawndown_s}, and \code{drawdown_cm}. The category for each of these new
-  columns is \code{apply_gm} to indicate that they were created using this
-  function.
+  The return value depends on the value of \code{return_exdf}:
+  \itemize{
+    \item If \code{return_exdf} is \code{TRUE}, the return value is an
+          \code{exdf} object based on \code{licor_exdf} with the following
+          columns, calculated as described above: \code{Pci} and \code{Ci}
+          (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
+          \code{drawndown_s}, and \code{drawdown_cm}. The category for each of
+          these new columns is \code{apply_gm} to indicate that they were
+          created using this function.
+    \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
+          a single named element (\code{internal_c}), which contains values of
+          \code{Cc} or \code{Cm} as a numeric vector.
+  }
 }
 
 \examples{
