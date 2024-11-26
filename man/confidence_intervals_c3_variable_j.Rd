@@ -41,6 +41,7 @@
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
+    check_j = FALSE,
     \dots
   )
 }
@@ -184,6 +185,10 @@
   }
 
   \item{gmc_max}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{check_j}{
     To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 

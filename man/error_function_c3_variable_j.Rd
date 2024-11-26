@@ -36,6 +36,7 @@
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
+    check_j = FALSE,
     \dots
   )
 }
@@ -181,6 +182,11 @@
     acceptable. See below for more details.
   }
 
+  \item{check_j}{
+    A logical (TRUE/FALSE) value indicating whether to check whether
+    \code{J_F > J_tl}. See below for more details.
+  }
+
   \item{\dots}{
     Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
   }
@@ -243,6 +249,14 @@
           argument can be used to address this. If any predicted \code{gmc}
           values exceed \code{gmc_max} when \code{A} is positive, a heavy
           penalty will be added to the error function.
+    \item \code{Enforcing consistent RuBP regeneration rates}: In principle, the
+          actual RuBP regeneration rate (\code{J_F}) should always be less than
+          or equal to its maximum value for a given \code{Qin} and leaf
+          temperature (\code{J_tl}), with equality only occuring when
+          assimilation is RuBP-regeneration-limited. When \code{check_j} is
+          \code{TRUE}, a heavy penalty will be added to the error function for
+          any parameter values where \code{J_F} is greater than \code{J_tl} at
+          any point in the curve.
   }
 
   A penalty is also added for any parameter combination where \code{An} is not a

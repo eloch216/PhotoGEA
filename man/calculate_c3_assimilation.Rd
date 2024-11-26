@@ -462,8 +462,8 @@
           \code{calculate_c3_assimilation} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
-          the following named elements: \code{An}, \code{Ac}, \code{Aj}, and
-          \code{Ap}. Each element is a numeric vector.
+          the following named elements: \code{An}, \code{Ac}, \code{Aj},
+          \code{Ap}, and \code{J_tl}. Each element is a numeric vector.
   }
 }
 

@@ -176,6 +176,6 @@ calculate_c3_variable_j <- function(
             c('calculate_c3_variable_j', 'c3_variable_j_msg',  '')
         )
     } else {
-        return(list(gmc = gmc, Cc = Cc))
+        return(list(gmc = gmc, Cc = Cc, J_F = J_F))
     }
 }

@@ -325,6 +325,6 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'c3_assimilation_msg',   '')
         )
     } else {
-        return(list(An = An, Ac = Ac, Aj = Aj, Ap = Ap, Wc = Wc, Wj = Wj))
+        return(list(An = An, Ac = Ac, Aj = Aj, Ap = Ap, Wc = Wc, Wj = Wj, J_tl = J_tl))
     }
 }

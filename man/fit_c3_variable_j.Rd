@@ -44,6 +44,7 @@
     cj_crossover_max = NA,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
+    check_j = FALSE,
     error_threshold_factor = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
@@ -216,6 +217,10 @@
   }
 
   \item{gmc_max}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{check_j}{
     To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 
