@@ -510,6 +510,21 @@ fit_c3_aci <- function(
         Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
         replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
         replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
+
+        # Document the new columns that were added
+        replicate_identifiers <- document_variables(
+            replicate_identifiers,
+            c('fit_c3_aci', 'gmc_tl_avg_lower',   'mol mol^(-2) s^(-1) bar^(-1)'),
+            c('fit_c3_aci', 'gmc_tl_avg_upper',   'mol mol^(-2) s^(-1) bar^(-1)'),
+            c('fit_c3_aci', 'J_tl_avg_lower',     'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'J_tl_avg_upper',     'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'RL_tl_avg_lower',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'RL_tl_avg_upper',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'Tp_tl_avg_lower',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'Tp_tl_avg_upper',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'Vcmax_tl_avg_lower', 'micromol m^(-2) s^(-1)'),
+            c('fit_c3_aci', 'Vcmax_tl_avg_upper', 'micromol m^(-2) s^(-1)')
+        )
     }
 
     # Return the results, including indicators of unreliable parameter estimates

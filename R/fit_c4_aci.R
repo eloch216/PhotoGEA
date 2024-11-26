@@ -486,6 +486,19 @@ fit_c4_aci <- function(
         Vpmax_tl_scale <- replicate_identifiers[, 'Vpmax_tl_avg'] / replicate_identifiers[, 'Vpmax_at_25']
         replicate_identifiers[, 'Vpmax_tl_avg_lower'] <- replicate_identifiers[, 'Vpmax_at_25_lower'] * Vpmax_tl_scale
         replicate_identifiers[, 'Vpmax_tl_avg_upper'] <- replicate_identifiers[, 'Vpmax_at_25_upper'] * Vpmax_tl_scale
+
+        # Document the new columns that were added
+        replicate_identifiers <- document_variables(
+            replicate_identifiers,
+            c('fit_c4_aci', 'Jmax_tl_avg_lower',  'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'Jmax_tl_avg_upper',  'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'RL_tl_avg_lower',    'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'RL_tl_avg_upper',    'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'Vcmax_tl_avg_lower', 'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'Vcmax_tl_avg_upper', 'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'Vpmax_tl_avg_lower', 'micromol m^(-2) s^(-1)'),
+            c('fit_c4_aci', 'Vpmax_tl_avg_upper', 'micromol m^(-2) s^(-1)')
+        )
     }
 
     # Return the results, including indicators of unreliable parameter estimates
