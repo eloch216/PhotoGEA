@@ -27,7 +27,7 @@ confidence_intervals_c3_variable_j <- function(
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
-    check_j = FALSE,
+    check_j = TRUE,
     ...
 
 )

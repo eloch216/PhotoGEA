@@ -36,7 +36,7 @@ fit_c3_variable_j <- function(
     cj_crossover_max = NA,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
-    check_j = FALSE,
+    check_j = TRUE,
     error_threshold_factor = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,

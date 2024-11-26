@@ -66,7 +66,8 @@ test_that('fit results have not changed (no alpha)', {
         require_positive_gmc = 'all',
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 2,
+        check_j = FALSE
     )
 
     expect_equal(
@@ -112,7 +113,8 @@ test_that('fit results have not changed (alpha_old)', {
         require_positive_gmc = 'all',
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 2,
+        check_j = FALSE
     )
 
     expect_equal(
@@ -158,7 +160,8 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         require_positive_gmc = 'all',
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 2,
+        check_j = FALSE
     )
 
     expect_equal(
@@ -200,7 +203,8 @@ test_that('fit results have not changed (pseudo-FvCB)', {
         one_curve,
         Ca_atmospheric = 420,
         OPTIM_FUN = optimizer_deoptim(200),
-        use_min_A = TRUE
+        use_min_A = TRUE,
+        check_j = FALSE
     )
 
     expect_equal(
@@ -267,7 +271,7 @@ test_that('removing and excluding points produce the same fit results', {
     # Check that results haven't changed
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(246.33, 257.59, 1.92, 0.41, NA, 37.56),
+        c(268.81, 277.21, 1.97, 0.44, NA, 41.90),
         tolerance = TOLERANCE
     )
 
@@ -278,7 +282,7 @@ test_that('removing and excluding points produce the same fit results', {
 
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('RSS', 'RMSE')]),
-        c(6.178, 0.786),
+        c(9.534, 0.976),
         tolerance = TOLERANCE
     )
 
