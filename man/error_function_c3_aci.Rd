@@ -20,7 +20,8 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     a_column_name = 'A',
-    cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -89,9 +90,15 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{cc_column_name}{
+  \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
   }
 
   \item{j_norm_column_name}{
@@ -164,10 +171,10 @@
   When fitting A-Ci curves using a maximum likelihood approach, it is necessary
   to define a function that calculates the likelihood of a given set of
   \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
-  \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
-  \code{Vcmax_at_25} values by comparing a model prediction to a measured curve.
-  This function will be passed to an optimization algorithm which will determine
-  the values that produce the largest likelihood.
+  \code{Gamma_star}, \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, and \code{Vcmax_at_25} values by comparing a model prediction
+  to a measured curve. This function will be passed to an optimization algorithm
+  which will determine the values that produce the largest likelihood.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
@@ -227,17 +234,8 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)

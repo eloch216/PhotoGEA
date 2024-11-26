@@ -582,43 +582,29 @@ licor_data <- remove_points(
 Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
-values of the total pressure, values of the chloroplast CO~2~ concentration
-$C_c$, and temperature-dependent values of important photosynthetic parameters
-such as $\Gamma^*$. However, the `PhotoGEA` package includes three functions to
-help with these calculations: `calculate_total_pressure`, `apply_gm`, and
-`calculate_temperature_response`. Each of these requires an `exdf` object
-containing Licor data. The units for each required column will be checked in an
-attempt to avoid unit-related errors. More information about these functions can
-be obtained from the built-in help system by typing `?calculate_total_pressure`,
-`?apply_gm`, or `?calculate_temperature_response`.
+values of the total pressure and temperature-dependent values of important
+photosynthetic parameters such as $\Gamma^*$. However, the `PhotoGEA` package
+includes two functions to help with these calculations:
+`calculate_total_pressure`, and `calculate_temperature_response`. Each of these
+requires an `exdf` object containing Licor data. The units for each required
+column will be checked in an attempt to avoid unit-related errors. More
+information about these functions can be obtained from the built-in help system
+by typing `?calculate_total_pressure` or `?calculate_temperature_response`.
 
-Another important consideration is that `apply_gm` requires values of the
-mesophyll conductance to CO~2~. Values of mesophyll conductance can be specified
-using the `set_variable` function from `PhotoGEA`. A common choice is to set
-mesophyll conductance to infinity, in which case FvCB model parameters
-determined during the fitting process will be "effective" parameters. Then we
-will calculate values of $C_c$, and use Arrhenius parameters from
-@sharkey_fitting_2007 to calculate the temperature-dependent inputs:
+Here we use temperature response parameters from @sharkey_fitting_2007 to
+calculate the temperature-dependent inputs:
 
 ```{r prepare_for_fitting}
 # Calculate total pressure in the Licor chamber
 licor_data <- calculate_total_pressure(licor_data)
-
-# Specify infinite mesophyll conductance
-licor_data <- set_variable(
-  licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
-# Calculate Cc
-licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_data <- calculate_temperature_response(licor_data, c3_temperature_param_sharkey)
 ```
 
 Together, these functions add several new columns to `licor_data`, including
-`gmc`, `Cc`, `Gamma_star`, and others. With this information, we are now ready
-to perform the fitting procedure. For this operation, we can use the
+`total_pressure`, `Gamma_star`, and others. With this information, we are now
+ready to perform the fitting procedure. For this operation, we can use the
 `fit_c3_aci` function from the `PhotoGEA` package, which fits a single response
 curve to extract the values of key photosynthetic parameters. To apply this
 function to each curve in a larger data set and then consolidate the results, we
@@ -648,7 +634,10 @@ c3_aci_results <- consolidate(by(
 
 Note that in this command, we used the default fitting settings. In this case,
 we will vary all five key photosynthetic parameters: $R_L$, $V_{cmax}$, $J$,
-$T_p$, and $\alpha_{old}$.
+$T_p$, and $\alpha_{old}$. The mesophyll conductance ($g_{mc}$) is set to
+infinity by default, so these fits are made assuming $C_c = C_i$, and hence the
+estimates of $V_{cmax}$ and other parameters should be considered as "effective"
+values rather than chloroplastic values.
 
 ## Viewing the Fitted Curves
 

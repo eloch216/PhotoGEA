@@ -229,13 +229,13 @@ if (PERFORM_CALCULATIONS) {
 
     combined_info[, UNIQUE_ID_COLUMN_NAME] <-
         paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
-    
+
     ###                     ###
     ### EXCLUDE SOME EVENTS ###
     ###                     ###
-    
+
     EVENTS_TO_EXCLUDE <- c("14","11","32","36","53","4","28")
-    
+
     combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
 
     # Factorize ID columns
@@ -344,7 +344,11 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- calculate_total_pressure(combined_info)
 
     # Calculate PCm
-    combined_info <- apply_gm(combined_info, 'C4')
+    combined_info <- apply_gm(
+        combined_info,
+        gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
+        photosynthesis_type = 'C4'
+    )
 
     # Calculate additional gas properties
     combined_info <- calculate_gas_properties(combined_info)

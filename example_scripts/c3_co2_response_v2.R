@@ -197,7 +197,7 @@ licor_data <- organize_response_curve_data(
 if (REQUIRE_STABILITY) {
   # Only keep points where stability was achieved
   licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
-  
+
   # Remove any curves that have fewer than three remaining points
   npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
   ids_to_keep <- names(npts[npts > 2])
@@ -332,7 +332,7 @@ if (MAKE_VALIDATION_PLOTS) {
 licor_data <- if (USE_GM_TABLE) {
   set_variable(
     licor_data,
-    'gmc',
+    'gmc_at_25',
     GM_UNITS,
     'c3_co2_response_v2',
     GM_VALUE,
@@ -342,7 +342,7 @@ licor_data <- if (USE_GM_TABLE) {
 } else {
   set_variable(
     licor_data,
-    'gmc',
+    'gmc_at_25',
     GM_UNITS,
     'c3_co2_response_v2',
     GM_VALUE
@@ -354,9 +354,6 @@ licor_data <- calculate_total_pressure(licor_data)
 
 # Calculate additional gas properties (required for calculate_c3_limitations_grassi)
 licor_data <- calculate_gas_properties(licor_data)
-
-# Calculate Cc
-licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 c3_temperature_param <- if (USE_SOYBEAN_RUBISCO) {
@@ -396,7 +393,8 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420                          # The atmospheric CO2 concentration
+  Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
+  fit_options = list(gmc_at_25 = 'column')
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -734,7 +732,7 @@ if (SAVE_CSV) {
     write.csv(all_samples, file.path(base_dir, "all_samples_plot_avg.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
     write.csv(aci_parameters, file.path(base_dir, "aci_parameters_plot_avg.csv"), row.names=FALSE)
-    
+
     tmp <- by(
       all_samples,
       all_samples$curve_identifier,
@@ -760,7 +758,7 @@ if (SAVE_CSV) {
     write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
     write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)
     write.csv(aci_parameters, file.path(base_dir, "aci_parameters.csv"), row.names=FALSE)
-    
+
     tmp <- by(
       all_samples,
       all_samples$curve_identifier,

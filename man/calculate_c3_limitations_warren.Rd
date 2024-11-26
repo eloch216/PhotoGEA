@@ -245,20 +245,11 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify mesophyll conductance
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 0.5
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate additional gas properties
 licor_file <- calculate_gas_properties(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)

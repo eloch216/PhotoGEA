@@ -660,7 +660,8 @@ licor_data <- calculate_total_pressure(licor_data)
 # Calculate PCm
 licor_data <- apply_gm(
   licor_data,
-  'C4' # Indicate C4 photosynthesis
+  gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
+  photosynthesis_type = 'C4' # Indicate C4 photosynthesis
 )
 ```
 
@@ -827,13 +828,11 @@ value of mesophyll conductance.
 # Get a subset of the data where Ci is below the threshold value
 licor_data_low_ci <- licor_data[licor_data[, 'Ci'] <= 60, , TRUE]
 
-# Set mesophyll conductance to infinity
-licor_data_low_ci[, 'gmc'] <- Inf
-
-# Recalculate PCm after changing mesophyll conductance
+# Recalculate PCm using infinite mesophyll conductance
 licor_data_low_ci <- apply_gm(
   licor_data_low_ci,
-  'C4' # Indicate C4 photosynthesis
+  gmc_at_25 = Inf,
+  photosynthesis_type = 'C4' # Indicate C4 photosynthesis
 )
 
 # The default optimizer uses randomness, so we will set a seed to ensure the
