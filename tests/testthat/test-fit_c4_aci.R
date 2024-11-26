@@ -2,8 +2,8 @@
 source('one_curve_c4_aci.R')
 
 # Calculate PCm
-one_curve <- apply_gm(one_curve, 'C4')
-one_curve_bad <- apply_gm(one_curve_bad, 'C4')
+one_curve <- apply_gm(one_curve, photosynthesis_type = 'C4')
+one_curve_bad <- apply_gm(one_curve_bad, photosynthesis_type = 'C4')
 
 # Choose test tolerance
 TOLERANCE <- 1e-4

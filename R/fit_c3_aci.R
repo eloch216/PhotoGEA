@@ -1,9 +1,9 @@
 # Specify default fit settings
-c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  alpha_t = 0,  Gamma_star = -20,      J_at_25 = -50,   RL_at_25 = -10,   Tp_at_25 = -10,   Vcmax_at_25 = -50)
-c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, alpha_t = 10, Gamma_star = 200,      J_at_25 = 1000,  RL_at_25 = 100,   Tp_at_25 = 100,   Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  alpha_t = 0,  Gamma_star = 'column', J_at_25 = 'fit', RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  alpha_t = 0,  Gamma_star = -20,      gmc = -1,  J_at_25 = -50,   RL_at_25 = -10,   Tp_at_25 = -10,   Vcmax_at_25 = -50)
+c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, alpha_t = 10, Gamma_star = 200,      gmc = 10,  J_at_25 = 1000,  RL_at_25 = 100,   Tp_at_25 = 100,   Vcmax_at_25 = 1000)
+c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  alpha_t = 0,  Gamma_star = 'column', gmc = Inf, J_at_25 = 'fit', RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
 
-c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'alpha_t', 'Gamma_star', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Vcmax_at_25')
+c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'alpha_t', 'Gamma_star', 'gmc', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Vcmax_at_25')
 
 # Fitting function
 fit_c3_aci <- function(
@@ -11,7 +11,6 @@ fit_c3_aci <- function(
     Ca_atmospheric = NA,
     a_column_name = 'A',
     ca_column_name = 'Ca',
-    cc_column_name = 'Cc',
     ci_column_name = 'Ci',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
@@ -58,7 +57,7 @@ fit_c3_aci <- function(
         curvature_cj,
         curvature_cjp,
         a_column_name,
-        cc_column_name,
+        ci_column_name,
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
@@ -77,7 +76,6 @@ fit_c3_aci <- function(
     # most units have already been chcked by error_function_c3_aci
     required_variables <- list()
     required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -100,26 +98,31 @@ fit_c3_aci <- function(
     }
 
     # Get an initial guess for all the parameter values
-    alpha_g_guess <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
-    alpha_s_guess <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
-    alpha_t_guess <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
+    alpha_g_guess    <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
+    alpha_old_guess  <- if (fit_options$alpha_old == 'fit') {0.5}                     else {fit_options$alpha_old}
+    alpha_s_guess    <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
+    alpha_t_guess    <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
+    gamma_star_guess <- if (fit_options$Gamma_star == 'fit') {40}                     else {fit_options$Gamma_star}
+    gmc_guess        <- if (fit_options$gmc == 1.0) {Inf}                             else {fit_options$gmc}
 
     initial_guess_fun <- initial_guess_c3_aci(
         alpha_g_guess,
-        if (fit_options$alpha_old == 'fit') {0.5} else {fit_options$alpha_old}, # alpha_old
+        alpha_old_guess,
         alpha_s_guess,
         alpha_t_guess,
-        if (fit_options$Gamma_star == 'fit') {40}  else {fit_options$Gamma_star}, # Gamma_star
+        gamma_star_guess,
+        gmc_guess,
         100, # cc_threshold_rd
         atp_use,
         nadph_use,
         a_column_name,
-        cc_column_name,
+        ci_column_name,
         j_norm_column_name,
         kc_column_name,
         ko_column_name,
         oxygen_column_name,
         rl_norm_column_name,
+        total_pressure_column_name,
         tp_norm_column_name,
         vcmax_norm_column_name
     )
@@ -138,18 +141,33 @@ fit_c3_aci <- function(
     best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
 
+    # Get the corresponding values of Cc at the best guess
+    replicate_exdf <- apply_gm(
+        replicate_exdf,
+        best_X[6], # gmc
+        'C3',
+        TRUE,
+        a_column_name,
+        ca_column_name,
+        ci_column_name,
+        total_pressure_column_name,
+        perform_checks = FALSE
+    )
+
+    cc_column_name <- 'Cc'
+
     # Get the corresponding values of An at the best guess
     aci <- calculate_c3_assimilation(
         replicate_exdf,
-        best_X[1], # alpha_g
-        best_X[2], # alpha_old
-        best_X[3], # alpha_s
-        best_X[4], # alpha_t
-        best_X[5], # Gamma_star
-        best_X[6], # J_at_25
-        best_X[7], # RL_at_25
-        best_X[8], # Tp_at_25
-        best_X[9], # Vcmax_at_25
+        best_X[1],  # alpha_g
+        best_X[2],  # alpha_old
+        best_X[3],  # alpha_s
+        best_X[4],  # alpha_t
+        best_X[5],  # Gamma_star
+        best_X[7],  # J_at_25
+        best_X[8],  # RL_at_25
+        best_X[9],  # Tp_at_25
+        best_X[10], # Vcmax_at_25
         atp_use,
         nadph_use,
         curvature_cj,
@@ -192,15 +210,15 @@ fit_c3_aci <- function(
     # Estimate An at the operating point
     operating_An_model <- calculate_c3_assimilation(
         operating_point_info$operating_exdf,
-        best_X[1], # alpha_g
-        best_X[2], # alpha_old
-        best_X[3], # alpha_s
-        best_X[4], # alpha_t
-        best_X[5], # Gamma_star
-        best_X[6], # J_at_25
-        best_X[7], # RL_at_25
-        best_X[8], # Tp_at_25
-        best_X[9], # Vcmax_at_25
+        best_X[1],  # alpha_g
+        best_X[2],  # alpha_old
+        best_X[3],  # alpha_s
+        best_X[4],  # alpha_t
+        best_X[5],  # Gamma_star
+        best_X[7],  # J_at_25
+        best_X[8],  # RL_at_25
+        best_X[9],  # Tp_at_25
+        best_X[10], # Vcmax_at_25
         atp_use,
         nadph_use,
         curvature_cj,
@@ -235,8 +253,8 @@ fit_c3_aci <- function(
             'RL_at_25',
             'Tp_at_25',
             'Vcmax_at_25',
-            cc_column_name,
             ci_column_name,
+            cc_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
@@ -345,10 +363,11 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'alpha_s']     <- best_X[3]
     replicate_identifiers[, 'alpha_t']     <- best_X[4]
     replicate_identifiers[, 'Gamma_star']  <- best_X[5]
-    replicate_identifiers[, 'J_at_25']     <- best_X[6]
-    replicate_identifiers[, 'RL_at_25']    <- best_X[7]
-    replicate_identifiers[, 'Tp_at_25']    <- best_X[8]
-    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[9]
+    replicate_identifiers[, 'gmc']         <- best_X[6]
+    replicate_identifiers[, 'J_at_25']     <- best_X[7]
+    replicate_identifiers[, 'RL_at_25']    <- best_X[8]
+    replicate_identifiers[, 'Tp_at_25']    <- best_X[9]
+    replicate_identifiers[, 'Vcmax_at_25'] <- best_X[10]
 
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
@@ -389,7 +408,7 @@ fit_c3_aci <- function(
             curvature_cj,
             curvature_cjp,
             a_column_name,
-            cc_column_name,
+            ci_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,
@@ -413,6 +432,7 @@ fit_c3_aci <- function(
         c('fit_c3_aci',               'alpha_s',             'dimensionless'),
         c('fit_c3_aci',               'alpha_t',             'dimensionless'),
         c('fit_c3_aci',               'Gamma_star',          'micromol mol^(-1)'),
+        c('fit_c3_aci',               'gmc',                 'mol mol^(-2) s^(-1) bar^(-1)'),
         c('fit_c3_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
@@ -447,7 +467,7 @@ fit_c3_aci <- function(
             curvature_cj,
             curvature_cjp,
             a_column_name,
-            cc_column_name,
+            ci_column_name,
             j_norm_column_name,
             kc_column_name,
             ko_column_name,

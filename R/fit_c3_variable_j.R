@@ -109,16 +109,18 @@ fit_c3_variable_j <- function(
     }
 
     # Get an initial guess for all the parameter values
-    alpha_g_guess <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
-    alpha_s_guess <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
-    alpha_t_guess <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
+    alpha_g_guess    <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
+    alpha_old_guess  <- if (fit_options$alpha_old == 'fit') {0.5}                     else {fit_options$alpha_old}
+    alpha_s_guess    <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
+    alpha_t_guess    <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
+    gamma_star_guess <- if (fit_options$Gamma_star == 'fit') {40}                     else {fit_options$Gamma_star}
 
     initial_guess_fun <- initial_guess_c3_variable_j(
         alpha_g_guess,
-        if (fit_options$alpha_old == 'fit') {0.5} else {fit_options$alpha_old}, # alpha_old
+        alpha_old_guess,
         alpha_s_guess,
         alpha_t_guess,
-        if (fit_options$Gamma_star == 'fit') {40} else {fit_options$Gamma_star}, # Gamma_star
+        gamma_star_guess,
         100, # cc_threshold_rd
         atp_use,
         nadph_use,
@@ -132,6 +134,7 @@ fit_c3_variable_j <- function(
         phips2_column_name,
         qin_column_name,
         rl_norm_column_name,
+        total_pressure_column_name,
         tp_norm_column_name,
         vcmax_norm_column_name
     )

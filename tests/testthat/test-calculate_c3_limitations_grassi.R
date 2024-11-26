@@ -53,25 +53,9 @@ test_that('limitations add to 1', {
 # Get test curve to use
 source('one_curve_c3_aci.R')
 
-# Specify mesophyll conductance
-one_curve <- set_variable(
-  one_curve,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
-)
-
-one_curve_bad <- set_variable(
-  one_curve_bad,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
-)
-
-# Calculate Cc
-one_curve <- apply_gm(one_curve)
-one_curve_bad <- apply_gm(one_curve_bad)
-
 # Calculate additional gas properties
 one_curve <- calculate_gas_properties(one_curve)
 one_curve_bad <- calculate_gas_properties(one_curve_bad)
-
 
 test_that('fit failures are handled properly', {
     # Set a seed before fitting since there is randomness involved with the
@@ -102,7 +86,7 @@ test_that('fit results have not changed', {
         one_curve,
         Ca_atmospheric = 420,
         optim_fun = optimizer_nmkb(1e-7),
-        fit_options = list(alpha_old = 0),
+        fit_options = list(alpha_old = 0, gmc = 1.0),
         calculate_confidence_intervals = FALSE,
         remove_unreliable_param = 0
     )

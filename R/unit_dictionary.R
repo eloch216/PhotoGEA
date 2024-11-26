@@ -27,6 +27,7 @@ unit_dictionary <- list(
     Flow           = 'micromol s^(-1)',
     Gamma_star     = micromol_fraction,
     gbs            = conductance_bar,
+    gmc            = conductance_bar,
     gsw            = conductance,
     H2O_r          = millimol_fraction,
     H2O_s          = millimol_fraction,

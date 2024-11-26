@@ -1,15 +1,6 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-one_curve <- set_variable(
-  one_curve,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
-# Calculate Cc
-one_curve <- apply_gm(one_curve)
-
 test_that('the nmkb optimizer works', {
     set.seed(1234)
 

@@ -1,21 +1,6 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-one_curve <- set_variable(
-  one_curve,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
-one_curve_bad <- set_variable(
-  one_curve_bad,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
-# Calculate Cc
-one_curve <- apply_gm(one_curve)
-one_curve_bad <- apply_gm(one_curve_bad)
-
 # Choose test tolerance
 TOLERANCE <- 1e-4
 
