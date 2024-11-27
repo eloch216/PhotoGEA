@@ -77,54 +77,67 @@ error_function_c3_aci <- function(
     # Retrieve values of flexible parameters as necessary
     if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
 
-    # Make a temporary copy of replicate_exdf to use for fitting, and set its
-    # Cc column to NA
-    fitting_exdf <- replicate_exdf
-
+    # Make a temporary copy of replicate_exdf to use for fitting. If we are not
+    # fitting gmc, we can just calculate Cc right now. Otherwise, set the Cc
+    # column to NA
     cc_column_name <- 'Cc'
+    fit_gmc <- fit_options[['gmc_at_25']] == 'fit'
 
-    fitting_exdf <- set_variable(
-        fitting_exdf,
-        cc_column_name,
-        'micromol mol^(-1)',
-        NA
-    )
+    fitting_exdf <- if (fit_gmc) {
+        set_variable(
+            replicate_exdf,
+            cc_column_name,
+            'micromol mol^(-1)',
+            NA
+        )
+    } else {
+        apply_gm(
+            replicate_exdf,
+            fit_options[['gmc_at_25']],
+            'C3',
+            FALSE,
+            a_column_name,
+            '',
+            ci_column_name,
+            gmc_norm_column_name,
+            total_pressure_column_name
+        )
+    }
 
     # Create and return the error function
     function(guess) {
         X <- fit_options_vec
         X[param_to_fit] <- guess
 
-        # Use a 1D diffusion equation to calculate Cc. TO-DO: when we are not
-        # fitting gmc, it isn't necessary to repeat this calculation for every
-        # guess, since gmc and Cc will always be the same. Find a way to bypass
-        # this when we aren't fitting gmc.
-        cc <- tryCatch(
-            {
-                apply_gm(
-                    fitting_exdf,
-                    X[6], # gmc
-                    'C3',
-                    FALSE,
-                    a_column_name,
-                    '',
-                    ci_column_name,
-                    total_pressure_column_name,
-                    gmc_norm_column_name,
-                    perform_checks = FALSE,
-                    return_exdf = FALSE
-                )
-            },
-            error = function(e) {
-                NULL
+        # If we are fitting gmc, use a 1D diffusion equation to calculate Cc.
+        if (fit_gmc) {
+            cc <- tryCatch(
+                {
+                    apply_gm(
+                        fitting_exdf,
+                        X[6], # gmc
+                        'C3',
+                        FALSE,
+                        a_column_name,
+                        '',
+                        ci_column_name,
+                        total_pressure_column_name,
+                        gmc_norm_column_name,
+                        perform_checks = FALSE,
+                        return_exdf = FALSE
+                    )
+                },
+                error = function(e) {
+                    NULL
+                }
+            )
+
+            if (is.null(cc) || any(is.na(cc$internal_c))) {
+                return(ERROR_PENALTY)
             }
-        )
 
-        if (is.null(cc) || any(is.na(cc$internal_c))) {
-            return(ERROR_PENALTY)
+            fitting_exdf[, cc_column_name] <- cc$internal_c
         }
-
-        fitting_exdf[, cc_column_name] <- cc$internal_c
 
         assim <- tryCatch(
             {
