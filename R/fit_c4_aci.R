@@ -35,7 +35,7 @@ fit_c4_aci <- function(
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2
@@ -447,7 +447,7 @@ fit_c4_aci <- function(
             upper,
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
-            error_threshold_factor,
+            relative_likelihood_threshold,
             absorptance,
             f_spectral,
             rho,

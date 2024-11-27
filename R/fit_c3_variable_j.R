@@ -37,7 +37,7 @@ fit_c3_variable_j <- function(
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
     check_j = TRUE,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2,
@@ -547,7 +547,7 @@ fit_c3_variable_j <- function(
             upper,
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
-            error_threshold_factor,
+            relative_likelihood_threshold,
             atp_use,
             nadph_use,
             curvature_cj,

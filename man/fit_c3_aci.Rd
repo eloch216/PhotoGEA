@@ -2,15 +2,26 @@
 
 \alias{fit_c3_aci}
 
-\title{Fits a C3 assimilation model to an experimental curve}
+\title{Fits a C3 assimilation model to an A-Ci curve}
 
 \description{
-  Fits a model to an experimentally measured C3 CO2 response curve using the
-  data in the \code{exdf} object along with a few other user-supplied
-  parameters. This function can accomodate alternative column names for the
-  variables taken from the Licor file in case they change at some point in the
-  future. This function also checks the units of each required column and will
-  produce an error if any units are incorrect.
+  Fits the Farquhar-von-Caemmerer-Berry model to an experimentally measured C3
+  A-Ci curve.
+
+  It is possible to fit the following parameters: \code{alpha_g},
+  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{gamma_star},
+  \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25}.
+
+  Best-fit parameters are found using maximum likelihood fitting, where the
+  optimizer (\code{optim_fun}) is used to minimize the error function (defined
+  by \code{\link{error_function_c3_aci}}).
+
+  Once best-fit parameters are found, confidence intervals are calculated
+  using \code{\link{confidence_intervals_c3_aci}}, and unreliable parameter
+  estimates are removed.
+
+  See below for more details.
 }
 
 \usage{
@@ -40,7 +51,7 @@
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2,
@@ -198,7 +209,7 @@
     restriction will not be applied.
   }
 
-  \item{error_threshold_factor}{
+  \item{relative_likelihood_threshold}{
     To be passed to \code{\link{confidence_intervals_c3_aci}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
   }

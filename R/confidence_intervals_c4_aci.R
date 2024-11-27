@@ -5,7 +5,7 @@ confidence_intervals_c4_aci <- function(
     upper = list(),
     fit_options = list(),
     sd_A = 1,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     absorptance = 0.85,
     f_spectral = 0.15,
     rho = 0.5,
@@ -72,7 +72,7 @@ confidence_intervals_c4_aci <- function(
         error_function,
         best_fit_parameters,
         luf,
-        error_threshold_factor,
+        relative_likelihood_threshold,
         'confidence_intervals_c4_aci'
     )
 }

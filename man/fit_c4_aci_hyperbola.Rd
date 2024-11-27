@@ -5,12 +5,19 @@
 \title{Fits a hyperbolic C4 assimilation model to an experimental curve}
 
 \description{
-  Fits a model to an experimentally measured C4 CO2 response curve using the
-  data in the \code{exdf} object along with a few other user-supplied
-  parameters. This function can accomodate alternative column names for the
-  variables taken from the Licor file in case they change at some point in the
-  future. This function also checks the units of each required column and will
-  produce an error if any units are incorrect.
+  Fits an empirical hyperbola model to an experimentally measured C4 A-Ci curve.
+
+  It is possible to fit the following parameters: \code{c4_curvature},
+  \code{c4_slope}, \code{rL}, and \code{Vmax}.
+
+  Best-fit parameters are found using maximum likelihood fitting, where the
+  optimizer (\code{optim_fun}) is used to minimize the error function (defined
+  by \code{\link{error_function_c4_aci_hyperbola}}).
+
+  Once best-fit parameters are found, confidence intervals are calculated
+  using \code{\link{confidence_intervals_c4_aci_hyperbola}}.
+
+  See below for more details.
 }
 
 \usage{
@@ -23,7 +30,7 @@
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE
   )
@@ -86,7 +93,7 @@
     column of \code{replicate_exdf}.
   }
 
-  \item{error_threshold_factor}{
+  \item{relative_likelihood_threshold}{
     To be passed to \code{\link{confidence_intervals_c4_aci_hyperbola}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
   }
@@ -132,7 +139,7 @@
   get stuck in local minima. If it seems to be returning bad fits, consider
   using the \code{\link{optimizer_deoptim}} optimizer instead, but be aware that
   the fits will take more time to complete.
-  
+
   Unlike the model represented by \code{\link{calculate_c4_assimilation}}, the
   model in \code{\link{calculate_c4_assimilation_hyperbola}} is smooth in the
   sense that small changes in the input parameters cause small changes in its
