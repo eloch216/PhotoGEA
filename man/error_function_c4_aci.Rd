@@ -232,7 +232,11 @@ licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate PCm
-licor_file <- apply_gm(licor_file, 'C4')
+licor_file <- apply_gm(
+  licor_file,
+  gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
+  photosynthesis_type = 'C4'
+)
 
 # Define an error function for one curve from the set
 error_fcn <- error_function_c4_aci(

@@ -262,9 +262,10 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
+    x <- apply_gm(x, param[6])
     calculate_c3_assimilation(
       x,
-      param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[8], param[9]
+      param[1], param[2], param[3], param[4], param[5], param[7], param[8], param[9], param[10]
     )
   }
 ))

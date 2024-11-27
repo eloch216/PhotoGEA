@@ -229,7 +229,11 @@ licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate PCm
-licor_file <- apply_gm(licor_file, 'C4')
+licor_file <- apply_gm(
+  licor_file,
+  gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
+  photosynthesis_type = 'C4'
+)
 
 # Create the guessing function, using typical values for the alpha_psii, gbs,
 # and Rm_frac: 0, 0.003, and 0.5

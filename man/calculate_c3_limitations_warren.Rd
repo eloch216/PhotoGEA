@@ -72,7 +72,7 @@
   \item{cc_column_name}{
     The name of the column in \code{exdf_obj} that contains the chloroplastic
     CO2 concentration in \code{micromol mol^(-1)}. Typically these are
-    calculated using \code{\link{apply_gm}}.
+    values that are automatically calculated by \code{\link{fit_c3_aci}}.
   }
 
   \item{ci_column_name}{

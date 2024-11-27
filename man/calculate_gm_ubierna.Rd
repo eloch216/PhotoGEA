@@ -236,6 +236,18 @@ licor_data <- set_variable(
 licor_data <- calculate_gm_ubierna(licor_data)
 
 # Calculate Cc using the new values of mesophyll conductance
+licor_data <- calculate_temperature_response(
+  licor_data,
+  c3_temperature_param_flat['gmc_norm']
+)
+
+licor_data <- set_variable(
+  licor_data,
+  'gmc_at_25',
+  units = licor_data$units$gmc,
+  value = licor_data[, 'gmc']
+)
+
 licor_data <- apply_gm(licor_data)
 
 # View some of the results
