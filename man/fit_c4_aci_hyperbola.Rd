@@ -10,6 +10,8 @@
   It is possible to fit the following parameters: \code{c4_curvature},
   \code{c4_slope}, \code{rL}, and \code{Vmax}.
 
+  By default, all of these parameters are fit.
+
   Best-fit parameters are found using maximum likelihood fitting, where the
   optimizer (\code{optim_fun}) is used to minimize the error function (defined
   by \code{\link{error_function_c4_aci_hyperbola}}).
