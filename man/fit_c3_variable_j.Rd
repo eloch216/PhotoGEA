@@ -13,6 +13,11 @@
   \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
   \code{Vcmax_at_25}.
 
+  By default, only a subset of these parameters are actually fit:
+  \code{alpha_old}, \code{J_at_25}, \code{RL_at_25}, \code{tau},
+  \code{Tp_at_25}, and \code{Vcmax_at_25}. This can be altered using the
+  \code{fit_options} argument, as described below.
+
   Best-fit parameters are found using maximum likelihood fitting, where the
   optimizer (\code{optim_fun}) is used to minimize the error function (defined
   by \code{\link{error_function_c3_variable_j}}).
@@ -20,6 +25,9 @@
   Once best-fit parameters are found, confidence intervals are calculated
   using \code{\link{confidence_intervals_c3_variable_j}}, and unreliable
   parameter estimates are removed.
+
+  For temperature-dependent parameters, best-fit values and confidence intervals
+  are returned at 25 degrees C and at leaf temperature.
 
   See below for more details.
 }

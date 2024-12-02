@@ -4,10 +4,6 @@ source('one_curve_c4_aci.R')
 # Load helping function
 source('get_duplicated_colnames.R')
 
-# Calculate PCm
-one_curve <- apply_gm(one_curve, gmc_at_25 = 1, photosynthesis_type = 'C4')
-one_curve_bad <- apply_gm(one_curve_bad, gmc_at_25 = 1, photosynthesis_type = 'C4')
-
 # Choose test tolerance
 TOLERANCE <- 1e-4
 
@@ -199,6 +195,67 @@ test_that('fit results have not changed (Jmax)', {
         c(2, 1, 0, 2)
     )
 })
+
+test_that('fit results have not changed (gmc with temperature dependence)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c4_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        fit_options = list(gmc_at_25 = 'fit'),
+        optim_fun = optimizer_nmkb(1e-7),
+        hard_constraints = 2,
+        calculate_confidence_intervals = TRUE,
+        remove_unreliable_param = 2
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'gmc_at_25', 'AIC')]),
+        c(42.177755, 114.264158, 3.029476, 9.999997, 75.003441),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper', 'gmc_at_25_upper')]),
+        c(43.925521, 124.343968, 4.295661, Inf),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_tl_avg', 'Vpmax_tl_avg', 'RL_tl_avg', 'gmc_tl_avg')]),
+        c(73.155628, 162.740193, 4.841121, 14.212310),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_tl_avg_lower', 'Vpmax_tl_avg_lower', 'RL_tl_avg_lower', 'gmc_tl_avg_lower')]),
+        c(70.179640, 149.671916, 2.812345, 4.772084),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 4, 9)
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        c(2, 2, 0, 0)
+    )
+})
+
 
 test_that('removing and excluding points produce the same fit results', {
     pts_to_remove <- c(3, 5, 13)

@@ -115,7 +115,7 @@ error_function_c3_aci <- function(
                 {
                     apply_gm(
                         fitting_exdf,
-                        X[6], # gmc
+                        X[6], # gmc_at_25
                         'C3',
                         FALSE,
                         a_column_name,

@@ -10,8 +10,9 @@
   modeled and measured \code{An} values. When this function is minimized, the
   likelihood is maximized.
 
-  Internally, this function uses \code{link{calculate_c3_assimilation}} to
-  calculate assimilation rate values that are compared to the measured ones.
+  Internally, this function uses \code{\link{apply_gm}} to calculate \code{Cc},
+  and then uses \code{link{calculate_c3_assimilation}} to calculate assimilation
+  rate values that are compared to the measured ones.
 }
 
 \usage{

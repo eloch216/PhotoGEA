@@ -348,6 +348,18 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_tl_avg', 'J_tl_avg', 'RL_tl_avg', 'Tp_tl_avg', 'gmc_tl_avg')]),
+        c(210.40741, 319.61101, 3.06379, 58.43600, 13.58767),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_tl_avg_lower', 'J_tl_avg_lower', 'RL_tl_avg_lower', 'Tp_tl_avg_lower', 'gmc_tl_avg_lower')]),
+        c(199.507529, 310.836478, 2.024810, 21.909000, 2.266986),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
         c(13, 6, 7)
     )

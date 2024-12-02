@@ -10,8 +10,9 @@
   modeled and measured \code{An} values. When this function is minimized, the
   likelihood is maximized.
 
-  Internally, this function uses \code{link{calculate_c4_assimilation}} to
-  calculate assimilation rate values that are compared to the measured ones.
+  Internally, this function uses \code{\link{apply_gm}} to calculate \code{Cc},
+  and then uses \code{link{calculate_c4_assimilation}} to calculate assimilation
+  rate values that are compared to the measured ones.
 }
 
 \usage{
@@ -24,15 +25,16 @@
     rho = 0.5,
     theta = 0.7,
     x_etr = 0.4,
-    ao_column_name = 'ao',
     a_column_name = 'A',
+    ao_column_name = 'ao',
+    ci_column_name = 'Ci',
     gamma_star_column_name = 'gamma_star',
+    gmc_norm_column_name = 'gmc_norm',
     jmax_norm_column_name = 'Jmax_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -95,19 +97,30 @@
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
   }
 
-  \item{ao_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    dimensionless ratio of solubility and diffusivity of O2 to CO2.
-  }
-
   \item{a_column_name}{
     The name of the column in \code{replicate_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
+  \item{ao_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    dimensionless ratio of solubility and diffusivity of O2 to CO2.
+  }
+
+  \item{ci_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
   \item{gamma_star_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     dimensionless \code{gamma_star} values.
+  }
+
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
   }
 
   \item{jmax_norm_column_name}{
@@ -136,11 +149,6 @@
     The name of the column in \code{exdf_obj} that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
     the units must be \code{percent}.
-  }
-
-  \item{pcm_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the partial
-    pressure of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
   \item{qin_column_name}{
@@ -180,10 +188,11 @@
 \details{
   When fitting A-Ci curves, it is necessary to define a function that calculates
   the likelihood of a given set of \code{alpha_psii}, \code{gbs},
-  \code{Jmax_at_25}, \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
-  \code{Vpmax_at_25}, and \code{Vpr} values by comparing a model prediction to a
-  measured curve. This function will be passed to an optimization algorithm
-  which will determine the values that produce the smallest error.
+  \code{gmc_at_25}, \code{Jmax_at_25}, \code{RL_at_25}, \code{Rm_frac},
+  \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} values by comparing a
+  model prediction to a measured curve. This function will be passed to an
+  optimization algorithm which will determine the values that produce the
+  smallest error.
 
   The \code{error_function_c4_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
@@ -234,13 +243,6 @@ licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate PCm
-licor_file <- apply_gm(
-  licor_file,
-  gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
-  photosynthesis_type = 'C4'
-)
 
 # Define an error function for one curve from the set
 error_fcn <- error_function_c4_aci(

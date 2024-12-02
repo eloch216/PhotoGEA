@@ -90,6 +90,8 @@ be directly added to this file to describe the related changes.
 - The C3 assimilation model and C3 A-Ci fits have been updated to include:
   - Another parameter related to TPU (`alpha_t`)
   - Mesophyll conductance (`gmc_at_25`)
+- The C4 A-Ci fits have also been updated to include mesophyll conductance
+  (`gmc_at_25`)
 - Revamped the Laisk fitting function:
   - Renamed the function from `calculate_RL_laisk` to `fit_laisk` since a
     fitting procedure is used, and the method also estimates `Ci_star` in

@@ -105,7 +105,7 @@ fit_c3_aci <- function(
     alpha_s_guess    <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
     alpha_t_guess    <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
     gamma_star_guess <- if (fit_options$Gamma_star == 'fit') {40}                     else {fit_options$Gamma_star}
-    gmc_guess        <- if (fit_options$gmc == 'fit') {1.0}                           else {fit_options$gmc_at_25}
+    gmc_guess        <- if (fit_options$gmc_at_25 == 'fit') {1.0}                     else {fit_options$gmc_at_25}
 
     initial_guess_fun <- initial_guess_c3_aci(
         alpha_g_guess,

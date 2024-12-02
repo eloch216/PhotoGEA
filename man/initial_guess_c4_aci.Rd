@@ -17,6 +17,7 @@
   initial_guess_c4_aci(
     alpha_psii,
     gbs,
+    gmc_at_25,
     Rm_frac,
     pcm_threshold_rlm = 40,
     absorptance = 0.85,
@@ -25,11 +26,13 @@
     theta = 0.7,
     x_etr = 0.4,
     a_column_name = 'A',
+    ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     jmax_norm_column_name = 'Jmax_norm',
     kp_column_name = 'Kp',
-    pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
   )
@@ -39,25 +42,33 @@
   \item{alpha_psii}{
     The fraction of photosystem II activity in the bundle sheath
     (\code{dimensionless}). If \code{alpha_psii} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{alpha_psii} with
+    must be a column in \code{rc_exdf} called \code{alpha_psii} with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{alpha_psii} column of \code{exdf_obj} if it exists.
+    in the \code{alpha_psii} column of \code{rc_exdf} if it exists.
   }
 
   \item{gbs}{
     The bundle sheath conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
     If \code{gbs} is not a number, then there must be a column in
-    \code{exdf_obj} called \code{gbs} with appropriate units. A numeric value
+    \code{rc_exdf} called \code{gbs} with appropriate units. A numeric value
     supplied here will overwrite the values in the \code{gbs} column of
-    \code{exdf_obj} if it exists.
+    \code{rc_exdf} if it exists.
+  }
+
+  \item{gmc_at_25}{
+    The mesophyll conductance to CO2 diffusion at 25 degrees C, expressed in
+    \code{mol m^(-2) s^(-1) bar^(-1)}. If \code{gmc_at_25} is not a number, then
+    there must be a column in \code{rc_exdf} called \code{gmc_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{gmc_at_25} column of \code{rc_exdf} if it exists.
   }
 
   \item{Rm_frac}{
     The fraction of the total mitochondrial respiration that occurs in the
     mesophyll. If \code{Rm_frac} is not a number, then there must be a column in
-    \code{exdf_obj} called \code{Rm_frac} with appropriate units. A numeric
+    \code{rc_exdf} called \code{Rm_frac} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{Rm_frac} column
-    of \code{exdf_obj} if it exists.
+    of \code{rc_exdf} if it exists.
   }
 
   \item{pcm_threshold_rlm}{
@@ -91,45 +102,56 @@
   }
 
   \item{a_column_name}{
-    The name of the column in \code{licor_exdf} that contains the net
+    The name of the column in \code{rc_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
+  \item{ci_column_name}{
+    The name of the column in \code{rc_exdf} that contains the
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
+  }
+
   \item{jmax_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{Jmax} values (with units of
     \code{normalized to Jmax at 25 degrees C}).
   }
 
   \item{kp_column_name}{
-    The name of the column in \code{exdf_obj} that contains the Michaelis-Menten
+    The name of the column in \code{rc_exdf} that contains the Michaelis-Menten
     constant for PEP carboxylase carboxylation in \code{microbar}.
   }
 
-  \item{pcm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the partial pressure
-    of CO2 in the mesophyll, expressed in \code{microbar}.
-  }
-
   \item{qin_column_name}{
-    The name of the column in \code{exdf_obj} that contains values of the
+    The name of the column in \code{rc_exdf} that contains values of the
     incident photosynthetically active flux density in
     \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rl_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
+  \item{total_pressure_column_name}{
+    The name of the column in \code{rc_exdf} that contains the total pressure
+    in \code{bar}.
+  }
+
   \item{vcmax_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
   }
 
   \item{vpmax_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{rc_exdf} that contains the normalized
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
   }
@@ -139,12 +161,13 @@
   Here we estimate values of \code{Jmax_at_25}, \code{RL_at_25},
   \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} from a measured C4 CO2
   response curve. It is difficult to estimate values of \code{alpha_psii},
-  \code{gbs}, and \code{Rm_frac} from a curve, so they must be supplied
-  beforehand. For more information about these parameters, see the documentation
-  for \code{\link{calculate_c4_assimilation}}. To estimate these parameter
-  values, we use several equations from S. von Caemmerer, "Biochemical Models of
-  Leaf Photosynthesis" (CSIRO Publishing, 2000) [\doi{10.1071/9780643103405}].
-  Any equation numbers referenced below are from this book.
+  \code{gbs}, \code{gmc_at_25}, and \code{Rm_frac} from a curve, so they must be
+  supplied beforehand. For more information about these parameters, see the
+  documentation for \code{\link{calculate_c4_assimilation}}. To estimate these
+  parameter values, we use several equations from S. von Caemmerer, "Biochemical
+  Models of Leaf Photosynthesis" (CSIRO Publishing, 2000)
+  [\doi{10.1071/9780643103405}]. Any equation numbers referenced below are from
+  this book.
 
   \itemize{
     \item \strong{Estimating RL}: An estimate for \code{RLm} can be obtained
@@ -228,16 +251,9 @@ licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
-# Calculate PCm
-licor_file <- apply_gm(
-  licor_file,
-  gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
-  photosynthesis_type = 'C4'
-)
-
 # Create the guessing function, using typical values for the alpha_psii, gbs,
-# and Rm_frac: 0, 0.003, and 0.5
-guessing_func <- initial_guess_c4_aci(0, 0.003, 0.5)
+# gmc_at_25, and Rm_frac: 0, 0.003, 1, and 0.5
+guessing_func <- initial_guess_c4_aci(0, 0.003, 1, 0.5)
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -249,15 +265,16 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
+    x <- apply_gm(x, param[3], 'C4')
     calculate_c4_assimilation(
       x,
-      param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[8]
+      param[1], param[2], param[4], param[5], param[6], param[7], param[8], param[9]
     )
   }
 ))
 
 lattice::xyplot(
-  A + Apr + Apc + Ar + Ajm + Ajbs + An ~ PCm | species_plot,
+  A + Apr + Apc + Ar + Ajm + Ajbs + An ~ Ci | species_plot,
   data = cbind(licor_file, calculated_aci)$main_data,
   type = 'b',
   auto = TRUE,

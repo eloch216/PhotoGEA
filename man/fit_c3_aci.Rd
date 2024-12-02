@@ -13,6 +13,11 @@
   \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
   \code{Vcmax_at_25}.
 
+  By default, only a subset of these parameters are actually fit:
+  \code{alpha_old}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25}. This can be altered using the \code{fit_options} argument,
+  as described below.
+
   Best-fit parameters are found using maximum likelihood fitting, where the
   optimizer (\code{optim_fun}) is used to minimize the error function (defined
   by \code{\link{error_function_c3_aci}}).
@@ -20,6 +25,9 @@
   Once best-fit parameters are found, confidence intervals are calculated
   using \code{\link{confidence_intervals_c3_aci}}, and unreliable parameter
   estimates are removed.
+
+  For temperature-dependent parameters, best-fit values and confidence intervals
+  are returned at 25 degrees C and at leaf temperature.
 
   See below for more details.
 }
@@ -237,13 +245,14 @@
 }
 
 \details{
-  This function calls \code{\link{calculate_c3_assimilation}} to calculate
-  values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-  \code{alpha_t}, \code{gamma_star}, \code{gmc_at_25}, \code{J_at_25},
-  \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25} to find ones that
-  best reproduce the experimentally measured values of net assimilation. By
-  default, the following options are used for the fits:
+  This function calls \code{\link{apply_gm}} and
+  \code{\link{calculate_c3_assimilation}} to calculate values of net
+  assimilation. The user-supplied optimization function is used to vary the
+  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+  \code{gamma_star}, \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, and \code{Vcmax_at_25} to find ones that best reproduce the
+  experimentally measured values of net assimilation. By default, the following
+  options are used for the fits:
   \itemize{
     \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_old}: lower = 0, upper = 10, fit_option = \code{'fit'}
