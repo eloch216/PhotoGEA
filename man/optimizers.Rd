@@ -3,6 +3,7 @@
 \alias{optimizers}
 \alias{optimizer_nmkb}
 \alias{optimizer_hjkb}
+\alias{optimizer_nlminb}
 \alias{optimizer_deoptim}
 
 \title{Optimizers}
@@ -10,15 +11,18 @@
 \description{
   These functions return optimizers that meet requirements for the
   \code{optim_fun} input argument of \code{\link{fit_c3_aci}},
-  \code{\link{fit_c3_variable_j}}, and \code{\link{fit_c4_aci}}. Essentially,
-  they are wrappers for optimizers from other libraries that serve to
-  standardize their inputs and outputs.
+  \code{\link{fit_c3_variable_j}}, \code{\link{fit_c4_aci}}, and
+  \code{\link{fit_c4_aci_hyperbola}}. Essentially, they are wrappers for
+  optimizers from other libraries that serve to standardize their inputs and
+  outputs.
 }
 
 \usage{
   optimizer_nmkb(tol, maxfeval = 2000, restarts.max = 10)
 
   optimizer_hjkb(tol, maxfeval = Inf, target = Inf)
+
+  optimizer_nlminb(rel.tol, eval.max = 200, iter.max = 200, abs.tol = 0)
 
   optimizer_deoptim(itermax, VTR = -Inf)
 }
@@ -39,6 +43,27 @@
   \item{target}{
     A real number restricting the absolute function value; to be passed to
     \code{\link[dfoptim]{hjkb}} via its \code{control} input argument.
+  }
+
+  \item{rel.tol}{
+    A relative convergence tolerance value; to be passed to
+    \code{\link[stats]{nlminb}} via its \code{control} input argument. A typical
+    value is \code{1e-10}.
+  }
+
+  \item{eval.max}{
+    A maximum value for the number of function evaluations; to be passed to
+    \code{\link[stats]{nlminb}} via its \code{control} input argument.
+  }
+
+  \item{iter.max}{
+    A maximum value for the number of iterations; to be passed to
+    \code{\link[stats]{nlminb}} via its \code{control} input argument.
+  }
+
+  \item{abs.tol}{
+    An absolute convergence tolerance value; to be passed to
+    \code{\link[stats]{nlminb}} via its \code{control} input argument.
   }
 
   \item{restarts.max}{
@@ -64,6 +89,8 @@
   \code{optimizer_nmkb} is a wrapper for \code{\link[dfoptim]{nmkb}}.
 
   \code{optimizer_hjkb} is a wrapper for \code{\link[dfoptim]{hjkb}}.
+
+  \code{optimizer_nlminb} is a wrapper for \code{\link[stats]{nlminb}}.
 
   \code{optimizer_deoptim} is a wrapper for \code{\link[DEoptim]{DEoptim}}.
 

@@ -68,6 +68,7 @@ export(calculate_gm_ubierna)
 export(calculate_gm_busch)
 export(optimizer_deoptim)
 export(optimizer_hjkb)
+export(optimizer_nlminb)
 export(optimizer_nmkb)
 export(residual_stats)
 

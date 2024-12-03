@@ -63,7 +63,7 @@
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
+    \code{feval}, and \code{convergence_msg}. See \code{\link{optimizers}}
     for a list of available options.
   }
 

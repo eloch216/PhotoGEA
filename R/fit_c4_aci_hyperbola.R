@@ -70,6 +70,8 @@ fit_c4_aci_hyperbola <- function(
         upper = upper_complete[param_to_fit]
     )
 
+    check_optim_result(optim_result)
+
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
@@ -176,17 +178,10 @@ fit_c4_aci_hyperbola <- function(
     replicate_identifiers[, 'Vmax']           <- best_X[4]
 
     # Also add fitting details
-    if (is.null(optim_result[['convergence_msg']])) {
-        optim_result[['convergence_msg']] <- NA
-    }
-
-    if (is.null(optim_result[['feval']])) {
-        optim_result[['feval']] <- NA
-    }
-
     replicate_identifiers[, 'convergence']                   <- optim_result[['convergence']]
-    replicate_identifiers[, 'convergence_msg']               <- optim_result[['message']]
+    replicate_identifiers[, 'convergence_msg']               <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']                         <- optim_result[['feval']]
+    replicate_identifiers[, 'optimizer']                     <- optim_result[['optimizer']]
     replicate_identifiers[, 'c4_assimilation_hyperbola_msg'] <- replicate_exdf[1, 'c4_assimilation_hyperbola_msg']
 
     # Get an updated likelihood value using the RMSE

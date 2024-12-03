@@ -101,6 +101,9 @@ be directly added to this file to describe the related changes.
     `plot_laisk_fit`.
 - AIC calculations were moved to `residual_stats` so the AIC can be more easily
   calculated for fits from other packages.
+- Added a new optimizer (`optimizer_nlminb`) and improved the optimizer
+  documentation and testing. The new optimizer is a wrapper for `stats::nlminb`
+  and employs a quasi-Newton algorithm.
 - A new option was added to Variable J fits: `check_j`
 
 

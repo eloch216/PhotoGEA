@@ -149,6 +149,8 @@ fit_c3_variable_j <- function(
         upper = upper_complete[param_to_fit]
     )
 
+    check_optim_result(optim_result)
+
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
@@ -455,17 +457,10 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
 
     # Also add fitting details
-    if (is.null(optim_result[['convergence_msg']])) {
-        optim_result[['convergence_msg']] <- NA
-    }
-
-    if (is.null(optim_result[['feval']])) {
-        optim_result[['feval']] <- NA
-    }
-
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
-    replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
+    replicate_identifiers[, 'convergence_msg']     <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
+    replicate_identifiers[, 'optimizer']           <- optim_result[['optimizer']]
     replicate_identifiers[, 'c3_assimilation_msg'] <- replicate_exdf[1, 'c3_assimilation_msg']
     replicate_identifiers[, 'c3_variable_j_msg']   <- replicate_exdf[1, 'c3_variable_j_msg']
 
@@ -589,7 +584,7 @@ fit_c3_variable_j <- function(
         Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
         replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
         replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
-        
+
         # Document the new columns that were added
         replicate_identifiers <- document_variables(
             replicate_identifiers,

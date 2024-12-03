@@ -189,7 +189,7 @@
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. The default option is an
+    \code{feval}, and \code{convergence_msg}. The default option is an
     evolutionary optimizer that runs slow but tends to find good fits for most
     curves. \code{\link{optimizer_nmkb}} can also be used; it is faster, but
     doesn't always find a good fit.
