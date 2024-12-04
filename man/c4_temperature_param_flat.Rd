@@ -33,8 +33,8 @@
     \item \code{ao}: The ratio of solubility and diffusivity of O2 to CO2.
     \item \code{gmc_norm}: The mesophyll conductance to CO2 diffusion normalized
           to its value at 25 degrees C.
-    \item \code{Jmax_norm}: The maximum rate of RuBP regneration \code{Jmax}
-          normalized to its value at its optimal temperature.
+    \item \code{J_norm}: The electron transport rate \code{J} normalized to its
+          value at 25 degrees C.
   }
 
   Each of these is a list with 4 named elements:
@@ -48,7 +48,7 @@
 
 \source{
   Some of these parameters (\code{Vcmax}, \code{Vpmax}, \code{RL}, \code{gmc},
-  and \code{Jmax}) are normalized to their values at 25 degrees C. These
+  and \code{J}) are normalized to their values at 25 degrees C. These
   variables include \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Kc}, \code{Ko}, \code{Kp}, \code{gamma_star},

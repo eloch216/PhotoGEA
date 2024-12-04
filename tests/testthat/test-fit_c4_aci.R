@@ -60,7 +60,7 @@ test_that('fit results have not changed (Vcmax)', {
     fit_res <- fit_c4_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_25 = 1000),
+        fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000),
         optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -95,7 +95,7 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
         c(2, 2, 0, 0)
     )
 })
@@ -108,7 +108,7 @@ test_that('fit results have not changed (Vpr)', {
     fit_res <- fit_c4_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 1000, Vpr = 'fit', Jmax_at_25 = 1000),
+        fit_options = list(Vcmax_at_25 = 1000, Vpr = 'fit', J_at_25 = 1000),
         optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -127,7 +127,7 @@ test_that('fit results have not changed (Vpr)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vpr', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
-        c(58.1571, 133.8038, 0.0000, 88.3427),
+        c(58.1503, 133.8474, 0.0000, 88.3427),
         tolerance = TOLERANCE
     )
 
@@ -143,12 +143,12 @@ test_that('fit results have not changed (Vpr)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
         c(2, 1, 2, 0)
     )
 })
 
-test_that('fit results have not changed (Jmax)', {
+test_that('fit results have not changed (J)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
     set.seed(1234)
@@ -156,7 +156,7 @@ test_that('fit results have not changed (Jmax)', {
     fit_res <- fit_c4_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_25 = 'fit'),
+        fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, J_at_25 = 'fit'),
         optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
@@ -174,14 +174,14 @@ test_that('fit results have not changed (Jmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Jmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
-        c(5.215746e+02, 1.338467e+02, 1.475187e-08, 8.875720e+01),
+        as.numeric(fit_res$parameters[1, c('J_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
+        c(258.1464, 135.7058, 0.0000, 88.6061),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Jmax_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
-        c(573.15632, 157.30750, 2.24672),
+        as.numeric(fit_res$parameters[1, c('J_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
+        c(275.66, 157.25, 2.35),
         tolerance = TOLERANCE
     )
 
@@ -191,7 +191,7 @@ test_that('fit results have not changed (Jmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
         c(2, 1, 0, 2)
     )
 })
@@ -251,11 +251,10 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'Jmax_trust')]),
+        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
         c(2, 2, 0, 0)
     )
 })
-
 
 test_that('removing and excluding points produce the same fit results', {
     pts_to_remove <- c(3, 5, 13)

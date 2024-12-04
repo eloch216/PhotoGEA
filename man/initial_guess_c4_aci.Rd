@@ -20,15 +20,11 @@
     gmc_at_25,
     Rm_frac,
     pcm_threshold_rlm = 40,
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gmc_norm_column_name = 'gmc_norm',
-    jmax_norm_column_name = 'Jmax_norm',
+    j_norm_column_name = 'J_norm',
     kp_column_name = 'Kp',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
@@ -76,26 +72,6 @@
     \code{microbar}) to be used when estimating \code{RLm}.
   }
 
-  \item{absorptance}{
-    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
-    (2021).
-  }
-
-  \item{f_spectral}{
-    The spectral quality adjustment factor (dimensionless). See Equation 35
-    from S. von Caemmerer (2021).
-  }
-
-  \item{rho}{
-    The fraction of light absorbed by photosystem II rather than photosystem I
-    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
-  }
-
-  \item{theta}{
-    An empirical curvature factor (dimensionless). See Equation 34 from S. von
-    Caemmerer (2021).
-  }
-
   \item{x_etr}{
     The fraction of whole-chain electron transport occurring in the mesophyll
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
@@ -117,10 +93,10 @@
     \code{normalized to gmc at 25 degrees C}).
   }
 
-  \item{jmax_norm_column_name}{
+  \item{j_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
-    \code{Jmax} values (with units of
-    \code{normalized to Jmax at 25 degrees C}).
+    \code{J} values (with units of
+    \code{normalized to J at 25 degrees C}).
   }
 
   \item{kp_column_name}{
@@ -158,7 +134,7 @@
 }
 
 \details{
-  Here we estimate values of \code{Jmax_at_25}, \code{RL_at_25},
+  Here we estimate values of \code{J_at_25}, \code{RL_at_25},
   \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} from a measured C4 CO2
   response curve. It is difficult to estimate values of \code{alpha_psii},
   \code{gbs}, \code{gmc_at_25}, and \code{Rm_frac} from a curve, so they must be
@@ -199,11 +175,11 @@
     \item \strong{Estimating Vpr}: An estimate for \code{Vpr} can be
           obtained by solving \code{An = Vpr + gbs * PCm - RLm} for \code{Vpr},
           similar to the method used to estimate \code{Vpmax}.
-    \item \strong{Estimating Jmax}: First, an estimate for \code{J} can be
+    \item \strong{Estimating J}: First, an estimate for \code{J} can be
           obtained by solving \code{An = (1 - x_etr) * J / 3 - RL} for \code{J}.
-          Then, estimates of \code{Jmax} can be made from \code{J} and
-          \code{Qin}. The largest value of \code{Jmax / Jmax_norm} is chosen as
-          the best estimate for \code{Jmax_at_25}.
+          Then, estimates of \code{J} can be made from \code{J} and
+          \code{Qin}. The largest value of \code{J / J_norm} is chosen as
+          the best estimate for \code{J_at_25}.
   }
 
   Note that a key assumption underlying this approach is that the net
@@ -222,7 +198,7 @@
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C4 CO2 response curve. The return value of
   this function will be a numeric vector with eight elements, representing the
-  values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_25}, \code{RL_at_25},
+  values of \code{alpha_psii}, \code{gbs}, \code{J_at_25}, \code{RL_at_25},
   \code{rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr} (in
   that order).
 }

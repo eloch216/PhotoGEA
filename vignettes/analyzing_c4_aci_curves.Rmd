@@ -70,10 +70,10 @@ understood as follows:
 More specifically, the model provides equations that calculate the net
 assimilation rate $A_n$ from the maximumum rate of PEP carboxylation
 ($V_{p,max}$), the maximum rate of Rubisco activity ($V_{c,max}$), the maximum
-rate of PEP carboxylase regeneration ($V_{p,r}$), the maximum electron transport
-rate ($J_{max}$), the total rate of mitochondrial respiration across the
-mesophyll and bundle sheath cells ($R_L$), the partial pressure of CO~2~ in the
-mesophyll ($P_{cm}$), and several other parameters. The full equations are quite
+rate of PEP carboxylase regeneration ($V_{p,r}$), the electron transport rate
+($J$), the total rate of mitochondrial respiration across the mesophyll and
+bundle sheath cells ($R_L$), the partial pressure of CO~2~ in the mesophyll
+($P_{cm}$), and several other parameters. The full equations are quite
 complicated. $A_n$ is given by the smaller of the enzyme-limited rate ($A_c$)
 and the light-limited rate ($A_j$). $A_c$ is co-limited by PEP carboxylase
 activity, Rubisco activity, and PEP regeneration, while $A_j$ is co-limited by
@@ -126,7 +126,7 @@ inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf
 
 alpha_psii <- 0
 gbs <- 0.003
-Jmax_at_25 <- 250
+J_at_25 <- 220
 RL_at_25 <- 1
 Rm_frac <- 0.5
 Vcmax_at_25 <- 30
@@ -135,7 +135,7 @@ Vpr <- 80
 
 assim <- calculate_c4_assimilation(
   inputs,
-  alpha_psii, gbs, Jmax_at_25, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+  alpha_psii, gbs, J_at_25, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
 )
 
 xyplot(
@@ -164,7 +164,7 @@ C~4~ leaf according to the model with
 `Vpmax_at_25` = `r Vpmax_at_25` `r assim$units$Vpmax_at_25`,
 `Vcmax_at_25` = `r Vcmax_at_25` `r assim$units$Vcmax_at_25`,
 `Vpr` = `r Vpr` `r assim$units$Vpr`,
-`Jmax_at_25` = `r Jmax_at_25` `r assim$units$Jmax_at_25`, and a leaf
+`J_at_25` = `r J_at_25` `r assim$units$J_at_25`, and a leaf
 temperature of `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response
 parameters were taken from @von_caemmerer_updating_2021.)
 
@@ -198,7 +198,7 @@ response to CO~2~.
 One of the most common reasons to measure an _A-C~i~_ curve is to interpret it
 in the context of this model. In other words, by fitting the model's equations
 to a measured curve, it is possible to estimate values for $R_L$, $V_{pmax}$,
-$V_{cmax}$, $J_{max}$, and others. See the documentation for
+$V_{cmax}$, $J$, and others. See the documentation for
 `calculate_c4_assimilation` for more information about these important
 quantities.
 
@@ -692,7 +692,7 @@ For viewing the resulting fits, we will be using the `plot_c4_aci_fit` and
 ## Mechanistic Fit, Assuming Rubisco Limitations
 
 To ensure that the fitted assimilation rates are limited by Rubisco activity at
-high $C_i$, we can set $V_{pr}$ and $J_{max}$ to extremely high values, which
+high $C_i$, we can set $V_{pr}$ and $J$ to extremely high values, which
 will ensure that PEP regeneration and light availability are never limiting.
 At the same time, we will allow $V_{cmax}$ to vary during the fit. This is the
 default behavior of `fit_c4_aci`, but here we will use the `fit_options` input
@@ -709,7 +709,7 @@ c4_aci_results_rubisco <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_25 = 1000)
+  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000)
 ))
 ```
 
@@ -735,7 +735,7 @@ than either $A_r$ or $A_{pc}$ in these results.
 To ensure that the fitted assimilation rates are limited by light at high $C_i$,
 we can set $V_{pr}$ and $V_{cmax}$ to extremely high values, which will ensure
 that PEP regeneration and Rubisco activity are never limiting. At the same time,
-we will allow $J_{max}$ to vary during the fit. This can be done using the
+we will allow $J$ to vary during the fit. This can be done using the
 `fit_options` input argument to `fit_c4_aci`.
 
 ```{r fit_aci_light}
@@ -749,7 +749,7 @@ c4_aci_results_light <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_25 = 'fit')
+  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, J_at_25 = 'fit')
 ))
 ```
 
@@ -847,7 +847,7 @@ c4_aci_results_vpmax <- consolidate(by(
   fit_options = list(
     Vcmax_at_25 = 1000,
     Vpr = 1000,
-    Jmax_at_25 = 1000,
+    J_at_25 = 1000,
     alpha_psii = 0,
     gbs = 0
   )
@@ -899,7 +899,7 @@ Here we can see that the estimates made from the mechanistic fit with Rubisco
 limitations are generally the largest, while those made from just the low-$C_i$
 points are the lowest.
 
-Estimates of other parameters, such as $V_{cmax}$, $J_{max}$, $V_{max}$, and
+Estimates of other parameters, such as $V_{cmax}$, $J$, $V_{max}$, and
 $R_L$ can be accessed with similar commands.
 
 ## Visualizing Average Best-Fit Parameters

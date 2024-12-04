@@ -8,7 +8,7 @@
   Fits the von Caemmerer model to an experimentally measured C4 A-Ci curve.
 
   It is possible to fit the following parameters: \code{alpha_psii}, \code{gbs},
-  \code{gmc_at_25}, \code{Jmax_at_25}, \code{RL_at_25}, \code{Rm_frac},
+  \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25}, \code{Rm_frac},
   \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr}.
 
   By default, only a subset of these parameters are actually fit:
@@ -39,7 +39,7 @@
     ci_column_name = 'Ci',
     gamma_star_column_name = 'gamma_star',
     gmc_norm_column_name = 'gmc_norm',
-    jmax_norm_column_name = 'Jmax_norm',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
@@ -50,10 +50,6 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     sd_A = 'RMSE',
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     optim_fun = optimizer_deoptim(200),
     lower = list(),
@@ -108,10 +104,10 @@
     \code{normalized to gmc at 25 degrees C}).
   }
 
-  \item{jmax_norm_column_name}{
+  \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Jmax} values (with units of
-    \code{normalized to Jmax at 25 degrees C}).
+    \code{J} values (with units of
+    \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -167,26 +163,6 @@
     A value of the standard deviation of measured \code{A} values, or the name
     of a method for determining the deviation; currently, the only supported
     option is \code{'RMSE'}.
-  }
-
-  \item{absorptance}{
-    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
-    (2021).
-  }
-
-  \item{f_spectral}{
-    The spectral quality adjustment factor (dimensionless). See Equation 35
-    from S. von Caemmerer (2021).
-  }
-
-  \item{rho}{
-    The fraction of light absorbed by photosystem II rather than photosystem I
-    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
-  }
-
-  \item{theta}{
-    An empirical curvature factor (dimensionless). See Equation 34 from S. von
-    Caemmerer (2021).
   }
 
   \item{x_etr}{
@@ -257,7 +233,7 @@
   This function calls \code{\link{calculate_c4_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
   vary the values of \code{alpha_psii}, \code{gbs}, \code{gmc_at_25},
-  \code{Jmax_at_25}, \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
+  \code{J_at_25}, \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
   \code{Vpmax_at_25}, and \code{Vpr} to find ones that best reproduce the
   experimentally measured values of net assimilation. By default, the following
   options are used for the fits:
@@ -265,14 +241,14 @@
     \item \code{alpha_psii}: lower = -1, upper = 10, fit_option = 0
     \item \code{gbs}: lower = -1, upper = 10, fit_option = 0.003
     \item \code{gmc_at_25}: lower = -1, upper = 10, fit_option = 1
-    \item \code{Jmax_at_25}: lower = -50, upper = 1000, fit_option = 1000
+    \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = 1000
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Rm_frac}: lower = -10, upper = 10, fit_option = 0.5
     \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{Vpmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{Vpr}: lower = -50, upper = 1000, fit_option = 1000
   }
-  With these settings, \code{Jmax} and \code{Vpr} are set to 1000 (so net
+  With these settings, \code{J_at_25} and \code{Vpr} are set to 1000 (so net
   assimilation is essentially never limited by light or PEP carboxylase
   regeneration), \code{alpha_psii}, \code{gbs}, \code{gmc_at_25}, and
   \code{Rm_frac} are set to default values used in von Caemmerer (2000), and the
@@ -325,7 +301,7 @@
   \code{Vpr}) will be severely unreliable. Likewise, it may happen that one of
   \code{Ac} or \code{Aj} is never the smallest rate. In this case the
   corresponding parameter estimates (\code{Vpmax}, \code{Vpr}, and \code{Vcmax},
-  or \code{Jmax}) will be severely unreliable. This will be indicated by a value
+  or \code{J}) will be severely unreliable. This will be indicated by a value
   of \code{0} in the corresponding trust column(for example,
   \code{Vcmax_trust}). If \code{remove_unreliable_param} is \code{1} or larger,
   then such parameter estimates (and the corresponding rates) will be replaced
@@ -370,7 +346,7 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C will be stored in
-                  the \code{gmc_at_25}, \code{Jmax_at_25}, \code{RL_at_25},
+                  the \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
                   \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr}
                   columns.
             \item The other outputs from \code{\link{calculate_c4_assimilation}}
@@ -390,7 +366,7 @@
                   the smallest potential carboxylation rate are stored in the
                   \code{n_Vpc_smallest} and \code{n_Vpr_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_psii},
-                  \code{gbs}, \code{gmc_at_25}, \code{Jmax_at_25},
+                  \code{gbs}, \code{gmc_at_25}, \code{J_at_25},
                   \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
                   \code{Vpmax_at_25}, and \code{Vpr} columns. If
                   \code{calculate_confidence_intervals} is \code{TRUE}, upper

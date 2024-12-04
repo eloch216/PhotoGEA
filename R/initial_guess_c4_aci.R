@@ -4,15 +4,11 @@ initial_guess_c4_aci <- function(
     gmc_at_25,  # mol / m^2 / s / bar
     Rm_frac,    # dimensionless
     pcm_threshold_rlm = 40,
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gmc_norm_column_name = 'gmc_norm',
-    jmax_norm_column_name = 'Jmax_norm',
+    j_norm_column_name = 'J_norm',
     kp_column_name = 'Kp',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
@@ -35,7 +31,7 @@ initial_guess_c4_aci <- function(
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
-        required_variables[[jmax_norm_column_name]]      <- unit_dictionary[['Jmax_norm']]
+        required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
         required_variables[[kp_column_name]]             <- 'microbar'
         required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
@@ -149,29 +145,19 @@ initial_guess_c4_aci <- function(
 
         # To estimate J, we solve the equation for Ajbs (defined in the
         # documentation for calculate_c4_assimilation) for J and calculate it
-        # for each point in the response curve.
+        # for each point in the response curve. We will choose the largest
+        # estimate as with the other variables
         j_estimates <-
             3 * (rc_exdf[, a_column_name] + RL_estimate * rc_exdf[, rl_norm_column_name]) / (1 - x_etr)
 
-        # Now we can estimate Jmax from each J estimate. We will choose the
-        # largest estimate as with the other variables
-        jmax_estimates <- sapply(seq_along(j_estimates), function(i) {
-            jmax_from_j(
-                j_estimates[i],
-                rc_exdf[i, qin_column_name],
-                absorptance * (1 - f_spectral) * rho,
-                theta
-            )
-        })
-
-        jmax_estimates <- jmax_estimates / rc_exdf[, jmax_norm_column_name]
+        j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]
 
         # Return the estimates
         c(
             mean(rc_exdf[, 'alpha_psii']), # alpha_psii
             mean(rc_exdf[, 'gbs']),        # gbs
             mean(rc_exdf[, 'gmc_at_25']),  # gmc_at_25
-            max(jmax_estimates),           # Jmax_at_25
+            max(j_estimates),              # J_at_25
             RL_estimate,                   # RL_at_25
             mean(rc_exdf[, 'Rm_frac']),    # Rm_frac
             max(vcmax_estimates),          # Vcmax_at_25

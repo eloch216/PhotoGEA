@@ -19,17 +19,13 @@
     fit_options = list(),
     sd_A = 1,
     relative_likelihood_threshold = 0.147,
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     a_column_name = 'A',
     ao_column_name = 'ao',
     ci_column_name = 'Ci',
     gamma_star_column_name = 'gamma_star',
     gmc_norm_column_name = 'gmc_norm',
-    jmax_norm_column_name = 'Jmax_norm',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
@@ -78,26 +74,6 @@
     the confidence intervals; see details below.
   }
 
-  \item{absorptance}{
-    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
-    (2021).
-  }
-
-  \item{f_spectral}{
-    The spectral quality adjustment factor (dimensionless). See Equation 35
-    from S. von Caemmerer (2021).
-  }
-
-  \item{rho}{
-    The fraction of light absorbed by photosystem II rather than photosystem I
-    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
-  }
-
-  \item{theta}{
-    An empirical curvature factor (dimensionless). See Equation 34 from S. von
-    Caemmerer (2021).
-  }
-
   \item{x_etr}{
     The fraction of whole-chain electron transport occurring in the mesophyll
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
@@ -129,7 +105,7 @@
     \code{normalized to gmc at 25 degrees C}).
   }
 
-  \item{jmax_norm_column_name}{
+  \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
     \code{normalized to Jmax at 25 degrees C}).

@@ -8,5 +8,5 @@ c4_temperature_param_flat <- list(
     gamma_star = list(type = 'Arrhenius', c = log(0.5 / 1310), Ea = 0, units = 'dimensionless'),
     ao =         list(type = 'Arrhenius', c = log(0.047),      Ea = 0, units = 'dimensionless'),
     gmc_norm =   list(type = 'Arrhenius', c = 0,               Ea = 0, units = 'normalized to gmc at 25 degrees C'),
-    Jmax_norm =  list(type = 'Arrhenius', c = 0,               Ea = 0, units = 'normalized to Jmax at 25 degrees C')
+    J_norm =     list(type = 'Arrhenius', c = 0,               Ea = 0, units = 'normalized to J at 25 degrees C')
 )

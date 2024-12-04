@@ -73,7 +73,7 @@ identify_c4_unreliable_points <- function(
     r_remove          <- remove_estimate(r_trust, remove_unreliable_param)
 
     j_unreliable_npts <- parameters[, 'n_Aj_smallest'] < unreliable_n_threshold
-    j_unreliable_inf  <- 'Jmax_at_25' %in% colnames(parameters) && !is.finite(parameters[, 'Jmax_at_25_upper'])
+    j_unreliable_inf  <- 'J_at_25' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
     j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
     j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 
@@ -141,21 +141,19 @@ identify_c4_unreliable_points <- function(
         }
     }
 
-    # If we are unsure about light limitations, then the Jmax estimates should
+    # If we are unsure about light limitations, then the J estimates should
     # be flagged as unreliable. If necessary, remove Aj.
-    parameters[, 'Jmax_trust'] <- j_trust
+    parameters[, 'J_trust'] <- j_trust
 
     if (j_remove) {
         # Remove unreliable parameter estimates
-        parameters[, 'Jmax_at_25']        <- NA
-        parameters[, 'Jmax_tl_avg']        <- NA
-        parameters[, 'J_tl_avg']           <- NA
-        fits[, 'Jmax_at_25']              <- NA
-        fits[, 'Jmax_tl']                  <- NA
-        fits[, 'J_tl']                     <- NA
-        fits_interpolated[, 'Jmax_at_25'] <- NA
-        fits_interpolated[, 'Jmax_tl']     <- NA
-        fits_interpolated[, 'J_tl']        <- NA
+        parameters[, 'J_at_25']        <- NA
+        parameters[, 'J_tl_avg']       <- NA
+        parameters[, 'J_tl_avg']       <- NA
+        fits[, 'J_at_25']              <- NA
+        fits[, 'J_tl']                 <- NA
+        fits_interpolated[, 'J_at_25'] <- NA
+        fits_interpolated[, 'J_tl']    <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (j_unreliable_npts) {
@@ -177,7 +175,7 @@ identify_c4_unreliable_points <- function(
         c('identify_c4_unreliable_points', 'Vpmax_trust',             ''),
         c('identify_c4_unreliable_points', 'Vpr_trust',               ''),
         c('identify_c4_unreliable_points', 'Vcmax_trust',             ''),
-        c('identify_c4_unreliable_points', 'Jmax_trust',              ''),
+        c('identify_c4_unreliable_points', 'J_trust',                 ''),
         c('identify_c4_unreliable_points', 'remove_unreliable_param', '')
     )
 
