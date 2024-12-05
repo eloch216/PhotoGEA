@@ -104,6 +104,9 @@ be directly added to this file to describe the related changes.
 - Added a new optimizer (`optimizer_nlminb`) and improved the optimizer
   documentation and testing. The new optimizer is a wrapper for `stats::nlminb`
   and employs a quasi-Newton algorithm.
+- Added a new function for identifying limiting processes in C3 curves:
+  `identify_c3_limiting_processes`. This function is used internally by
+  `fit_c3_aci` and `fit_c3_variable_j`.
 - A new option was added to Variable J fits: `check_j`
 
 

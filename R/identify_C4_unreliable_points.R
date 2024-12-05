@@ -9,11 +9,10 @@ n_C4_V_smallest <- function(c4_assim, v_name, tol = 1e-3) {
         stop('c4_assim must be an exdf object')
     }
 
-    min_V <- pmin(c4_assim[, 'Vpc'], c4_assim[, 'Vpr'], na.rm = TRUE)
+    c4_assim[, 'min_V'] <-
+        pmin(c4_assim[, 'Vpc'], c4_assim[, 'Vpr'], na.rm = TRUE)
 
-    rel_diff <- abs((c4_assim[, v_name] - min_V) / min_V)
-
-    sum(!is.na(rel_diff) & rel_diff <= tol)
+    sum(A_limiting(c4_assim, 'min_V', v_name, tol))
 }
 
 # Helping function for determining the number of points in a calculated CO2
@@ -24,11 +23,10 @@ n_C4_A_smallest <- function(c4_assim, a_name, tol = 1e-3) {
         stop('c4_assim must be an exdf object')
     }
 
-    min_A <- pmin(c4_assim[, 'Ac'], c4_assim[, 'Aj'], na.rm = TRUE)
+    c4_assim[, 'min_A'] <-
+        pmin(c4_assim[, 'Ac'], c4_assim[, 'Aj'], na.rm = TRUE)
 
-    rel_diff <- abs((c4_assim[, a_name] - min_A) / min_A)
-
-    sum(!is.na(rel_diff) & rel_diff <= tol)
+    sum(A_limiting(c4_assim, 'min_A', a_name, tol))
 }
 
 identify_c4_unreliable_points <- function(

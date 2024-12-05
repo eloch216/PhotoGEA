@@ -100,6 +100,11 @@ test_that('fit results have not changed (no alpha)', {
         c(13, 5, 8)
     )
 
+    expect_equal(
+        as.character(fit_res$fits[, 'limiting_process']),
+        c('Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Aj', 'Aj', 'Aj', 'Aj', 'Aj')
+    )
+
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 

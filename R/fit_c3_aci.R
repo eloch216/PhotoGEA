@@ -522,6 +522,15 @@ fit_c3_aci <- function(
         )
     }
 
+    # Identify limiting process
+    replicate_exdf <- identify_c3_limiting_processes(
+        replicate_exdf,
+        paste0(a_column_name, '_fit'),
+        'Ac',
+        'Aj',
+        'Ap'
+    )
+
     # Return the results, including indicators of unreliable parameter estimates
     identify_c3_unreliable_points(
         replicate_identifiers,

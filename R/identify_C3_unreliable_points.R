@@ -1,19 +1,10 @@
 # The functions in this file are for internal use only, so they are not exported
 # to the package namespace.
 
-# Helping function for determining the number of points in a calculated CO2
-# response curve where a potential limiting carboxylation rate is actually the
-# smallest carboxylation rate
+# Helping function for determining the number of points in a curve where a
+# potential limiting rate is the actual limiting rate
 n_C3_A_limiting <- function(c3_assim, an_name, a_name, tol = 1e-3) {
-    if (!is.exdf(c3_assim)) {
-        stop('c3_assim must be an exdf object')
-    }
-
-    rel_diff <-
-        abs(c3_assim[, a_name] - c3_assim[, an_name]) /
-            pmax(1e-10, abs(c3_assim[, an_name]))
-
-    sum(!is.na(rel_diff) & rel_diff <= tol)
+    sum(A_limiting(c3_assim, an_name, a_name, tol))
 }
 
 identify_c3_unreliable_points <- function(
