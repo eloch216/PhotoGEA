@@ -408,8 +408,6 @@ number of points or the wrong identifier column, we would get error messages:
 check_response_curve_data(licor_data, 'curve_identifier', 15)
 
 check_response_curve_data(licor_data, 'species', 16)
-
-check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
 ## Plotting the _A-C~i~_ Curves
@@ -626,14 +624,13 @@ Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
 temperature-dependent values of important photosynthetic parameters such as
-$\gamma^*$, values of the total pressure, and values of the partial pressure of
-CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes three
-functions to help with these calculations: `calculate_temperature_response`,
-`calculate_total_pressure`, and `apply_gm`. Each of these requires an `exdf`
-object containing Licor data. The units for each required column will be checked
-in an attempt to avoid unit-related errors. More information about these
-functions can be obtained from the built-in help system by typing
-`?calculate_temperature_response`, `?calculate_total_pressure`, or `?apply_gm`.
+$\gamma^*$, and values of the total pressure. However, the `PhotoGEA` package
+includes two functions to help with these calculations:
+`calculate_temperature_response` and `calculate_total_pressure`. Each of these
+requires an `exdf` object containing Licor data. The units for each required
+column will be checked in an attempt to avoid unit-related errors. More
+information about these functions can be obtained from the built-in help system
+by typing `?calculate_temperature_response` or `?calculate_total_pressure`.
 
 First, we can use `calculate_temperature_response`:
 
@@ -651,18 +648,11 @@ Notice that this command calculated values of the mesophyll conductance to CO2
 for _Setaria viridis_ and may not be appropriate for all C~4~ plants.
 Nevertheless, we will use them here.
 
-Now we can use `calculate_total_pressure` and `apply_gm` to calculate `PCm`:
+Now we can use `calculate_total_pressure`:
 
 ```{r apply_gm}
 # Calculate the total pressure in the Licor chamber
 licor_data <- calculate_total_pressure(licor_data)
-
-# Calculate PCm
-licor_data <- apply_gm(
-  licor_data,
-  gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
-  photosynthesis_type = 'C4' # Indicate C4 photosynthesis
-)
 ```
 
 Together, these functions have added several new columns to `licor_data`,
@@ -821,19 +811,12 @@ following conditions are met:
   large.
 
 Here we will fit this equation to just the measured points where $C_i$ is below
-60 ppm. To do this, we will also need to recalculate $PCm$ using an infinite
-value of mesophyll conductance.
+60 ppm. To do this, we will also need to specify an infinite value of mesophyll
+conductance, overriding the default value.
 
 ```{r fit_aci_vpmax}
 # Get a subset of the data where Ci is below the threshold value
 licor_data_low_ci <- licor_data[licor_data[, 'Ci'] <= 60, , TRUE]
-
-# Recalculate PCm using infinite mesophyll conductance
-licor_data_low_ci <- apply_gm(
-  licor_data_low_ci,
-  gmc_at_25 = Inf,
-  photosynthesis_type = 'C4' # Indicate C4 photosynthesis
-)
 
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
@@ -849,7 +832,8 @@ c4_aci_results_vpmax <- consolidate(by(
     Vpr = 1000,
     J_at_25 = 1000,
     alpha_psii = 0,
-    gbs = 0
+    gbs = 0,
+    gmc_at_25 = Inf
   )
 ))
 ```

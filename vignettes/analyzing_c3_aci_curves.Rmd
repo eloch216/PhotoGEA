@@ -350,8 +350,6 @@ number of points or the wrong identifier column, we would get error messages:
 check_response_curve_data(licor_data, 'curve_identifier', 15)
 
 check_response_curve_data(licor_data, 'species', 16)
-
-check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
 ## Plotting the _A-C~i~_ Curves
