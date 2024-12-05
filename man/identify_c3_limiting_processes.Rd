@@ -91,7 +91,8 @@ example_curve <- exdf(
     A_fit = 'micromol m^(-2) s^(-1)',
     Ac    = 'micromol m^(-2) s^(-1)',
     Aj    = 'micromol m^(-2) s^(-1)',
-    Ap    = 'micromol m^(-2) s^(-1)'
+    Ap    = 'micromol m^(-2) s^(-1)',
+    stringsAsFactors = FALSE
   )
 )
 
