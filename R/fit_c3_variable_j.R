@@ -28,7 +28,7 @@ fit_c3_variable_j <- function(
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(400),
+    optim_fun = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -36,7 +36,8 @@ fit_c3_variable_j <- function(
     cj_crossover_max = NA,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
-    error_threshold_factor = 0.147,
+    check_j = TRUE,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2,
@@ -78,6 +79,7 @@ fit_c3_variable_j <- function(
         hard_constraints,
         require_positive_gmc,
         gmc_max,
+        check_j,
         ...
     )
 
@@ -107,16 +109,18 @@ fit_c3_variable_j <- function(
     }
 
     # Get an initial guess for all the parameter values
-    alpha_g_guess <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
-    alpha_s_guess <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
-    alpha_t_guess <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
+    alpha_g_guess    <- if (fit_options$alpha_g == 'fit') {0.5}                       else {fit_options$alpha_g}
+    alpha_old_guess  <- if (fit_options$alpha_old == 'fit') {0.5}                     else {fit_options$alpha_old}
+    alpha_s_guess    <- if (fit_options$alpha_s == 'fit') {0.3 * (1 - alpha_g_guess)} else {fit_options$alpha_s}
+    alpha_t_guess    <- if (fit_options$alpha_t == 'fit') {0}                         else {fit_options$alpha_t}
+    gamma_star_guess <- if (fit_options$Gamma_star == 'fit') {40}                     else {fit_options$Gamma_star}
 
     initial_guess_fun <- initial_guess_c3_variable_j(
         alpha_g_guess,
-        if (fit_options$alpha_old == 'fit') {0.5} else {fit_options$alpha_old}, # alpha_old
+        alpha_old_guess,
         alpha_s_guess,
         alpha_t_guess,
-        if (fit_options$Gamma_star == 'fit') {40} else {fit_options$Gamma_star}, # Gamma_star
+        gamma_star_guess,
         100, # cc_threshold_rd
         atp_use,
         nadph_use,
@@ -130,6 +134,7 @@ fit_c3_variable_j <- function(
         phips2_column_name,
         qin_column_name,
         rl_norm_column_name,
+        total_pressure_column_name,
         tp_norm_column_name,
         vcmax_norm_column_name
     )
@@ -137,12 +142,14 @@ fit_c3_variable_j <- function(
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
-    optim_result <- OPTIM_FUN(
+    optim_result <- optim_fun(
         initial_guess[param_to_fit],
         total_error_fcn,
         lower = lower_complete[param_to_fit],
         upper = upper_complete[param_to_fit]
     )
+
+    check_optim_result(optim_result)
 
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
@@ -173,11 +180,15 @@ fit_c3_variable_j <- function(
     vj$categories[1,] <- 'fit_c3_variable_j'
 
     # Remove a few columns so they don't get repeated
-    vj[, 'atp_use']    <- NULL
-    vj[, 'Gamma_star'] <- NULL
-    vj[, 'nadph_use']  <- NULL
-    vj[, 'RL_at_25']   <- NULL
-    vj[, 'RL_tl']      <- NULL
+    vj[, 'alpha_g']        <- NULL
+    vj[, 'alpha_s']        <- NULL
+    vj[, 'alpha_t']        <- NULL
+    vj[, 'atp_use']        <- NULL
+    vj[, 'Gamma_star']     <- NULL
+    vj[, 'Gamma_star_agt'] <- NULL
+    vj[, 'nadph_use']      <- NULL
+    vj[, 'RL_at_25']       <- NULL
+    vj[, 'RL_tl']          <- NULL
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -446,17 +457,10 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
 
     # Also add fitting details
-    if (is.null(optim_result[['convergence_msg']])) {
-        optim_result[['convergence_msg']] <- NA
-    }
-
-    if (is.null(optim_result[['feval']])) {
-        optim_result[['feval']] <- NA
-    }
-
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
-    replicate_identifiers[, 'convergence_msg']     <- optim_result[['message']]
+    replicate_identifiers[, 'convergence_msg']     <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
+    replicate_identifiers[, 'optimizer']           <- optim_result[['optimizer']]
     replicate_identifiers[, 'c3_assimilation_msg'] <- replicate_exdf[1, 'c3_assimilation_msg']
     replicate_identifiers[, 'c3_variable_j_msg']   <- replicate_exdf[1, 'c3_variable_j_msg']
 
@@ -495,15 +499,10 @@ fit_c3_variable_j <- function(
             hard_constraints,
             require_positive_gmc,
             gmc_max,
+            check_j,
             ...
         )(best_X[param_to_fit])
     }
-
-    # Add the AIC
-    replicate_identifiers[, 'AIC'] <- akaike_information_criterion(
-        -1.0 * replicate_identifiers[, 'optimum_val'],
-        length(which(param_to_fit))
-    )
 
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
@@ -530,7 +529,6 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'convergence_msg',     ''),
         c('fit_c3_variable_j',        'feval',               ''),
         c('fit_c3_variable_j',        'optimum_val',         ''),
-        c('fit_c3_variable_j',        'AIC',                 ''),
         c('fit_c3_variable_j',        'c3_assimilation_msg', ''),
         c('fit_c3_variable_j',        'c3_variable_j_msg',   '')
     )
@@ -544,7 +542,7 @@ fit_c3_variable_j <- function(
             upper,
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
-            error_threshold_factor,
+            relative_likelihood_threshold,
             atp_use,
             nadph_use,
             curvature_cj,
@@ -566,6 +564,7 @@ fit_c3_variable_j <- function(
             hard_constraints,
             require_positive_gmc,
             gmc_max,
+            check_j,
             ...
         )
 
@@ -585,7 +584,29 @@ fit_c3_variable_j <- function(
         Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
         replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
         replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
+
+        # Document the new columns that were added
+        replicate_identifiers <- document_variables(
+            replicate_identifiers,
+            c('fit_c3_variable_j', 'J_tl_avg_lower',     'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'J_tl_avg_upper',     'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'RL_tl_avg_lower',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'RL_tl_avg_upper',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'Tp_tl_avg_lower',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'Tp_tl_avg_upper',    'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'Vcmax_tl_avg_lower', 'micromol m^(-2) s^(-1)'),
+            c('fit_c3_variable_j', 'Vcmax_tl_avg_upper', 'micromol m^(-2) s^(-1)')
+        )
     }
+
+    # Identify limiting process
+    replicate_exdf <- identify_c3_limiting_processes(
+        replicate_exdf,
+        paste0(a_column_name, '_fit'),
+        'Ac',
+        'Aj',
+        'Ap'
+    )
 
     # Return the results, including indicators of unreliable parameter estimates
     identify_c3_unreliable_points(

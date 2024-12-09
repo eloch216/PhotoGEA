@@ -21,7 +21,7 @@
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
     e_column_name = 'E',
-    gmc_column_name = 'gmc',
+    gmc_column_name = 'gmc_tl',
     gsw_column_name = 'gsw',
     h2o_a_column_name = 'H2O_s',
     h2o_i_column_name = 'H2O_i',
@@ -67,7 +67,7 @@
 
   \item{gmc_column_name}{
     The name of the column in \code{licor_exdf} that contains the mesophyll
-    conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
+    conductance to CO2 at leaf temperature in \code{mol m^(-2) s^(-1) bar^(-1)}.
   }
 
   \item{gsw_column_name}{
@@ -174,23 +174,17 @@ licor_file <- read_gasex_file(
 
 licor_file <- calculate_total_pressure(licor_file)
 
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_sharkey)
+
 licor_file <- calculate_gas_properties(licor_file)
 
-licor_file <- set_variable(
-  licor_file,
-  'gmc',
-  'mol m^(-2) s^(-1) bar^(-1)',
-  value = 0.5
-)
-
-licor_file <- apply_gm(licor_file)
+licor_file <- apply_gm(licor_file, gmc_at_25 = 0.5)
 
 licor_file <- calculate_wue(licor_file, calculate_c3 = TRUE)
 
 licor_file$units$iWUE      # View the units of the new `iWUE` column
 licor_file$categories$iWUE # View the category of the new `iWUE` column
 licor_file[, 'iWUE']       # View the values of the new `iWUE` column
-
 }
 
 \concept{exdf}

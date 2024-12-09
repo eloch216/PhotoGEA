@@ -2,20 +2,16 @@ calculate_c4_assimilation <- function(
     exdf_obj,
     alpha_psii,  # dimensionless        (typically this value is fixed to 0)
     gbs,         # mol / m^2 / s / bar  (typically this value is fixed to 0.003)
-    Jmax_at_25,  # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
+    J_at_25,     # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     RL_at_25,    # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Rm_frac,     # dimensionless        (typically this value is fixed to 0.5 or 1.0)
     Vcmax_at_25, # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpmax_at_25, # micromol / m^2 / s   (at 25 degrees C; typically this value is being fitted)
     Vpr,         # micromol / m^2 / s   (typically this value is being fitted)
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
-    jmax_norm_column_name = 'Jmax_norm',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
@@ -40,7 +36,7 @@ calculate_c4_assimilation <- function(
         required_variables <- list()
         required_variables[[ao_column_name]]             <- 'dimensionless'
         required_variables[[gamma_star_column_name]]     <- 'dimensionless'
-        required_variables[[jmax_norm_column_name]]      <- unit_dictionary[['Jmax_norm']]
+        required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
         required_variables[[kc_column_name]]             <- 'microbar'
         required_variables[[ko_column_name]]             <- 'mbar'
         required_variables[[kp_column_name]]             <- 'microbar'
@@ -55,7 +51,7 @@ calculate_c4_assimilation <- function(
         flexible_param <- list(
             alpha_psii = alpha_psii,
             gbs = gbs,
-            Jmax_at_25 = Jmax_at_25,
+            J_at_25 = J_at_25,
             RL_at_25 = RL_at_25,
             Rm_frac = Rm_frac,
             Vcmax_at_25 = Vcmax_at_25,
@@ -72,7 +68,7 @@ calculate_c4_assimilation <- function(
     # Retrieve values of flexible parameters as necessary
     if (!value_set(alpha_psii))  {alpha_psii  <- exdf_obj[, 'alpha_psii']}
     if (!value_set(gbs))         {gbs         <- exdf_obj[, 'gbs']}
-    if (!value_set(Jmax_at_25))  {Jmax_at_25  <- exdf_obj[, 'Jmax_at_25']}
+    if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
     if (!value_set(RL_at_25))    {RL_at_25    <- exdf_obj[, 'RL_at_25']}
     if (!value_set(Rm_frac))     {Rm_frac     <- exdf_obj[, 'Rm_frac']}
     if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
@@ -115,7 +111,7 @@ calculate_c4_assimilation <- function(
     if (hard_constraints >= 2) {
         if (any(alpha_psii < 0 | alpha_psii > 1, na.rm = TRUE)) {msg <- append(msg, 'alpha_psii must be >= 0 and <= 1')}
         if (any(gbs < 0, na.rm = TRUE))                         {msg <- append(msg, 'gbs must be >= 0')}
-        if (any(Jmax_at_25 < 0, na.rm = TRUE))                  {msg <- append(msg, 'Jmax_at_25 must be >= 0')}
+        if (any(J_at_25 < 0, na.rm = TRUE))                     {msg <- append(msg, 'J_at_25 must be >= 0')}
         if (any(RL_at_25 < 0, na.rm = TRUE))                    {msg <- append(msg, 'RL_at_25 must be >= 0')}
         if (any(Rm_frac < 0 | Rm_frac > 1, na.rm = TRUE))       {msg <- append(msg, 'Rm_frac must be >= 0 and <= 1')}
         if (any(Vcmax_at_25 < 0, na.rm = TRUE))                 {msg <- append(msg, 'Vcmax_at_25 must be >= 0')}
@@ -132,27 +128,17 @@ calculate_c4_assimilation <- function(
         }
     }
 
-    # Apply temperature responses to Vcmax, Vpmax, RL, RLm, and Jmax, making use
+    # Apply temperature responses to Vcmax, Vpmax, RL, RLm, and J, making use
     # of Table 4.1
     Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
     Vpmax_tl <- Vpmax_at_25 * exdf_obj[, vpmax_norm_column_name] # micromol / m^2 / s
     RL_tl <- RL_at_25 * exdf_obj[, rl_norm_column_name]          # micromol / m^2 / s
     RLm_tl <- Rm_frac * RL_tl                                    # micromol / m^2 / s
-    Jmax_tl <- Jmax_at_25 * exdf_obj[, jmax_norm_column_name]    # micromol / m^2 / s
+    J_tl <- J_at_25 * exdf_obj[, j_norm_column_name]             # micromol / m^2 / s
 
     # Equations 4.17 and 4.19
     Vpc <- Cm * Vpmax_tl / (Cm + Kp)   # micromol / m^2 / s
     Vp <- pmin(Vpc, Vpr, na.rm = TRUE) # micromol / m^2 / s
-
-    # Equations 2.14 and 2.15
-    J_tl <- sapply(seq_along(Jmax_tl), function(i) {
-        j_from_jmax(
-            Jmax_tl[i],
-            Qin[i],
-            absorptance * (1 - f_spectral) * rho,
-            theta
-        )
-    })
 
     # Calculate individual process-limited assimilation rates. These are not
     # explicitly given by any equations in the textbook, but do appear as terms
@@ -211,8 +197,7 @@ calculate_c4_assimilation <- function(
         output <- exdf(data.frame(
             alpha_psii = alpha_psii,
             gbs = gbs,
-            Jmax_at_25 = Jmax_at_25,
-            Jmax_tl = Jmax_tl,
+            J_at_25 = J_at_25,
             J_tl = J_tl,
             RL_at_25 = RL_at_25,
             RL_tl = RL_tl,
@@ -242,8 +227,7 @@ calculate_c4_assimilation <- function(
             output,
             c('calculate_c4_assimilation', 'alpha_psii',          unit_dictionary$alpha_psii),
             c('calculate_c4_assimilation', 'gbs',                 unit_dictionary$gbs),
-            c('calculate_c4_assimilation', 'Jmax_at_25',          'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Jmax_tl',             'micromol m^(-2) s^(-1)'),
+            c('calculate_c4_assimilation', 'J_at_25',             'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'J_tl',                'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'RL_at_25',            'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'Rm_frac',             unit_dictionary$Rm_frac),

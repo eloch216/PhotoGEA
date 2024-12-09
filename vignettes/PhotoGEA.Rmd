@@ -97,19 +97,8 @@ licor_data <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify separate mesophyll conductance values for each species; here we use
-# arbitrary values since this is just an example
-licor_data <- set_variable(
-  licor_data, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)',
-  id_column = 'species',
-  value_table = list(soybean = 0.9, tobacco = 1.1)
-)
-
 # Calculate the total pressure
 licor_data <- calculate_total_pressure(licor_data)
-
-# Calculate Cc
-licor_data <- apply_gm(licor_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_data <- calculate_temperature_response(licor_data, c3_temperature_param_bernacchi)

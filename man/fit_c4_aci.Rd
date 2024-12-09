@@ -2,15 +2,31 @@
 
 \alias{fit_c4_aci}
 
-\title{Fits a C4 assimilation model to an experimental curve}
+\title{Fits a C4 assimilation model to an A-Ci curve}
 
 \description{
-  Fits a model to an experimentally measured C4 CO2 response curve using the
-  data in the \code{exdf} object along with a few other user-supplied
-  parameters. This function can accomodate alternative column names for the
-  variables taken from the Licor file in case they change at some point in the
-  future. This function also checks the units of each required column and will
-  produce an error if any units are incorrect.
+  Fits the von Caemmerer model to an experimentally measured C4 A-Ci curve.
+
+  It is possible to fit the following parameters: \code{alpha_psii}, \code{gbs},
+  \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25}, \code{Rm_frac},
+  \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr}.
+
+  By default, only a subset of these parameters are actually fit:
+  \code{RL_at_25}, \code{Vcmax_at_25}, and \code{Vpmax_at_25}. This can be
+  altered using the \code{fit_options} argument, as described below.
+
+  Best-fit parameters are found using maximum likelihood fitting, where the
+  optimizer (\code{optim_fun}) is used to minimize the error function (defined
+  by \code{\link{error_function_c4_aci}}).
+
+  Once best-fit parameters are found, confidence intervals are calculated
+  using \code{\link{confidence_intervals_c4_aci}}, and unreliable parameter
+  estimates are removed.
+
+  For temperature-dependent parameters, best-fit values and confidence intervals
+  are returned at 25 degrees C and at leaf temperature.
+
+  See below for more details.
 }
 
 \usage{
@@ -22,28 +38,24 @@
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     gamma_star_column_name = 'gamma_star',
-    jmax_norm_column_name = 'Jmax_norm',
+    gmc_norm_column_name = 'gmc_norm',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
     sd_A = 'RMSE',
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
-    OPTIM_FUN = optimizer_deoptim(200),
+    optim_fun = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2
@@ -61,14 +73,14 @@
     operating point. A value of \code{NA} disables this feature.
   }
 
-  \item{ao_column_name}{
-    The name of the column in \code{exdf_obj} that contains the dimensionless
-    ratio of solubility and diffusivity of O2 to CO2.
-  }
-
   \item{a_column_name}{
     The name of the column in \code{replicate_exdf} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{ao_column_name}{
+    The name of the column in \code{exdf_obj} that contains the dimensionless
+    ratio of solubility and diffusivity of O2 to CO2.
   }
 
   \item{ca_column_name}{
@@ -86,10 +98,16 @@
     \code{gamma_star} values.
   }
 
-  \item{jmax_norm_column_name}{
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
+  }
+
+  \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Jmax} values (with units of
-    \code{normalized to Jmax at 25 degrees C}).
+    \code{J} values (with units of
+    \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -111,11 +129,6 @@
     The name of the column in \code{exdf_obj} that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
     the units must be \code{percent}.
-  }
-
-  \item{pcm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the partial pressure
-    of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
   \item{qin_column_name}{
@@ -152,36 +165,16 @@
     option is \code{'RMSE'}.
   }
 
-  \item{absorptance}{
-    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
-    (2021).
-  }
-
-  \item{f_spectral}{
-    The spectral quality adjustment factor (dimensionless). See Equation 35
-    from S. von Caemmerer (2021).
-  }
-
-  \item{rho}{
-    The fraction of light absorbed by photosystem II rather than photosystem I
-    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
-  }
-
-  \item{theta}{
-    An empirical curvature factor (dimensionless). See Equation 34 from S. von
-    Caemmerer (2021).
-  }
-
   \item{x_etr}{
     The fraction of whole-chain electron transport occurring in the mesophyll
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
   }
 
-  \item{OPTIM_FUN}{
+  \item{optim_fun}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
+    \code{feval}, and \code{convergence_msg}. See \code{\link{optimizers}}
     for a list of available options.
   }
 
@@ -213,7 +206,7 @@
     \code{exdf_obj}.
   }
 
-  \item{error_threshold_factor}{
+  \item{relative_likelihood_threshold}{
     To be passed to \code{\link{confidence_intervals_c4_aci}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
   }
@@ -239,35 +232,52 @@
 \details{
   This function calls \code{\link{calculate_c4_assimilation}} to calculate
   values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{alpha_psii}, \code{gbs}, \code{Jmax_at_25},
-  \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
-  \code{Vpr} to find ones that best reproduce the experimentally measured values
-  of net assimilation. By default, the following options are used for the fits:
+  vary the values of \code{alpha_psii}, \code{gbs}, \code{gmc_at_25},
+  \code{J_at_25}, \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
+  \code{Vpmax_at_25}, and \code{Vpr} to find ones that best reproduce the
+  experimentally measured values of net assimilation. By default, the following
+  options are used for the fits:
   \itemize{
     \item \code{alpha_psii}: lower = -1, upper = 10, fit_option = 0
     \item \code{gbs}: lower = -1, upper = 10, fit_option = 0.003
-    \item \code{Jmax_at_25}: lower = -50, upper = 1000, fit_option = 1000
+    \item \code{gmc_at_25}: lower = -1, upper = 10, fit_option = 1
+    \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = 1000
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Rm_frac}: lower = -10, upper = 10, fit_option = 0.5
     \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{Vpmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{Vpr}: lower = -50, upper = 1000, fit_option = 1000
   }
-  With these settings, \code{Jmax} and \code{Vpr} are set to 1000 (so net
+  With these settings, \code{J_at_25} and \code{Vpr} are set to 1000 (so net
   assimilation is essentially never limited by light or PEP carboxylase
-  regeneration), \code{alpha_psii}, \code{gbs}, and \code{Rm_frac} are set to
-  default values used in von Caemmerer (2000), and the other parameters are fit
-  during the process (see \code{fit_options} above). The bounds are chosen
-  liberally to avoid any bias.
+  regeneration), \code{alpha_psii}, \code{gbs}, \code{gmc_at_25}, and
+  \code{Rm_frac} are set to default values used in von Caemmerer (2000), and the
+  other parameters are fit during the process (see \code{fit_options} above).
+  The bounds are chosen liberally to avoid any bias.
 
   An initial guess for the parameters is generated by calling
-  \code{\link{initial_guess_c4_aci}} with the \code{pcm_threshold_rlm} argument
-  set to 40 microbar. Note that any fixed values specified in the fit options
-  will override the values returned by the guessing function.
+  \code{\link{initial_guess_c4_aci}} as follows:
+  \itemize{
+    \item \code{pcm_threshold_rlm} is set to 40 microbar.
+    \item If \code{alpha_psii} is being fit, the \code{alpha_psii} argument of
+          \code{initial_guess_c4_aci} is set to 0.1; otherwise, the argument is
+          set to the value specified by the fit options.
+    \item If \code{gbs} is being fit, the \code{gbs} argument of
+          \code{initial_guess_c4_aci} is set to 0.003; otherwise, the argument
+          is set to the value specified by the fit options.
+    \item If \code{gmc_at_25} is being fit, the \code{gmc_at_25} argument of
+          \code{initial_guess_c4_aci} is set to 1; otherwise, the argument is
+          set to the value specified by the fit options.
+    \item If \code{Rm_frac} is being fit, the \code{Rm_frac} argument of
+          \code{initial_guess_c4_aci} is set to 0.5; otherwise, the argument is
+          set to the value specified by the fit options.
+  }
+  Note that any fixed values specified in the fit options will override the
+  values returned by the guessing function.
 
   The fit is made by creating an error function using
   \code{\link{error_function_c4_aci}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above.  The
+  \code{optim_fun}, starting from the initial guess described above.  The
   \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
   found to reliably return great fits. However, it is a slow optimizer. If speed
   is important, consider reducing the number of generations or using
@@ -283,8 +293,7 @@
   will not change the model's outputs. Similar issues can occur when calculating
   \code{An} as the minimum of \code{Ac} and \code{Aj}. Because of this,
   derivative-based optimizers tend to struggle when fitting C4 A-Ci curves. Best
-  results are obtained using derivative-free methods. It has been found that
-  \code{dfoptim::nmkb} is often able to find a good fit.
+  results are obtained using derivative-free methods.
 
   Sometimes the optimizer may choose a set of parameter values where one of the
   potential limiting rates \code{Vpc} or \code{Vpr} is never the smallest rate.
@@ -292,7 +301,7 @@
   \code{Vpr}) will be severely unreliable. Likewise, it may happen that one of
   \code{Ac} or \code{Aj} is never the smallest rate. In this case the
   corresponding parameter estimates (\code{Vpmax}, \code{Vpr}, and \code{Vcmax},
-  or \code{Jmax}) will be severely unreliable. This will be indicated by a value
+  or \code{J}) will be severely unreliable. This will be indicated by a value
   of \code{0} in the corresponding trust column(for example,
   \code{Vcmax_trust}). If \code{remove_unreliable_param} is \code{1} or larger,
   then such parameter estimates (and the corresponding rates) will be replaced
@@ -336,13 +345,13 @@
                   name is determined by appending \code{'_residuals'} to the end
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
-            \item Values of fitting parameters at 25 degrees C (or the optimal
-                  temperature) will be stored in the \code{Jmax_at_25},
-                  \code{RL_at_25}, \code{Vcmax_at_25}, \code{Vpmax_at_25},
-                  and \code{Vpr} columns.
+            \item Values of fitting parameters at 25 degrees C will be stored in
+                  the \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
+                  \code{Vcmax_at_25}, \code{Vpmax_at_25}, and \code{Vpr}
+                  columns.
             \item The other outputs from \code{\link{calculate_c4_assimilation}}
                   will be stored in columns with the usual names:
-                  \code{alpha_psii}, \code{gbs}, \code{Rm_Frac},
+                  \code{alpha_psii}, \code{gbs}, \code{gmc_tl}, \code{Rm_Frac},
                   \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl}, \code{RLm_tl},
                   \code{Vp}, \code{Apc}, \code{Apr}, \code{Ap}, \code{Ar},
                   \code{Ajm}, \code{Ajbs}, \code{Ac}, and \code{Aj}.
@@ -357,15 +366,16 @@
                   the smallest potential carboxylation rate are stored in the
                   \code{n_Vpc_smallest} and \code{n_Vpr_smallest} columns.
             \item The best-fit values are stored in the \code{alpha_psii},
-                  \code{gbs}, \code{Jmax_at_25} \code{RL_at_25},
-                  \code{Rm_frac}, \code{Vcmax_at_25}, \code{Vpmax_at_25}, and
-                  \code{Vpr} columns. If \code{calculate_confidence_intervals}
-                  is \code{TRUE}, upper and lower limits for each of these
-                  parameters will also be included.
+                  \code{gbs}, \code{gmc_at_25}, \code{J_at_25},
+                  \code{RL_at_25}, \code{Rm_frac}, \code{Vcmax_at_25},
+                  \code{Vpmax_at_25}, and \code{Vpr} columns. If
+                  \code{calculate_confidence_intervals} is \code{TRUE}, upper
+                  and lower limits for each of these parameters will also be
+                  included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  \code{X_tl_avg} columns: \code{J_tl_avg}, \code{Jmax_tl_avg},
-                  \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
+                  \code{X_tl_avg} columns: \code{gmc_tl_avg}, \code{J_tl_avg},
+                  \code{Jmax_tl_avg}, \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
                   \code{Vpmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_PCm}, \code{operating_Ci},
@@ -409,9 +419,6 @@ licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
-# Calculate PCm
-licor_file <- apply_gm(licor_file, 'C4')
-
 # For these examples, we will use a faster (but sometimes less reliable)
 # optimizer so they run faster
 optimizer <- optimizer_nmkb(1e-7)
@@ -420,7 +427,7 @@ optimizer <- optimizer_nmkb(1e-7)
 one_result <- fit_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 )
 
 # Fit all curves in the data set (it is more common to do this)
@@ -429,7 +436,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c4_aci,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 ))
 
 # View the fitting parameters for each species / plot

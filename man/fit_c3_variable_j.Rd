@@ -2,15 +2,34 @@
 
 \alias{fit_c3_variable_j}
 
-\title{Fits a C3 assimilation model to an experimental curve}
+\title{Fits a C3 assimilation model to an A-Ci + CF curve}
 
 \description{
-  Fits a model to an experimentally measured C3 CO2 response curve + chlorophyll
-  fluorescence using the data in the \code{exdf} object along with a few other
-  user-supplied parameters. This function can accomodate alternative column
-  names for the variables taken from the data file in case they change at some
-  point in the future. This function also checks the units of each required
-  column and will produce an error if any units are incorrect.
+  Fits the Farquhar-von-Caemmerer-Berry + Variable J model to an experimentally
+  measured C3 A-Ci + CF curve.
+
+  It is possible to fit the following parameters: \code{alpha_g},
+  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{gamma_star},
+  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25}.
+
+  By default, only a subset of these parameters are actually fit:
+  \code{alpha_old}, \code{J_at_25}, \code{RL_at_25}, \code{tau},
+  \code{Tp_at_25}, and \code{Vcmax_at_25}. This can be altered using the
+  \code{fit_options} argument, as described below.
+
+  Best-fit parameters are found using maximum likelihood fitting, where the
+  optimizer (\code{optim_fun}) is used to minimize the error function (defined
+  by \code{\link{error_function_c3_variable_j}}).
+
+  Once best-fit parameters are found, confidence intervals are calculated
+  using \code{\link{confidence_intervals_c3_variable_j}}, and unreliable
+  parameter estimates are removed.
+
+  For temperature-dependent parameters, best-fit values and confidence intervals
+  are returned at 25 degrees C and at leaf temperature.
+
+  See below for more details.
 }
 
 \usage{
@@ -36,7 +55,7 @@
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(400),
+    optim_fun = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
     fit_options = list(),
@@ -44,7 +63,8 @@
     cj_crossover_max = NA,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
-    error_threshold_factor = 0.147,
+    check_j = TRUE,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2,
@@ -165,11 +185,11 @@
     \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
   }
 
-  \item{OPTIM_FUN}{
+  \item{optim_fun}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. The default option is an
+    \code{feval}, and \code{convergence_msg}. The default option is an
     evolutionary optimizer that runs slow but tends to find good fits for most
     curves. \code{\link{optimizer_nmkb}} can also be used; it is faster, but
     doesn't always find a good fit.
@@ -219,7 +239,11 @@
     To be passed to \code{\link{error_function_c3_variable_j}}.
   }
 
-  \item{error_threshold_factor}{
+  \item{check_j}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{relative_likelihood_threshold}{
     To be passed to \code{\link{confidence_intervals_c3_variable_j}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
   }
@@ -300,7 +324,7 @@
 
   The fit is made by creating an error function using
   \code{\link{error_function_c3_variable_j}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above. The
+  \code{optim_fun}, starting from the initial guess described above. The
   \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
   found to reliably return great fits. However, it is a slow optimizer. If speed
   is important, consider reducing the number of generations or using
@@ -446,7 +470,7 @@ optimizer <- optimizer_nmkb(1e-7)
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 )
 }
 
@@ -456,7 +480,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_variable_j,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 ))
 
 # View the fitting parameters for each species / plot

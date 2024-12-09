@@ -30,12 +30,13 @@
     \item \code{Kp}: The Michaelis-Menten constant of PEP carboxylase.
     \item \code{gamma_star}: Half the reciprocal of rubisco specificity.
     \item \code{ao}: The ratio of solubility and diffusivity of O2 to CO2.
-    \item \code{gmc}: The mesophyll conductance to CO2 diffusion.
-    \item \code{Jmax_norm}: The maximum rate of RuBP regneration \code{Jmax}
-          normalized to its value at its optimal temperature.
+    \item \code{gmc_norm}: The mesophyll conductance to CO2 diffusion normalized
+          to its value at 25 degrees C.
+    \item \code{J_norm}: The electron transport rate \code{J} normalized to its
+          value at 25 degrees C.
   }
 
-  The \code{Jmax_norm} parameter is calculated using a Gaussian function and
+  The \code{J_norm} parameter is calculated using a Gaussian function and
   hence its corresponding list element is itself a list with 4 named elements:
   \itemize{
     \item \code{type}: the type of temperature response (\code{'Gaussian'})
@@ -56,13 +57,13 @@
 }
 
 \source{
-  Some of these parameters (\code{Vcmax}, \code{Vpmax}, \code{RL}, and
-  \code{Jmax}) are normalized to their values at 25 degrees C. These variables
-  include \code{_norm} in their names to indicate this.
+  Some of these parameters (\code{Vcmax}, \code{Vpmax}, \code{RL}, \code{gmc},
+  and \code{J}) are normalized to their values at 25 degrees C. These
+  variables include \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Kc}, \code{Ko}, \code{Kp}, \code{gamma_star},
-  \code{ao}, and \code{gmc}) are not normalized because they are assumed to not
-  vary significantly between species.
+  and \code{ao}) are not normalized because they are assumed to not vary
+  significantly between species.
 
   Here, the Arrhenius scaling factors (\code{c}; dimensionless) and activation
   energy values (\code{Ea}; kJ / mol) are obtained from von Caemmerer (2021). In
@@ -71,10 +72,11 @@
   information as described in the documentation for
   \code{\link{calculate_temperature_response_arrhenius}}.
 
-  The Gaussian parameters (\code{t_opt} and \code{sigma}) for \code{Jmax_norm}
-  are also obtained from von Caemmerer (2021). The value of \code{optimum_rate}
-  is chosen such that \code{Jmax_norm} is equal to 1 at a temperature of 25
-  degrees C.
+  The Gaussian parameters (\code{t_opt} and \code{sigma}) for \code{J_norm}
+  are also obtained from von Caemmerer (2021), assuming that \code{J} and
+  \code{Jmax} follow the same temperature response. The value of
+  \code{optimum_rate} is chosen such that \code{J_norm} is equal to 1 at a
+  temperature of 25 degrees C.
 
   References:
 

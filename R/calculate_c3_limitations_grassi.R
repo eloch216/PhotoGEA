@@ -9,7 +9,7 @@ calculate_c3_limitations_grassi <- function(
     nadph_use = 8.0,
     cc_column_name = 'Cc',
     gamma_star_column_name = 'Gamma_star',
-    gmc_column_name = 'gmc',
+    gmc_column_name = 'gmc_tl',
     gsc_column_name = 'gsc',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',

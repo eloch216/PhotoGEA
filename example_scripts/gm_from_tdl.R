@@ -434,7 +434,7 @@ if (PERFORM_CALCULATIONS) {
             licor_files[, 'event_replicate'],
             mean
           ))
-          
+
           licor_files <- set_variable(
             licor_files,
             'Delta_obs_growth',
@@ -443,7 +443,7 @@ if (PERFORM_CALCULATIONS) {
             value_table = Delta_obs_growth_table
           )
         }
-      
+
         calculate_gm_busch(
             licor_files,
             e_star_equation = E_STAR_EQUATION
@@ -451,6 +451,19 @@ if (PERFORM_CALCULATIONS) {
     } else {
         calculate_gm_ubierna(licor_files)
     }
+
+    # Calculate Cc using the new values of mesophyll conductance
+    licor_files <- calculate_temperature_response(
+      licor_files,
+      c3_temperature_param_flat['gmc_norm']
+    )
+
+    licor_files <- set_variable(
+      licor_files,
+      'gmc_at_25',
+      units = licor_files$units$gmc,
+      value = licor_files[, 'gmc']
+    )
 
     licor_files <- apply_gm(licor_files)
 

@@ -19,16 +19,19 @@
     alpha_s,
     alpha_t,
     Gamma_star,
+    gmc_at_25,
     cc_threshold_rd = 100,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
-    cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
+    total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
   )
@@ -81,6 +84,16 @@
     in the \code{Gamma_star} column of \code{rc_exdf} if it exists.
   }
 
+  \item{gmc_at_25}{
+    The mesophyll conductance to CO2 diffusion at 25 degrees C, expressed in
+    \code{mol m^(-2) s^(-1) bar^(-1)}. In the absence of other reliable
+    information, \code{gmc_at_25} is often assumed to be infinitely large. If
+    \code{gmc_at_25} is not a number, then there must be a column in
+    \code{rc_exdf} called \code{gmc_at_25} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{gmc_at_25}
+    column of \code{rc_exdf} if it exists.
+  }
+
   \item{cc_threshold_rd}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{RL}.
@@ -99,9 +112,15 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{cc_column_name}{
+  \item{ci_column_name}{
     The name of the column in \code{rc_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
   }
 
   \item{j_norm_column_name}{
@@ -130,6 +149,11 @@
   \item{rl_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{rc_exdf} that contains the total
+    pressure in \code{bar}.
   }
 
   \item{tp_norm_column_name}{
@@ -210,25 +234,23 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
-# Create the guessing function; here we set all alpha values to 0 and use the
-# temperature-dependent values of Gamma_star calculated above
-guessing_func <-
-  initial_guess_c3_aci(alpha_g = 0, alpha_old = 0, alpha_s = 0, alpha_t = 0, Gamma_star = '')
+# Create the guessing function; here we set all alpha values to 0, use the
+# temperature-dependent values of Gamma_star calculated above, and set gmc to
+# infinity
+guessing_func <- initial_guess_c3_aci(
+  alpha_g = 0,
+  alpha_old = 0,
+  alpha_s = 0,
+  alpha_t = 0,
+  Gamma_star = '',
+  gmc_at_25 = Inf
+)
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
@@ -240,9 +262,10 @@ calculated_aci <- do.call(rbind, by(
   licor_file[, 'species_plot'],
   function(x) {
     param <- guessing_func(x)
+    x <- apply_gm(x, param[6])
     calculate_c3_assimilation(
       x,
-      param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[8], param[9]
+      param[1], param[2], param[3], param[4], param[5], param[7], param[8], param[9], param[10]
     )
   }
 ))

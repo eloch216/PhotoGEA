@@ -1,6 +1,9 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
+# Load helping function
+source('get_duplicated_colnames.R')
+
 # Choose test tolerance
 TOLERANCE <- 1e-4
 
@@ -13,7 +16,7 @@ test_that('fit failures are handled properly', {
         fit_c3_variable_j(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_deoptim(200),
+            optim_fun = optimizer_deoptim(200),
             hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
@@ -39,7 +42,7 @@ test_that('Ci and Cc limits can be bypassed', {
         fit_c3_variable_j(
             one_curve_bad,
             Ca_atmospheric = 420,
-            OPTIM_FUN = optimizer_deoptim(200),
+            optim_fun = optimizer_deoptim(200),
             hard_constraints = 0,
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 2
@@ -62,16 +65,27 @@ test_that('fit results have not changed (no alpha)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
-        OPTIM_FUN = optimizer_deoptim(200),
+        optim_fun = optimizer_deoptim(200),
         require_positive_gmc = 'all',
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 2,
+        check_j = FALSE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(240.718, 254.101, 1.885, 0.405, NA, 38.416),
+        c(240.718, 254.101, 1.885, 0.405, NA, 40.416),
         tolerance = TOLERANCE
     )
 
@@ -84,6 +98,11 @@ test_that('fit results have not changed (no alpha)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
         c(13, 5, 8)
+    )
+
+    expect_equal(
+        as.character(fit_res$fits[, 'limiting_process']),
+        c('Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Aj', 'Aj', 'Aj', 'Aj', 'Aj')
     )
 
     lim_info <-
@@ -108,16 +127,27 @@ test_that('fit results have not changed (alpha_old)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 'fit', alpha_g = 0, alpha_s = 0),
-        OPTIM_FUN = optimizer_deoptim(200),
+        optim_fun = optimizer_deoptim(200),
         require_positive_gmc = 'all',
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 2,
+        check_j = FALSE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(243.821, 256.166, 1.901, 0.409, NA, 40.429),
+        c(243.821, 256.166, 1.901, 0.409, NA, 42.429),
         tolerance = TOLERANCE
     )
 
@@ -154,16 +184,27 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
         one_curve,
         Ca_atmospheric = 420,
         fit_options = list(alpha_old = 0, alpha_g = 'fit', alpha_s = 'fit'),
-        OPTIM_FUN = optimizer_deoptim(200),
+        optim_fun = optimizer_deoptim(200),
         require_positive_gmc = 'all',
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+        remove_unreliable_param = 2,
+        check_j = FALSE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(223.833, 264.193, 1.798, 0.422, NA, 43.052),
+        c(223.833, 264.193, 1.798, 0.422, NA, 45.052),
         tolerance = TOLERANCE
     )
 
@@ -199,13 +240,24 @@ test_that('fit results have not changed (pseudo-FvCB)', {
     fit_res <- fit_c3_variable_j(
         one_curve,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_deoptim(200),
-        use_min_A = TRUE
+        optim_fun = optimizer_deoptim(200),
+        use_min_A = TRUE,
+        check_j = FALSE
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(319.868, 313.808, 2.441, 0.500, NA, 47.966),
+        c(319.868, 313.808, 2.441, 0.500, NA, 49.966),
         tolerance = TOLERANCE
     )
 
@@ -253,7 +305,7 @@ test_that('removing and excluding points produce the same fit results', {
     fit_res_remove <- fit_c3_variable_j(
         one_curve_remove,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_deoptim(200)
+        optim_fun = optimizer_deoptim(200)
     )
 
     set.seed(1234)
@@ -261,13 +313,13 @@ test_that('removing and excluding points produce the same fit results', {
     fit_res_exclude <- fit_c3_variable_j(
         one_curve_exclude,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_deoptim(200)
+        optim_fun = optimizer_deoptim(200)
     )
 
     # Check that results haven't changed
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'tau', 'Tp_at_25', 'AIC')]),
-        c(246.33, 257.59, 1.92, 0.41, NA, 35.56),
+        c(268.81, 277.21, 1.97, 0.44, NA, 41.90),
         tolerance = TOLERANCE
     )
 
@@ -278,7 +330,7 @@ test_that('removing and excluding points produce the same fit results', {
 
     expect_equal(
         as.numeric(fit_res_remove$parameters[1, c('RSS', 'RMSE')]),
-        c(6.178, 0.786),
+        c(9.534, 0.976),
         tolerance = TOLERANCE
     )
 

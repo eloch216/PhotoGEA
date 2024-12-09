@@ -59,7 +59,7 @@
   \code{Jmax} has \code{optimal_rate = 1}, \code{t_opt = 43}, {sigma = 26}, and
   units of \code{micromol mol^(-1)}, the \code{gaussian_parameters} argument
   could be specified as follows:
-  \code{list(Jmax_norm = list(optimal_rate = 1, t_opt = 43, sigma = 26, units =
+  \code{list(Jmax = list(optimal_rate = 1, t_opt = 43, sigma = 26, units =
   'micromol mol^(-1)'))}.
 
   It is rare to specify these parameters directly; instead, it is more typical
@@ -85,12 +85,12 @@ licor_file <- read_gasex_file(
 
 licor_file <- calculate_temperature_response_gaussian(
   licor_file,
-  list(Jmax_norm = c4_temperature_param_vc$Jmax_norm)
+  list(J_norm = c4_temperature_param_vc$J_norm)
 )
 
-licor_file$units$Jmax_norm      # View the units of the new `Jmax_norm` column
-licor_file$categories$Jmax_norm # View the category of the new `Jmax_norm` column
-licor_file[,'Jmax_norm']        # View the values of the new `Jmax_norm` column
+licor_file$units$J_norm      # View the units of the new `J_norm` column
+licor_file$categories$J_norm # View the category of the new `J_norm` column
+licor_file[,'J_norm']        # View the values of the new `J_norm` column
 }
 
 \concept{exdf}

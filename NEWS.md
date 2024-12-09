@@ -78,8 +78,8 @@ be directly added to this file to describe the related changes.
   - The `c4_arrhenius_von_caemmerer` and `c4_peaked_gaussian_von_caemmerer` have
     been consolidated into a single list suitable for use with
     `calculate_temperature_response`, caled `c4_temperature_param_vc`.
-  - The `c3_arrhenius_sharkey` and `c3_arrhenius_bernacchi` lists now include a
-    Johnson-Eyring-Williams reponse for `Tp` and have been renamed to
+  - The `c3_arrhenius_sharkey` and `c3_arrhenius_bernacchi` lists now include
+    Johnson-Eyring-Williams reponses for `Tp` and `gmc` and have been renamed to
     `c3_temperature_param_sharkey` and `c3_temperature_param_bernacchi` since
     they are no longer pure list of Arrhenius parameters.
   - These changes may not be compatible with scripts written for earlier
@@ -87,8 +87,11 @@ be directly added to this file to describe the related changes.
 - `read_licor_6800_Excel` now checks to make sure the `A` and `gsw` columns are
   not all zero; if these columns are all zero, this indicates that the Excel
   file needs to be "calculated," and a relevant message is sent to the user.
-- The C3 assimilation model and C3 A-Ci fits have been updated to include
-  another parameter related to TPU: `alpha_t`
+- The C3 assimilation model and C3 A-Ci fits have been updated to include:
+  - Another parameter related to TPU (`alpha_t`)
+  - Mesophyll conductance (`gmc_at_25`)
+- The C4 A-Ci fits have also been updated to include mesophyll conductance
+  (`gmc_at_25`) and to fit `J` rather than `Jmax`.
 - Revamped the Laisk fitting function:
   - Renamed the function from `calculate_RL_laisk` to `fit_laisk` since a
     fitting procedure is used, and the method also estimates `Ci_star` in
@@ -96,6 +99,16 @@ be directly added to this file to describe the related changes.
   - Used the method described in Walker & Ort (2015) and Busch et al. (2024)
   - Added a plotting function for displaying the results of a Laisk fit:
     `plot_laisk_fit`.
+- AIC calculations were moved to `residual_stats` so the AIC can be more easily
+  calculated for fits from other packages.
+- Added a new optimizer (`optimizer_nlminb`) and improved the optimizer
+  documentation and testing. The new optimizer is a wrapper for `stats::nlminb`
+  and employs a quasi-Newton algorithm.
+- Added a new function for identifying limiting processes in C3 curves:
+  `identify_c3_limiting_processes`. This function is used internally by
+  `fit_c3_aci` and `fit_c3_variable_j`.
+- A new option was added to Variable J fits: `check_j`
+
 
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 

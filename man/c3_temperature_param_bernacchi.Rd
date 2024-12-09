@@ -15,8 +15,9 @@
 \usage{c3_temperature_param_bernacchi}
 
 \format{
-  List with 8 named elements that each represent a variable whose
-  temperature-dependent value can be calculated using the Arrhenius equation:
+  List with 9 named elements that each represent a variable whose
+  temperature-dependent value can be calculated using an Arrhenius equation or a
+  Johnson-Eyring-Williams equation:
   \itemize{
     \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to its
           value at 25 degrees C.
@@ -31,24 +32,24 @@
     \item \code{Ko}: The Michaelis-Menten constant for rubisco oxygenation.
     \item \code{J_norm}: The electron transport rate (\code{J}) normalized to
           its value at 25 degrees C.
+    \item \code{gmc_norm}: The mesophyll conductance (\code{gmc}) normalized to
+          its value at 25 degrees C.
     \item \code{Tp_norm}: The maximum rate of triose phosphate utilization
           (\code{Tp}) normalized to its value at 25 degrees C.
   }
 
-  In turn, each of these elements is a list with 4 named elements:
+  In turn, each of these elements is a list with at least 2 named elements:
   \itemize{
-    \item \code{type}: the type of temperature response (\code{'Arrhenius'})
-    \item \code{c}: the (dimensionless) Arrhenius scaling factor.
-    \item \code{Ea}: the activation energy in \code{kJ / mol}.
+    \item \code{type}: the type of temperature response
     \item \code{units}: the units of the corresponding variable.
   }
 }
 
 \source{
-  Some of these parameters (\code{RL}, \code{Vcmax}, \code{J}, and \code{Tp})
-  are normalized to their values at 25 degrees C. \code{Vomax} is normalized to
-  the value of \code{Vcmax} at 25 degrees C. These variables include
-  \code{_norm} in their names to indicate this.
+  Some of these parameters (\code{RL}, \code{Vcmax}, \code{J}, \code{Tp}, and
+  \code{gmc}) are normalized to their values at 25 degrees C. \code{Vomax} is
+  normalized to the value of \code{Vcmax} at 25 degrees C. These variables
+  include \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Gamma_star}, \code{Kc}, and \code{Ko}) are not
   normalized because they are assumed to not vary significantly between species.
@@ -60,6 +61,9 @@
   light-dependent values of \code{J} follow the same temperature response
   function and refer to it as \code{J} for compatibility with
   \code{\link{c3_temperature_param_sharkey}}.
+
+  Johnson-Eyring-Williams parameters for \code{gmc} were obtained from Bernacchi
+  et al. (2002).
 
   The Bernacchi papers from the early 2000s do not specify a temperature
   response for \code{Tp}, so we instead use the Johnson-Eyring-Williams
@@ -79,6 +83,12 @@
           S. P. "Improved temperature response functions for models of
           Rubisco-limited photosynthesis" Plant, Cell & Environment 24, 253–259
           (2001) [\doi{10.1111/j.1365-3040.2001.00668.x}].
+
+    \item Bernacchi, C. J., Portis, A. R., Nakano, H., von Caemmerer, S. & Long,
+          S. P. "Temperature Response of Mesophyll Conductance. Implications for
+          the Determination of Rubisco Enzyme Kinetics and for Limitations to
+          Photosynthesis in Vivo" Plant Physiology 130, 1992–1998 (2002)
+          [\doi{10.1104/pp.008250}].
 
     \item Bernacchi, C. J., Pimentel, C. & Long, S. P. "In vivo temperature
           response functions of parameters required to model RuBP-limited

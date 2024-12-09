@@ -35,6 +35,7 @@
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
+    total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm'
   )
@@ -153,6 +154,11 @@
   \item{rl_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
+  }
+
+  \item{total_pressure_column_name}{
+    The name of the column in \code{rc_exdf} that contains the total
+    pressure in \code{bar}.
   }
 
   \item{tp_norm_column_name}{

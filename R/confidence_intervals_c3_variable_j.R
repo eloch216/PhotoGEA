@@ -5,7 +5,7 @@ confidence_intervals_c3_variable_j <- function(
     upper = list(),
     fit_options = list(),
     sd_A = 1,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -27,6 +27,7 @@ confidence_intervals_c3_variable_j <- function(
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
+    check_j = TRUE,
     ...
 
 )
@@ -62,6 +63,7 @@ confidence_intervals_c3_variable_j <- function(
         hard_constraints,
         require_positive_gmc,
         gmc_max,
+        check_j,
         ...
     )
 
@@ -77,7 +79,7 @@ confidence_intervals_c3_variable_j <- function(
         error_function,
         best_fit_parameters,
         luf,
-        error_threshold_factor,
+        relative_likelihood_threshold,
         'confidence_intervals_c3_variable_j'
     )
 }

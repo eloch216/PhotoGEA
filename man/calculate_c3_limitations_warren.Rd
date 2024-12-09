@@ -72,7 +72,7 @@
   \item{cc_column_name}{
     The name of the column in \code{exdf_obj} that contains the chloroplastic
     CO2 concentration in \code{micromol mol^(-1)}. Typically these are
-    calculated using \code{\link{apply_gm}}.
+    values that are automatically calculated by \code{\link{fit_c3_aci}}.
   }
 
   \item{ci_column_name}{
@@ -245,20 +245,11 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify mesophyll conductance
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 0.5
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate additional gas properties
 licor_file <- calculate_gas_properties(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
@@ -270,7 +261,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_aci,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb(1e-7)
+  optim_fun = optimizer_nmkb(1e-7)
 ))
 
 # Get a subset of fitting results corresponding to the first measured point

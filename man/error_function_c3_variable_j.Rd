@@ -5,9 +5,14 @@
 \title{Generate an error function for C3 Variable J curve fitting}
 
 \description{
-  Creates a function that returns an error value (the sum of squared residuals)
-  representing the amount of agreement between modeled and measured \code{An}
-  values.
+  Creates a function that returns an error value (the negative of the natural
+  logarithm of the likelihood) representing the amount of agreement between
+  modeled and measured \code{An} values. When this function is minimized, the
+  likelihood is maximized.
+
+  Internally, this function uses \code{link{calculate_c3_variable_j}} and
+  \code{link{calculate_c3_assimilation}} to calculate assimilation rate values
+  that are compared to the measured ones.
 }
 
 \usage{
@@ -36,6 +41,7 @@
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
+    check_j = TRUE,
     \dots
   )
 }
@@ -181,6 +187,11 @@
     acceptable. See below for more details.
   }
 
+  \item{check_j}{
+    A logical (TRUE/FALSE) value indicating whether to check whether
+    \code{J_F > J_tl}. See below for more details.
+  }
+
   \item{\dots}{
     Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
   }
@@ -199,9 +210,9 @@
   The \code{error_function_c3_variable_j} returns such a function, which is
   based on a particular replicate and a set of fitting options. It is possible
   to just fit a subset of the available fitting parameters; by default, the
-  fitting parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25},
-  \code{tau}, and \code{Vcmax_at_25}. This behavior can be changed via the
-  \code{fit_options} argument.
+  fitting parameters are \code{alpha_old}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, \code{tau}, and \code{Vcmax_at_25}. This behavior can be
+  changed via the \code{fit_options} argument.
 
   For practical reasons, the function actually returns values of \code{-ln(L)},
   where \code{L} is the likelihood. The logarithm of \code{L} is simpler to
@@ -243,6 +254,14 @@
           argument can be used to address this. If any predicted \code{gmc}
           values exceed \code{gmc_max} when \code{A} is positive, a heavy
           penalty will be added to the error function.
+    \item \code{Enforcing consistent RuBP regeneration rates}: In principle, the
+          actual RuBP regeneration rate (\code{J_F}) should always be less than
+          or equal to its maximum value for a given \code{Qin} and leaf
+          temperature (\code{J_tl}), with equality only occuring when
+          assimilation is RuBP-regeneration-limited. When \code{check_j} is
+          \code{TRUE}, a heavy penalty will be added to the error function for
+          any parameter values where \code{J_F} is greater than \code{J_tl} at
+          any point in the curve.
   }
 
   A penalty is also added for any parameter combination where \code{An} is not a
@@ -255,9 +274,9 @@
   vector representing values of the parameters to be fitted (which are specified
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
-  default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in that
-  order).
+  default settings, \code{guess} should contain values of \code{alpha_old},
+  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25} (in that order).
 }
 
 \examples{
@@ -289,15 +308,20 @@ error_fcn <- error_function_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 200, RL_at_25 = 1, tau = 0.5, Tp_at_25 = 15,
-# Vcmax_at_25 = 100
-error_fcn(c(200, 1, 0.5, 15, 100))
+# Evaluate the error for:
+#  alpha_old = 1.9
+#  J_at_25 = 270
+#  RL_at_25 = 1.9
+#  tau = 0.42
+#  Tp_at_25 = 8.7
+#  Vcmax_at_25 = 258
+error_fcn(c(1.9, 270, 1.9, 0.42, 8.7, 258))
 
 # Make a plot of error vs. Tp_at_25 when the other parameters are fixed to the
 # values above. As Tp_at_25 increases, it eventually stops limiting the
 # assimilation rate and its value stops influencing the error.
-tpu_error_fcn <- function(Tp_at_25) {error_fcn(c(200, 1, 0.5, Tp_at_25, 100))}
-tpu_seq <- seq(5, 25)
+tpu_error_fcn <- function(Tp_at_25) {error_fcn(c(1.9, 270, 1.9, 0.42, Tp_at_25, 258))}
+tpu_seq <- seq(5, 12, by = 0.25)
 
 lattice::xyplot(
   sapply(tpu_seq, tpu_error_fcn) ~ tpu_seq,

@@ -1,21 +1,6 @@
 # Get test curves to use
 source('one_curve_c3_aci.R')
 
-# Specify mesophyll conductance
-one_curve <- set_variable(
-  one_curve,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
-)
-
-one_curve_bad <- set_variable(
-  one_curve_bad,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
-)
-
-# Calculate Cc
-one_curve <- apply_gm(one_curve)
-one_curve_bad <- apply_gm(one_curve_bad)
-
 test_that('fit failures are handled properly', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
@@ -24,7 +9,7 @@ test_that('fit failures are handled properly', {
     fit_res_bad <- fit_c3_aci(
         one_curve_bad,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7)
+        optim_fun = optimizer_nmkb(1e-7)
     )
 
     limit_res_bad <- expect_no_error(
@@ -43,8 +28,8 @@ test_that('fit results have not changed', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7),
-        fit_options = list(alpha_old = 0),
+        optim_fun = optimizer_nmkb(1e-7),
+        fit_options = list(alpha_old = 0, gmc_at_25 = 1.0),
         calculate_confidence_intervals = FALSE,
         remove_unreliable_param = 0
     )

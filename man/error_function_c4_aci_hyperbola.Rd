@@ -7,7 +7,12 @@
 \description{
   Creates a function that returns an error value (the negative of the natural
   logarithm of the likelihood) representing the amount of agreement between
-  modeled and measured \code{An} values.
+  modeled and measured \code{An} values. When this function is minimized, the
+  likelihood is maximized.
+
+  Internally, this function uses
+  \code{link{calculate_c4_assimilation_hyperbola}} to calculate assimilation
+  rate values that are compared to the measured ones.
 }
 
 \usage{
@@ -58,7 +63,7 @@
     The name of the column in \code{exdf_obj} that contains the intercellular
     CO2 concentration, expressed in \code{micromol mol^(-1)}.
   }
-  
+
   \item{hard_constraints}{
     To be passed to \code{\link{calculate_c4_assimilation_hyperbola}}; see that
     function for more details.

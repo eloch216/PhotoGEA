@@ -19,10 +19,14 @@ licor_file <- organize_response_curve_data(
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters. Here
-# use the "Bernacchi" option, but override the Tp response with a flat one.
+# we use the "Bernacchi" option, but override the Tp and gmc responses with a
+# flat one.
 licor_file <- calculate_temperature_response(
     licor_file,
-    within(c3_temperature_param_bernacchi, {Tp_norm = c3_temperature_param_flat$Tp_norm})
+    within(c3_temperature_param_bernacchi, {
+        Tp_norm = c3_temperature_param_flat$Tp_norm
+        gmc_norm = c3_temperature_param_flat$gmc_norm
+    })
 )
 
 # Get just one curve

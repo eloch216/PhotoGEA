@@ -271,8 +271,8 @@
           \code{calculate_c3_variable_j} to indicate that they were created
           using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
-          the following named elements: \code{gmc} and \code{Cc}. Each element
-          is a numeric vector.
+          the following named elements: \code{gmc}, \code{Cc}, and \code{J_F}.
+          Each element is a numeric vector.
   }
 }
 

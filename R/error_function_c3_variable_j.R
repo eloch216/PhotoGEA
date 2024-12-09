@@ -23,6 +23,7 @@ error_function_c3_variable_j <- function(
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
+    check_j = TRUE,
     ...
 )
 {
@@ -223,6 +224,12 @@ error_function_c3_variable_j <- function(
                         assim$Wj[i] > assim$Wc[i]) {
                     return(ERROR_PENALTY)
                 }
+            }
+        }
+
+        if (check_j) {
+            if (any(vj$J_F > assim$J_tl)) {
+                return(ERROR_PENALTY)
             }
         }
 

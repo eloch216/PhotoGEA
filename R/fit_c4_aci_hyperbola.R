@@ -11,11 +11,11 @@ fit_c4_aci_hyperbola <- function(
     a_column_name = 'A',
     ci_column_name = 'Ci',
     sd_A = 'RMSE',
-    OPTIM_FUN = optimizer_nmkb(1e-7),
+    optim_fun = optimizer_nmkb(1e-7),
     lower = list(),
     upper = list(),
     fit_options = list(),
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE
 )
@@ -63,12 +63,14 @@ fit_c4_aci_hyperbola <- function(
     initial_guess <- initial_guess_fun(replicate_exdf)
 
     # Find the best values for the parameters that should be varied
-    optim_result <- OPTIM_FUN(
+    optim_result <- optim_fun(
         initial_guess[param_to_fit],
         total_error_fcn,
         lower = lower_complete[param_to_fit],
         upper = upper_complete[param_to_fit]
     )
+
+    check_optim_result(optim_result)
 
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
@@ -176,17 +178,10 @@ fit_c4_aci_hyperbola <- function(
     replicate_identifiers[, 'Vmax']           <- best_X[4]
 
     # Also add fitting details
-    if (is.null(optim_result[['convergence_msg']])) {
-        optim_result[['convergence_msg']] <- NA
-    }
-
-    if (is.null(optim_result[['feval']])) {
-        optim_result[['feval']] <- NA
-    }
-
     replicate_identifiers[, 'convergence']                   <- optim_result[['convergence']]
-    replicate_identifiers[, 'convergence_msg']               <- optim_result[['message']]
+    replicate_identifiers[, 'convergence_msg']               <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']                         <- optim_result[['feval']]
+    replicate_identifiers[, 'optimizer']                     <- optim_result[['optimizer']]
     replicate_identifiers[, 'c4_assimilation_hyperbola_msg'] <- replicate_exdf[1, 'c4_assimilation_hyperbola_msg']
 
     # Get an updated likelihood value using the RMSE
@@ -203,12 +198,6 @@ fit_c4_aci_hyperbola <- function(
         )(best_X[param_to_fit])
     }
 
-    # Add the AIC
-    replicate_identifiers[, 'AIC'] <- akaike_information_criterion(
-        -1.0 * replicate_identifiers[, 'optimum_val'],
-        length(which(param_to_fit))
-    )
-
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
@@ -220,7 +209,6 @@ fit_c4_aci_hyperbola <- function(
         c('fit_c4_aci_hyperbola', 'convergence_msg',               ''),
         c('fit_c4_aci_hyperbola', 'feval',                         ''),
         c('fit_c4_aci_hyperbola', 'optimum_val',                   ''),
-        c('fit_c4_aci_hyperbola', 'AIC',                           ''),
         c('fit_c4_aci_hyperbola', 'c4_assimilation_hyperbola_msg', '')
     )
 
@@ -233,7 +221,7 @@ fit_c4_aci_hyperbola <- function(
             upper,
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
-            error_threshold_factor,
+            relative_likelihood_threshold,
             a_column_name,
             ci_column_name,
             hard_constraints

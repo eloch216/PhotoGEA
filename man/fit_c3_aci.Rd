@@ -2,15 +2,34 @@
 
 \alias{fit_c3_aci}
 
-\title{Fits a C3 assimilation model to an experimental curve}
+\title{Fits a C3 assimilation model to an A-Ci curve}
 
 \description{
-  Fits a model to an experimentally measured C3 CO2 response curve using the
-  data in the \code{exdf} object along with a few other user-supplied
-  parameters. This function can accomodate alternative column names for the
-  variables taken from the Licor file in case they change at some point in the
-  future. This function also checks the units of each required column and will
-  produce an error if any units are incorrect.
+  Fits the Farquhar-von-Caemmerer-Berry model to an experimentally measured C3
+  A-Ci curve.
+
+  It is possible to fit the following parameters: \code{alpha_g},
+  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{gamma_star},
+  \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25}.
+
+  By default, only a subset of these parameters are actually fit:
+  \code{alpha_old}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+  \code{Vcmax_at_25}. This can be altered using the \code{fit_options} argument,
+  as described below.
+
+  Best-fit parameters are found using maximum likelihood fitting, where the
+  optimizer (\code{optim_fun}) is used to minimize the error function (defined
+  by \code{\link{error_function_c3_aci}}).
+
+  Once best-fit parameters are found, confidence intervals are calculated
+  using \code{\link{confidence_intervals_c3_aci}}, and unreliable parameter
+  estimates are removed.
+
+  For temperature-dependent parameters, best-fit values and confidence intervals
+  are returned at 25 degrees C and at leaf temperature.
+
+  See below for more details.
 }
 
 \usage{
@@ -19,8 +38,8 @@
     Ca_atmospheric = NA,
     a_column_name = 'A',
     ca_column_name = 'Ca',
-    cc_column_name = 'Cc',
     ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -34,13 +53,13 @@
     nadph_use = 8.0,
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
-    OPTIM_FUN = optimizer_deoptim(200),
+    optim_fun = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
     fit_options = list(),
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2,
@@ -69,14 +88,15 @@
     ambient CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{cc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
-  }
-
   \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
   }
 
   \item{j_norm_column_name}{
@@ -149,12 +169,12 @@
     \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
   }
 
-  \item{OPTIM_FUN}{
+  \item{optim_fun}{
     An optimization function that accepts the following input arguments: an
     initial guess, an error function, lower bounds, and upper bounds. It should
     return a list with the following elements: \code{par}, \code{convergence},
-    \code{value}, and (optionally) \code{message}. See \code{\link{optimizers}}
-    for a list of available options.
+    \code{feval}, and \code{convergence_msg}. See \code{\link{optimizers}} for a
+    list of available options.
   }
 
   \item{lower}{
@@ -197,7 +217,7 @@
     restriction will not be applied.
   }
 
-  \item{error_threshold_factor}{
+  \item{relative_likelihood_threshold}{
     To be passed to \code{\link{confidence_intervals_c3_aci}} when
     \code{calculate_confidence_intervals} is \code{TRUE}.
   }
@@ -225,19 +245,21 @@
 }
 
 \details{
-  This function calls \code{\link{calculate_c3_assimilation}} to calculate
-  values of net assimilation. The user-supplied optimization function is used to
-  vary the values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-  \code{alpha_t}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
-  \code{Vcmax_at_25} to find ones that best reproduce the experimentally
-  measured values of net assimilation. By default, the following options are
-  used for the fits:
+  This function calls \code{\link{apply_gm}} and
+  \code{\link{calculate_c3_assimilation}} to calculate values of net
+  assimilation. The user-supplied optimization function is used to vary the
+  values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+  \code{gamma_star}, \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, and \code{Vcmax_at_25} to find ones that best reproduce the
+  experimentally measured values of net assimilation. By default, the following
+  options are used for the fits:
   \itemize{
     \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_old}: lower = 0, upper = 10, fit_option = \code{'fit'}
     \item \code{alpha_s}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_t}: lower = 0, upper = 10, fit_option = 0
     \item \code{Gamma_star}: lower = -20, upper = 200, fit_option = \code{'column'}
+    \item \code{gmc_at_25}: lower = -1, upper = 10,  fit_option = \code{Inf}
     \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Tp_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
@@ -245,9 +267,10 @@
   }
   With these settings, the "new" \code{alpha} parameters are set to 0, values of
   \code{Gamma_star} are taken from the \code{Gamma_star} column of
-  \code{replicate_exdf}, and the other parameters are fit during the process
-  (see \code{fit_options} above). The bounds are chosen liberally to avoid any
-  bias.
+  \code{replicate_exdf}, mesophyll conductance (\code{gmc_at_25}) is set to
+  inifinity (so \code{Cc = Ci}), and the other parameters are fit during the
+  process (see \code{fit_options} above). The bounds are chosen liberally to
+  avoid any bias.
 
   An initial guess for the parameters is generated by calling
   \code{\link{initial_guess_c3_aci}} as follows:
@@ -269,13 +292,16 @@
     \item If \code{Gamma_star} is being fit, the \code{Gamma_star} argument of
           \code{initial_guess_c3_aci} is set to 40; otherwise, the argument is
           set to the value specified by the fit options.
+    \item If \code{gmc_at_25} is being fit, the \code{gmc_at_25} argument of
+          \code{initial_guess_c3_aci} is set to 1; otherwise, the argument is
+          set to the value specified by the fit options.
   }
   Note that any fixed values specified in the fit options will override the
   values returned by the guessing function.
 
   The fit is made by creating an error function using
   \code{\link{error_function_c3_aci}} and minimizing its value using
-  \code{OPTIM_FUN}, starting from the initial guess described above.  The
+  \code{optim_fun}, starting from the initial guess described above.  The
   \code{\link{optimizer_deoptim}} optimizer is used by default since it has been
   found to reliably return great fits. However, it is a slow optimizer. If speed
   is important, consider reducing the number of generations or using
@@ -314,7 +340,7 @@
   they will never be replaced by \code{NA}.
 
   Once the best-fit parameters have been determined, this function also
-  estimates the operating value of `\code{Cc} from the atmospheric CO2
+  estimates the operating value of \code{Cc} from the atmospheric CO2
   concentration \code{atmospheric_ca} using
   \code{\link{estimate_operating_point}}, and then uses that value to estimate
   the modeled \code{An} at the operating point via
@@ -341,14 +367,15 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C will be stored in
-                  the \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
-                  \code{Vcmax_at_25} columns.
+                  the \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
+                  \code{Tp_at_25}, and \code{Vcmax_at_25} columns.
             \item The other outputs from \code{\link{calculate_c3_assimilation}}
                   will be stored in columns with the usual names:
                   \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-                  \code{alpha_t}, \code{Tp_tl}, \code{Vcmax_tl}, \code{RL_tl},
-                  \code{J_tl}, \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc},
-                  \code{Ac}, \code{Aj}, and \code{Ap}.
+                  \code{alpha_t}, \code{Gamma_star}, \code{gmc_tl},
+                  \code{Tp_tl}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
+                  \code{Wc}, \code{Wj}, \code{Wp}, \code{Vc}, \code{Ac},
+                  \code{Aj}, and \code{Ap}.
           }
     \item \code{fits_interpolated}: An \code{exdf} object including the
           calculated assimilation rates at a fine spacing of \code{Ci} values
@@ -361,15 +388,15 @@
                   \code{n_Aj_limiting}, and \code{n_Ap_limiting} columns.
             \item The best-fit values are stored in the \code{alpha_g},
                   \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
-                  \code{Tp_at_25}, \code{J_at_25}, \code{RL_at_25}, and
-                  \code{Vcmax_at_25} columns. If
-                  \code{calculate_confidence_intervals} is \code{TRUE}, upper
-                  and lower limits for each of these parameters will also be
-                  included.
+                  \code{Gamma_star}, \code{gmc_at_25}, \code{Tp_at_25},
+                  \code{J_at_25}, \code{RL_at_25}, and \code{Vcmax_at_25}
+                  columns. If \code{calculate_confidence_intervals} is
+                  \code{TRUE}, upper and lower limits for each of these
+                  parameters will also be included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  \code{J_tl_avg}, \code{RL_tl_avg}, \code{Tp_tl_avg}, and
-                  \code{Vcmax_tl_avg}.
+                  \code{gmc_tl_avg}, \code{J_tl_avg}, \code{RL_tl_avg},
+                  \code{Tp_tl_avg}, and \code{Vcmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.
@@ -406,17 +433,8 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
@@ -429,7 +447,7 @@ optimizer <- optimizer_nmkb(1e-7)
 one_result <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 )
 
 # We can fit the same curve, but also allow alpha_old and Gamma_star to vary
@@ -437,7 +455,7 @@ one_result_v2 <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
   fit_options = list(Gamma_star = 'fit', alpha_old = 'fit'),
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 )
 
 # Fit all curves in the data set (it is more common to do this)
@@ -446,7 +464,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_aci,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer
+  optim_fun = optimizer
 ))
 
 # View the fitting parameters for each species / plot
