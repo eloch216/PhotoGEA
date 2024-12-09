@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing C3 A-Ci Curves">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing C3 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.0.0/vignettes/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c3_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c3_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c3_aci_curves.Rmd</code></div>
     </div>
 
@@ -184,11 +184,10 @@ predicted by the FvCB model.</p>
 <code>calculate_c3_assimilation</code> function from the
 <code>PhotoGEA</code> package, and it represents the photosynethetic
 response of a C<sub>3</sub> leaf according to the FvCB model with
-<code>Tp</code> = 18 micromol m^(-2) s^(-1), <code>J</code> = 200
-micromol m^(-2) s^(-1), <code>RL</code> = 1.8 micromol m^(-2) s^(-1),
-<code>Vcmax</code> = 125 micromol m^(-2) s^(-1), and a leaf temperature
-of 30 degrees C. Arrhenius temperature response parameters were taken
-from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span>.)</p>
+<code>Tp</code> = 18 , <code>J</code> = 200 micromol m^(-2) s^(-1),
+<code>RL</code> = 1.8 micromol m^(-2) s^(-1), <code>Vcmax</code> = 125
+micromol m^(-2) s^(-1), and a leaf temperature of 30 degrees C.
+Arrhenius temperature response parameters were taken from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span>.)</p>
 <p>Thus, one of the most common reasons to measure an
 <em>A-C<sub>i</sub></em> curve is to interpret it in the context of this
 model. In other words, by fitting the model’s equations to a measured
@@ -412,53 +411,7 @@ we would get error messages:</p>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1 soybean   48</span></span>
 <span><span class="co">#&gt; 2 tobacco   48</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'Ci'</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Point 1 from curve `ripe1 - tobacco - 1` has value `Ci = 251.525996944688`, but the average value for this point across all curves is `Ci = 237.742020686325`"  </span></span>
-<span><span class="co">#&gt;  [2] "Point 1 from curve `ripe1 - tobacco - 2` has value `Ci = 261.420818849899`, but the average value for this point across all curves is `Ci = 237.742020686325`"  </span></span>
-<span><span class="co">#&gt;  [3] "Point 1 from curve `ripe2 - tobacco - 4` has value `Ci = 268.023119478639`, but the average value for this point across all curves is `Ci = 237.742020686325`"  </span></span>
-<span><span class="co">#&gt;  [4] "Point 2 from curve `ripe1 - soybean - 5a` has value `Ci = 189.778318756111`, but the average value for this point across all curves is `Ci = 187.890931847939`" </span></span>
-<span><span class="co">#&gt;  [5] "Point 2 from curve `ripe1 - tobacco - 2` has value `Ci = 190.364626604515`, but the average value for this point across all curves is `Ci = 187.890931847939`"  </span></span>
-<span><span class="co">#&gt;  [6] "Point 2 from curve `ripe2 - soybean - 1` has value `Ci = 195.64990814843`, but the average value for this point across all curves is `Ci = 187.890931847939`"   </span></span>
-<span><span class="co">#&gt;  [7] "Point 2 from curve `ripe2 - tobacco - 4` has value `Ci = 189.683389404078`, but the average value for this point across all curves is `Ci = 187.890931847939`"  </span></span>
-<span><span class="co">#&gt;  [8] "Point 3 from curve `ripe1 - tobacco - 2` has value `Ci = 140.739846550331`, but the average value for this point across all curves is `Ci = 138.989000725059`"  </span></span>
-<span><span class="co">#&gt;  [9] "Point 3 from curve `ripe2 - soybean - 1` has value `Ci = 142.312320467618`, but the average value for this point across all curves is `Ci = 138.989000725059`"  </span></span>
-<span><span class="co">#&gt; [10] "Point 3 from curve `ripe2 - soybean - 5b` has value `Ci = 143.562222433932`, but the average value for this point across all curves is `Ci = 138.989000725059`" </span></span>
-<span><span class="co">#&gt; [11] "Point 3 from curve `ripe2 - tobacco - 4` has value `Ci = 146.070064069876`, but the average value for this point across all curves is `Ci = 138.989000725059`"  </span></span>
-<span><span class="co">#&gt; [12] "Point 4 from curve `ripe2 - soybean - 5b` has value `Ci = 113.289686896819`, but the average value for this point across all curves is `Ci = 107.426766159492`" </span></span>
-<span><span class="co">#&gt; [13] "Point 4 from curve `ripe2 - tobacco - 4` has value `Ci = 109.855903103213`, but the average value for this point across all curves is `Ci = 107.426766159492`"  </span></span>
-<span><span class="co">#&gt; [14] "Point 5 from curve `ripe2 - tobacco - 4` has value `Ci = 85.5777210143503`, but the average value for this point across all curves is `Ci = 81.9169717791416`"  </span></span>
-<span><span class="co">#&gt; [15] "Point 6 from curve `ripe2 - tobacco - 4` has value `Ci = 69.6297854655665`, but the average value for this point across all curves is `Ci = 68.5175017770492`"  </span></span>
-<span><span class="co">#&gt; [16] "Point 7 from curve `ripe2 - tobacco - 4` has value `Ci = 56.8863754899374`, but the average value for this point across all curves is `Ci = 54.4173221075231`"  </span></span>
-<span><span class="co">#&gt; [17] "Point 8 from curve `ripe1 - tobacco - 1` has value `Ci = 38.2025072855919`, but the average value for this point across all curves is `Ci = 36.0525184649295`"  </span></span>
-<span><span class="co">#&gt; [18] "Point 8 from curve `ripe1 - tobacco - 2` has value `Ci = 37.1263965357958`, but the average value for this point across all curves is `Ci = 36.0525184649295`"  </span></span>
-<span><span class="co">#&gt; [19] "Point 9 from curve `ripe2 - soybean - 1` has value `Ci = 283.443935342356`, but the average value for this point across all curves is `Ci = 277.293550282807`"  </span></span>
-<span><span class="co">#&gt; [20] "Point 9 from curve `ripe2 - tobacco - 4` has value `Ci = 293.651577805789`, but the average value for this point across all curves is `Ci = 277.293550282807`"  </span></span>
-<span><span class="co">#&gt; [21] "Point 10 from curve `ripe1 - tobacco - 2` has value `Ci = 265.953774610768`, but the average value for this point across all curves is `Ci = 260.791607349089`" </span></span>
-<span><span class="co">#&gt; [22] "Point 10 from curve `ripe2 - soybean - 5b` has value `Ci = 278.939936070802`, but the average value for this point across all curves is `Ci = 260.791607349089`"</span></span>
-<span><span class="co">#&gt; [23] "Point 11 from curve `ripe1 - soybean - 5a` has value `Ci = 406.253997571488`, but the average value for this point across all curves is `Ci = 395.465043677258`"</span></span>
-<span><span class="co">#&gt; [24] "Point 11 from curve `ripe2 - soybean - 5b` has value `Ci = 408.560591466166`, but the average value for this point across all curves is `Ci = 395.465043677258`"</span></span>
-<span><span class="co">#&gt; [25] "Point 11 from curve `ripe2 - tobacco - 4` has value `Ci = 420.067730833784`, but the average value for this point across all curves is `Ci = 395.465043677258`" </span></span>
-<span><span class="co">#&gt; [26] "Point 12 from curve `ripe1 - tobacco - 1` has value `Ci = 547.105363904173`, but the average value for this point across all curves is `Ci = 508.989047311619`" </span></span>
-<span><span class="co">#&gt; [27] "Point 12 from curve `ripe1 - tobacco - 2` has value `Ci = 544.825019266542`, but the average value for this point across all curves is `Ci = 508.989047311619`" </span></span>
-<span><span class="co">#&gt; [28] "Point 12 from curve `ripe2 - soybean - 5b` has value `Ci = 540.706050036121`, but the average value for this point across all curves is `Ci = 508.989047311619`"</span></span>
-<span><span class="co">#&gt; [29] "Point 12 from curve `ripe2 - tobacco - 4` has value `Ci = 557.813796419447`, but the average value for this point across all curves is `Ci = 508.989047311619`" </span></span>
-<span><span class="co">#&gt; [30] "Point 13 from curve `ripe1 - tobacco - 1` has value `Ci = 695.552175120025`, but the average value for this point across all curves is `Ci = 640.742220104825`" </span></span>
-<span><span class="co">#&gt; [31] "Point 13 from curve `ripe1 - tobacco - 2` has value `Ci = 714.400660938829`, but the average value for this point across all curves is `Ci = 640.742220104825`" </span></span>
-<span><span class="co">#&gt; [32] "Point 13 from curve `ripe2 - soybean - 5b` has value `Ci = 648.296844649221`, but the average value for this point across all curves is `Ci = 640.742220104825`"</span></span>
-<span><span class="co">#&gt; [33] "Point 13 from curve `ripe2 - tobacco - 4` has value `Ci = 754.539509157309`, but the average value for this point across all curves is `Ci = 640.742220104825`" </span></span>
-<span><span class="co">#&gt; [34] "Point 14 from curve `ripe1 - tobacco - 1` has value `Ci = 873.847290736827`, but the average value for this point across all curves is `Ci = 764.016093410732`" </span></span>
-<span><span class="co">#&gt; [35] "Point 14 from curve `ripe1 - tobacco - 2` has value `Ci = 886.833187517944`, but the average value for this point across all curves is `Ci = 764.016093410732`" </span></span>
-<span><span class="co">#&gt; [36] "Point 14 from curve `ripe2 - tobacco - 4` has value `Ci = 955.187469706573`, but the average value for this point across all curves is `Ci = 764.016093410732`" </span></span>
-<span><span class="co">#&gt; [37] "Point 15 from curve `ripe1 - tobacco - 1` has value `Ci = 1174.23795813254`, but the average value for this point across all curves is `Ci = 994.214575601785`" </span></span>
-<span><span class="co">#&gt; [38] "Point 15 from curve `ripe1 - tobacco - 2` has value `Ci = 1162.50199383597`, but the average value for this point across all curves is `Ci = 994.214575601785`" </span></span>
-<span><span class="co">#&gt; [39] "Point 15 from curve `ripe2 - tobacco - 4` has value `Ci = 1234.06839380054`, but the average value for this point across all curves is `Ci = 994.214575601785`" </span></span>
-<span><span class="co">#&gt; [40] "Point 16 from curve `ripe1 - soybean - 5a` has value `Ci = 1376.24212413574`, but the average value for this point across all curves is `Ci = 1374.12936701593`"</span></span>
-<span><span class="co">#&gt; [41] "Point 16 from curve `ripe1 - tobacco - 1` has value `Ci = 1489.79307180783`, but the average value for this point across all curves is `Ci = 1374.12936701593`" </span></span>
-<span><span class="co">#&gt; [42] "Point 16 from curve `ripe1 - tobacco - 2` has value `Ci = 1469.9939278736`, but the average value for this point across all curves is `Ci = 1374.12936701593`"  </span></span>
-<span><span class="co">#&gt; [43] "Point 16 from curve `ripe2 - tobacco - 4` has value `Ci = 1509.57270639848`, but the average value for this point across all curves is `Ci = 1374.12936701593`"</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 16, : The curves do not all follow the same sequence of the driving variable.</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plotting-the-a-ci-curves">Plotting the <em>A-C<sub>i</sub></em> Curves<a class="anchor" aria-label="anchor" href="#plotting-the-a-ci-curves"></a>
@@ -698,7 +651,8 @@ setpoint value, so it is easy to specify them all at once:</p>
 <code class="sourceCode R"><span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instrument <span class="op">=</span> <span class="st">'ripe1'</span>, CO2_r_sp <span class="op">=</span> <span class="fl">1800</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instrument <span class="op">=</span> <span class="st">'ripe1'</span>, CO2_r_sp <span class="op">=</span> <span class="fl">1800</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'exclude'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -708,51 +662,28 @@ setpoint value, so it is easy to specify them all at once:</p>
 <p>Now that we have checked the data quality, we are ready to perform
 the fitting. In order to fit the curves, there are several required
 pieces of information that are not included in the Licor data files as
-produced by the instrument: values of the total pressure, values of the
-chloroplast CO<sub>2</sub> concentration
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>c</mi></msub><annotation encoding="application/x-tex">C_c</annotation></semantics></math>,
-and temperature-dependent values of important photosynthetic parameters
-such as
+produced by the instrument: values of the total pressure and
+temperature-dependent values of important photosynthetic parameters such
+as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>Γ</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\Gamma^*</annotation></semantics></math>.
-However, the <code>PhotoGEA</code> package includes three functions to
-help with these calculations: <code>calculate_total_pressure</code>,
-<code>apply_gm</code>, and <code>calculate_arrhenius</code>. Each of
-these requires an <code>exdf</code> object containing Licor data. The
-units for each required column will be checked in an attempt to avoid
-unit-related errors. More information about these functions can be
-obtained from the built-in help system by typing
-<code><a href="../reference/calculate_total_pressure.html">?calculate_total_pressure</a></code>, <code><a href="../reference/apply_gm.html">?apply_gm</a></code>, or
-<code><a href="../reference/calculate_arrhenius.html">?calculate_arrhenius</a></code>.</p>
-<p>Another important consideration is that <code>apply_gm</code>
-requires values of the mesophyll conductance to CO<sub>2</sub>. Values
-of mesophyll conductance can be specified using the
-<code>set_variable</code> function from <code>PhotoGEA</code>. Here we
-will set <code>gmc = 1.0 mol / m^2 / s / bar</code> for tobacco and
-<code>gmc = Inf</code> for soybean; in this case, the soybean parameters
-determined by the fitting process will be “effective” parameters. Then
-we will calculate values of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>c</mi></msub><annotation encoding="application/x-tex">C_c</annotation></semantics></math>,
-and use Arrhenius parameters from <span class="citation">Sharkey et al.
-(<a href="#ref-sharkey_fitting_2007">2007</a>)</span> to calculate the
+However, the <code>PhotoGEA</code> package includes two functions to
+help with these calculations: <code>calculate_total_pressure</code>, and
+<code>calculate_temperature_response</code>. Each of these requires an
+<code>exdf</code> object containing Licor data. The units for each
+required column will be checked in an attempt to avoid unit-related
+errors. More information about these functions can be obtained from the
+built-in help system by typing <code><a href="../reference/calculate_total_pressure.html">?calculate_total_pressure</a></code> or
+<code><a href="../reference/calculate_temperature_response.html">?calculate_temperature_response</a></code>.</p>
+<p>Here we use temperature response parameters from <span class="citation">Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span> to calculate the
 temperature-dependent inputs:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Specify separate mesophyll conductance values for each species</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>, <span class="st">'mol m^(-2) s^(-1) bar^(-1)'</span>,</span>
-<span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
-<span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tobacco <span class="op">=</span> <span class="fl">1.0</span>, soybean <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calculate Cc</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_sharkey</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span></code></pre></div>
 <p>Together, these functions add several new columns to
-<code>licor_data</code>, including <code>gmc</code>, <code>Cc</code>,
+<code>licor_data</code>, including <code>total_pressure</code>,
 <code>Gamma_star</code>, and others. With this information, we are now
 ready to perform the fitting procedure. For this operation, we can use
 the <code>fit_c3_aci</code> function from the <code>PhotoGEA</code>
@@ -789,7 +720,15 @@ this case, we will vary all five key photosynthetic parameters:
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>p</mi></msub><annotation encoding="application/x-tex">T_p</annotation></semantics></math>,
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msub><annotation encoding="application/x-tex">\alpha_{old}</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msub><annotation encoding="application/x-tex">\alpha_{old}</annotation></semantics></math>.
+The mesophyll conductance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>m</mi><mi>c</mi></mrow></msub><annotation encoding="application/x-tex">g_{mc}</annotation></semantics></math>)
+is set to infinity by default, so these fits are made assuming
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>c</mi></msub><mo>=</mo><msub><mi>C</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">C_c = C_i</annotation></semantics></math>,
+and hence the estimates of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
+and other parameters should be considered as “effective” values rather
+than chloroplastic values.</p>
 <div class="section level3">
 <h3 id="viewing-the-fitted-curves">Viewing the Fitted Curves<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-curves"></a>
 </h3>
@@ -802,7 +741,7 @@ the potential limiting rates <code>Ac</code>, <code>Aj</code>, and
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">c3_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/fit_aci_limiting-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>In general, these fits look good. There are a few specific things to
 notice:</p>
 <ul>
@@ -868,11 +807,11 @@ values from each curve as follows:</p>
 <span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'J_at_25_lower'</span>, <span class="st">'J_at_25'</span>, <span class="st">'J_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       curve_identifier J_at_25_lower  J_at_25 J_at_25_upper</span></span>
 <span><span class="co">#&gt; 1 ripe1 - soybean - 5a      183.4704       NA           Inf</span></span>
-<span><span class="co">#&gt; 2  ripe1 - tobacco - 1      233.0200 240.2729      247.5259</span></span>
-<span><span class="co">#&gt; 3  ripe1 - tobacco - 2      204.0791 211.6087      219.1383</span></span>
-<span><span class="co">#&gt; 4  ripe2 - soybean - 1      160.0126       NA           Inf</span></span>
-<span><span class="co">#&gt; 5 ripe2 - soybean - 5b      152.3074 160.9141      169.5208</span></span>
-<span><span class="co">#&gt; 6  ripe2 - tobacco - 4      166.3857       NA           Inf</span></span></code></pre></div>
+<span><span class="co">#&gt; 2  ripe1 - tobacco - 1      229.6193 236.1173      242.6154</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2      201.4352 208.5934      215.7515</span></span>
+<span><span class="co">#&gt; 4  ripe2 - soybean - 1      160.3528       NA           Inf</span></span>
+<span><span class="co">#&gt; 5 ripe2 - soybean - 5b      152.3077 160.9145      169.5211</span></span>
+<span><span class="co">#&gt; 6  ripe2 - tobacco - 4      165.4966       NA           Inf</span></span></code></pre></div>
 <p>Here we can see that some curves have an upper limit of infinity
 (<code>Inf</code>) and a best-fit value of “not available”
 (<code>NA</code>). Comparing this table to the figure showing the fits,
@@ -887,12 +826,12 @@ with a finite confidence interval:</p>
 <code class="sourceCode R"><span><span class="co"># View values of Vcmax from each fit</span></span>
 <span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'Vcmax_at_25_lower'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vcmax_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       curve_identifier Vcmax_at_25_lower Vcmax_at_25 Vcmax_at_25_upper</span></span>
-<span><span class="co">#&gt; 1 ripe1 - soybean - 5a          96.90012   103.76130         111.42321</span></span>
-<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         143.54375   152.22336         166.48570</span></span>
-<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         117.99127   126.80601         135.62073</span></span>
-<span><span class="co">#&gt; 4  ripe2 - soybean - 1         102.06632   108.82793         121.10386</span></span>
-<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         105.28716   122.01141         138.73517</span></span>
-<span><span class="co">#&gt; 6  ripe2 - tobacco - 4          89.34372    93.87686          99.47903</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 ripe1 - soybean - 5a          96.90012   103.76131         111.42322</span></span>
+<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         126.18028   133.10354         140.02682</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         104.97285   113.58837         121.19943</span></span>
+<span><span class="co">#&gt; 4  ripe2 - soybean - 1         102.25499   109.06222         121.15484</span></span>
+<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         105.28776   122.01153         138.73577</span></span>
+<span><span class="co">#&gt; 6  ripe2 - tobacco - 4          84.24144    87.79942          91.35826</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualizing-average-best-fit-parameters">Visualizing Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#visualizing-average-best-fit-parameters"></a>
@@ -942,16 +881,16 @@ function from <code>PhotoGEA</code>:</p>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
 <span>  <span class="st">'J_at_25_avg'</span>, <span class="st">'J_at_25_stderr'</span>,</span>
 <span>  <span class="st">'RL_at_25_avg'</span>, <span class="st">'RL_at_25_stderr'</span>,</span>
-<span>  <span class="st">'Tp_avg'</span>, <span class="st">'Tp_stderr'</span></span>
+<span>  <span class="st">'Tp_at_25_avg'</span>, <span class="st">'Tp_at_25_stderr'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   species Vcmax_at_25_avg Vcmax_at_25_stderr J_at_25_avg J_at_25_stderr</span></span>
-<span><span class="co">#&gt; 1 soybean        111.5335           5.439266    160.9141             NA</span></span>
-<span><span class="co">#&gt; 2 tobacco        124.3021          16.889650    225.9408       14.33209</span></span>
-<span><span class="co">#&gt;   RL_at_25_avg RL_at_25_stderr   Tp_avg Tp_stderr</span></span>
-<span><span class="co">#&gt; 1     1.934000       0.5719046 12.99084        NA</span></span>
-<span><span class="co">#&gt; 2     1.964341       0.2165851 14.97514        NA</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 soybean        111.6117           5.420408    160.9145             NA</span></span>
+<span><span class="co">#&gt; 2 tobacco        111.4971          13.119907    222.3553       13.76199</span></span>
+<span><span class="co">#&gt;   RL_at_25_avg RL_at_25_stderr Tp_at_25_avg Tp_at_25_stderr</span></span>
+<span><span class="co">#&gt; 1     1.938940       0.5729342     9.834033              NA</span></span>
+<span><span class="co">#&gt; 2     1.925908       0.1694589    11.178309              NA</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="other-ideas-for-synthesizing-results">Other Ideas for Synthesizing Results<a class="anchor" aria-label="anchor" href="#other-ideas-for-synthesizing-results"></a>
@@ -1192,7 +1131,8 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
 <span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instrument <span class="op">=</span> <span class="st">'ripe1'</span>, CO2_r_sp <span class="op">=</span> <span class="fl">1800</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instrument <span class="op">=</span> <span class="st">'ripe1'</span>, CO2_r_sp <span class="op">=</span> <span class="fl">1800</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'exclude'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">###</span></span>
@@ -1203,18 +1143,8 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co"># Calculate total pressure in the Licor chamber</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Specify separate mesophyll conductance values for each species</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>, <span class="st">'mol m^(-2) s^(-1) bar^(-1)'</span>,</span>
-<span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
-<span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tobacco <span class="op">=</span> <span class="fl">1.0</span>, soybean <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calculate Cc</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_sharkey</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
 <span><span class="co"># results from this fit are always identical</span></span>
@@ -1228,6 +1158,8 @@ Analysis Pipeline</a> vignette.</p>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
+<span><span class="fu"><a href="../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">c3_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the residuals</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
@@ -1278,7 +1210,7 @@ Analysis Pipeline</a> vignette.</p>
 <span>  <span class="st">'Vcmax_at_25_avg'</span>, <span class="st">'Vcmax_at_25_stderr'</span>,</span>
 <span>  <span class="st">'J_at_25_avg'</span>, <span class="st">'J_at_25_stderr'</span>,</span>
 <span>  <span class="st">'RL_at_25_avg'</span>, <span class="st">'RL_at_25_stderr'</span>,</span>
-<span>  <span class="st">'Tp_avg'</span>, <span class="st">'Tp_stderr'</span></span>
+<span>  <span class="st">'Tp_at_25_avg'</span>, <span class="st">'Tp_at_25_stderr'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span></code></pre></div>
@@ -1318,7 +1250,7 @@ Environment</em> 30 (9): 1035–40. <a href="https://doi.org/10.1111/j.1365-3040
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

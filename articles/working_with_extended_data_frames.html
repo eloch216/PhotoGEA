@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Working With Extended Data Frames">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Working With Extended Data Frames</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.0.0/vignettes/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/working_with_extended_data_frames.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/working_with_extended_data_frames.Rmd</code></a></small>
       <div class="d-none name"><code>working_with_extended_data_frames.Rmd</code></div>
     </div>
 
@@ -99,7 +99,7 @@ a category; for example, the column for values of net assimilation rate
 is called <code>A</code>, has units of <code>micromol / m^2 / s</code>,
 and is categorized as a <code>GasEx</code> variable.</p>
 <div class="figure" style="text-align: center">
-<img src="images/exdf_illustration.png" alt="Illustration comparing data frames (left) to extended data frames (right)." width="95%"><p class="caption">
+<img src="images%2Fexdf_illustration.png" alt="Illustration comparing data frames (left) to extended data frames (right)." width="95%"><p class="caption">
 Illustration comparing data frames (left) to extended data frames
 (right).
 </p>
@@ -524,7 +524,7 @@ steps will not cause any issues, so there’s no harm in always doing
 this. The following image illustrates this process visually for a set of
 three files.</p>
 <div class="figure" style="text-align: center">
-<img src="images/file_loading_illustration.png" alt="Illustration of combining multiple tables using `identify_common_columns` and
+<img src="images%2Ffile_loading_illustration.png" alt="Illustration of combining multiple tables using `identify_common_columns` and
   `rbind`. In this example, the `YY` and `ZZ` columns are not present in all of
   the tables, so they are removed before the tables are vertically stacked." width="95%"><p class="caption">
 Illustration of combining multiple tables using
@@ -626,28 +626,28 @@ words, a nested list. We can see this structure as follows:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">by_result</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 8</span></span>
 <span><span class="co">#&gt;  $ soybean.1 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  76 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  80 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1a:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  79 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1b:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.2 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  73 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.5 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  75 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  79 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5a:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  81 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5c:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  81 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span></code></pre></div>
 <p>It would be much easier to work with this information if it were
 reorganized by separately combining all of the <code>fits</code> and
@@ -662,7 +662,7 @@ using <code>rbind</code>:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">consolidate_by_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  72 variables:</span></span>
+<span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  76 variables:</span></span>
 <span><span class="co">#&gt;  $ fits      :'data.frame':  56 obs. of  254 variables:</span></span></code></pre></div>
 <p>It is common to apply the <code>consolidate</code> and
 <code>by</code> functions in the same line to make the code more
@@ -683,7 +683,7 @@ separated to make additional analysis easier:</p>
 scripts, such as the one in the <a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a>
 vignette. The following image illustrates this process visually.</p>
 <div class="figure" style="text-align: center">
-<img src="images/table_processing_illustration.png" alt="Illustration of processing multiple parts of a table using `by` and
+<img src="images%2Ftable_processing_illustration.png" alt="Illustration of processing multiple parts of a table using `by` and
   `consolidate`. Here the `id` column is either `1` or `2`, and the processing
   function returns a list of two tables called `fits` and `parameters`." width="95%"><p class="caption">
 Illustration of processing multiple parts of a table using
@@ -778,7 +778,7 @@ and used while analyzing photosynthetic gas exchange data.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

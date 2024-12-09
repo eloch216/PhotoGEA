@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started With PhotoGEA">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Getting Started With PhotoGEA</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.0.0/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
       <div class="d-none name"><code>PhotoGEA.Rmd</code></div>
     </div>
 
@@ -157,22 +157,11 @@ curve:</p>
 <span>    <span class="st">'CO2_r_sp'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Specify separate mesophyll conductance values for each species; here we use</span></span>
-<span><span class="co"># arbitrary values since this is just an example</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>, <span class="st">'gmc'</span>, <span class="st">'mol m^(-2) s^(-1) bar^(-1)'</span>,</span>
-<span>  id_column <span class="op">=</span> <span class="st">'species'</span>,</span>
-<span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>soybean <span class="op">=</span> <span class="fl">0.9</span>, tobacco <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Calculate the total pressure</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Calculate Cc</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/apply_gm.html">apply_gm</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_arrhenius.html">calculate_arrhenius</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_arrhenius_bernacchi</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_bernacchi</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
 <span><span class="co"># results from this fit are always identical</span></span>
@@ -188,7 +177,7 @@ curve:</p>
 <p>When this document was generated, evaluating this code required the
 following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;  13.049   0.039  13.089</span></span></code></pre>
+<span><span class="co">#&gt;  15.871   0.043  15.919</span></span></code></pre>
 <p>The timing results may vary depending on the particular machine used
 to run the code. Nevertheless, this is a small time investment for an
 advanced algorithm that uses derivative-free optimizers for robust
@@ -239,22 +228,22 @@ residuals, which should be randomly distributed:</p>
 <p><img src="PhotoGEA_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>For individual parameters, we can take a look at the best-fit values
 and the associated confidence intervals. Here is an example showing
-values of <code>Tp</code>, the maximum rate of triose phosphate
+values of <code>Tp_at_25</code>, the maximum rate of triose phosphate
 utilization.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_id'</span>, <span class="st">'Tp_lower'</span>, <span class="st">'Tp'</span>, <span class="st">'Tp_upper'</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;       curve_id  Tp_lower       Tp Tp_upper</span></span>
-<span><span class="co">#&gt; 1  soybean - 1 10.068918 10.75812 11.39151</span></span>
-<span><span class="co">#&gt; 2 soybean - 5a      -Inf       NA      Inf</span></span>
-<span><span class="co">#&gt; 3 soybean - 5b      -Inf       NA      Inf</span></span>
-<span><span class="co">#&gt; 4  tobacco - 1      -Inf       NA      Inf</span></span>
-<span><span class="co">#&gt; 5  tobacco - 2  3.654579       NA      Inf</span></span>
-<span><span class="co">#&gt; 6  tobacco - 4 12.959903 13.55359 14.14744</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_id'</span>, <span class="st">'Tp_at_25_lower'</span>, <span class="st">'Tp_at_25'</span>, <span class="st">'Tp_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;       curve_id Tp_at_25_lower  Tp_at_25 Tp_at_25_upper</span></span>
+<span><span class="co">#&gt; 1  soybean - 1       7.664315  8.167682       8.609374</span></span>
+<span><span class="co">#&gt; 2 soybean - 5a           -Inf        NA            Inf</span></span>
+<span><span class="co">#&gt; 3 soybean - 5b           -Inf        NA            Inf</span></span>
+<span><span class="co">#&gt; 4  tobacco - 1           -Inf        NA            Inf</span></span>
+<span><span class="co">#&gt; 5  tobacco - 2           -Inf        NA            Inf</span></span>
+<span><span class="co">#&gt; 6  tobacco - 4       9.901601 10.282169      10.671615</span></span></code></pre></div>
 <p>Some of these estimates have an upper limit of <code>Inf</code> and a
 best estimate of <code>NA</code>. A comparison with the fits shown above
 indicates that for these curves, insufficiently many points were found
 to be TPU-limited, preventing a reliable estimate of
-<code>Tp</code>.</p>
+<code>Tp_at_25</code>.</p>
 <p>It is also possible to plot the best-fit values of a parameter
 averaged across subsets of the data in a bar chart, where the error bars
 represent the standard error of the mean. Any values of <code>NA</code>
@@ -328,7 +317,7 @@ other packages to extend the processing capabilities of
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

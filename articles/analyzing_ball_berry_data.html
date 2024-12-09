@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing Ball-Berry Data">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing Ball-Berry Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.0.0/vignettes/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/analyzing_ball_berry_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/analyzing_ball_berry_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_ball_berry_data.Rmd</code></div>
     </div>
 
@@ -507,24 +507,23 @@ remove them before proceeding with the Ball-Berry fitting.</p>
 <p>While checking over the plots in <a href="#qualitative-checks">Qualitative Checks</a>, two issues were
 noticed: (1) some points were logged before stability was achieved and
 (2) some of the curves look abnormal. In this section, we will
-demonstrate how to remove the unstable points and the weird curves.</p>
-<p>The following command will keep only the points where
-<code>Stable</code> is exactly 2; this condition means that all of the
-stability criteria were satisfied. Sometimes, following this procedure,
-a curve will have very few stable points remaining; it is usually a good
-idea to automatically exclude any curve with fewer than three stable
-points.</p>
+demonstrate how to remove the unstable points and the weird curves using
+the <code>remove_points</code> function from <code>PhotoGEA</code>.</p>
+<p>The following command will remove points where <code>Stable</code> is
+0 or 1, keeping only the points where <code>Stable</code> is 2; this
+condition means that all of the stability criteria were satisfied.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only keep points where stability was achieved</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
-<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
-<span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Stable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'exclude'</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Since we have identified a few curves that may not be acceptable for
 Ball-Berry fitting, we can remove them via the
 <code>remove_points</code> function from <code>PhotoGEA</code>:</p>
+<p>The following command will remove all points from the curves that are
+not acceptable for Ball-Berry fitting:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a list of curves to remove from the data set</span></span>
 <span><span class="va">curves_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -534,11 +533,11 @@ Ball-Berry fitting, we can remove them via the
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove them</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>curve_identifier <span class="op">=</span> <span class="va">curves_to_remove</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Note that <code>remove_points</code> can also be used to exclude
-individual points instead of entire curves; see its help entry by typing
-<code><a href="../reference/remove_points.html">?remove_points</a></code> for more information.</p>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>curve_identifier <span class="op">=</span> <span class="va">curves_to_remove</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'remove'</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -603,24 +602,13 @@ fits:</p>
 <h3 id="viewing-the-fitted-curves">Viewing the Fitted Curves<a class="anchor" aria-label="anchor" href="#viewing-the-fitted-curves"></a>
 </h3>
 <p>Having made the fits, it is now a good idea to visually check them,
-making sure they look reasonable. As before, we can use
-<code>xyplot</code> from the <code>lattice</code> library to quickly
-make plots of all the fits, which are stored in
-<code>ball_berry_results$fits</code>, an <code>exdf</code> object:</p>
+making sure they look reasonable. For this, we can use the
+<code>plot_ball_berry_fits</code> function from <code>PhotoGEA</code>,
+which will also show the points that were excluded from the fits during
+the data cleaning step:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the Ball-Berry fits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">gsw</span> <span class="op">+</span> <span class="va">gsw_fit</span> <span class="op">~</span> <span class="va">bb_index</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Ball-Berry index ('</span>, <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">bb_index</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Stomatal conductance to H2O ('</span>, <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gsw</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.8</span><span class="op">)</span>,</span>
-<span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plot_ball_berry_fit.html">plot_ball_berry_fit</a></span><span class="op">(</span><span class="va">ball_berry_results</span>, <span class="st">'curve_identifier'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_ball_berry_data_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>All these fits look good!</p>
 </div>
@@ -906,13 +894,16 @@ Analysis Pipeline</a> vignette.</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net assimilation ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Only keep points where stability was achieved</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="co">## IMPORTANT: When analyzing your own files, it is not advised to remove any</span></span>
+<span><span class="co">## points for the initial fits. Only remove unstable or unusual points if it is</span></span>
+<span><span class="co">## necessary in order to get good fits.</span></span>
 <span></span>
-<span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
-<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
-<span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="co"># Only keep points where stability was achieved</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Stable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'exclude'</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define a list of curves to remove from the data set</span></span>
 <span><span class="va">curves_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -922,8 +913,11 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove them</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>curve_identifier <span class="op">=</span> <span class="va">curves_to_remove</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
+<span>  <span class="va">licor_data</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>curve_identifier <span class="op">=</span> <span class="va">curves_to_remove</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">'remove'</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">###</span></span>
 <span><span class="co">### PROCESSING:</span></span>
@@ -947,18 +941,7 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the Ball-Berry fits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">gsw</span> <span class="op">+</span> <span class="va">gsw_fit</span> <span class="op">~</span> <span class="va">bb_index</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Ball-Berry index ('</span>, <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">bb_index</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Stomatal conductance to H2O ('</span>, <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gsw</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.8</span><span class="op">)</span>,</span>
-<span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_ball_berry_fit.html">plot_ball_berry_fit</a></span><span class="op">(</span><span class="va">ball_berry_results</span>, <span class="st">'curve_identifier'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View the Ball-Berry parameters</span></span>
 <span><span class="va">columns_for_viewing</span> <span class="op">&lt;-</span></span>
@@ -1040,7 +1023,7 @@ Environment</em> 16 (4): 341–49. <a href="https://doi.org/10.1111/j.1365-3040.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
