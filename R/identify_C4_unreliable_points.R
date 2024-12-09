@@ -9,11 +9,10 @@ n_C4_V_smallest <- function(c4_assim, v_name, tol = 1e-3) {
         stop('c4_assim must be an exdf object')
     }
 
-    min_V <- pmin(c4_assim[, 'Vpc'], c4_assim[, 'Vpr'], na.rm = TRUE)
+    c4_assim[, 'min_V'] <-
+        pmin(c4_assim[, 'Vpc'], c4_assim[, 'Vpr'], na.rm = TRUE)
 
-    rel_diff <- abs((c4_assim[, v_name] - min_V) / min_V)
-
-    sum(!is.na(rel_diff) & rel_diff <= tol)
+    sum(A_limiting(c4_assim, 'min_V', v_name, tol))
 }
 
 # Helping function for determining the number of points in a calculated CO2
@@ -24,11 +23,10 @@ n_C4_A_smallest <- function(c4_assim, a_name, tol = 1e-3) {
         stop('c4_assim must be an exdf object')
     }
 
-    min_A <- pmin(c4_assim[, 'Ac'], c4_assim[, 'Aj'], na.rm = TRUE)
+    c4_assim[, 'min_A'] <-
+        pmin(c4_assim[, 'Ac'], c4_assim[, 'Aj'], na.rm = TRUE)
 
-    rel_diff <- abs((c4_assim[, a_name] - min_A) / min_A)
-
-    sum(!is.na(rel_diff) & rel_diff <= tol)
+    sum(A_limiting(c4_assim, 'min_A', a_name, tol))
 }
 
 identify_c4_unreliable_points <- function(
@@ -38,9 +36,8 @@ identify_c4_unreliable_points <- function(
     remove_unreliable_param
 )
 {
-    if (!is.numeric(remove_unreliable_param)) {
-        stop('The `remove_unreliable_param` input argument must be a number')
-    }
+    remove_unreliable_param <- as.numeric(remove_unreliable_param)
+    check_param_setting(remove_unreliable_param)
 
     # Determine the number of points where each potential carboxylation rate is
     # the smallest potential carboxylation rate
@@ -60,30 +57,30 @@ identify_c4_unreliable_points <- function(
 
     pc_unreliable_npts <- parameters[, 'n_Vpc_smallest'] < unreliable_n_threshold || parameters[, 'n_Ac_smallest'] < unreliable_n_threshold
     pc_unreliable_inf  <- 'Vpmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vpmax_at_25_upper'])
-    pc_unreliable      <- (remove_unreliable_param >= 1 && pc_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && pc_unreliable_inf)
+    pc_trust           <- trust_value(pc_unreliable_npts, pc_unreliable_inf)
+    pc_remove          <- remove_estimate(pc_trust, remove_unreliable_param)
 
     pr_unreliable_npts <- parameters[, 'n_Vpr_smallest'] < unreliable_n_threshold || parameters[, 'n_Ac_smallest'] < unreliable_n_threshold
     pr_unreliable_inf  <- 'Vpr_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vpr_upper'])
-    pr_unreliable      <- (remove_unreliable_param >= 1 && pr_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && pr_unreliable_inf)
+    pr_trust           <- trust_value(pr_unreliable_npts, pr_unreliable_inf)
+    pr_remove          <- remove_estimate(pr_trust, remove_unreliable_param)
 
     r_unreliable_npts <- parameters[, 'n_Ac_smallest'] < unreliable_n_threshold
     r_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
-    r_unreliable      <- (remove_unreliable_param >= 1 && r_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && r_unreliable_inf)
+    r_trust           <- trust_value(r_unreliable_npts, r_unreliable_inf)
+    r_remove          <- remove_estimate(r_trust, remove_unreliable_param)
 
     j_unreliable_npts <- parameters[, 'n_Aj_smallest'] < unreliable_n_threshold
-    j_unreliable_inf  <- 'Jmax_at_opt' %in% colnames(parameters) && !is.finite(parameters[, 'Jmax_at_opt'])
-    j_unreliable      <- (remove_unreliable_param >= 1 && j_unreliable_npts) ||
-                            (remove_unreliable_param >= 2 && j_unreliable_inf)
+    j_unreliable_inf  <- 'J_at_25' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
+    j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
+    j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 
     # If we are unsure about PEP carboxylase limitations, then the Vpmax
     # estimates should be flagged as unreliable. If necessary, remove Vpmax and
     # Vpc.
-    parameters[, 'Vpmax_trust'] <- as.numeric(!pc_unreliable)
+    parameters[, 'Vpmax_trust'] <- pc_trust
 
-    if (pc_unreliable) {
+    if (pc_remove) {
         # Remove unreliable parameter estimates
         parameters[, 'Vpmax_at_25']        <- NA
         parameters[, 'Vpmax_tl_avg']       <- NA
@@ -103,9 +100,9 @@ identify_c4_unreliable_points <- function(
 
     # If we are unsure about PEP regeneration limitations, then the Vpr
     # estimates should be flagged as unreliable. If necessary, remove Vpr.
-    parameters[, 'Vpr_trust'] <- as.numeric(!pr_unreliable)
+    parameters[, 'Vpr_trust'] <- pr_trust
 
-    if (pr_unreliable) {
+    if (pr_remove) {
         # Remove unreliable parameter estimates
         parameters[, 'Vpr']        <- NA
         fits[, 'Vpr']              <- NA
@@ -122,9 +119,9 @@ identify_c4_unreliable_points <- function(
 
     # If we are unsure about Rubisco limitations, then the Vcmax estimates
     # should be flagged as unreliable. If necessary, remove Ac.
-    parameters[, 'Vcmax_trust'] <- as.numeric(!r_unreliable)
+    parameters[, 'Vcmax_trust'] <- r_trust
 
-    if (r_unreliable) {
+    if (r_remove) {
         # Remove unreliable parameter estimates
         parameters[, 'Vcmax_at_25']        <- NA
         parameters[, 'Vcmax_tl_avg']       <- NA
@@ -142,21 +139,19 @@ identify_c4_unreliable_points <- function(
         }
     }
 
-    # If we are unsure about light limitations, then the Jmax estimates should
+    # If we are unsure about light limitations, then the J estimates should
     # be flagged as unreliable. If necessary, remove Aj.
-    parameters[, 'Jmax_trust'] <- as.numeric(!j_unreliable)
+    parameters[, 'J_trust'] <- j_trust
 
-    if (j_unreliable) {
+    if (j_remove) {
         # Remove unreliable parameter estimates
-        parameters[, 'Jmax_at_opt']        <- NA
-        parameters[, 'Jmax_tl_avg']        <- NA
-        parameters[, 'J_tl_avg']           <- NA
-        fits[, 'Jmax_at_opt']              <- NA
-        fits[, 'Jmax_tl']                  <- NA
-        fits[, 'J_tl']                     <- NA
-        fits_interpolated[, 'Jmax_at_opt'] <- NA
-        fits_interpolated[, 'Jmax_tl']     <- NA
-        fits_interpolated[, 'J_tl']        <- NA
+        parameters[, 'J_at_25']        <- NA
+        parameters[, 'J_tl_avg']       <- NA
+        parameters[, 'J_tl_avg']       <- NA
+        fits[, 'J_at_25']              <- NA
+        fits[, 'J_tl']                 <- NA
+        fits_interpolated[, 'J_at_25'] <- NA
+        fits_interpolated[, 'J_tl']    <- NA
 
         # Only remove unreliable rates if they have no influence on A_fit
         if (j_unreliable_npts) {
@@ -178,7 +173,7 @@ identify_c4_unreliable_points <- function(
         c('identify_c4_unreliable_points', 'Vpmax_trust',             ''),
         c('identify_c4_unreliable_points', 'Vpr_trust',               ''),
         c('identify_c4_unreliable_points', 'Vcmax_trust',             ''),
-        c('identify_c4_unreliable_points', 'Jmax_trust',              ''),
+        c('identify_c4_unreliable_points', 'J_trust',                 ''),
         c('identify_c4_unreliable_points', 'remove_unreliable_param', '')
     )
 

@@ -3,6 +3,7 @@ plot_c3_aci_fit <- function(
     identifier_column_name,
     x_name,
     plot_operating_point = TRUE,
+    plot_Ad = FALSE,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -32,46 +33,63 @@ plot_c3_aci_fit <- function(
     required_variables[[ci_column_name]]         <- 'micromol mol^(-1)'
     required_variables[[identifier_column_name]] <- NA
 
-    check_required_variables(fit_results$fits_interpolated, required_variables)
-    
+    # Don't throw an error if some columns are all NA
+    check_required_variables(fit_results$fits_interpolated, required_variables, check_NA = FALSE)
+
     required_variables[[a_column_name]] <- unit_dictionary[['A']]
 
-    check_required_variables(fit_results$fits, required_variables)
+    # Don't throw an error if some columns are all NA
+    check_required_variables(fit_results$fits, required_variables, check_NA = FALSE)
 
     required_variables <- list()
     required_variables[['operating_Ci']]       <- 'micromol mol^(-1)'
     required_variables[['operating_Cc']]       <- 'micromol mol^(-1)'
     required_variables[['operating_An_model']] <- unit_dictionary[['A']]
 
-    check_required_variables(fit_results$parameters, required_variables)
+    # Don't throw an error if some columns are all NA
+    check_required_variables(fit_results$parameters, required_variables, check_NA = FALSE)
 
     # Choose line settings
-    assim_cols <- multi_curve_colors()[1:4]
+    assim_cols <- multi_curve_colors()[1:5]
     assim_cols[1] <- '#676767'
 
     line_settings <- list(
         col = assim_cols,
-        lwd = c(4, 2, 2, 2),
-        lty = c(1, 5, 5, 5)
+        lwd = c(4, 2, 2, 2, 2),
+        lty = c(1, 5, 5, 5, 2)
+    )
+
+    # Specify the y-axis label
+    y_label <- paste0(
+        'Net CO2 assimilation rate [ ', fit_results$fits_interpolated$units[['An']],
+        ' ]\n(filled black circles: measured data used for fits',
+        '\nopen black circles: measured data excluded from fits'
+    )
+
+    y_label <- paste0(
+        y_label,
+        if (plot_operating_point) {
+            '\nopen red circle: estimated operating point)'
+        } else {
+            ')'
+        }
     )
 
     # Plot the fits, operating point, and raw data
     lattice::xyplot(
-        An + Ac + Aj + Ap ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name],
+        if (plot_Ad) {
+            An + Ac + Aj + Ap + Ad ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name]
+        } else {
+            An + Ac + Aj + Ap ~ fit_results$fits_interpolated[, x_name] | fit_results$fits_interpolated[, identifier_column_name]
+        },
         data = fit_results$fits_interpolated$main_data,
         type = 'l',
         par.settings = list(superpose.line = line_settings),
         auto.key = list(space = 'right', lines = TRUE, points = FALSE),
         xlab = paste(x_name, '[', fit_results$fits_interpolated$units[[x_name]], ']'),
-        ylab = paste(
-            'Net CO2 assimilation rate [', fit_results$fits_interpolated$units[['An']],
-            ']\n(black circles: measured data; red circle: estimated operating point)'
-        ),
+        ylab = y_label,
         curve_ids = fit_results$fits_interpolated[, identifier_column_name],
         panel = function(...) {
-            # Plot the fit lines
-            lattice::panel.xyplot(...)
-
             # Get info about this curve
             args <- list(...)
             curve_id <- args$curve_ids[args$subscripts][1]
@@ -82,21 +100,35 @@ plot_c3_aci_fit <- function(
             curve_data <-
                 fit_results$fits[fit_results$fits[, identifier_column_name] == curve_id, ]
 
+            curve_data_interpolated <-
+                fit_results$fits_interpolated[fit_results$fits_interpolated[, identifier_column_name] == curve_id, ]
+
+            used_for_fit <- points_for_fitting(curve_data)
+
+            # Plot the fit lines
+            lattice::panel.xyplot(...)
+
+            # Plot the measured data points
+            lattice::panel.points(
+                curve_data[used_for_fit, a_column_name] ~ curve_data[used_for_fit, x_name],
+                col = 'black',
+                pch = 16
+            )
+
+            lattice::panel.points(
+                curve_data[!used_for_fit, a_column_name] ~ curve_data[!used_for_fit, x_name],
+                col = 'black',
+                pch = 1
+            )
+
             # Plot the operating point, if desired
             if (plot_operating_point) {
                 lattice::panel.points(
                     curve_parameters[1, 'operating_An_model'] ~ curve_parameters[1, operating_x],
                     col = 'red',
-                    pch = 16
+                    pch = 1
                 )
             }
-
-            # Plot the measured data points
-            lattice::panel.points(
-                curve_data[, a_column_name] ~ curve_data[, x_name],
-                col = 'black',
-                pch = 16
-            )
         },
         ...
     )

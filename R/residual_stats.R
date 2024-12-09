@@ -1,4 +1,7 @@
 residual_stats <- function(fit_residuals, units, nparam) {
+    # Only use points that are not NA
+    fit_residuals <- fit_residuals[!is.na(fit_residuals)]
+
     npts <- length(fit_residuals)
     dof <- npts - nparam
 
@@ -6,6 +9,8 @@ residual_stats <- function(fit_residuals, units, nparam) {
     MSE <- RSS / npts
     RMSE <- sqrt(MSE)
     RSE <- if (dof > 0) {sqrt(RSS / dof)} else {NA}
+
+    AIC <- npts * (log(2 * pi) + 1) + npts * log(MSE) + 2 * (nparam + 1)
 
     result <- exdf(data.frame(
         npts = npts,
@@ -15,6 +20,7 @@ residual_stats <- function(fit_residuals, units, nparam) {
         MSE = MSE,
         RMSE = RMSE,
         RSE = RSE,
+        AIC = AIC,
         stringsAsFactors = FALSE
     ))
 
@@ -26,6 +32,7 @@ residual_stats <- function(fit_residuals, units, nparam) {
         c('residual_stats', 'RSS',    paste0('(', units, ')^2')),
         c('residual_stats', 'MSE',    paste0('(', units, ')^2')),
         c('residual_stats', 'RMSE',   units),
-        c('residual_stats', 'RSE',    units)
+        c('residual_stats', 'RSE',    units),
+        c('residual_stats', 'AIC',    '')
     )
 }

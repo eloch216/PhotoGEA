@@ -7,6 +7,13 @@ error_function_c4_aci_hyperbola <- function(
     hard_constraints = 0
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('error_function_c4_aci_hyperbola requires an exdf object')
+    }
+
+    # Only use points designated for fitting
+    replicate_exdf <- replicate_exdf[points_for_fitting(replicate_exdf), , TRUE]
+
     # Assemble fit options; here we do not care about bounds
     luf <- assemble_luf(
         c4_aci_hyperbola_param,

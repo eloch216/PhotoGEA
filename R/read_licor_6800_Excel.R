@@ -2,6 +2,7 @@ read_licor_6800_Excel <- function(
     file_name,
     column_name = 'obs',
     get_oxygen = TRUE,
+    check_for_zero = c('A', 'gsw'),
     ...
 )
 {
@@ -78,6 +79,22 @@ read_licor_6800_Excel <- function(
         preamble = licor_preamble,
         data_row = data_row
     )
+
+    # Check for columns that are all zero
+    all_zeros <- sapply(check_for_zero, function(cn) {
+        all(exdf_obj[, cn] == 0)
+    })
+
+    if (any(all_zeros)) {
+        all_zero_cols <- check_for_zero[all_zeros]
+        msg <- paste0(
+            'The following columns in Licor 6800 Excel file `', file_name,
+            '` are all zero: ', paste(all_zero_cols, collapse = ', '),
+            '.\nYou may need to open the file in Excel to "calculate" its ',
+            'values; type `?read_licor_6800_Excel` for more information.'
+        )
+        stop(msg)
+    }
 
     # Return the object, including oxygen information if necessary
     if (get_oxygen) {

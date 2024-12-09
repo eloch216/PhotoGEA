@@ -6,7 +6,7 @@ calculate_wue <- function(
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
     e_column_name = 'E',
-    gmc_column_name = 'gmc',
+    gmc_column_name = 'gmc_tl',
     gsw_column_name = 'gsw',
     h2o_a_column_name = 'H2O_s',
     h2o_i_column_name = 'H2O_i',

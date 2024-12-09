@@ -85,7 +85,8 @@
     The name of the column in \code{exdf_obj} that contains the CO2 compensation
     point in the absence of day respiration in \code{micromol mol^(-1)}.  Values
     of \code{Gamma_star} are typically calculated using
-    \code{\link{calculate_gamma_star}} or \code{\link{calculate_arrhenius}}.
+    \code{\link{calculate_gamma_star}} or
+    \code{\link{calculate_temperature_response}}.
   }
 
   \item{rl_column_name}{
@@ -235,6 +236,18 @@ licor_data <- set_variable(
 licor_data <- calculate_gm_ubierna(licor_data)
 
 # Calculate Cc using the new values of mesophyll conductance
+licor_data <- calculate_temperature_response(
+  licor_data,
+  c3_temperature_param_flat['gmc_norm']
+)
+
+licor_data <- set_variable(
+  licor_data,
+  'gmc_at_25',
+  units = licor_data$units$gmc,
+  value = licor_data[, 'gmc']
+)
+
 licor_data <- apply_gm(licor_data)
 
 # View some of the results

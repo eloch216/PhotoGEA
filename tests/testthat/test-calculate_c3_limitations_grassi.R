@@ -2,7 +2,7 @@ example_exdf <- exdf(
     data.frame(
         Cc             = seq(10, 400, length.out = 3),
         Gamma_star     = 40,
-        gmc            = 0.5,
+        gmc_tl         = 0.5,
         gsc            = 0.8,
         J_tl           = 200,
         Kc             = 270,
@@ -15,7 +15,7 @@ example_exdf <- exdf(
     units = data.frame(
         Cc             = 'micromol mol^(-1)',
         Gamma_star     = 'micromol mol^(-1)',
-        gmc            = 'mol m^(-2) s^(-1) bar^(-1)',
+        gmc_tl         = 'mol m^(-2) s^(-1) bar^(-1)',
         gsc            = 'mol m^(-2) s^(-1)',
         J_tl           = 'micromol m^(-2) s^(-1)',
         Kc             = 'micromol mol^(-1)',
@@ -53,25 +53,9 @@ test_that('limitations add to 1', {
 # Get test curve to use
 source('one_curve_c3_aci.R')
 
-# Specify mesophyll conductance
-one_curve <- set_variable(
-  one_curve,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
-)
-
-one_curve_bad <- set_variable(
-  one_curve_bad,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0
-)
-
-# Calculate Cc
-one_curve <- apply_gm(one_curve)
-one_curve_bad <- apply_gm(one_curve_bad)
-
 # Calculate additional gas properties
 one_curve <- calculate_gas_properties(one_curve)
 one_curve_bad <- calculate_gas_properties(one_curve_bad)
-
 
 test_that('fit failures are handled properly', {
     # Set a seed before fitting since there is randomness involved with the
@@ -81,7 +65,7 @@ test_that('fit failures are handled properly', {
     fit_res_bad <- fit_c3_aci(
         one_curve_bad,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7),
+        optim_fun = optimizer_nmkb(1e-7),
         hard_constraints = 2
     )
 
@@ -101,8 +85,8 @@ test_that('fit results have not changed', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        OPTIM_FUN = optimizer_nmkb(1e-7),
-        fit_options = list(alpha_old = 0),
+        optim_fun = optimizer_nmkb(1e-7),
+        fit_options = list(alpha_old = 0, gmc_at_25 = 1.0),
         calculate_confidence_intervals = FALSE,
         remove_unreliable_param = 0
     )

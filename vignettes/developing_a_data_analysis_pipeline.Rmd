@@ -135,7 +135,10 @@ xyplot(
   type = 'b',
   pch = 16,
   auto = TRUE,
-  grid = TRUE
+  grid = TRUE,
+  xlab = 'X',
+  ylab = 'Y',
+  auto.key = list(space = 'top', text = c('linear fit', 'observed'))
 )
 ```
 
@@ -221,8 +224,8 @@ data set:
 
 - `apply_gm`: Calculates values of the chloroplast or mesophyll CO~2~
   concentration.
-- `calculate_arrhenius`: Calculates temperature-dependent values of
-  photosynthetic parameters using Arrhenius exponents.
+- `calculate_temperature_response`: Calculates temperature-dependent values of
+  key photosynthetic parameters.
 - `calculate_ball_berry_index`: Calculates the Ball-Berry index from values of
   net assimilation, relative humidity at the leaf surface, and CO~2~
   concentration at the leaf surface.
@@ -260,8 +263,8 @@ plants or response curves.
 The `PhotoGEA` package includes the following functions for fitting individual
 response curves or sets of response curves:
 
-- `calculate_RL_laisk`: Estimates `RL` from a set of response curves using the
-  Laisk method.
+- `fit_laisk`: Estimates `RL` and `Ci_star` from a set of response curves using
+  the Laisk method.
 - `fit_ball_berry`: Calculates a linear fit of stomatal conductance to H~2~O vs.
   the Ball-Berry index.
 - `fit_c3_aci`: Calculates a nonlinear fit of net CO2 assimilation vs.
@@ -271,6 +274,8 @@ response curves or sets of response curves:
   chlorophyll fluorescence data.
 - `fit_c4_aci`: Calculates a nonlinear fit of net CO2 assimilation vs. the
   partial pressure of CO~2~ in the mesophyll.
+- `fit_medlyn`: Calculates a nonlinear fit of stomatal conductance to H~2~O
+  using the Medlyn model.
 
 These functions generally assume that the input `exdf` object represents a
 single response curve, and they return both the optimized parameter values and

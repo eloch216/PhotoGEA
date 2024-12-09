@@ -152,6 +152,8 @@ if (PERFORM_CALCULATIONS) {
     
     combined_info <- calculate_gas_properties(combined_info)
 
+    combined_info <- calculate_total_pressure(combined_info)
+    combined_info <- calculate_gas_properties(combined_info)
     combined_info <- calculate_wue(combined_info)
 
     # Check the data for any issues before proceeding with additional analysis

@@ -32,6 +32,84 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## CHANGES IN PhotoGEA VERSION 1.1.0 (2024-12-09)
+
+- The parameter trust values have been changed from logical values (`TRUE` or
+  `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
+  unreliability, potential unreliability, and full reliability, respectively.
+- Added several optional input arguments to `calculate_c3_assimilation` that
+  allow variants of the FvCB model to be used: `use_min_A`, `TPU_threshold`,
+  `use_FRL`, and `consider_depletion`. These can also be specified when fitting
+  curves.
+- The behavior of `identify_c3_unreliable_pts` was modified to make it
+  compatible with the new `use_min_A` option.
+- A new option was added to `remove_points`, allowing users to exclude points
+  from any subsequent fits rather than completely removing them.
+  - `plot_c3_aci_fit` and the other fit plotting functions have been altered to
+    distinguish between points included in or excluded from the fit.
+  - `xyplot_avg_rc` has been altered to exclude such points when calculating
+    average values
+- Outliers can now be excluded automatically when creating a barchart using
+  `barchart_with_errorbars`
+- More information is now included in the output from `fit_ball_berry`: standard
+  error for each fitted parameter, and the p-value for the fit. A dedicated
+  plotting function was also added (`plot_ball_berry_fit`).
+- A function was added for fitting the Medlyn conductance model (as an
+  alternative to the Ball-Berry model): `fit_medlyn`
+- Update input argument checks for several functions: `check_required_columns`
+  and `set_variable`
+- The system for specifying temperature response parameters and calculating
+  temperature-dependent values of key photosynthetic parameters has been been
+  revamped to make it more flexible and easier to use:
+  - `calculate_arrhenius` and `calculate_peaked_gaussian` have been renamed to
+    `calculate_temperature_response_arrhenius` and
+    `calculate_temperature_response_gaussian` to better reflect their purpose.
+  - A new type of temperature response has been added:
+    `calculate_temperature_response_johnson`.
+  - When calculating C3 assimilation rates or fitting C3 A-Ci curves, `Tp` is
+    now specified at 25 degrees C and follows a temperature response function,
+    as was already done for `Vcmax`, `J`, and `RL`.
+  - When calculating C4 assimilation rates or fitting C4 A-Ci curves, `Jmax` is
+    now specified at 25 degrees C, rather than at its optimum value, for
+    consistency with the other parameters that can be fit in PhotoGEA.
+  - A central function for calculating temperature responses has been added:
+    `calculate_temperature_response`. It internally calls the other functions,
+    so users can just use this single function.
+  - The `c4_arrhenius_von_caemmerer` and `c4_peaked_gaussian_von_caemmerer` have
+    been consolidated into a single list suitable for use with
+    `calculate_temperature_response`, caled `c4_temperature_param_vc`.
+  - The `c3_arrhenius_sharkey` and `c3_arrhenius_bernacchi` lists now include
+    Johnson-Eyring-Williams reponses for `Tp` and `gmc` and have been renamed to
+    `c3_temperature_param_sharkey` and `c3_temperature_param_bernacchi` since
+    they are no longer pure list of Arrhenius parameters.
+  - These changes may not be compatible with scripts written for earlier
+    versions of PhotoGEA.
+- `read_licor_6800_Excel` now checks to make sure the `A` and `gsw` columns are
+  not all zero; if these columns are all zero, this indicates that the Excel
+  file needs to be "calculated," and a relevant message is sent to the user.
+- The C3 assimilation model and C3 A-Ci fits have been updated to include:
+  - Another parameter related to TPU (`alpha_t`)
+  - Mesophyll conductance (`gmc_at_25`)
+- The C4 A-Ci fits have also been updated to include mesophyll conductance
+  (`gmc_at_25`) and to fit `J` rather than `Jmax`.
+- Revamped the Laisk fitting function:
+  - Renamed the function from `calculate_RL_laisk` to `fit_laisk` since a
+    fitting procedure is used, and the method also estimates `Ci_star` in
+    addition to `RL`.
+  - Used the method described in Walker & Ort (2015) and Busch et al. (2024)
+  - Added a plotting function for displaying the results of a Laisk fit:
+    `plot_laisk_fit`.
+- AIC calculations were moved to `residual_stats` so the AIC can be more easily
+  calculated for fits from other packages.
+- Added a new optimizer (`optimizer_nlminb`) and improved the optimizer
+  documentation and testing. The new optimizer is a wrapper for `stats::nlminb`
+  and employs a quasi-Newton algorithm.
+- Added a new function for identifying limiting processes in C3 curves:
+  `identify_c3_limiting_processes`. This function is used internally by
+  `fit_c3_aci` and `fit_c3_variable_j`.
+- A new option was added to Variable J fits: `check_j`
+
+
 ## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
 
 - A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to

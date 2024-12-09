@@ -4,7 +4,7 @@ test_that('missing data frame columns are detected', {
             data.frame(A = seq(1, 3)),
             'B'
         ),
-        'The following columns are undefined: B'
+        'The following required columns are not present: B'
     )
 })
 
@@ -17,13 +17,31 @@ test_that('present data frame columns are detected', {
     )
 })
 
+test_that('NA data frame columns are detected', {
+    expect_error(
+        check_required_variables(
+            data.frame(A = c(NA, NA, NA)),
+            'A'
+        ),
+        'The following required columns are all NA: A'
+    )
+
+    expect_silent(
+        check_required_variables(
+            data.frame(A = c(NA, NA, NA)),
+            'A',
+            check_NA = FALSE
+        )
+    )
+})
+
 test_that('missing exdf columns are detected', {
     expect_error(
         check_required_variables(
             exdf(data.frame(A = seq(1, 3), B = seq(2, 4))),
             list('C' = NA)
         ),
-        'The following columns are undefined: C'
+        'The following required columns are not present: C'
     )
 })
 
@@ -52,6 +70,24 @@ test_that('present exdf columns and units are detected', {
         check_required_variables(
             exdf(data.frame(A = seq(1, 3), B = seq(2, 4)), units = data.frame(A = 'A units', B = 'B units', stringsAsFactors = FALSE)),
             list('A' = 'A units', B = NA)
+        )
+    )
+})
+
+test_that('NA exdf columns are detected', {
+    expect_error(
+        check_required_variables(
+            exdf(data.frame(A = c(NA, NA, NA), B = c(NA, NA, NA)), units = data.frame(A = 'A units', B = 'B units', stringsAsFactors = FALSE)),
+            list('A' = 'A units', B = NA)
+        ),
+        'The following required columns are all NA: A, B'
+    )
+
+    expect_silent(
+        check_required_variables(
+            exdf(data.frame(A = c(NA, NA, NA), B = c(NA, NA, NA)), units = data.frame(A = 'A units', B = 'B units', stringsAsFactors = FALSE)),
+            list('A' = 'A units', B = NA),
+            check_NA = FALSE
         )
     )
 })

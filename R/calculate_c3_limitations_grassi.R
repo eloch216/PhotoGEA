@@ -9,7 +9,7 @@ calculate_c3_limitations_grassi <- function(
     nadph_use = 8.0,
     cc_column_name = 'Cc',
     gamma_star_column_name = 'Gamma_star',
-    gmc_column_name = 'gmc',
+    gmc_column_name = 'gmc_tl',
     gsc_column_name = 'gsc',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
@@ -43,7 +43,8 @@ calculate_c3_limitations_grassi <- function(
         required_variables[[j_column_name]] <- 'micromol m^(-2) s^(-1)'
     }
 
-    check_required_variables(exdf_obj, required_variables)
+    # Don't throw an error if some columns are all NA
+    check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
 
     # Extract key variables to make the following equations simpler. Note that
     # we convert the units for some of these.

@@ -17,8 +17,8 @@ REP_COLUMN_NAME <- 'replicate'
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
-NUM_OBS_IN_SEQ <- 16
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10, 16)
+NUM_OBS_IN_SEQ <- 17
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -31,7 +31,7 @@ SAVE_TO_PDF <- FALSE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -41,10 +41,10 @@ POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
-REMOVE_STATISTICAL_OUTLIERS <- TRUE
+REMOVE_STATISTICAL_OUTLIERS <- FALSE
 
 # Decide whether to perform stats tests
-PERFORM_STATS_TESTS <- FALSE
+PERFORM_STATS_TESTS <- TRUE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event. If gm is set to infinity
@@ -60,6 +60,10 @@ GM_TABLE <- list(
   `10` = 0.504,
   `14` = 0.541
 )
+
+# Decide whether to use soybean Rubisco Arrhenius parameters; otherwise,
+# tobacco parameters (the default) will be used
+USE_SOYBEAN_RUBISCO <- TRUE
 
 # Decide whether to override the Gamma_star value calculated from Arrhenius
 # equations
@@ -77,7 +81,7 @@ CO2_s_seq <- c(420, 320, 220, 150, 100, 75, 50, 20, 420, 420, 500, 600, 800, 100
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- FALSE
+SAVE_CSV <- TRUE
 
 ###
 ### TRANSLATION:
@@ -171,7 +175,7 @@ if (CO2_CONTROL == 'CO2_s_sp') {
 }
 
 # Remove certain events
-licor_data <- remove_points(licor_data, list(event = c('15', '37')))
+#licor_data <- remove_points(licor_data, list(event = c('32', '36', '26')))
 
 # Make sure the data meets basic requirements
 check_response_curve_data(
@@ -190,6 +194,38 @@ licor_data <- organize_response_curve_data(
     'Ci'
 )
 
+if (REQUIRE_STABILITY) {
+  # Only keep points where stability was achieved
+  licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+
+  # Remove any curves that have fewer than three remaining points
+  npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+  ids_to_keep <- names(npts[npts > 2])
+  licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+}
+
+if (REMOVE_SPECIFIC_POINTS) {
+  # Remove specific points
+  licor_data <- remove_points(
+    licor_data,
+    #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500),
+    #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500),
+    #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 800),
+    #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
+    #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
+    #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
+    list(event = '32', replicate = 1, CO2_r_sp = 220),
+    list(event = '17', replicate = 4, CO2_r_sp = 220),
+    list(event = '122', replicate = 4, CO2_r_sp = 600),
+    list(event = '36', replicate = 6, CO2_r_sp = 320),
+    list(event = '17', replicate = 7, CO2_r_sp = 500),
+    list(event = '10', replicate = 8, CO2_r_sp = 420),
+    list(event = '10', replicate = 8, CO2_r_sp = 220),
+    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+    #list(curve_identifier = '10 5 6', seq_num = c(2))
+  )
+}
+
 if (MAKE_VALIDATION_PLOTS) {
     # Plot all A-Ci curves in the data set
     dev.new()
@@ -198,7 +234,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      auto.key = list(space = 'right'),
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
@@ -225,7 +261,7 @@ if (MAKE_VALIDATION_PLOTS) {
       data = licor_data$main_data,
       type = 'b',
       pch = 16,
-      auto = TRUE,
+      auto.key = list(space = 'right'),
       grid = TRUE,
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Stomatal conductance to H2O [', licor_data$units$gsw, ']')
@@ -287,35 +323,6 @@ if (MAKE_VALIDATION_PLOTS) {
   #Make a plot to check stability criteria insert here
 }
 
-if (REQUIRE_STABILITY) {
-    # Only keep points where stability was achieved
-    licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
-
-    # Remove any curves that have fewer than three remaining points
-    npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
-    ids_to_keep <- names(npts[npts > 2])
-    licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
-}
-
-if (REMOVE_SPECIFIC_POINTS) {
-    # Remove specific points
-    licor_data <- remove_points(
-      licor_data,
-      #list(event = 'TGx2014-49FZ', replicate = '34'),
-      #list(event = 'TTGx2002-3DM', replicate = '35'),
-      #list(event = 'LD11-2170', replicate = '27', seq_num = c('8','17'))
-      #list(event = 'WT', replicate = 9, CO2_r_sp = 800),
-      #list(event = '25', replicate = 4, CO2_r_sp = 200)
-      list(curve_identifier = 'WT 2 9', seq_num = c(13)),
-      list(curve_identifier = '25 6 8', seq_num = c(16, 17)),
-      list(curve_identifier = '23 6 9', seq_num = c(16, 17)),
-      list(curve_identifier = '20 3 6', seq_num = c(15)),
-      list(curve_identifier = '25 3 3', seq_num = c(16)),
-      list(curve_identifier = '25 2 4', seq_num = c(3))
-
-    )
-}
-
 ###
 ### PROCESSING:
 ### Extracting new pieces of information from the data
@@ -325,7 +332,7 @@ if (REMOVE_SPECIFIC_POINTS) {
 licor_data <- if (USE_GM_TABLE) {
   set_variable(
     licor_data,
-    'gmc',
+    'gmc_at_25',
     GM_UNITS,
     'c3_co2_response_v2',
     GM_VALUE,
@@ -335,7 +342,7 @@ licor_data <- if (USE_GM_TABLE) {
 } else {
   set_variable(
     licor_data,
-    'gmc',
+    'gmc_at_25',
     GM_UNITS,
     'c3_co2_response_v2',
     GM_VALUE
@@ -348,11 +355,23 @@ licor_data <- calculate_total_pressure(licor_data)
 # Calculate additional gas properties (required for calculate_c3_limitations_grassi)
 licor_data <- calculate_gas_properties(licor_data)
 
-# Calculate Cc
-licor_data <- apply_gm(licor_data)
-
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_data <- calculate_arrhenius(licor_data, c3_arrhenius_sharkey)
+c3_temperature_param <- if (USE_SOYBEAN_RUBISCO) {
+    # These Arrhenius parameters are estimated from the supplemental data of
+    # Orr et al. (2016)
+    within(c3_temperature_param_sharkey, {
+        Gamma_star$c = 14.12718424
+        Gamma_star$Ea = 26.00388519
+        Kc$c = 42.3821705
+        Kc$Ea = 90.47626014
+        Ko$c = 12.78425777
+        Ko$Ea = 16.5650822
+    })
+} else {
+    c3_temperature_param_sharkey
+}
+
+licor_data <- calculate_temperature_response(licor_data, c3_temperature_param)
 
 # Manually override Gamma_star, if desired
 if (OVERRIDE_GAMMA_STAR) {
@@ -374,7 +393,8 @@ c3_aci_results <- consolidate(by(
   licor_data_for_fitting,                       # The `exdf` object containing the curves
   licor_data_for_fitting[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c3_aci,                                   # The function to apply to each chunk of `licor_data`
-  Ca_atmospheric = 420                          # The atmospheric CO2 concentration
+  Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
+  fit_options = list(gmc_at_25 = 'column')
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
@@ -542,7 +562,7 @@ aci_parameters <- c3_aci_results$parameters$main_data
 
 if (AVERAGE_OVER_PLOTS) {
   col_to_average <- c(
-    'Vcmax_at_25', 'RL_at_25', 'J_at_25', 'Tp'
+    'Vcmax_at_25', 'RL_at_25', 'J_at_25', 'Tp_at_25'
   )
 
   aci_parameters_list <- by(
@@ -593,7 +613,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     xl <- "Genotype"
 
     plot_param <- list(
-      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 50),  main = boxplot_caption),
+      list(Y = all_samples_one_point[, 'A'],                 X = x_s, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",                     ylim = c(0, 65),  main = boxplot_caption),
       list(Y = all_samples_one_point[, 'iWUE'],              X = x_s, xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)",            ylim = c(0, 100), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'ls_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to stomata (Grassi) (dimensionless)",      ylim = c(0, 0.5), main = boxplot_caption),
       list(Y = all_samples_one_point[, 'lm_rubisco_grassi'], X = x_s, xlab = xl, ylab = "Relative A limitation due to mesophyll (Grassi) (dimensionless)",    ylim = c(0, 0.5), main = boxplot_caption),
@@ -603,14 +623,14 @@ if (MAKE_ANALYSIS_PLOTS) {
       list(Y = aci_parameters[, 'Vcmax_at_25'],              X = x_v, xlab = xl, ylab = "Vcmax at 25 degrees C (micromol / m^2 / s)",                         ylim = c(0, 200), main = fitting_caption),
       list(Y = aci_parameters[, 'RL_at_25'],                 X = x_v, xlab = xl, ylab = "RL at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 3),   main = fitting_caption),
       list(Y = aci_parameters[, 'J_at_25'],                  X = x_v, xlab = xl, ylab = "J at 25 degrees C (micromol / m^2 / s)",                             ylim = c(0, 225), main = fitting_caption),
-      list(Y = aci_parameters[, 'Tp'],                       X = x_v, xlab = xl, ylab = "Tp (micromol / m^2 / s)",                                            ylim = c(0, 30),  main = fitting_caption)
+      list(Y = aci_parameters[, 'Tp_at_25'],                 X = x_v, xlab = xl, ylab = "Tp at 25 degrees C (micromol / m^2 / s)",                            ylim = c(0, 30),  main = fitting_caption)
     )
 
     if (INCLUDE_FLUORESCENCE) {
         plot_param <- c(
             plot_param,
             list(
-                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.5), main = boxplot_caption),
+                list(Y = all_samples_one_point[, PHIPS2_COLUMN_NAME], X = x_s, xlab = xl, ylab = "Photosystem II operating efficiency (dimensionless)", ylim = c(0, 0.6), main = boxplot_caption),
                 list(Y = all_samples_one_point[, 'ETR'],              X = x_s, xlab = xl, ylab = "Electron transport rate (micromol / m^2 / s)",        ylim = c(0, 350), main = boxplot_caption)
             )
         )
@@ -633,11 +653,11 @@ if (MAKE_ANALYSIS_PLOTS) {
     x_s <- all_samples[, 'seq_num']
     x_e <- all_samples[, EVENT_COLUMN_NAME]
 
-    ci_lim <- c(-50, 1700)
-    cc_lim <- c(-50, 1700)
+    ci_lim <- c(-50, 1500)
+    cc_lim <- c(-50, 1500)
     a_lim <- c(-10, 65)
-    gsw_lim <- c(0, 0.7)
-    phi_lim <- c(0, 0.5)
+    gsw_lim <- c(0, 0.9)
+    phi_lim <- c(0, 0.6)
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Chloroplast [CO2] (ppm)"
@@ -709,6 +729,10 @@ if (PERFORM_STATS_TESTS) {
 if (SAVE_CSV) {
 
   if (AVERAGE_OVER_PLOTS) {
+    write.csv(all_samples, file.path(base_dir, "all_samples_plot_avg.csv"), row.names=FALSE)
+    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
+    write.csv(aci_parameters, file.path(base_dir, "aci_parameters_plot_avg.csv"), row.names=FALSE)
+
     tmp <- by(
       all_samples,
       all_samples$curve_identifier,
@@ -730,10 +754,11 @@ if (SAVE_CSV) {
     tmp <- do.call(rbind, tmp)
 
     write.csv(tmp, file.path(base_dir, 'for_jmp_plot_avg.csv'), row.names=FALSE)
-    write.csv(all_samples, file.path(base_dir, "all_samples_plot_avg.csv"), row.names=FALSE)
-    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point_plot_avg.csv"), row.names=FALSE)
-    write.csv(aci_parameters, file.path(base_dir, "aci_parameters_plot_avg.csv"), row.names=FALSE)
   } else {
+    write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
+    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)
+    write.csv(aci_parameters, file.path(base_dir, "aci_parameters.csv"), row.names=FALSE)
+
     tmp <- by(
       all_samples,
       all_samples$curve_identifier,
@@ -758,8 +783,5 @@ if (SAVE_CSV) {
     tmp <- do.call(rbind, tmp)
 
     write.csv(tmp, file.path(base_dir, 'for_jmp.csv'), row.names=FALSE)
-    write.csv(all_samples, file.path(base_dir, "all_samples.csv"), row.names=FALSE)
-    write.csv(all_samples_one_point, file.path(base_dir, "all_samples_one_point.csv"), row.names=FALSE)
-    write.csv(aci_parameters, file.path(base_dir, "aci_parameters.csv"), row.names=FALSE)
   }
 }

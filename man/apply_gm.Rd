@@ -15,21 +15,34 @@
 
 \usage{
   apply_gm(
-    licor_exdf,
+    exdf_obj,
+    gmc_at_25 = '',
     photosynthesis_type = 'C3',
     calculate_drawdown = TRUE,
     a_column_name = 'A',
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
-    gmc_column_name = 'gmc',
-    total_pressure_column_name = 'total_pressure'
+    gmc_norm_column_name = 'gmc_norm',
+    total_pressure_column_name = 'total_pressure',
+    perform_checks = TRUE,
+    return_exdf = TRUE
   )
 }
 
 \arguments{
-  \item{licor_exdf}{
-    An \code{exdf} object representing data from a Licor gas exchange
+  \item{exdf_obj}{
+    An \code{exdf} object, typically representing data from a Licor gas exchange
     measurement system.
+  }
+
+  \item{gmc_at_25}{
+    The mesophyll conductance to CO2 diffusion at 25 degrees C, expressed in
+    \code{mol m^(-2) s^(-1) bar^(-1)}. In the absence of other reliable
+    information, \code{gmc_at_25} is often assumed to be infinitely large. If
+    \code{gmc_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{gmc_at_25} with appropriate units. A numeric
+    value supplied here will overwrite the values in the \code{gmc_at_25}
+    column of \code{exdf_obj} if it exists.
   }
 
   \item{photosynthesis_type}{
@@ -42,28 +55,45 @@
   }
 
   \item{a_column_name}{
-    The name of the column in \code{licor_exdf} that contains the net
+    The name of the column in \code{exdf_obj} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{ca_column_name}{
-    The name of the column in \code{licor_exdf} that contains the ambient CO2
+    The name of the column in \code{exdf_obj} that contains the ambient CO2
     concentration in the chamber in \code{micromol mol^(-1)}.
   }
 
   \item{ci_column_name}{
-    The name of the column in \code{licor_exdf} that contains the intercellular
+    The name of the column in \code{exdf_obj} that contains the intercellular
     CO2 concentration in \code{micromol mol^(-1)}.
   }
 
-  \item{gmc_column_name}{
-    The name of the column in \code{licor_exdf} that contains the mesophyll
-    conductance to CO2 in \code{mol m^(-2) s^(-1) bar^(-1)}.
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
-    The name of the column in \code{licor_exdf} that contains the total pressure
+    The name of the column in \code{exdf_obj} that contains the total pressure
     in \code{bar}.
+  }
+
+  \item{perform_checks}{
+    A logical value indicating whether to check units for the required columns.
+    This should almost always be \code{TRUE}. The option to disable these checks
+    is only intended to be used when \code{\link{fit_c3_aci}} calls this
+    function, since performing these checks many times repeatedly slows down the
+    fitting procedure.
+  }
+
+  \item{return_exdf}{
+    A logical value indicating whether to return an \code{exdf} object. This
+    should almost always be \code{TRUE}. The option to return a vector is mainly
+    intended to be used when  \code{\link{fit_c3_aci}} calls this function,
+    since creating an \code{exdf} object to return will slow down the fitting
+    procedure.
   }
 }
 
@@ -133,12 +163,19 @@
 }
 
 \value{
-  An \code{exdf} object based on \code{licor_exdf} that includes the following
-  additional columns, calculated as described above: \code{Pci} and \code{Ci}
-  (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
-  \code{drawndown_s}, and \code{drawdown_cm}. The category for each of these new
-  columns is \code{apply_gm} to indicate that they were created using this
-  function.
+  The return value depends on the value of \code{return_exdf}:
+  \itemize{
+    \item If \code{return_exdf} is \code{TRUE}, the return value is an
+          \code{exdf} object based on \code{exdf_obj} with the following
+          columns, calculated as described above: \code{Pci} and \code{Ci}
+          (for C3 plants) or \code{PCm} and \code{Cm} (for C4 plants),
+          \code{drawndown_s}, and \code{drawdown_cm}. The category for each of
+          these new columns is \code{apply_gm} to indicate that they were
+          created using this function.
+    \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
+          a single named element (\code{internal_c}), which contains values of
+          \code{Cc} or \code{Cm} as a numeric vector.
+  }
 }
 
 \examples{
@@ -150,12 +187,12 @@ licor_file <- read_gasex_file(
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
-# Set the mesophyll conductance to 1 mol / m^2 / s / bar
-licor_file <-
-  set_variable(licor_file, 'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 1.0)
+# Calculate temperature-dependent parameter values, including gmc_norm
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_sharkey)
 
-# Calculate Cc and drawdowns
-licor_file <- apply_gm(licor_file)
+# Calculate Cc and drawdowns assuming a mesophyll conductance of
+# 1 mol / m^2 / s / bar at 25 degrees C
+licor_file <- apply_gm(licor_file, 1)
 
 licor_file$units$Cc      # View the units of the new `Cc` column
 licor_file$categories$Cc # View the category of the new `Cc` column

@@ -17,8 +17,10 @@ calculate_c3_limitations_warren <- function(
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
-    hard_constraints = 0
+    hard_constraints = 0,
+    ...
 )
 {
     # Check inputs
@@ -31,10 +33,11 @@ calculate_c3_limitations_warren <- function(
     required_variables[['alpha_g']]                  <- unit_dictionary[['alpha_g']]
     required_variables[['alpha_old']]                <- unit_dictionary[['alpha_old']]
     required_variables[['alpha_s']]                  <- unit_dictionary[['alpha_s']]
+    required_variables[['alpha_t']]                  <- unit_dictionary[['alpha_t']]
     required_variables[['Gamma_star']]               <- unit_dictionary[['Gamma_star']]
     required_variables[['J_at_25']]                  <- unit_dictionary[['J_at_25']]
     required_variables[['RL_at_25']]                 <- unit_dictionary[['RL_at_25']]
-    required_variables[['Tp']]                       <- unit_dictionary[['Tp']]
+    required_variables[['Tp_at_25']]                 <- unit_dictionary[['Tp_at_25']]
     required_variables[['Vcmax_at_25']]              <- unit_dictionary[['Vcmax_at_25']]
     required_variables[[ca_column_name]]             <- unit_dictionary[['Ca']]
     required_variables[[cc_column_name]]             <- unit_dictionary[['Cc']]
@@ -45,9 +48,11 @@ calculate_c3_limitations_warren <- function(
     required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
     required_variables[[rl_norm_column_name]]        <- unit_dictionary[['RL_norm']]
     required_variables[[total_pressure_column_name]] <- unit_dictionary[['total_pressure']]
+    required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
     required_variables[[vcmax_norm_column_name]]     <- unit_dictionary[['Vcmax_norm']]
 
-    check_required_variables(exdf_obj, required_variables)
+    # Don't throw an error if some columns are all NA
+    check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
 
     # Extract key variables to make the following equations simpler
     Ca <- exdf_obj[, ca_column_name]    # micromol / mol
@@ -79,10 +84,11 @@ calculate_c3_limitations_warren <- function(
             '', # alpha_g
             '', # alpha_old
             '', # alpha_s
+            '', # alpha_t
             '', # Gamma_star
             '', # J_at_25
             '', # RL_at_25
-            '', # Tp
+            '', # Tp_at_25
             '', # Vcmax_at_25
             atp_use = atp_use,
             nadph_use = nadph_use,
@@ -95,10 +101,12 @@ calculate_c3_limitations_warren <- function(
             oxygen_column_name = oxygen_column_name,
             rl_norm_column_name = rl_norm_column_name,
             total_pressure_column_name = total_pressure_column_name,
+            tp_norm_column_name = tp_norm_column_name,
             vcmax_norm_column_name = vcmax_norm_column_name,
             hard_constraints = hard_constraints,
             perform_checks = FALSE,
-            return_exdf = TRUE
+            return_exdf = TRUE,
+            ...
         )[, 'An']
     }
 

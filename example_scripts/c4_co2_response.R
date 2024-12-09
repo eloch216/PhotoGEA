@@ -68,7 +68,7 @@ PERFORM_CALCULATIONS <- TRUE
 VIEW_DATA_FRAMES <- TRUE
 
 # Decide whether to save average response curves to PDF
-SAVE_TO_PDF <- FALSE
+SAVE_TO_PDF <- TRUE
 
 # Decide whether to specify one gm value for all events or to use a table to
 # specify (possibly) different values for each event
@@ -93,7 +93,7 @@ if (PERFORM_CALCULATIONS) {
 # 8, and 9 all have the CO2 setpoint set to 400. Here we only want to keep the
 # first one, so we exclude points 8 and 9.
 NUM_OBS_IN_SEQ <- 14
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(8,9)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8,9,10,14)
 POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove points where the Licor stability criteria were not
@@ -119,7 +119,7 @@ CALCULATE_BASIC_STATS <- TRUE
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- TRUE
+SAVE_CSV <- FALSE
 
 # Decide which solver to use
 USE_DEOPTIM_SOLVER <- TRUE
@@ -230,6 +230,14 @@ if (PERFORM_CALCULATIONS) {
     combined_info[, UNIQUE_ID_COLUMN_NAME] <-
         paste(combined_info[, EVENT_COLUMN_NAME], combined_info[, REP_COLUMN_NAME])
 
+    ###                     ###
+    ### EXCLUDE SOME EVENTS ###
+    ###                     ###
+
+    EVENTS_TO_EXCLUDE <- c("14","11","32","36","53","4","28")
+
+    combined_info <- combined_info[!combined_info[, EVENT_COLUMN_NAME] %in% EVENTS_TO_EXCLUDE, , return_exdf = TRUE]
+
     # Factorize ID columns
     combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
     combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
@@ -261,34 +269,21 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        #list(line_sample = 'WT 10', seq_num = c(1,14)),
-        #list(line_sample = '25 10', seq_num = 14),
-        #list(line_sample = '3 8',   seq_num = 14)
-        #list(event = "zg12a", replicate = '1', seq_num = 7)                    #needed for GH sorghum 2023
-        #list(event = "WT", replicate = '5')
-        list(event = "WT", replicate = '1', plot = '5', seq_num = 7),          # needed for Aug 4 Field Aci
-        list(event = "hn1a", replicate = '2', plot = '4', seq_num = 7),        # needed for Aug 4 Field Aci
-        #list(event = "zg5b", replicate = '1', plot = '5', seq_num = 2),
-        #list(event = "zg5b", replicate = '1', plot = '5'),
-        #list(event = "zg5b", replicate = '2', plot = '6', seq_num = 7),
-        #list(event = "zg5b", replicate = '1', plot = '3'),
-        #list(event = "WT", replicate = '1', plot = '1'),
-        list(event = "zg12a", replicate = '1', plot = '4', seq_num = 2)      # needed for Aug 4 Field Aci
-        #list(event = "zg12a", replicate = '2', plot = '2', seq_num = 7)       # needed for July 10 Field Aci
-        #list(event = "zg12a", replicate = '2', plot = '5', seq_num = 1)       # needed for Aug 29 Field Aci
-        #list(event = 'WT', replicate = '10', obs = 15)
-        #list(event = 'WT', replicate = '2a-1', obs = 29),
-        #list(event = '3', replicate = '1', seq_num = 5)
-        #list(event = 'zg5b', replicate = '1', plot = '5', seq_num = 2),
-        #list(event = 'WT', replicate = '2a-1', obs = 29),
-        #list(event = '25', replicate = '9', seq_num = c(2,4)),
-        #list(event = '25', replicate = '1'),
-        #list(event = '9', replicate = '1'),
-        #list(event = '25', replicate = '8', seq_num = 6),
-        #list(event = '3', replicate = '7', seq_num = 5),
-        #list(event = '3', replicate = '10', seq_num = 5),
-        #list(event = 'WT', replicate = '9', seq_num = 5)
-
+        list(
+          line_sample = c(
+            'WT 3',
+            'WT 4',
+            'HN-15 1',
+            'HN-15 5',
+            'HN-15 8',
+            'ZG-15 1',
+            'ZG-15 2',
+            'ZG-15 7',
+            'ZG-7 4',
+            'ZG-7 5'
+          ),
+          seq_num = 7), # These points have PCm < 0
+        list(line_sample = 'ZG-15 1', seq_num = c(2, 6, 7, 14)) # This point prevents a good fit
       )
     }
 
@@ -322,10 +317,7 @@ if (PERFORM_CALCULATIONS) {
 
     # Calculate temperature-dependent values of C4 parameters
     combined_info <-
-      calculate_arrhenius(combined_info, c4_arrhenius_von_caemmerer)
-
-    combined_info <-
-      calculate_peaked_gaussian(combined_info, c4_peaked_gaussian_von_caemmerer)
+      calculate_temperature_response(combined_info, c4_temperature_param_vc)
 
     # Include gm values
     combined_info <- if (USE_GM_TABLE) {
@@ -352,7 +344,11 @@ if (PERFORM_CALCULATIONS) {
     combined_info <- calculate_total_pressure(combined_info)
 
     # Calculate PCm
-    combined_info <- apply_gm(combined_info, 'C4')
+    combined_info <- apply_gm(
+        combined_info,
+        gmc_at_25 = 1, # mol / m^2 / s / bar (von Caemmerer 2021)
+        photosynthesis_type = 'C4'
+    )
 
     # Calculate additional gas properties
     combined_info <- calculate_gas_properties(combined_info)
@@ -385,7 +381,7 @@ if (PERFORM_CALCULATIONS) {
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, , TRUE],
         combined_info[combined_info[, CI_COLUMN_NAME] <= CI_UPPER_LIMIT, UNIQUE_ID_COLUMN_NAME],
         fit_c4_aci,
-        OPTIM_FUN = solver,
+        optim_fun = solver,
         Ca_atmospheric = 420,
         fit_options = list(alpha_psii = 0, gbs = 0, Rm_frac = 1)
     ))
@@ -566,6 +562,8 @@ if (INCLUDE_FLUORESCENCE) {
     )
 }
 
+event_colors <- c('#000000', brewer.pal(8, 'Dark2'))
+
 for (i in seq_along(avg_plot_param)) {
   plot_obj <- do.call(xyplot_avg_rc, c(avg_plot_param[[i]], list(
     type = 'b',
@@ -679,7 +677,7 @@ x_s <- all_samples_one_point[[EVENT_COLUMN_NAME]]
 x_p <- all_fit_parameters[[EVENT_COLUMN_NAME]]
 xl <- "Genotype"
 plot_param <- list(
-  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 50),   main = fitting_caption),
+  list(Y = all_fit_parameters[['Vcmax_at_25']],    X = x_p, xlab = xl, ylab = "Vcmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 40),   main = fitting_caption),
   list(Y = all_fit_parameters[['Vpmax_at_25']],    X = x_p, xlab = xl, ylab = "Vpmax at 25 C (micromol / m^2 / s)",                      ylim = c(0, 120),  main = fitting_caption),
   list(Y = all_fit_parameters[['Vmax_at_25']],     X = x_p, xlab = xl, ylab = "Vmax at 25 C (micromol / m^2 / s)",                       ylim = c(0, 70),  main = fitting_caption),
   list(Y = all_fit_parameters[['RL_at_25']],       X = x_p, xlab = xl, ylab = "RL at 25 C (micromol / m^2 / s)",                         ylim = c(0, 4),   main = fitting_caption),

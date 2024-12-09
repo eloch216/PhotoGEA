@@ -19,7 +19,7 @@
     upper = list(),
     fit_options = list(),
     sd_A = 1,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     atp_use = 4.0,
     nadph_use = 8.0,
     curvature_cj = 1.0,
@@ -34,12 +34,15 @@
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
-    gmc_max = Inf
+    gmc_max = Inf,
+    check_j = TRUE,
+    \dots
   )
 }
 
@@ -74,9 +77,9 @@
     generating \code{best_fit_parameters}.
   }
 
-  \item{error_threshold_factor}{
-    A multiplicative factor that sets the threshold value of the error function
-    used to define the edges of the confidence intervals; see details below.
+  \item{relative_likelihood_threshold}{
+    The threshold value of relative likelihood used to define the boundaries of
+    the confidence intervals; see details below.
   }
 
   \item{atp_use}{
@@ -153,6 +156,11 @@
     pressure in \code{bar}.
   }
 
+  \item{tp_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
+  }
+
   \item{vcmax_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{Vcmax} values (with units of
@@ -179,6 +187,14 @@
   \item{gmc_max}{
     To be passed to \code{\link{error_function_c3_variable_j}}.
   }
+
+  \item{check_j}{
+    To be passed to \code{\link{error_function_c3_variable_j}}.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
+  }
 }
 
 \details{
@@ -194,11 +210,17 @@
   Here we calculate the upper and lower limits of the relative likelihood
   intervals for each parameter. This is done by fixing the other parameters to
   their best-fit values, and varying a single parameter to find the interval
-  where the relative likelihood is above the threshold value. If the threshold
-  \code{p_0} is set to 0.147, then these intervals are equivalent to 95\%
-  confidence intervals in most situations. See the Wikipedia page about
+  where the relative likelihood is above the threshold value (set by the
+  \code{relative_likelihood_threshold} input argument). If the threshold
+  is set to 0.147, then these intervals are equivalent to 95\% confidence
+  intervals in most situations. See the Wikipedia page about
   \href{https://en.wikipedia.org/wiki/Relative_likelihood}{relative likelihood}
   for more information.
+
+  Internally, this function uses \code{\link{error_function_c3_variable_j}} to
+  calculate the negative logarithm of the likelihood (\code{-ln(L)}). It varies
+  each fitting parameter independendently to find values where
+  \code{ln(L) - ln(p_0) - ln(L_max) = 0}.
 
   If the upper limit of a confidence interval is found to exceed ten times the
   upper limit specified when fitting that parameter, then the upper limit of the
@@ -235,7 +257,7 @@ licor_file <- organize_response_curve_data(
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Fit just one curve from the data set
 one_result <- fit_c3_variable_j(

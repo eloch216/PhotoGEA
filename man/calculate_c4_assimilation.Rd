@@ -17,20 +17,16 @@
     exdf_obj,
     alpha_psii,
     gbs,
-    Jmax_at_opt,
+    J_at_25,
     RL_at_25,
     Rm_frac,
     Vcmax_at_25,
     Vpmax_at_25,
     Vpr,
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     ao_column_name = 'ao',
     gamma_star_column_name = 'gamma_star',
-    jmax_norm_column_name = 'Jmax_norm',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
@@ -66,12 +62,14 @@
     \code{exdf_obj} if it exists.
   }
 
-  \item{Jmax_at_opt}{
-    The RuBP regeneration rate at its optimal temperature, expressed in
-    \code{micromol m^(-2) s^(-1)}. If \code{Jmax_at_opt} is not a number, then
-    there must be a column in \code{exdf_obj} called \code{Jmax_at_opt} with
-    appropriate units. A numeric value supplied here will override the values
-    in the \code{Jmax_at_opt} column of \code{exdf_obj} if it exists.
+  \item{J_at_25}{
+    The electron transport rate at 25 degrees C, expressed in
+    \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
+    general will depend on the incident photosynthetically active flux density.
+    If \code{J_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{J_at_25} with appropriate units. A numeric
+    value supplied here will override the values in the \code{J_at_25} column of
+    \code{exdf_obj} if it exists.
   }
 
   \item{RL_at_25}{
@@ -115,26 +113,6 @@
     \code{Vpr} column of \code{exdf_obj} if it exists.
   }
 
-  \item{absorptance}{
-    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
-    (2021).
-  }
-
-  \item{f_spectral}{
-    The spectral quality adjustment factor (dimensionless). See Equation 35
-    from S. von Caemmerer (2021).
-  }
-
-  \item{rho}{
-    The fraction of light absorbed by photosystem II rather than photosystem I
-    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
-  }
-
-  \item{theta}{
-    An empirical curvature factor (dimensionless). See Equation 34 from S. von
-    Caemmerer (2021).
-  }
-
   \item{x_etr}{
     The fraction of whole-chain electron transport occurring in the mesophyll
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
@@ -150,10 +128,10 @@
     \code{gamma_star} values.
   }
 
-  \item{jmax_norm_column_name}{
+  \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
-    \code{normalized to Jmax at its optimal temperature}).
+    \code{normalized to Jmax at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -419,7 +397,7 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns: \code{alpha_psii},
-          \code{gbs}, \code{Jmax_at_opt}, \code{Jmax_tl}, \code{J_tl},
+          \code{gbs}, \code{J_at_25}, \code{Jmax_tl}, \code{J_tl},
           \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl},
           \code{RLm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc},
           \code{Apr}, \code{Ap}, \code{Ar}, \code{Ajm}, \code{Ajbs}, \code{Ac},
@@ -457,11 +435,9 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
 
-inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
-
-assim <- calculate_c4_assimilation(inputs, 0, 0.003, 400, 1, 0.5, 40, 200, 80)
+assim <- calculate_c4_assimilation(inputs, 0, 0.003, 250, 1, 0.5, 40, 200, 80)
 
 # Now we can plot Ac, Apr, Apc, and Ar. From this plot, we can see that
 # replacing the complicated quadratic equation with a simple minimum yields

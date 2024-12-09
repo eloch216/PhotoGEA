@@ -140,17 +140,14 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
+# Calculate temperature-dependent values of photosynthetic parameters
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_sharkey)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
+# Calculate Cc, assuming an infinite mesophyll conductance (so `Cc` = `Ci`)
+licor_file <- apply_gm(licor_file, Inf)
 
 # Determine the operating point for just one curve from the data set
 one_result <- estimate_operating_point(

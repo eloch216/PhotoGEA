@@ -16,14 +16,24 @@ error_function_c3_variable_j <- function(
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     hard_constraints = 0,
     require_positive_gmc = 'positive_a',
-    gmc_max = Inf
+    gmc_max = Inf,
+    check_j = TRUE,
+    ...
 )
 {
+    if (!is.exdf(replicate_exdf)) {
+        stop('error_function_c3_variable_j requires an exdf object')
+    }
+
+    # Only use points designated for fitting
+    replicate_exdf <- replicate_exdf[points_for_fitting(replicate_exdf), , TRUE]
+
     # Make sure options are okay
     require_positive_gmc <- tolower(require_positive_gmc)
     if (!require_positive_gmc %in% c('none', 'all', 'positive_a')) {
@@ -56,6 +66,7 @@ error_function_c3_variable_j <- function(
     required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
     required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
+    required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
     required_variables <- require_flexible_param(
@@ -115,9 +126,10 @@ error_function_c3_variable_j <- function(
                     fitting_exdf,
                     X[1], # alpha_g
                     X[3], # alpha_s
-                    X[4], # Gamma_star
-                    X[6], # RL_at_25
-                    X[7], # tau
+                    X[4], # alpha_t
+                    X[5], # Gamma_star
+                    X[7], # RL_at_25
+                    X[8], # tau
                     atp_use,
                     nadph_use,
                     a_column_name,
@@ -160,14 +172,15 @@ error_function_c3_variable_j <- function(
             {
                 calculate_c3_assimilation(
                     fitting_exdf,
-                    X[1], # alpha_g
-                    X[2], # alpha_old
-                    X[3], # alpha_s
-                    X[4], # Gamma_star
-                    X[5], # J_at_25
-                    X[6], # RL_at_25
-                    X[8], # Tp
-                    X[9], # Vcmax_at_25
+                    X[1],  # alpha_g
+                    X[2],  # alpha_old
+                    X[3],  # alpha_s
+                    X[4],  # alpha_t
+                    X[5],  # Gamma_star
+                    X[6],  # J_at_25
+                    X[7],  # RL_at_25
+                    X[9],  # Tp_at_25
+                    X[10], # Vcmax_at_25
                     atp_use,
                     nadph_use,
                     curvature_cj,
@@ -179,10 +192,12 @@ error_function_c3_variable_j <- function(
                     oxygen_column_name,
                     rl_norm_column_name,
                     total_pressure_column_name,
+                    tp_norm_column_name,
                     vcmax_norm_column_name,
                     hard_constraints = hard_constraints,
                     perform_checks = FALSE,
-                    return_exdf = FALSE
+                    return_exdf = FALSE,
+                    ...
                 )
             },
             error = function(e) {
@@ -209,6 +224,12 @@ error_function_c3_variable_j <- function(
                         assim$Wj[i] > assim$Wc[i]) {
                     return(ERROR_PENALTY)
                 }
+            }
+        }
+
+        if (check_j) {
+            if (any(vj$J_F > assim$J_tl)) {
+                return(ERROR_PENALTY)
             }
         }
 

@@ -16,9 +16,7 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
-
-inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
 
 inputs2 <- set_variable(inputs, 'alpha_psii', 'dimensionless', '', 0.5)
 
@@ -42,7 +40,7 @@ test_that('c4 assimilation works for numeric values of flexible inputs', {
 test_that('c4 assimilation works for non-numeric values of flexible inputs', {
     expect_error(
         calculate_c4_assimilation(inputs, '', 0.003, 400, 1, 0.5, 80, 120, 400),
-        'The following columns are undefined: alpha_psii'
+        'The following required columns are not present: alpha_psii'
     )
 
     res <- expect_silent(
@@ -56,7 +54,7 @@ test_that('c4 assimilation works for non-numeric values of flexible inputs', {
 test_that('fitting parameter limits can be bypassed', {
     expect_error(
         calculate_c4_assimilation(inputs, 0, -0.003, -400, 1, 0.5, 80, 120, 400, hard_constraints = 2),
-        'gbs must be >= 0. Jmax_at_opt must be >= 0',
+        'gbs must be >= 0. J_at_25 must be >= 0',
         fixed = TRUE
     )
 

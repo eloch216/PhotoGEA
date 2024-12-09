@@ -7,7 +7,12 @@
 \description{
   Creates a function that returns an error value (the negative of the natural
   logarithm of the likelihood) representing the amount of agreement between
-  modeled and measured \code{An} values.
+  modeled and measured \code{An} values. When this function is minimized, the
+  likelihood is maximized.
+
+  Internally, this function uses \code{\link{apply_gm}} to calculate \code{Cc},
+  and then uses \code{link{calculate_c3_assimilation}} to calculate assimilation
+  rate values that are compared to the measured ones.
 }
 
 \usage{
@@ -20,17 +25,20 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     a_column_name = 'A',
-    cc_column_name = 'Cc',
+    ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     cj_crossover_min = NA,
     cj_crossover_max = NA,
-    hard_constraints = 0
+    hard_constraints = 0,
+    \dots
   )
 }
 
@@ -47,19 +55,19 @@
     \code{'column'} means that the value of the parameter will be taken from a
     column in \code{replicate_exdf} of the same name; and a numeric value means
     that the parameter will be set to that value. For example,
-    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp = 'column')}
+    \code{fit_options = list(alpha_g = 0, Vcmax_at_25 = 'fit', Tp_at_25 = 'column')}
     means that \code{alpha_g} will be set to 0, \code{Vcmax_at_25} will be fit,
-    and \code{Tp} will be set to the values in the \code{Tp} column of
-    \code{replicate_exdf}.
+    and \code{Tp_at_25} will be set to the values in the \code{Tp_at_25} column
+    of \code{replicate_exdf}.
   }
 
   \item{sd_A}{
     The standard deviation of the measured values of the net CO2 assimilation
-    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If
-    \code{sd_A} is not a number, then there must be a column in \code{exdf_obj}
-    called \code{sd_A} with appropriate units. A numeric value supplied here
-    will overwrite the values in the \code{sd_A} column of \code{exdf_obj} if it
-    exists.
+    rate, expressed in units of \code{micromol m^(-2) s^(-1)}. If \code{sd_A} is
+    not a number, then there must be a column in \code{replicate_exdf} called
+    \code{sd_A} with appropriate units. A numeric value supplied here will
+    overwrite the values in the \code{sd_A} column of \code{replicate_exdf} if
+    it exists.
   }
 
   \item{atp_use}{
@@ -87,9 +95,15 @@
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
-  \item{cc_column_name}{
+  \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
   }
 
   \item{j_norm_column_name}{
@@ -110,9 +124,9 @@
   }
 
   \item{oxygen_column_name}{
-    The name of the column in \code{exdf_obj} that contains the concentration
-    of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
-    the units must be \code{percent}.
+    The name of the column in \code{replicate_exdf} that contains the
+    concentration of O2 in the ambient air, expressed as a percentage (commonly
+    21\% or 2\%); the units must be \code{percent}.
   }
 
   \item{rl_norm_column_name}{
@@ -123,6 +137,11 @@
   \item{total_pressure_column_name}{
     The name of the column in \code{replicate_exdf} that contains the total
     pressure in \code{bar}.
+  }
+
+  \item{tp_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
@@ -147,22 +166,27 @@
     To be passed to \code{\link{calculate_c3_assimilation}}; see that function
     for more details.
   }
+
+  \item{\dots}{
+    Additional arguments to be passed to \code{\link{calculate_c3_assimilation}}.
+  }
 }
 
 \details{
   When fitting A-Ci curves using a maximum likelihood approach, it is necessary
   to define a function that calculates the likelihood of a given set of
-  \code{alpha_g}, \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25}, \code{Tp},
-  and \code{Vcmax_at_25} values by comparing a model prediction to a measured
-  curve. This function will be passed to an optimization algorithm which will
-  determine the values that produce the largest likelihood.
+  \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+  \code{Gamma_star}, \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, and \code{Vcmax_at_25} values by comparing a model prediction
+  to a measured curve. This function will be passed to an optimization algorithm
+  which will determine the values that produce the largest likelihood.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
   a subset of the available fitting parameters; by default, the fitting
-  parameters are \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and
-  \code{Vcmax_at_25}. This behavior can be changed via the \code{fit_options}
-  argument.
+  parameters are \code{alpha_old}, \code{J_at_25}, \code{RL_at_25},
+  \code{Tp_at_25}, and \code{Vcmax_at_25}. This behavior can be changed via the
+  \code{fit_options} argument.
 
   For practical reasons, the function actually returns values of \code{-ln(L)},
   where \code{L} is the likelihood. The logarithm of \code{L} is simpler to
@@ -193,8 +217,9 @@
   vector representing values of the parameters to be fitted (which are specified
   by the \code{fit_options} input argument.) Each element of \code{guess} is the
   value of one parameter (arranged in alphabetical order.) For example, with the
-  default settings, \code{guess} should contain values of \code{J_at_25},
-  \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25} (in that order).
+  default settings, \code{guess} should contain values of \code{alpha_old},
+  \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in
+  that order).
 }
 
 \examples{
@@ -215,32 +240,28 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify an infinite mesophyll conductance (so `Cc` = `Ci`)
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = Inf
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
-
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Define an error function for one curve from the set
 error_fcn <- error_function_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE]
 )
 
-# Evaluate the error for J_at_25 = 236, RL_at_25 = 4e-8, Tp = 22.7, Vcmax_at_25 = 147
-error_fcn(c(236, 4e-8, 22.7, 147))
+# Evaluate the error for:
+#  alpha_old = 0
+#  J_at_25 = 236
+#  RL_at_25 = 4e-8
+#  Tp_at_25 = 22.7
+#  Vcmax_at_25 = 147
+error_fcn(c(0, 236, 4e-8, 22.7, 147))
 
 # Make a plot of likelihood vs. Vcmax when other parameters are fixed to the
 # values above.
-vcmax_error_fcn <- function(Vcmax) {error_fcn(c(236, 4e-8, 22.7, Vcmax))}
+vcmax_error_fcn <- function(Vcmax) {error_fcn(c(0, 236, 4e-8, 22.7, Vcmax))}
 vcmax_seq <- seq(135, 152, length.out = 41)
 
 lattice::xyplot(

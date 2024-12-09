@@ -15,6 +15,7 @@
     identifier_column_name,
     x_name,
     plot_operating_point = TRUE,
+    plot_Ad = FALSE,
     a_column_name = 'A',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -24,7 +25,7 @@
 
 \arguments{
   \item{fit_results}{
-    A list of three \code{exdf} objects names \code{fits}, \code{parameters},
+    A list of three \code{exdf} objects named \code{fits}, \code{parameters},
     and \code{fits_interpolated}, as calculated by \code{\link{fit_c3_aci}}.
   }
 
@@ -44,21 +45,27 @@
     A logical value indicating whether to plot the operating point.
   }
 
+  \item{plot_Ad}{
+    A logical value indicating whether to plot the RuBP-depletion-limited net
+    CO2 assimilation rate (\code{Ad}).
+  }
+
   \item{a_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the net
-    assimilation in \code{micromol m^(-2) s^(-1)}; should be the same value that
-    was passed to \code{fit_c3_aci}.
+    The name of the columns in the elements of \code{fit_results} that contain
+    the net assimilation in \code{micromol m^(-2) s^(-1)}; should be the same
+    value that was passed to \code{fit_c3_aci} or \code{fit_c3_variable_j}.
   }
 
   \item{cc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
+    The name of the columns in the elements of \code{fit_results} that contain
+    the chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{ci_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    intercellular CO2 concentration in \code{micromol mol^(-1)}; should be the
-    same value that was passed to \code{fit_c3_aci}.
+    The name of the columns in the elements of \code{fit_results} that contain
+    the intercellular CO2 concentration in \code{micromol mol^(-1)}; should be
+    the same value that was passed to \code{fit_c3_aci} or
+    \code{fit_c3_variable_j}.
   }
 
   \item{\dots}{

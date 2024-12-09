@@ -18,21 +18,18 @@
     upper = list(),
     fit_options = list(),
     sd_A = 1,
-    error_threshold_factor = 0.147,
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
+    relative_likelihood_threshold = 0.147,
     x_etr = 0.4,
-    ao_column_name = 'ao',
     a_column_name = 'A',
+    ao_column_name = 'ao',
+    ci_column_name = 'Ci',
     gamma_star_column_name = 'gamma_star',
-    jmax_norm_column_name = 'Jmax_norm',
+    gmc_norm_column_name = 'gmc_norm',
+    j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -72,29 +69,9 @@
     \code{best_fit_parameters}.
   }
 
-  \item{error_threshold_factor}{
-    A multiplicative factor that sets the threshold value of the error function
-    used to define the edges of the confidence intervals; see details below.
-  }
-
-  \item{absorptance}{
-    The leaf absorptance (dimensionless). See Equation 35 from S. von Caemmerer
-    (2021).
-  }
-
-  \item{f_spectral}{
-    The spectral quality adjustment factor (dimensionless). See Equation 35
-    from S. von Caemmerer (2021).
-  }
-
-  \item{rho}{
-    The fraction of light absorbed by photosystem II rather than photosystem I
-    (dimensionless). See Equation 35 from S. von Caemmerer (2021).
-  }
-
-  \item{theta}{
-    An empirical curvature factor (dimensionless). See Equation 34 from S. von
-    Caemmerer (2021).
+  \item{relative_likelihood_threshold}{
+    The threshold value of relative likelihood used to define the boundaries of
+    the confidence intervals; see details below.
   }
 
   \item{x_etr}{
@@ -102,14 +79,19 @@
     (dimensionless). See Equation 29 from S. von Caemmerer (2021).
   }
 
-   \item{ao_column_name}{
+  \item{a_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the net
+    assimilation in \code{micromol m^(-2) s^(-1)}.
+  }
+
+  \item{ao_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     dimensionless ratio of solubility and diffusivity of O2 to CO2.
   }
 
-  \item{a_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the net
-    assimilation in \code{micromol m^(-2) s^(-1)}.
+  \item{ci_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the
+    intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{gamma_star_column_name}{
@@ -117,10 +99,16 @@
     dimensionless \code{gamma_star} values.
   }
 
-  \item{jmax_norm_column_name}{
+  \item{gmc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    mesophyll conductance values (with units of
+    \code{normalized to gmc at 25 degrees C}).
+  }
+
+  \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Jmax} values (with units of
-    \code{normalized to Jmax at its optimal temperature}).
+    \code{normalized to Jmax at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -143,11 +131,6 @@
     The name of the column in \code{exdf_obj} that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
     the units must be \code{percent}.
-  }
-
-  \item{pcm_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the partial
-    pressure of CO2 in the mesophyll, expressed in \code{microbar}.
   }
 
   \item{qin_column_name}{
@@ -197,11 +180,17 @@
   Here we calculate the upper and lower limits of the relative likelihood
   intervals for each parameter. This is done by fixing the other parameters to
   their best-fit values, and varying a single parameter to find the interval
-  where the relative likelihood is above the threshold value. If the threshold
-  \code{p_0} is set to 0.147, then these intervals are equivalent to 95\%
-  confidence intervals in most situations. See the Wikipedia page about
+  where the relative likelihood is above the threshold value (set by the
+  \code{relative_likelihood_threshold} input argument). If the threshold
+  is set to 0.147, then these intervals are equivalent to 95\% confidence
+  intervals in most situations. See the Wikipedia page about
   \href{https://en.wikipedia.org/wiki/Relative_likelihood}{relative likelihood}
   for more information.
+
+  Internally, this function uses \code{\link{error_function_c4_aci}} to
+  calculate the negative logarithm of the likelihood (\code{-ln(L)}). It varies
+  each fitting parameter independendently to find values where
+  \code{ln(L) - ln(p_0) - ln(L_max) = 0}.
 
   If the upper limit of a confidence interval is found to exceed ten times the
   upper limit specified when fitting that parameter, then the upper limit of the
@@ -234,15 +223,10 @@ licor_file <- organize_response_curve_data(
 )
 
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c4_arrhenius_von_caemmerer)
-
-licor_file <- calculate_peaked_gaussian(licor_file, c4_peaked_gaussian_von_caemmerer)
+licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc)
 
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
-
-# Calculate PCm
-licor_file <- apply_gm(licor_file, 'C4')
 
 # Fit just one curve from the data set
 one_result <- fit_c4_aci(

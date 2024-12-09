@@ -29,8 +29,10 @@
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
+    tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
-    hard_constraints = 0
+    hard_constraints = 0,
+    \dots
   )
 }
 
@@ -70,7 +72,7 @@
   \item{cc_column_name}{
     The name of the column in \code{exdf_obj} that contains the chloroplastic
     CO2 concentration in \code{micromol mol^(-1)}. Typically these are
-    calculated using \code{\link{apply_gm}}.
+    values that are automatically calculated by \code{\link{fit_c3_aci}}.
   }
 
   \item{ci_column_name}{
@@ -82,21 +84,23 @@
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
     Typically these are the leaf-temperature dependent values calculated using
-    \code{\link{calculate_arrhenius}}.
+    \code{\link{calculate_temperature_response}}.
   }
 
   \item{kc_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     \code{micromol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_arrhenius}}.
+    values calculated using
+    \code{\link{calculate_temperature_response}}.
   }
 
   \item{ko_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_arrhenius}}.
+    values calculated using
+    \code{\link{calculate_temperature_response}}.
   }
 
   \item{oxygen_column_name}{
@@ -116,6 +120,11 @@
     \code{\link{calculate_total_pressure}}.
   }
 
+  \item{tp_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
+  }
+
   \item{vcmax_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{Vcmax} values (with units of
@@ -125,6 +134,11 @@
   \item{hard_constraints}{
     To be passed to \code{\link{calculate_c3_assimilation}}; see that function
     for more details.
+  }
+
+  \item{\dots}{
+    Additional arguments to be passed to
+    \code{\link{calculate_c3_assimilation}}.
   }
 }
 
@@ -231,23 +245,14 @@ licor_file <- organize_response_curve_data(
     'CO2_r_sp'
 )
 
-# Specify mesophyll conductance
-licor_file <- set_variable(
-  licor_file,
-  'gmc', 'mol m^(-2) s^(-1) bar^(-1)', value = 0.5
-)
-
 # Calculate the total pressure in the Licor chamber
 licor_file <- calculate_total_pressure(licor_file)
 
 # Calculate additional gas properties
 licor_file <- calculate_gas_properties(licor_file)
 
-# Calculate Cc
-licor_file <- apply_gm(licor_file)
-
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_file <- calculate_arrhenius(licor_file, c3_arrhenius_bernacchi)
+licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Fit all curves in the data set. Here we use a faster optimizer than the
 # default one to ensure the example runs quickly.
@@ -256,7 +261,7 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_aci,
   Ca_atmospheric = 420,
-  OPTIM_FUN = optimizer_nmkb(1e-7)
+  optim_fun = optimizer_nmkb(1e-7)
 ))
 
 # Get a subset of fitting results corresponding to the first measured point

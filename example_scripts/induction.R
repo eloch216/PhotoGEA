@@ -61,7 +61,7 @@ LICOR_FILES_TO_PROCESS <- c()
 
 # Decide whether to remove a few specific points from the data before subsequent
 # processing and plotting
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Specify the filenames depending on the value of PERFORM_CALCULATIONS
 if (PERFORM_CALCULATIONS) {
@@ -74,7 +74,7 @@ GET_INFO_FROM_FILENAME <- FALSE
 # points along the time sequence of measurements.
 #
 #
-NUM_OBS_IN_SEQ <- 390
+NUM_OBS_IN_SEQ <- 240
 MEASUREMENT_NUMBERS_TO_REMOVE <- c()
 
 TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
@@ -83,21 +83,21 @@ TIME_INCREMENT <- 10 / 60 # 10 seconds, converted to minutes
 # number of elapsed minutes. For each event, the average assimilation rate
 # across this interval will be calculated, and then used to normalize the A
 # values.
-TIME_RANGE_FOR_NORMALIZATION <- c(55,60)
+TIME_RANGE_FOR_NORMALIZATION <- c(35,40)
 
 # Specify time range to use for plotting curves. Elapsed time will be shifted
 # so the plots always begin at 0. Units are minutes.
-A_TIME_LIM <- c(30, 60)
+A_TIME_LIM <- c(4, 40)
 
 # Specify fraction of assimilation rate to use for speed calculations (expressed
 # as a percentage)
-TARGET_PERCENTAGE <- 50
+TARGET_PERCENTAGE <- 10
 
 # Specify time interval for calculating average assimilation and lost carbon.
 # Units are minutes, and times should be specified relative to the start of
 # A_TIME_LIM. E.g. c(0, 5) is the first five minutes (300 seconds) after light
 # exposure.
-LOST_CARBON_INTERVAL <- c(0,3)
+LOST_CARBON_INTERVAL <- c(5,6)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###

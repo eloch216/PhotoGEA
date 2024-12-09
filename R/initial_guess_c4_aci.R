@@ -1,43 +1,48 @@
 initial_guess_c4_aci <- function(
     alpha_psii, # dimensionless
     gbs,        # mol / m^2 / s / bar
+    gmc_at_25,  # mol / m^2 / s / bar
     Rm_frac,    # dimensionless
     pcm_threshold_rlm = 40,
-    absorptance = 0.85,
-    f_spectral = 0.15,
-    rho = 0.5,
-    theta = 0.7,
     x_etr = 0.4,
     a_column_name = 'A',
-    jmax_norm_column_name = 'Jmax_norm',
+    ci_column_name = 'Ci',
+    gmc_norm_column_name = 'gmc_norm',
+    j_norm_column_name = 'J_norm',
     kp_column_name = 'Kp',
-    pcm_column_name = 'PCm',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
+    total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm'
 )
 {
     function(rc_exdf) {
         if (!is.exdf(rc_exdf)) {
-            stop("initial_guess_c4_aci requires an exdf object")
+            stop('initial_guess_c4_aci requires an exdf object')
         }
+
+        # Only use points designated for fitting
+        rc_exdf <- rc_exdf[points_for_fitting(rc_exdf), , TRUE]
 
         # Make sure the required variables are defined and have the correct
         # units
         required_variables <- list()
-        required_variables[[a_column_name]]          <- "micromol m^(-2) s^(-1)"
-        required_variables[[jmax_norm_column_name]]  <- 'normalized to Jmax at its optimal temperature'
-        required_variables[[kp_column_name]]         <- 'microbar'
-        required_variables[[pcm_column_name]]        <- "microbar"
-        required_variables[[qin_column_name]]        <- 'micromol m^(-2) s^(-1)'
-        required_variables[[rl_norm_column_name]]    <- 'normalized to RL at 25 degrees C'
-        required_variables[[vcmax_norm_column_name]] <- 'normalized to Vcmax at 25 degrees C'
-        required_variables[[vpmax_norm_column_name]] <- 'normalized to Vpmax at 25 degrees C'
+        required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
+        required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
+        required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
+        required_variables[[kp_column_name]]             <- 'microbar'
+        required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
+        required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
+        required_variables[[total_pressure_column_name]] <- 'bar'
+        required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
+        required_variables[[vpmax_norm_column_name]]     <- 'normalized to Vpmax at 25 degrees C'
 
         flexible_param <- list(
             alpha_psii = alpha_psii,
             gbs = gbs,
+            gmc_at_25 = gmc_at_25,
             Rm_frac = Rm_frac
         )
 
@@ -50,7 +55,23 @@ initial_guess_c4_aci <- function(
         # not already present
         if (value_set(alpha_psii)) {rc_exdf[, 'alpha_psii'] <- alpha_psii}
         if (value_set(gbs))        {rc_exdf[, 'gbs']        <- gbs}
+        if (value_set(gmc_at_25))  {rc_exdf[, 'gmc_at_25']  <- gmc_at_25}
         if (value_set(Rm_frac))    {rc_exdf[, 'Rm_frac']    <- Rm_frac}
+
+        # Get values of Pcm
+        rc_exdf <- apply_gm(
+            rc_exdf,
+            gmc_at_25,
+            'C4',
+            FALSE,
+            a_column_name,
+            '',
+            ci_column_name,
+            gmc_norm_column_name,
+            total_pressure_column_name
+        )
+
+        pcm_column_name <- 'PCm'
 
         # To estimate RLm, make a linear fit of A ~ PCm where PCm is below the
         # threshold. The intercept from the fit should be -RLm. If there are not
@@ -77,6 +98,9 @@ initial_guess_c4_aci <- function(
 
         # RLm is determined by RLm = Rm_frac * RL, so RL = RLm / Rm_frac.
         RL_estimate <- RLm_estimate / mean(rc_exdf[, 'Rm_frac'])
+
+        # Make sure RL_estimate has no names
+        RL_estimate <- as.numeric(RL_estimate)
 
         # To estimate Vpmax, we solve the equation for Apc (defined in the
         # documentation for calculate_c4_assimilation) for Vpmax and calculate
@@ -121,33 +145,24 @@ initial_guess_c4_aci <- function(
 
         # To estimate J, we solve the equation for Ajbs (defined in the
         # documentation for calculate_c4_assimilation) for J and calculate it
-        # for each point in the response curve.
+        # for each point in the response curve. We will choose the largest
+        # estimate as with the other variables
         j_estimates <-
             3 * (rc_exdf[, a_column_name] + RL_estimate * rc_exdf[, rl_norm_column_name]) / (1 - x_etr)
 
-        # Now we can estimate Jmax from each J estimate. We will choose the
-        # largest estimate as with the other variables
-        jmax_estimates <- sapply(seq_along(j_estimates), function(i) {
-            jmax_from_j(
-                j_estimates[i],
-                rc_exdf[i, qin_column_name],
-                absorptance * (1 - f_spectral) * rho,
-                theta
-            )
-        })
-
-        jmax_estimates <- jmax_estimates / rc_exdf[, jmax_norm_column_name]
+        j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]
 
         # Return the estimates
         c(
-            mean(rc_exdf[, 'alpha_psii']),
-            mean(rc_exdf[, 'gbs']),
-            max(jmax_estimates),
-            as.numeric(RL_estimate), # remove names
-            mean(rc_exdf[, 'Rm_frac']),
-            max(vcmax_estimates),
-            max(vpmax_estimates),
-            max(vpr_estimates)
+            mean(rc_exdf[, 'alpha_psii']), # alpha_psii
+            mean(rc_exdf[, 'gbs']),        # gbs
+            mean(rc_exdf[, 'gmc_at_25']),  # gmc_at_25
+            max(j_estimates),              # J_at_25
+            RL_estimate,                   # RL_at_25
+            mean(rc_exdf[, 'Rm_frac']),    # Rm_frac
+            max(vcmax_estimates),          # Vcmax_at_25
+            max(vpmax_estimates),          # Vpmax_at_25
+            max(vpr_estimates)             # Vpr
         )
     }
 }

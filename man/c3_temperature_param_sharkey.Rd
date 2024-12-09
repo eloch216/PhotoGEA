@@ -1,21 +1,21 @@
-\name{c3_arrhenius_sharkey}
+\name{c3_temperature_param_sharkey}
 
 \docType{data}
 
-\alias{c3_arrhenius_sharkey}
+\alias{c3_temperature_param_sharkey}
 
-\title{C3 Arrhenius parameters from Sharkey et al.}
+\title{C3 temperature response parameters from Sharkey et al.}
 
 \description{
-  Arrhenius parameters describing the temperature response of important C3
-  photosynthetic parameters, intended to be passed to the
-  \code{\link{calculate_arrhenius}} function.
+  Parameters describing the temperature response of important C3 photosynthetic
+  parameters, intended to be passed to the
+  \code{\link{calculate_temperature_response}} function.
 }
 
-\usage{c3_arrhenius_sharkey}
+\usage{c3_temperature_param_sharkey}
 
 \format{
-  List with 6 named elements that each represent a variable whose
+  List with 9 named elements that each represent a variable whose
   temperature-dependent value can be calculated using the Arrhenius equation:
   \itemize{
     \item \code{Kc}: The Michaelis-Menten constant for rubisco carboxylation.
@@ -29,10 +29,28 @@
           its value at 25 degrees C.
     \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to its
           value at 25 degrees C.
+    \item \code{gmc_norm}: The mesophyll conductance (\code{gmc}) normalized to
+          its value at 25 degrees C.
+    \item \code{Tp_norm}: The maximum rate of triose phosphate utilization
+          (\code{Tp}) normalized to its value at 25 degrees C.
   }
 
-  In turn, each of these elements is a list with 3 named elements:
+  The \code{gmc_norm} and \code{Tp_norm} parameters are calculated using
+  Johnson-Eyring-Williams functions, and hence their elements are lists with 4
+  named elements:
   \itemize{
+    \item \code{type}: the type of temperature response (\code{'Johnson'})
+    \item \code{c}: the (dimensionless) scaling factor.
+    \item \code{Ha}: the enthalpy of activation in \code{kJ / mol}.
+    \item \code{Hd}: the enthalpy of deactivation in \code{kJ / mol}.
+    \item \code{S}: the entropy in \code{kJ / K / mol}.
+    \item \code{units}: the units of the corresponding variable.
+  }
+
+  Each of the other parameters is calculated using an Arrhenius response, so
+  each remaining element is itself a list with 4 named elements:
+  \itemize{
+    \item \code{type}: the type of temperature response (\code{'Arrhenius'})
     \item \code{c}: the (dimensionless) Arrhenius scaling factor.
     \item \code{Ea}: the activation energy in \code{kJ / mol}.
     \item \code{units}: the units of the corresponding variable.
@@ -40,18 +58,19 @@
 }
 
 \source{
-  Some of these parameters (\code{RL}, \code{Vcmax}, and \code{J}) are
-  normalized to their values at 25 degrees C. These variables include
-  \code{_norm} in their names to indicate this.
+  Some of these parameters (\code{RL}, \code{Vcmax}, \code{J}, \code{Tp}, and
+  \code{gmc}) are normalized to their values at 25 degrees C. These variables
+  include \code{_norm} in their names to indicate this.
 
   The remaining parameters (\code{Gamma_star}, \code{Kc}, and \code{Ko}) are not
   normalized because they are assumed to not vary significantly between species.
 
-  Arrhenius parameters were obtained from Sharkey et al. (2007). In this
+  Response parameters were obtained from Sharkey et al. (2007). In this
   publication, gas concentrations are expressed as partial pressures (in
   \code{Pa} or \code{kPa}) rather than mole fractions (\code{micromol / mol} or
   \code{mmol / mol}). However, for consistency with
-  \code{\link{c3_arrhenius_bernacchi}}, here we prefer to use mole fractions.
+  \code{\link{c3_temperature_param_bernacchi}}, here we prefer to use mole
+  fractions.
 
   To convert a concentration expressed as a partial pressure (\code{P}; in
   \code{Pa}) to a concentration expressed as a mole fraction (\code{C}; in

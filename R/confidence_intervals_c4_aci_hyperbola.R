@@ -5,7 +5,7 @@ confidence_intervals_c4_aci_hyperbola <- function(
     upper = list(),
     fit_options = list(),
     sd_A = 1,
-    error_threshold_factor = 0.147,
+    relative_likelihood_threshold = 0.147,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     hard_constraints = 0
@@ -38,7 +38,7 @@ confidence_intervals_c4_aci_hyperbola <- function(
         error_function,
         best_fit_parameters,
         luf,
-        error_threshold_factor,
+        relative_likelihood_threshold,
         'confidence_intervals_c4_aci_hyperbola'
     )
 }

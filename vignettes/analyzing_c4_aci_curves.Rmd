@@ -70,10 +70,10 @@ understood as follows:
 More specifically, the model provides equations that calculate the net
 assimilation rate $A_n$ from the maximumum rate of PEP carboxylation
 ($V_{p,max}$), the maximum rate of Rubisco activity ($V_{c,max}$), the maximum
-rate of PEP carboxylase regeneration ($V_{p,r}$), the maximum electron transport
-rate ($J_{max}$), the total rate of mitochondrial respiration across the
-mesophyll and bundle sheath cells ($R_L$), the partial pressure of CO~2~ in the
-mesophyll ($P_{cm}$), and several other parameters. The full equations are quite
+rate of PEP carboxylase regeneration ($V_{p,r}$), the electron transport rate
+($J$), the total rate of mitochondrial respiration across the mesophyll and
+bundle sheath cells ($R_L$), the partial pressure of CO~2~ in the mesophyll
+($P_{cm}$), and several other parameters. The full equations are quite
 complicated. $A_n$ is given by the smaller of the enzyme-limited rate ($A_c$)
 and the light-limited rate ($A_j$). $A_c$ is co-limited by PEP carboxylase
 activity, Rubisco activity, and PEP regeneration, while $A_j$ is co-limited by
@@ -122,13 +122,11 @@ inputs <- document_variables(
   c('', 'oxygen',         'percent')
 )
 
-inputs <- calculate_arrhenius(inputs, c4_arrhenius_von_caemmerer, 'Tleaf')
-
-inputs <- calculate_peaked_gaussian(inputs, c4_peaked_gaussian_von_caemmerer, 'Tleaf')
+inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
 
 alpha_psii <- 0
 gbs <- 0.003
-Jmax_at_opt <- 400
+J_at_25 <- 220
 RL_at_25 <- 1
 Rm_frac <- 0.5
 Vcmax_at_25 <- 30
@@ -137,7 +135,7 @@ Vpr <- 80
 
 assim <- calculate_c4_assimilation(
   inputs,
-  alpha_psii, gbs, Jmax_at_opt, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
+  alpha_psii, gbs, J_at_25, RL_at_25, Rm_frac, Vcmax_at_25, Vpmax_at_25, Vpr
 )
 
 xyplot(
@@ -166,7 +164,7 @@ C~4~ leaf according to the model with
 `Vpmax_at_25` = `r Vpmax_at_25` `r assim$units$Vpmax_at_25`,
 `Vcmax_at_25` = `r Vcmax_at_25` `r assim$units$Vcmax_at_25`,
 `Vpr` = `r Vpr` `r assim$units$Vpr`,
-`Jmax_at_opt` = `r Jmax_at_opt` `r assim$units$Jmax_at_opt`, and a leaf
+`J_at_25` = `r J_at_25` `r assim$units$J_at_25`, and a leaf
 temperature of `r Tleaf` `r inputs$units$Tleaf`. Arrhenius temperature response
 parameters were taken from @von_caemmerer_updating_2021.)
 
@@ -200,7 +198,7 @@ response to CO~2~.
 One of the most common reasons to measure an _A-C~i~_ curve is to interpret it
 in the context of this model. In other words, by fitting the model's equations
 to a measured curve, it is possible to estimate values for $R_L$, $V_{pmax}$,
-$V_{cmax}$, $J_{max}$, and others. See the documentation for
+$V_{cmax}$, $J$, and others. See the documentation for
 `calculate_c4_assimilation` for more information about these important
 quantities.
 
@@ -410,8 +408,6 @@ number of points or the wrong identifier column, we would get error messages:
 check_response_curve_data(licor_data, 'curve_identifier', 15)
 
 check_response_curve_data(licor_data, 'species', 16)
-
-check_response_curve_data(licor_data, 'curve_identifier', 16, 'Ci')
 ```
 
 ## Plotting the _A-C~i~_ Curves
@@ -617,7 +613,8 @@ highest CO~2~ setpoint value, so it is easy to specify them all at once.
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
 licor_data <- remove_points(
   licor_data,
-  list(instrument = 'ripe1', CO2_r_sp = 1800)
+  list(instrument = 'ripe1', CO2_r_sp = 1800),
+  method = 'exclude'
 )
 ```
 
@@ -627,46 +624,35 @@ Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
 that are not included in the Licor data files as produced by the instrument:
 temperature-dependent values of important photosynthetic parameters such as
-$\gamma^*$, values of the total pressure, and values of the partial pressure of
-CO~2~ in the mesophyll $P_{cm}$. However, the `PhotoGEA` package includes four
-functions to help with these calculations: `calculate_arrhenius`,
-`calculate_peaked_gaussian`, `calculate_total_pressure`, and `apply_gm`. Each of
-these requires an `exdf` object containing Licor data. The units for each
-required column will be checked in an attempt to avoid unit-related errors. More
+$\gamma^*$, and values of the total pressure. However, the `PhotoGEA` package
+includes two functions to help with these calculations:
+`calculate_temperature_response` and `calculate_total_pressure`. Each of these
+requires an `exdf` object containing Licor data. The units for each required
+column will be checked in an attempt to avoid unit-related errors. More
 information about these functions can be obtained from the built-in help system
-by typing `?calculate_arrhenius`, `?calculate_total_pressure`, or `?apply_gm`.
+by typing `?calculate_temperature_response` or `?calculate_total_pressure`.
 
-First, we can use `calculate_arrhenius` and `calculate_peaked_gaussian`:
+First, we can use `calculate_temperature_response`:
 
 ```{r calculate_t_response}
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_data <- calculate_arrhenius(licor_data, c4_arrhenius_von_caemmerer)
-
-licor_data <- calculate_peaked_gaussian(licor_data, c4_peaked_gaussian_von_caemmerer)
+licor_data <- calculate_temperature_response(licor_data, c4_temperature_param_vc)
 ```
 
 With these simple commands, we have used the leaf temperature from the Licor
 file to calculate values of several key C~4~ photosynthetic parameters
-(`r paste(names(c4_arrhenius_von_caemmerer), collapse = ', ')` and
-`r paste(names(c4_peaked_gaussian_von_caemmerer), collapse = ', ')`) according
-to the temperature response parameters specified in
-@von_caemmerer_updating_2021. Notice that this command calculated values of the
-mesophyll conductance to CO2 (`gmc`) in units of
-mol m$^{-2}$ s$^{-1}$ bar$^{-1}$. These values were estmated for
-_Setaria viridis_ and may not be appropriate for all C~4~ plants. Nevertheless,
-we will use them here.
+(`r paste(names(c4_temperature_param_vc), collapse = ', ')` according to the
+temperature response parameters specified in @von_caemmerer_updating_2021.
+Notice that this command calculated values of the mesophyll conductance to CO2
+(`gmc`) in units of mol m$^{-2}$ s$^{-1}$ bar$^{-1}$. These values were estmated
+for _Setaria viridis_ and may not be appropriate for all C~4~ plants.
+Nevertheless, we will use them here.
 
-Now we can use `calculate_total_pressure` and `apply_gm` to calculate `PCm`:
+Now we can use `calculate_total_pressure`:
 
 ```{r apply_gm}
 # Calculate the total pressure in the Licor chamber
 licor_data <- calculate_total_pressure(licor_data)
-
-# Calculate PCm
-licor_data <- apply_gm(
-  licor_data,
-  'C4' # Indicate C4 photosynthesis
-)
 ```
 
 Together, these functions have added several new columns to `licor_data`,
@@ -696,7 +682,7 @@ For viewing the resulting fits, we will be using the `plot_c4_aci_fit` and
 ## Mechanistic Fit, Assuming Rubisco Limitations
 
 To ensure that the fitted assimilation rates are limited by Rubisco activity at
-high $C_i$, we can set $V_{pr}$ and $J_{max}$ to extremely high values, which
+high $C_i$, we can set $V_{pr}$ and $J$ to extremely high values, which
 will ensure that PEP regeneration and light availability are never limiting.
 At the same time, we will allow $V_{cmax}$ to vary during the fit. This is the
 default behavior of `fit_c4_aci`, but here we will use the `fit_options` input
@@ -713,7 +699,7 @@ c4_aci_results_rubisco <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, Jmax_at_opt = 1000)
+  fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000)
 ))
 ```
 
@@ -739,7 +725,7 @@ than either $A_r$ or $A_{pc}$ in these results.
 To ensure that the fitted assimilation rates are limited by light at high $C_i$,
 we can set $V_{pr}$ and $V_{cmax}$ to extremely high values, which will ensure
 that PEP regeneration and Rubisco activity are never limiting. At the same time,
-we will allow $J_{max}$ to vary during the fit. This can be done using the
+we will allow $J$ to vary during the fit. This can be done using the
 `fit_options` input argument to `fit_c4_aci`.
 
 ```{r fit_aci_light}
@@ -753,7 +739,7 @@ c4_aci_results_light <- consolidate(by(
   licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
   fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
-  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, Jmax_at_opt = 'fit')
+  fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, J_at_25 = 'fit')
 ))
 ```
 
@@ -825,21 +811,12 @@ following conditions are met:
   large.
 
 Here we will fit this equation to just the measured points where $C_i$ is below
-60 ppm. To do this, we will also need to recalculate $PCm$ using an infinite
-value of mesophyll conductance.
+60 ppm. To do this, we will also need to specify an infinite value of mesophyll
+conductance, overriding the default value.
 
 ```{r fit_aci_vpmax}
 # Get a subset of the data where Ci is below the threshold value
 licor_data_low_ci <- licor_data[licor_data[, 'Ci'] <= 60, , TRUE]
-
-# Set mesophyll conductance to infinity
-licor_data_low_ci[, 'gmc'] <- Inf
-
-# Recalculate PCm after changing mesophyll conductance
-licor_data_low_ci <- apply_gm(
-  licor_data_low_ci,
-  'C4' # Indicate C4 photosynthesis
-)
 
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
@@ -853,9 +830,10 @@ c4_aci_results_vpmax <- consolidate(by(
   fit_options = list(
     Vcmax_at_25 = 1000,
     Vpr = 1000,
-    Jmax_at_opt = 1000,
+    J_at_25 = 1000,
     alpha_psii = 0,
-    gbs = 0
+    gbs = 0,
+    gmc_at_25 = Inf
   )
 ))
 ```
@@ -905,7 +883,7 @@ Here we can see that the estimates made from the mechanistic fit with Rubisco
 limitations are generally the largest, while those made from just the low-$C_i$
 points are the lowest.
 
-Estimates of other parameters, such as $V_{cmax}$, $J_{max}$, $V_{max}$, and
+Estimates of other parameters, such as $V_{cmax}$, $J$, $V_{max}$, and
 $R_L$ can be accessed with similar commands.
 
 ## Visualizing Average Best-Fit Parameters
@@ -1107,6 +1085,10 @@ vignette.
 <<plot_co2>>
 
 <<plot_stability>>
+
+## IMPORTANT: When analyzing your own files, it is not advised to remove any
+## points for the initial fits. Only remove unstable or unusual points if it is
+## necessary in order to get good fits.
 
 <<remove_unstable_points>>
 

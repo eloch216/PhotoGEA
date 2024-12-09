@@ -3,7 +3,7 @@ confidence_interval_all_param <- function(
     error_function,
     best_fit_parameters,
     luf,
-    error_threshold_factor,
+    relative_likelihood_threshold,
     category_name
 )
 {
@@ -37,7 +37,7 @@ confidence_interval_all_param <- function(
                 error_function,
                 param_to_fit,
                 best_fit_vector,
-                best_error - log(error_threshold_factor),
+                best_error - log(relative_likelihood_threshold),
                 lower[i],
                 upper[i]
             )
