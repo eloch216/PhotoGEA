@@ -32,7 +32,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## CHANGES IN PhotoGEA VERSION 1.1.0 (2024-12-09)
 
 - The parameter trust values have been changed from logical values (`TRUE` or
   `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
