@@ -66,6 +66,20 @@ test_that('Cc limits can be bypassed', {
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
 })
 
+test_that('Gamma_star can be passed via fit_options', {
+    one_curve_no_gstar <- one_curve
+    one_curve_no_gstar[, 'Gamma_star'] <- NULL
+
+    expect_silent(
+        fit_c3_aci(
+            one_curve_no_gstar,
+            fit_options = list(Gamma_star = 38.6),
+            optim_fun = optimizer_nmkb(1e-7),
+            calculate_confidence_intervals = FALSE
+        )
+    )
+})
+
 test_that('fit results have not changed (no alpha)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
