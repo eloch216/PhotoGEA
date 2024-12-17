@@ -27,14 +27,30 @@ identify_c3_limiting_processes <- function(
     exdf_obj[, 'Ap_limiting'] <- A_limiting(exdf_obj, a_column_name, ap_column_name, tol)
 
     exdf_obj[, 'limiting_process'] <- sapply(seq_len(nrow(exdf_obj)), function(i) {
-        if (exdf_obj[i, 'Ac_limiting'] && !exdf_obj[i, 'Aj_limiting'] && !exdf_obj[i, 'Ap_limiting']) {
+        limit_tuple <- as.numeric(
+            c(
+                exdf_obj[i, 'Ac_limiting'],
+                exdf_obj[i, 'Aj_limiting'],
+                exdf_obj[i, 'Ap_limiting']
+            )
+        )
+
+        if (identical(limit_tuple, c(1, 0, 0))) {
             'Ac'
-        } else if (!exdf_obj[i, 'Ac_limiting'] && exdf_obj[i, 'Aj_limiting'] && !exdf_obj[i, 'Ap_limiting']) {
+        } else if (identical(limit_tuple, c(0, 1, 0))) {
             'Aj'
-        } else if (!exdf_obj[i, 'Ac_limiting'] && !exdf_obj[i, 'Aj_limiting'] && exdf_obj[i, 'Ap_limiting']) {
+        } else if (identical(limit_tuple, c(0, 0, 1))) {
             'Ap'
+        } else if (identical(limit_tuple, c(1, 1, 0))) {
+            'co-limited (Ac and Aj)'
+        } else if (identical(limit_tuple, c(1, 0, 1))) {
+            'co-limited (Ac and Ap)'
+        } else if (identical(limit_tuple, c(0, 1, 1))) {
+            'co-limited (Aj and Ap)'
+        } else if (identical(limit_tuple, c(1, 1, 1))) {
+            'co-limited (Ac, Aj, and Ap)'
         } else {
-            'co-limited'
+            'unknown'
         }
     })
 
