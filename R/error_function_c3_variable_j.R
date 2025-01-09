@@ -200,7 +200,7 @@ error_function_c3_variable_j <- function(
                     vcmax_norm_column_name,
                     hard_constraints = hard_constraints,
                     perform_checks = FALSE,
-                    return_exdf = FALSE,
+                    return_table = FALSE,
                     ...
                 )
             },

@@ -1,5 +1,5 @@
 calculate_c3_assimilation <- function(
-    exdf_obj,
+    data_table,
     alpha_g,      # dimensionless      (this value is sometimes being fitted)
     alpha_old,    # dimensionless      (this value is sometimes being fitted)
     alpha_s,      # dimensionless      (this value is sometimes being fitted)
@@ -24,7 +24,7 @@ calculate_c3_assimilation <- function(
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
-    return_exdf = TRUE,
+    return_table = TRUE,
     ...
 )
 {
@@ -36,10 +36,6 @@ calculate_c3_assimilation <- function(
     use_min_A          <- get_optional_argument(optional_args, 'use_min_A',          FALSE)
 
     if (perform_checks) {
-        if (!is.exdf(exdf_obj)) {
-            stop('calculate_c3_assimilation requires an exdf object')
-        }
-
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
         required_variables[[cc_column_name]]             <- 'micromol mol^(-1)'
@@ -67,7 +63,7 @@ calculate_c3_assimilation <- function(
         required_variables <-
             require_flexible_param(required_variables, flexible_param)
 
-        check_required_variables(exdf_obj, required_variables)
+        check_required_variables(data_table, required_variables)
 
         # Make sure curvature parameters lie on [0,1]
         check_zero_one <- list(
@@ -83,33 +79,33 @@ calculate_c3_assimilation <- function(
     }
 
     # Retrieve values of flexible parameters as necessary
-    if (!value_set(alpha_g))     {alpha_g     <- exdf_obj[, 'alpha_g']}
-    if (!value_set(alpha_old))   {alpha_old   <- exdf_obj[, 'alpha_old']}
-    if (!value_set(alpha_s))     {alpha_s     <- exdf_obj[, 'alpha_s']}
-    if (!value_set(alpha_t))     {alpha_t     <- exdf_obj[, 'alpha_t']}
-    if (!value_set(Gamma_star))  {Gamma_star  <- exdf_obj[, 'Gamma_star']}
-    if (!value_set(J_at_25))     {J_at_25     <- exdf_obj[, 'J_at_25']}
-    if (!value_set(RL_at_25))    {RL_at_25    <- exdf_obj[, 'RL_at_25']}
-    if (!value_set(Tp_at_25))    {Tp_at_25    <- exdf_obj[, 'Tp_at_25']}
-    if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- exdf_obj[, 'Vcmax_at_25']}
+    if (!value_set(alpha_g))     {alpha_g     <- data_table[, 'alpha_g']}
+    if (!value_set(alpha_old))   {alpha_old   <- data_table[, 'alpha_old']}
+    if (!value_set(alpha_s))     {alpha_s     <- data_table[, 'alpha_s']}
+    if (!value_set(alpha_t))     {alpha_t     <- data_table[, 'alpha_t']}
+    if (!value_set(Gamma_star))  {Gamma_star  <- data_table[, 'Gamma_star']}
+    if (!value_set(J_at_25))     {J_at_25     <- data_table[, 'J_at_25']}
+    if (!value_set(RL_at_25))    {RL_at_25    <- data_table[, 'RL_at_25']}
+    if (!value_set(Tp_at_25))    {Tp_at_25    <- data_table[, 'Tp_at_25']}
+    if (!value_set(Vcmax_at_25)) {Vcmax_at_25 <- data_table[, 'Vcmax_at_25']}
 
     # Extract a few columns from the exdf object to make the equations easier to
     # read, converting units as necessary
-    pressure <- exdf_obj[, total_pressure_column_name] # bar
+    pressure <- data_table[, total_pressure_column_name] # bar
 
-    oxygen <- exdf_obj[, oxygen_column_name] # percent
+    oxygen <- data_table[, oxygen_column_name] # percent
     POc <- oxygen * pressure * 1e4 # microbar
 
-    Cc <- exdf_obj[, cc_column_name] # micromol / mol
+    Cc <- data_table[, cc_column_name] # micromol / mol
     PCc <- Cc * pressure             # microbar
 
-    Kc <- exdf_obj[, kc_column_name] * pressure                 # microbar
-    Ko <- exdf_obj[, ko_column_name] * pressure * 1000          # microbar
+    Kc <- data_table[, kc_column_name] * pressure                 # microbar
+    Ko <- data_table[, ko_column_name] * pressure * 1000          # microbar
 
-    J_tl     <- J_at_25 * exdf_obj[, j_norm_column_name]         # micromol / m^2 / s
-    RL_tl    <- RL_at_25 * exdf_obj[, rl_norm_column_name]       # micromol / m^2 / s
-    Tp_tl    <- Tp_at_25 * exdf_obj[, tp_norm_column_name]       # micromol / m^2 / s
-    Vcmax_tl <- Vcmax_at_25 * exdf_obj[, vcmax_norm_column_name] # micromol / m^2 / s
+    J_tl     <- J_at_25 * data_table[, j_norm_column_name]         # micromol / m^2 / s
+    RL_tl    <- RL_at_25 * data_table[, rl_norm_column_name]       # micromol / m^2 / s
+    Tp_tl    <- Tp_at_25 * data_table[, tp_norm_column_name]       # micromol / m^2 / s
+    Vcmax_tl <- Vcmax_at_25 * data_table[, vcmax_norm_column_name] # micromol / m^2 / s
 
     # Make sure key inputs have reasonable values
     msg <- character()
@@ -150,8 +146,8 @@ calculate_c3_assimilation <- function(
 
     msg <- paste(msg, collapse = '. ')
 
-    # We only bypass these checks if !perform_checks && return_exdf
-    if (perform_checks || !return_exdf) {
+    # We only bypass these checks if !perform_checks && return_table
+    if (perform_checks || !return_table) {
         if (msg != '') {
             stop(msg)
         }
@@ -251,13 +247,14 @@ calculate_c3_assimilation <- function(
         An <- pmin(Ac, Aj, Ap, na.rm = TRUE)
     }
 
-    if (return_exdf) {
-        # Make a new exdf object from the calculated variables and make sure units
-        # are included
+    if (return_table) {
+        # Add the new columns to the input table and make sure units are
+        # included
+
         optional_arg_string <-
             paste(paste(names(optional_args), optional_args, sep = ' = '), collapse = ', ')
 
-        output <- exdf(data.frame(
+        output <- data.frame(
             alpha_g = alpha_g,
             alpha_old = alpha_old,
             alpha_s = alpha_s,
@@ -289,7 +286,11 @@ calculate_c3_assimilation <- function(
             c3_assimilation_msg = msg,
             c3_optional_arguments = optional_arg_string,
             stringsAsFactors = FALSE
-        ))
+        )
+
+        if (is.exdf(data_table)) {
+            output <- exdf(output)
+        }
 
         document_variables(
             output,

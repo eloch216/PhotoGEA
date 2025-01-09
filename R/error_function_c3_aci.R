@@ -54,7 +54,7 @@ error_function_c3_aci <- function(
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
-    
+
     check_required_variables(replicate_exdf, required_variables)
 
     check_required_variables(
@@ -171,7 +171,7 @@ error_function_c3_aci <- function(
                     vcmax_norm_column_name,
                     hard_constraints = hard_constraints,
                     perform_checks = FALSE,
-                    return_exdf = FALSE,
+                    return_table = FALSE,
                     ...
                 )
             },

@@ -142,3 +142,18 @@ test_that('Cc limits can be bypassed', {
         calculate_c3_assimilation(inputs3, 0, 0, 0, 0, 40, 150, 1, 12, 120, hard_constraints = 0)
     )
 })
+
+test_that('c3 assimilation works for exdf and data frame objects', {
+    res_exdf <- expect_silent(
+        calculate_c3_assimilation(inputs, 0, 0, 0, 0, 40, 150, 1, 12, 120)
+    )
+
+    res_df <- expect_silent(
+        calculate_c3_assimilation(inputs$main_data, 0, 0, 0, 0, 40, 150, 1, 12, 120)
+    )
+
+    expect_equal(
+        as.numeric(res_df[, 'An']),
+        as.numeric(res_exdf[, 'An'])
+    )
+})
