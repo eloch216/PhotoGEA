@@ -80,6 +80,17 @@ test_that('Gamma_star can be passed via fit_options', {
     )
 })
 
+test_that('Bad optional arguments are caught', {
+    expect_error(
+        fit_c3_aci(
+            one_curve,
+            bad_arg_1 = TRUE,
+            bad_arg_2 = 45
+        ),
+        'The following optional arguments are not supported: bad_arg_1, bad_arg_2'
+    )
+})
+
 test_that('fit results have not changed (no alpha)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer

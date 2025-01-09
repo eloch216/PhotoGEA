@@ -30,6 +30,15 @@ calculate_c3_assimilation <- function(
 {
     optional_args <- list(...)
 
+    potential_optional_args <- c(
+        'consider_depletion',
+        'TPU_threshold',
+        'use_FRL',
+        'use_min_A'
+    )
+
+    check_optional_arguments(optional_args, potential_optional_args)
+
     consider_depletion <- get_optional_argument(optional_args, 'consider_depletion', FALSE)
     TPU_threshold      <- get_optional_argument(optional_args, 'TPU_threshold',      NULL)
     use_FRL            <- get_optional_argument(optional_args, 'use_FRL',            FALSE)
