@@ -82,8 +82,9 @@ read_licor_6800_Excel <- function(
         skipEmptyCols = FALSE
     )
 
-    # Replace any tabs in the second column with spaces
-    rawdata_remarks[, 2] <- gsub('\t', ' ', rawdata_remarks[, 2])
+    # Replace any unicode
+    rawdata_remarks[, 1] <- replace_unicode(rawdata_remarks[, 1])
+    rawdata_remarks[, 2] <- replace_unicode(rawdata_remarks[, 2])
 
     # Find the user remark rows, whose first column values are formatted like
     # HH:MM:SS

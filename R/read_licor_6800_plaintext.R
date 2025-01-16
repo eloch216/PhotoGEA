@@ -50,6 +50,10 @@ extract_user_remark_table <- function(file_lines, is_remark) {
     paste(x[seq(2, length(x))], collapse = ' ')
   })
 
+  # Replace unicode
+  remark_times  <- replace_unicode(remark_times)
+  remark_values <- replace_unicode(remark_values)
+
   # Return as a data frame
   data.frame(
     remark_time = remark_times,
