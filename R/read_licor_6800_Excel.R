@@ -3,6 +3,7 @@ read_licor_6800_Excel <- function(
     column_name = 'obs',
     get_oxygen = TRUE,
     check_for_zero = c('A', 'gsw'),
+    include_user_remark_column = TRUE,
     ...
 )
 {
@@ -129,6 +130,11 @@ read_licor_6800_Excel <- function(
             'values; type `?read_licor_6800_Excel` for more information.'
         )
         stop(msg)
+    }
+
+    # Add user remarks if necessary
+    if (include_user_remark_column) {
+        exdf_obj <- add_latest_remark(exdf_obj)
     }
 
     # Return the object, including oxygen information if necessary

@@ -1,3 +1,39 @@
+# Helping function for adding user remarks to the main data table (also used
+# for LI-6800 Excel files)
+add_latest_remark <- function(licor_file) {
+  # Get the user remarks and order them by time
+  user_remarks <- licor_file$user_remarks
+
+  user_remarks[, 'remark_time'] <- as.POSIXct(
+    user_remarks[, 'remark_time'],
+    format = '%H:%M:%S'
+  )
+
+  user_remarks <- user_remarks[order(user_remarks[, 'remark_time']), ]
+
+  # Get the time values from the main data
+  data_times <- as.POSIXct(
+    licor_file[, 'hhmmss'],
+    format = '%H:%M:%S'
+  )
+
+  # Initialize the user_remark column and fill it in
+  licor_file <- set_variable(
+    licor_file,
+    'user_remark',
+    category = 'add_latest_remark'
+  )
+
+  for (i in seq_len(nrow(user_remarks))) {
+    time_i   <- user_remarks[i, 'remark_time']
+    remark_i <- user_remarks[i, 'remark_value']
+
+    licor_file[data_times > time_i, 'user_remark'] <- remark_i
+  }
+
+  licor_file
+}
+
 # Helping function for extracting user remarks
 extract_user_remark_table <- function(file_lines, is_remark) {
   # Get the line contents
@@ -36,9 +72,11 @@ licor_6800_lines_to_df <- function(file_lines, rows) {
   as.data.frame(chunk_res, stringsAsFactors = FALSE)
 }
 
+# Main function for reading plaintext LI-6800 log files
 read_licor_6800_plaintext <- function(
     file_name,
     get_oxygen = TRUE,
+    include_user_remark_column = TRUE,
     ...
 )
 {
@@ -182,6 +220,11 @@ read_licor_6800_plaintext <- function(
     # Store additional information in the data exdf
     exdf_obj$preamble <- header_part
     exdf_obj$user_remarks <- user_remarks
+
+    # Add user remarks if necessary
+    if (include_user_remark_column) {
+        exdf_obj <- add_latest_remark(exdf_obj)
+    }
 
     # Return the object, including oxygen information if necessary
     if (get_oxygen) {
