@@ -1,3 +1,27 @@
+# Helping function for extracting user remarks
+extract_user_remark_table <- function(file_lines, is_remark) {
+  # Get the line contents
+  remark_lines <- file_lines[is_remark]
+
+  # Split the remarks into a time and a value
+  split_remark_lines <- strsplit(remark_lines, '\t')
+
+  remark_times <- sapply(split_remark_lines, function(x) {
+    x[1]
+  })
+
+  remark_values <- sapply(split_remark_lines, function(x) {
+    paste(x[seq(2, length(x))], collapse = ' ')
+  })
+
+  # Return as a data frame
+  data.frame(
+    remark_time = remark_times,
+    remark_value = remark_values,
+    stringsAsFactors = FALSE
+  )
+}
+
 # Helping function for converting raw lines to a data frame
 licor_6800_lines_to_df <- function(file_lines, rows) {
   split_res <- strsplit(file_lines[rows], '\t')
@@ -18,12 +42,24 @@ read_licor_6800_plaintext <- function(
     ...
 )
 {
-    # First read the file as a set of lines. This will allow us to find the rows
-    # where the [Header] and [Data] sections begin.
+    # First read the file as a set of lines
     fconn <- file(file_name)
     file_lines <- readLines(fconn)
     close(fconn)
 
+    # Find the remark lines, which begin with HH:MM:SS followed by a tab
+    line_is_remark <- grepl(
+      '^[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}\t',
+      file_lines
+    )
+
+    # Get the user remarks as a table
+    user_remarks <- extract_user_remark_table(file_lines, line_is_remark)
+
+    # Remove the remark lines so they don't appear in the main data
+    file_lines <- file_lines[!line_is_remark]
+
+    # Find the rows where the [Header] and [Data] sections begin
     header_indices <- which(file_lines == '[Header]')
     data_indices <- which(file_lines == '[Data]')
 
@@ -145,8 +181,7 @@ read_licor_6800_plaintext <- function(
 
     # Store additional information in the data exdf
     exdf_obj$preamble <- header_part
-    exdf_obj$header_indx <- header_indices
-    exdf_obj$data_indx <- data_indices
+    exdf_obj$user_remarks <- user_remarks
 
     # Return the object, including oxygen information if necessary
     if (get_oxygen) {
