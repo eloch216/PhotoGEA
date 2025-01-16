@@ -1,3 +1,17 @@
+# Helping function for converting raw lines to a data frame
+licor_6800_lines_to_df <- function(file_lines, rows) {
+  split_res <- strsplit(file_lines[rows], '\t')
+  lengths   <- sapply(split_res, length)
+  chunk_res <- matrix(nrow = length(rows), ncol = max(lengths))
+
+  for (i in seq_along(rows)) {
+    rowdata <- split_res[[i]]
+    chunk_res[i, seq_along(rowdata)] <- rowdata
+  }
+
+  as.data.frame(chunk_res, stringsAsFactors = FALSE)
+}
+
 read_licor_6800_plaintext <- function(
     file_name,
     get_oxygen = TRUE,
@@ -37,16 +51,8 @@ read_licor_6800_plaintext <- function(
     # Define a helping function for reading a row as a data frame and then
     # replacing any Unicode characters
     get_processed_row_data_frame <- function(skip) {
-        row_data <- utils::read.delim(
-            file_name,
-            skip = skip,
-            nrows = 1,
-            header = FALSE,
-            stringsAsFactors = FALSE
-        )
-
+        row_data      <- licor_6800_lines_to_df(file_lines, skip)
         row_data[1, ] <- replace_unicode(row_data[1, ])
-
         row_data
     }
 
@@ -59,21 +65,18 @@ read_licor_6800_plaintext <- function(
         nlines <- if (i < length(data_indices)) {
             header_indices[i + 1] - data_indx - 4
         } else {
-            -1
+            length(file_lines) - data_indx - 3
         }
 
         # Read the column names, categories, units, and values from this data
         # chunk
-        licor_variable_names <- get_processed_row_data_frame(data_indx + 1)
-        licor_variable_units <- get_processed_row_data_frame(data_indx + 2)
-        licor_variable_categories <- get_processed_row_data_frame(data_indx)
+        licor_variable_names      <- get_processed_row_data_frame(data_indx + 2)
+        licor_variable_units      <- get_processed_row_data_frame(data_indx + 3)
+        licor_variable_categories <- get_processed_row_data_frame(data_indx + 1)
 
-        licor_data <- utils::read.delim(
-            file_name,
-            skip = data_indx + 3,
-            nrows = nlines,
-            header = FALSE,
-            stringsAsFactors = FALSE
+        licor_data <- licor_6800_lines_to_df(
+          file_lines,
+          seq(data_indx + 4, length.out = nlines)
         )
 
         # Convert the data to numeric values whenever possible
@@ -101,19 +104,19 @@ read_licor_6800_plaintext <- function(
         header_indx <- header_indices[i]
 
         # Get the number of points in this header
-        nlines <- data_indices[i] - header_indx
+        nlines <- data_indices[i] - header_indx - 1
 
         # Read the header information
-        preamble_raw <- utils::read.delim(
-            file_name,
-            skip = header_indx,
-            nrows = nlines,
-            header = FALSE,
-            stringsAsFactors = FALSE
+        preamble_raw <- licor_6800_lines_to_df(
+          file_lines,
+          seq(header_indx + 1, length.out = nlines)
         )
 
         licor_preamble <- stats::setNames(
-            as.data.frame(t(preamble_raw[, 2]), stringsAsFactors = FALSE),
+            as.data.frame(
+                t(preamble_raw[, seq(2, ncol(preamble_raw))]),
+                stringsAsFactors = FALSE
+            ),
             preamble_raw[, 1]
         )
 
