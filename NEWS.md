@@ -32,6 +32,11 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+- Added functionality for reading user remarks to `read_licor_6800_plaintext`
+  and `read_licor_6800_Excel`
+
 ## CHANGES IN PhotoGEA VERSION 1.1.0 (2024-12-09)
 
 - The parameter trust values have been changed from logical values (`TRUE` or
