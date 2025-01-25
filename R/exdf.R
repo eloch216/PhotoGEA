@@ -223,7 +223,7 @@ write.csv.exdf <- function(x, file, ...) {
 read.csv.exdf <- function(file, ...) {
     arg_list <- list(...)
 
-    forbidden_arg <- c('header', 'skip')
+    forbidden_arg <- c('header', 'skip', 'stringsAsFactors')
 
     if (any(forbidden_arg %in% names(arg_list))) {
         stop(
@@ -242,7 +242,7 @@ read.csv.exdf <- function(file, ...) {
     categories <- data.frame(t(header[[2]]), stringsAsFactors = FALSE)
     units      <- data.frame(t(header[[3]]), stringsAsFactors = FALSE)
 
-    dataf <- utils::read.csv(file, header = FALSE, skip = 3, ...)
+    dataf <- utils::read.csv(file, header = FALSE, skip = 3, stringsAsFactors = FALSE, ...)
 
     colnames(dataf)      <- cnames
     colnames(units)      <- cnames

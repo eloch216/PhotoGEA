@@ -34,6 +34,11 @@ get_oxygen_from_preamble <- function(licor_exdf) {
         NA
     }
 
+    # Remove any duplicated or NA values
+    oxygen <- unique(oxygen)
+    oxygen <- oxygen[!is.na(oxygen)]
+
+    # Check for issues with multiple values
     if (length(unique(oxygen)) > 1) {
         msg <- paste0(
             "Found multiple oxygen values in file:\n'",
