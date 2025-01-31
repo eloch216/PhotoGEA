@@ -4,37 +4,36 @@ release.
 
 All changes related to a particular release should be collected under a heading
 specifying the version number of that release, such as
-"## CHANGES IN PhotoGEA VERSION 2.0.0". The individual changes should be listed
-as bullet points and categorized under "### MAJOR CHANGES", "### MINOR CHANGES",
-or "### BUG FIXES" following the major.minor.patch structure of semantic
-versioning. When applicable, entries should include direct links to the relevant
-pull requests.
+"## Changes in PhotoGEA version 2.0.0". The individual changes should be listed
+as bullet points and categorized under "### Major changes", "### Minor changes",
+or "### Bug fixes" following the major.minor.patch structure of semantic
+versioning.
 
 To facilitate this, when a feature on a feature branch is completed and a pull
 request is being prepared, a new section should be added at the top of this file
-under the heading "## UNRELEASED"; it should list all the important changes made
+under the heading "## Unreleased"; it should list all the important changes made
 on the feature branch.
 
 Then, when it comes time to merge the feature branch into `unreleased`, the new
-"## UNRELEASED" section is transferred into the `unreleased` branch's version of
-NEWS.md, or, if the `unreleased` branch already has an "## UNRELEASED" section
+"## Unreleased" section is transferred into the `unreleased` branch's version of
+NEWS.md, or, if the `unreleased` branch already has an "## Unreleased" section
 in its version of NEWS.md, the feature branch's "## UNRELEASED" section will be
 integrated into the one on the `unreleased` branch. (This process of integrating
 the two "## UNRELEASED" sections will likely be part of resolving an inevitable
 merge conflict.)
 
-Finally, when a new release is made, "## UNRELEASED" should be replaced by a
+Finally, when a new release is made, "## Unreleased" should be replaced by a
 heading with the new version number, such as
-"## CHANGES IN PhotoGEA VERSION 2.0.0". This section will combine the draft
+"## Changes in PhotoGEA version 2.0.0". This section will combine the draft
 release notes for all features that have been added since the previous release.
 
 In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## Unreleased
 
-### MINOR USER-FACING CHANGES
+### Minor user-facing changes
 
 - `identify_c3_limiting_processes` now returns each co-limiting process when
   assimilation is co-limited.
@@ -45,14 +44,14 @@ be directly added to this file to describe the related changes.
 - Added functionality for reading user remarks to `read_licor_6800_plaintext`
   and `read_licor_6800_Excel`
 
-### BUG FIXES
+### Bug fixes
 
 - A bug was fixed where `Gamma_star` was sometimes accidentally removed from the
   outputs of `fit_c3_aci` and `fit_c3_variable_j`
 - Optional input arguments to `calculate_c3_assimilation` are checked to make
   sure they are supported.
 
-## CHANGES IN PhotoGEA VERSION 1.1.0 (2024-12-09)
+## Changes in PhotoGEA version 1.1.0 (2024-12-09)
 
 - The parameter trust values have been changed from logical values (`TRUE` or
   `FALSE`) to a numeric indicator (0, 1, or 2). These values indicate severe
@@ -129,8 +128,7 @@ be directly added to this file to describe the related changes.
   `fit_c3_aci` and `fit_c3_variable_j`.
 - A new option was added to Variable J fits: `check_j`
 
-
-## CHANGES IN PhotoGEA VERSION 1.0.0 (2024-08-13)
+## Changes in PhotoGEA version 1.0.0 (2024-08-13)
 
 - A new fitting function was added: `fit_c4_aci_hyperbola`. This allows users to
   fit an empirical hyperbola to C4 A-Ci curves, rather than the mechanistic
@@ -195,7 +193,7 @@ be directly added to this file to describe the related changes.
   actions testing setup no longer works for R < 4.0, so it has become too
   difficult to guarantee compatability with an earlier version.
 
-## CHANGES IN PhotoGEA VERSION 0.12.0 (2024-06-03)
+## Changes in PhotoGEA version 0.12.0 (2024-06-03)
 
 - Changed fitting method from least-squares to maximum likelihood in
   `fit_c3_aci`, `fit_c3_variable_j`, and `fit_c4_aci`.
@@ -260,7 +258,7 @@ be directly added to this file to describe the related changes.
   not limited to only Licor measurements
 - Specified a minimum supported R version: `3.6.0`.
 
-## CHANGES IN PhotoGEA VERSION 0.11.0 (2024-02-12)
+## Changes in PhotoGEA version 0.11.0 (2024-02-12)
 
 - Added new options for adding penalties to the error function during Variable J
   fits, that enable the user to selectively penalize negative or unreasonably
@@ -329,7 +327,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/88
   - https://github.com/eloch216/PhotoGEA/pull/89
 
-## CHANGES IN PhotoGEA VERSION 0.10.0 (2023-12-16)
+## Changes in PhotoGEA version 0.10.0 (2023-12-16)
 
 - Reorganized the variable J fitting functions to be more like `fit_c3_aci`:
   - Added `calculate_c3_variable_j`, `initial_guess_c3_variable_j`, and
@@ -374,7 +372,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/83
   - https://github.com/eloch216/PhotoGEA/pull/84
 
-## CHANGES IN PhotoGEA VERSION 0.9.2 (2023-11-16)
+## Changes in PhotoGEA version 0.9.2 (2023-11-16)
 
 - Fixed a bug in `check_required_variables` where missing units in an `exdf`
   object were not properly identified
@@ -383,14 +381,14 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/75
   - https://github.com/eloch216/PhotoGEA/pull/76
 
-## CHANGES IN PhotoGEA VERSION 0.9.1 (2023-11-13)
+## Changes in PhotoGEA version 0.9.1 (2023-11-13)
 
 - Added logo to package and documentation
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/73
   - https://github.com/eloch216/PhotoGEA/pull/74
 
-## CHANGES IN PhotoGEA VERSION 0.9.0 (2023-10-25)
+## Changes in PhotoGEA version 0.9.0 (2023-10-25)
 
 - Added a new convenience function for printing plot objects: `pdf_print`
 - Added and/or documented several functions related to isotope discrimination
@@ -423,7 +421,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/71
   - https://github.com/eloch216/PhotoGEA/pull/72
 
-## CHANGES IN PhotoGEA VERSION 0.8.0 (2023-04-30)
+## Changes in PhotoGEA version 0.8.0 (2023-04-30)
 
 - Modified `identify_tdl_cycles` and `process_tdl_cycle_polynomial` so they can
   handle cycles where there are multiple measurement logs from each valve.
@@ -444,7 +442,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/68
   - https://github.com/eloch216/PhotoGEA/pull/69
 
-## CHANGES IN PhotoGEA VERSION 0.7.1 (2023-01-11)
+## Changes in PhotoGEA version 0.7.1 (2023-01-11)
 
 - Added new outputs from `fit_c3_aci` and `fit_c4_aci` that include the average
   values of leaf-temperature-dependent parameters like `Vcmax` and `Rd`.
@@ -455,7 +453,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/64
   - https://github.com/eloch216/PhotoGEA/pull/65
 
-## CHANGES IN PhotoGEA VERSION 0.7.0 (2022-12-19)
+## Changes in PhotoGEA version 0.7.0 (2022-12-19)
 
 - Added new example files:
   - `plaintext_licor_file` represents a plaintext Licor LI-6800 log file.
@@ -511,7 +509,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/61
   - https://github.com/eloch216/PhotoGEA/pull/62
 
-## CHANGES IN PhotoGEA VERSION 0.6.1 (2022-11-01)
+## Changes in PhotoGEA version 0.6.1 (2022-11-01)
 
 - Modified `fit_c3_aci` so it now ensures that the initial guess lies within
   (and not on) the bounds. This is a requirement for the `dfoptim::nmkb` solver
@@ -519,7 +517,7 @@ be directly added to this file to describe the related changes.
 - PRs related to creating this version:
   - https://github.com/eloch216/PhotoGEA/pull/57
 
-## CHANGES IN PhotoGEA VERSION 0.6.0 (2022-10-06)
+## Changes in PhotoGEA version 0.6.0 (2022-10-06)
 
 - Moved the `dfoptim` package from `Suggests` to `Imports` because it is used by
   an essential part of `PhotoGEA`.
@@ -571,7 +569,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/55
   - https://github.com/eloch216/PhotoGEA/pull/56
 
-## CHANGES IN PhotoGEA VERSION 0.5.0 (2022-09-16)
+## Changes in PhotoGEA version 0.5.0 (2022-09-16)
 
 - Added a new vignette demonstrating how to analyze C3 A-Ci curve data.
 - Included `TPU` in the output from `calculate_c3_assimilation`.
@@ -598,7 +596,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/47
   - https://github.com/eloch216/PhotoGEA/pull/48
 
-## CHANGES IN PhotoGEA VERSION 0.4.0 (2022-09-07)
+## Changes in PhotoGEA version 0.4.0 (2022-09-07)
 
 - Made several improvements to accessibility:
   - Renamed GitHub repository from `licor-processing-and-analysis` to
@@ -664,7 +662,7 @@ be directly added to this file to describe the related changes.
   - https://github.com/eloch216/PhotoGEA/pull/41
   - https://github.com/eloch216/PhotoGEA/pull/42
 
-## CHANGES IN PhotoGEA VERSION 0.3.0 (2022-08-15)
+## Changes in PhotoGEA version 0.3.0 (2022-08-15)
 
 - This version adds a substantial amount of documentation, including a vignette
   describing how to use PhotoGEA to analyze TDL data.
@@ -685,7 +683,7 @@ be directly added to this file to describe the related changes.
     we no longer want to follow this strategy.
 - `basic_stats` and the "Variable J" example script have been fixed.
 
-## CHANGES IN PhotoGEA VERSION 0.2.0 (2022-07-26)
+## Changes in PhotoGEA version 0.2.0 (2022-07-26)
 
 - This version adds a substantial amount of documentation, including a vignette
   describing how to use PhotoGEA to analyze Ball-Berry data.
@@ -694,7 +692,7 @@ be directly added to this file to describe the related changes.
 - At the moment, `basic_stats` and the "Variable J" example script have been
   broken.
 
-## CHANGES IN PhotoGEA VERSION 0.1.0
+## Changes in PhotoGEA version 0.1.0
 
 - This is the first version of PhotoGEA. At this point, the package is in a
   state of rapid development, and not all changes will be described here.
