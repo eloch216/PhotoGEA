@@ -32,6 +32,24 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+### MINOR USER-FACING CHANGES
+
+- `identify_c3_limiting_processes` now returns each co-limiting process when
+  assimilation is co-limited.
+- Several functions were modified to accept `data.frame` objects in addition to
+  `exdf` objects: `calculate_ball_berry_index`, `calculate_c3_assimilation`,
+  `calculate_residuals`, `document_variables`, `identify_c3_limiting_processes`,
+  and `set_variable`.
+
+### BUG FIXES
+
+- A bug was fixed where `Gamma_star` was sometimes accidentally removed from the
+  outputs of `fit_c3_aci` and `fit_c3_variable_j`
+- Optional input arguments to `calculate_c3_assimilation` are checked to make
+  sure they are supported.
+
 ## CHANGES IN PhotoGEA VERSION 1.1.0 (2024-12-09)
 
 - The parameter trust values have been changed from logical values (`TRUE` or
