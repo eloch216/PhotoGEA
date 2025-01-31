@@ -14,7 +14,7 @@
 
 \usage{
   calculate_c3_assimilation(
-    exdf_obj,
+    data_table,
     alpha_g,
     alpha_old,
     alpha_s,
@@ -39,21 +39,23 @@
     vcmax_norm_column_name = 'Vcmax_norm',
     hard_constraints = 0,
     perform_checks = TRUE,
-    return_exdf = TRUE,
+    return_table = TRUE,
     \dots
   )
 }
 
 \arguments{
-  \item{exdf_obj}{An \code{exdf} object.}
+  \item{data_table}{
+    A table-like R object such as a data frame or an \code{exdf}.
+  }
 
   \item{alpha_g}{
     A dimensionless parameter where \code{0 <= alpha_g <= 1}, representing the
     proportion of glycolate carbon taken out of the photorespiratory pathway as
     glycine. \code{alpha_g} is often assumed to be 0. If \code{alpha_g} is not a
-    number, then there must be a column in \code{exdf_obj} called \code{alpha_g}
+    number, then there must be a column in \code{data_table} called \code{alpha_g}
     with appropriate units. A numeric value supplied here will overwrite the
-    values in the \code{alpha_g} column of \code{exdf_obj} if it exists.
+    values in the \code{alpha_g} column of \code{data_table} if it exists.
   }
 
   \item{alpha_old}{
@@ -61,9 +63,9 @@
     fraction of remaining glycolate carbon not returned to the chloroplast
     after accounting for carbon released as CO2. \code{alpha_old} is often
     assumed to be 0. If \code{alpha_old} is not a number, then there must be a
-    column in \code{exdf_obj} called \code{alpha_old} with appropriate units.
+    column in \code{data_table} called \code{alpha_old} with appropriate units.
     A numeric value supplied here will overwrite the values in the
-    \code{alpha_old} column of \code{exdf_obj} if it exists.
+    \code{alpha_old} column of \code{data_table} if it exists.
   }
 
   \item{alpha_s}{
@@ -71,26 +73,26 @@
     representing the proportion of glycolate carbon taken out of the
     photorespiratory pathway as serine. \code{alpha_s} is often assumed to be 0.
     If \code{alpha_s} is not a number, then there must be a column in
-    \code{exdf_obj} called \code{alpha_s} with appropriate units. A numeric
+    \code{data_table} called \code{alpha_s} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{alpha_s} column
-    of \code{exdf_obj} if it exists.
+    of \code{data_table} if it exists.
   }
 
   \item{alpha_t}{
     A dimensionless parameter where \code{0 <= alpha_t <= 1} representing the
     proportion of glycolate carbon taken out of the photorespiratory pathway as
     CH2-THF. \code{alpha_t} is often assumed to be 0. If \code{alpha_t} is not a
-    number, then there must be a column in \code{exdf_obj} called \code{alpha_t}
+    number, then there must be a column in \code{data_table} called \code{alpha_t}
     with appropriate units. A numeric value supplied here will overwrite the
-    values in the \code{alpha_t} column of \code{exdf_obj} if it exists.
+    values in the \code{alpha_t} column of \code{data_table} if it exists.
   }
 
   \item{Gamma_star}{
     The CO2 compensation point in the absence of day respiration, expressed in
     \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{Gamma_star} with
+    must be a column in \code{data_table} called \code{Gamma_star} with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Gamma_star} column of \code{exdf_obj} if it exists.
+    in the \code{Gamma_star} column of \code{data_table} if it exists.
   }
 
   \item{J_at_25}{
@@ -98,33 +100,33 @@
     \code{micromol m^(-2) s^(-1)}. Note that this is _not_ \code{Jmax}, and in
     general will depend on the incident photosynthetically active flux density.
     If \code{J_at_25} is not a number, then there must be a column in
-    \code{exdf_obj} called \code{J_at_25} with appropriate units. A numeric
+    \code{data_table} called \code{J_at_25} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{J_at_25} column
-    of \code{exdf_obj} if it exists.
+    of \code{data_table} if it exists.
   }
 
   \item{RL_at_25}{
     The respiration rate at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. If \code{RL_at_25} is not a number, then
-    there must be a column in \code{exdf_obj} called \code{RL_at_25} with
+    there must be a column in \code{data_table} called \code{RL_at_25} with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{RL_at_25} column of \code{exdf_obj} if it exists.
+    in the \code{RL_at_25} column of \code{data_table} if it exists.
   }
 
   \item{Tp_at_25}{
     The maximum rate of triphosphate utilization at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. If \code{Tp_at_25} is not a number, then
-    there must be a column in \code{exdf_obj} called \code{Tp_at_25} with
+    there must be a column in \code{data_table} called \code{Tp_at_25} with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Tp_at_25} column of \code{exdf_obj} if it exists.
+    in the \code{Tp_at_25} column of \code{data_table} if it exists.
   }
 
   \item{Vcmax_at_25}{
     The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
     \code{micromol m^(-2) s^(-1)}. If \code{Vcmax_at_25} is not a number, then
-    there must be a column in \code{exdf_obj} called \code{Vcmax_at_25} with
+    there must be a column in \code{data_table} called \code{Vcmax_at_25} with
     appropriate units. A numeric value supplied here will overwrite the
-    values in the \code{Vcmax_at_25} column of \code{exdf_obj} if it exists.
+    values in the \code{Vcmax_at_25} column of \code{data_table} if it exists.
   }
 
   \item{atp_use}{
@@ -148,50 +150,50 @@
   }
 
   \item{cc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{data_table} that contains the
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
   \item{j_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{data_table} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{data_table} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     \code{micromol mol^(-1)}.
   }
 
   \item{ko_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
+    The name of the column in \code{data_table} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}.
   }
 
   \item{oxygen_column_name}{
-    The name of the column in \code{exdf_obj} that contains the concentration
+    The name of the column in \code{data_table} that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
     the units must be \code{percent}.
   }
 
   \item{rl_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{data_table} that contains the normalized
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
   }
 
   \item{total_pressure_column_name}{
-    The name of the column in \code{exdf_obj} that contains the total pressure
+    The name of the column in \code{data_table} that contains the total pressure
     in \code{bar}.
   }
 
   \item{tp_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{data_table} that contains the normalized
     \code{Tp} values (with units of \code{normalized to Tp at 25 degrees C}).
   }
 
   \item{vcmax_norm_column_name}{
-    The name of the column in \code{exdf_obj} that contains the normalized
+    The name of the column in \code{data_table} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
   }
@@ -209,7 +211,7 @@
     fitting procedure.
   }
 
-  \item{return_exdf}{
+  \item{return_table}{
     A logical value indicating whether to return an \code{exdf} object. This
     should almost always be \code{TRUE}. The option to return a vector is mainly
     intended to be used when  \code{\link{fit_c3_aci}} calls this function,
@@ -452,19 +454,22 @@
 }
 
 \value{
-  The return value depends on the value of \code{return_exdf}:
+  The return value depends on the value of \code{return_table}:
   \itemize{
-    \item If \code{return_exdf} is \code{TRUE}, the return value is an
+    \item If \code{return_table} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns, calculated as described
           above: \code{Tp_tl}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
           \code{Ac}, \code{Aj}, \code{Ap}, \code{An}, \code{Vc}, and others. The
           category for each of these new columns is
           \code{calculate_c3_assimilation} to indicate that they were created
           using this function.
-    \item If \code{return_exdf} is \code{FALSE}, the return value is a list with
+    \item If \code{return_table} is \code{FALSE}, the return value is a list with
           the following named elements: \code{An}, \code{Ac}, \code{Aj},
           \code{Ap}, and \code{J_tl}. Each element is a numeric vector.
   }
+
+  If \code{data_table} is not an \code{exdf} object, then the return value will
+  be a data frame, and units and categories will not be reported.
 }
 
 \examples{

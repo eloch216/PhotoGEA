@@ -55,12 +55,16 @@ error_function_c4_aci <- function(
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[vpmax_norm_column_name]]     <- 'normalized to Vpmax at 25 degrees C'
 
-    required_variables <- require_flexible_param(
-        required_variables,
-        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
-    )
-
     check_required_variables(replicate_exdf, required_variables)
+
+    check_required_variables(
+        replicate_exdf,
+        require_flexible_param(
+            list(),
+            c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
+        ),
+        check_NA = FALSE
+    )
 
     # Retrieve values of flexible parameters as necessary
     if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}

@@ -35,15 +35,16 @@
   \code{check_required_variables} is generic, with methods defined for data
   frames and \code{exdf} objects.
 
-  When \code{x} is a \code{data.frame}, the \code{required_variables} input
-  argument must be a character vector specifying the names of columns that
-  should be included in \code{x}.
-
   When \code{x} is an \code{exdf}, the \code{required_variables} input argument
   must be a list of named strings, where the name of each element specifies the
   name of a column that must be included in \code{x}, while the value of each
   column specifies the corresponding units for that column. If the value is
   \code{NA}, no unit checking will be performed.
+
+  When \code{x} is a \code{data.frame}, the \code{required_variables} input
+  argument can be specified as a list (as if \code{x} were an \code{exdf}
+  object) or as a character vector specifying the names of columns that
+  should be included in \code{x}.
 
   The required variables will be checked as follows:
   \itemize{

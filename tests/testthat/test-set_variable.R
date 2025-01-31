@@ -42,6 +42,42 @@ test_that('new columns can be added with set_variable', {
     expect_equal(gmc_v2$categories$gmc, 'testing')
 })
 
+test_that('new columns can be added to exdf and data frame objects', {
+    gmc_exdf <- expect_silent(
+        set_variable(
+            test_exdf,
+            'gmc',
+            'mol m^(-2) s^(-1) bar^(-1)',
+            'testing',
+            value = 1.1,
+            id_column = 'species',
+            value_table = list(maize = 0.9)
+        )
+    )
+
+    gmc_df <- expect_silent(
+        set_variable(
+            test_exdf$main_data,
+            'gmc',
+            'mol m^(-2) s^(-1) bar^(-1)',
+            'testing',
+            value = 1.1,
+            id_column = 'species',
+            value_table = list(maize = 0.9)
+        )
+    )
+
+    expect_equal(
+        gmc_exdf[, 'gmc'],
+        c(0.9, 0.9, 1.1)
+    )
+
+    expect_equal(
+        gmc_df[, 'gmc'],
+        c(0.9, 0.9, 1.1)
+    )
+})
+
 test_that('common mistakes are caught', {
     expect_error(
         set_variable(

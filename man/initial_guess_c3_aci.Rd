@@ -172,7 +172,7 @@
   Here we estimate values of \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25},
   and \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult
   to estimate values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-  code{alpha_t}, and \code{Gamma_star} from a curve, so they must be supplied
+  \code{alpha_t}, and \code{Gamma_star} from a curve, so they must be supplied
   beforehand. For more information about these parameters, see the documentation
   for \code{\link{calculate_c3_assimilation}}.
 

@@ -56,8 +56,8 @@
   width (\code{sigma}), and units (\code{units}) for a variable must be
   specified as elements of a list, which itself is a named element of
   \code{gaussian_parameters}. For example, if a variable called
-  \code{Jmax} has \code{optimal_rate = 1}, \code{t_opt = 43}, {sigma = 26}, and
-  units of \code{micromol mol^(-1)}, the \code{gaussian_parameters} argument
+  \code{Jmax} has \code{optimal_rate = 1}, \code{t_opt = 43}, \code{sigma = 26},
+  and units of \code{micromol mol^(-1)}, the \code{gaussian_parameters} argument
   could be specified as follows:
   \code{list(Jmax = list(optimal_rate = 1, t_opt = 43, sigma = 26, units =
   'micromol mol^(-1)'))}.

@@ -192,13 +192,17 @@ fit_c3_aci <- function(
         ...
     )
 
-    # Remove a few columns so they don't get repeated
-    aci[, 'Gamma_star'] <- NULL
+    # Remove any columns in replicate_exdf that are also included in the
+    # output from calculate_c3_assimilation
+    replicate_exdf <- remove_repeated_colnames(replicate_exdf, aci)
 
     # Set all categories to `fit_c3_aci` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c3_aci'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
+
+    # Append the fitting results to the original exdf object
+    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -242,9 +246,6 @@ fit_c3_aci <- function(
         perform_checks = FALSE,
         ...
     )[, 'An']
-
-    # Append the fitting results to the original exdf object
-    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Interpolate onto a finer Cc spacing and recalculate fitted rates
     replicate_exdf_interpolated <- interpolate_assimilation_inputs(

@@ -105,7 +105,7 @@ calculate_c3_limitations_warren <- function(
             vcmax_norm_column_name = vcmax_norm_column_name,
             hard_constraints = hard_constraints,
             perform_checks = FALSE,
-            return_exdf = TRUE,
+            return_table = TRUE,
             ...
         )[, 'An']
     }

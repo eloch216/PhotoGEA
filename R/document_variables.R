@@ -47,12 +47,11 @@ set_column_info <- function(x, name, units, category) {
     return(x)
 }
 
-document_variables <- function(exdf_obj, ...)
-{
-    if (!is.exdf(exdf_obj)) {
-        stop("exdf_obj must be an exdf object")
-    }
+document_variables <- function(x, ...) {
+    UseMethod('document_variables', x)
+}
 
+document_variables.data.frame <- function(x, ...) {
     variable_specs <- list(...)
 
     for (v in variable_specs) {
@@ -60,13 +59,27 @@ document_variables <- function(exdf_obj, ...)
             stop("all variable specifications must be provided as vectors of three strings")
         }
 
-        exdf_obj <- set_column_info(
-            exdf_obj,
-            v[2],
-            v[3],
-            v[1]
-        )
+        name <- v[2]
+
+        if (!name %in% colnames(x)) {
+            x[[name]] <- NA
+        }
     }
 
-    return(exdf_obj)
+    return(x)
+}
+
+document_variables.exdf <- function(x, ...)
+{
+    variable_specs <- list(...)
+
+    for (v in variable_specs) {
+        if (length(v) != 3 & !is.character(v)) {
+            stop("all variable specifications must be provided as vectors of three strings")
+        }
+
+        x <- set_column_info(x, v[2], v[3], v[1])
+    }
+
+    return(x)
 }
