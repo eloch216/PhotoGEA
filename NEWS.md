@@ -42,6 +42,8 @@ be directly added to this file to describe the related changes.
   `exdf` objects: `calculate_ball_berry_index`, `calculate_c3_assimilation`,
   `calculate_residuals`, `document_variables`, `identify_c3_limiting_processes`,
   and `set_variable`.
+- Added functionality for reading user remarks to `read_licor_6800_plaintext`
+  and `read_licor_6800_Excel`
 
 ### BUG FIXES
 
