@@ -80,6 +80,12 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
         }
     }
 
+    # Send error messages if any issues were found
+    if (length(errors) > 0) {
+        msg <- paste(errors, collapse = '\n  ')
+        stop(msg)
+    }
+
     # Make sure the units and categories are treated as strings, including any
     # missing values, which should be replaced by a string "NA"
     units[1, ] <- as.character(units[1, ])

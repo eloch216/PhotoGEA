@@ -6,7 +6,7 @@ test_exdf <- exdf(
     ),
     units = data.frame(
         TleafCnd = 'degrees C',
-        tmp = '',
+        not_used = '',
         stringsAsFactors = FALSE
     )
 )
