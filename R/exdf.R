@@ -39,23 +39,44 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
     main_data_colnames <- colnames(main_data)
 
     for (i in seq_along(should_be_data_frames)) {
-        if (!is.data.frame(should_be_data_frames[[i]])) {
+        obj      <- should_be_data_frames[[i]]
+        obj_name <- names(should_be_data_frames)[i]
+
+        if (!is.null(obj) && !is.data.frame(obj)) {
             errors <- append(
                 errors,
-                paste0(
-                    "'",
-                    names(should_be_data_frames)[i],
-                    "' must be a data.frame"
-                )
+                paste0('`', obj_name, '` must be a data.frame')
             )
         }
-        if (!identical(colnames(should_be_data_frames[[i]]), main_data_colnames)) {
+
+        if (!is.null(obj) && any(!colnames(obj) %in% main_data_colnames)) {
+            errors <- append(
+                errors,
+                paste0('All columns of `', obj_name, '` must exist in `main_data`')
+            )
+        }
+    }
+
+    # Check to make sure data frames do not have duplicated columns
+    should_have_unique_names <- list(
+        main_data = main_data,
+        units = units,
+        categories = categories
+    )
+
+    for (i in seq_along(should_have_unique_names)) {
+        obj      <- should_have_unique_names[[i]]
+        obj_name <- names(should_have_unique_names)[i]
+
+        if (!is.null(obj) && any(duplicated(colnames(obj)))) {
+            dup_names <- colnames(obj)[duplicated(colnames(obj))]
+
             errors <- append(
                 errors,
                 paste0(
-                    "'",
-                    names(should_be_data_frames)[i],
-                    "' must have the same column names as main_data"
+                    'All columns of `', obj_name, '` must have unique names, ',
+                    'but the following names are duplicated: ',
+                    paste(dup_names, collapse = ', ')
                 )
             )
         }
@@ -68,14 +89,13 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
     )
 
     for (i in seq_along(should_have_one_row)) {
-        if (nrow(should_have_one_row[[i]]) != 1) {
+        obj      <- should_have_one_row[[i]]
+        obj_name <- names(should_have_one_row)[i]
+
+        if (!is.null(obj) && nrow(obj) != 1) {
             errors <- append(
                 errors,
-                paste0(
-                    "'",
-                    names(should_have_one_row)[i],
-                    "' must have exactly one row"
-                )
+                paste0('`', obj_name, '` must have exactly one row')
             )
         }
     }

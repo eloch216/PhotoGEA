@@ -14,6 +14,32 @@ test_that('exdf units and categories cannot have multiple rows', {
                 B = c('B1 category', 'B2 category')
             )
         ),
-        "'units' must have exactly one row\n  'categories' must have exactly one row"
+        '`units` must have exactly one row\n  `categories` must have exactly one row'
+    )
+})
+
+test_that('units and categories cannot have duplicated column names', {
+    bad_units <- data.frame(
+        A = 'A1 units',
+        A = 'A2 units'
+    )
+    colnames(bad_units) <- c('A', 'A')
+
+    bad_categories <- data.frame(
+        B = 'B1 category',
+        B = 'B2 category'
+    )
+    colnames(bad_categories) <- c('B', 'B')
+
+    expect_error(
+        exdf(
+            data.frame(
+                A = seq_len(5),
+                B = seq_len(5) * 2
+            ),
+            units = bad_units,
+            categories = bad_categories
+        ),
+        'All columns of `units` must have unique names, but the following names are duplicated: A\n  All columns of `categories` must have unique names, but the following names are duplicated: B'
     )
 })

@@ -32,7 +32,7 @@ read_licor_6800_Excel <- function(
     }
 
     # Get variable names, units, and categories
-    licor_variable_names <- replace_unicode(rawdata[data_row, ])
+    licor_variable_names <- make.unique(replace_unicode(rawdata[data_row, ]))
 
     licor_variable_units <- as.data.frame(matrix(nrow = 1, ncol = ncol(rawdata)), stringsAsFactors = FALSE)
     licor_variable_units[1, ] <- replace_unicode(rawdata[data_row + 1, ])
