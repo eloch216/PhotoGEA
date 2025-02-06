@@ -96,15 +96,11 @@ exdf <- function(
     }
 
     # Initialize the full units and categories
-    full_units <- main_data[1, ]
+    full_units <- data.frame(matrix(ncol = ncol(main_data), nrow = 1))
+    colnames(full_units) <- colnames(main_data)
     full_units[] <- lapply(full_units, as.character)
-    full_units[1, ] <- NA
-    row.names(full_units) <- NULL
 
-    full_categories <- main_data[1, ]
-    full_categories[] <- lapply(full_categories, as.character)
-    full_categories[1, ] <- NA
-    row.names(full_categories) <- NULL
+    full_categories <- full_units
 
     # Fill in values supplied by the user
     if (!is.null(units)) {

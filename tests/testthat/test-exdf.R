@@ -9,6 +9,12 @@ test_that('an empty exdf can be created and printed', {
     )
 })
 
+test_that('an exdf with one row can be created directly', {
+    expect_silent(
+        exdf(data.frame(A = seq_len(5)))
+    )
+})
+
 test_that('exdf units and categories cannot have multiple rows', {
     expect_error(
         exdf(
