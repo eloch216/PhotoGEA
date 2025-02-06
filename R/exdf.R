@@ -9,23 +9,6 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
         stop("`main_data` must be a data frame")
     }
 
-    # If `units` or `categories` is NULL, replace it with a default data frame
-    # that has the same names as `main_data` and one row where all entries are
-    # NA. Make sure that all columns are treated as strings.
-    if (is.null(units)) {
-        units <- main_data[1, ]
-        units[] <- lapply(units, as.character)
-        units[1, ] <- NA
-        row.names(units) <- NULL
-    }
-
-    if (is.null(categories)) {
-        categories <- main_data[1, ]
-        categories[] <- lapply(categories, as.character)
-        categories[1, ] <- NA
-        row.names(categories) <- NULL
-    }
-
     # Get ready to store messages about any problems with the inputs
     errors <- character()
 
@@ -106,19 +89,39 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
         stop(msg)
     }
 
+    # Initialize the full units and categories
+    full_units <- main_data[1, ]
+    full_units[] <- lapply(full_units, as.character)
+    full_units[1, ] <- NA
+    row.names(full_units) <- NULL
+
+    full_categories <- main_data[1, ]
+    full_categories[] <- lapply(full_categories, as.character)
+    full_categories[1, ] <- NA
+    row.names(full_categories) <- NULL
+
+    # Fill in values supplied by the user
+    if (!is.null(units)) {
+        full_units[, colnames(units)] <- units
+    }
+
+    if (!is.null(categories)) {
+        full_categories[, colnames(categories)] <- categories
+    }
+
     # Make sure the units and categories are treated as strings, including any
     # missing values, which should be replaced by a string "NA"
-    units[1, ] <- as.character(units[1, ])
-    units[1, is.na(units[1, ])] <- "NA"
+    full_units[1, ] <- as.character(full_units[1, ])
+    full_units[1, is.na(full_units[1, ])] <- "NA"
 
-    categories[1, ] <- as.character(categories[1, ])
-    categories[1, is.na(categories[1, ])] <- "NA"
+    full_categories[1, ] <- as.character(full_categories[1, ])
+    full_categories[1, is.na(full_categories[1, ])] <- "NA"
 
     # Make the exdf object
     new_exdf <- list(
         main_data = main_data,
-        units = units,
-        categories = categories
+        units = full_units,
+        categories = full_categories
     )
 
     # Add any other properties specified by the input arguments

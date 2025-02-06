@@ -43,3 +43,23 @@ test_that('units and categories cannot have duplicated column names', {
         'All columns of `units` must have unique names, but the following names are duplicated: A\n  All columns of `categories` must have unique names, but the following names are duplicated: B'
     )
 })
+
+test_that('Not all units and categories are required for exdf creation', {
+    test_exdf <- expect_silent(
+        exdf(
+            data.frame(
+                A = seq_len(5),
+                B = seq_len(5) * 2,
+                C = seq_len(5) * 3 - 6
+            ),
+            units = data.frame(
+                A = 'A units'
+            ),
+            categories = data.frame(
+                B = 'B category'
+            )
+        )
+    )
+
+    expect_true(is.exdf(test_exdf, consistency_check = TRUE))
+})
