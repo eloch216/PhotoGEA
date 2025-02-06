@@ -253,7 +253,19 @@ guessing_func <- initial_guess_c3_aci(
 )
 
 # Apply it and see the initial guesses for each curve
-str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+print(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+
+# A simple way to visualize the guesses is to "fit" the curves using the null
+# optimizer, which simply returns the initial guess
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c3_aci,
+  fit_options = list(alpha_old = 0),
+  optim_fun = optimizer_null()
+))
+
+plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
 }
 
 \concept{exdf}

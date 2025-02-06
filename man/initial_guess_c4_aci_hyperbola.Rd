@@ -69,7 +69,18 @@ licor_file <- organize_response_curve_data(
 guessing_func <- initial_guess_c4_aci_hyperbola()
 
 # Apply it and see the initial guesses for each curve
-str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+print(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+
+# A simple way to visualize the guesses is to "fit" the curves using the null
+# optimizer, which simply returns the initial guess
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c4_aci_hyperbola,
+  optim_fun = optimizer_null()
+))
+
+plot_c4_aci_hyperbola_fit(aci_results, 'species_plot', ylim = c(-10, 100))
 }
 
 \concept{exdf}

@@ -229,11 +229,28 @@ licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_be
 
 # Create the guessing function; here we set all alpha values to 0 and use the
 # temperature-dependent values of Gamma_star calculated above
-guessing_func <-
-  initial_guess_c3_variable_j(alpha_g = 0, alpha_old = 0, alpha_s = 0, alpha_t = 0, Gamma_star = '')
+guessing_func <- initial_guess_c3_variable_j(
+  alpha_g = 0,
+  alpha_old = 0,
+  alpha_s = 0,
+  alpha_t = 0,
+  Gamma_star = ''
+)
 
 # Apply it and see the initial guesses for each curve
-str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+print(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+
+# A simple way to visualize the guesses is to "fit" the curves using the null
+# optimizer, which simply returns the initial guess
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c3_variable_j,
+  fit_options = list(alpha_old = 0),
+  optim_fun = optimizer_null()
+))
+
+plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')
 }
 
 \concept{exdf}
