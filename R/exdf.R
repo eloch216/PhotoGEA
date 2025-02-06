@@ -3,7 +3,13 @@
 # specifying units and a category for each column in addition to names.
 
 # Constructor
-exdf <- function(main_data, units = NULL, categories = NULL, ...) {
+exdf <- function(
+    main_data = data.frame(),
+    units = NULL,
+    categories = NULL,
+    ...
+)
+{
     # Make sure `main_data` is a data frame
     if (!is.data.frame(main_data)) {
         stop("`main_data` must be a data frame")
@@ -283,11 +289,13 @@ read.csv.exdf <- function(file, ...) {
 # Define a helper function for making nice column names (used to improve `print`
 # and `utils::str`)
 fancy_column_names <- function(x) {
-    paste0(
-        colnames(x$units),
-        " [", x$categories[1,], "]",
-        " (", x$units[1,], ")"
-    )
+    sapply(seq_len(ncol(x)), function(i) {
+        paste0(
+            colnames(x)[i],
+            ' [', x$categories[[i]], ']',
+            ' (', x$units[[i]], ')'
+        )
+    })
 }
 
 # Print an exdf

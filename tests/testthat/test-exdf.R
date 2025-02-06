@@ -1,3 +1,14 @@
+test_that('an empty exdf can be created and printed', {
+    empty_exdf <- expect_silent(
+        exdf()
+    )
+
+    expect_equal(
+        length(PhotoGEA:::fancy_column_names(empty_exdf)),
+        ncol(empty_exdf)
+    )
+})
+
 test_that('exdf units and categories cannot have multiple rows', {
     expect_error(
         exdf(
