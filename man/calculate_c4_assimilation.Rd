@@ -444,8 +444,8 @@ assim <- calculate_c4_assimilation(inputs, 0, 0.003, 250, 1, 0.5, 40, 200, 80)
 # very different results. Although this approximation is helpful for
 # understanding C4 photosythesis, it should not be used for calculations.
 lattice::xyplot(
-  Apr + Apc + Ar + Ac ~ PCm,
-  data = cbind(inputs, assim)$main_data,
+  Apr + Apc + Ar + Ac ~ inputs[, 'PCm'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,
@@ -456,8 +456,8 @@ lattice::xyplot(
 
 # Likewise, we can look at Ajm, Ajbs, and Aj
 lattice::xyplot(
-  Ajm + Ajbs + Aj ~ PCm,
-  data = cbind(inputs, assim)$main_data,
+  Ajm + Ajbs + Aj ~ inputs[, 'PCm'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,
@@ -469,8 +469,8 @@ lattice::xyplot(
 # Finally, we can see whether enzyme activity or light limits overall
 # assimilation. In this case, assimilation is always enzyme-limited.
 lattice::xyplot(
-  Ac + Aj + An ~ PCm,
-  data = cbind(inputs, assim)$main_data,
+  Ac + Aj + An ~ inputs[, 'PCm'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,

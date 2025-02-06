@@ -496,8 +496,8 @@ inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, '
 assim <- calculate_c3_assimilation(inputs, 0, 0, 0, 0, '', 150, 1, 12, 120)
 
 lattice::xyplot(
-  Ac + Aj + Ap + An ~ Cc,
-  data = cbind(inputs, assim)$main_data,
+  Ac + Aj + Ap + An ~ inputs[, 'Cc'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,

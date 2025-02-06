@@ -42,7 +42,10 @@ be directly added to this file to describe the related changes.
   `calculate_residuals`, `document_variables`, `identify_c3_limiting_processes`,
   and `set_variable`.
 - Added functionality for reading user remarks to `read_licor_6800_plaintext`
-  and `read_licor_6800_Excel`
+  and `read_licor_6800_Excel`.
+- Improved `exdf` construction and element access; now it is possible to provide
+  just a few units when creating an `exdf` object, and it is possible to create
+  single-column `exdf` objects.
 
 ### Bug fixes
 

@@ -297,17 +297,16 @@ licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_be
 # tau = 0.2, and RL = 0.5
 vj_res <- calculate_c3_variable_j(licor_file, 0, 0, 0, '', 1.5, 0.55)
 
-# Combine with original data
-licor_file <- cbind(licor_file, vj_res)
-
 # Plot mesophyll conductance against Cc. Note: this information is not very
 # meaningful since the values of tau and RL used above are arbitrary.
 lattice::xyplot(
-  gmc ~ Cc | species_plot,
-  data = licor_file$main_data,
+  gmc ~ Cc | licor_file[, 'species_plot'],
+  data = vj_res$main_data,
   type = 'b',
   pch = 16,
-  auto = TRUE
+  auto = TRUE,
+  xlab = paste0('Chloroplast CO2 concentration (', vj_res$units$Cc, ')'),
+  ylab = paste0('Mesophyll conductance to CO2 (', vj_res$units$gmc, ')')
 )
 }
 

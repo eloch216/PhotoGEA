@@ -92,8 +92,8 @@ fit_c4_aci_hyperbola <- function(
     # output from calculate_c4_assimilation_hyperbola
     replicate_exdf <- remove_repeated_colnames(replicate_exdf, aci)
 
-    # Set all categories to `fit_c4_aci_hyperbola` and rename the `An` variable to
-    # indicate that it contains fitted values of `a_column_name`
+    # Set all categories to `fit_c4_aci_hyperbola` and rename the `An` variable
+    # to indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c4_aci_hyperbola'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
 
@@ -132,10 +132,7 @@ fit_c4_aci_hyperbola <- function(
         assim_interpolated
     )
 
-    fits_interpolated <- cbind(
-        replicate_exdf_interpolated,
-        assim_interpolated
-    )
+    fits_interpolated <- cbind(replicate_exdf_interpolated, assim_interpolated)
 
     # If there was a problem, set all the fit results to NA
     fit_failure <- aci[1, 'c4_assimilation_hyperbola_msg'] != ''
@@ -161,6 +158,16 @@ fit_c4_aci_hyperbola <- function(
 
     # Get the replicate identifier columns
     replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    # Attach identifiers to interpolated rates, making sure to avoid duplicating
+    # any columns
+    identifiers_to_keep <-
+        colnames(replicate_identifiers)[!colnames(replicate_identifiers) %in% colnames(fits_interpolated)]
+
+    fits_interpolated <- cbind(
+        fits_interpolated,
+        replicate_identifiers[, identifiers_to_keep, TRUE]
+    )
 
     # Attach the residual stats to the identifiers
     replicate_identifiers <- cbind(

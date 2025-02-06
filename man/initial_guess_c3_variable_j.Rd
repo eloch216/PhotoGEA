@@ -234,34 +234,6 @@ guessing_func <-
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
-
-# Calculate simulated A-Ci curves based on the guesses and compare them to the
-# actual data
-calculated_aci <- do.call(rbind, by(
-  licor_file,
-  licor_file[, 'species_plot'],
-  function(x) {
-    param <- guessing_func(x)
-    x <- cbind(
-      x,
-      calculate_c3_variable_j(x, param[1], param[3], param[4], param[5], param[7], param[8])
-    )
-    cbind(x,
-      calculate_c3_assimilation(
-        x,
-        param[1], param[2], param[3], param[4], param[5], param[6], param[7], param[9], param[10]
-      )
-    )
-  }
-))
-
-lattice::xyplot(
-  Ac + Aj + Ap + An + A ~ Cc | species_plot,
-  data = cbind(licor_file, calculated_aci)$main_data,
-  type = 'b',
-  auto = TRUE,
-  grid = TRUE
-)
 }
 
 \concept{exdf}

@@ -31,7 +31,7 @@
   and \code{Vmax} from a measured C4 CO2 response curve. For more information
   about these parameters, see the documentation for
   \code{\link{calculate_c4_assimilation_hyperbola}}.
-  
+
   Here we take a very simple approach to forming the initial guess. We always
   choose \code{c4_curvature = 0.5}, \code{c4_slope = 1.0}, and \code{rL = 0.0}.
   For \code{Vmax}, we use \code{Vmax = max{A} - rL_guess}, where \code{max{A}}
@@ -70,33 +70,6 @@ guessing_func <- initial_guess_c4_aci_hyperbola()
 
 # Apply it and see the initial guesses for each curve
 str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
-
-# Calculate simulated A-Ci curves based on the guesses and compare them to the
-# actual data
-calculated_aci <- do.call(rbind, by(
-  licor_file,
-  licor_file[, 'species_plot'],
-  function(x) {
-    param <- guessing_func(x)
-    calculate_c4_assimilation_hyperbola(
-      x,
-      param[1], param[2], param[3], param[4]
-    )
-  }
-))
-
-lattice::xyplot(
-  A + Ainitial + Amax + An ~ Ci | species_plot,
-  data = cbind(licor_file, calculated_aci)$main_data,
-  type = 'b',
-  auto = TRUE,
-  grid = TRUE,
-  ylim = c(0, 100),
-  par.settings = list(
-    superpose.line = list(col = multi_curve_line_colors()),
-    superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-  )
-)
 }
 
 \concept{exdf}
