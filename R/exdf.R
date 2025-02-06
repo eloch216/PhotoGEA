@@ -298,6 +298,7 @@ fancy_column_names <- function(x) {
 print.exdf <- function(x, ...) {
     res <- x$main_data
     colnames(res) <- fancy_column_names(x)
+    cat('\nConverting an `exdf` object to a `data.frame` before printing\n\n')
     print(res, ...)
 }
 
@@ -305,6 +306,7 @@ print.exdf <- function(x, ...) {
 str.exdf <- function(object, ...) {
     res <- object$main_data
     colnames(res) <- fancy_column_names(object)
+    cat('\nConverting an `exdf` object to a `data.frame` before printing\n\n')
     utils::str(res, ...)
 }
 
