@@ -355,9 +355,9 @@ dimnames.exdf <- function(x) {
         )
 
         essential_element_list <- list(
-            x$main_data[i, j],
-            x$units[1, j],
-            x$categories[1, j]
+            x$main_data[i, j, drop = FALSE],
+            x$units[1, j, drop = FALSE],
+            x$categories[1, j, drop = FALSE]
         )
 
         return(do.call(exdf, c(essential_element_list, extra_element_list)))

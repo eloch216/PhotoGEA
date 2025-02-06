@@ -9,10 +9,25 @@ test_that('an empty exdf can be created and printed', {
     )
 })
 
-test_that('an exdf with one row can be created directly', {
-    expect_silent(
+test_that('an exdf with one row can be created directly or by subsetting', {
+    # Direct creation
+    v1 <- expect_silent(
         exdf(data.frame(A = seq_len(5)))
     )
+
+    # Taking a subset of an exdf
+    big_exdf <- exdf(
+        data.frame(
+            A = seq_len(5),
+            B = seq_len(5) * 2
+        )
+    )
+
+    v2 <- expect_silent(
+        big_exdf[, 'A', TRUE]
+    )
+
+    expect_equal(v1, v2)
 })
 
 test_that('exdf units and categories cannot have multiple rows', {
