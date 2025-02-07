@@ -14,6 +14,22 @@ test_that('genotype (WT) identifiers are factorized properly', {
     )
 })
 
+test_that('genotype (control) identifiers are factorized properly', {
+    ids <- c('4', 'coNTRol', '2', 'CONTROL', '8')
+
+    factorized_ids <- factorize_id_column(ids, 'control')
+
+    expect_equal(
+        levels(factorized_ids),
+        c('control', '2',  '4',  '8')
+    )
+
+    expect_equal(
+        as.character(factorized_ids),
+        c('4', 'control', '2', 'control', '8')
+    )
+})
+
 test_that('genotype - replicate (WT) identifiers are factorized properly', {
     ids <- c('4 - 4', 'wT - 2', 'a - 2', 'WT - 1', '4 - 8', 'wt - 9')
 
@@ -21,12 +37,12 @@ test_that('genotype - replicate (WT) identifiers are factorized properly', {
 
     expect_equal(
         levels(factorized_ids),
-        c("WT - 1", "WT - 2", "WT - 9", "4 - 4", "4 - 8", "a - 2")
+        c('WT - 1', 'WT - 2', 'WT - 9', '4 - 4', '4 - 8', 'a - 2')
     )
 
     expect_equal(
         as.character(factorized_ids),
-        c("4 - 4", "WT - 2", "a - 2", "WT - 1", "4 - 8", "WT - 9")
+        c('4 - 4', 'WT - 2', 'a - 2', 'WT - 1', '4 - 8', 'WT - 9')
     )
 })
 

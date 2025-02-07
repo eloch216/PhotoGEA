@@ -51,6 +51,8 @@ be directly added to this file to describe the related changes.
   `data.frame`.
 - Licor LI-6800 Excel log files must now have a sheet called `Measurements`. A
   `Remarks` sheet is optional.
+- `factorize_id_column` can now work with other control group names besides
+  `WT`.
 
 ### Bug fixes
 
@@ -360,7 +362,7 @@ be directly added to this file to describe the related changes.
 - Renamed `calculate_iwue` to `calculate_wue` and provided documentation for
   this function, which now calculates two measures of leaf-level water use
   efficiency.
-- Provided documentation for `factorize_id_columns` and converted it to an S3
+- Provided documentation for `factorize_id_column` and converted it to an S3
   method so it can be applied to data frames and exdf objects.
 - Removed the `process_id_column` function since it can easily be replicated
   using `paste`.
