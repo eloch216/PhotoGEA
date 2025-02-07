@@ -163,10 +163,14 @@ read_licor_6800_plaintext <- function(
             stringsAsFactors = FALSE
         )
 
+        # Get the column names as a vector
+        licor_variable_names <-
+            make.unique(as.character(licor_variable_names[1, ]))
+
         # Apply column names
-        colnames(licor_variable_units) <- licor_variable_names[1, ]
-        colnames(licor_variable_categories) <- licor_variable_names[1, ]
-        colnames(licor_data) <- licor_variable_names[1, ]
+        colnames(licor_variable_units) <- licor_variable_names
+        colnames(licor_variable_categories) <- licor_variable_names
+        colnames(licor_data) <- licor_variable_names
 
         # Return this chunk as an exdf object
         exdf(

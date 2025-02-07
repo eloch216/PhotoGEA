@@ -133,8 +133,8 @@ Vcmax <- 125
 assim <- calculate_c3_assimilation(inputs, alpha_g, alpha_old, alpha_s, alpha_t, '', J, RL, Tp, Vcmax)
 
 xyplot(
-  An + Ac + Aj + Ap ~ Cc,
-  data = cbind(inputs, assim)$main_data,
+  An + Ac + Aj + Ap ~ inputs[, 'Cc'],
+  data = assim$main_data,
   type = 'l',
   lwd = c(4, 2, 2, 2),
   lty = c(1, 2, 2, 2),

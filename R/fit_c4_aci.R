@@ -176,10 +176,17 @@ fit_c4_aci <- function(
         perform_checks = FALSE
     )
 
+    # Remove any columns in replicate_exdf that are also included in the
+    # output from calculate_c4_assimilation
+    replicate_exdf <- remove_repeated_colnames(replicate_exdf, aci)
+
     # Set all categories to `fit_c4_aci` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c4_aci'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
+
+    # Append the fitting results to the original exdf object
+    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -222,9 +229,6 @@ fit_c4_aci <- function(
         hard_constraints,
         perform_checks = FALSE
     )[, 'An']
-
-    # Append the fitting results to the original exdf object
-    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Interpolate onto a finer Cc spacing and recalculate fitted rates
     replicate_exdf_interpolated <- interpolate_assimilation_inputs(
@@ -285,8 +289,15 @@ fit_c4_aci <- function(
         perform_checks = FALSE
     )
 
+    # Remove any columns in replicate_exdf_interpolated that are also included
+    # in the output from calculate_c4_assimilation
+    replicate_exdf_interpolated <- remove_repeated_colnames(
+        replicate_exdf_interpolated,
+        assim_interpolated
+    )
+
     fits_interpolated <- cbind(
-        replicate_exdf_interpolated[, c(ci_column_name, pcm_column_name), TRUE],
+        replicate_exdf_interpolated,
         assim_interpolated
     )
 

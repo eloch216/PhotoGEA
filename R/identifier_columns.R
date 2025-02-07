@@ -8,7 +8,7 @@ identifier_columns.data.frame <- function(x) {
         sapply(colnames(x), function(cn) {length(unique(x[ , cn])) == 1})
 
     # Restrict the data frame to the first row of just these columns
-    id_columns <- x[1, id_column_indx]
+    id_columns <- x[1, id_column_indx, drop = FALSE]
 
     # Remove row names and return the identifiers
     rownames(id_columns) <- NULL

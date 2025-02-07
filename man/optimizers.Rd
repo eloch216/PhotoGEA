@@ -1,10 +1,11 @@
 \name{optimizers}
 
 \alias{optimizers}
-\alias{optimizer_nmkb}
+\alias{optimizer_deoptim}
 \alias{optimizer_hjkb}
 \alias{optimizer_nlminb}
-\alias{optimizer_deoptim}
+\alias{optimizer_nmkb}
+\alias{optimizer_null}
 
 \title{Optimizers}
 
@@ -18,13 +19,15 @@
 }
 
 \usage{
-  optimizer_nmkb(tol, maxfeval = 2000, restarts.max = 10)
+  optimizer_deoptim(itermax, VTR = -Inf)
 
   optimizer_hjkb(tol, maxfeval = Inf, target = Inf)
 
   optimizer_nlminb(rel.tol, eval.max = 200, iter.max = 200, abs.tol = 0)
 
-  optimizer_deoptim(itermax, VTR = -Inf)
+  optimizer_nmkb(tol, maxfeval = 2000, restarts.max = 10)
+
+  optimizer_null()
 }
 
 \arguments{
@@ -86,13 +89,16 @@
 }
 
 \details{
-  \code{optimizer_nmkb} is a wrapper for \code{\link[dfoptim]{nmkb}}.
+  \code{optimizer_deoptim} is a wrapper for \code{\link[DEoptim]{DEoptim}}.
 
   \code{optimizer_hjkb} is a wrapper for \code{\link[dfoptim]{hjkb}}.
 
   \code{optimizer_nlminb} is a wrapper for \code{\link[stats]{nlminb}}.
 
-  \code{optimizer_deoptim} is a wrapper for \code{\link[DEoptim]{DEoptim}}.
+  \code{optimizer_nmkb} is a wrapper for \code{\link[dfoptim]{nmkb}}.
+
+  \code{optimizer_null} simply returns the initial guess without doing any
+  optimization; it can be useful for viewing initial guesses.
 
   See the documentation for those functions for more information about how the
   optimizers work.

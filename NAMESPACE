@@ -70,6 +70,7 @@ export(optimizer_deoptim)
 export(optimizer_hjkb)
 export(optimizer_nlminb)
 export(optimizer_nmkb)
+export(optimizer_null)
 export(residual_stats)
 
 # Basic methods for `exdf` class

@@ -389,7 +389,7 @@ example, `print` will not properly display the `E` column. This is a subtle
 problem that can only be detected using `is.exdf` with `consistency_check` set
 to `TRUE`:
 
-```{r}
+```{r, error = TRUE}
 print(exdf_2)
 
 is.exdf(exdf_2)

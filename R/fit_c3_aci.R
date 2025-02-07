@@ -304,10 +304,14 @@ fit_c3_aci <- function(
         ...
     )
 
-    fits_interpolated <- cbind(
-        replicate_exdf_interpolated[, c(ci_column_name, cc_column_name), TRUE],
+    # Remove any columns in replicate_exdf_interpolated that are also included
+    # in the output from calculate_c3_assimilation
+    replicate_exdf_interpolated <- remove_repeated_colnames(
+        replicate_exdf_interpolated,
         assim_interpolated
     )
+
+    fits_interpolated <- cbind(replicate_exdf_interpolated, assim_interpolated)
 
     # If there was a problem, set all the fit results to NA
     fit_failure <- aci[1, 'c3_assimilation_msg'] != ''

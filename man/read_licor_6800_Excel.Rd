@@ -58,11 +58,16 @@
   Unfortunately, base R does not have any functionality for reading Excel files,
   so here the \code{openxlsx} package is used.
 
-  \code{read_licor_6800_Excel} looks for a particular data column
+  Excel log files typically have two sheets called \code{Measurements} and
+  \code{Remarks}. The \code{Measurements} sheet contains the main data logs,
+  and if \code{read_licor_6800_Excel} does not find a sheet called
+  \code{Measurements}, it will send an error message.
+
+  Then, \code{read_licor_6800_Excel} looks for a particular data column
   (\code{column_name}) in order to identify the start of the data table within
-  the contents of the Licor file. Rows above the main data table are assumed to
-  be part of the preamble (or header), which are broken into pairs of rows
-  representing names and values.
+  the contents of the \code{Measurements} sheet. Rows above the main data table
+  are assumed to be part of the preamble (or header), which are broken into
+  pairs of rows representing names and values.
 
   \strong{"Calculating" formula values}: By default, Licor Excel files do not
   "calculate" formula values. This causes a problem when reading them in R,
@@ -84,8 +89,8 @@
   \code{read_licor_6800_Excel} or \code{read_gasex_file}.
 
   \strong{User remarks:} When operating a Licor LI-6800, it is possible to make
-  a "remark." Each remark will appear in the "remarks" sheet of an Excel log
-  file on its own line, where the entry in the first column is an
+  a "remark." Each remark will appear in the \code{Remarks} sheet of an Excel
+  log file on its own line, where the entry in the first column is an
   \code{HH:MM:SS} time, and the second column contains the remark text. The
   \code{read_licor_6800_Excel} function identifies these user remarks and
   includes them in the return as an "extra" element called \code{user_remarks}.

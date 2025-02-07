@@ -88,8 +88,12 @@ fit_c4_aci_hyperbola <- function(
         perform_checks = FALSE
     )
 
-    # Set all categories to `fit_c4_aci_hyperbola` and rename the `An` variable to
-    # indicate that it contains fitted values of `a_column_name`
+    # Remove any columns in replicate_exdf that are also included in the
+    # output from calculate_c4_assimilation_hyperbola
+    replicate_exdf <- remove_repeated_colnames(replicate_exdf, aci)
+
+    # Set all categories to `fit_c4_aci_hyperbola` and rename the `An` variable
+    # to indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c4_aci_hyperbola'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
 
@@ -121,10 +125,14 @@ fit_c4_aci_hyperbola <- function(
         perform_checks = FALSE
     )
 
-    fits_interpolated <- cbind(
-        replicate_exdf_interpolated[, c(ci_column_name, 'Vmax'), TRUE],
+    # Remove any columns in replicate_exdf_interpolated that are also included
+    # in the output from calculate_c4_assimilation_hyperbola
+    replicate_exdf_interpolated <- remove_repeated_colnames(
+        replicate_exdf_interpolated,
         assim_interpolated
     )
+
+    fits_interpolated <- cbind(replicate_exdf_interpolated, assim_interpolated)
 
     # If there was a problem, set all the fit results to NA
     fit_failure <- aci[1, 'c4_assimilation_hyperbola_msg'] != ''
