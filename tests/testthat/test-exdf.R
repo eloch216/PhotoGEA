@@ -97,3 +97,24 @@ test_that('Not all units and categories are required for exdf creation', {
 
     expect_true(is.exdf(test_exdf, consistency_check = TRUE))
 })
+
+test_that('Extra units are not allowed when creating an exdf', {
+    expect_error(
+        exdf(
+            data.frame(
+                A = seq_len(5),
+                B = seq_len(5) * 2,
+                C = seq_len(5) * 3 - 6
+            ),
+            units = data.frame(
+                D = 'D units',
+                stringsAsFactors = FALSE
+            ),
+            categories = data.frame(
+                E = 'E category',
+                stringsAsFactors = FALSE
+            )
+        ),
+        'All columns of `units` must exist in `main_data`\n  All columns of `categories` must exist in `main_data`'
+    )
+})
