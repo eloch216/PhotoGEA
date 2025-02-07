@@ -1,9 +1,9 @@
 test_that('single identifiers can be found', {
     # Create a simple exdf object
     simple_exdf <- exdf(
-        data.frame(A = c(3, 2, 7, 9), species = c('a', 'a', 'a', 'a')),
-        data.frame(A = 'm', species = 'none'),
-        data.frame(A = 'Cat1', species = 'meas')
+        data.frame(A = c(3, 2, 7, 9), species = c('a', 'a', 'a', 'a'), stringsAsFactors = FALSE),
+        data.frame(A = 'm', species = 'none', stringsAsFactors = FALSE),
+        data.frame(A = 'Cat1', species = 'meas', stringsAsFactors = FALSE)
     )
 
     # Find its (exdf) identifier columns and make sure they are correct
@@ -12,9 +12,9 @@ test_that('single identifiers can be found', {
     expect_equal(
         exdf_id_col,
         exdf(
-            data.frame(species = 'a'),
-            data.frame(species = 'none'),
-            data.frame(species = 'meas')
+            data.frame(species = 'a', stringsAsFactors = FALSE),
+            data.frame(species = 'none', stringsAsFactors = FALSE),
+            data.frame(species = 'meas', stringsAsFactors = FALSE)
         )
     )
 
@@ -23,6 +23,6 @@ test_that('single identifiers can be found', {
 
     expect_equal(
         df_id_col,
-        data.frame(species = 'a')
+        data.frame(species = 'a', stringsAsFactors = FALSE)
     )
 })

@@ -85,10 +85,12 @@ test_that('Not all units and categories are required for exdf creation', {
                 C = seq_len(5) * 3 - 6
             ),
             units = data.frame(
-                A = 'A units'
+                A = 'A units',
+                stringsAsFactors = FALSE
             ),
             categories = data.frame(
-                B = 'B category'
+                B = 'B category',
+                stringsAsFactors = FALSE
             )
         )
     )
