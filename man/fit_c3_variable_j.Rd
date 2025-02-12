@@ -47,6 +47,7 @@
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
+    tleaf_column_name = 'TleafCnd',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -141,6 +142,11 @@
   \item{rl_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
+  }
+
+  \item{tleaf_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the leaf
+    temperature values (with units of \code{degrees C}).
   }
 
   \item{total_pressure_column_name}{
@@ -419,6 +425,8 @@
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{J_tl_avg}, \code{RL_tl_avg},
                   \code{Tp_tl_avg}, and \code{Vcmax_tl_avg}.
+            \item The average leaf temperature is also stored in the
+                  \code{Tleaf_avg} column.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.

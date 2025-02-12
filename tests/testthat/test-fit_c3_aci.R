@@ -117,8 +117,8 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC', 'Tleaf_avg')]),
+        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101, 30.1448308),
         tolerance = TOLERANCE
     )
 

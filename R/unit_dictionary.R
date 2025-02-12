@@ -6,6 +6,7 @@ micromol_flux     <- 'micromol m^(-2) s^(-1)'
 micromol_fraction <- 'micromol mol^(-1)'
 millimol_fraction <- 'mmol mol^(-1)'
 pressure          <- 'bar'
+temperature       <- 'degrees C'
 
 # Specify units for some important parameters
 unit_dictionary <- list(
@@ -44,6 +45,7 @@ unit_dictionary <- list(
     Rm_frac        = dimensionless,
     S              = 'cm^2',
     tau            = dimensionless,
+    TleafCnd       = temperature,
     total_pressure = pressure,
     Tp_at_25       = micromol_flux,
     Tp_norm        = 'normalized to Tp at 25 degrees C',

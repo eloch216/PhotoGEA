@@ -22,6 +22,7 @@ fit_c4_aci <- function(
     oxygen_column_name = 'oxygen',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
+    tleaf_column_name = 'TleafCnd',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
@@ -71,9 +72,10 @@ fit_c4_aci <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c4_aci
+    # most units have already been checked by error_function_c4_aci
     required_variables <- list()
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ca_column_name]]    <- unit_dictionary[['Ca']]
+    required_variables[[tleaf_column_name]] <- unit_dictionary[['TleafCnd']]
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -371,6 +373,7 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'gmc_tl_avg']   <- mean(replicate_exdf[, 'gmc_tl'])
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
     replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
+    replicate_identifiers[, 'Tleaf_avg']    <- mean(replicate_exdf[, tleaf_column_name])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
 
@@ -430,6 +433,7 @@ fit_c4_aci <- function(
         c('fit_c4_aci',               'gmc_tl_avg',          unit_dictionary[['gmc_at_25']]),
         c('fit_c4_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
+        c('fit_c4_aci',               'Tleaf_avg',           replicate_exdf$units[[tleaf_column_name]]),
         c('fit_c4_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpmax_tl_avg',        'micromol m^(-2) s^(-1)'),
         c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
