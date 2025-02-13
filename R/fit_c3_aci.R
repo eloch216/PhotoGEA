@@ -17,6 +17,7 @@ fit_c3_aci <- function(
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     oxygen_column_name = 'oxygen',
+    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     tleaf_column_name = 'TleafCnd',
     total_pressure_column_name = 'total_pressure',
@@ -79,6 +80,7 @@ fit_c3_aci <- function(
     # most units have already been checked by error_function_c3_aci
     required_variables <- list()
     required_variables[[ca_column_name]]    <- unit_dictionary[['Ca']]
+    required_variables[[qin_column_name]]   <- unit_dictionary[['Qin']]
     required_variables[[tleaf_column_name]] <- unit_dictionary[['TleafCnd']]
 
     check_required_variables(replicate_exdf, required_variables)
@@ -385,6 +387,7 @@ fit_c3_aci <- function(
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'gmc_tl_avg']   <- mean(replicate_exdf[, 'gmc_tl'])
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
+    replicate_identifiers[, 'Qin_avg']      <- mean(replicate_exdf[, qin_column_name])
     replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
     replicate_identifiers[, 'Tleaf_avg']    <- mean(replicate_exdf[, tleaf_column_name])
     replicate_identifiers[, 'Tp_tl_avg']    <- mean(replicate_exdf[, 'Tp_tl'])
@@ -445,6 +448,7 @@ fit_c3_aci <- function(
         c('fit_c3_aci',               'gmc_tl_avg',          'mol mol^(-2) s^(-1) bar^(-1)'),
         c('fit_c3_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Qin_avg',             replicate_exdf$units[[qin_column_name]]),
         c('fit_c3_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c3_aci',               'Tleaf_avg',           replicate_exdf$units[[tleaf_column_name]]),
