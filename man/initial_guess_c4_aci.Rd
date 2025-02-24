@@ -26,7 +26,6 @@
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kp_column_name = 'Kp',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -102,12 +101,6 @@
   \item{kp_column_name}{
     The name of the column in \code{rc_exdf} that contains the Michaelis-Menten
     constant for PEP carboxylase carboxylation in \code{microbar}.
-  }
-
-  \item{qin_column_name}{
-    The name of the column in \code{rc_exdf} that contains values of the
-    incident photosynthetically active flux density in
-    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rl_norm_column_name}{

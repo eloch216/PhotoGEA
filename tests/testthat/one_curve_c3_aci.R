@@ -12,7 +12,8 @@ licor_file <- organize_response_curve_data(
     licor_file,
     'species_plot',
     c(9, 10, 16),
-    'CO2_r_sp'
+    'CO2_r_sp',
+    columns_to_average = c('Qin', 'TleafCnd')
 )
 
 # Calculate the total pressure in the Licor chamber

@@ -13,7 +13,6 @@ error_function_c4_aci <- function(
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -49,7 +48,6 @@ error_function_c4_aci <- function(
     required_variables[[kc_column_name]]             <- 'microbar'
     required_variables[[ko_column_name]]             <- 'mbar'
     required_variables[[kp_column_name]]             <- 'microbar'
-    required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
     required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
@@ -152,7 +150,6 @@ error_function_c4_aci <- function(
                     kp_column_name,
                     oxygen_column_name,
                     pcm_column_name,
-                    qin_column_name,
                     rl_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,

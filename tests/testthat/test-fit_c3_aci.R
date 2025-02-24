@@ -106,6 +106,18 @@ test_that('fit results have not changed (no alpha)', {
         remove_unreliable_param = 2
     )
 
+    fit_res$parameters <- calculate_temperature_response(
+        fit_res$parameters,
+        jmax_temperature_param_bernacchi,
+        'TleafCnd_avg'
+    )
+
+    fit_res$parameters <- calculate_jmax(
+        fit_res$parameters,
+        0.6895,
+        0.97875
+    )
+
     expect_equal(
         get_duplicated_colnames(fit_res$fits),
         character(0)
@@ -117,8 +129,8 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC', 'Tleaf_avg')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101, 30.1448308),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC', 'TleafCnd_avg', 'Jmax_at_25')]),
+        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101, 30.1448308, 233.8417400),
         tolerance = TOLERANCE
     )
 

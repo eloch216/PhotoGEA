@@ -25,7 +25,7 @@ calculate_jmax <- function(
     j_tl_column_name = 'J_tl_avg',
     qin_column_name = 'Qin_avg',
     theta_j_norm_column_name = 'theta_j_norm',
-    tleaf_column_name = 'Tleaf_avg',
+    tleaf_column_name = 'TleafCnd_avg',
     ...
 )
 {

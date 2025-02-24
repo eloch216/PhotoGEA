@@ -10,7 +10,6 @@ initial_guess_c4_aci <- function(
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kp_column_name = 'Kp',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -33,7 +32,6 @@ initial_guess_c4_aci <- function(
         required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
         required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
         required_variables[[kp_column_name]]             <- 'microbar'
-        required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'

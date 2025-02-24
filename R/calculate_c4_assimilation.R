@@ -17,7 +17,6 @@ calculate_c4_assimilation <- function(
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -42,7 +41,6 @@ calculate_c4_assimilation <- function(
         required_variables[[kp_column_name]]             <- 'microbar'
         required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
         required_variables[[pcm_column_name]]            <- 'microbar'
-        required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
@@ -83,7 +81,6 @@ calculate_c4_assimilation <- function(
     Kp         <- exdf_obj[, kp_column_name]         # microbar
     gamma_star <- exdf_obj[, gamma_star_column_name] # dimensionless
     ao         <- exdf_obj[, ao_column_name]         # dimensionless
-    Qin        <- exdf_obj[, qin_column_name]        # micromol / m^2 / s
 
     pressure <- exdf_obj[, total_pressure_column_name] # bar
     oxygen   <- exdf_obj[, oxygen_column_name]         # percent

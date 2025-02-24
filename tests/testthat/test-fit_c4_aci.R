@@ -78,7 +78,7 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC', 'Tleaf_avg')]),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC', 'TleafCnd_avg')]),
         c(3.630116e+01, 1.804791e+02, 1.069116e-08, 8.226640e+01, 3.030823e+01),
         tolerance = TOLERANCE
     )
@@ -163,6 +163,18 @@ test_that('fit results have not changed (J)', {
         remove_unreliable_param = 2
     )
 
+    fit_res$parameters <- calculate_temperature_response(
+        fit_res$parameters,
+        jmax_temperature_param_bernacchi,
+        'TleafCnd_avg'
+    )
+
+    fit_res$parameters <- calculate_jmax(
+        fit_res$parameters,
+        0.6895,
+        0.97875
+    )
+
     expect_equal(
         get_duplicated_colnames(fit_res$fits),
         character(0)
@@ -174,8 +186,8 @@ test_that('fit results have not changed (J)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('J_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC')]),
-        c(258.1464, 135.7058, 0.0000, 88.6061),
+        as.numeric(fit_res$parameters[1, c('J_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC', 'Jmax_at_25')]),
+        c(258.1464, 135.7058, 0.0000, 88.6061, 259.4098),
         tolerance = TOLERANCE
     )
 

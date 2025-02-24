@@ -44,9 +44,7 @@
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
-    tleaf_column_name = 'TleafCnd',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
@@ -132,20 +130,9 @@
     the units must be \code{percent}.
   }
 
-  \item{qin_column_name}{
-    The name of the column in \code{exdf_obj} that contains values of the
-    incident photosynthetically active flux density in
-    \code{micromol m^(-2) s^(-1)}.
-  }
-
   \item{rl_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{RL} values (with units of \code{normalized to RL at 25 degrees C}).
-  }
-
-  \item{tleaf_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the leaf
-    temperature values (with units of \code{degrees C}).
   }
 
   \item{total_pressure_column_name}{

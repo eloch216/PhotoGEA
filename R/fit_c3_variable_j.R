@@ -20,7 +20,6 @@ fit_c3_variable_j <- function(
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
-    tleaf_column_name = 'TleafCnd',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -87,8 +86,7 @@ fit_c3_variable_j <- function(
     # Make sure the required variables are defined and have the correct units;
     # most units have already been checked by error_function_c3_variable_j
     required_variables <- list()
-    required_variables[[ca_column_name]]    <- unit_dictionary[['Ca']]
-    required_variables[[tleaf_column_name]] <- unit_dictionary[['TleafCnd']]
+    required_variables[[ca_column_name]] <- unit_dictionary[['Ca']]
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -460,7 +458,6 @@ fit_c3_variable_j <- function(
     # Attach the average leaf-temperature values of fitting parameters
     replicate_identifiers[, 'J_tl_avg']     <- mean(replicate_exdf[, 'J_tl'])
     replicate_identifiers[, 'RL_tl_avg']    <- mean(replicate_exdf[, 'RL_tl'])
-    replicate_identifiers[, 'Tleaf_avg']    <- mean(replicate_exdf[, tleaf_column_name])
     replicate_identifiers[, 'Tp_tl_avg']    <- mean(replicate_exdf[, 'Tp_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
 
@@ -524,7 +521,6 @@ fit_c3_variable_j <- function(
         c('fit_c3_variable_j',        'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'RL_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
-        c('fit_c3_variable_j',        'Tleaf_avg',           replicate_exdf$units[[tleaf_column_name]]),
         c('fit_c3_variable_j',        'tau',                 'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Tp_at_25',            'micromol m^(-2) s^(-1)'),
         c('fit_c3_variable_j',        'Tp_tl_avg',           'micromol m^(-2) s^(-1)'),

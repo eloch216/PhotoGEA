@@ -18,7 +18,7 @@
     j_tl_column_name = 'J_tl_avg',
     qin_column_name = 'Qin_avg',
     theta_j_norm_column_name = 'theta_j_norm',
-    tleaf_column_name = 'Tleaf_avg',
+    tleaf_column_name = 'TleafCnd_avg',
     \dots
   )
 }
@@ -51,12 +51,14 @@ licor_file <- read_gasex_file(
 licor_file[, 'species_plot'] <-
   paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
 
-# Organize the data
+# Organize the data; we will need average values of leaf temperature and
+# incident PPFD in order to calculate Jmax later
 licor_file <- organize_response_curve_data(
     licor_file,
     'species_plot',
     c(9, 10, 16),
-    'CO2_r_sp'
+    'CO2_r_sp',
+    columns_to_average = c('TleafCnd', 'Qin')
 )
 
 # Calculate the total pressure in the Licor chamber
@@ -82,7 +84,7 @@ aci_results <- consolidate(by(
 aci_results$parameters <- calculate_temperature_response(
     aci_results$parameters,
     jmax_temperature_param_bernacchi,
-    'Tleaf_avg'
+    'TleafCnd_avg'
 )
 
 # Calculate Jmax
