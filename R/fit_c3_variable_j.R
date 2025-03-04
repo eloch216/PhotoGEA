@@ -86,7 +86,7 @@ fit_c3_variable_j <- function(
     # Make sure the required variables are defined and have the correct units;
     # most units have already been checked by error_function_c3_variable_j
     required_variables <- list()
-    required_variables[[ca_column_name]] <- unit_dictionary[['Ca']]
+    required_variables[[ca_column_name]] <- unit_dictionary('Ca')
 
     check_required_variables(replicate_exdf, required_variables)
 

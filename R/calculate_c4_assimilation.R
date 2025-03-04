@@ -35,11 +35,11 @@ calculate_c4_assimilation <- function(
         required_variables <- list()
         required_variables[[ao_column_name]]             <- 'dimensionless'
         required_variables[[gamma_star_column_name]]     <- 'dimensionless'
-        required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
+        required_variables[[j_norm_column_name]]         <- unit_dictionary('J_norm')
         required_variables[[kc_column_name]]             <- 'microbar'
         required_variables[[ko_column_name]]             <- 'mbar'
         required_variables[[kp_column_name]]             <- 'microbar'
-        required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
+        required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
         required_variables[[pcm_column_name]]            <- 'microbar'
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
@@ -222,12 +222,12 @@ calculate_c4_assimilation <- function(
 
         document_variables(
             output,
-            c('calculate_c4_assimilation', 'alpha_psii',          unit_dictionary$alpha_psii),
-            c('calculate_c4_assimilation', 'gbs',                 unit_dictionary$gbs),
+            c('calculate_c4_assimilation', 'alpha_psii',          unit_dictionary('alpha_psii')),
+            c('calculate_c4_assimilation', 'gbs',                 unit_dictionary('gbs')),
             c('calculate_c4_assimilation', 'J_at_25',             'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'J_tl',                'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'RL_at_25',            'micromol m^(-2) s^(-1)'),
-            c('calculate_c4_assimilation', 'Rm_frac',             unit_dictionary$Rm_frac),
+            c('calculate_c4_assimilation', 'Rm_frac',             unit_dictionary('Rm_frac')),
             c('calculate_c4_assimilation', 'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'Vpmax_at_25',         'micromol m^(-2) s^(-1)'),
             c('calculate_c4_assimilation', 'Vpr',                 'micromol m^(-2) s^(-1)'),

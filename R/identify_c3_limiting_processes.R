@@ -9,10 +9,10 @@ identify_c3_limiting_processes <- function(
 {
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]  <- unit_dictionary[['A']]
-    required_variables[[ac_column_name]] <- unit_dictionary[['A']]
-    required_variables[[aj_column_name]] <- unit_dictionary[['A']]
-    required_variables[[ap_column_name]] <- unit_dictionary[['A']]
+    required_variables[[a_column_name]]  <- unit_dictionary('A')
+    required_variables[[ac_column_name]] <- unit_dictionary('A')
+    required_variables[[aj_column_name]] <- unit_dictionary('A')
+    required_variables[[ap_column_name]] <- unit_dictionary('A')
 
     check_required_variables(data_table, required_variables, check_NA = FALSE)
 

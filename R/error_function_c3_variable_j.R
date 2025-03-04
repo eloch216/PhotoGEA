@@ -66,7 +66,7 @@ error_function_c3_variable_j <- function(
     required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
     required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
+    required_variables[[tp_norm_column_name]]        <- unit_dictionary('Tp_norm')
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
     check_required_variables(replicate_exdf, required_variables)

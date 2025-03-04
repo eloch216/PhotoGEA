@@ -9,14 +9,16 @@ pressure          <- 'bar'
 temperature       <- 'degrees C'
 
 # Specify units for some important parameters
-unit_dictionary <- list(
+unit_dictionary_list <- list(
     A              = micromol_flux,
+    Ainitial       = micromol_flux,
     alpha_g        = dimensionless,
     alpha_j_at_25  = dimensionless,
     alpha_j_norm   = 'normalized to alpha_j at 25 degrees C',
     alpha_old      = dimensionless,
     alpha_psii     = dimensionless,
     alpha_s        = dimensionless,
+    alpha_t        = dimensionless,
     bb_index       = conductance,
     c4_curvature   = dimensionless,
     c4_slope       = conductance, # this is not a conductance, but happens to have the same units as a conductance
@@ -67,3 +69,16 @@ unit_dictionary <- list(
     Vpmax_at_25    = micromol_flux,
     Vpr            = micromol_flux
 )
+
+unit_dictionary <- function(quantity_name) {
+    if (!quantity_name %in% names(unit_dictionary_list)) {
+        msg <- paste0(
+            'Units were requested for a quantity named `', quantity_name,
+            '`, but it is not included in the unit dictionary'
+        )
+
+        stop(msg)
+    }
+
+    unit_dictionary_list[[quantity_name]]
+}

@@ -28,7 +28,7 @@ error_function_c4_aci_hyperbola <- function(
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
     required_variables[[a_column_name]]  <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ci_column_name]] <- unit_dictionary$Ci
+    required_variables[[ci_column_name]] <- unit_dictionary('Ci')
 
     check_required_variables(replicate_exdf, required_variables)
 

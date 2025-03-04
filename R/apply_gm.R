@@ -21,7 +21,7 @@ apply_gm <- function(
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gmc_norm_column_name]]       <- unit_dictionary[[gmc_norm_column_name]]
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary(gmc_norm_column_name)
         required_variables[[total_pressure_column_name]] <- 'bar'
 
         if (calculate_drawdown) {

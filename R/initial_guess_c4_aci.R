@@ -29,8 +29,8 @@ initial_guess_c4_aci <- function(
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
-        required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
+        required_variables[[j_norm_column_name]]         <- unit_dictionary('J_norm')
         required_variables[[kp_column_name]]             <- 'microbar'
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'

@@ -9,7 +9,7 @@ require_flexible_param <- function(required_variables, flexible_param) {
     for (i in seq_along(flexible_param)) {
         if (!value_set(flexible_param[[i]])) {
             pn <- names(flexible_param)[i]
-            required_variables[pn] <- unit_dictionary[pn]
+            required_variables[pn] <- unit_dictionary(pn)
         }
     }
     required_variables

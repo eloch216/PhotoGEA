@@ -42,12 +42,12 @@ calculate_jmax <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[alpha_j_norm_column_name]] <- unit_dictionary[['alpha_j_norm']]
-    required_variables[[j_at_25_column_name]]      <- unit_dictionary[['J_at_25']]
-    required_variables[[j_tl_column_name]]         <- unit_dictionary[['J_tl_avg']]
-    required_variables[[qin_column_name]]          <- unit_dictionary[['Qin']]
-    required_variables[[theta_j_norm_column_name]] <- unit_dictionary[['theta_j_norm']]
-    required_variables[[tleaf_column_name]]        <- unit_dictionary[['Tleaf_avg']]
+    required_variables[[alpha_j_norm_column_name]] <- unit_dictionary('alpha_j_norm')
+    required_variables[[j_at_25_column_name]]      <- unit_dictionary('J_at_25')
+    required_variables[[j_tl_column_name]]         <- unit_dictionary('J_tl_avg')
+    required_variables[[qin_column_name]]          <- unit_dictionary('Qin')
+    required_variables[[theta_j_norm_column_name]] <- unit_dictionary('theta_j_norm')
+    required_variables[[tleaf_column_name]]        <- unit_dictionary('Tleaf_avg')
 
     flexible_param <- list(
         alpha_j_at_25 = alpha_j_at_25,
@@ -114,11 +114,11 @@ calculate_jmax <- function(
 
     document_variables(
         data_table,
-        c('calculate_jmax', 'I2_at_25',       unit_dictionary[['I2_at_25']]),
-        c('calculate_jmax', 'I2_tl',          unit_dictionary[['I2_tl']]),
-        c('calculate_jmax', 'Jmax_at_25',     unit_dictionary[['Jmax_at_25']]),
+        c('calculate_jmax', 'I2_at_25',       unit_dictionary('I2_at_25')),
+        c('calculate_jmax', 'I2_tl',          unit_dictionary('I2_tl')),
+        c('calculate_jmax', 'Jmax_at_25',     unit_dictionary('Jmax_at_25')),
         c('calculate_jmax', 'Jmax_at_25_msg', ''),
-        c('calculate_jmax', 'Jmax_tl',        unit_dictionary[['Jmax_tl']]),
+        c('calculate_jmax', 'Jmax_tl',        unit_dictionary('Jmax_tl')),
         c('calculate_jmax', 'Jmax_tl_msg',    '')
     )
 
