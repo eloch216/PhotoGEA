@@ -192,8 +192,8 @@ test_that('fit results have not changed (J)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('J_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
-        c(275.66, 157.25, 2.35),
+        as.numeric(fit_res$parameters[1, c('J_at_25_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper', 'Jmax_at_25_upper')]),
+        c(275.66, 157.25, 2.35, 277.121056),
         tolerance = TOLERANCE
     )
 

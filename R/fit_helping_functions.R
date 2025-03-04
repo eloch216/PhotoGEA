@@ -15,6 +15,18 @@ require_flexible_param <- function(required_variables, flexible_param) {
     required_variables
 }
 
+# A helping function for checking units of "optional" parameters (uses the unit
+# dictionary)
+require_optional_param <- function(required_variables, optional_param, data_table) {
+    for (i in seq_along(optional_param)) {
+        if (optional_param[[i]] %in% colnames(data_table)) {
+            pn <- names(optional_param)[i]
+            required_variables[pn] <- unit_dictionary(pn)
+        }
+    }
+    required_variables
+}
+
 # A helping function that combines user-supplied and default values of `lower`,
 # `upper`, and `fit_options`, as used by several fitting functions in PhotoGEA.
 # This is only intended to be used internally, so checks are not provided for
