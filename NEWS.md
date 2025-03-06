@@ -35,6 +35,12 @@ be directly added to this file to describe the related changes.
 
 ### Minor user-facing changes
 
+- Added a new function for calculating values of Jmax (`calculate_jmax`) and
+  included it in the C3 and C4 A-Ci curve vignettes. Along with this function,
+  new temperature response parameters were added:
+  `jmax_temperature_param_bernacchi` and `jmax_temperature_param_flat`. These
+  emply polynomial temperature responses, a new type that was also added to the
+  package via the `calculate_temperature_response_polynomial` function.
 - `identify_c3_limiting_processes` now returns each co-limiting process when
   assimilation is co-limited.
 - Several functions were modified to accept `data.frame` objects in addition to
