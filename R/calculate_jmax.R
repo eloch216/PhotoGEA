@@ -5,15 +5,16 @@ jmax_from_j <- function(J, I2, theta) {
 
 # A helping function for creating error messages
 jmax_error_msg <- function(J, I2) {
-    error_cond <- J >= I2
+    if (length(J) != length(I2)) {
+        stop('Length mismatch between J and I2')
+    }
 
-    sapply(error_cond, function(ec) {
-        if (ec) {
-            'J >= I2'
-        } else {
-            ''
-        }
-    })
+    msg <- rep_len('', length(J))
+
+    msg[is.na(J)] <- 'J is NA'
+    msg[J >= I2]  <- 'J >= I2'
+
+    msg
 }
 
 calculate_jmax <- function(

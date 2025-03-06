@@ -181,6 +181,10 @@
   0.2930375. These values, rounded to three decimal places, are used as the
   defaults when calculating \code{Jmax}.
 
+  It is not clear whether the temperture response defined in Bernacchi et al.
+  (2003) is applicable to C4 leaves. For C4 leaves, it may be better to use the
+  temperature-independent estimates from von Caemmerer (2000).
+
   \strong{Absorbed light basis:}
 
   Values of \code{Jmax} can also be estimated from the absorbed
