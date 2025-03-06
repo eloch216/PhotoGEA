@@ -5,11 +5,11 @@ jmax_from_j <- function(J, I2, theta) {
 
 # A helping function for creating error messages
 jmax_error_msg <- function(J, I2) {
-    error_cond <- I2 < J
+    error_cond <- J >= I2
 
     sapply(error_cond, function(ec) {
         if (ec) {
-            'I2 < J'
+            'J >= I2'
         } else {
             ''
         }
@@ -18,8 +18,8 @@ jmax_error_msg <- function(J, I2) {
 
 calculate_jmax <- function(
     data_table,
-    alpha_j_at_25, # dimensionless
-    theta_j_at_25, # dimensionless
+    alpha_j_at_25 = 0.293, # dimensionless
+    theta_j_at_25 = 0.979, # dimensionless
     alpha_j_norm_column_name = 'alpha_j_norm',
     qin_column_name = 'Qin_avg',
     theta_j_norm_column_name = 'theta_j_norm',
@@ -82,10 +82,10 @@ calculate_jmax <- function(
     # Make sure key inputs have reasonable values
     msg <- character()
 
-    if (any(alpha_j_at_25 < 0, na.rm = TRUE))                     {msg <- append(msg, 'alpha_j_at_25 must be >= 0')}
-    if (any(alpha_j_tl < 0, na.rm = TRUE))                        {msg <- append(msg, 'alpha_j_tl must be >= 0')}
-    if (any(theta_j_at_25 < 0 | theta_j_at_25 > 1, na.rm = TRUE)) {msg <- append(msg, 'theta_j_at_25 must be >= 0 and <= 1')}
-    if (any(theta_j_tl < 0 | theta_j_tl > 1, na.rm = TRUE))       {msg <- append(msg, 'theta_j_tl must be >= 0 and <= 1')}
+    if (any(alpha_j_at_25 < 0, na.rm = TRUE))                      {msg <- append(msg, 'alpha_j_at_25 must be >= 0')}
+    if (any(alpha_j_tl < 0, na.rm = TRUE))                         {msg <- append(msg, 'alpha_j_tl must be >= 0')}
+    if (any(theta_j_at_25 <= 0 | theta_j_at_25 > 1, na.rm = TRUE)) {msg <- append(msg, 'theta_j_at_25 must be > 0 and <= 1')}
+    if (any(theta_j_tl <= 0 | theta_j_tl > 1, na.rm = TRUE))       {msg <- append(msg, 'theta_j_tl must be > 0 and <= 1')}
 
     msg <- paste(msg, collapse = '. ')
 
@@ -95,15 +95,16 @@ calculate_jmax <- function(
 
     # Specify lists of Jmax types to calculate
     to_calculate <- list(
-        at_25 = list(J = data_table[, 'J_at_25'],  alpha_j = alpha_j_at_25, theta_j = theta_j_at_25),
-        tl    = list(J = data_table[, 'J_tl_avg'], alpha_j = alpha_j_tl,    theta_j = theta_j_tl)
+        at_25 = list(J = data_table[, 'J_at_25'],  alpha_j = alpha_j_at_25, theta_j = theta_j_at_25, include_I2 = TRUE),
+        tl    = list(J = data_table[, 'J_tl_avg'], alpha_j = alpha_j_tl,    theta_j = theta_j_tl,    include_I2 = TRUE)
     )
 
     if ('J_at_25_lower' %in% colnames(data_table)) {
         to_calculate$at_25_lower <- list(
             J = data_table[, 'J_at_25_lower'],
             alpha_j = alpha_j_at_25,
-            theta_j = theta_j_at_25
+            theta_j = theta_j_at_25,
+            include_I2 = FALSE
         )
     }
 
@@ -111,7 +112,8 @@ calculate_jmax <- function(
         to_calculate$at_25_upper <- list(
             J = data_table[, 'J_at_25_upper'],
             alpha_j = alpha_j_at_25,
-            theta_j = theta_j_at_25
+            theta_j = theta_j_at_25,
+            include_I2 = FALSE
         )
     }
 
@@ -119,7 +121,8 @@ calculate_jmax <- function(
         to_calculate$tl_lower <- list(
             J = data_table[, 'J_tl_avg_lower'],
             alpha_j = alpha_j_tl,
-            theta_j = theta_j_tl
+            theta_j = theta_j_tl,
+            include_I2 = FALSE
         )
     }
 
@@ -127,7 +130,8 @@ calculate_jmax <- function(
         to_calculate$tl_upper <- list(
             J = data_table[, 'J_tl_avg_upper'],
             alpha_j = alpha_j_tl,
-            theta_j = theta_j_tl
+            theta_j = theta_j_tl,
+            include_I2 = FALSE
         )
     }
 
@@ -152,13 +156,15 @@ calculate_jmax <- function(
         }
 
         # Add results to table
-        data_table <- set_variable(
-            data_table,
-            paste0('I2_', x_name),
-            unit_dictionary('I2'),
-            'calculate_jmax',
-            I2
-        )
+        if (x$include_I2) {
+            data_table <- set_variable(
+                data_table,
+                paste0('I2_', x_name),
+                unit_dictionary('I2'),
+                'calculate_jmax',
+                I2
+            )
+        }
 
         data_table <- set_variable(
             data_table,
