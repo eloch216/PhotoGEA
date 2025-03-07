@@ -55,6 +55,12 @@
     \item When \code{type} is \code{'Gaussian'}, the
           \code{\link{calculate_temperature_response_gaussian}} function will
           be used.
+    \item When \code{type} is \code{'Johnson'}, the
+          \code{\link{calculate_temperature_response_johnson}} function will
+          be used.
+    \item When \code{type} is \code{'Polynomial'}, the
+          \code{\link{calculate_temperature_response_polynomial}} function will
+          be used.
   }
 
   Values of \code{type} are not case-sensitive.

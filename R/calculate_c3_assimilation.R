@@ -51,10 +51,10 @@ calculate_c3_assimilation <- function(
         required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
-        required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
+        required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
-        required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
+        required_variables[[tp_norm_column_name]]        <- unit_dictionary('Tp_norm')
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(

@@ -209,10 +209,10 @@ fit_c4_aci_hyperbola <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c4_aci_hyperbola', 'c4_curvature',                  unit_dictionary$c4_curvature),
-        c('fit_c4_aci_hyperbola', 'rL',                            unit_dictionary$rL),
-        c('fit_c4_aci_hyperbola', 'c4_slope',                      unit_dictionary$c4_slope),
-        c('fit_c4_aci_hyperbola', 'Vmax',                          unit_dictionary$Vmax),
+        c('fit_c4_aci_hyperbola', 'c4_curvature',                  unit_dictionary('c4_curvature')),
+        c('fit_c4_aci_hyperbola', 'rL',                            unit_dictionary('rL')),
+        c('fit_c4_aci_hyperbola', 'c4_slope',                      unit_dictionary('c4_slope')),
+        c('fit_c4_aci_hyperbola', 'Vmax',                          unit_dictionary('Vmax')),
         c('fit_c4_aci_hyperbola', 'convergence',                   ''),
         c('fit_c4_aci_hyperbola', 'convergence_msg',               ''),
         c('fit_c4_aci_hyperbola', 'feval',                         ''),

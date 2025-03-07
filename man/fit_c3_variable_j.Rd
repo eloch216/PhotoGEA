@@ -419,6 +419,8 @@
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{J_tl_avg}, \code{RL_tl_avg},
                   \code{Tp_tl_avg}, and \code{Vcmax_tl_avg}.
+            \item The average leaf temperature is also stored in the
+                  \code{Tleaf_avg} column.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.

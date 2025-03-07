@@ -35,7 +35,7 @@ calculate_c3_limitations_grassi <- function(
     required_variables[[gsc_column_name]]            <- 'mol m^(-2) s^(-1)'
     required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
     required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
-    required_variables[[oxygen_column_name]]         <- unit_dictionary[['oxygen']]
+    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_column_name]]          <- 'micromol m^(-2) s^(-1)'
 

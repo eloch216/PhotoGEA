@@ -9,7 +9,19 @@ require_flexible_param <- function(required_variables, flexible_param) {
     for (i in seq_along(flexible_param)) {
         if (!value_set(flexible_param[[i]])) {
             pn <- names(flexible_param)[i]
-            required_variables[pn] <- unit_dictionary[pn]
+            required_variables[pn] <- unit_dictionary(pn)
+        }
+    }
+    required_variables
+}
+
+# A helping function for checking units of "optional" parameters (uses the unit
+# dictionary)
+require_optional_param <- function(required_variables, optional_param, data_table) {
+    for (i in seq_along(optional_param)) {
+        if (optional_param[[i]] %in% colnames(data_table)) {
+            pn <- names(optional_param)[i]
+            required_variables[pn] <- unit_dictionary(pn)
         }
     }
     required_variables

@@ -75,9 +75,9 @@ fit_c3_aci <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c3_aci
+    # most units have already been checked by error_function_c3_aci
     required_variables <- list()
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ca_column_name]] <- unit_dictionary('Ca')
 
     check_required_variables(replicate_exdf, required_variables)
 

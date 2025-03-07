@@ -15,7 +15,8 @@
     identifier_columns,
     measurement_numbers_to_remove,
     column_for_ordering,
-    ordering_column_tolerance = Inf
+    ordering_column_tolerance = Inf,
+    columns_to_average = c()
   )
 }
 
@@ -48,6 +49,11 @@
     \code{driving_column_tolerance} input argument; the
     \code{ordering_column_tolerance} can be set to \code{Inf} to disable this
     check.
+  }
+
+  \item{columns_to_average}{
+    A list of columns whose average values should be calculated; see below for
+    details.
   }
 }
 
@@ -83,6 +89,14 @@
   \code{ordering_column_tolerance}). This check is accomplished via
   \code{\link{check_response_curve_data}}, treating the
   \code{column_for_ordering} as the \code{driving_column}.
+
+  Sometimes it is useful to calculate average values of certain columns across
+  each curve in a data set, such as the leaf temperature or incident light. This
+  can be done by specifying the names of such columns as the
+  \code{columns_to_average} input argument. For each such column, its mean value
+  will be stored in a new column whose name is based on the original column
+  name, but with \code{'_avg'} added at the end. For example, the average value
+  of the \code{Qin} column would be stored in \code{Qin_avg}.
 }
 
 \value{
@@ -103,16 +117,18 @@ licor_file <- read_gasex_file(
 # each curve, and order them by their incident light values (since these are
 # light response curves). The curves were measured from high to low values of
 # `Qin`, so after organizing the curves, their order will be reversed from the
-# original version.
+# original version. Also add the average value of TleafCnd and Qin for each
+# curve.
 licor_file <- organize_response_curve_data(
   licor_file,
   c('species', 'plot'),
   c(),
-  'Qin'
+  'Qin',
+  columns_to_average = c('TleafCnd', 'Qin')
 )
 
 # View a subset of the data, including the new `seq_num` column
-print(licor_file[, c('species', 'plot', 'seq_num', 'Qin', 'A'), TRUE])
+print(licor_file[, c('species', 'plot', 'seq_num', 'Qin', 'A', 'Qin_avg'), TRUE])
 }
 
 \concept{exdf}
