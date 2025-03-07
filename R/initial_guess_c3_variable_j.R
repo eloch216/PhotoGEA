@@ -56,7 +56,7 @@ initial_guess_c3_variable_j <- function(
         rc_exdf <- set_variable(
             rc_exdf,
             gmc_norm_column_name,
-            unit_dictionary[['gmc_norm']],
+            unit_dictionary('gmc_norm'),
             value = 1
         )
 

@@ -18,22 +18,3 @@ j_from_jmax <- function(
     # Equation 2.15
     quadratic_root_minus(theta, -(I2 + Jmax), I2 * Jmax) # micromol / m^2 / s
 }
-
-# Here we use Equations 2.13 and 2.14 from S. von Caemmerer to calculate Jmax
-# from J.
-#
-# Note that this function expects arguments of length 1. In other words, it is
-# not vectorized.
-jmax_from_j <- function(
-    J,    # micromol / m^2 / s
-    Qin,  # micromol / m^2 / s
-    beta, # dimensionless
-    theta # dimensionless
-)
-{
-    # Equation 2.14
-    I2 <- Qin * beta # micromol / m^2 / s
-
-    # Here we solve Equation 2.13 for Jmax:
-    J * (I2 - theta * J) / (I2 - J) # micromol / m^2 / s
-}

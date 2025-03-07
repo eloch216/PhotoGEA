@@ -34,13 +34,13 @@ initial_guess_c3_aci <- function(
         required_variables <- list()
         required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
         required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
         required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
         required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
         required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
         required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
         required_variables[[total_pressure_column_name]] <- 'bar'
-        required_variables[[tp_norm_column_name]]        <- unit_dictionary[['Tp_norm']]
+        required_variables[[tp_norm_column_name]]        <- unit_dictionary('Tp_norm')
         required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
 
         flexible_param <- list(

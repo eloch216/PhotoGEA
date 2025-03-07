@@ -30,7 +30,6 @@
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -131,12 +130,6 @@
     The name of the column in \code{exdf_obj} that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21\% or 2\%);
     the units must be \code{percent}.
-  }
-
-  \item{qin_column_name}{
-    The name of the column in \code{exdf_obj} that contains values of the
-    incident photosynthetically active flux density in
-    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rl_norm_column_name}{

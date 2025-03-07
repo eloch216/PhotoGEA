@@ -3,7 +3,8 @@ organize_response_curve_data <- function(
     identifier_columns,
     measurement_numbers_to_remove,
     column_for_ordering,
-    ordering_column_tolerance = Inf
+    ordering_column_tolerance = Inf,
+    columns_to_average = c()
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -45,6 +46,28 @@ organize_response_curve_data <- function(
     for (cn in c(column_for_ordering, identifier_columns)) {
         licor_exdf <- licor_exdf[order(licor_exdf[, cn]), , TRUE]
     }
+
+
+    # Re-create factors from the identifier columns
+    f_new <- lapply(identifier_columns, function(x) {licor_exdf[ , x]})
+
+    # Calulate average values of certain columns
+    columns_to_average <-
+        columns_to_average[columns_to_average %in% colnames(licor_exdf)]
+
+    licor_exdf <- do.call(rbind, by(licor_exdf, f_new, function(x) {
+        for (cn in columns_to_average) {
+            avg_cn <- paste0(cn, '_avg')
+            x <- set_variable(
+                x,
+                avg_cn,
+                x[['units']][[cn]],
+                'organize_response_curve_data',
+                mean(x[, cn], na.rm = TRUE)
+            )
+        }
+        x
+    }))
 
     # Remove any row names and return the exdf
     row.names(licor_exdf$main_data) <- NULL

@@ -18,7 +18,7 @@ plot_c4_aci_hyperbola_fit <- function(
 
     check_required_variables(fit_results$fits_interpolated, required_variables)
 
-    required_variables[[a_column_name]] <- unit_dictionary[['A']]
+    required_variables[[a_column_name]] <- unit_dictionary('A')
 
     check_required_variables(fit_results$fits, required_variables)
 

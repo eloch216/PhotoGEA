@@ -22,14 +22,14 @@ estimate_licor_variance <- function(
 
     # Make sure the required variables are defined and have the correct units.
     required_variables <- list()
-    required_variables[[a_column_name]]        <- unit_dictionary[['A']]
-    required_variables[[co2_r_column_name]]    <- unit_dictionary[['CO2_r']]
-    required_variables[[co2_s_column_name]]    <- unit_dictionary[['CO2_s']]
-    required_variables[[corrfact_column_name]] <- unit_dictionary[['CorrFact']]
-    required_variables[[flow_column_name]]     <- unit_dictionary[['Flow']]
-    required_variables[[h2o_r_column_name]]    <- unit_dictionary[['H2O_r']]
-    required_variables[[h2o_s_column_name]]    <- unit_dictionary[['H2O_s']]
-    required_variables[[s_column_name]]        <- unit_dictionary[['S']]
+    required_variables[[a_column_name]]        <- unit_dictionary('A')
+    required_variables[[co2_r_column_name]]    <- unit_dictionary('CO2_r')
+    required_variables[[co2_s_column_name]]    <- unit_dictionary('CO2_s')
+    required_variables[[corrfact_column_name]] <- unit_dictionary('CorrFact')
+    required_variables[[flow_column_name]]     <- unit_dictionary('Flow')
+    required_variables[[h2o_r_column_name]]    <- unit_dictionary('H2O_r')
+    required_variables[[h2o_s_column_name]]    <- unit_dictionary('H2O_s')
+    required_variables[[s_column_name]]        <- unit_dictionary('S')
 
     check_required_variables(exdf_obj, required_variables)
 

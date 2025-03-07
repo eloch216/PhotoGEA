@@ -35,7 +35,7 @@ plot_c4_aci_fit <- function(
     # Don't throw an error if some columns are all NA
     check_required_variables(fit_results$fits_interpolated, required_variables, check_NA = FALSE)
 
-    required_variables[[a_column_name]] <- unit_dictionary[['A']]
+    required_variables[[a_column_name]] <- unit_dictionary('A')
 
     # Don't throw an error if some columns are all NA
     check_required_variables(fit_results$fits, required_variables, check_NA = FALSE)
@@ -43,7 +43,7 @@ plot_c4_aci_fit <- function(
     required_variables <- list()
     required_variables[['operating_Ci']]       <- 'micromol mol^(-1)'
     required_variables[['operating_PCm']]      <- 'microbar'
-    required_variables[['operating_An_model']] <- unit_dictionary[['A']]
+    required_variables[['operating_An_model']] <- unit_dictionary('A')
 
     # Don't throw an error if some columns are all NA
     check_required_variables(fit_results$parameters, required_variables, check_NA = FALSE)
