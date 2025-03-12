@@ -789,19 +789,22 @@ above, where there is a smooth transition between limiting states.
 
 ### Calculating Jmax
 
-The `fit_c4_aci` function can estimate values of $J$, but not $J_{max}$.
-However, estimates of $J_{max}$ can be obtained after fitting by applying the
+The `fit_c4_aci` function estimates values of $J$, but not $J_{max}$. However,
+estimates of $J_{max}$ can be obtained after fitting by applying the
 `calculate_jmax` function to the results from `fit_c4_aci`. This is only
 possible when allowing or assuming electron transport limitations, as we have
-done for the previous fits.
+done for the fits in this section. For more information about this function, see
+the built-in help menu entry by typing `?calculate_jmax`.
 
-In order to do this, there are a few required pieces of information that are not
-included in the results: the temperature-dependent values of $\alpha_J$ and
+In order to do this, we need values of $Q_{in}$ and $T_{leaf}$ for each curve.
+This information is not typically included in a Licor file, but we calculated
+average values of $Q_{in}$ and $T_{leaf}$ in the [Reorganizing the Data] section
+when calling `organize_response_curve_data`, so this is taken care of.
+
+It is also necessary to have temperature-dependent values of $\alpha_J$ and
 $\theta_J$, two parameters related to $J$ and $J_{max}$. These can be obtained
-using the `calculate_temperature_response` function, which was also used above
-in a different context. For more information about these functions, see the
-built-in help menu entries by typing `?calculate_jmax` or
-`?calculate_temperature_response`.
+using the `calculate_temperature_response` function, which was also used in the
+[Fitting Licor Data] section above.
 
 ```{r calculate_jmax}
 # Calculate temperature-dependent values of Jmax-related parameters
