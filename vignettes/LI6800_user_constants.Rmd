@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 advice <- function(include_prefix, advice_text) {
   if (include_prefix) {
-    cat(paste(' > ', advice_text))
+    cat(paste0(' > *', advice_text, '*'))
   } else {
     cat(paste(' -', advice_text, '\n\n'))
   }
@@ -108,8 +108,8 @@ The later sections include more information about a few related topics:
   with log files where user constants, file names, or log remarks were not
   used to record metadata.
 
-Throughout this vignette, key pieces of advice will be shown in boxes. The final
-section in the vignette
+Throughout this vignette, key pieces of advice will be shown in italics. The
+final section in the vignette
 ([Summary of Advice for Using Licor LI-6800 User Constants]) contains a list of
 all such pieces of advice.
 
@@ -139,27 +139,27 @@ advice(INCLUDE_PREFIX, 'User constants should generally reflect your
 experimental design and the comparisons you eventually plan to make.')
 ```
 
-- For example, if you have a field experiment with two cultivars and two
-  treatments, it would make sense to include `cultivar` and `treatment` as user
-  constants.
+For example, if you have a field experiment with two cultivars and two
+treatments, it would make sense to include `cultivar` and `treatment` as user
+constants.
 
 ```{r user_constants_id_curves}
 advice(INCLUDE_PREFIX, 'In combination, user constants should uniquely identify
 each response curve in your data set.')
 ```
 
-- In the experiment above, if you plan to measure multiple biological replicates
-  from each cultivar and treatment, then `cultivar` and `treatment` will not
-  uniquely identify each measurement. In this case it would make sense to also
-  include a `replicate` user constant.
+In the experiment above, if you plan to measure multiple biological replicates
+from each cultivar and treatment, then `cultivar` and `treatment` will not
+uniquely identify each measurement. In this case it would make sense to also
+include a `replicate` user constant.
 
 ```{r minimize_user_constants}
 advice(INCLUDE_PREFIX, "Don't include too many user constants.")
 ```
 
-- Each user constant takes time and effort to define, and to update during your
-  measurements. Make sure each one has a clear purpose, and is not redundant
-  with another user constant.
+Each user constant takes time and effort to define, and to update during your
+measurements. Make sure each one has a clear purpose, and is not redundant
+with another user constant.
 
 ## Examples of User Constants
 
@@ -213,85 +213,85 @@ advice(INCLUDE_PREFIX, 'User constants must be defined before opening a log
 file.')
 ```
 
-- The user constants will (potentially) be included as columns in the log file,
-  so so they must be defined before opening a log file. They can be defined
-  during warmup tests, which is a good time to get them sorted out.
+The user constants will (potentially) be included as columns in the log file,
+so so they must be defined before opening a log file. They can be defined
+during warmup tests, which is a good time to get them sorted out.
 
 ```{r retained_definitions}
 advice(INCLUDE_PREFIX, 'User constant definitions are retained by each machine
 between uses.')
 ```
 
-- Just like environmental settings (such as humiditity, temperature, or light),
-  user constant definitions are retained when a log file is closed and when the
-  machine is powered off. So, when you first start using a machine, you may see
-  user constant definitions from the previous experiment it was used for. Just
-  go ahead and replace these with your own definitions.
+Just like environmental settings (such as humiditity, temperature, or light),
+user constant definitions are retained when a log file is closed and when the
+machine is powered off. So, when you first start using a machine, you may see
+user constant definitions from the previous experiment it was used for. Just
+go ahead and replace these with your own definitions.
 
 ```{r include_as_columns}
 advice(INCLUDE_PREFIX, 'Always log user constants as columns, not as rows.')
 ```
 
-- Logging the user constants as rows breaks up the main data table in the log
-  file. A basic expectation for a table is that each row represents a set of
-  observations of each column. This is no longer true when user constants are
-  logged as rows, which makes the table difficult to process.
+Logging the user constants as rows breaks up the main data table in the log
+file. A basic expectation for a table is that each row represents a set of
+observations of each column. This is no longer true when user constants are
+logged as rows, which makes the table difficult to process.
 
 ```{r do_not_reset}
 advice(INCLUDE_PREFIX, 'Never reset after logging.')
 ```
 
-- When the "reset to default after logging" option is selected, the value of the
-  user constant will change to its default after _a single log_. If you are
-  running a response curve, this means that the first row in the curve will have
-  the desired value of the user constant, and then the remaining rows will have
-  the default value. This is confusing. Potentially, it could be acceptable to
-  "reset to default after logging" when making spot measurements, but even in
-  this case it is not clear what the benefit of resetting would be.
+When the "reset to default after logging" option is selected, the value of the
+user constant will change to its default after _a single log_. If you are
+running a response curve, this means that the first row in the curve will have
+the desired value of the user constant, and then the remaining rows will have
+the default value. This is confusing. Potentially, it could be acceptable to
+"reset to default after logging" when making spot measurements, but even in
+this case it is not clear what the benefit of resetting would be.
 
 ```{r computed_variable}
 advice(INCLUDE_PREFIX, 'It is rare to need a computed variable.')
 ```
 
-- Computed variables are almost never needed. The only exception is if you want
-  to see the value of a variable that is not included in a typical log file,
-  such as the Ball-Berry index (when measuring Ball-Berry curves).
+Computed variables are almost never needed. The only exception is if you want
+to see the value of a variable that is not included in a typical log file,
+such as the Ball-Berry index (when measuring Ball-Berry curves).
 
 ```{r consistent_spelling}
 advice(INCLUDE_PREFIX, 'Be consistent with spelling, capitalization, and spacing
 across machines and replicates.')
 ```
 
-- If you are using multiple machines for a single experiment and plan to
-  eventually combine data from each separate log file, it is important to use
-  consistent spelling and capitalization across the user constant definitions.
-  For example, if one machine has a user constant called `Species` and another
-  has `species`, R will not identify these as being the same column when reading
-  log files.
+If you are using multiple machines for a single experiment and plan to
+eventually combine data from each separate log file, it is important to use
+consistent spelling and capitalization across the user constant definitions.
+For example, if one machine has a user constant called `Species` and another
+has `species`, R will not identify these as being the same column when reading
+log files.
 
 ```{r consider_dropdown}
 advice(INCLUDE_PREFIX, 'Consider using a dropdown menu.')
 ```
 
-- For user constants with simple values, setting values with the keyboard/number
-  pad is the best choice. For example, if the `replicate` user constant will
-  only take numeric values `1` through `5`, then this would be easy to enter
-  using the keyboard. However, sometimes values are more complicated; for
-  example, the `construct_id` user constant might take values `h1na`, `zg5b`,
-  and `WT`. In this case, spelling these out would be tedious and error-prone,
-  and it would be better to use a dropdown menu instead of the keyboard.
+For user constants with simple values, setting values with the keyboard/number
+pad is the best choice. For example, if the `replicate` user constant will
+only take numeric values `1` through `5`, then this would be easy to enter
+using the keyboard. However, sometimes values are more complicated; for
+example, the `construct_id` user constant might take values `h1na`, `zg5b`,
+and `WT`. In this case, spelling these out would be tedious and error-prone,
+and it would be better to use a dropdown menu instead of the keyboard.
 
 ```{r consider_config}
 advice(INCLUDE_PREFIX, 'Consider using a configuration file to define user
 constants.')
 ```
 
-- User constant definitions can be saved to a
-  [configuration file](https://www.licor.com/support/LI-6800/topics/startup-tab.html#Configuration),
-  which can then be transferred to a USB stick. From there, the configuration
-  file can be copied to other machines, and the definitions can be loaded. This
-  can save time and help ensure that user constants use consistent spelling and
-  capitalization across all machines.
+User constant definitions can be saved to a
+[configuration file](https://www.licor.com/support/LI-6800/topics/startup-tab.html#Configuration),
+which can then be transferred to a USB stick. From there, the configuration
+file can be copied to other machines, and the definitions can be loaded. This
+can save time and help ensure that user constants use consistent spelling and
+capitalization across all machines.
 
 ## Choosing Logging Options
 
@@ -303,11 +303,11 @@ One of the logging options pertains to user constants.
 advice(INCLUDE_PREFIX, 'It is rare to prompt on manual logs.')
 ```
 
-- When the "prompt on (manual) logs" option is selected, a prompt window will
-  appear after making a manual log; the prompt will allow you to enter values of
-  each user constant. When measuring response curves, manual logs are rarely
-  made, so there is no strong reason to use this option. It may be helpful when
-  making spot measurements, though.
+When the "prompt on (manual) logs" option is selected, a prompt window will
+appear after making a manual log; the prompt will allow you to enter values of
+each user constant. When measuring response curves, manual logs are rarely
+made, so there is no strong reason to use this option. It may be helpful when
+making spot measurements, though.
 
 ## Setting Values of the User Constants
 
@@ -326,24 +326,24 @@ values you have specified until you change them.
 advice(INCLUDE_PREFIX, 'Make user constants part of your measurement routine.')
 ```
 
-- Before clamping on to a new leaf, it is a good idea to double check the
-  environment variables, and to update user constants so they accurately
-  describe the new leaf. Make sure both of these steps are part of your
-  measurement routine. The machine itself will not automatically remind you to
-  update user constant values.
+Before clamping on to a new leaf, it is a good idea to double check the
+environment variables, and to update user constants so they accurately
+describe the new leaf. Make sure both of these steps are part of your
+measurement routine. The machine itself will not automatically remind you to
+update user constant values.
 
 ```{r use_a_backup}
 advice(INCLUDE_PREFIX, 'Record metadata in a second place.')
 ```
 
-- User constants are a convenient way to ensure that your important metadata is
-  stored alongside the gas exchange data itself. However, it's easy to make
-  mistakes in field conditions, and sometimes you will forget to update user
-  constants when clamping a new leaf or starting a new curve. As an "insurance
-  policy," it is wise to record the metadata in a second place, typically a
-  paper lab notebook. In the paper record, just indicate the sequence of samples
-  that each machine measures throughout the day. This will enable you to correct
-  any errors in the user constants.
+User constants are a convenient way to ensure that your important metadata is
+stored alongside the gas exchange data itself. However, it's easy to make
+mistakes in field conditions, and sometimes you will forget to update user
+constants when clamping a new leaf or starting a new curve. As an "insurance
+policy," it is wise to record the metadata in a second place, typically a
+paper lab notebook. In the paper record, just indicate the sequence of samples
+that each machine measures throughout the day. This will enable you to correct
+any errors in the user constants.
 
 # Examples of User Constant Applications
 
@@ -461,16 +461,18 @@ separate columns for `species`, `plot`, and `replicate`, these approaches would
 create a single description of all three together. If you want to later extract
 the individual `species`, `plot`, and `replicate` values, it will be necessary
 to ["parse"](https://en.wikipedia.org/wiki/Parsing) the combined text string.
-There is no general way to do this, but we discuss a few options below.
-
-Because of the "parsing issue," it's generally simpler and more time-efficient
-to just make separate user constants for each important piece of metadata. In
-other words:
 
 ```{r avoid_filenames_and_remarks}
 advice(INCLUDE_PREFIX, 'User constants save time in the long run compared to
 storing metadata in file names or remarks.')
 ```
+
+Because of the "parsing issue," it's generally simpler and more time-efficient
+to just make separate user constants for each important piece of metadata.
+Although it's often simple for a human to parse a string, it can be difficult
+for a computer.
+
+There is no general way to parse a string, but we discuss a few options below.
 
 ## Automated Parsing Using R
 
