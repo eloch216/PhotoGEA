@@ -234,3 +234,8 @@ being added all the time:
   - [Combining PhotoGEA With Other Packages](combining_with_other_packages.html):
     Discusses how to create wrappers for functions from other packages to extend
     the processing capabilities of `PhotoGEA`.
+- General advice:
+  - [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html):
+    Discusses how to include metadata in log files when using a Licor LI-6800
+    gas exchange measurement system, and provides advice for dealing with data
+    sets that do not contain user constants.

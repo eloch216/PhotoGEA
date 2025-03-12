@@ -1,5 +1,6 @@
 Package: PhotoGEA
-Version: 1.1.0
+Version: 1.2.0
+Date: 2025-03-12
 Title: Photosynthetic Gas Exchange Analysis
 Description: A collection of tools for loading and analyzing photosynthetic gas
     exchange data.
@@ -7,7 +8,10 @@ Authors@R: c(
     person("Edward B.", "Lochocki", role = c('cre', 'aut'),
            email = "eloch@illinois.edu",
            comment = c(ORCID = "0000-0002-4912-9783")),
-    person("Coralie E.", "Salesse-Smith", role = 'ctb'),
+    person("Coralie E.", "Salesse-Smith", role = 'aut',
+           comment = c(ORCID = "0000-0002-2856-4217")),
+    person("Justin M.", "McGrath", role = 'aut',
+           comment = c(ORCID = "0000-0002-7025-3906")),
     person("PhotoGEA authors", role = "cph")
     )
 Depends: R (>= 3.6.0)

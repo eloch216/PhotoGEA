@@ -31,15 +31,16 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## Unreleased
+## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 
 ### Minor user-facing changes
 
+- Added a vignette with advice for Licor LI-6800 user constants.
 - Added a new function for calculating values of Jmax (`calculate_jmax`) and
   included it in the C3 and C4 A-Ci curve vignettes. Along with this function,
   new temperature response parameters were added:
   `jmax_temperature_param_bernacchi` and `jmax_temperature_param_flat`. These
-  emply polynomial temperature responses, a new type that was also added to the
+  employ polynomial temperature responses, a new type that was also added to the
   package via the `calculate_temperature_response_polynomial` function.
 - `identify_c3_limiting_processes` now returns each co-limiting process when
   assimilation is co-limited.
@@ -49,6 +50,8 @@ be directly added to this file to describe the related changes.
   and `set_variable`.
 - Added functionality for reading user remarks to `read_licor_6800_plaintext`
   and `read_licor_6800_Excel`.
+- Added a new input argument to `organize_response_curve_data` that enables
+  calculations of average values for specified columns.
 - Improved `exdf` construction and element access; now it is possible to provide
   just a few units when creating an `exdf` object, and it is possible to create
   single-column `exdf` objects.
@@ -65,7 +68,16 @@ be directly added to this file to describe the related changes.
 - A bug was fixed where `Gamma_star` was sometimes accidentally removed from the
   outputs of `fit_c3_aci` and `fit_c3_variable_j`
 - Optional input arguments to `calculate_c3_assimilation` are checked to make
-  sure they are supported.
+  sure they are supported. Going forward, any new functions with optional
+  arguments (such as `calculate_jmax`) will use this same check.
+- Removed `Qin` from several functions related to C4 A-Ci curves, since `Qin` is
+  not actually needed for fitting C4 A-Ci curves.
+
+### Internal changes
+
+- The `unit_dictionary` is now a function rather than a list, which enables
+  better error messages when a quantity is not included in the dictionary; a few
+  mistakes were discovered this way (and fixed).
 
 ## Changes in PhotoGEA version 1.1.0 (2024-12-09)
 
