@@ -3,9 +3,14 @@ check_required_variables <- function(x, required_variables, check_NA = TRUE) {
     UseMethod('check_required_variables', x)
 }
 
-# For a data frame, `required_variables` should just be a character vector of
+# For a data frame, `required_variables` can just be a character vector of
 # column names that should be included in `colnames(x)`.
 check_required_variables.data.frame <- function(x, required_variables, check_NA = TRUE) {
+    # If required_variables is a list, just use the names of its elements
+    if (is.list(required_variables)) {
+        required_variables <- names(required_variables)
+    }
+
     missing_columns <-
         required_variables[!required_variables %in% colnames(x)]
 

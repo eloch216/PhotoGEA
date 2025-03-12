@@ -28,14 +28,18 @@ error_function_c4_aci_hyperbola <- function(
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
     required_variables[[a_column_name]]  <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ci_column_name]] <- unit_dictionary$Ci
-
-    required_variables <- require_flexible_param(
-        required_variables,
-        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
-    )
+    required_variables[[ci_column_name]] <- unit_dictionary('Ci')
 
     check_required_variables(replicate_exdf, required_variables)
+
+    check_required_variables(
+        replicate_exdf,
+        require_flexible_param(
+            list(),
+            c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
+        ),
+        check_NA = FALSE
+    )
 
     # Retrieve values of flexible parameters as necessary
     if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}

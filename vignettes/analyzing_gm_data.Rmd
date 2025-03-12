@@ -73,21 +73,21 @@ always positive (because $\alpha$ is always greater than 1). The discrimination
 can also be expressed in terms of the isotopic composition $\delta$, which is
 related to the isotope ratio $R$ by $\delta = R - 1$:
 $$\Delta^{13}C = \frac{\delta^{13}C_r - \delta^{13}C_p}{1 + \delta^{13}C_p}.$$
-The isotopic compositions can be expressed relative to an international standard,
-making them the preferred way to express the relative abundance of different
-isotopes.
+The isotopic compositions can be expressed relative to an international
+standard, making them the preferred way to express the relative abundance of
+different isotopes.
 
 During photosynthetic carbon isotope discrimination measurements, it is not
-typically possible to actually measure $\delta^{13}C_p$ for a variety of reasons.
-Instead, $\delta^{13}C$ can be measured in the outgoing air from the leaf.
-Then, it is possible to relate the isotopic compositions of the incoming and
-outgoing air to and from the leaf ($\delta^{13}C_{in}$ and $\delta^{13}C_{out}$,
-respectively) to $\delta^{13}C_p$. In this case, the full equation for
-$\Delta^{13}C$ becomes $$\Delta^{13}C = \frac{\xi (\delta^{13}C_{out} -
-\delta^{13}C_{in})}{1 + \delta^{13}C_{out} - \xi (\delta^{13}C_{out} -
-\delta^{13}C_{in})}.$$ Here, $\xi$ is defined by $$\xi = \frac{C_{in}}{C_{in} -
-C_{out}},$$ where $C_{in}$ and $C_{out}$ are the ^12^C concentrations in the
-incoming and outgoing air.
+typically possible to actually measure $\delta^{13}C_p$ for a variety of
+reasons. Instead, $\delta^{13}C$ can be measured in the outgoing air from the
+leaf. Then, it is possible to relate the isotopic compositions of the incoming
+and outgoing air to and from the leaf ($\delta^{13}C_{in}$ and
+$\delta^{13}C_{out}$, respectively) to $\delta^{13}C_p$. In this case, the full
+equation for $\Delta^{13}C$ becomes $$\Delta^{13}C =
+\frac{\xi (\delta^{13}C_{out} - \delta^{13}C_{in})}
+{1 + \delta^{13}C_{out} - \xi (\delta^{13}C_{out} - \delta^{13}C_{in})}.$$ Here,
+$\xi$ is defined by $$\xi = \frac{C_{in}}{C_{in} - C_{out}},$$ where $C_{in}$
+and $C_{out}$ are the ^12^C concentrations in the incoming and outgoing air.
 
 In summary, the photosynthetic carbon isotope discrimination $\Delta^{13}C$ is
 an experimentally accessible quantity that reflects the degree of preference for
@@ -332,14 +332,22 @@ licor_data[ , 'curve_identifier'] <-
   paste(licor_data[ , 'machine'], licor_data[ , 'replicate'], sep = ' - ')
 ```
 
+When measuring response curves (or any other type of gas exchange data), it is
+strongly recommended to record key pieces of metadata in the log files using
+"user constants," as was done in this example. For more information, please see
+the [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html), which
+also includes advice for dealing with data sets that do not contain such
+metadata.
+
 The next step is to make sure that this column correctly identifies each
-response curve. To do this, we can use the `check_response_curve_data` function from
-`PhotoGEA`. Here we will supply the name of a column that should uniquely
+response curve. To do this, we can use the `check_response_curve_data` function
+from `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`12`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
-information, see the built-in help menu entry by typing `?check_response_curve_data`.)
+information, see the built-in help menu entry by typing
+`?check_response_curve_data`.)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements

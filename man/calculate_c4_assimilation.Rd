@@ -32,7 +32,6 @@
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
     pcm_column_name = 'PCm',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -158,12 +157,6 @@
   \item{pcm_column_name}{
     The name of the column in \code{exdf_obj} that contains the partial pressure
     of CO2 in the mesophyll, expressed in \code{microbar}.
-  }
-
-  \item{qin_column_name}{
-    The name of the column in \code{exdf_obj} that contains values of the
-    incident photosynthetically active flux density in
-    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rl_norm_column_name}{
@@ -444,8 +437,8 @@ assim <- calculate_c4_assimilation(inputs, 0, 0.003, 250, 1, 0.5, 40, 200, 80)
 # very different results. Although this approximation is helpful for
 # understanding C4 photosythesis, it should not be used for calculations.
 lattice::xyplot(
-  Apr + Apc + Ar + Ac ~ PCm,
-  data = cbind(inputs, assim)$main_data,
+  Apr + Apc + Ar + Ac ~ inputs[, 'PCm'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,
@@ -456,8 +449,8 @@ lattice::xyplot(
 
 # Likewise, we can look at Ajm, Ajbs, and Aj
 lattice::xyplot(
-  Ajm + Ajbs + Aj ~ PCm,
-  data = cbind(inputs, assim)$main_data,
+  Ajm + Ajbs + Aj ~ inputs[, 'PCm'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,
@@ -469,8 +462,8 @@ lattice::xyplot(
 # Finally, we can see whether enzyme activity or light limits overall
 # assimilation. In this case, assimilation is always enzyme-limited.
 lattice::xyplot(
-  Ac + Aj + An ~ PCm,
-  data = cbind(inputs, assim)$main_data,
+  Ac + Aj + An ~ inputs[, 'PCm'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,

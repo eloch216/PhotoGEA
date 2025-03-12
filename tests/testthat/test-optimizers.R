@@ -57,6 +57,18 @@ test_that('the nlminb optimizer works', {
     expect_true(is.finite(fit_res$parameters[1, 'RL_at_25']))
 })
 
+test_that('the null optimizer works', {
+    fit_res <- expect_silent(
+        fit_c3_aci(
+            one_curve,
+            Ca_atmospheric = 420,
+            optim_fun = optimizer_null()
+        )
+    )
+
+    expect_true(is.finite(fit_res$parameters[1, 'RL_at_25']))
+})
+
 test_that('optimizer outputs are checked', {
     expect_error(
         fit_c3_aci(

@@ -20,7 +20,6 @@ fit_c4_aci <- function(
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -62,7 +61,6 @@ fit_c4_aci <- function(
         ko_column_name,
         kp_column_name,
         oxygen_column_name,
-        qin_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -71,9 +69,9 @@ fit_c4_aci <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c4_aci
+    # most units have already been checked by error_function_c4_aci
     required_variables <- list()
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ca_column_name]] <- unit_dictionary('Ca')
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -108,7 +106,6 @@ fit_c4_aci <- function(
         gmc_norm_column_name,
         j_norm_column_name,
         kp_column_name,
-        qin_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -167,7 +164,6 @@ fit_c4_aci <- function(
         kp_column_name,
         oxygen_column_name,
         pcm_column_name,
-        qin_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -176,10 +172,17 @@ fit_c4_aci <- function(
         perform_checks = FALSE
     )
 
+    # Remove any columns in replicate_exdf that are also included in the
+    # output from calculate_c4_assimilation
+    replicate_exdf <- remove_repeated_colnames(replicate_exdf, aci)
+
     # Set all categories to `fit_c4_aci` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c4_aci'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
+
+    # Append the fitting results to the original exdf object
+    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -214,7 +217,6 @@ fit_c4_aci <- function(
         kp_column_name,
         oxygen_column_name,
         pcm_column_name,
-        qin_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -222,9 +224,6 @@ fit_c4_aci <- function(
         hard_constraints,
         perform_checks = FALSE
     )[, 'An']
-
-    # Append the fitting results to the original exdf object
-    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Interpolate onto a finer Cc spacing and recalculate fitted rates
     replicate_exdf_interpolated <- interpolate_assimilation_inputs(
@@ -247,7 +246,6 @@ fit_c4_aci <- function(
             kp_column_name,
             oxygen_column_name,
             pcm_column_name,
-            qin_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
@@ -276,7 +274,6 @@ fit_c4_aci <- function(
         kp_column_name,
         oxygen_column_name,
         pcm_column_name,
-        qin_column_name,
         rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
@@ -285,8 +282,15 @@ fit_c4_aci <- function(
         perform_checks = FALSE
     )
 
+    # Remove any columns in replicate_exdf_interpolated that are also included
+    # in the output from calculate_c4_assimilation
+    replicate_exdf_interpolated <- remove_repeated_colnames(
+        replicate_exdf_interpolated,
+        assim_interpolated
+    )
+
     fits_interpolated <- cbind(
-        replicate_exdf_interpolated[, c(ci_column_name, pcm_column_name), TRUE],
+        replicate_exdf_interpolated,
         assim_interpolated
     )
 
@@ -395,7 +399,6 @@ fit_c4_aci <- function(
             ko_column_name,
             kp_column_name,
             oxygen_column_name,
-            qin_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,
@@ -407,16 +410,16 @@ fit_c4_aci <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c4_aci',               'alpha_psii',          unit_dictionary[['alpha_psii']]),
-        c('fit_c4_aci',               'gbs',                 unit_dictionary[['gbs']]),
-        c('fit_c4_aci',               'gmc_at_25',           unit_dictionary[['gmc_at_25']]),
+        c('fit_c4_aci',               'alpha_psii',          unit_dictionary('alpha_psii')),
+        c('fit_c4_aci',               'gbs',                 unit_dictionary('gbs')),
+        c('fit_c4_aci',               'gmc_at_25',           unit_dictionary('gmc_at_25')),
         c('fit_c4_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'Rm_frac',             unit_dictionary[['Rm_frac']]),
+        c('fit_c4_aci',               'Rm_frac',             unit_dictionary('Rm_frac')),
         c('fit_c4_aci',               'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpmax_at_25',         'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vpr',                 'micromol m^(-2) s^(-1)'),
-        c('fit_c4_aci',               'gmc_tl_avg',          unit_dictionary[['gmc_at_25']]),
+        c('fit_c4_aci',               'gmc_tl_avg',          unit_dictionary('gmc_at_25')),
         c('fit_c4_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
         c('fit_c4_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
@@ -453,7 +456,6 @@ fit_c4_aci <- function(
             ko_column_name,
             kp_column_name,
             oxygen_column_name,
-            qin_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
             vcmax_norm_column_name,

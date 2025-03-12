@@ -3,27 +3,16 @@
 # specifying units and a category for each column in addition to names.
 
 # Constructor
-exdf <- function(main_data, units = NULL, categories = NULL, ...) {
+exdf <- function(
+    main_data = data.frame(),
+    units = NULL,
+    categories = NULL,
+    ...
+)
+{
     # Make sure `main_data` is a data frame
     if (!is.data.frame(main_data)) {
         stop("`main_data` must be a data frame")
-    }
-
-    # If `units` or `categories` is NULL, replace it with a default data frame
-    # that has the same names as `main_data` and one row where all entries are
-    # NA. Make sure that all columns are treated as strings.
-    if (is.null(units)) {
-        units <- main_data[1, ]
-        units[] <- lapply(units, as.character)
-        units[1, ] <- NA
-        row.names(units) <- NULL
-    }
-
-    if (is.null(categories)) {
-        categories <- main_data[1, ]
-        categories[] <- lapply(categories, as.character)
-        categories[1, ] <- NA
-        row.names(categories) <- NULL
     }
 
     # Get ready to store messages about any problems with the inputs
@@ -39,23 +28,44 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
     main_data_colnames <- colnames(main_data)
 
     for (i in seq_along(should_be_data_frames)) {
-        if (!is.data.frame(should_be_data_frames[[i]])) {
+        obj      <- should_be_data_frames[[i]]
+        obj_name <- names(should_be_data_frames)[i]
+
+        if (!is.null(obj) && !is.data.frame(obj)) {
             errors <- append(
                 errors,
-                paste0(
-                    "'",
-                    names(should_be_data_frames)[i],
-                    "' must be a data.frame"
-                )
+                paste0('`', obj_name, '` must be a data.frame')
             )
         }
-        if (!identical(colnames(should_be_data_frames[[i]]), main_data_colnames)) {
+
+        if (!is.null(obj) && any(!colnames(obj) %in% main_data_colnames)) {
+            errors <- append(
+                errors,
+                paste0('All columns of `', obj_name, '` must exist in `main_data`')
+            )
+        }
+    }
+
+    # Check to make sure data frames do not have duplicated columns
+    should_have_unique_names <- list(
+        main_data = main_data,
+        units = units,
+        categories = categories
+    )
+
+    for (i in seq_along(should_have_unique_names)) {
+        obj      <- should_have_unique_names[[i]]
+        obj_name <- names(should_have_unique_names)[i]
+
+        if (!is.null(obj) && any(duplicated(colnames(obj)))) {
+            dup_names <- colnames(obj)[duplicated(colnames(obj))]
+
             errors <- append(
                 errors,
                 paste0(
-                    "'",
-                    names(should_be_data_frames)[i],
-                    "' must have the same column names as main_data"
+                    'All columns of `', obj_name, '` must have unique names, ',
+                    'but the following names are duplicated: ',
+                    paste(dup_names, collapse = ', ')
                 )
             )
         }
@@ -68,31 +78,52 @@ exdf <- function(main_data, units = NULL, categories = NULL, ...) {
     )
 
     for (i in seq_along(should_have_one_row)) {
-        if (nrow(should_have_one_row[[i]]) != 1) {
+        obj      <- should_have_one_row[[i]]
+        obj_name <- names(should_have_one_row)[i]
+
+        if (!is.null(obj) && nrow(obj) != 1) {
             errors <- append(
                 errors,
-                paste0(
-                    "'",
-                    names(should_have_one_row)[i],
-                    "' must have exactly one row"
-                )
+                paste0('`', obj_name, '` must have exactly one row')
             )
         }
     }
 
+    # Send error messages if any issues were found
+    if (length(errors) > 0) {
+        msg <- paste(errors, collapse = '\n  ')
+        stop(msg)
+    }
+
+    # Initialize the full units and categories
+    full_units <- data.frame(matrix(ncol = ncol(main_data), nrow = 1))
+    colnames(full_units) <- colnames(main_data)
+    full_units[] <- lapply(full_units, as.character)
+
+    full_categories <- full_units
+
+    # Fill in values supplied by the user
+    if (!is.null(units)) {
+        full_units[, colnames(units)] <- units
+    }
+
+    if (!is.null(categories)) {
+        full_categories[, colnames(categories)] <- categories
+    }
+
     # Make sure the units and categories are treated as strings, including any
     # missing values, which should be replaced by a string "NA"
-    units[1, ] <- as.character(units[1, ])
-    units[1, is.na(units[1, ])] <- "NA"
+    full_units[1, ] <- as.character(full_units[1, ])
+    full_units[1, is.na(full_units[1, ])] <- "NA"
 
-    categories[1, ] <- as.character(categories[1, ])
-    categories[1, is.na(categories[1, ])] <- "NA"
+    full_categories[1, ] <- as.character(full_categories[1, ])
+    full_categories[1, is.na(full_categories[1, ])] <- "NA"
 
     # Make the exdf object
     new_exdf <- list(
         main_data = main_data,
-        units = units,
-        categories = categories
+        units = full_units,
+        categories = full_categories
     )
 
     # Add any other properties specified by the input arguments
@@ -223,7 +254,7 @@ write.csv.exdf <- function(x, file, ...) {
 read.csv.exdf <- function(file, ...) {
     arg_list <- list(...)
 
-    forbidden_arg <- c('header', 'skip')
+    forbidden_arg <- c('header', 'skip', 'stringsAsFactors')
 
     if (any(forbidden_arg %in% names(arg_list))) {
         stop(
@@ -242,7 +273,7 @@ read.csv.exdf <- function(file, ...) {
     categories <- data.frame(t(header[[2]]), stringsAsFactors = FALSE)
     units      <- data.frame(t(header[[3]]), stringsAsFactors = FALSE)
 
-    dataf <- utils::read.csv(file, header = FALSE, skip = 3, ...)
+    dataf <- utils::read.csv(file, header = FALSE, skip = 3, stringsAsFactors = FALSE, ...)
 
     colnames(dataf)      <- cnames
     colnames(units)      <- cnames
@@ -254,17 +285,20 @@ read.csv.exdf <- function(file, ...) {
 # Define a helper function for making nice column names (used to improve `print`
 # and `utils::str`)
 fancy_column_names <- function(x) {
-    paste0(
-        colnames(x$units),
-        " [", x$categories[1,], "]",
-        " (", x$units[1,], ")"
-    )
+    sapply(seq_len(ncol(x)), function(i) {
+        paste0(
+            colnames(x)[i],
+            ' [', x$categories[[i]], ']',
+            ' (', x$units[[i]], ')'
+        )
+    })
 }
 
 # Print an exdf
 print.exdf <- function(x, ...) {
     res <- x$main_data
     colnames(res) <- fancy_column_names(x)
+    cat('\nConverting an `exdf` object to a `data.frame` before printing\n\n')
     print(res, ...)
 }
 
@@ -272,6 +306,7 @@ print.exdf <- function(x, ...) {
 str.exdf <- function(object, ...) {
     res <- object$main_data
     colnames(res) <- fancy_column_names(object)
+    cat('\nConverting an `exdf` object to a `data.frame` before printing\n\n')
     utils::str(res, ...)
 }
 
@@ -322,9 +357,9 @@ dimnames.exdf <- function(x) {
         )
 
         essential_element_list <- list(
-            x$main_data[i, j],
-            x$units[1, j],
-            x$categories[1, j]
+            x$main_data[i, j, drop = FALSE],
+            x$units[1, j, drop = FALSE],
+            x$categories[1, j, drop = FALSE]
         )
 
         return(do.call(exdf, c(essential_element_list, extra_element_list)))

@@ -60,7 +60,9 @@
           Several user constants were defined in these logs that can be used to
           identify individual curves or subsets of curves: \code{species},
           \code{plot}, and \code{instrument}. These files are used in the
-          "Analyzing C3 A-Ci Curves" vignette and in other examples.
+          "Analyzing C3 A-Ci Curves" vignette and in other examples. The
+          \code{Remarks} sheet of \code{c3_aci_2.xlsx} was deleted from the
+          original version as a test for \code{\link{read_licor_6800_Excel}}.
     \item \code{c4_aci_1.xlsx} and \code{c4_aci_2.xlsx}: Two log files
           created by Licor Li-6800 portable gas exchange measurement systems.
           These log files each contain several C4 CO2 response (or A-Ci) curves.

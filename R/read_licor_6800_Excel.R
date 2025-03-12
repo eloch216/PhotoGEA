@@ -3,12 +3,27 @@ read_licor_6800_Excel <- function(
     column_name = 'obs',
     get_oxygen = TRUE,
     check_for_zero = c('A', 'gsw'),
+    include_user_remark_column = TRUE,
     ...
 )
 {
-    # Read the entire workbook into a single data frame
+    # Get the names of sheets in the workbook
+    sheet_names <- openxlsx::getSheetNames(file_name)
+    
+    if (!'Measurements' %in% sheet_names) {
+        stop(paste0(
+            'A sheet named `Measurements` could not be found in Excel file `',
+            file_name,
+            '`'
+        ))
+    }
+    
+    has_remarks <- 'Remarks' %in% sheet_names
+    
+    # Read the entire first sheet of the workbook into a single data frame
     rawdata <- openxlsx::readWorkbook(
         file_name,
+        sheet = 'Measurements',
         colNames = FALSE,
         skipEmptyRows = FALSE,
         skipEmptyCols = FALSE
@@ -30,7 +45,7 @@ read_licor_6800_Excel <- function(
     }
 
     # Get variable names, units, and categories
-    licor_variable_names <- replace_unicode(rawdata[data_row, ])
+    licor_variable_names <- make.unique(replace_unicode(rawdata[data_row, ]))
 
     licor_variable_units <- as.data.frame(matrix(nrow = 1, ncol = ncol(rawdata)), stringsAsFactors = FALSE)
     licor_variable_units[1, ] <- replace_unicode(rawdata[data_row + 1, ])
@@ -71,13 +86,58 @@ read_licor_6800_Excel <- function(
     )
     licor_preamble <- do.call(cbind, row_df_list)
 
+    # Get the remarks, if possible
+    if (has_remarks) {
+        # Read the entire second sheet of the workbook to get the remarks
+        rawdata_remarks <- openxlsx::readWorkbook(
+            file_name,
+            sheet = 'Remarks',
+            colNames = FALSE,
+            skipEmptyRows = FALSE,
+            skipEmptyCols = FALSE
+        )
+
+        # Replace any unicode
+        rawdata_remarks[, 1] <- replace_unicode(rawdata_remarks[, 1])
+        rawdata_remarks[, 2] <- replace_unicode(rawdata_remarks[, 2])
+
+        # Find the user remark rows, whose first column values are formatted
+        # like HH:MM:SS
+        row_is_remark <- grepl(
+          '^[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}$',
+          rawdata_remarks[, 1]
+        )
+
+        # Extract the user remarks
+        user_remarks <- rawdata_remarks[row_is_remark, ]
+
+        colnames(user_remarks) <- c('remark_time', 'remark_value')
+        rownames(user_remarks) <- NULL
+
+        # Get the other entries in the remarks
+        other_remarks <- t(rawdata_remarks[!row_is_remark, ])
+        other_remarks <- data.frame(other_remarks)
+
+        remarks           <- other_remarks[2, ]
+        colnames(remarks) <- as.character(other_remarks[1, ])
+        rownames(remarks) <- NULL
+    } else {
+        user_remarks <- data.frame(
+            remark_time = character(),
+            remark_value = character()
+        )
+        
+        remarks <- data.frame(matrix(nrow = 1, ncol = 0))
+    }
+
     # Create the exdf object
     exdf_obj <- exdf(
         licor_data,
         licor_variable_units,
         licor_variable_categories,
-        preamble = licor_preamble,
-        data_row = data_row
+        preamble = cbind(remarks, licor_preamble),
+        data_row = data_row,
+        user_remarks = user_remarks
     )
 
     # Check for columns that are all zero
@@ -94,6 +154,11 @@ read_licor_6800_Excel <- function(
             'values; type `?read_licor_6800_Excel` for more information.'
         )
         stop(msg)
+    }
+
+    # Add user remarks if necessary
+    if (include_user_remark_column) {
+        exdf_obj <- add_latest_remark(exdf_obj)
     }
 
     # Return the object, including oxygen information if necessary

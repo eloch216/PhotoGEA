@@ -13,7 +13,7 @@
 
 \usage{
   calculate_ball_berry_index(
-    licor_exdf,
+    data_table,
     a_column_name = 'A',
     rhleaf_column_name = 'RHleaf',
     csurface_column_name = 'Csurface'
@@ -21,23 +21,22 @@
 }
 
 \arguments{
-  \item{licor_exdf}{
-    An \code{exdf} object representing data from a Licor gas exchange
-    measurement system.
+  \item{data_table}{
+    A table-like R object such as a data frame or an \code{exdf}.
   }
 
   \item{a_column_name}{
-    The name of the column in \code{licor_exdf} that contains the net
+    The name of the column in \code{data_table} that contains the net
     assimilation in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rhleaf_column_name}{
-    The name of the column in \code{licor_exdf} that contains the relative
+    The name of the column in \code{data_table} that contains the relative
     humidity at the leaf surface in \code{\%}.
   }
 
   \item{csurface_column_name}{
-    The name of the column in \code{licor_exdf} that contains the CO2
+    The name of the column in \code{data_table} that contains the CO2
     concentration at the leaf surface in \code{micromol mol^(-1)}.
   }
 }
@@ -62,10 +61,12 @@
 }
 
 \value{
-  An \code{exdf} object based on \code{licor_exdf} that includes the Ball-Berry
-  index as a new column called \code{bb_index}. The category of this new column
-  is \code{calculate_ball_berry_index} to indicate that it was created using
-  this function.
+  An object based on \code{data_table} that includes the Ball-Berry index as a
+  new column called \code{bb_index}.
+
+  If \code{data_table} is an \code{exdf} object, the category of this new column
+  will be \code{calculate_ball_berry_index} to indicate that it was created
+  using this function.
 }
 
 \examples{

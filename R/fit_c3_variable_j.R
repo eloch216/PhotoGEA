@@ -84,9 +84,9 @@ fit_c3_variable_j <- function(
     )
 
     # Make sure the required variables are defined and have the correct units;
-    # most units have already been chcked by error_function_c3_variable_j
+    # most units have already been checked by error_function_c3_variable_j
     required_variables <- list()
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[ca_column_name]] <- unit_dictionary('Ca')
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -179,16 +179,9 @@ fit_c3_variable_j <- function(
     # Set all categories to `fit_c3_variable_j`
     vj$categories[1,] <- 'fit_c3_variable_j'
 
-    # Remove a few columns so they don't get repeated
-    vj[, 'alpha_g']        <- NULL
-    vj[, 'alpha_s']        <- NULL
-    vj[, 'alpha_t']        <- NULL
-    vj[, 'atp_use']        <- NULL
-    vj[, 'Gamma_star']     <- NULL
-    vj[, 'Gamma_star_agt'] <- NULL
-    vj[, 'nadph_use']      <- NULL
-    vj[, 'RL_at_25']       <- NULL
-    vj[, 'RL_tl']          <- NULL
+    # Remove any columns in replicate_exdf that are also included in the
+    # output from calculate_c3_variable_j
+    replicate_exdf <- remove_repeated_colnames(replicate_exdf, vj)
 
     # Append the fitting results to the original exdf object
     replicate_exdf <- cbind(replicate_exdf, vj)
@@ -223,13 +216,17 @@ fit_c3_variable_j <- function(
         ...
     )
 
-    # Remove a few columns so they don't get repeated
-    aci[, 'Gamma_star'] <- NULL
+    # Remove any columns in replicate_exdf that are also included in the
+    # output from calculate_c3_assimilation
+    replicate_exdf <- remove_repeated_colnames(replicate_exdf, aci)
 
     # Set all categories to `fit_c3_variable_j` and rename the `An` variable to
     # indicate that it contains fitted values of `a_column_name`
     aci$categories[1,] <- 'fit_c3_variable_j'
     colnames(aci)[colnames(aci) == 'An'] <- paste0(a_column_name, '_fit')
+
+    # Append the fitting results to the original exdf object
+    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Get operating point information
     operating_point_info <- estimate_operating_point(
@@ -273,9 +270,6 @@ fit_c3_variable_j <- function(
         perform_checks = FALSE,
         ...
     )[, 'An']
-
-    # Append the fitting results to the original exdf object
-    replicate_exdf <- cbind(replicate_exdf, aci)
 
     # Interpolate onto a finer Cc spacing and recalculate fitted rates
     replicate_exdf_interpolated <- interpolate_assimilation_inputs(
@@ -328,13 +322,17 @@ fit_c3_variable_j <- function(
         perform_checks = FALSE
     )
 
-    vj_interpolated[, 'atp_use']    <- NULL
-    vj_interpolated[, 'Gamma_star'] <- NULL
-    vj_interpolated[, 'nadph_use']  <- NULL
-    vj_interpolated[, 'RL_at_25']   <- NULL
-    vj_interpolated[, 'RL_tl']      <- NULL
+    # Remove any columns in replicate_exdf_interpolated that are also included
+    # in the output from calculate_c3_variable_j
+    replicate_exdf_interpolated <- remove_repeated_colnames(
+        replicate_exdf_interpolated,
+        vj_interpolated
+    )
 
-    replicate_exdf_interpolated <- cbind(replicate_exdf_interpolated, vj_interpolated)
+    replicate_exdf_interpolated <- cbind(
+        replicate_exdf_interpolated,
+        vj_interpolated
+    )
 
     assim_interpolated <- calculate_c3_assimilation(
         replicate_exdf_interpolated,
@@ -365,8 +363,15 @@ fit_c3_variable_j <- function(
         ...
     )
 
+    # Remove any columns in replicate_exdf_interpolated that are also included
+    # in the output from calculate_c3_assimilation
+    replicate_exdf_interpolated <- remove_repeated_colnames(
+        replicate_exdf_interpolated,
+        assim_interpolated
+    )
+
     fits_interpolated <- cbind(
-        replicate_exdf_interpolated[, c(ci_column_name, 'Cc'), TRUE],
+        replicate_exdf_interpolated,
         assim_interpolated
     )
 

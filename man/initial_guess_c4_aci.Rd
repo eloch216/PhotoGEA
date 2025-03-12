@@ -26,7 +26,6 @@
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kp_column_name = 'Kp',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -102,12 +101,6 @@
   \item{kp_column_name}{
     The name of the column in \code{rc_exdf} that contains the Michaelis-Menten
     constant for PEP carboxylase carboxylation in \code{microbar}.
-  }
-
-  \item{qin_column_name}{
-    The name of the column in \code{rc_exdf} that contains values of the
-    incident photosynthetically active flux density in
-    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{rl_norm_column_name}{
@@ -232,35 +225,18 @@ licor_file <- calculate_total_pressure(licor_file)
 guessing_func <- initial_guess_c4_aci(0, 0.003, 1, 0.5)
 
 # Apply it and see the initial guesses for each curve
-str(by(licor_file, licor_file[, 'species_plot'], guessing_func))
+print(by(licor_file, licor_file[, 'species_plot'], guessing_func))
 
-# Calculate simulated A-Ci curves based on the guesses and compare them to the
-# actual data
-calculated_aci <- do.call(rbind, by(
+# A simple way to visualize the guesses is to "fit" the curves using the null
+# optimizer, which simply returns the initial guess
+aci_results <- consolidate(by(
   licor_file,
   licor_file[, 'species_plot'],
-  function(x) {
-    param <- guessing_func(x)
-    x <- apply_gm(x, param[3], 'C4')
-    calculate_c4_assimilation(
-      x,
-      param[1], param[2], param[4], param[5], param[6], param[7], param[8], param[9]
-    )
-  }
+  fit_c4_aci,
+  optim_fun = optimizer_null()
 ))
 
-lattice::xyplot(
-  A + Apr + Apc + Ar + Ajm + Ajbs + An ~ Ci | species_plot,
-  data = cbind(licor_file, calculated_aci)$main_data,
-  type = 'b',
-  auto = TRUE,
-  grid = TRUE,
-  ylim = c(0, 100),
-  par.settings = list(
-    superpose.line = list(col = multi_curve_line_colors()),
-    superpose.symbol = list(col = multi_curve_point_colors(), pch = 16)
-  )
-)
+plot_c4_aci_fit(aci_results, 'species_plot', 'Ci', ylim = c(-10, 100))
 }
 
 \concept{exdf}

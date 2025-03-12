@@ -11,27 +11,36 @@
 }
 
 \usage{
-  exdf(main_data, units = NULL, categories = NULL, ...)
+  exdf(
+    main_data = data.frame(),
+    units = NULL,
+    categories = NULL,
+    \dots
+  )
 }
 
 \arguments{
   \item{main_data}{A data frame.}
 
   \item{units}{
-    A data frame with the same columns as \code{main_data} but with just one
-    row, where each entry describes the units for the corresponding column of
-    \code{main_data}. If \code{units} is \code{NULL}, it will be initialized
-    with \code{NA} for each column.
+    A data frame with the same columns as \code{main_data} (or a subset of the
+    columns in \code{main_data}) but with just one row, where each entry
+    describes the units for the corresponding column of \code{main_data}. If
+    \code{units} is \code{NULL}, it will be initialized with \code{NA} for each
+    column. The units of any columns in \code{main_data} that are not present in
+    \code{units} will also be initialized to \code{NA}.
   }
 
   \item{categories}{
-    A data frame with the same columns as \code{main_data} but with just one
-    row, where each entry describes the category for the corresponding column of
-    \code{main_data}. If \code{categories} is \code{NULL}, it will be
-    initialized with \code{NA} for each column.
+    A data frame with the same columns as \code{main_data} (or a subset of the
+    columns in \code{main_data}) but with just one row, where each entry
+    describes the category for the corresponding column of \code{main_data}. If
+    \code{categories} is \code{NULL}, it will be initialized with \code{NA} for
+    each column. The categories of any columns in \code{main_data} that are not
+    present in \code{catgories} will also be initialized to \code{NA}.
   }
 
-  \item{...}{
+  \item{\dots}{
     Any additional properties to include as entries in the resulting \code{exdf}
     object; these must be passed as named arguments.
   }
@@ -69,6 +78,10 @@
     \item \code{\link{split.exdf}}
     \item \code{\link{by.exdf}}
   }
+
+  Note that the column names of \code{main_data}, \code{units}, and
+  \code{categories} must be unique; the \code{\link{make.unique}} function can
+  be useful for ensuring this.
 }
 
 \value{

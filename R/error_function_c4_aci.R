@@ -13,7 +13,6 @@ error_function_c4_aci <- function(
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
     oxygen_column_name = 'oxygen',
-    qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -44,23 +43,26 @@ error_function_c4_aci <- function(
     required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
     required_variables[[ao_column_name]]             <- 'dimensionless'
     required_variables[[gamma_star_column_name]]     <- 'dimensionless'
-    required_variables[[gmc_norm_column_name]]       <- unit_dictionary[['gmc_norm']]
-    required_variables[[j_norm_column_name]]         <- unit_dictionary[['J_norm']]
+    required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
+    required_variables[[j_norm_column_name]]         <- unit_dictionary('J_norm')
     required_variables[[kc_column_name]]             <- 'microbar'
     required_variables[[ko_column_name]]             <- 'mbar'
     required_variables[[kp_column_name]]             <- 'microbar'
-    required_variables[[qin_column_name]]            <- 'micromol m^(-2) s^(-1)'
     required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
     required_variables[[vpmax_norm_column_name]]     <- 'normalized to Vpmax at 25 degrees C'
 
-    required_variables <- require_flexible_param(
-        required_variables,
-        c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
-    )
-
     check_required_variables(replicate_exdf, required_variables)
+
+    check_required_variables(
+        replicate_exdf,
+        require_flexible_param(
+            list(),
+            c(list(sd_A = sd_A), fit_options[fit_options != 'fit'])
+        ),
+        check_NA = FALSE
+    )
 
     # Retrieve values of flexible parameters as necessary
     if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
@@ -148,7 +150,6 @@ error_function_c4_aci <- function(
                     kp_column_name,
                     oxygen_column_name,
                     pcm_column_name,
-                    qin_column_name,
                     rl_norm_column_name,
                     total_pressure_column_name,
                     vcmax_norm_column_name,

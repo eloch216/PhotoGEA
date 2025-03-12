@@ -7,12 +7,12 @@
 \description{
   Identify limiting processes in a C3 curve, typically the result of a fit.
   It is rate for users to call this function directly because it is used
-  internally ny \code{\link{fit_c3_aci}} and \code{\link{fit_c3_variable_j}}.
+  internally by \code{\link{fit_c3_aci}} and \code{\link{fit_c3_variable_j}}.
 }
 
 \usage{
   identify_c3_limiting_processes(
-    exdf_obj,
+    data_table,
     a_column_name = 'A_fit',
     ac_column_name = 'Ac',
     aj_column_name = 'Aj',
@@ -22,28 +22,28 @@
 }
 
 \arguments{
-  \item{exdf_obj}{
-    An \code{exdf} object representing a C3 response curve.
+  \item{data_table}{
+    A table-like R object such as a data frame or an \code{exdf}.
   }
 
   \item{a_column_name}{
-    The name of the column in \code{exdf_obj} that contains the modeled net CO2
+    The name of the column in \code{data_table} that contains the modeled net CO2
     assimilation rate in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{ac_column_name}{
-    The name of the column in \code{exdf_obj} that contains the modeled
+    The name of the column in \code{data_table} that contains the modeled
     Rubisco-limited net CO2 assimilation rate in \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{aj_column_name}{
-    The name of the column in \code{exdf_obj} that contains the modeled
+    The name of the column in \code{data_table} that contains the modeled
     RuBP-regeneration-limited net CO2 assimilation rate in
     \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{ap_column_name}{
-    The name of the column in \code{exdf_obj} that contains the modeled
+    The name of the column in \code{data_table} that contains the modeled
     TPU-limited net CO2 assimilation rate in \code{micromol m^(-2) s^(-1)}.
   }
 
@@ -97,6 +97,9 @@ example_curve <- exdf(
 )
 
 identify_c3_limiting_processes(example_curve)
+
+# This function also works for data frames
+identify_c3_limiting_processes(example_curve$main_data)
 }
 
 \concept{exdf}

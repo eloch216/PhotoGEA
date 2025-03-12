@@ -1,3 +1,15 @@
+optimizer_null <- function() {
+    function(guess, fun, lower, upper) {
+        list(
+            convergence = NA,
+            convergence_msg = NA,
+            feval = 0,
+            par = guess,
+            optimizer = 'optimizer_null'
+        )
+    }
+}
+
 optimizer_nmkb <- function(tol, maxfeval = 2000, restarts.max = 10) {
     function(guess, fun, lower, upper) {
         guess <- constrain_guess(guess, lower, upper, 0.01)

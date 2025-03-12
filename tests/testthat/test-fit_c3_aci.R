@@ -66,6 +66,31 @@ test_that('Cc limits can be bypassed', {
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
 })
 
+test_that('Gamma_star can be passed via fit_options', {
+    one_curve_no_gstar <- one_curve
+    one_curve_no_gstar[, 'Gamma_star'] <- NULL
+
+    expect_silent(
+        fit_c3_aci(
+            one_curve_no_gstar,
+            fit_options = list(Gamma_star = 38.6),
+            optim_fun = optimizer_nmkb(1e-7),
+            calculate_confidence_intervals = FALSE
+        )
+    )
+})
+
+test_that('Bad optional arguments are caught', {
+    expect_error(
+        fit_c3_aci(
+            one_curve,
+            bad_arg_1 = TRUE,
+            bad_arg_2 = 45
+        ),
+        'The following optional arguments are not supported: bad_arg_1, bad_arg_2'
+    )
+})
+
 test_that('fit results have not changed (no alpha)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
@@ -81,6 +106,18 @@ test_that('fit results have not changed (no alpha)', {
         remove_unreliable_param = 2
     )
 
+    fit_res$parameters <- calculate_temperature_response(
+        fit_res$parameters,
+        jmax_temperature_param_bernacchi,
+        'TleafCnd_avg'
+    )
+
+    fit_res$parameters <- calculate_jmax(
+        fit_res$parameters,
+        0.6895,
+        0.97875
+    )
+
     expect_equal(
         get_duplicated_colnames(fit_res$fits),
         character(0)
@@ -92,14 +129,14 @@ test_that('fit results have not changed (no alpha)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC', 'TleafCnd_avg', 'Jmax_at_25')]),
+        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101, 30.1448308, 233.8417400),
         tolerance = TOLERANCE
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper')]),
-        c(152.831071, 238.947894, 1.034651, Inf),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Jmax_at_25_upper')]),
+        c(152.831071, 238.947894, 1.034651, Inf, 240.012420),
         tolerance = TOLERANCE
     )
 

@@ -1,15 +1,107 @@
+# Helping function for adding user remarks to the main data table (also used
+# for LI-6800 Excel files)
+add_latest_remark <- function(licor_file) {
+  # Get the user remarks and order them by time
+  user_remarks <- licor_file$user_remarks
+
+  user_remarks[, 'remark_time'] <- as.POSIXct(
+    user_remarks[, 'remark_time'],
+    format = '%H:%M:%S'
+  )
+
+  user_remarks <- user_remarks[order(user_remarks[, 'remark_time']), ]
+
+  # Get the time values from the main data
+  data_times <- as.POSIXct(
+    licor_file[, 'hhmmss'],
+    format = '%H:%M:%S'
+  )
+
+  # Initialize the user_remark column and fill it in
+  licor_file <- set_variable(
+    licor_file,
+    'user_remark',
+    category = 'add_latest_remark'
+  )
+
+  for (i in seq_len(nrow(user_remarks))) {
+    time_i   <- user_remarks[i, 'remark_time']
+    remark_i <- user_remarks[i, 'remark_value']
+
+    licor_file[data_times > time_i, 'user_remark'] <- remark_i
+  }
+
+  licor_file
+}
+
+# Helping function for extracting user remarks
+extract_user_remark_table <- function(file_lines, is_remark) {
+  # Get the line contents
+  remark_lines <- file_lines[is_remark]
+
+  # Split the remarks into a time and a value
+  split_remark_lines <- strsplit(remark_lines, '\t')
+
+  remark_times <- sapply(split_remark_lines, function(x) {
+    x[1]
+  })
+
+  remark_values <- sapply(split_remark_lines, function(x) {
+    paste(x[seq(2, length(x))], collapse = ' ')
+  })
+
+  # Replace unicode
+  remark_times  <- replace_unicode(remark_times)
+  remark_values <- replace_unicode(remark_values)
+
+  # Return as a data frame
+  data.frame(
+    remark_time = remark_times,
+    remark_value = remark_values,
+    stringsAsFactors = FALSE
+  )
+}
+
+# Helping function for converting raw lines to a data frame
+licor_6800_lines_to_df <- function(file_lines, rows) {
+  split_res <- strsplit(file_lines[rows], '\t')
+  lengths   <- sapply(split_res, length)
+  chunk_res <- matrix(nrow = length(rows), ncol = max(lengths))
+
+  for (i in seq_along(rows)) {
+    rowdata <- split_res[[i]]
+    chunk_res[i, seq_along(rowdata)] <- rowdata
+  }
+
+  as.data.frame(chunk_res, stringsAsFactors = FALSE)
+}
+
+# Main function for reading plaintext LI-6800 log files
 read_licor_6800_plaintext <- function(
     file_name,
     get_oxygen = TRUE,
+    include_user_remark_column = TRUE,
     ...
 )
 {
-    # First read the file as a set of lines. This will allow us to find the rows
-    # where the [Header] and [Data] sections begin.
+    # First read the file as a set of lines
     fconn <- file(file_name)
     file_lines <- readLines(fconn)
     close(fconn)
 
+    # Find the remark lines, which begin with HH:MM:SS followed by a tab
+    line_is_remark <- grepl(
+      '^[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}\t',
+      file_lines
+    )
+
+    # Get the user remarks as a table
+    user_remarks <- extract_user_remark_table(file_lines, line_is_remark)
+
+    # Remove the remark lines so they don't appear in the main data
+    file_lines <- file_lines[!line_is_remark]
+
+    # Find the rows where the [Header] and [Data] sections begin
     header_indices <- which(file_lines == '[Header]')
     data_indices <- which(file_lines == '[Data]')
 
@@ -37,16 +129,8 @@ read_licor_6800_plaintext <- function(
     # Define a helping function for reading a row as a data frame and then
     # replacing any Unicode characters
     get_processed_row_data_frame <- function(skip) {
-        row_data <- utils::read.delim(
-            file_name,
-            skip = skip,
-            nrows = 1,
-            header = FALSE,
-            stringsAsFactors = FALSE
-        )
-
+        row_data      <- licor_6800_lines_to_df(file_lines, skip)
         row_data[1, ] <- replace_unicode(row_data[1, ])
-
         row_data
     }
 
@@ -59,21 +143,18 @@ read_licor_6800_plaintext <- function(
         nlines <- if (i < length(data_indices)) {
             header_indices[i + 1] - data_indx - 4
         } else {
-            -1
+            length(file_lines) - data_indx - 3
         }
 
         # Read the column names, categories, units, and values from this data
         # chunk
-        licor_variable_names <- get_processed_row_data_frame(data_indx + 1)
-        licor_variable_units <- get_processed_row_data_frame(data_indx + 2)
-        licor_variable_categories <- get_processed_row_data_frame(data_indx)
+        licor_variable_names      <- get_processed_row_data_frame(data_indx + 2)
+        licor_variable_units      <- get_processed_row_data_frame(data_indx + 3)
+        licor_variable_categories <- get_processed_row_data_frame(data_indx + 1)
 
-        licor_data <- utils::read.delim(
-            file_name,
-            skip = data_indx + 3,
-            nrows = nlines,
-            header = FALSE,
-            stringsAsFactors = FALSE
+        licor_data <- licor_6800_lines_to_df(
+          file_lines,
+          seq(data_indx + 4, length.out = nlines)
         )
 
         # Convert the data to numeric values whenever possible
@@ -82,10 +163,14 @@ read_licor_6800_plaintext <- function(
             stringsAsFactors = FALSE
         )
 
+        # Get the column names as a vector
+        licor_variable_names <-
+            make.unique(as.character(licor_variable_names[1, ]))
+
         # Apply column names
-        colnames(licor_variable_units) <- licor_variable_names[1, ]
-        colnames(licor_variable_categories) <- licor_variable_names[1, ]
-        colnames(licor_data) <- licor_variable_names[1, ]
+        colnames(licor_variable_units) <- licor_variable_names
+        colnames(licor_variable_categories) <- licor_variable_names
+        colnames(licor_data) <- licor_variable_names
 
         # Return this chunk as an exdf object
         exdf(
@@ -101,19 +186,19 @@ read_licor_6800_plaintext <- function(
         header_indx <- header_indices[i]
 
         # Get the number of points in this header
-        nlines <- data_indices[i] - header_indx
+        nlines <- data_indices[i] - header_indx - 1
 
         # Read the header information
-        preamble_raw <- utils::read.delim(
-            file_name,
-            skip = header_indx,
-            nrows = nlines,
-            header = FALSE,
-            stringsAsFactors = FALSE
+        preamble_raw <- licor_6800_lines_to_df(
+          file_lines,
+          seq(header_indx + 1, length.out = nlines)
         )
 
         licor_preamble <- stats::setNames(
-            as.data.frame(t(preamble_raw[, 2]), stringsAsFactors = FALSE),
+            as.data.frame(
+                t(preamble_raw[, seq(2, ncol(preamble_raw))]),
+                stringsAsFactors = FALSE
+            ),
             preamble_raw[, 1]
         )
 
@@ -142,8 +227,12 @@ read_licor_6800_plaintext <- function(
 
     # Store additional information in the data exdf
     exdf_obj$preamble <- header_part
-    exdf_obj$header_indx <- header_indices
-    exdf_obj$data_indx <- data_indices
+    exdf_obj$user_remarks <- user_remarks
+
+    # Add user remarks if necessary
+    if (include_user_remark_column) {
+        exdf_obj <- add_latest_remark(exdf_obj)
+    }
 
     # Return the object, including oxygen information if necessary
     if (get_oxygen) {

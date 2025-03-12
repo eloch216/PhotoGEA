@@ -12,10 +12,10 @@ fit_medlyn <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]        <- unit_dictionary[['A']]
-    required_variables[[csurface_column_name]] <- unit_dictionary[['Csurface']]
-    required_variables[[gsw_column_name]]      <- unit_dictionary[['gsw']]
-    required_variables[[vpdleaf_column_name]]  <- unit_dictionary[['VPDleaf']]
+    required_variables[[a_column_name]]        <- unit_dictionary('A')
+    required_variables[[csurface_column_name]] <- unit_dictionary('Csurface')
+    required_variables[[gsw_column_name]]      <- unit_dictionary('gsw')
+    required_variables[[vpdleaf_column_name]]  <- unit_dictionary('VPDleaf')
 
     check_required_variables(replicate_exdf, required_variables)
 

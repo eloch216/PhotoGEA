@@ -14,9 +14,9 @@ plot_ball_berry_fit <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[gsw_column_name]]        <- unit_dictionary[['gsw']]
-    required_variables[[gsw_fit_column_name]]    <- unit_dictionary[['gsw']]
-    required_variables[[bb_index_column_name]]   <- unit_dictionary[['bb_index']]
+    required_variables[[gsw_column_name]]        <- unit_dictionary('gsw')
+    required_variables[[gsw_fit_column_name]]    <- unit_dictionary('gsw')
+    required_variables[[bb_index_column_name]]   <- unit_dictionary('bb_index')
     required_variables[[identifier_column_name]] <- NA
 
     # Don't throw an error if some columns are all NA

@@ -15,7 +15,9 @@ read_cr3000 <- function(
         ...
     )
 
-    cr_variable_names <- as.character(raw_cr[variable_name_row - rows_to_skip,])
+    cr_variable_names <-
+        make.unique(as.character(raw_cr[variable_name_row - rows_to_skip,]))
+
     cr_variable_units <- raw_cr[variable_unit_row - rows_to_skip,]
     cr_data <- raw_cr[seq(data_start_row - rows_to_skip, nrow(raw_cr)),]
 

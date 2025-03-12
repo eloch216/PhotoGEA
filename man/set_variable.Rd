@@ -2,16 +2,16 @@
 
 \alias{set_variable}
 
-\title{Document exdf columns by specifying units and categories}
+\title{Set values, units, and categories for a column in a table}
 
 \description{
-  Sets the value, units, and/or category of a new or existing column of an
-  \code{exdf} object.
+  Sets the value, units, and/or category of a new or existing column of a
+  table-like object.
 }
 
 \usage{
   set_variable(
-    exdf_obj,
+    data_table,
     name,
     units = NULL,
     category = NULL,
@@ -22,17 +22,19 @@
 }
 
 \arguments{
-  \item{exdf_obj}{An \code{exdf} object.}
+  \item{data_table}{
+    A table-like R object such as a data frame or an \code{exdf}.
+  }
 
-  \item{name}{The name of the column to be added to \code{exdf_obj}.}
+  \item{name}{The name of the column to be added to \code{data_table}.}
 
-  \item{units}{The units of the column to be added to \code{exdf_obj}.}
+  \item{units}{The units of the column to be added to \code{data_table}.}
 
-  \item{category}{The category of the column to be added to \code{exdf_obj}.}
+  \item{category}{The category of the column to be added to \code{data_table}.}
 
-  \item{value}{The value of the column to be added to \code{exdf_obj}.}
+  \item{value}{The value of the column to be added to \code{data_table}.}
 
-  \item{id_column}{The name of an identifier column in \code{exdf_obj}.}
+  \item{id_column}{The name of an identifier column in \code{data_table}.}
 
   \item{value_table}{
     A list of named elements, where the name of each element is a possible value
@@ -52,10 +54,10 @@
   In greater detail, this function attempts to set the value of a new or
   existing column in an \code{exdf} object according to the following rules:
   \itemize{
-    \item The value of the \code{name} column of \code{exdf_obj} will be set to
+    \item The value of the \code{name} column of \code{data_table} will be set to
           \code{value}; this assignment follows the usual rules; in other words,
           \code{value} could be a single value or a vector of length
-          \code{nrow(exdf_obj)}.
+          \code{nrow(data_table)}.
     \item If \code{units} and \code{categories} are both \code{NULL}, the units
           and category will not be specified. In this case, if the \code{name}
           column already exists, its units and category will remain the same;
@@ -76,10 +78,13 @@
           be \code{value}. **Note**: values of the \code{id_column} will be
           converted using \code{as.character} before making comparisons.
   }
+
+  For other table-like objects, such as data frames, only the values will be
+  set, and the units and categories will be ignored.
 }
 
 \value{
-  An \code{exdf} object with new and/or modified columns.
+  An object based on \code{data_table} with new and/or modified columns.
 }
 
 \seealso{\code{\link{exdf}}}
@@ -106,6 +111,21 @@ simple_exdf <- set_variable(
 )
 
 print(simple_exdf)
+
+# Take the same operations, but using a data frame instead
+simple_df <- data.frame(A = c(3, 2, 7, 9), B = c(4, 5, 1, 8))
+
+simple_df <- set_variable(simple_exdf$main_data, 'C', 'u1', 'cat1', 1000)
+
+simple_df <- set_variable(
+  simple_df,
+  'B',
+  value = 4000,
+  id_column = 'A',
+  value_table = list('3' = 2000, '9' = 3000)
+)
+
+print(simple_df)
 
 # As a more realistic example, load a Licor file and set different values of
 # mesophyll conductance for each species in the data set.

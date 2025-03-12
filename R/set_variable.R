@@ -1,5 +1,5 @@
 set_variable <- function(
-    exdf_obj,
+    data_table,
     name,
     units = NULL,
     category = NULL,
@@ -8,10 +8,6 @@ set_variable <- function(
     value_table = NULL
 )
 {
-    if (!is.exdf(exdf_obj)) {
-        stop('set_variable requires an exdf object')
-    }
-
     # Check for some potential issues with the inputs
     if (!is.null(value_table)) {
         if (!is.list(value_table)) {
@@ -30,7 +26,7 @@ set_variable <- function(
     }
 
     # Set the value of the column
-    exdf_obj[, name] <- value
+    data_table[, name] <- value
 
     # If units or a category were provided, document the column info
     if (!is.null(units) || !is.null(category)) {
@@ -42,19 +38,19 @@ set_variable <- function(
             category <- 'NA'
         }
 
-        exdf_obj <- document_variables(exdf_obj, c(category, name, units))
+        data_table <- document_variables(data_table, c(category, name, units))
     }
 
     # If an id_column was provided, set column values based on the table
     if (!is.null(id_column)) {
         required_variables <- list()
         required_variables[[id_column]] <- NA
-        check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
+        check_required_variables(data_table, required_variables, check_NA = FALSE)
 
         for (i in seq_along(value_table)) {
-            exdf_obj[as.character(exdf_obj[, id_column]) == names(value_table)[i], name] <- value_table[[i]]
+            data_table[as.character(data_table[, id_column]) == names(value_table)[i], name] <- value_table[[i]]
         }
     }
 
-    return(exdf_obj)
+    return(data_table)
 }

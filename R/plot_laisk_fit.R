@@ -24,14 +24,14 @@ plot_laisk_fit <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[ci_column_name]]         <- unit_dictionary[['Ci']]
+    required_variables[[ci_column_name]]         <- unit_dictionary('Ci')
     required_variables[[identifier_column_name]] <- NA
     required_variables[[ppfd_column_name]]       <- NA
 
     # Don't throw an error if some columns are all NA
     check_required_variables(fit_results$first_fits, required_variables, check_NA = FALSE)
 
-    required_variables[[a_column_name]] <- unit_dictionary[['A']]
+    required_variables[[a_column_name]] <- unit_dictionary('A')
 
     # Don't throw an error if some columns are all NA
     check_required_variables(fit_results$first_fits, required_variables, check_NA = FALSE)

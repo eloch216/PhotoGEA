@@ -36,6 +36,6 @@ test_that('C3 limiting processes are identified', {
 
     expect_equal(
         as.character(example_curve[, 'limiting_process']),
-        c('Ac', 'Ac', 'Aj', 'co-limited', 'Ap')
+        c('Ac', 'Ac', 'Aj', 'co-limited (Aj and Ap)', 'Ap')
     )
 })

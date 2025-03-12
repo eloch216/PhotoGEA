@@ -210,8 +210,8 @@ inputs <- document_variables(
 assim <- calculate_c4_assimilation_hyperbola(inputs, 0.8, 0.5, 1.0, 55)
 
 lattice::xyplot(
-  Ainitial + Amax + An ~ Ci,
-  data = cbind(inputs, assim)$main_data,
+  Ainitial + Amax + An ~ inputs[, 'Ci'],
+  data = assim$main_data,
   type = 'l',
   grid = TRUE,
   auto = TRUE,

@@ -67,7 +67,7 @@
   (\code{c}), activation energy (\code{Ea}), and units (\code{units}) for a
   variable must be specified as elements of a list, which itself is a named
   element of \code{arrhenius_parameters}. For example, if a variable called
-  \code{Kc} has \code{c = 38.05}, {Ea = 79.43}, and units of
+  \code{Kc} has \code{c = 38.05}, \code{Ea = 79.43}, and units of
   \code{micromol mol^(-1)}, the \code{arrhenius_parameters} argument could be
   specified as follows:
   \code{list(Kc = list(c = 38.05, Ea = 79.43, units = 'micromol mol^(-1)'))}.

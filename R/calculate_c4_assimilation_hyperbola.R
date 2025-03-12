@@ -17,7 +17,7 @@ calculate_c4_assimilation_hyperbola <- function(
 
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
-        required_variables[[ci_column_name]] <- unit_dictionary[['Ci']]
+        required_variables[[ci_column_name]] <- unit_dictionary('Ci')
 
         flexible_param <- list(
             c4_curvature = c4_curvature,
@@ -106,14 +106,14 @@ calculate_c4_assimilation_hyperbola <- function(
 
         document_variables(
             output,
-            c('calculate_c4_assimilation_hyperbola', 'Ag',                            unit_dictionary$Vmax),
-            c('calculate_c4_assimilation_hyperbola', 'Ainitial',                      unit_dictionary$Ainitial),
-            c('calculate_c4_assimilation_hyperbola', 'Amax',                          unit_dictionary$Vmax),
-            c('calculate_c4_assimilation_hyperbola', 'An',                            unit_dictionary$Vmax),
-            c('calculate_c4_assimilation_hyperbola', 'c4_curvature',                  unit_dictionary$c4_curvature),
-            c('calculate_c4_assimilation_hyperbola', 'rL',                            unit_dictionary$rL),
-            c('calculate_c4_assimilation_hyperbola', 'Vinitial',                      unit_dictionary$Vmax),
-            c('calculate_c4_assimilation_hyperbola', 'Vmax',                          unit_dictionary$Vmax),
+            c('calculate_c4_assimilation_hyperbola', 'Ag',                            unit_dictionary('Vmax')),
+            c('calculate_c4_assimilation_hyperbola', 'Ainitial',                      unit_dictionary('Ainitial')),
+            c('calculate_c4_assimilation_hyperbola', 'Amax',                          unit_dictionary('Vmax')),
+            c('calculate_c4_assimilation_hyperbola', 'An',                            unit_dictionary('Vmax')),
+            c('calculate_c4_assimilation_hyperbola', 'c4_curvature',                  unit_dictionary('c4_curvature')),
+            c('calculate_c4_assimilation_hyperbola', 'rL',                            unit_dictionary('rL')),
+            c('calculate_c4_assimilation_hyperbola', 'Vinitial',                      unit_dictionary('Vmax')),
+            c('calculate_c4_assimilation_hyperbola', 'Vmax',                          unit_dictionary('Vmax')),
             c('calculate_c4_assimilation_hyperbola', 'c4_assimilation_hyperbola_msg', '')
         )
     } else {
