@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -54,7 +55,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_licor_6800_plaintext</span><span class="op">(</span><span class="va">file_name</span>, get_oxygen <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_licor_6800_plaintext</span><span class="op">(</span></span>
+<span>    <span class="va">file_name</span>,</span>
+<span>    get_oxygen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    include_user_remark_column <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    <span class="va">...</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,6 +73,11 @@
   <dt id="arg-get-oxygen">get_oxygen<a class="anchor" aria-label="anchor" href="#arg-get-oxygen"></a></dt>
 <dd><p>A logical value indicating whether to get the oxygen percentage from the
     file's preamble using <code><a href="get_oxygen_from_preamble.html">get_oxygen_from_preamble</a></code>.</p></dd>
+
+
+  <dt id="arg-include-user-remark-column">include_user_remark_column<a class="anchor" aria-label="anchor" href="#arg-include-user-remark-column"></a></dt>
+<dd><p>A logical value indicating whether to include the user remarks as a column;
+    see below for details.</p></dd>
 
 
   <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -84,6 +95,30 @@
   preamble), and the <code>[Data]</code> line indicates the beginning of the data
   table. If these lines are missing from the file, it will not be loaded
   properly.</p>
+<p><strong>Closing and reopening a log file:</strong> When operating a Licor LI-6800, it
+  is possible to close and then reopen a log file. Doing this causes the
+  plaintext log file to contain multiple <code>[Head]</code> and <code>[Data]</code>
+  sections. This function is able to handle such files.</p>
+<p><strong>User remarks:</strong> When operating a Licor LI-6800, it is possible to make
+  a "remark." Each remark will appear in the plaintext log file in its own line,
+  which begins with an <code>HH:MM:SS</code> time and then contains the remark text.
+  The <code>read_licor_6800_plaintext</code> function identifies these user remarks
+  and includes them in the return as an "extra" element called
+  <code>user_remarks</code>. Note that changing stability criteria will also generate
+  a user remark with a message describing the new stability settings.</p>
+<p>When <code>include_user_remark_column</code> is <code>TRUE</code>, these user remarks will
+  be included in the main data table as a column called <code>user_remark</code>. For
+  each row in the table, the entry in the <code>user_remark</code> column will be set
+  to the most recent user remark.</p>
+<p>The user remark system is prone to errors, especially since changes to
+  stability settings are recorded in the log files using the exact same format
+  as true user remarks. In general, it is better to record metadata about
+  measurements via user constants rather than user remarks.</p>
+<p><strong>User constants as rows:</strong> When operating a Licor LI-6800, it is
+  possible to include user constants as either rows or columns. In general, it
+  is better to include them as columns, and the <code>read_licor_6800_plaintext</code>
+  function may not be able to properly read files where they are included as
+  rows. Support for user constant rows may be added in the future.</p>
     </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -92,9 +127,9 @@
   <code><a href="read_gasex_file.html">read_gasex_file</a></code>, the following "extra" elements are also
   included:</p><ul><li><p><code>preamble</code>: A data frame containing the "preamble" (or "header")
           information from the file.</p></li>
-<li><p><code>header_indx</code>: The line of the file where <code>[Head]</code> was
-          found.</p></li>
-<li><p><code>data_indx</code>: The line of the file where <code>[Data]</code> was found.</p></li>
+<li><p><code>user_remarks</code>: A data frame containing any user remarks from the
+          file. The data frame has two columns for the timestamp and the value,
+          called <code>remark_time</code> and <code>remark_value</code>, respectively.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -104,10 +139,77 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: Reading a Licor plaintext file that is included with the PhotoGEA</span></span></span>
-<span class="r-in"><span><span class="co"># package.</span></span></span>
+<span class="r-in"><span><span class="co"># package and viewing some of the "extra" information associated with the file</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">PhotoGEA</span><span class="fu">:::</span><span class="fu">read_licor_6800_plaintext</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'plaintext_licor_file'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">$</span><span class="va">preamble</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	1 obs. of  57 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ File opened         : chr "2021-08-04 09:22:24"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Console s/n         : chr "68C-831539"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Console ver         : chr "Bluestem v.1.5.02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Scripts ver         : chr "2021.03  1.5.02, Feb 2021"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head s/n            : chr "68H-891539"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head ver            : chr "1.4.5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head cal            : chr "{\"h2obzero\": \"1.1092\", \"ssa_ref\": \"31965.6\", \"h2obspan2b\": \"0.0719985\", \"h2oaspan2b\": \"0.0715867"| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber type        : chr "6800-01A"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber s/n         : chr "MPF-651414"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber rev         : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber cal         : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Fluorometer         : chr "MPF-651414"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Flr. Version        : chr "1.4.5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SysConst:AvgTime    : chr "4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SysConst:Oxygen     : chr "21.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:Chamber  : chr "6800-01A"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:Aperture : chr "6 cm^2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_a    : chr "0.578"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_b    : chr "0.5229739"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_c    : chr "0.003740252"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_d    : chr "-0.06197961"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_e    : chr "-0.005608586"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_minS : chr "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_maxS : chr "6"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst:blc_Po   : chr "96.9"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LTConst:deltaTw     : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LTConst:fT1         : chr "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LTConst:fT2         : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LTConst:fTeb        : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:Leaf        : chr "standard"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:Ambient     : chr "Sun+Sky"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_ambient : chr "0.8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_redLED  : chr "0.84"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_greenLED: chr "0.7"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_blueLED : chr "0.87"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_whiteLED: chr "0.75"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_redFlr  : chr "0.84"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:abs_blueFlr : chr "0.87"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_ambient   : chr "0.1911"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_redLED    : chr "0.1512"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_greenLED  : chr "0.161"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_blueLED   : chr "0.2262"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_whiteLED  : chr "0.1575"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_redFlr    : chr "0.1596"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst:k_blueFlr   : chr "0.2175"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QConst:fQ_Amb_in    : chr "0.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QConst:fQ_Amb_out   : chr "0.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QConst:fQ_HeadLS    : chr "0.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QConst:fQ_ConsoleLS : chr "0.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QConst:fQ_Flr       : chr "1.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:fan_a     : chr "-6276.0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:fan_b     : chr "6.6"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:fan_c     : chr "1.709e-05"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:fan_d     : chr "3.11"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:Fs_meas   : chr "3.37548 84.5351 372.99 621.291 866.807 1096.7 1244.78 1402.89"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:Fs_true   : chr "0.0646052 105.617 400.849 601.323 799.968 1001.32 1200.39 1401.02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst:leak_wt   : chr "0"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">$</span><span class="va">user_remarks</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   remark_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    09:22:24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                 remark_value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Stability Definition: gsw (GasEx): Slp&lt;0.2 Std&lt;0.02 Per=30 A (GasEx): Slp&lt;1 Std&lt;0.2 Per=30</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -115,7 +217,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

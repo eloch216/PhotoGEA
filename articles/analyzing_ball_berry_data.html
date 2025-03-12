@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul>
 </li>
@@ -73,7 +74,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing Ball-Berry Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.1.0/vignettes/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/analyzing_ball_berry_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/analyzing_ball_berry_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_ball_berry_data.Rmd</code></div>
     </div>
 
@@ -272,6 +273,12 @@ creating a new column that combines the values from each of these:</p>
 <code class="sourceCode R"><span><span class="co"># Create a new identifier column formatted like `instrument - species - plot`</span></span>
 <span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p>When measuring response curves (or any other type of gas exchange
+data), it is strongly recommended to record key pieces of metadata in
+the log files using “user constants,” as was done in this example. For
+more information, please see the <a href="LI6800_user_constants.html">Guide to Licor LI-6800 User
+Constants</a>, which also includes advice for dealing with data sets
+that do not contain such metadata.</p>
 <p>The next step is to make sure that this column correctly identifies
 each response curve. To do this, we can use the
 <code>check_response_curve_data</code> function from
@@ -628,6 +635,9 @@ care about a few of them. We can view them as follows:</p>
 <span>  <span class="va">ball_berry_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">columns_for_viewing</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_parameters</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   instrument [UserDefCon] (NA) species [UserDefCon] (NA) plot [UserDefCon] (NA)</span></span>
 <span><span class="co">#&gt; 1                        ripe4                   tobacco                      2</span></span>
 <span><span class="co">#&gt; 2                        ripe5                   soybean                      1</span></span>
@@ -668,6 +678,9 @@ for each species using the <code>basic_stats</code> function from
 <span>  <span class="st">'bb_slope_avg'</span>, <span class="st">'bb_slope_stderr'</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ball_berry_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   species [UserDefCon] (NA)</span></span>
 <span><span class="co">#&gt; 1                   soybean</span></span>
 <span><span class="co">#&gt; 2                   tobacco</span></span>
@@ -1019,7 +1032,7 @@ Environment</em> 16 (4): 341–49. <a href="https://doi.org/10.1111/j.1365-3040.
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

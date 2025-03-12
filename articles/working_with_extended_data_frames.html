@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul>
 </li>
@@ -73,7 +74,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Working With Extended Data Frames</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.1.0/vignettes/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/working_with_extended_data_frames.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/working_with_extended_data_frames.Rmd</code></a></small>
       <div class="d-none name"><code>working_with_extended_data_frames.Rmd</code></div>
     </div>
 
@@ -212,6 +213,9 @@ and <code>s</code> and categories of <code>Cat1</code> and
 <code>print</code> command:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s)</span></span>
 <span><span class="co">#&gt; 1            3            4</span></span>
 <span><span class="co">#&gt; 2            2            5</span></span>
@@ -231,6 +235,9 @@ and <code>B</code>, but we won’t specify their units or categories.</p>
 <p>As before, we can <code>print</code> the data frame:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   A [NA] (NA) B [NA] (NA)</span></span>
 <span><span class="co">#&gt; 1           3           4</span></span>
 <span><span class="co">#&gt; 2           2           5</span></span>
@@ -311,9 +318,10 @@ elements can be retrieved using <code>names</code>:</p>
 <span><span class="co">#&gt; [1] "main_data"  "units"      "categories"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">exdf_3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "main_data"         "units"             "categories"       </span></span>
-<span><span class="co">#&gt; [4] "preamble"          "data_row"          "file_name"        </span></span>
-<span><span class="co">#&gt; [7] "file_type"         "instrument_type"   "timestamp_colname"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "main_data"         "units"             "categories"       </span></span>
+<span><span class="co">#&gt;  [4] "preamble"          "data_row"          "user_remarks"     </span></span>
+<span><span class="co">#&gt;  [7] "file_name"         "file_type"         "instrument_type"  </span></span>
+<span><span class="co">#&gt; [10] "timestamp_colname"</span></span></code></pre></div>
 <p>Here we see that both <code>exdf</code> objects have the three
 required elements: <code>main_data</code>, <code>units</code>, and
 <code>categories</code>. <code>exdf_3</code> has a few “extra” elements
@@ -367,6 +375,9 @@ follows, using a syntax that is nearly identical to the syntax of
 extracting a subset of a data frame:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exdf_1</span><span class="op">[</span><span class="va">exdf_1</span><span class="op">[</span>, <span class="st">'A'</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">5</span>, , return_exdf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s)</span></span>
 <span><span class="co">#&gt; 3            7            1</span></span>
 <span><span class="co">#&gt; 4            9            8</span></span></code></pre></div>
@@ -425,6 +436,9 @@ example, we could add 1 to each value in the <code>A</code> column of
 initialized to <code>NA</code>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s) C [NA] (NA)</span></span>
 <span><span class="co">#&gt; 1            4            4           7</span></span>
 <span><span class="co">#&gt; 2            3            5           7</span></span>
@@ -442,6 +456,9 @@ in one step. Here we use this function to add a new column called
 <code class="sourceCode R"><span><span class="va">exdf_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable.html">set_variable</a></span><span class="op">(</span><span class="va">exdf_2</span>, <span class="st">'D'</span>, <span class="st">'kg'</span>, <span class="st">'cat4'</span>, <span class="fl">20</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s) C [NA] (NA) D [cat4] (kg)</span></span>
 <span><span class="co">#&gt; 1            4            4           7            20</span></span>
 <span><span class="co">#&gt; 2            3            5           7            20</span></span>
@@ -468,11 +485,7 @@ This is a subtle problem that can only be detected using
 <code>TRUE</code>:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   A [Cat1] (m) B [Cat2] (s) C [NA] (NA) D [cat4] (kg) NA</span></span>
-<span><span class="co">#&gt; 1            4            4           7            20 17</span></span>
-<span><span class="co">#&gt; 2            3            5           7            20 17</span></span>
-<span><span class="co">#&gt; 3            8            1           7            20 17</span></span>
-<span><span class="co">#&gt; 4           10            8           7            20 17</span></span>
+<span><span class="co">#&gt; Error in .subset2(x, i, exact = exact): subscript out of bounds</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/is.exdf.html">is.exdf</a></span><span class="op">(</span><span class="va">exdf_2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -626,29 +639,77 @@ words, a nested list. We can see this structure as follows:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">by_result</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 8</span></span>
 <span><span class="co">#&gt;  $ soybean.1 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  80 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  81 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1a:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  79 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  80 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1b:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  78 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.2 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  78 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  77 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  78 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.5 :List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  79 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  80 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5a:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  81 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  82 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5c:List of 2</span></span>
-<span><span class="co">#&gt;   ..$ parameters:'data.frame':   1 obs. of  81 variables:</span></span>
-<span><span class="co">#&gt;   ..$ fits      :'data.frame':   7 obs. of  254 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;   ..$ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  82 variables:</span></span>
+<span><span class="co">#&gt;   ..$ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span></code></pre></div>
 <p>It would be much easier to work with this information if it were
 reorganized by separately combining all of the <code>fits</code> and
 <code>parameters</code> elements. Fortunately, this can be easily done
@@ -662,8 +723,14 @@ using <code>rbind</code>:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">consolidate_by_result</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ parameters:'data.frame':  8 obs. of  76 variables:</span></span>
-<span><span class="co">#&gt;  $ fits      :'data.frame':  56 obs. of  254 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ parameters:</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    8 obs. of  77 variables:</span></span>
+<span><span class="co">#&gt;  $ fits      :</span></span>
+<span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 'data.frame':    56 obs. of  255 variables:</span></span></code></pre></div>
 <p>It is common to apply the <code>consolidate</code> and
 <code>by</code> functions in the same line to make the code more
 concise. Afterwards, the elements from the resulting list can be
@@ -755,10 +822,10 @@ using the <code>methods</code> function:</p>
 <span><span class="co">#&gt;  [1] [                        [&lt;-                      as.data.frame           </span></span>
 <span><span class="co">#&gt;  [4] by                       cbind                    check_required_variables</span></span>
 <span><span class="co">#&gt;  [7] consolidate              dim                      dimnames                </span></span>
-<span><span class="co">#&gt; [10] dimnames&lt;-               exclude_outliers         factorize_id_column     </span></span>
-<span><span class="co">#&gt; [13] identifier_columns       identify_common_columns  length                  </span></span>
-<span><span class="co">#&gt; [16] print                    rbind                    split                   </span></span>
-<span><span class="co">#&gt; [19] str                     </span></span>
+<span><span class="co">#&gt; [10] dimnames&lt;-               document_variables       exclude_outliers        </span></span>
+<span><span class="co">#&gt; [13] factorize_id_column      identifier_columns       identify_common_columns </span></span>
+<span><span class="co">#&gt; [16] length                   print                    rbind                   </span></span>
+<span><span class="co">#&gt; [19] split                    str                     </span></span>
 <span><span class="co">#&gt; see '?methods' for accessing help and source code</span></span></code></pre></div>
 <p>However, this does not include all functions related to the
 <code>exdf</code> class. Others can be identified by typing
@@ -774,7 +841,7 @@ and used while analyzing photosynthetic gas exchange data.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

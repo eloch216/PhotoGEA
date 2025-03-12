@@ -43,7 +43,7 @@ See below for more details."><meta property="og:image" content="https://eloch216
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,7 @@ See below for more details."><meta property="og:image" content="https://eloch216
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -473,6 +474,8 @@ See below for more details."><meta property="og:image" content="https://eloch216
                   leaf-temperature-dependent values are stored in
                   <code>X_tl_avg</code> columns: <code>J_tl_avg</code>, <code>RL_tl_avg</code>,
                   <code>Tp_tl_avg</code>, and <code>Vcmax_tl_avg</code>.</p></li>
+<li><p>The average leaf temperature is also stored in the
+                  <code>Tleaf_avg</code> column.</p></li>
 <li><p>Information about the operating point is stored in
                   <code>operating_Cc</code>, <code>operating_Ci</code>, <code>operating_An</code>,
                   and <code>operating_An_model</code>.</p></li>
@@ -551,6 +554,9 @@ See below for more details."><meta property="og:image" content="https://eloch216
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span> , <span class="va">col_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   species [UserDefCon] (NA) plot [UserDefCon] (NA)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   soybean                     5a</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                   tobacco                      1</span>
@@ -676,7 +682,7 @@ See below for more details."><meta property="og:image" content="https://eloch216
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

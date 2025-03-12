@@ -19,7 +19,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -334,17 +335,16 @@
 <span class="r-in"><span><span class="co"># tau = 0.2, and RL = 0.5</span></span></span>
 <span class="r-in"><span><span class="va">vj_res</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_variable_j</span><span class="op">(</span><span class="va">licor_file</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">1.5</span>, <span class="fl">0.55</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Combine with original data</span></span></span>
-<span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">licor_file</span>, <span class="va">vj_res</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot mesophyll conductance against Cc. Note: this information is not very</span></span></span>
 <span class="r-in"><span><span class="co"># meaningful since the values of tau and RL used above are arbitrary.</span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">gmc</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">species_plot</span>,</span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">licor_file</span><span class="op">$</span><span class="va">main_data</span>,</span></span>
+<span class="r-in"><span>  <span class="va">gmc</span> <span class="op">~</span> <span class="va">Cc</span> <span class="op">|</span> <span class="va">licor_file</span><span class="op">[</span>, <span class="st">'species_plot'</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">vj_res</span><span class="op">$</span><span class="va">main_data</span>,</span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="st">'b'</span>,</span></span>
 <span class="r-in"><span>  pch <span class="op">=</span> <span class="fl">16</span>,</span></span>
-<span class="r-in"><span>  auto <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Chloroplast CO2 concentration ('</span>, <span class="va">vj_res</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Cc</span>, <span class="st">')'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2 ('</span>, <span class="va">vj_res</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">')'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="calculate_c3_variable_j-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
@@ -354,7 +354,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -59,6 +60,7 @@
 <span>    column_name <span class="op">=</span> <span class="st">'obs'</span>,</span>
 <span>    get_oxygen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    check_for_zero <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'A'</span>, <span class="st">'gsw'</span><span class="op">)</span>,</span>
+<span>    include_user_remark_column <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    <span class="va">...</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,6 +87,11 @@
     details.</p></dd>
 
 
+  <dt id="arg-include-user-remark-column">include_user_remark_column<a class="anchor" aria-label="anchor" href="#arg-include-user-remark-column"></a></dt>
+<dd><p>A logical value indicating whether to include the user remarks as a column;
+    see below for details.</p></dd>
+
+
   <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments; currently unused.</p></dd>
 
@@ -97,11 +104,15 @@
   columns. For this reason, it is helpful to be able to read these files in R.
   Unfortunately, base R does not have any functionality for reading Excel files,
   so here the <code>openxlsx</code> package is used.</p>
-<p><code>read_licor_6800_Excel</code> looks for a particular data column
+<p>Excel log files typically have two sheets called <code>Measurements</code> and
+  <code>Remarks</code>. The <code>Measurements</code> sheet contains the main data logs,
+  and if <code>read_licor_6800_Excel</code> does not find a sheet called
+  <code>Measurements</code>, it will send an error message.</p>
+<p>Then, <code>read_licor_6800_Excel</code> looks for a particular data column
   (<code>column_name</code>) in order to identify the start of the data table within
-  the contents of the Licor file. Rows above the main data table are assumed to
-  be part of the preamble (or header), which are broken into pairs of rows
-  representing names and values.</p>
+  the contents of the <code>Measurements</code> sheet. Rows above the main data table
+  are assumed to be part of the preamble (or header), which are broken into
+  pairs of rows representing names and values.</p>
 <p><strong>"Calculating" formula values</strong>: By default, Licor Excel files do not
   "calculate" formula values. This causes a problem when reading them in R,
   since any data entry determined from a formula will be read as 0. To fix this
@@ -116,11 +127,30 @@
   If any of these columns are all 0, then an error message will be sent. This
   feature can be disabled by setting <code>check_for_zero = c()</code> when calling
   <code>read_licor_6800_Excel</code> or <code>read_gasex_file</code>.</p>
-<p><strong>File structure</strong>: Not that this function is not foolproof and may not
-  be able to read some LI-6800 log files. For example, this function assumes
-  that the logged points are contained in a single table. If user constants are
-  logged as rows rather than columns, the file will instead contain multiple
-  tables, and this function will not be able to read it.</p>
+<p><strong>User remarks:</strong> When operating a Licor LI-6800, it is possible to make
+  a "remark." Each remark will appear in the <code>Remarks</code> sheet of an Excel
+  log file on its own line, where the entry in the first column is an
+  <code>HH:MM:SS</code> time, and the second column contains the remark text. The
+  <code>read_licor_6800_Excel</code> function identifies these user remarks and
+  includes them in the return as an "extra" element called <code>user_remarks</code>.
+  Note that changing stability criteria will also generate a user remark with a
+  message describing the new stability settings. Also note that the "remarks"
+  tab includes other automatically generated entries, such as the instrument
+  serial number; these entries are included with the "preamble" in the output
+  from <code>read_licor_6800_Excel</code>.</p>
+<p>When <code>include_user_remark_column</code> is <code>TRUE</code>, these user remarks will
+  be included in the main data table as a column called <code>user_remark</code>. For
+  each row in the table, the entry in the <code>user_remark</code> column will be set
+  to the most recent user remark.</p>
+<p>The user remark system is prone to errors, especially since changes to
+  stability settings are recorded in the log files using the exact same format
+  as true user remarks. In general, it is better to record metadata about
+  measurements via user constants rather than user remarks.</p>
+<p><strong>User constants as rows:</strong> When operating a Licor LI-6800, it is
+  possible to include user constants as either rows or columns. In general, it
+  is better to include them as columns, and the <code>read_licor_6800_Excel</code>
+  function may not be able to properly read files where they are included as
+  rows. Support for user constant rows may be added in the future.</p>
     </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -130,6 +160,9 @@
   included:</p><ul><li><p><code>preamble</code>: A data frame containing the "preamble" (or "header")
           information from the file.</p></li>
 <li><p><code>data_row</code>: The line of the file where the column name was found.</p></li>
+<li><p><code>user_remarks</code>: A data frame containing any user remarks from the
+          file. The data frame has two columns for the timestamp and the value,
+          called <code>remark_time</code> and <code>remark_value</code>, respectively.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -139,10 +172,82 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example 1: Reading a Licor Excel file that is included with the PhotoGEA</span></span></span>
-<span class="r-in"><span><span class="co"># package.</span></span></span>
+<span class="r-in"><span><span class="co"># package and viewing some of the "extra" information associated with the file</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">PhotoGEA</span><span class="fu">:::</span><span class="fu">read_licor_6800_Excel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'ball_berry_1.xlsx'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">$</span><span class="va">preamble</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	1 obs. of  63 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ File opened : chr "2021-08-23 09:09:04"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Console s/n : chr "68C-831540"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Console ver : chr "Bluestem v.1.5.02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Scripts ver : chr "2021.03  1.5.02, Feb 2021"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head s/n    : chr "68H-891540"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head ver    : chr "1.4.5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head cal    : chr "{\"h2obspanconc1\": \"12.33\", \"h2oaspanconc1\": \"12.33\", \"oxygen\": \"21\", \"co2bspanconc2\": \"314.9\", "| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber type: chr "6800-01A"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber s/n : chr "MPF-651415"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber rev : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber cal : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Fluorometer : chr "MPF-651415"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Flr. Version: chr "1.4.5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SysConst    : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ AvgTime     : chr "4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Oxygen      : chr "21"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ChambConst  : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber     : chr "6800-01A"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Aperture    : chr "6 cm^2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_a       : chr "0.57799999999999996"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_b       : chr "0.52297389999999999"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_c       : chr "3.7402519999999999E-3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_d       : chr "-6.1979609999999997E-2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_e       : chr "-5.6085859999999996E-3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_minS    : chr "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_maxS    : chr "6"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blc_Po      : chr "96.9"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LTConst     : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ deltaTw     : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fT1         : chr "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fT2         : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fTeb        : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LQConst     : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Leaf        : chr "standard"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Ambient     : chr "Sun+Sky"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_ambient : chr "0.8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_redLED  : chr "0.84"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_greenLED: chr "0.7"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_blueLED : chr "0.87"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_whiteLED: chr "0.75"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_redFlr  : chr "0.84"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ abs_blueFlr : chr "0.87"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_ambient   : chr "0.19109999999999999"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_redLED    : chr "0.1512"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_greenLED  : chr "0.161"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_blueLED   : chr "0.22620000000000001"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_whiteLED  : chr "0.1575"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_redFlr    : chr "0.15959999999999999"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ k_blueFlr   : chr "0.2175"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QConst      : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fQ_Amb_in   : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fQ_Amb_out  : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fQ_HeadLS   : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fQ_ConsoleLS: chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fQ_Flr      : chr "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LeakConst   : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fan_a       : chr "-6276"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fan_b       : chr "6.6"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fan_c       : chr "1.7090000000000001E-5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fan_d       : chr "3.11"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Fs_meas     : chr "2.57209 56.8345 376.092 656.102 912.922 1140.22 1323.58 1601.94"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Fs_true     : chr "0.140462 100.535 403.009 601.359 801.268 1002.06 1200.81 1402.44"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ leak_wt     : chr "0"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">$</span><span class="va">user_remarks</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   remark_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    09:09:04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                        remark_value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Stability Definition: gsw (GasEx): Slp&lt;0.004 Std&lt;0.004 Per=180 A (GasEx): Slp&lt;0.5 Std&lt;0.5 Per=120</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 2: Reading a Licor Excel file that is included with the PhotoGEA</span></span></span>
 <span class="r-in"><span><span class="co"># package; here we use a different column name to identify the data block within</span></span></span>
@@ -158,7 +263,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

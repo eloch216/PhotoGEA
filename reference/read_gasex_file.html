@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -197,7 +198,10 @@
 <span class="r-in"><span><span class="va">licor_file</span><span class="op">$</span><span class="va">file_name</span>     <span class="co"># A record of where the data came from</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/PhotoGEA/extdata/ball_berry_1.xlsx"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">)</span>          <span class="co"># View the contents of the exdf object's main_data</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	28 obs. of  242 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	28 obs. of  243 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ obs [SysObs] (NA)                                  : num  1 2 3 4 5 6 7 8 9 10 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ time [SysObs] (s)                                  : POSIXlt, format: "2021-08-23 14:30:48" "2021-08-23 14:38:15" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ elapsed [SysObs] (s)                               : num  0 448 803 1226 1486 ...</span>
@@ -299,7 +303,20 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ H2O_b [Meas2] (mmol mol^(-1))                      : num  25.2 26.6 26.8 26.8 27 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [list output truncated]</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">$</span><span class="va">preamble</span><span class="op">)</span> <span class="co"># View the Licor file's preamble data</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	1 obs. of  50 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	1 obs. of  63 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ File opened : chr "2021-08-23 09:09:04"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Console s/n : chr "68C-831540"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Console ver : chr "Bluestem v.1.5.02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Scripts ver : chr "2021.03  1.5.02, Feb 2021"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head s/n    : chr "68H-891540"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head ver    : chr "1.4.5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Head cal    : chr "{\"h2obspanconc1\": \"12.33\", \"h2oaspanconc1\": \"12.33\", \"oxygen\": \"21\", \"co2bspanconc2\": \"314.9\", "| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber type: chr "6800-01A"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber s/n : chr "MPF-651415"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber rev : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Chamber cal : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Fluorometer : chr "MPF-651415"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Flr. Version: chr "1.4.5"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ SysConst    : chr NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ AvgTime     : chr "4"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Oxygen      : chr "21"</span>
@@ -357,7 +374,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -11,7 +11,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -57,7 +58,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">exdf</span><span class="op">(</span><span class="va">main_data</span>, units <span class="op">=</span> <span class="cn">NULL</span>, categories <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">exdf</span><span class="op">(</span></span>
+<span>    main_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    units <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    categories <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    <span class="va">...</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,17 +74,21 @@
 
 
   <dt id="arg-units">units<a class="anchor" aria-label="anchor" href="#arg-units"></a></dt>
-<dd><p>A data frame with the same columns as <code>main_data</code> but with just one
-    row, where each entry describes the units for the corresponding column of
-    <code>main_data</code>. If <code>units</code> is <code>NULL</code>, it will be initialized
-    with <code>NA</code> for each column.</p></dd>
+<dd><p>A data frame with the same columns as <code>main_data</code> (or a subset of the
+    columns in <code>main_data</code>) but with just one row, where each entry
+    describes the units for the corresponding column of <code>main_data</code>. If
+    <code>units</code> is <code>NULL</code>, it will be initialized with <code>NA</code> for each
+    column. The units of any columns in <code>main_data</code> that are not present in
+    <code>units</code> will also be initialized to <code>NA</code>.</p></dd>
 
 
   <dt id="arg-categories">categories<a class="anchor" aria-label="anchor" href="#arg-categories"></a></dt>
-<dd><p>A data frame with the same columns as <code>main_data</code> but with just one
-    row, where each entry describes the category for the corresponding column of
-    <code>main_data</code>. If <code>categories</code> is <code>NULL</code>, it will be
-    initialized with <code>NA</code> for each column.</p></dd>
+<dd><p>A data frame with the same columns as <code>main_data</code> (or a subset of the
+    columns in <code>main_data</code>) but with just one row, where each entry
+    describes the category for the corresponding column of <code>main_data</code>. If
+    <code>categories</code> is <code>NULL</code>, it will be initialized with <code>NA</code> for
+    each column. The categories of any columns in <code>main_data</code> that are not
+    present in <code>catgories</code> will also be initialized to <code>NA</code>.</p></dd>
 
 
   <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -114,7 +124,10 @@
 <li><p><code><a href="cbind.exdf.html">cbind.exdf</a></code></p></li>
 <li><p><code><a href="split.exdf.html">split.exdf</a></code></p></li>
 <li><p><code><a href="by.exdf.html">by.exdf</a></code></p></li>
-</ul></div>
+</ul><p>Note that the column names of <code>main_data</code>, <code>units</code>, and
+  <code>categories</code> must be unique; the <code><a href="https://rdrr.io/r/base/make.unique.html" class="external-link">make.unique</a></code> function can
+  be useful for ensuring this.</p>
+    </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An <code>exdf</code> object as described above.</p>
@@ -126,6 +139,9 @@
 <span class="r-in"><span><span class="co"># default values for its units and categories. There are four values of each</span></span></span>
 <span class="r-in"><span><span class="co"># variable.</span></span></span>
 <span class="r-in"><span><span class="fu">exdf</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">7</span>, <span class="fl">9</span><span class="op">)</span>, B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">1</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   A [NA] (NA) B [NA] (NA)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           3           4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2           2           5</span>
@@ -140,6 +156,9 @@
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">'m'</span>, B <span class="op">=</span> <span class="st">'s'</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">'Cat1'</span>, B <span class="op">=</span> <span class="st">'Cat2'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   A [Cat1] (m) B [Cat2] (s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1            3            4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2            2            5</span>
@@ -152,7 +171,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -194,6 +195,12 @@
         <dd>Calculate photosynthetic isotope discrimination</dd>
       </dl><dl><dt>
 
+          <code><a href="calculate_jmax.html">calculate_jmax()</a></code>
+
+        </dt>
+        <dd>Calculate maximum electron transport rate</dd>
+      </dl><dl><dt>
+
           <code><a href="calculate_leakiness_ubierna.html">calculate_leakiness_ubierna()</a></code>
 
         </dt>
@@ -222,6 +229,12 @@
 
         </dt>
         <dd>Calculate temperature-dependent values using Johnson-Eyring-Williams equations</dd>
+      </dl><dl><dt>
+
+          <code><a href="calculate_temperature_response_polynomial.html">calculate_temperature_response_polynomial()</a></code>
+
+        </dt>
+        <dd>Calculate temperature-dependent values using polynomial equations</dd>
       </dl><dl><dt>
 
           <code><a href="calculate_ternary_correction.html">calculate_ternary_correction()</a></code>
@@ -500,6 +513,18 @@
         <dd>Is an object an exdf?</dd>
       </dl><dl><dt>
 
+          <code><a href="jmax_temperature_param_bernacchi.html">jmax_temperature_param_bernacchi</a></code>
+
+        </dt>
+        <dd>Jmax-related temperature response parameters from Bernacchi et al.</dd>
+      </dl><dl><dt>
+
+          <code><a href="jmax_temperature_param_flat.html">jmax_temperature_param_flat</a></code>
+
+        </dt>
+        <dd>Jmax-related temperature response parameters from Bernacchi et al.</dd>
+      </dl><dl><dt>
+
           <code><a href="length.exdf.html">length(<i>&lt;exdf&gt;</i>)</a></code>
 
         </dt>
@@ -512,7 +537,7 @@
         <dd>Set of colors for plotting multiple curves</dd>
       </dl><dl><dt>
 
-          <code><a href="optimizers.html">optimizer_nmkb()</a></code> <code><a href="optimizers.html">optimizer_hjkb()</a></code> <code><a href="optimizers.html">optimizer_nlminb()</a></code> <code><a href="optimizers.html">optimizer_deoptim()</a></code>
+          <code><a href="optimizers.html">optimizer_deoptim()</a></code> <code><a href="optimizers.html">optimizer_hjkb()</a></code> <code><a href="optimizers.html">optimizer_nlminb()</a></code> <code><a href="optimizers.html">optimizer_nmkb()</a></code> <code><a href="optimizers.html">optimizer_null()</a></code>
 
         </dt>
         <dd>Optimizers</dd>
@@ -623,7 +648,7 @@
           <code><a href="set_variable.html">set_variable()</a></code>
 
         </dt>
-        <dd>Document exdf columns by specifying units and categories</dd>
+        <dd>Set values, units, and categories for a column in a table</dd>
       </dl><dl><dt>
 
           <code><a href="smooth_tdl_data.html">smooth_tdl_data()</a></code>
@@ -653,7 +678,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

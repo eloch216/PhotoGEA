@@ -2,6 +2,7 @@
 <url><loc>https://eloch216.github.io/PhotoGEA/404.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/LICENSE-text.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/LICENSE.html</loc></url>
+<url><loc>https://eloch216.github.io/PhotoGEA/articles/LI6800_user_constants.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/articles/PhotoGEA.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_ball_berry_data.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/articles/analyzing_c3_aci_curves.html</loc></url>
@@ -39,11 +40,13 @@
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gm_busch.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_gm_ubierna.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_isotope_discrimination.html</loc></url>
+<url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_jmax.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_leakiness_ubierna.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_arrhenius.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_gaussian.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_johnson.html</loc></url>
+<url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_polynomial.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_ternary_correction.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_total_pressure.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/calculate_wue.html</loc></url>
@@ -91,6 +94,8 @@
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/initial_guess_c4_aci.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/initial_guess_c4_aci_hyperbola.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/is.exdf.html</loc></url>
+<url><loc>https://eloch216.github.io/PhotoGEA/reference/jmax_temperature_param_bernacchi.html</loc></url>
+<url><loc>https://eloch216.github.io/PhotoGEA/reference/jmax_temperature_param_flat.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/length.exdf.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/multi_curve_colors.html</loc></url>
 <url><loc>https://eloch216.github.io/PhotoGEA/reference/optimizers.html</loc></url>

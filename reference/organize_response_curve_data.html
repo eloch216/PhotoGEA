@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -59,7 +60,8 @@
 <span>    <span class="va">identifier_columns</span>,</span>
 <span>    <span class="va">measurement_numbers_to_remove</span>,</span>
 <span>    <span class="va">column_for_ordering</span>,</span>
-<span>    ordering_column_tolerance <span class="op">=</span> <span class="cn">Inf</span></span>
+<span>    ordering_column_tolerance <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>    columns_to_average <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,6 +97,11 @@
     <code>ordering_column_tolerance</code> can be set to <code>Inf</code> to disable this
     check.</p></dd>
 
+
+  <dt id="arg-columns-to-average">columns_to_average<a class="anchor" aria-label="anchor" href="#arg-columns-to-average"></a></dt>
+<dd><p>A list of columns whose average values should be calculated; see below for
+    details.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -125,6 +132,13 @@
   <code>ordering_column_tolerance</code>). This check is accomplished via
   <code><a href="check_response_curve_data.html">check_response_curve_data</a></code>, treating the
   <code>column_for_ordering</code> as the <code>driving_column</code>.</p>
+<p>Sometimes it is useful to calculate average values of certain columns across
+  each curve in a data set, such as the leaf temperature or incident light. This
+  can be done by specifying the names of such columns as the
+  <code>columns_to_average</code> input argument. For each such column, its mean value
+  will be stored in a new column whose name is based on the original column
+  name, but with <code>'_avg'</code> added at the end. For example, the average value
+  of the <code>Qin</code> column would be stored in <code>Qin_avg</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -146,16 +160,21 @@
 <span class="r-in"><span><span class="co"># each curve, and order them by their incident light values (since these are</span></span></span>
 <span class="r-in"><span><span class="co"># light response curves). The curves were measured from high to low values of</span></span></span>
 <span class="r-in"><span><span class="co"># `Qin`, so after organizing the curves, their order will be reversed from the</span></span></span>
-<span class="r-in"><span><span class="co"># original version.</span></span></span>
+<span class="r-in"><span><span class="co"># original version. Also add the average value of TleafCnd and Qin for each</span></span></span>
+<span class="r-in"><span><span class="co"># curve.</span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">organize_response_curve_data</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'species'</span>, <span class="st">'plot'</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  <span class="st">'Qin'</span></span></span>
+<span class="r-in"><span>  <span class="st">'Qin'</span>,</span></span>
+<span class="r-in"><span>  columns_to_average <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'TleafCnd'</span>, <span class="st">'Qin'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># View a subset of the data, including the new `seq_num` column</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'seq_num'</span>, <span class="st">'Qin'</span>, <span class="st">'A'</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">licor_file</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'species'</span>, <span class="st">'plot'</span>, <span class="st">'seq_num'</span>, <span class="st">'Qin'</span>, <span class="st">'A'</span>, <span class="st">'Qin_avg'</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    species [UserDefCon] (NA) plot [UserDefCon] (NA) seq_num [NA] (NA)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                    soybean                     1a                 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                    soybean                     1a                 6</span>
@@ -214,6 +233,35 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 26                              799.910                          32.769396</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27                             1099.960                          36.218245</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28                             1999.980                          45.780746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Qin_avg [organize_response_curve_data] (micromol m^(-2) s^(-1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                         800.0209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                         799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                         799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                        799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                        799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                        799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                        799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                        799.9707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                        800.0560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                        799.9856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                        799.9856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                        799.9856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                        799.9856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                        799.9856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                        799.9856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                        799.9856</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -221,7 +269,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

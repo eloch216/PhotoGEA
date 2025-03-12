@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -80,14 +81,15 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>check_required_variables</code> is generic, with methods defined for data
   frames and <code>exdf</code> objects.</p>
-<p>When <code>x</code> is a <code>data.frame</code>, the <code>required_variables</code> input
-  argument must be a character vector specifying the names of columns that
-  should be included in <code>x</code>.</p>
 <p>When <code>x</code> is an <code>exdf</code>, the <code>required_variables</code> input argument
   must be a list of named strings, where the name of each element specifies the
   name of a column that must be included in <code>x</code>, while the value of each
   column specifies the corresponding units for that column. If the value is
   <code>NA</code>, no unit checking will be performed.</p>
+<p>When <code>x</code> is a <code>data.frame</code>, the <code>required_variables</code> input
+  argument can be specified as a list (as if <code>x</code> were an <code>exdf</code>
+  object) or as a character vector specifying the names of columns that
+  should be included in <code>x</code>.</p>
 <p>The required variables will be checked as follows:</p><ul><li><p>If any required variable columns are missing from the table, an
           informative error message will be thrown.</p></li>
 <li><p>If <code>check_NA</code> is <code>TRUE</code> and any required variable columns
@@ -133,7 +135,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

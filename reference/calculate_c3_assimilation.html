@@ -15,7 +15,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -64,7 +65,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_c3_assimilation</span><span class="op">(</span></span>
-<span>    <span class="va">exdf_obj</span>,</span>
+<span>    <span class="va">data_table</span>,</span>
 <span>    <span class="va">alpha_g</span>,</span>
 <span>    <span class="va">alpha_old</span>,</span>
 <span>    <span class="va">alpha_s</span>,</span>
@@ -89,7 +90,7 @@
 <span>    vcmax_norm_column_name <span class="op">=</span> <span class="st">'Vcmax_norm'</span>,</span>
 <span>    hard_constraints <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>    perform_checks <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    return_exdf <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    return_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    <span class="va">...</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
@@ -97,17 +98,17 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <p></p>
-<dl><dt id="arg-exdf-obj">exdf_obj<a class="anchor" aria-label="anchor" href="#arg-exdf-obj"></a></dt>
-<dd><p>An <code>exdf</code> object.</p></dd>
+<dl><dt id="arg-data-table">data_table<a class="anchor" aria-label="anchor" href="#arg-data-table"></a></dt>
+<dd><p>A table-like R object such as a data frame or an <code>exdf</code>.</p></dd>
 
 
   <dt id="arg-alpha-g">alpha_g<a class="anchor" aria-label="anchor" href="#arg-alpha-g"></a></dt>
 <dd><p>A dimensionless parameter where <code>0 &lt;= alpha_g &lt;= 1</code>, representing the
     proportion of glycolate carbon taken out of the photorespiratory pathway as
     glycine. <code>alpha_g</code> is often assumed to be 0. If <code>alpha_g</code> is not a
-    number, then there must be a column in <code>exdf_obj</code> called <code>alpha_g</code>
+    number, then there must be a column in <code>data_table</code> called <code>alpha_g</code>
     with appropriate units. A numeric value supplied here will overwrite the
-    values in the <code>alpha_g</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    values in the <code>alpha_g</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-alpha-old">alpha_old<a class="anchor" aria-label="anchor" href="#arg-alpha-old"></a></dt>
@@ -115,9 +116,9 @@
     fraction of remaining glycolate carbon not returned to the chloroplast
     after accounting for carbon released as CO2. <code>alpha_old</code> is often
     assumed to be 0. If <code>alpha_old</code> is not a number, then there must be a
-    column in <code>exdf_obj</code> called <code>alpha_old</code> with appropriate units.
+    column in <code>data_table</code> called <code>alpha_old</code> with appropriate units.
     A numeric value supplied here will overwrite the values in the
-    <code>alpha_old</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    <code>alpha_old</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-alpha-s">alpha_s<a class="anchor" aria-label="anchor" href="#arg-alpha-s"></a></dt>
@@ -125,26 +126,26 @@
     representing the proportion of glycolate carbon taken out of the
     photorespiratory pathway as serine. <code>alpha_s</code> is often assumed to be 0.
     If <code>alpha_s</code> is not a number, then there must be a column in
-    <code>exdf_obj</code> called <code>alpha_s</code> with appropriate units. A numeric
+    <code>data_table</code> called <code>alpha_s</code> with appropriate units. A numeric
     value supplied here will overwrite the values in the <code>alpha_s</code> column
-    of <code>exdf_obj</code> if it exists.</p></dd>
+    of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-alpha-t">alpha_t<a class="anchor" aria-label="anchor" href="#arg-alpha-t"></a></dt>
 <dd><p>A dimensionless parameter where <code>0 &lt;= alpha_t &lt;= 1</code> representing the
     proportion of glycolate carbon taken out of the photorespiratory pathway as
     CH2-THF. <code>alpha_t</code> is often assumed to be 0. If <code>alpha_t</code> is not a
-    number, then there must be a column in <code>exdf_obj</code> called <code>alpha_t</code>
+    number, then there must be a column in <code>data_table</code> called <code>alpha_t</code>
     with appropriate units. A numeric value supplied here will overwrite the
-    values in the <code>alpha_t</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    values in the <code>alpha_t</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-gamma-star">Gamma_star<a class="anchor" aria-label="anchor" href="#arg-gamma-star"></a></dt>
 <dd><p>The CO2 compensation point in the absence of day respiration, expressed in
     <code>micromol mol^(-1)</code>. If <code>Gamma_star</code> is not a number, then there
-    must be a column in <code>exdf_obj</code> called <code>Gamma_star</code> with
+    must be a column in <code>data_table</code> called <code>Gamma_star</code> with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the <code>Gamma_star</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    in the <code>Gamma_star</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-j-at-">J_at_25<a class="anchor" aria-label="anchor" href="#arg-j-at-"></a></dt>
@@ -152,33 +153,33 @@
     <code>micromol m^(-2) s^(-1)</code>. Note that this is _not_ <code>Jmax</code>, and in
     general will depend on the incident photosynthetically active flux density.
     If <code>J_at_25</code> is not a number, then there must be a column in
-    <code>exdf_obj</code> called <code>J_at_25</code> with appropriate units. A numeric
+    <code>data_table</code> called <code>J_at_25</code> with appropriate units. A numeric
     value supplied here will overwrite the values in the <code>J_at_25</code> column
-    of <code>exdf_obj</code> if it exists.</p></dd>
+    of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-rl-at-">RL_at_25<a class="anchor" aria-label="anchor" href="#arg-rl-at-"></a></dt>
 <dd><p>The respiration rate at 25 degrees C, expressed in
     <code>micromol m^(-2) s^(-1)</code>. If <code>RL_at_25</code> is not a number, then
-    there must be a column in <code>exdf_obj</code> called <code>RL_at_25</code> with
+    there must be a column in <code>data_table</code> called <code>RL_at_25</code> with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the <code>RL_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    in the <code>RL_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-tp-at-">Tp_at_25<a class="anchor" aria-label="anchor" href="#arg-tp-at-"></a></dt>
 <dd><p>The maximum rate of triphosphate utilization at 25 degrees C, expressed in
     <code>micromol m^(-2) s^(-1)</code>. If <code>Tp_at_25</code> is not a number, then
-    there must be a column in <code>exdf_obj</code> called <code>Tp_at_25</code> with
+    there must be a column in <code>data_table</code> called <code>Tp_at_25</code> with
     appropriate units. A numeric value supplied here will overwrite the values
-    in the <code>Tp_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    in the <code>Tp_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-vcmax-at-">Vcmax_at_25<a class="anchor" aria-label="anchor" href="#arg-vcmax-at-"></a></dt>
 <dd><p>The maximum rate of rubisco carboxylation at 25 degrees C, expressed in
     <code>micromol m^(-2) s^(-1)</code>. If <code>Vcmax_at_25</code> is not a number, then
-    there must be a column in <code>exdf_obj</code> called <code>Vcmax_at_25</code> with
+    there must be a column in <code>data_table</code> called <code>Vcmax_at_25</code> with
     appropriate units. A numeric value supplied here will overwrite the
-    values in the <code>Vcmax_at_25</code> column of <code>exdf_obj</code> if it exists.</p></dd>
+    values in the <code>Vcmax_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-atp-use">atp_use<a class="anchor" aria-label="anchor" href="#arg-atp-use"></a></dt>
@@ -202,50 +203,50 @@
 
 
   <dt id="arg-cc-column-name">cc_column_name<a class="anchor" aria-label="anchor" href="#arg-cc-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the
+<dd><p>The name of the column in <code>data_table</code> that contains the
     chloroplastic CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
   <dt id="arg-j-norm-column-name">j_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-j-norm-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
     <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).</p></dd>
 
 
   <dt id="arg-kc-column-name">kc_column_name<a class="anchor" aria-label="anchor" href="#arg-kc-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the
+<dd><p>The name of the column in <code>data_table</code> that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     <code>micromol mol^(-1)</code>.</p></dd>
 
 
   <dt id="arg-ko-column-name">ko_column_name<a class="anchor" aria-label="anchor" href="#arg-ko-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the
+<dd><p>The name of the column in <code>data_table</code> that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     <code>mmol mol^(-1)</code>.</p></dd>
 
 
   <dt id="arg-oxygen-column-name">oxygen_column_name<a class="anchor" aria-label="anchor" href="#arg-oxygen-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the concentration
+<dd><p>The name of the column in <code>data_table</code> that contains the concentration
     of O2 in the ambient air, expressed as a percentage (commonly 21% or 2%);
     the units must be <code>percent</code>.</p></dd>
 
 
   <dt id="arg-rl-norm-column-name">rl_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-rl-norm-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
     <code>RL</code> values (with units of <code>normalized to RL at 25 degrees C</code>).</p></dd>
 
 
   <dt id="arg-total-pressure-column-name">total_pressure_column_name<a class="anchor" aria-label="anchor" href="#arg-total-pressure-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the total pressure
+<dd><p>The name of the column in <code>data_table</code> that contains the total pressure
     in <code>bar</code>.</p></dd>
 
 
   <dt id="arg-tp-norm-column-name">tp_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-tp-norm-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
     <code>Tp</code> values (with units of <code>normalized to Tp at 25 degrees C</code>).</p></dd>
 
 
   <dt id="arg-vcmax-norm-column-name">vcmax_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-vcmax-norm-column-name"></a></dt>
-<dd><p>The name of the column in <code>exdf_obj</code> that contains the normalized
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
     <code>Vcmax</code> values (with units of
     <code>normalized to Vcmax at 25 degrees C</code>).</p></dd>
 
@@ -263,7 +264,7 @@
     fitting procedure.</p></dd>
 
 
-  <dt id="arg-return-exdf">return_exdf<a class="anchor" aria-label="anchor" href="#arg-return-exdf"></a></dt>
+  <dt id="arg-return-table">return_table<a class="anchor" aria-label="anchor" href="#arg-return-table"></a></dt>
 <dd><p>A logical value indicating whether to return an <code>exdf</code> object. This
     should almost always be <code>TRUE</code>. The option to return a vector is mainly
     intended to be used when  <code><a href="fit_c3_aci.html">fit_c3_aci</a></code> calls this function,
@@ -456,17 +457,19 @@
 </ul></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The return value depends on the value of <code>return_exdf</code>:</p><ul><li><p>If <code>return_exdf</code> is <code>TRUE</code>, the return value is an
+    <p>The return value depends on the value of <code>return_table</code>:</p><ul><li><p>If <code>return_table</code> is <code>TRUE</code>, the return value is an
           <code>exdf</code> object with the following columns, calculated as described
           above: <code>Tp_tl</code>, <code>Vcmax_tl</code>, <code>RL_tl</code>, <code>J_tl</code>,
           <code>Ac</code>, <code>Aj</code>, <code>Ap</code>, <code>An</code>, <code>Vc</code>, and others. The
           category for each of these new columns is
           <code>calculate_c3_assimilation</code> to indicate that they were created
           using this function.</p></li>
-<li><p>If <code>return_exdf</code> is <code>FALSE</code>, the return value is a list with
+<li><p>If <code>return_table</code> is <code>FALSE</code>, the return value is a list with
           the following named elements: <code>An</code>, <code>Ac</code>, <code>Aj</code>,
           <code>Ap</code>, and <code>J_tl</code>. Each element is a numeric vector.</p></li>
-</ul></div>
+</ul><p>If <code>data_table</code> is not an <code>exdf</code> object, then the return value will
+  be a data frame, and units and categories will not be reported.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -493,8 +496,8 @@
 <span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">150</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">120</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">An</span> <span class="op">~</span> <span class="va">Cc</span>,</span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">inputs</span>, <span class="va">assim</span><span class="op">)</span><span class="op">$</span><span class="va">main_data</span>,</span></span>
+<span class="r-in"><span>  <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">An</span> <span class="op">~</span> <span class="va">inputs</span><span class="op">[</span>, <span class="st">'Cc'</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">assim</span><span class="op">$</span><span class="va">main_data</span>,</span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="st">'l'</span>,</span></span>
 <span class="r-in"><span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
@@ -509,7 +512,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

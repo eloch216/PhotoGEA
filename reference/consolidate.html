@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -186,35 +187,62 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">nested_exdf_list</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ list_1:List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_1:'data.frame':	2 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 1 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_2:'data.frame':	2 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 3 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_3:'data.frame':	2 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 5 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ list_2:List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_1:'data.frame':	2 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 7 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_2:'data.frame':	2 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 9 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_3:'data.frame':	2 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 11 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ list_3:List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_1:'data.frame':	2 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  3 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 13 14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ C [NA] (NA): num [1:2] -1 -2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_2:'data.frame':	2 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  3 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ C [NA] (NA): num [1:2] -1 -2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_3:'data.frame':	2 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name_3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  3 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ A [NA] (NA): num [1:2] 17 18</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ B [NA] (NA): num [1:2] 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ C [NA] (NA): num [1:2] -1 -2</span>
@@ -223,13 +251,22 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">consolidated_exdf_list</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ name_1:'data.frame':	6 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ name_1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	6 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ A [NA] (NA): num [1:6] 1 2 7 8 13 14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ B [NA] (NA): num [1:6] 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ name_2:'data.frame':	6 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ name_2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	6 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ A [NA] (NA): num [1:6] 3 4 9 10 15 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ B [NA] (NA): num [1:6] 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ name_3:'data.frame':	6 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ name_3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	6 obs. of  2 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ A [NA] (NA): num [1:6] 5 6 11 12 17 18</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ B [NA] (NA): num [1:6] 0 0 0 0 0 0</span>
 </code></pre></div>
@@ -239,7 +276,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">

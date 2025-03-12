@@ -17,7 +17,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -66,13 +67,15 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">optimizer_nmkb</span><span class="op">(</span><span class="va">tol</span>, maxfeval <span class="op">=</span> <span class="fl">2000</span>, restarts.max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">optimizer_deoptim</span><span class="op">(</span><span class="va">itermax</span>, VTR <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="fu">optimizer_hjkb</span><span class="op">(</span><span class="va">tol</span>, maxfeval <span class="op">=</span> <span class="cn">Inf</span>, target <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="fu">optimizer_nlminb</span><span class="op">(</span><span class="va">rel.tol</span>, eval.max <span class="op">=</span> <span class="fl">200</span>, iter.max <span class="op">=</span> <span class="fl">200</span>, abs.tol <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="fu">optimizer_deoptim</span><span class="op">(</span><span class="va">itermax</span>, VTR <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">optimizer_nmkb</span><span class="op">(</span><span class="va">tol</span>, maxfeval <span class="op">=</span> <span class="fl">2000</span>, restarts.max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">optimizer_null</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -136,10 +139,12 @@
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>optimizer_nmkb</code> is a wrapper for <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></code>.</p>
+    <p><code>optimizer_deoptim</code> is a wrapper for <code><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></code>.</p>
 <p><code>optimizer_hjkb</code> is a wrapper for <code><a href="https://rdrr.io/pkg/dfoptim/man/hookejeeves.html" class="external-link">hjkb</a></code>.</p>
 <p><code>optimizer_nlminb</code> is a wrapper for <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></code>.</p>
-<p><code>optimizer_deoptim</code> is a wrapper for <code><a href="https://rdrr.io/pkg/DEoptim/man/DEoptim.html" class="external-link">DEoptim</a></code>.</p>
+<p><code>optimizer_nmkb</code> is a wrapper for <code><a href="https://rdrr.io/pkg/dfoptim/man/nmkb.html" class="external-link">nmkb</a></code>.</p>
+<p><code>optimizer_null</code> simply returns the initial guess without doing any
+  optimization; it can be useful for viewing initial guesses.</p>
 <p>See the documentation for those functions for more information about how the
   optimizers work.</p>
     </div>
@@ -149,7 +154,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Edward B. Lochocki.</p>
+  <p>Developed by Edward B. Lochocki, Coralie E. Salesse-Smith, Justin M. McGrath.</p>
 </div>
 
 <div class="pkgdown-footer-right">
