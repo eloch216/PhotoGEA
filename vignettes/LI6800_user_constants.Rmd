@@ -1,9 +1,6 @@
 ---
 title: "Guide to Licor LI-6800 User Constants"
 output:
-  pdf_document:
-    toc: true
-    number_sections: true
   rmarkdown::html_vignette:
     toc: true
     number_sections: true
@@ -26,7 +23,7 @@ knitr::opts_chunk$set(
 
 advice <- function(include_prefix, advice_text) {
   if (include_prefix) {
-    cat(paste('**Advice:**', advice_text))
+    cat(paste(' > ', advice_text))
   } else {
     cat(paste(' -', advice_text, '\n\n'))
   }
@@ -57,56 +54,9 @@ measured values that are always recorded. When used effectively, Licor user
 constants can be a convenient way to keep track of metadata, helping to
 streamline your data analysis workflow.
 
-The first three sections of this vignette provide key advice about how to set up
-user constants and what they can be used for:
-
-1. [Benefits of User Constants] -- A brief overview of the benefits of user
-   constants.
-
-2. [Choosing User Constants] -- Advice for choosing user constants, including
-   examples.
-
-3. [Using User Constants] -- Advice for setting up user constants for
-   measurements.
-
-The later sections include more information about a few related topics:
-
-4. [Using File Names or Log Remarks] -- A discussion of alternatives to user
-   constants; this section illustrates why user constants are generally simpler
-   and easier.
-
-5. [How To Deal With Files That Have No Metadata] -- A discussion of what to do
-   with log files where user constants, file names, or log remarks were not
-   used to record metadata.
-
-6. [Examples of User Constant Applications] -- A few short examples of using
-   user constants when processing and analyzing data, building off the brief
-   overview in the [Benefits of User Constants] section.
-
-Throughout this vignette, key pieces of advice will be prefaced with
-"**Advice**." The final section in the vignette ([Advice Summary]) contains a
-list of all such pieces of advice.
-
-Several R examples in this vignette use the the `PhotoGEA` and `lattice`
-packages, so we will load them now:
-
-```{r echo = TRUE, results = 'markup'}
-library(PhotoGEA)
-library(lattice)
-```
-
-Although this vignette is specialized for Licor LI-6800 instruments, other gas
-exchange systems have similar ways to record user constants, so most of the
-advice here is general, even if particular details may change with other
-instruments. This advice is also specialized for measuring response curves, but
-we will sometimes mention other considerations that may apply when making spot
-measurements.
-
-# Benefits of User Constants
-
 Simply put, including user constants in your data will make processing and
-analyzing the data much easier. There are two main ways that user constants can
-help:
+analyzing the data much easier. There are two main situations where user
+constants can help:
 
 1. Applying an operation to every curve in a data set. This approach can be used
    to automate processing steps such as curve fitting. The image below shows how
@@ -126,16 +76,63 @@ can be found throughout the PhotoGEA documentation, such as the
 ```{r, fig.cap = caption, out.width = '95%', echo = FALSE, results = 'markup'}
 caption <-
   'Illustration of processing multiple parts of a table using `by` and
-  `consolidate`. Here the `id` column identifies each individual curve, and the
-  `ring` value indicates whether each leaf was grown under ambient (A) or
-  elevated (E) carbon dioxide conditions. The processing function function fits
-  a single A-Ci curve and returns a list of two tables called `fits` and
-  `parameters`.'
+  `consolidate`. Here, `id` and `ring` are user constants, where the `id` column
+  identifies each individual curve, and the `ring` value indicates whether each
+  leaf was grown under ambient (A) or elevated (E) carbon dioxide conditions.
+  The processing function fits a single A-Ci curve and returns a list of two
+  tables called `fits` and `parameters`.'
 
 knitr::include_graphics('images/table_processing_illustration.png')
 ```
 
+The first two sections of this vignette provide key advice about how to set up
+user constants and what they can be used for:
+
+- [Choosing User Constants] -- Advice for choosing pieces of metadata to record,
+  including examples.
+
+- [Using User Constants] -- Advice for setting up user constants for
+  measurements.
+
+The later sections include more information about a few related topics:
+
+- [Examples of User Constant Applications] -- A few short examples of using
+  user constants when processing and analyzing data, building off the brief
+  overview above.
+
+- [Using File Names or Log Remarks] -- A discussion of alternatives to user
+  constants; this section illustrates why user constants are generally simpler
+  and easier.
+
+- [How To Deal With Files That Have No Metadata] -- A discussion of what to do
+  with log files where user constants, file names, or log remarks were not
+  used to record metadata.
+
+Throughout this vignette, key pieces of advice will be shown in boxes. The final
+section in the vignette
+([Summary of Advice for Using Licor LI-6800 User Constants]) contains a list of
+all such pieces of advice.
+
+Although this vignette is specialized for Licor LI-6800 instruments, other gas
+exchange systems have similar ways to record user constants, so most of the
+advice here is general, even if particular details may change with other
+instruments. This advice is also specialized for measuring response curves, but
+we will sometimes mention other considerations that may apply when making spot
+measurements.
+
+Several R examples in this vignette use the the `PhotoGEA` and `lattice`
+packages, so we will load them now:
+
+```{r echo = TRUE, results = 'markup'}
+library(PhotoGEA)
+library(lattice)
+```
+
 # Choosing User Constants
+
+Before setting up your user constants through the Licor LI-6800 interface, it is
+necessary to decide which pieces of metadata to record. Here are a few
+considerations to keep in mind when choosing them:
 
 ```{r user_constants_reflect_design}
 advice(INCLUDE_PREFIX, 'User constants should generally reflect your
@@ -202,14 +199,23 @@ user constants:
 2. Choosing logging options
 3. Setting values of the user constants
 
-These will be discussed below.
+These will be discussed in the following three sections.
 
 ## Defining the User Constants
 
 The "LI-6800 Operating Instructions" includes
 [a section about defining user constants](https://www.licor.com/support/LI-6800/topics/constants-tab.html#User).
-This is a great place to start, but it's missing some important details, which
-are provided below.
+This is a great place to start, but it's missing some important practical
+details:
+
+```{r define_before_opening}
+advice(INCLUDE_PREFIX, 'User constants must be defined before opening a log
+file.')
+```
+
+- The user constants will (potentially) be included as columns in the log file,
+  so so they must be defined before opening a log file. They can be defined
+  during warmup tests, which is a good time to get them sorted out.
 
 ```{r retained_definitions}
 advice(INCLUDE_PREFIX, 'User constant definitions are retained by each machine
@@ -221,15 +227,6 @@ between uses.')
   machine is powered off. So, when you first start using a machine, you may see
   user constant definitions from the previous experiment it was used for. Just
   go ahead and replace these with your own definitions.
-
-```{r define_before_opening}
-advice(INCLUDE_PREFIX, 'User constants must be defined before opening a log
-file.')
-```
-
-- The user constants will (potentially) be included as columns in the log file,
-  so so they must be defined before opening a log file. They can be defined
-  during warmup tests, which is a good time to get them sorted out.
 
 ```{r include_as_columns}
 advice(INCLUDE_PREFIX, 'Always log user constants as columns, not as rows.')
@@ -261,7 +258,8 @@ advice(INCLUDE_PREFIX, 'It is rare to need a computed variable.')
   such as the Ball-Berry index (when measuring Ball-Berry curves).
 
 ```{r consistent_spelling}
-advice(INCLUDE_PREFIX, 'Be consistent with spelling and capitalization.')
+advice(INCLUDE_PREFIX, 'Be consistent with spelling, capitalization, and spacing
+across machines and replicates.')
 ```
 
 - If you are using multiple machines for a single experiment and plan to
@@ -347,6 +345,101 @@ advice(INCLUDE_PREFIX, 'Record metadata in a second place.')
   that each machine measures throughout the day. This will enable you to correct
   any errors in the user constants.
 
+# Examples of User Constant Applications
+
+## Applying an Operation to Every Curve in a Data Set
+
+We often want to apply an operation to every response curve in a data set. This
+could be something relatively simple, such as plotting $A_n$ values against
+$C_i$ values, or something more complicated, such as fitting the
+Farquhar-von-Caemmerer-Berry model to estimate the values of key photosynthetic
+parameters. In all such cases, a prerequisite is that we must be able to
+identify each curve in the set.
+
+User constants help to achieve this. For example, if every curve in the set can
+be identified by its unique values of the `species` and `plot` columns, then we
+can define a new `curve_identifier` column by combining the values of
+`species` and `plot`. Then, we can use this column to split the set into chunks
+representing individual curves, and apply an operation to each chunk.
+
+Here is an example using a Licor log file that is included with the PhotoGEA
+package. When this file was created, the researcher specified the values of
+user constants called `species` and `plot`. The file contains several Ball-Berry
+curves, which are a special type of light response curve intended to be fit
+using the Ball-Berry model:
+
+```{r echo = TRUE, results = 'markup'}
+# Read an example Licor file included in the PhotoGEA package
+licor_file <- read_gasex_file(
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
+)
+
+# Create a `curve_identifier` column based on the `species` and `plot` columns
+licor_file[, 'curve_identifier'] <- paste(
+  licor_file[, 'species'],
+  licor_file[, 'plot']
+)
+
+# Plot A vs. Qin for each curve in the data set
+xyplot(
+  licor_file[, 'A'] ~ licor_file[, 'Qin'] | licor_file[, 'curve_identifier'],
+  type = 'b',
+  pch = 16,
+  xlab = 'Qin (micromol / m^2 / s)',
+  ylab = 'A (micromol / m^2 / s)'
+)
+
+# Get the number of measured points in each curve
+by(
+  licor_file,
+  licor_file[, 'curve_identifier'],
+  nrow
+)
+
+# A more complex example: apply the `fit_ball_berry` function to each curve
+licor_file <- calculate_total_pressure(licor_file)
+licor_file <- calculate_gas_properties(licor_file)
+licor_file <- calculate_ball_berry_index(licor_file)
+
+bb_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'curve_identifier'],
+  fit_ball_berry
+))
+```
+
+## Performing Statistical Operations
+
+All fitting functions in PhotoGEA will preserve user constants in their outputs,
+which makes it easy to perform statistical operations on the resulting parameter
+estimates. Continuing with the example above, we can calculate the mean
+Ball-Berry intercept for each species or plot the mean Ball-Berry slope:
+
+```{r echo = TRUE, results = 'markup'}
+# Get the Ball-Berry parameter estimates
+bb_parameters <- bb_results$parameters
+
+# Calculate mean Ball-Berry intercept for each species
+by(
+  bb_parameters,
+  bb_parameters[, 'species'],
+  function(x) {
+    mean(x[, 'bb_intercept'])
+  }
+)
+
+# Make barchart of mean Ball-Berry slope for each species
+barchart_with_errorbars(
+  bb_parameters[, 'bb_slope'],
+  bb_parameters[, 'species'],
+  ylim = c(0, 8),
+  ylab = 'Ball-Berry slope (dimensionless)'
+)
+```
+
+This is a very simple example with a simple data set. More realistic examples
+could perform stats tests or compute ANOVA tables.
+
 # Using File Names or Log Remarks
 
 Besides user constants, there are other methods for digitally storing metadata.
@@ -362,11 +455,6 @@ comments such as "Wow, this plant looks terrible," but they can be repurposed to
 store metadata. Following the example above, the remark message could be
 something like `species plot replicate`.
 
-```{r avoid_filenames_and_remarks}
-advice(INCLUDE_PREFIX, 'User constants save time in the long run compared to
-storing metadata in file names or remarks.')
-```
-
 A downside to these approaches is that they only provide one field for storing
 the metadata. In other words, in the examples above, instead of creating
 separate columns for `species`, `plot`, and `replicate`, these approaches would
@@ -376,7 +464,13 @@ to ["parse"](https://en.wikipedia.org/wiki/Parsing) the combined text string.
 There is no general way to do this, but we discuss a few options below.
 
 Because of the "parsing issue," it's generally simpler and more time-efficient
-to just make separate user constants for each important piece of metadata.
+to just make separate user constants for each important piece of metadata. In
+other words:
+
+```{r avoid_filenames_and_remarks}
+advice(INCLUDE_PREFIX, 'User constants save time in the long run compared to
+storing metadata in file names or remarks.')
+```
 
 ## Automated Parsing Using R
 
@@ -560,104 +654,7 @@ section.
 <<manual_parsing_with_excel>>
 ```
 
-# Examples of User Constant Applications
-
-## Applying an Operation to Every Curve in a Data Set
-
-We often want to apply an operation to every response curve in a data set. This
-could be something relatively simple, such as plotting $A_n$ values against
-$C_i$ values, or something more complicated, such as fitting the
-Farquhar-von-Caemmerer-Berry model to estimate the values of key photosynthetic
-parameters. In all such cases, a prerequisite is that we must be able to
-identify each curve in the set.
-
-User constants help to achieve this. For example, if every curve in the set can
-be identified by its unique values of the `species` and `plot` columns, then we
-can define a new `curve_identifier` column by combining the values of
-`species` and `plot`. Then, we can use this column to split the set into chunks
-representing individual curves, and apply an operation to each chunk.
-
-Here is an example using a Licor log file that is included with the PhotoGEA
-package. When this file was created, the researcher specified the values of
-user constants called `species` and `plot`. The file contains several Ball-Berry
-curves, which are a special type of light response curve intended to be fit
-using the Ball-Berry model:
-
-```{r echo = TRUE, results = 'markup'}
-# Read an example Licor file included in the PhotoGEA package
-licor_file <- read_gasex_file(
-  PhotoGEA_example_file_path('ball_berry_1.xlsx')
-)
-
-# Create a `curve_identifier` column based on the `species` and `plot` columns
-licor_file[, 'curve_identifier'] <- paste(
-  licor_file[, 'species'],
-  licor_file[, 'plot']
-)
-
-# Plot A vs. Qin for each curve in the data set
-xyplot(
-  licor_file[, 'A'] ~ licor_file[, 'Qin'] | licor_file[, 'curve_identifier'],
-  type = 'b',
-  pch = 16,
-  xlab = 'Qin (micromol / m^2 / s)',
-  ylab = 'A (micromol / m^2 / s)'
-)
-
-# Get the number of measured points in each curve
-by(
-  licor_file,
-  licor_file[, 'curve_identifier'],
-  nrow
-)
-
-# A more complex example: apply the `fit_ball_berry` function to each curve
-licor_file <- calculate_total_pressure(licor_file)
-licor_file <- calculate_gas_properties(licor_file)
-licor_file <- calculate_ball_berry_index(licor_file)
-
-bb_results <- consolidate(by(
-  licor_file,
-  licor_file[, 'curve_identifier'],
-  fit_ball_berry
-))
-```
-
-## Performing Statistical Operations
-
-All fitting functions in PhotoGEA will preserve user constants in their outputs,
-which makes it easy to perform statistical operations on the resulting parameter
-estimates. Continuing with the example above, we can calculate the mean
-Ball-Berry intercept for each species or plot the mean Ball-Berry slope:
-
-```{r echo = TRUE, results = 'markup'}
-# Get the Ball-Berry parameter estimates
-bb_parameters <- bb_results$parameters
-
-# Calculate mean Ball-Berry intercept for each species
-by(
-  bb_parameters,
-  bb_parameters[, 'species'],
-  function(x) {
-    mean(x[, 'bb_intercept'])
-  }
-)
-
-# Make barchart of mean Ball-Berry slope for each species
-barchart_with_errorbars(
-  bb_parameters[, 'bb_slope'],
-  bb_parameters[, 'species'],
-  ylim = c(0, 8),
-  ylab = 'Ball-Berry slope (dimensionless)'
-)
-```
-
-This is a very simple example with a simple data set. More realistic examples
-could perform stats tests or compute ANOVA tables.
-
-# Advice Summary
-
-**Advice for Using Licor LI-6800 User Constants**
+# Summary of Advice for Using Licor LI-6800 User Constants
 
 ```{r}
 INCLUDE_PREFIX <- FALSE
@@ -666,9 +663,9 @@ INCLUDE_PREFIX <- FALSE
 
 <<user_constants_id_curves>>
 
-<<retained_definitions>>
-
 <<define_before_opening>>
+
+<<retained_definitions>>
 
 <<include_as_columns>>
 
