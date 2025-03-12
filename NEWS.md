@@ -50,6 +50,8 @@ be directly added to this file to describe the related changes.
   and `set_variable`.
 - Added functionality for reading user remarks to `read_licor_6800_plaintext`
   and `read_licor_6800_Excel`.
+- Added a new input argument to `organize_response_curve_data` that enables
+  calculations of average values for specified columns.
 - Improved `exdf` construction and element access; now it is possible to provide
   just a few units when creating an `exdf` object, and it is possible to create
   single-column `exdf` objects.
@@ -68,11 +70,14 @@ be directly added to this file to describe the related changes.
 - Optional input arguments to `calculate_c3_assimilation` are checked to make
   sure they are supported. Going forward, any new functions with optional
   arguments (such as `calculate_jmax`) will use this same check.
+- Removed `Qin` from several functions related to C4 A-Ci curves, since `Qin` is
+  not actually needed for fitting C4 A-Ci curves.
 
 ### Internal changes
 
 - The `unit_dictionary` is now a function rather than a list, which enables
-  better error messages when a quantity is not included in the dictionary.
+  better error messages when a quantity is not included in the dictionary; a few
+  mistakes were discovered this way (and fixed).
 
 ## Changes in PhotoGEA version 1.1.0 (2024-12-09)
 
