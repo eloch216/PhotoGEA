@@ -35,6 +35,7 @@ be directly added to this file to describe the related changes.
 
 ### Minor user-facing changes
 
+- Added a vignette with advice for Licor LI-6800 user constants.
 - Added a new function for calculating values of Jmax (`calculate_jmax`) and
   included it in the C3 and C4 A-Ci curve vignettes. Along with this function,
   new temperature response parameters were added:
