@@ -401,6 +401,13 @@ licor_data[ , 'curve_identifier'] <-
   paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
 ```
 
+When measuring response curves (or any other type of gas exchange data), it is
+strongly recommended to record key pieces of metadata in the log files using
+"user constants," as was done in this example. For more information, please see
+the [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html), which
+also includes advice for dealing with data sets that do not contain such
+metadata.
+
 The next step is to make sure that this column correctly identifies each
 response curve. To do this, we can use the `check_response_curve_data` function
 from `PhotoGEA`. Here we will supply the name of a column that should uniquely
