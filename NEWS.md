@@ -31,7 +31,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## Unreleased
+## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 
 ### Minor user-facing changes
 
@@ -40,7 +40,7 @@ be directly added to this file to describe the related changes.
   included it in the C3 and C4 A-Ci curve vignettes. Along with this function,
   new temperature response parameters were added:
   `jmax_temperature_param_bernacchi` and `jmax_temperature_param_flat`. These
-  emply polynomial temperature responses, a new type that was also added to the
+  employ polynomial temperature responses, a new type that was also added to the
   package via the `calculate_temperature_response_polynomial` function.
 - `identify_c3_limiting_processes` now returns each co-limiting process when
   assimilation is co-limited.
@@ -66,7 +66,13 @@ be directly added to this file to describe the related changes.
 - A bug was fixed where `Gamma_star` was sometimes accidentally removed from the
   outputs of `fit_c3_aci` and `fit_c3_variable_j`
 - Optional input arguments to `calculate_c3_assimilation` are checked to make
-  sure they are supported.
+  sure they are supported. Going forward, any new functions with optional
+  arguments (such as `calculate_jmax`) will use this same check.
+
+### Internal changes
+
+- The `unit_dictionary` is now a function rather than a list, which enables
+  better error messages when a quantity is not included in the dictionary.
 
 ## Changes in PhotoGEA version 1.1.0 (2024-12-09)
 
