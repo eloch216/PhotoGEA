@@ -66,14 +66,18 @@ test_that('Cc limits can be bypassed', {
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
 })
 
-test_that('Gamma_star can be passed via fit_options', {
-    one_curve_no_gstar <- one_curve
-    one_curve_no_gstar[, 'Gamma_star'] <- NULL
+test_that('Gamma_star can be passed as a column', {
+    one_curve_with_gstar <- set_variable(
+        one_curve,
+        'Gamma_star_at_25',
+        'micromol mol^(-1)',
+        value = 38.6
+    )
 
     expect_silent(
         fit_c3_aci(
-            one_curve_no_gstar,
-            fit_options = list(Gamma_star = 38.6),
+            one_curve_with_gstar,
+            fit_options = list(Gamma_star_at_25 = 'column'),
             optim_fun = optimizer_nmkb(1e-7),
             calculate_confidence_intervals = FALSE
         )
@@ -137,6 +141,12 @@ test_that('fit results have not changed (no alpha)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Jmax_at_25_upper')]),
         c(152.831071, 238.947894, 1.034651, Inf, 240.012420),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(294.70316, 294.70316, 37.51608, 37.85419),
         tolerance = TOLERANCE
     )
 
@@ -360,7 +370,7 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     fit_res <- fit_c3_aci(
         one_curve_t,
         Ca_atmospheric = 420,
-        fit_options = list(gmc_at_25 = 'fit'),
+        fit_options = list(gmc_at_25 = 'fit', Gamma_star_at_25 = 36.94438),
         optim_fun = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,

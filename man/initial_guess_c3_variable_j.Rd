@@ -227,14 +227,14 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
-# Create the guessing function; here we set all alpha values to 0 and use the
-# temperature-dependent values of Gamma_star calculated above
+# Create the guessing function; here we set all alpha values to 0 and set
+# Gamma_star_at_25 to 40 micromol / mol.
 guessing_func <- initial_guess_c3_variable_j(
   alpha_g = 0,
   alpha_old = 0,
   alpha_s = 0,
   alpha_t = 0,
-  Gamma_star = ''
+  Gamma_star = 40
 )
 
 # Apply it and see the initial guesses for each curve

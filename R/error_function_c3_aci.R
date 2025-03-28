@@ -8,6 +8,7 @@ error_function_c3_aci <- function(
     curvature_cjp = 1.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
     kc_column_name = 'Kc',
@@ -43,17 +44,18 @@ error_function_c3_aci <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
-    required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
-    required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
-    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
-    required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
-    required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[tp_norm_column_name]]        <- unit_dictionary('Tp_norm')
-    required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
+    required_variables[[a_column_name]]               <- unit_dictionary('A')
+    required_variables[[ci_column_name]]              <- unit_dictionary('Ci')
+    required_variables[[gmc_norm_column_name]]        <- unit_dictionary('gmc_norm')
+    required_variables[[gamma_star_norm_column_name]] <- unit_dictionary('Gamma_star_norm')
+    required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
+    required_variables[[kc_column_name]]              <- unit_dictionary('Kc')
+    required_variables[[ko_column_name]]              <- unit_dictionary('Ko')
+    required_variables[[oxygen_column_name]]          <- unit_dictionary('oxygen')
+    required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
+    required_variables[[total_pressure_column_name]]  <- unit_dictionary('total_pressure')
+    required_variables[[tp_norm_column_name]]         <- unit_dictionary('Tp_norm')
+    required_variables[[vcmax_norm_column_name]]      <- unit_dictionary('Vcmax_norm')
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -151,7 +153,7 @@ error_function_c3_aci <- function(
                     X[2],  # alpha_old
                     X[3],  # alpha_s
                     X[4],  # alpha_t
-                    X[5],  # Gamma_star
+                    X[5],  # Gamma_star_at_25
                     X[7],  # J_at_25
                     X[8],  # RL_at_25
                     X[9],  # Tp_at_25
@@ -161,6 +163,7 @@ error_function_c3_aci <- function(
                     curvature_cj,
                     curvature_cjp,
                     cc_column_name,
+                    gamma_star_norm_column_name,
                     j_norm_column_name,
                     kc_column_name,
                     ko_column_name,

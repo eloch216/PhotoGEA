@@ -294,11 +294,12 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = alpha_t = 0,
-# tau = 0.2, and RL = 0.5
-vj_res <- calculate_c3_variable_j(licor_file, 0, 0, 0, '', 1.5, 0.55)
+# Gamma_star_at_25 = 40, tau = 0.2, and RL_at_25 = 0.5.
+vj_res <- calculate_c3_variable_j(licor_file, 0, 0, 0, 40, 1.5, 0.55)
 
 # Plot mesophyll conductance against Cc. Note: this information is not very
-# meaningful since the values of tau and RL used above are arbitrary.
+# meaningful since the values of Gamma_star, tau and RL used above are
+# arbitrary.
 lattice::xyplot(
   gmc ~ Cc | licor_file[, 'species_plot'],
   data = vj_res$main_data,

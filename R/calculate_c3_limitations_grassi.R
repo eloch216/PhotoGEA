@@ -8,7 +8,7 @@ calculate_c3_limitations_grassi <- function(
     atp_use = 4.0,
     nadph_use = 8.0,
     cc_column_name = 'Cc',
-    gamma_star_column_name = 'Gamma_star',
+    gamma_star_column_name = 'Gamma_star_tl',
     gmc_column_name = 'gmc_tl',
     gsc_column_name = 'gsc',
     kc_column_name = 'Kc',
@@ -29,18 +29,18 @@ calculate_c3_limitations_grassi <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[cc_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
-    required_variables[[gmc_column_name]]            <- 'mol m^(-2) s^(-1) bar^(-1)'
-    required_variables[[gsc_column_name]]            <- 'mol m^(-2) s^(-1)'
-    required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
+    required_variables[[cc_column_name]]             <- unit_dictionary('Cc')
+    required_variables[[gamma_star_column_name]]     <- unit_dictionary('Gamma_star_at_25')
+    required_variables[[gmc_column_name]]            <- unit_dictionary('gmc_at_25')
+    required_variables[[gsc_column_name]]            <- unit_dictionary('gsc')
+    required_variables[[kc_column_name]]             <- unit_dictionary('Kc')
+    required_variables[[ko_column_name]]             <- unit_dictionary('Ko')
     required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
-    required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[vcmax_column_name]]          <- 'micromol m^(-2) s^(-1)'
+    required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
+    required_variables[[vcmax_column_name]]          <- unit_dictionary('Vcmax_at_25')
 
     if (use_j) {
-        required_variables[[j_column_name]] <- 'micromol m^(-2) s^(-1)'
+        required_variables[[j_column_name]] <- unit_dictionary('J_at_25')
     }
 
     # Don't throw an error if some columns are all NA

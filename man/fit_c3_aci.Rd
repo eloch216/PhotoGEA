@@ -452,11 +452,11 @@ one_result <- fit_c3_aci(
   optim_fun = optimizer
 )
 
-# We can fit the same curve, but also allow alpha_old and Gamma_star to vary
+# We can fit the same curve, but allow alpha_old and Gamma_star_at_25 to vary
 one_result_v2 <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
-  fit_options = list(Gamma_star = 'fit', alpha_old = 'fit'),
+  fit_options = list(Gamma_star_at_25 = 'fit', alpha_old = 'fit'),
   optim_fun = optimizer
 )
 

@@ -1,7 +1,7 @@
 example_exdf <- exdf(
     data.frame(
         Cc             = seq(10, 400, length.out = 3),
-        Gamma_star     = 40,
+        Gamma_star_tl  = 40,
         gmc_tl         = 0.5,
         gsc            = 0.8,
         J_tl           = 200,
@@ -14,7 +14,7 @@ example_exdf <- exdf(
     ),
     units = data.frame(
         Cc             = 'micromol mol^(-1)',
-        Gamma_star     = 'micromol mol^(-1)',
+        Gamma_star_tl  = 'micromol mol^(-1)',
         gmc_tl         = 'mol m^(-2) s^(-1) bar^(-1)',
         gsc            = 'mol m^(-2) s^(-1)',
         J_tl           = 'micromol m^(-2) s^(-1)',
