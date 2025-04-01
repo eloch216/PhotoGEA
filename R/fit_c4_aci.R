@@ -463,40 +463,12 @@ fit_c4_aci <- function(
             hard_constraints
         )
 
-        # Attach limits for the average leaf-temperature values of fitting parameters
-        gmc_tl_scale <- replicate_identifiers[, 'gmc_tl_avg'] / replicate_identifiers[, 'gmc_at_25']
-        replicate_identifiers[, 'gmc_tl_avg_lower'] <- replicate_identifiers[, 'gmc_at_25_lower'] * gmc_tl_scale
-        replicate_identifiers[, 'gmc_tl_avg_upper'] <- replicate_identifiers[, 'gmc_at_25_upper'] * gmc_tl_scale
-
-        J_tl_scale <- replicate_identifiers[, 'J_tl_avg'] / replicate_identifiers[, 'J_at_25']
-        replicate_identifiers[, 'J_tl_avg_lower'] <- replicate_identifiers[, 'J_at_25_lower'] * J_tl_scale
-        replicate_identifiers[, 'J_tl_avg_upper'] <- replicate_identifiers[, 'J_at_25_upper'] * J_tl_scale
-
-        RL_tl_scale <- replicate_identifiers[, 'RL_tl_avg'] / replicate_identifiers[, 'RL_at_25']
-        replicate_identifiers[, 'RL_tl_avg_lower'] <- replicate_identifiers[, 'RL_at_25_lower'] * RL_tl_scale
-        replicate_identifiers[, 'RL_tl_avg_upper'] <- replicate_identifiers[, 'RL_at_25_upper'] * RL_tl_scale
-
-        Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
-        replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
-        replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
-
-        Vpmax_tl_scale <- replicate_identifiers[, 'Vpmax_tl_avg'] / replicate_identifiers[, 'Vpmax_at_25']
-        replicate_identifiers[, 'Vpmax_tl_avg_lower'] <- replicate_identifiers[, 'Vpmax_at_25_lower'] * Vpmax_tl_scale
-        replicate_identifiers[, 'Vpmax_tl_avg_upper'] <- replicate_identifiers[, 'Vpmax_at_25_upper'] * Vpmax_tl_scale
-
-        # Document the new columns that were added
-        replicate_identifiers <- document_variables(
+        # Attach limits for the average leaf-temperature values of fitting
+        # parameters
+        replicate_identifiers <- confidence_intervals_leaf_temperature(
             replicate_identifiers,
-            c('fit_c4_aci', 'gmc_tl_avg_lower',   'mol m^(-2) s^(-1) bar^(-1)'),
-            c('fit_c4_aci', 'gmc_tl_avg_upper',   'mol m^(-2) s^(-1) bar^(-1)'),
-            c('fit_c4_aci', 'J_tl_avg_lower',     'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'J_tl_avg_upper',     'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'RL_tl_avg_lower',    'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'RL_tl_avg_upper',    'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'Vcmax_tl_avg_lower', 'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'Vcmax_tl_avg_upper', 'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'Vpmax_tl_avg_lower', 'micromol m^(-2) s^(-1)'),
-            c('fit_c4_aci', 'Vpmax_tl_avg_upper', 'micromol m^(-2) s^(-1)')
+            c('gmc', 'J', 'RL', 'Vcmax', 'Vpmax'),
+            'fit_c4_aci'
         )
     }
 

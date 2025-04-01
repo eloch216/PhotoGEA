@@ -521,58 +521,12 @@ fit_c3_aci <- function(
             ...
         )
 
-        # Attach limits for the average leaf-temperature values of fitting parameters
-        Gamma_star_tl_scale <- replicate_identifiers[, 'Gamma_star_tl_avg'] / replicate_identifiers[, 'Gamma_star_at_25']
-        replicate_identifiers[, 'Gamma_star_tl_avg_lower'] <- replicate_identifiers[, 'Gamma_star_at_25_lower'] * Gamma_star_tl_scale
-        replicate_identifiers[, 'Gamma_star_tl_avg_upper'] <- replicate_identifiers[, 'Gamma_star_at_25_upper'] * Gamma_star_tl_scale
-
-        gmc_tl_scale <- replicate_identifiers[, 'gmc_tl_avg'] / replicate_identifiers[, 'gmc_at_25']
-        replicate_identifiers[, 'gmc_tl_avg_lower'] <- replicate_identifiers[, 'gmc_at_25_lower'] * gmc_tl_scale
-        replicate_identifiers[, 'gmc_tl_avg_upper'] <- replicate_identifiers[, 'gmc_at_25_upper'] * gmc_tl_scale
-
-        J_tl_scale <- replicate_identifiers[, 'J_tl_avg'] / replicate_identifiers[, 'J_at_25']
-        replicate_identifiers[, 'J_tl_avg_lower'] <- replicate_identifiers[, 'J_at_25_lower'] * J_tl_scale
-        replicate_identifiers[, 'J_tl_avg_upper'] <- replicate_identifiers[, 'J_at_25_upper'] * J_tl_scale
-
-        Kc_tl_scale <- replicate_identifiers[, 'Kc_tl_avg'] / replicate_identifiers[, 'Kc_at_25']
-        replicate_identifiers[, 'Kc_tl_avg_lower'] <- replicate_identifiers[, 'Kc_at_25_lower'] * Kc_tl_scale
-        replicate_identifiers[, 'Kc_tl_avg_upper'] <- replicate_identifiers[, 'Kc_at_25_upper'] * Kc_tl_scale
-
-        Ko_tl_scale <- replicate_identifiers[, 'Ko_tl_avg'] / replicate_identifiers[, 'Ko_at_25']
-        replicate_identifiers[, 'Ko_tl_avg_lower'] <- replicate_identifiers[, 'Ko_at_25_lower'] * Ko_tl_scale
-        replicate_identifiers[, 'Ko_tl_avg_upper'] <- replicate_identifiers[, 'Ko_at_25_upper'] * Ko_tl_scale
-
-        RL_tl_scale <- replicate_identifiers[, 'RL_tl_avg'] / replicate_identifiers[, 'RL_at_25']
-        replicate_identifiers[, 'RL_tl_avg_lower'] <- replicate_identifiers[, 'RL_at_25_lower'] * RL_tl_scale
-        replicate_identifiers[, 'RL_tl_avg_upper'] <- replicate_identifiers[, 'RL_at_25_upper'] * RL_tl_scale
-
-        Tp_tl_scale <- replicate_identifiers[, 'Tp_tl_avg'] / replicate_identifiers[, 'Tp_at_25']
-        replicate_identifiers[, 'Tp_tl_avg_lower'] <- replicate_identifiers[, 'Tp_at_25_lower'] * Tp_tl_scale
-        replicate_identifiers[, 'Tp_tl_avg_upper'] <- replicate_identifiers[, 'Tp_at_25_upper'] * Tp_tl_scale
-
-        Vcmax_tl_scale <- replicate_identifiers[, 'Vcmax_tl_avg'] / replicate_identifiers[, 'Vcmax_at_25']
-        replicate_identifiers[, 'Vcmax_tl_avg_lower'] <- replicate_identifiers[, 'Vcmax_at_25_lower'] * Vcmax_tl_scale
-        replicate_identifiers[, 'Vcmax_tl_avg_upper'] <- replicate_identifiers[, 'Vcmax_at_25_upper'] * Vcmax_tl_scale
-
-        # Document the new columns that were added
-        replicate_identifiers <- document_variables(
+        # Attach limits for the average leaf-temperature values of fitting
+        # parameters
+        replicate_identifiers <- confidence_intervals_leaf_temperature(
             replicate_identifiers,
-            c('fit_c3_aci', 'Gamma_star_tl_avg_lower', 'micromol mol^(-1)'),
-            c('fit_c3_aci', 'Gamma_star_tl_avg_upper', 'micromol mol^(-1)'),
-            c('fit_c3_aci', 'gmc_tl_avg_lower',        'mol mol^(-2) s^(-1) bar^(-1)'),
-            c('fit_c3_aci', 'gmc_tl_avg_upper',        'mol mol^(-2) s^(-1) bar^(-1)'),
-            c('fit_c3_aci', 'J_tl_avg_lower',          'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'J_tl_avg_upper',          'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'Kc_tl_avg_lower',         'micromol mol^(-1)'),
-            c('fit_c3_aci', 'Kc_tl_avg_upper',         'micromol mol^(-1)'),
-            c('fit_c3_aci', 'Ko_tl_avg_lower',         'mmol mol^(-1)'),
-            c('fit_c3_aci', 'Ko_tl_avg_upper',         'mmol mol^(-1)'),
-            c('fit_c3_aci', 'RL_tl_avg_lower',         'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'RL_tl_avg_upper',         'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'Tp_tl_avg_lower',         'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'Tp_tl_avg_upper',         'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'Vcmax_tl_avg_lower',      'micromol m^(-2) s^(-1)'),
-            c('fit_c3_aci', 'Vcmax_tl_avg_upper',      'micromol m^(-2) s^(-1)')
+            c('Gamma_star', 'gmc', 'J', 'Kc', 'Ko', 'RL', 'Tp', 'Vcmax'),
+            'fit_c3_aci'
         )
     }
 
