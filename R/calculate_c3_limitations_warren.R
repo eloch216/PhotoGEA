@@ -13,8 +13,8 @@ calculate_c3_limitations_warren <- function(
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -37,6 +37,8 @@ calculate_c3_limitations_warren <- function(
     required_variables[['alpha_t']]                   <- unit_dictionary('alpha_t')
     required_variables[['Gamma_star_at_25']]          <- unit_dictionary('Gamma_star_at_25')
     required_variables[['J_at_25']]                   <- unit_dictionary('J_at_25')
+    required_variables[['Kc_at_25']]                  <- unit_dictionary('Kc_at_25')
+    required_variables[['Ko_at_25']]                  <- unit_dictionary('Ko_at_25')
     required_variables[['RL_at_25']]                  <- unit_dictionary('RL_at_25')
     required_variables[['Tp_at_25']]                  <- unit_dictionary('Tp_at_25')
     required_variables[['Vcmax_at_25']]               <- unit_dictionary('Vcmax_at_25')
@@ -45,8 +47,8 @@ calculate_c3_limitations_warren <- function(
     required_variables[[ci_column_name]]              <- unit_dictionary('Ci')
     required_variables[[gamma_star_norm_column_name]] <- unit_dictionary('Gamma_star_norm')
     required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
-    required_variables[[kc_column_name]]              <- unit_dictionary('Kc')
-    required_variables[[ko_column_name]]              <- unit_dictionary('Ko')
+    required_variables[[kc_norm_column_name]]         <- unit_dictionary('Kc_norm')
+    required_variables[[ko_norm_column_name]]         <- unit_dictionary('Ko_norm')
     required_variables[[oxygen_column_name]]          <- unit_dictionary('oxygen')
     required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
     required_variables[[total_pressure_column_name]]  <- unit_dictionary('total_pressure')
@@ -89,6 +91,8 @@ calculate_c3_limitations_warren <- function(
             '', # alpha_t
             '', # Gamma_star_at_25
             '', # J_at_25
+            '', # Kc_at_25
+            '', # Ko_at_25
             '', # RL_at_25
             '', # Tp_at_25
             '', # Vcmax_at_25
@@ -99,8 +103,8 @@ calculate_c3_limitations_warren <- function(
             cc_column_name = cc_name,
             gamma_star_norm_column_name = gamma_star_norm_column_name,
             j_norm_column_name = j_norm_column_name,
-            kc_column_name = kc_column_name,
-            ko_column_name = ko_column_name,
+            kc_norm_column_name = kc_norm_column_name,
+            ko_norm_column_name = ko_norm_column_name,
             oxygen_column_name = oxygen_column_name,
             rl_norm_column_name = rl_norm_column_name,
             total_pressure_column_name = total_pressure_column_name,

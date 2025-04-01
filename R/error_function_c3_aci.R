@@ -11,8 +11,8 @@ error_function_c3_aci <- function(
     gamma_star_norm_column_name = 'Gamma_star_norm',
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -49,8 +49,8 @@ error_function_c3_aci <- function(
     required_variables[[gmc_norm_column_name]]        <- unit_dictionary('gmc_norm')
     required_variables[[gamma_star_norm_column_name]] <- unit_dictionary('Gamma_star_norm')
     required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
-    required_variables[[kc_column_name]]              <- unit_dictionary('Kc')
-    required_variables[[ko_column_name]]              <- unit_dictionary('Ko')
+    required_variables[[kc_norm_column_name]]         <- unit_dictionary('Kc_norm')
+    required_variables[[ko_norm_column_name]]         <- unit_dictionary('Ko_norm')
     required_variables[[oxygen_column_name]]          <- unit_dictionary('oxygen')
     required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
     required_variables[[total_pressure_column_name]]  <- unit_dictionary('total_pressure')
@@ -155,9 +155,11 @@ error_function_c3_aci <- function(
                     X[4],  # alpha_t
                     X[5],  # Gamma_star_at_25
                     X[7],  # J_at_25
-                    X[8],  # RL_at_25
-                    X[9],  # Tp_at_25
-                    X[10], # Vcmax_at_25
+                    X[8],  # Kc_at_25
+                    X[9],  # Ko_at_25
+                    X[10], # RL_at_25
+                    X[11], # Tp_at_25
+                    X[12], # Vcmax_at_25
                     atp_use,
                     nadph_use,
                     curvature_cj,
@@ -165,8 +167,8 @@ error_function_c3_aci <- function(
                     cc_column_name,
                     gamma_star_norm_column_name,
                     j_norm_column_name,
-                    kc_column_name,
-                    ko_column_name,
+                    kc_norm_column_name,
+                    ko_norm_column_name,
                     oxygen_column_name,
                     rl_norm_column_name,
                     total_pressure_column_name,

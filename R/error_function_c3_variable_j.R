@@ -10,8 +10,8 @@ error_function_c3_variable_j <- function(
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
@@ -62,8 +62,8 @@ error_function_c3_variable_j <- function(
     required_variables[[ci_column_name]]              <- unit_dictionary('Ci')
     required_variables[[gamma_star_norm_column_name]] <- unit_dictionary('Gamma_star_norm')
     required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
-    required_variables[[kc_column_name]]              <- unit_dictionary('Kc')
-    required_variables[[ko_column_name]]              <- unit_dictionary('Ko')
+    required_variables[[kc_norm_column_name]]         <- unit_dictionary('Kc_norm')
+    required_variables[[ko_norm_column_name]]         <- unit_dictionary('Ko_norm')
     required_variables[[phips2_column_name]]          <- unit_dictionary('PhiPS2')
     required_variables[[qin_column_name]]             <- unit_dictionary('Qin')
     required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
@@ -130,12 +130,12 @@ error_function_c3_variable_j <- function(
             {
                 calculate_c3_variable_j(
                     fitting_exdf,
-                    X[1], # alpha_g
-                    X[3], # alpha_s
-                    X[4], # alpha_t
-                    X[5], # Gamma_star_at_25
-                    X[7], # RL_at_25
-                    X[8], # tau
+                    X[1],  # alpha_g
+                    X[3],  # alpha_s
+                    X[4],  # alpha_t
+                    X[5],  # Gamma_star_at_25
+                    X[9],  # RL_at_25
+                    X[10], # tau
                     atp_use,
                     nadph_use,
                     a_column_name,
@@ -185,9 +185,11 @@ error_function_c3_variable_j <- function(
                     X[4],  # alpha_t
                     X[5],  # Gamma_star_at_25
                     X[6],  # J_at_25
-                    X[7],  # RL_at_25
-                    X[9],  # Tp_at_25
-                    X[10], # Vcmax_at_25
+                    X[7],  # Kc_at_25
+                    X[8],  # Ko_at_25,
+                    X[9],  # RL_at_25
+                    X[11], # Tp_at_25
+                    X[12], # Vcmax_at_25
                     atp_use,
                     nadph_use,
                     curvature_cj,
@@ -195,8 +197,8 @@ error_function_c3_variable_j <- function(
                     cc_column_name,
                     gamma_star_norm_column_name,
                     j_norm_column_name,
-                    kc_column_name,
-                    ko_column_name,
+                    kc_norm_column_name,
+                    ko_norm_column_name,
                     oxygen_column_name,
                     rl_norm_column_name,
                     total_pressure_column_name,

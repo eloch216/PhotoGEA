@@ -4,6 +4,8 @@ initial_guess_c3_variable_j <- function(
     alpha_s,
     alpha_t,
     Gamma_star_at_25,
+    Kc_at_25,
+    Ko_at_25,
     cc_threshold_rd = 100,
     atp_use = 4.0,
     nadph_use = 8.0,
@@ -12,8 +14,8 @@ initial_guess_c3_variable_j <- function(
     etr_column_name = 'ETR',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
@@ -70,6 +72,8 @@ initial_guess_c3_variable_j <- function(
             alpha_t,
             Gamma_star_at_25,
             Inf, # gmc
+            Kc_at_25,
+            Ko_at_25,
             cc_threshold_rd,
             atp_use,
             nadph_use,
@@ -78,8 +82,8 @@ initial_guess_c3_variable_j <- function(
             gamma_star_norm_column_name,
             gmc_norm_column_name,
             j_norm_column_name,
-            kc_column_name,
-            ko_column_name,
+            kc_norm_column_name,
+            ko_norm_column_name,
             oxygen_column_name,
             rl_norm_column_name,
             total_pressure_column_name,
@@ -99,10 +103,12 @@ initial_guess_c3_variable_j <- function(
             c3_guess[4],  # alpha_t
             c3_guess[5],  # Gamma_star_at_25
             c3_guess[7],  # J_at_25
-            c3_guess[8],  # RL_at_25
+            c3_guess[8],  # Kc_at_25
+            c3_guess[9],  # Ko_at_25
+            c3_guess[10], # RL_at_25
             tau_guess,    # tau
-            c3_guess[9],  # Tp_at_25
-            c3_guess[10]  # Vcmax_at_25
+            c3_guess[11], # Tp_at_25
+            c3_guess[12]  # Vcmax_at_25
         )
     }
 }
