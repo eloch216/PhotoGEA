@@ -369,7 +369,7 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     fit_res <- fit_c3_aci(
         one_curve_t,
         Ca_atmospheric = 420,
-        fit_options = list(gmc_at_25 = 'fit', Gamma_star_at_25 = 36.94438, Kc_at_25 = 269.3391, Ko_at_25 = 163.7146),
+        fit_options = list(gmc_at_25 = 'fit'),
         optim_fun = optimizer_deoptim(100),
         hard_constraints = 2,
         calculate_confidence_intervals = TRUE,

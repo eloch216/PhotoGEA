@@ -131,9 +131,9 @@ initial_guess_c3_aci <- function(
         # the Rubisco-limited range. With this in mind, we choose the largest
         # Vcmax value as our best estimate. In this calculation, we need a value
         # of RL, so we use the previously-estimated value.
-        Kc_tl  <- Kc_at_25 * rc_exdf[, kc_norm_column_name]        # micromol / mol
-        Ko_tl  <- Ko_at_25 * rc_exdf[, ko_norm_column_name] * 1e-3 # mol / mol
-        oxygen <- rc_exdf[, oxygen_column_name] * 1e-2             # mol / mol
+        Kc_tl  <- rc_exdf[, 'Kc_at_25'] * rc_exdf[, kc_norm_column_name]        # micromol / mol
+        Ko_tl  <- rc_exdf[, 'Ko_at_25'] * rc_exdf[, ko_norm_column_name] * 1e-3 # mol / mol
+        oxygen <- rc_exdf[, oxygen_column_name] * 1e-2                          # mol / mol
 
         vcmax_estimates <- Vc *
             (rc_exdf[, cc_column_name] + Kc_tl * (1 + oxygen / Ko_tl)) /

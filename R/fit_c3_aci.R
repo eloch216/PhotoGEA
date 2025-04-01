@@ -1,7 +1,7 @@
 # Specify default fit settings
 c3_aci_lower       <- list(alpha_g = 0,  alpha_old = 0,     alpha_s = 0,  alpha_t = 0,  Gamma_star_at_25 = -20,      gmc_at_25 = -1,  J_at_25 = -50,   Kc_at_25 = -50,      Ko_at_25 = -50,      RL_at_25 = -10,   Tp_at_25 = -10,   Vcmax_at_25 = -50)
 c3_aci_upper       <- list(alpha_g = 10, alpha_old = 10,    alpha_s = 10, alpha_t = 10, Gamma_star_at_25 = 200,      gmc_at_25 = 10,  J_at_25 = 1000,  Kc_at_25 = 1000,     Ko_at_25 = 1000,     RL_at_25 = 100,   Tp_at_25 = 100,   Vcmax_at_25 = 1000)
-c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  alpha_t = 0,  Gamma_star_at_25 = 42.93205, gmc_at_25 = Inf, J_at_25 = 'fit', Kc_at_25 = 406.8494, Ko_at_25 = 277.1446, RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
+c3_aci_fit_options <- list(alpha_g = 0,  alpha_old = 'fit', alpha_s = 0,  alpha_t = 0,  Gamma_star_at_25 = 'column', gmc_at_25 = Inf, J_at_25 = 'fit', Kc_at_25 = 'column', Ko_at_25 = 'column', RL_at_25 = 'fit', Tp_at_25 = 'fit', Vcmax_at_25 = 'fit')
 
 c3_aci_param <- c('alpha_g', 'alpha_old', 'alpha_s', 'alpha_t', 'Gamma_star_at_25', 'gmc_at_25', 'J_at_25', 'Kc_at_25', 'Ko_at_25', 'RL_at_25', 'Tp_at_25', 'Vcmax_at_25')
 

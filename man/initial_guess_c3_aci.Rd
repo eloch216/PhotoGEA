@@ -240,15 +240,21 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
-# Create the guessing function; here we set all alpha values to 0, set
-# Gamma_star_at_25 to 40 micromol / mol, and set gmc to infinity
+# Create the guessing function; here we set:
+# - All alpha values to 0
+# - Gamma_star_at_25 to 40 micromol / mol
+# - gmc to infinity
+# - Kc_at_25 to 400 micromol / mol
+# - Ko_at_25 to 275 mmol / mol
 guessing_func <- initial_guess_c3_aci(
   alpha_g = 0,
   alpha_old = 0,
   alpha_s = 0,
   alpha_t = 0,
   Gamma_star = 40,
-  gmc_at_25 = Inf
+  gmc_at_25 = Inf,
+  Kc_at_25 = 400,
+  Ko_at_25 = 275
 )
 
 # Apply it and see the initial guesses for each curve
@@ -261,7 +267,8 @@ aci_results <- consolidate(by(
   licor_file[, 'species_plot'],
   fit_c3_aci,
   fit_options = list(alpha_old = 0),
-  optim_fun = optimizer_null()
+  optim_fun = optimizer_null(),
+  remove_unreliable_param = 0
 ))
 
 plot_c3_aci_fit(aci_results, 'species_plot', 'Ci')

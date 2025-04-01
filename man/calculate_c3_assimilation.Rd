@@ -493,7 +493,7 @@ inputs <- document_variables(
 
 inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 0, 0, 0, 0, 40, 150, 1, 12, 120)
+assim <- calculate_c3_assimilation(inputs, 0, 0, 0, 0, '', 150, '', '', 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ inputs[, 'Cc'],
