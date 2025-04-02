@@ -31,6 +31,28 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+### Minor user-facing changes
+
+- Separated the temperature response of `Gamma_star` from its value at 25
+  degrees C. With this change, several functions (including `fit_c3_aci` and
+  `fit_c3_variable_j`) now have separate inputs for `Gamma_star_at_25` and
+  `Gamma_star_norm`. The fitting functions can now fit `Gamma_star_at_25` rather
+  than `Gamma_star`, which previously represented the value at leaf temperature.
+  Since each set of temperature response parameters (such as
+  `c3_temperature_param_bernacchi`) tends to use a different value of
+  `Gamma_star_at_25`, the temperature response parameter lists now include both
+  `Gamma_star_at_25` and `Gamma_star_norm`.
+- Separated the temperature responses of `Kc` and `Ko` from their values at 25
+  degrees C, and enabled fits of `Kc_at_25` and `Ko_at_25`. As with
+  `Gamma_star`, the temperature response parameter lists include values at 25
+  degrees C and the normalized temperature responses.
+- Added values of `alpha_j_at_25` and `theta_j_at_25` to the Jmax-related
+  temperature response parameter lists.
+- The `calculate_gamma_star` function now returns values of `Gamma_star_tl` to
+  more clearly indicate that the values are specified at leaf temperature.
+
 ## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 
 ### Minor user-facing changes
