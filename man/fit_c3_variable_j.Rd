@@ -9,9 +9,9 @@
   measured C3 A-Ci + CF curve.
 
   It is possible to fit the following parameters: \code{alpha_g},
-  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{gamma_star},
-  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
-  \code{Vcmax_at_25}.
+  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{Gamma_star_at_25},
+  \code{J_at_25}, \code{Kc_at_25}, \code{Ko_at_25} \code{RL_at_25}, \code{tau},
+  \code{Tp_at_25}, and \code{Vcmax_at_25}.
 
   By default, only a subset of these parameters are actually fit:
   \code{alpha_old}, \code{J_at_25}, \code{RL_at_25}, \code{tau},
@@ -40,9 +40,10 @@
     ca_column_name = 'Ca',
     ci_column_name = 'Ci',
     etr_column_name = 'ETR',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
@@ -104,21 +105,25 @@
     \code{micromol m^(-2) s^(-1)}.
   }
 
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
+  }
+
   \item{j_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
-  \item{kc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    \code{micromol mol^(-1)}.
+  \item{kc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Kc} values (with units of \code{normalized to Kc at 25 degrees C}).
   }
 
-  \item{ko_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    \code{mmol mol^(-1)}.
+  \item{ko_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Ko} values (with units of \code{normalized to Ko at 25 degrees C}).
   }
 
   \item{oxygen_column_name}{
@@ -276,25 +281,28 @@
   \code{\link{calculate_c3_assimilation}} to calculate values of net
   assimilation. The user-supplied optimization function is used to vary the
   values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
-  \code{J_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and
-  \code{Vcmax_at_25} to find ones that best reproduce the experimentally
-  measured values of net assimilation. By default, the following options are
-  used for the fits:
+  \code{Gamma_star_at_25}, \code{J_at_25}, \code{Kc_at_25}, \code{Ko_at_25},
+  \code{RL_at_25}, \code{tau}, \code{Tp_at_25}, and \code{Vcmax_at_25} to find
+  ones that best reproduce the experimentally measured values of net
+  assimilation. By default, the following options are used for the fits:
   \itemize{
     \item \code{alpha_g}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_old}: lower = 0, upper = 10, fit_option = \code{'fit'}
     \item \code{alpha_s}: lower = 0, upper = 10, fit_option = 0
     \item \code{alpha_t}: lower = 0, upper = 10, fit_option = 0
-    \item \code{Gamma_star}: lower = -20, upper = 200, fit_option = \code{'column'}
+    \item \code{Gamma_star_at_25}: lower = -20, upper = 200, fit_option = \code{'column'}
     \item \code{J_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
+    \item \code{Kc_at_25}: lower = -50, upper = 1000, fit_option = \code{'column'}
+    \item \code{Ko_at_25}: lower = -50, upper = 1000, fit_option = \code{'column'}
     \item \code{RL_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{tau}: lower = -10, upper = 10, fit_option = \code{'fit'}
     \item \code{Tp_at_25}: lower = -10, upper = 100, fit_option = \code{'fit'}
     \item \code{Vcmax_at_25}: lower = -50, upper = 1000, fit_option = \code{'fit'}
   }
-  With these settings, all "new" \code{alpha} parameters are set to 0, values of
-  \code{Gamma_star} are taken from the \code{Gamma_star} column of
-  \code{replicate_exdf}, and the other parameters are fit during the process
+  With these settings, all "new" \code{alpha} parameters are set to 0; values of
+  \code{Gamma_star_at_25}, \code{Kc_at_25}, and \code{Ko_at_25} are taken from
+  the \code{Gamma_star_at_25}, \code{Kc_at_25}, and \code{Ko_at_25} columns of
+  \code{replicate_exdf}; and the other parameters are fit during the process
   (see \code{fit_options} above). The bounds are chosen liberally to avoid any
   bias.
 
@@ -303,21 +311,28 @@
   \itemize{
     \item \code{cc_threshold_rd} is set to 100 micromol / mol.
     \item If \code{alpha_g} is being fit, the \code{alpha_g} argument of
-          \code{initial_guess_c3_aci} is set to 0.5; otherwise, the argument is
-          set to the value specified by the fit options.
+          \code{initial_guess_c3_variable_j} is set to 0.5; otherwise, the
+          argument is set to the value specified by the fit options.
     \item If \code{alpha_old} is being fit, the \code{alpha_old} argument of
-          \code{initial_guess_c3_aci} is set to 0.5; otherwise, the argument is
-          set to the value specified by the fit options.
+          \code{initial_guess_c3_variable_j} is set to 0.5; otherwise, the
+          argument is set to the value specified by the fit options.
     \item if \code{alpha_s} is being fit, the \code{alpha_s} argument of
-          \code{initial_guess_c3_aci} is set to \code{0.3 * (1 - alpha_g)};
+          \code{initial_guess_c3_variable_j} is set to
+          \code{0.3 * (1 - alpha_g)}; otherwise, the argument is set to the
+          value specified by the fit options.
+    \item if \code{alpha_t} is being fit, the \code{alpha_t} argument of
+          \code{initial_guess_c3_variable_j} is set to 0; otherwise, the
+          argument is set to the value specified by the fit options.
+    \item If \code{Gamma_star_at_25} is being fit, the \code{Gamma_star_at_25}
+          argument of \code{initial_guess_c3_variable_j} is set to 40;
           otherwise, the argument is set to the value specified by the fit
           options.
-    \item if \code{alpha_t} is being fit, the \code{alpha_t} argument of
-          \code{initial_guess_c3_aci} is set to 0; otherwise, the argument is
-          set to the value specified by the fit options.
-    \item If \code{Gamma_star} is being fit, the \code{Gamma_star} argument of
-          \code{initial_guess_c3_aci} is set to 40; otherwise, the argument is
-          set to the value specified by the fit options.
+    \item If \code{Kc_at_25} is being fit, the \code{Kc_at_25} argument of
+          \code{initial_guess_c3_variable_j} is set to 400; otherwise, the
+          argument is set to the value specified by the fit options.
+    \item If \code{Ko_at_25} is being fit, the \code{Ko_at_25} argument of
+          \code{initial_guess_c3_variable_j} is set to 275; otherwise, the
+          argument is set to the value specified by the fit options.
   }
   Note that any fixed values specified in the fit options will override the
   values returned by the guessing function.
@@ -389,13 +404,15 @@
                   of \code{a_column_name}; typically, this will be
                   \code{'A_residuals'}.
             \item Values of fitting parameters at 25 degrees C will be stored in
-                  the \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
+                  the \code{Gamma_star_at_25}, \code{J_at_25}, \code{Kc_at_25},
+                  \code{Ko_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
                   \code{Vcmax_at_25} columns.
             \item The other outputs from \code{\link{calculate_c3_variable_j}}
                   and \code{\link{calculate_c3_assimilation}} will be stored in
                   columns with the usual names: \code{alpha_g},
-                  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{tau},
-                  \code{Tp_tl}, \code{Vcmax_tl}, \code{RL_tl}, \code{J_tl},
+                  \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+                  \code{Gamma_star_tl}, \code{J_tl}, \code{Kc_tl}, \code{Ko_tl},
+                  \code{RL_tl}, \code{tau}, \code{Tp_tl}, \code{Vcmax_tl},
                   \code{Ac}, \code{Aj}, \code{Ap}, \code{gmc}, \code{J_F}, and
                   \code{Cc}.
           }
@@ -409,18 +426,18 @@
                   \code{An = Ap} are stored in the \code{n_Ac_limiting},
                   \code{n_Aj_limiting}, and \code{n_Ap_limiting} columns.
             \item The best-fit values are stored in the \code{alpha_g},
-                  \code{alpha_old}, \code{alpha_s}, \code{alpha_t}, \code{tau},
-                  \code{Tp_at_25}, \code{J_at_25}, \code{RL_at_25}, and
-                  \code{Vcmax_at_25} columns. If
+                  \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
+                  \code{Gamma_star_at_25}, \code{J_at_25}, \code{Kc_at_25},
+                  \code{Ko_at_25}, \code{RL_at_25}, \code{tau}, \code{Tp_at_25},
+                  and \code{Vcmax_at_25} columns. If
                   \code{calculate_confidence_intervals} is \code{TRUE}, upper
                   and lower limits for each of these parameters will also be
                   included.
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
-                  \code{X_tl_avg} columns: \code{J_tl_avg}, \code{RL_tl_avg},
-                  \code{Tp_tl_avg}, and \code{Vcmax_tl_avg}.
-            \item The average leaf temperature is also stored in the
-                  \code{Tleaf_avg} column.
+                  \code{Gamma_star_tl_avg}, \code{J_tl_avg}, \code{Kc_tl_avg},
+                  \code{Ko_tl_avg}, \code{RL_tl_avg}, \code{Tp_tl_avg}, and
+                  \code{Vcmax_tl_avg}.
             \item Information about the operating point is stored in
                   \code{operating_Cc}, \code{operating_Ci}, \code{operating_An},
                   and \code{operating_An_model}.

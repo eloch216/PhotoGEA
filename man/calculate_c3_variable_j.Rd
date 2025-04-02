@@ -20,13 +20,14 @@
     alpha_g,
     alpha_s,
     alpha_t,
-    Gamma_star,
+    Gamma_star_at_25,
     RL_at_25,
     tau,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
@@ -68,12 +69,14 @@
     values in the \code{alpha_t} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Gamma_star}{
-    The CO2 compensation point in the absence of day respiration, expressed in
-    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{Gamma_star} with
-    appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Gamma_star} column of \code{exdf_obj} if it exists.
+  \item{Gamma_star_at_25}{
+    The chloroplastic CO2 concentration at which CO2 gains from Rubisco
+    carboxylation are exactly balanced by CO2 losses from Rubisco carboxylation,
+    at 25 degrees C, expressed in \code{micromol mol^(-1)}. If
+    \code{Gamma_star_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{Gamma_star_at_25} with appropriate units. A
+    numeric value supplied here will overwrite the values in the
+    \code{Gamma_star_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{RL_at_25}{
@@ -108,6 +111,12 @@
   \item{ci_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
   }
 
   \item{phips2_column_name}{

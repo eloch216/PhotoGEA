@@ -25,10 +25,11 @@
     curvature_cjp = 1.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -106,6 +107,12 @@
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
+  }
+
   \item{gmc_norm_column_name}{
     The name of the column in \code{replicate_exdf} that contains the normalized
     mesophyll conductance values (with units of
@@ -117,16 +124,14 @@
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
-  \item{kc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    \code{micromol mol^(-1)}.
+  \item{kc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Kc} values (with units of \code{normalized to Kc at 25 degrees C}).
   }
 
-  \item{ko_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    \code{mmol mol^(-1)}.
+  \item{ko_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Ko} values (with units of \code{normalized to Ko at 25 degrees C}).
   }
 
   \item{oxygen_column_name}{

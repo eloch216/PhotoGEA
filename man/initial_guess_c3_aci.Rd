@@ -18,17 +18,20 @@
     alpha_old,
     alpha_s,
     alpha_t,
-    Gamma_star,
+    Gamma_star_at_25,
     gmc_at_25,
+    Kc_at_25,
+    Ko_at_25,
     cc_threshold_rd = 100,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -76,12 +79,14 @@
     values in the \code{alpha_t} column of \code{rc_exdf} if it exists.
   }
 
-  \item{Gamma_star}{
-    The CO2 compensation point in the absence of day respiration, expressed in
-    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
-    must be a column in \code{rc_exdf} called \code{Gamma_star} with
-    appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Gamma_star} column of \code{rc_exdf} if it exists.
+  \item{Gamma_star_at_25}{
+    The chloroplastic CO2 concentration at which CO2 gains from Rubisco
+    carboxylation are exactly balanced by CO2 losses from Rubisco carboxylation,
+    at 25 degrees C, expressed in \code{micromol mol^(-1)}. If
+    \code{Gamma_star_at_25} is not a number, then there must be a column in
+    \code{rc_exdf} called \code{Gamma_star_at_25} with appropriate units. A
+    numeric value supplied here will overwrite the values in the
+    \code{Gamma_star_at_25} column of \code{rc_exdf} if it exists.
   }
 
   \item{gmc_at_25}{
@@ -92,6 +97,22 @@
     \code{rc_exdf} called \code{gmc_at_25} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{gmc_at_25}
     column of \code{rc_exdf} if it exists.
+  }
+
+  \item{Kc_at_25}{
+    The Michaelis-Menten constant for Rubisco carboxylation at 25 degrees C,
+    expressed in \code{micromol mol^(-1)}. If \code{Kc_at_25} is not a number,
+    then there must be a column in \code{rc_exdf} called \code{Kc_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Kc_at_25} column of \code{rc_exdf} if it exists.
+  }
+
+  \item{Ko_at_25}{
+    The Michaelis-Menten constant for Rubisco oxygenation at 25 degrees C,
+    expressed in \code{mmol mol^(-1)}. If \code{Ko_at_25} is not a number, then
+    there must be a column in \code{rc_exdf} called \code{Ko_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Ko_at_25} column of \code{rc_exdf} if it exists.
   }
 
   \item{cc_threshold_rd}{
@@ -117,6 +138,12 @@
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
   }
 
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
+  }
+
   \item{gmc_norm_column_name}{
     The name of the column in \code{rc_exdf} that contains the normalized
     mesophyll conductance values (with units of
@@ -128,16 +155,14 @@
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
-  \item{kc_column_name}{
-    The name of the column in \code{rc_exdf} that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    \code{micromol mol^(-1)}.
+  \item{kc_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Kc} values (with units of \code{normalized to Kc at 25 degrees C}).
   }
 
-  \item{ko_column_name}{
-    The name of the column in \code{rc_exdf} that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    \code{mmol mol^(-1)}.
+  \item{ko_norm_column_name}{
+    The name of the column in \code{rc_exdf} that contains the normalized
+    \code{Ko} values (with units of \code{normalized to Ko at 25 degrees C}).
   }
 
   \item{oxygen_column_name}{
@@ -172,9 +197,10 @@
   Here we estimate values of \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25},
   and \code{Vcmax_at_25} from a measured C3 CO2 response curve. It is difficult
   to estimate values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s},
-  \code{alpha_t}, and \code{Gamma_star} from a curve, so they must be supplied
-  beforehand. For more information about these parameters, see the documentation
-  for \code{\link{calculate_c3_assimilation}}.
+  \code{alpha_t}, \code{Gamma_star_at_25}, \code{gmc_at_25}, \code{Kc_at_25},
+  \code{Ko_at_25} from a curve, so they must be supplied beforehand. For more
+  information about these parameters, see the documentation for
+  \code{\link{calculate_c3_assimilation}}.
 
   \itemize{
     \item \strong{Estimating RL}: Regardless of which process is limiting at low
@@ -210,10 +236,11 @@
 \value{
   A function with one input argument \code{rc_exdf}, which should be an
   \code{exdf} object representing one C3 CO2 response curve. The return value of
-  this function will be a numeric vector with nine elements, representing the
+  this function will be a numeric vector with twelve elements, representing the
   values of \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
-  \code{Gamma_star}, \code{J_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and
-  \code{Vcmax_at_25} (in that order).
+  \code{Gamma_star_at_25}, \code{gmc_at_25}, \code{J_at_25}, \code{Kc_at_25},
+  \code{Ko_at_25}, \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25} (in
+  that order).
 }
 
 \examples{
