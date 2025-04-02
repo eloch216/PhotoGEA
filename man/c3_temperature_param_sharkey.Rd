@@ -15,55 +15,54 @@
 \usage{c3_temperature_param_sharkey}
 
 \format{
-  List with 9 named elements that each represent a variable whose
-  temperature-dependent value can be calculated using the Arrhenius equation:
+  List with 11 named elements that each represent a variable whose
+  temperature-dependent value can be calculated using an Arrhenius equation or a
+  polynomial equation:
   \itemize{
-    \item \code{Kc}: The Michaelis-Menten constant for rubisco carboxylation.
-    \item \code{Ko}: The Michaelis-Menten constant for rubisco oxygenation.
-    \item \code{Gamma_star}: The value of CO2 partial pressure in the
-          chloroplast at which no assimilation occurs in the absence of
-          respiration.
-    \item \code{Vcmax_norm}: The maximum rate of rubisco carboxylation
-          (\code{Vcmax}) normalized to its value at 25 degrees C.
+    \item \code{Gamma_star_at_25}: The value of chloroplastic CO2 concentration
+          at which CO2 gains from Rubisco carboxylation are exactly balanced by
+          CO2 losses from Rubisco oxygenation (\code{Gamma_star}) at 25
+          degrees C.
+
+    \item \code{Gamma_star_norm}: \code{Gamma_star} normalized to its value at
+          25 degrees C.
+
+    \item \code{gmc_norm}: The mesophyll conductance to CO2 diffusion
+          (\code{gmc}) normalized to its value at 25 degrees C.
+
     \item \code{J_norm}: The electron transport rate (\code{J}) normalized to
           its value at 25 degrees C.
-    \item \code{RL_norm}: The respiration rate (\code{RL}) normalized to its
-          value at 25 degrees C.
-    \item \code{gmc_norm}: The mesophyll conductance (\code{gmc}) normalized to
-          its value at 25 degrees C.
+
+    \item \code{Kc_at_25}: The Michaelis-Menten constant for rubisco
+          carboxylation (\code{Kc}) at 25 degrees C.
+
+    \item \code{Kc_norm}: \code{Kc} normalized to its value at 25 degrees C.
+
+    \item \code{Ko_at_25}: The Michaelis-Menten constant for rubisco oxygenation
+          (\code{Ko}) at 25 degrees C.
+
+    \item \code{Ko_norm}: \code{Ko} normalized to its value at 25 degrees C.
+
+    \item \code{RL_norm}: The rate of non-photorespiratory CO2 release in the
+          light (\code{RL}) normalized to its value at 25 degrees C.
+
     \item \code{Tp_norm}: The maximum rate of triose phosphate utilization
           (\code{Tp}) normalized to its value at 25 degrees C.
+
+    \item \code{Vcmax_norm}: The maximum rate of rubisco carboxylation
+          (\code{Vcmax}) normalized to its value at 25 degrees C.
   }
 
-  The \code{gmc_norm} and \code{Tp_norm} parameters are calculated using
-  Johnson-Eyring-Williams functions, and hence their elements are lists with 4
-  named elements:
+  In turn, each of these elements is a list with at least 2 named elements:
   \itemize{
-    \item \code{type}: the type of temperature response (\code{'Johnson'})
-    \item \code{c}: the (dimensionless) scaling factor.
-    \item \code{Ha}: the enthalpy of activation in \code{kJ / mol}.
-    \item \code{Hd}: the enthalpy of deactivation in \code{kJ / mol}.
-    \item \code{S}: the entropy in \code{kJ / K / mol}.
-    \item \code{units}: the units of the corresponding variable.
-  }
-
-  Each of the other parameters is calculated using an Arrhenius response, so
-  each remaining element is itself a list with 4 named elements:
-  \itemize{
-    \item \code{type}: the type of temperature response (\code{'Arrhenius'})
-    \item \code{c}: the (dimensionless) Arrhenius scaling factor.
-    \item \code{Ea}: the activation energy in \code{kJ / mol}.
+    \item \code{type}: the type of temperature response
     \item \code{units}: the units of the corresponding variable.
   }
 }
 
 \source{
-  Some of these parameters (\code{RL}, \code{Vcmax}, \code{J}, \code{Tp}, and
-  \code{gmc}) are normalized to their values at 25 degrees C. These variables
-  include \code{_norm} in their names to indicate this.
-
-  The remaining parameters (\code{Gamma_star}, \code{Kc}, and \code{Ko}) are not
-  normalized because they are assumed to not vary significantly between species.
+  Many of these parameters are normalized to their values at 25 degrees C. These
+  variables include \code{_norm} in their names to indicate this.
 
   Response parameters were obtained from Sharkey et al. (2007). In this
   publication, gas concentrations are expressed as partial pressures (in

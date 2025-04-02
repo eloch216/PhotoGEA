@@ -1,19 +1,22 @@
 initial_guess_c3_aci <- function(
-    alpha_g,    # dimensionless
-    alpha_old,  # dimensionless
-    alpha_s,    # dimensionless
-    alpha_t,    # dimensionless
-    Gamma_star, # micromol / mol
-    gmc_at_25,  # mol / m^2 / s / bar
+    alpha_g,          # dimensionless
+    alpha_old,        # dimensionless
+    alpha_s,          # dimensionless
+    alpha_t,          # dimensionless
+    Gamma_star_at_25, # micromol / mol
+    gmc_at_25,        # mol / m^2 / s / bar
+    Kc_at_25,         # micromol / mol
+    Ko_at_25,         # mmol / mol
     cc_threshold_rd = 100,
     atp_use = 4.0,
     nadph_use = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -32,24 +35,27 @@ initial_guess_c3_aci <- function(
         # Make sure the required variables are defined and have the correct
         # units
         required_variables <- list()
-        required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
-        required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
-        required_variables[[j_norm_column_name]]         <- 'normalized to J at 25 degrees C'
-        required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
-        required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
-        required_variables[[total_pressure_column_name]] <- 'bar'
-        required_variables[[tp_norm_column_name]]        <- unit_dictionary('Tp_norm')
-        required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
+        required_variables[[a_column_name]]               <- unit_dictionary('A')
+        required_variables[[ci_column_name]]              <- unit_dictionary('Ci')
+        required_variables[[gamma_star_norm_column_name]] <- unit_dictionary('Gamma_star_norm')
+        required_variables[[gmc_norm_column_name]]        <- unit_dictionary('gmc_norm')
+        required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
+        required_variables[[kc_norm_column_name]]         <- unit_dictionary('Kc_norm')
+        required_variables[[ko_norm_column_name]]         <- unit_dictionary('Ko_norm')
+        required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
+        required_variables[[total_pressure_column_name]]  <- unit_dictionary('total_pressure')
+        required_variables[[tp_norm_column_name]]         <- unit_dictionary('Tp_norm')
+        required_variables[[vcmax_norm_column_name]]      <- unit_dictionary('Vcmax_norm')
 
         flexible_param <- list(
             alpha_g = alpha_g,
             alpha_old = alpha_old,
             alpha_s = alpha_s,
             alpha_t = alpha_t,
-            Gamma_star = Gamma_star,
-            gmc_at_25 = gmc_at_25
+            Gamma_star_at_25 = Gamma_star_at_25,
+            gmc_at_25 = gmc_at_25,
+            Kc_at_25 = Kc_at_25,
+            Ko_at_25 = Ko_at_25
         )
 
         required_variables <-
@@ -59,12 +65,14 @@ initial_guess_c3_aci <- function(
 
         # Include values of flexible parameters in the exdf if they are not
         # already present
-        if (value_set(alpha_g))    {rc_exdf[, 'alpha_g']    <- alpha_g}
-        if (value_set(alpha_old))  {rc_exdf[, 'alpha_old']  <- alpha_old}
-        if (value_set(alpha_s))    {rc_exdf[, 'alpha_s']    <- alpha_s}
-        if (value_set(alpha_t))    {rc_exdf[, 'alpha_t']    <- alpha_t}
-        if (value_set(Gamma_star)) {rc_exdf[, 'Gamma_star'] <- Gamma_star}
-        if (value_set(gmc_at_25))  {rc_exdf[, 'gmc_at_25']  <- gmc_at_25}
+        if (value_set(alpha_g))          {rc_exdf[, 'alpha_g']          <- alpha_g}
+        if (value_set(alpha_old))        {rc_exdf[, 'alpha_old']        <- alpha_old}
+        if (value_set(alpha_s))          {rc_exdf[, 'alpha_s']          <- alpha_s}
+        if (value_set(alpha_t))          {rc_exdf[, 'alpha_t']          <- alpha_t}
+        if (value_set(Gamma_star_at_25)) {rc_exdf[, 'Gamma_star_at_25'] <- Gamma_star_at_25}
+        if (value_set(gmc_at_25))        {rc_exdf[, 'gmc_at_25']        <- gmc_at_25}
+        if (value_set(Kc_at_25))         {rc_exdf[, 'Kc_at_25']         <- Kc_at_25}
+        if (value_set(Ko_at_25))         {rc_exdf[, 'Ko_at_25']         <- Ko_at_25}
 
         # Get values of Cc
         rc_exdf <- apply_gm(
@@ -83,7 +91,8 @@ initial_guess_c3_aci <- function(
 
         # Get the effective value of Gamma_star
         rc_exdf[, 'Gamma_star_agt'] <-
-            (1 - rc_exdf[, 'alpha_g'] + 2 * rc_exdf[, 'alpha_t']) * rc_exdf[, 'Gamma_star'] # micromol / mol
+            (1 - rc_exdf[, 'alpha_g'] + 2 * rc_exdf[, 'alpha_t']) *
+            rc_exdf[, 'Gamma_star_at_25'] * rc_exdf[, gamma_star_norm_column_name] # micromol / mol
 
         # To estimate RL, first make a linear fit of A ~ Cc where Cc is below
         # the threshold. Then, evaluate the fit at Cc = Gamma_star_agt.
@@ -122,8 +131,12 @@ initial_guess_c3_aci <- function(
         # the Rubisco-limited range. With this in mind, we choose the largest
         # Vcmax value as our best estimate. In this calculation, we need a value
         # of RL, so we use the previously-estimated value.
+        Kc_tl  <- rc_exdf[, 'Kc_at_25'] * rc_exdf[, kc_norm_column_name]        # micromol / mol
+        Ko_tl  <- rc_exdf[, 'Ko_at_25'] * rc_exdf[, ko_norm_column_name] * 1e-3 # mol / mol
+        oxygen <- rc_exdf[, oxygen_column_name] * 1e-2                          # mol / mol
+
         vcmax_estimates <- Vc *
-            (rc_exdf[, cc_column_name] + rc_exdf[, kc_column_name] * (1 + rc_exdf[, oxygen_column_name] * 1e-2 / (1e-3 * rc_exdf[, ko_column_name]))) /
+            (rc_exdf[, cc_column_name] + Kc_tl * (1 + oxygen / Ko_tl)) /
             rc_exdf[, cc_column_name]
 
         vcmax_estimates <- vcmax_estimates / rc_exdf[, vcmax_norm_column_name]
@@ -150,16 +163,18 @@ initial_guess_c3_aci <- function(
 
         # Return the estimates
         c(
-            mean(rc_exdf[, 'alpha_g']),        # alpha_g
-            mean(rc_exdf[, 'alpha_old']),      # alpha_old
-            mean(rc_exdf[, 'alpha_s']),        # alpha_s
-            mean(rc_exdf[, 'alpha_t']),        # alpha_t
-            mean(rc_exdf[, 'Gamma_star_agt']), # Gamma_star
-            mean(rc_exdf[, 'gmc_at_25']),      # gmc_at_25
-            max(j_estimates),                  # J_at_25
-            RL_estimate,                       # RL_at_25
-            max(tp_estimates),                 # Tp_at_25
-            max(vcmax_estimates)               # Vcmax_at_25
+            mean(rc_exdf[, 'alpha_g']),          # alpha_g
+            mean(rc_exdf[, 'alpha_old']),        # alpha_old
+            mean(rc_exdf[, 'alpha_s']),          # alpha_s
+            mean(rc_exdf[, 'alpha_t']),          # alpha_t
+            mean(rc_exdf[, 'Gamma_star_at_25']), # Gamma_star_at_25
+            mean(rc_exdf[, 'gmc_at_25']),        # gmc_at_25
+            max(j_estimates),                    # J_at_25
+            mean(rc_exdf[, 'Kc_at_25']),         # Kc_at_25
+            mean(rc_exdf[, 'Ko_at_25']),         # Ko_at_25
+            RL_estimate,                         # RL_at_25
+            max(tp_estimates),                   # Tp_at_25
+            max(vcmax_estimates)                 # Vcmax_at_25
         )
     }
 }

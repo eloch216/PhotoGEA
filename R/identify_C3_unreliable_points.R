@@ -47,16 +47,31 @@ identify_c3_unreliable_points <- function(
     p_trust           <- trust_value(p_unreliable_npts, p_unreliable_inf)
     p_remove          <- remove_estimate(p_trust, remove_unreliable_param)
 
-    # If we are unsure about Rubisco limitations, then the Vcmax estimates
-    # should be flagged as unreliable. If necessary, remove Vcmax, Wc, and Ac.
+    # If we are unsure about Rubisco limitations, then the Vcmax, Kc, and Ko
+    # estimates should be flagged as unreliable. If necessary, remove Vcmax, Kc,
+    # Ko, Wc, and Ac.
+    parameters[, 'Kc_trust']    <- c_trust
+    parameters[, 'Ko_trust']    <- c_trust
     parameters[, 'Vcmax_trust'] <- c_trust
 
     if (c_remove) {
         # Remove unreliable parameter estimates
+        parameters[, 'Kc_at_25']           <- NA
+        parameters[, 'Kc_tl_avg']          <- NA
+        parameters[, 'Ko_at_25']           <- NA
+        parameters[, 'Ko_tl_avg']          <- NA
         parameters[, 'Vcmax_at_25']        <- NA
         parameters[, 'Vcmax_tl_avg']       <- NA
+        fits[, 'Kc_at_25']                 <- NA
+        fits[, 'Kc_tl']                    <- NA
+        fits[, 'Ko_at_25']                 <- NA
+        fits[, 'Ko_tl']                    <- NA
         fits[, 'Vcmax_at_25']              <- NA
         fits[, 'Vcmax_tl']                 <- NA
+        fits_interpolated[, 'Kc_at_25']    <- NA
+        fits_interpolated[, 'Kc_tl']       <- NA
+        fits_interpolated[, 'Ko_at_25']    <- NA
+        fits_interpolated[, 'Ko_tl']       <- NA
         fits_interpolated[, 'Vcmax_at_25'] <- NA
         fits_interpolated[, 'Vcmax_tl']    <- NA
 
@@ -91,9 +106,9 @@ identify_c3_unreliable_points <- function(
         }
     }
 
-    # If we are unsure about TPU limitations, then the Tp and alpha_g estimates
-    # should be flagged as unreliable. If necessary, remove Tp, alpha_g, Wp, and
-    # Ap.
+    # If we are unsure about TPU limitations, then the Tp, alpha_g, alpha_old,
+    # alpha_s, and alpha_t estimates should be flagged as unreliable. If
+    # necessary, remove Tp, alpha_g, alpha_old, alpha_s, alpha_t, Wp, and Ap.
     parameters[, 'alpha_g_trust']   <- p_trust
     parameters[, 'alpha_old_trust'] <- p_trust
     parameters[, 'alpha_s_trust']   <- p_trust
@@ -140,13 +155,15 @@ identify_c3_unreliable_points <- function(
         c('identify_c3_unreliable_points', 'n_Aj_limiting',           ''),
         c('identify_c3_unreliable_points', 'n_Ap_limiting',           ''),
         c('identify_c3_unreliable_points', 'n_Ad_limiting',           ''),
-        c('identify_c3_unreliable_points', 'Vcmax_trust',             ''),
-        c('identify_c3_unreliable_points', 'J_trust',                 ''),
         c('identify_c3_unreliable_points', 'alpha_g_trust',           ''),
         c('identify_c3_unreliable_points', 'alpha_old_trust',         ''),
         c('identify_c3_unreliable_points', 'alpha_s_trust',           ''),
         c('identify_c3_unreliable_points', 'alpha_t_trust',           ''),
+        c('identify_c3_unreliable_points', 'J_trust',                 ''),
+        c('identify_c3_unreliable_points', 'Kc_trust',                ''),
+        c('identify_c3_unreliable_points', 'Ko_trust',                ''),
         c('identify_c3_unreliable_points', 'Tp_trust',                ''),
+        c('identify_c3_unreliable_points', 'Vcmax_trust',             ''),
         c('identify_c3_unreliable_points', 'remove_unreliable_param', '')
     )
 

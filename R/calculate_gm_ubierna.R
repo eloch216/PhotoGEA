@@ -9,7 +9,7 @@ calculate_gm_ubierna <- function(
     csurface_column_name = 'Csurface',
     delta_c13_r_column_name = 'delta_C13_r',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
-    gamma_star_column_name = 'Gamma_star',
+    gamma_star_column_name = 'Gamma_star_tl',
     rl_column_name = 'RL',
     total_pressure_column_name = 'total_pressure',
     t_column_name = 't'

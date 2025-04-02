@@ -2,7 +2,7 @@ calculate_gamma_star <- function(
     exdf_obj,
     alpha_pr = 0.5,
     oxygen_column_name = 'oxygen',
-    specificity_at_tleaf_column_name = 'specificity_at_tleaf',
+    rubisco_specificity_column_name = 'rubisco_specificity_tl',
     tleaf_column_name = 'TleafCnd'
 )
 {
@@ -13,16 +13,16 @@ calculate_gamma_star <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[oxygen_column_name]] <- 'percent'
-    required_variables[[specificity_at_tleaf_column_name]] <- 'M / M'
-    required_variables[[tleaf_column_name]]  <- 'degrees C'
+    required_variables[[oxygen_column_name]]              <- unit_dictionary('oxygen')
+    required_variables[[rubisco_specificity_column_name]] <- unit_dictionary('rubisco_specificity')
+    required_variables[[tleaf_column_name]]               <- unit_dictionary('TleafCnd')
 
     check_required_variables(exdf_obj, required_variables)
 
     # Extract some important columns
-    oxygen <- exdf_obj[, oxygen_column_name]                             # percent
-    specificity_at_tleaf <- exdf_obj[, specificity_at_tleaf_column_name] # M / M
-    Tleaf  <- exdf_obj[, tleaf_column_name]                              # degrees C
+    oxygen                 <- exdf_obj[, oxygen_column_name]              # percent
+    rubisco_specificity_tl <- exdf_obj[, rubisco_specificity_column_name] # M / M
+    Tleaf                  <- exdf_obj[, tleaf_column_name]               # degrees C
 
     # Convert temperature to Kelvin
     T <- Tleaf + 273.15
@@ -45,16 +45,16 @@ calculate_gamma_star <- function(
 
     # Get the Rubisco specificity on a gas concentration basis (Pa / Pa)
     specificity_gas_basis <-
-        specificity_at_tleaf * H_CO2 / H_O2
+        rubisco_specificity_tl * H_CO2 / H_O2
 
     # Convert oxygen percentage to a concentration in micromol / mol
     O2 <- (oxygen * 1e-2) * 1e6
 
-    # Get Gamma_star in micromol / mol
-    Gamma_star <- alpha_pr * O2 / specificity_gas_basis
+    # Get Gamma_star at leaf temperature in micromol / mol
+    Gamma_star_tl <- alpha_pr * O2 / specificity_gas_basis
 
     # Store the new variables in the exdf object
-    exdf_obj[, 'Gamma_star'] <- Gamma_star
+    exdf_obj[, 'Gamma_star_tl'] <- Gamma_star_tl
     exdf_obj[, 'H_CO2'] <- H_CO2
     exdf_obj[, 'H_O2'] <- H_O2
     exdf_obj[, 'specificity_gas_basis'] <- specificity_gas_basis
@@ -62,7 +62,7 @@ calculate_gamma_star <- function(
     # Document the columns that were added and return the exdf
     document_variables(
         exdf_obj,
-        c('calculate_gamma_star', 'Gamma_star',            'micromol mol^(-1)'),
+        c('calculate_gamma_star', 'Gamma_star_tl',         'micromol mol^(-1)'),
         c('calculate_gamma_star', 'H_CO2',                 'micromol kg^(-1) Pa^(-1)'),
         c('calculate_gamma_star', 'H_O2',                  'micromol kg^(-1) Pa^(-1)'),
         c('calculate_gamma_star', 'specificity_gas_basis', 'Pa / Pa')

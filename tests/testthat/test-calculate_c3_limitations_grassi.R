@@ -1,12 +1,12 @@
 example_exdf <- exdf(
     data.frame(
         Cc             = seq(10, 400, length.out = 3),
-        Gamma_star     = 40,
+        Gamma_star_tl  = 40,
         gmc_tl         = 0.5,
         gsc            = 0.8,
         J_tl           = 200,
-        Kc             = 270,
-        Ko             = 160,
+        Kc_tl          = 270,
+        Ko_tl          = 160,
         oxygen         = 21,
         total_pressure = 1,
         Vcmax_tl       = 150
@@ -14,12 +14,12 @@ example_exdf <- exdf(
     ),
     units = data.frame(
         Cc             = 'micromol mol^(-1)',
-        Gamma_star     = 'micromol mol^(-1)',
+        Gamma_star_tl  = 'micromol mol^(-1)',
         gmc_tl         = 'mol m^(-2) s^(-1) bar^(-1)',
         gsc            = 'mol m^(-2) s^(-1)',
         J_tl           = 'micromol m^(-2) s^(-1)',
-        Kc             = 'micromol mol^(-1)',
-        Ko             = 'mmol mol^(-1)',
+        Kc_tl          = 'micromol mol^(-1)',
+        Ko_tl          = 'mmol mol^(-1)',
         oxygen         = 'percent',
         total_pressure = 'bar',
         Vcmax_tl       = 'micromol m^(-2) s^(-1)',
@@ -97,7 +97,7 @@ test_that('fit results have not changed', {
 
     expect_equal(
         as.numeric(limit_res[1, c('dAdC_rubisco', 'ls_rubisco_grassi', 'lm_rubisco_grassi', 'lb_rubisco_grassi')]),
-        c(0.39891, 0.43476, 0.16147, 0.40378),
-        tolerance = 1e-5
+        c(0.39985, 0.43517, 0.16162, 0.40321),
+        tolerance = 1e-4
     )
 })

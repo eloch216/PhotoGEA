@@ -19,8 +19,8 @@ jmax_error_msg <- function(J, I2) {
 
 calculate_jmax <- function(
     data_table,
-    alpha_j_at_25 = 0.293, # dimensionless
-    theta_j_at_25 = 0.979, # dimensionless
+    alpha_j_at_25 = 'column', # dimensionless
+    theta_j_at_25 = 'column', # dimensionless
     alpha_j_norm_column_name = 'alpha_j_norm',
     qin_column_name = 'Qin_avg',
     theta_j_norm_column_name = 'theta_j_norm',

@@ -19,8 +19,10 @@
     alpha_old,
     alpha_s,
     alpha_t,
-    Gamma_star,
+    Gamma_star_at_25,
     J_at_25,
+    Kc_at_25,
+    Ko_at_25,
     RL_at_25,
     Tp_at_25,
     Vcmax_at_25,
@@ -29,9 +31,10 @@
     curvature_cj = 1.0,
     curvature_cjp = 1.0,
     cc_column_name = 'Cc',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -87,12 +90,14 @@
     values in the \code{alpha_t} column of \code{data_table} if it exists.
   }
 
-  \item{Gamma_star}{
-    The CO2 compensation point in the absence of day respiration, expressed in
-    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
-    must be a column in \code{data_table} called \code{Gamma_star} with
-    appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Gamma_star} column of \code{data_table} if it exists.
+  \item{Gamma_star_at_25}{
+    The chloroplastic CO2 concentration at which CO2 gains from Rubisco
+    carboxylation are exactly balanced by CO2 losses from Rubisco oxygenation,
+    at 25 degrees C, expressed in \code{micromol mol^(-1)}. If
+    \code{Gamma_star_at_25} is not a number, then there must be a column in
+    \code{data_table} called \code{Gamma_star_at_25} with appropriate units. A
+    numeric value supplied here will overwrite the values in the
+    \code{Gamma_star_at_25} column of \code{data_table} if it exists.
   }
 
   \item{J_at_25}{
@@ -103,6 +108,22 @@
     \code{data_table} called \code{J_at_25} with appropriate units. A numeric
     value supplied here will overwrite the values in the \code{J_at_25} column
     of \code{data_table} if it exists.
+  }
+
+  \item{Kc_at_25}{
+    The Michaelis-Menten constant for Rubisco carboxylation at 25 degrees C,
+    expressed in \code{micromol mol^(-1)}. If \code{Kc_at_25} is not a number,
+    then there must be a column in \code{data_table} called \code{Kc_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Kc_at_25} column of \code{data_table} if it exists.
+  }
+
+  \item{Ko_at_25}{
+    The Michaelis-Menten constant for Rubisco oxygenation at 25 degrees C,
+    expressed in \code{mmol mol^(-1)}. If \code{Ko_at_25} is not a number, then
+    there must be a column in \code{data_table} called \code{Ko_at_25} with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the \code{Ko_at_25} column of \code{data_table} if it exists.
   }
 
   \item{RL_at_25}{
@@ -154,21 +175,25 @@
     chloroplastic CO2 concentration in \code{micromol mol^(-1)}.
   }
 
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{data_table} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
+  }
+
   \item{j_norm_column_name}{
     The name of the column in \code{data_table} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
-  \item{kc_column_name}{
-    The name of the column in \code{data_table} that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    \code{micromol mol^(-1)}.
+  \item{kc_norm_column_name}{
+    The name of the column in \code{data_table} that contains the normalized
+    \code{Kc} values (with units of \code{normalized to Kc at 25 degrees C}).
   }
 
-  \item{ko_column_name}{
-    The name of the column in \code{data_table} that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    \code{mmol mol^(-1)}.
+  \item{ko_norm_column_name}{
+    The name of the column in \code{data_table} that contains the normalized
+    \code{Ko} values (with units of \code{normalized to Ko at 25 degrees C}).
   }
 
   \item{oxygen_column_name}{
@@ -234,12 +259,12 @@
 
   \code{An = (1 - Gamma_star_agt / PCc) * Vc - RL},
 
-  where \code{Gamma_star} is the CO2 compensation point in the absence of day
-  respiration, \code{Gamma_star_agt} is the effective value of \code{Gamma_star}
-  accounting for glycolate carbon remaining in the cytosol, \code{PCc} is the
-  partial pressure of CO2 in the chloroplast, \code{Vc} is the RuBP
-  carboxylation rate, and \code{RL} is the rate of respiration in the light.
-  \code{Gamma_star_agt} is given by
+  where \code{Gamma_star} is the CO2 compensation point in the absence of
+  non-photorespiratory CO2 release, \code{Gamma_star_agt} is the effective value
+  of \code{Gamma_star} accounting for glycolate carbon remaining in the cytosol,
+  \code{PCc} is the partial pressure of CO2 in the chloroplast, \code{Vc} is the
+  RuBP carboxylation rate, and \code{RL} is the rate of non-photorespiratory CO2
+  release in the light. \code{Gamma_star_agt} is given by
 
   \code{Gamma_star_agt = (1 - alpha_g + 2 * alpha_t) * Gamma_star},
 
@@ -262,8 +287,9 @@
 
   \code{Wj = PCc * J / (4 * PCc + Gamma_star_agt * (8 + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s))},
 
-  where \code{J} is the RuBP regeneration rate and \code{alpha_s} is the
-  fraction of glycolate carbon leaving the photorespiratory pathway as serine.
+  where \code{J} is the potential electron transport rate at a given light
+  intensity and \code{alpha_s} is the fraction of glycolate carbon leaving the
+  photorespiratory pathway as serine.
 
   The TPU-limited carboxylation rate is given by
 
@@ -304,8 +330,9 @@
 
   In the equations above, several of the variables depend on the leaf
   temperature. In particular, the leaf-temperature-adjusted values of
-  \code{Vcmax}, \code{J}, \code{Tp}, and \code{RL} are determined from their
-  base values at 25 degrees C and a temperature-dependent multiplicative factor.
+  \code{Gamma_star}, \code{J}, \code{Kc}, \code{Ko}, \code{RL}, \code{Tp}, and
+  \code{Vcmax} are determined from their base values at 25 degrees C and a
+  temperature-dependent multiplicative factor.
 
   Also note that \code{PCc} is calculated from the chloroplastic CO2
   concentration \code{Cc} using the total pressure (ambient pressure + chamber
@@ -379,7 +406,7 @@
 
   \itemize{
     \item \code{hard_constraints = 0}: Constraints are only placed on inputs
-          that are user-supplied and cannot be fit, such as \code{Kc}.
+          that are user-supplied and cannot be fit, such as \code{oxygen}.
 
     \item \code{hard_constraints = 1}: Includes the same constraints as when
           \code{hard_constraints} is 0, with the additional constraint that
@@ -413,7 +440,7 @@
           errors that may occur when using a fixed TPU threshold.
     \item \strong{use_FRL}: If an input argument called \code{use_FRL} is
           supplied and its value is \code{TRUE}, then \code{An} will always be
-          set to \code{Ac} for \code{Cc < Gamma_star}. This "forced Rubisco
+          set to \code{Ac} for \code{Cc < Gamma_star_agt}. This "forced Rubisco
           limitation" can only be used along with the "minimum assimilation"
           variant (\code{use_min_A = TRUE}).
     \item \strong{consider_depletion}: If an input argument called
@@ -493,7 +520,7 @@ inputs <- document_variables(
 
 inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, 'Tleaf')
 
-assim <- calculate_c3_assimilation(inputs, 0, 0, 0, 0, '', 150, 1, 12, 120)
+assim <- calculate_c3_assimilation(inputs, 0, 0, 0, 0, '', 150, '', '', 1, 12, 120)
 
 lattice::xyplot(
   Ac + Aj + Ap + An ~ inputs[, 'Cc'],

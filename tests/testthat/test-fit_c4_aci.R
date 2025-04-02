@@ -90,6 +90,12 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_PCm', 'operating_An', 'operating_An_model')]),
+        c(183.48393, 146.19627, 52.35755, 56.54244),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
         c(13, 3, 10)
     )

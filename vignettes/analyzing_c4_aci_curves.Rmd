@@ -816,14 +816,9 @@ c4_aci_results_light$parameters <- calculate_temperature_response(
 
 # Calculate Jmax
 c4_aci_results_light$parameters <- calculate_jmax(
-  c4_aci_results_light$parameters,
-  0.36125,
-  0.7
+  c4_aci_results_light$parameters
 )
 ```
-
-Here we used constant values of $\theta_J = 0.7$ and $\alpha_J = 0.85 \cdot
-(1 - 0.15) \cdot 0.5 = 0.36125$, as recommended in @von_caemmerer_updating_2021.
 
 With these commands, the `parameters` element of `c4_aci_results_light` now
 includes estimates of $J_{max}$.

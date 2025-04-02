@@ -115,12 +115,12 @@ licor_file <- read_gasex_file(
 
 licor_file <- calculate_temperature_response_arrhenius(
   licor_file,
-  list(Kc = c3_temperature_param_sharkey$Kc)
+  list(Kc_norm = c3_temperature_param_sharkey$Kc_norm)
 )
 
-licor_file$units$Kc      # View the units of the new `Kc` column
-licor_file$categories$Kc # View the category of the new `Kc` column
-licor_file[,'Kc']        # View the values of the new `Kc` column
+licor_file$units$Kc_norm      # View the units of the new `Kc_norm` column
+licor_file$categories$Kc_norm # View the category of the new `Kc_norm` column
+licor_file[,'Kc_norm']        # View the values of the new `Kc_norm` column
 }
 
 \concept{exdf}

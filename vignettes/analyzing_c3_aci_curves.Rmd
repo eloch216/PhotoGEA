@@ -105,7 +105,7 @@ curve, as predicted by the FvCB model.
 library(PhotoGEA)
 library(lattice)
 
-Tleaf <- 30
+Tleaf <- 25
 
 cc_max  <- 1000
 cc_step <- 1
@@ -127,17 +127,20 @@ inputs <- document_variables(
 
 inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, 'Tleaf')
 
-alpha_g   <- 0
-alpha_old <- 0.2
-alpha_s   <- 0
-alpha_t   <- 0
-J         <- 170
-RL        <- 1
-Tp        <- 11.8
-Vcmax     <- 100
+alpha_g    <- 0
+alpha_old  <- 0.2
+alpha_s    <- 0
+alpha_t    <- 0
+Gamma_star <- ''
+J          <- 170
+Kc         <- ''
+Ko         <- ''
+RL         <- 1
+Tp         <- 11.8
+Vcmax      <- 100
 
-assim <-
-  calculate_c3_assimilation(inputs, alpha_g, alpha_old, alpha_s, alpha_t, '', J, RL, Tp, Vcmax)
+assim <- calculate_c3_assimilation(inputs,
+  alpha_g, alpha_old, alpha_s, alpha_t, Gamma_star, J, Kc, Ko, RL, Tp, Vcmax)
 
 xyplot(
   An + Ac + Aj + Ap ~ inputs[, 'Cc'],
@@ -164,11 +167,11 @@ xyplot(
 (Note: This figure was generated using the `calculate_c3_assimilation` function
 from the `PhotoGEA` package, and it represents the photosynethetic response of a
 C~3~ leaf according to the FvCB model with
-`alpha_old` = `r alpha_old`, `J` = `r J` `r assim$units$J_tl`,
-`RL` = `r RL` `r assim$units$RL_tl`, `Tp` = `r Tp` `r assim$units$Tp`,
-`Vcmax` = `r Vcmax` `r assim$units$Vcmax_tl`, and a leaf temperature of
-`r Tleaf` `r inputs$units$Tleaf`. Temperature response parameters from
-@sharkey_fitting_2007 were used for these calculations.)
+`alpha_old` = `r alpha_old`,
+`J` = `r J` `r assim$units$J_tl`, `RL` = `r RL` `r assim$units$RL_tl`,
+`Tp` = `r Tp` `r assim$units$Tp`, and
+`Vcmax` = `r Vcmax` `r assim$units$Vcmax_tl`. Temperature response parameters
+from @sharkey_fitting_2007 were used for these calculations.)
 
 Thus, one of the most common reasons to measure an _A-C~i~_ curve is to
 interpret it in the context of this model. In other words, by fitting the

@@ -141,3 +141,29 @@ confidence_interval_one_param <- function(
         conf_upper = conf_upper
     )
 }
+
+# A helping function that calculates confidence intervals at leaf temperature
+# from intervals at 25 degrees C
+confidence_intervals_leaf_temperature <- function(replicate_identifiers, parameters, fname) {
+    for (param in parameters) {
+        param_at_25        <- paste0(param, '_at_25')
+        param_at_25_lower  <- paste0(param, '_at_25_lower')
+        param_at_25_upper  <- paste0(param, '_at_25_upper')
+        param_tl_avg       <- paste0(param, '_tl_avg')
+        param_tl_avg_lower <- paste0(param, '_tl_avg_lower')
+        param_tl_avg_upper <- paste0(param, '_tl_avg_upper')
+        
+        param_tl_scale <- replicate_identifiers[, param_tl_avg] / replicate_identifiers[, param_at_25]
+        
+        replicate_identifiers[, param_tl_avg_lower] <- replicate_identifiers[, param_at_25_lower] * param_tl_scale
+        replicate_identifiers[, param_tl_avg_upper] <- replicate_identifiers[, param_at_25_upper] * param_tl_scale
+        
+        replicate_identifiers <- document_variables(
+            replicate_identifiers,
+            c(fname, param_tl_avg_lower, replicate_identifiers$units[[param_at_25]]),
+            c(fname, param_tl_avg_upper, replicate_identifiers$units[[param_at_25]])
+        )
+    }
+    
+    replicate_identifiers
+}
