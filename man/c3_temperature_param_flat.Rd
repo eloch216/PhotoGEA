@@ -22,7 +22,7 @@
   \itemize{
     \item \code{Gamma_star_at_25}: The value of chloroplastic CO2 concentration
           at which CO2 gains from Rubisco carboxylation are exactly balanced by
-          CO2 losses from Rubisco carboxylation (\code{Gamma_star}) at 25
+          CO2 losses from Rubisco oxygenation (\code{Gamma_star}) at 25
           degrees C.
 
     \item \code{Gamma_star_norm}: \code{Gamma_star} normalized to its value at

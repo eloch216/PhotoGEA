@@ -81,7 +81,7 @@
 
   \item{Gamma_star_at_25}{
     The chloroplastic CO2 concentration at which CO2 gains from Rubisco
-    carboxylation are exactly balanced by CO2 losses from Rubisco carboxylation,
+    carboxylation are exactly balanced by CO2 losses from Rubisco oxygenation,
     at 25 degrees C, expressed in \code{micromol mol^(-1)}. If
     \code{Gamma_star_at_25} is not a number, then there must be a column in
     \code{rc_exdf} called \code{Gamma_star_at_25} with appropriate units. A

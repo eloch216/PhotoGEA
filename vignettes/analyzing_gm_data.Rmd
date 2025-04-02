@@ -673,7 +673,7 @@ specificity using the `calculate_gamma_star` function from `PhotoGEA`, using
 # Set Rubisco specificity
 licor_data <- set_variable(
     licor_data,
-    'specificity_at_tleaf',
+    'rubisco_specificity_tl',
     'M / M',
     value = 92
 )

@@ -27,7 +27,7 @@
     delta_c13_r_column_name = 'delta_C13_r',
     delta_obs_growth_column_name = 'Delta_obs_growth',
     delta_obs_tdl_column_name = 'Delta_obs_tdl',
-    gamma_star_column_name = 'Gamma_star',
+    gamma_star_column_name = 'Gamma_star_tl',
     rl_column_name = 'RL',
     total_pressure_column_name = 'total_pressure',
     t_column_name = 't'
@@ -106,16 +106,19 @@
   }
 
   \item{gamma_star_column_name}{
-    The name of the column in \code{exdf_obj} that contains the CO2 compensation
-    point in the absence of day respiration in \code{micromol mol^(-1)}.  Values
-    of \code{Gamma_star} are typically calculated using
+    The name of the column in \code{exdf_obj} that contains the chloroplastic
+    CO2 concentration at which CO2 gains from Rubisco carboxylation are exactly
+    balanced by CO2 losses from Rubisco oxygenation, at leaf temperature,
+    expressed in \code{micromol mol^(-1)}.  Values of \code{Gamma_star} at leaf
+    temperature are typically calculated using
     \code{\link{calculate_gamma_star}} or
     \code{\link{calculate_temperature_response}}.
   }
 
   \item{rl_column_name}{
-    The name of the column in \code{exdf_obj} that contains the rate of day
-    respiration in \code{micromol m^(-2) s^(-1)}.
+    The name of the column in \code{exdf_obj} that contains the rate of
+    non-photorespiratory CO2 release in the light, in
+    \code{micromol m^(-2) s^(-1)}.
   }
 
   \item{total_pressure_column_name}{
@@ -243,7 +246,7 @@ licor_data <- calculate_ternary_correction(licor_data)
 # Set Rubisco specificity (needed for calculate_gamma_star)
 licor_data <- set_variable(
     licor_data,
-    'specificity_at_tleaf',
+    'rubisco_specificity_tl',
     'M / M',
     value = 90
 )
