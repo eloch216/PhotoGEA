@@ -1,0 +1,199 @@
+---
+title: "Frequently Asked Questions"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Frequently Asked Questions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+link-citations: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 4,
+  fig.height = 4,
+  fig.align = "center"
+)
+```
+
+# How Do I Install An Old Version of PhotoGEA?
+
+All PhotoGEA releases are tagged on GitHub, and the tag names are formatted as
+`vX.Y.Z`, where `X.Y.Z` is the version number. Because of this,
+`remotes::install_github` can be used to install old versions from within R,
+supplying the appropriate tag name as the `ref` input argument. For example,
+version `1.0.0` can be installed as follows:
+
+```{r, eval = FALSE}
+remotes::install_github('eloch216/PhotoGEA', ref = 'v1.0.0')
+```
+
+Note that this command requires the `remotes` package, which can be installed
+from within R by typing `install.packages('remotes')`.
+
+# How Do I Install The Development Version of PhotoGEA?
+
+The development version of PhotoGEA contains the latest changes, although it may
+be a "work in progress" and subject to suddent changes without any warning. It
+can always be found on the `unreleased` branch on GitHub, and the package can be
+installed from this branch as follows:
+
+```{r, eval = FALSE}
+remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
+```
+
+Note that this command requires the `remotes` package, which can be installed
+from within R by typing `install.packages('remotes')`.
+
+# What If My Response Curves Have Different Numbers of Points?
+
+The analysis guides use data sets where each response curve has the same number
+of points, making it easy to apply `check_response_curve_data` and
+`organize_response_curve_data`. However, data sets may sometimes have curves
+measured using different sequences of setpoints.
+
+To deal with this situation, one strategy is to split the full set into groups
+that are expected to use the same sequences, then separately check and organize
+each group, and finally recombine all the groups back together. The code
+snippets below show two examples of how this could be accomplished.
+
+## Splitting response curves according to the number of points in each curve
+
+The following code would replace the calls to `check_response_curve_data` and
+`organize_response_curve_data` in the user guides. This code was originally
+written for a set of A-Ci curves that used different numbers of recovery points.
+The user wished to keep the final recovery point to use for subsequent analysis.
+
+The curves used the following sequences of `CO2_r` setpoint values:
+
+- 16 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 600, 800, 1200,
+  1500, 1800, 400
+
+- 18 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400, 400, 600, 800,
+  1200, 1500, 1800, 400
+
+- 19 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400, 400, 400, 600,
+  800, 1200, 1500, 1800, 400
+
+```{r, eval = FALSE}
+# Add a new column called `curve_npts` that stores the number of points in each
+# response curve
+licor_data <- do.call(rbind, by(licor_data, licor_data[, 'curve_identifier'], function(x) {
+  x[, 'curve_npts'] <- nrow(x)
+  x
+}))
+
+# Choose points to remove, depending on how many points are in the curve
+pts_to_remove <- list(
+  '16' = c(1, 8:9,  16),
+  '18' = c(1, 8:11, 18),
+  '19' = c(1, 8:12, 19)
+)
+
+# Check and process each group of curves depending on how many points are in the
+# curve
+licor_exdf_list_processed <- by(licor_data, licor_data[, 'curve_npts'], function(x) {
+  # Get the number of points in these curves
+  npts <- x[1, 'curve_npts']
+
+  # Make sure info is specified for this group of curves
+  if (!as.character(npts) %in% names(pts_to_remove)) {
+    stop('Points to remove were not specified for npts = `', npts, '`')
+  }
+
+  # Make sure the data meets basic requirements
+  check_response_curve_data(x, 'curve_identifier', npts, 'CO2_r_sp')
+
+  # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+  organize_response_curve_data(
+    x,
+    'curve_identifier',
+    pts_to_remove[[as.character(npts)]],
+    'Ci'
+  )
+})
+
+# Use `rbind` to recombine all the data
+licor_data <- do.call(rbind, licor_exdf_list_processed)
+```
+
+## Splitting the response curves according to the date they were measured and the number of points in each curve
+
+This code would replace the calls to `check_response_curve_data` and
+`organize_response_curve_data` in the user guides. This code was originally
+written for a set of A-Ci curves that used different sequences of `CO2_r`
+setpoints on different days.
+
+The curves used the following sequences of `CO2_r` setpoint values:
+
+- 2023-03-21: 18 points: 400, 300, 200, 150, 100, 75, 50, 40, 30, 20, 10, 400,
+  400, 600, 800, 1000, 1200, 1500
+
+- 2023-03-23: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30, 20, 10, 400,
+  400, 500, 600, 800, 1000, 1200, 1500
+
+- 2023-03-24: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30, 20, 400, 400,
+  450, 500, 600, 800, 1000, 1200, 1500
+
+```{r, eval = FALSE}
+# Add a new column called `curve_npts` that stores the number of points in each
+# response curve
+licor_data <- do.call(rbind, by(licor_data, licor_data[, 'curve_identifier'], function(x) {
+  x[, 'curve_npts'] <- nrow(x)
+  x
+}))
+
+# Add a new column called `date_ymd` that stores the date formatted as
+# YYYY-MM-DD
+licor_data[, 'date_ymd'] <- paste(
+  substring(licor_data[, 'date'], 1, 4),
+  substring(licor_data[, 'date'], 5, 6),
+  substring(licor_data[, 'date'], 7, 8),
+  sep = '-'
+)
+
+# Add a new column called `date_ymd_npts` that combines the date and the number
+# of points
+licor_data[, 'date_ymd_npts'] <-
+  paste(licor_data[, 'date_ymd'], licor_data[, 'curve_npts'], sep = ' - ')
+
+# Choose points to remove, depending on the date the curve was measured and the
+# number of points it contains
+pts_to_remove <- list(
+  '2023-03-21 - 18' = c(12, 13),
+  '2023-03-23 - 19' = c(12, 13),
+  '2023-03-24 - 19' = c(11, 12)
+)
+
+# Check and process each group of curves depending on the date and the number of
+# points
+licor_exdf_list_processed <- by(licor_data, licor_data[, 'date_ymd_npts'], function(x) {
+  # Get the date and number of points in these curves
+  date_ymd_npts <- x[1, 'date_ymd_npts']
+  npts <- x[1, 'curve_npts']
+
+  # Make sure info is specified for this group of curves
+  if (!date_ymd_npts %in% names(pts_to_remove)) {
+    stop('Points to remove were not specified for date_ymd_npts = `', date_ymd_npts, '`')
+  }
+
+  # Make sure the data meets basic requirements
+  check_response_curve_data(x, 'curve_identifier', npts, 'CO2_r_sp')
+
+  # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+  organize_response_curve_data(
+    x,
+    'curve_identifier',
+    pts_to_remove[[date_ymd_npts]],
+    'Ci'
+  )
+})
+
+# Use `rbind` to recombine all the data
+licor_data <- do.call(rbind, licor_exdf_list_processed)
+```

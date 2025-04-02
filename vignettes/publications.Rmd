@@ -1,0 +1,68 @@
+---
+title: "PhotoGEA Publications"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{PhotoGEA Publications}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Overview
+
+This page contains a list of all publications about or using the PhotoGEA R
+package, including links to publicly-available analysis scripts whenever
+possible. If we are missing any publications, please let us know!
+
+# Publications About PhotoGEA
+
+The PhotoGEA R package was first described in:
+
+1. Lochocki, E. B., Salesse-Smith, C. E. & McGrath, J. M. "PhotoGEA: An R Package
+   for Closer Fitting of Photosynthetic Gas Exchange Data With Non-Gaussian
+   Confidence Interval Estimation." _Plant, Cell & Environment_ (2025).
+
+   > - [DOI:10.1111/pce.15501](https://doi.org/10.1111/pce.15501)
+   >
+   > - PhotoGEA version: `v1.1.0`
+   >
+   > - Analysis scripts: https://github.com/ripeproject/PhotoGEA-paper/
+
+If you use PhotoGEA for your own work, please cite this publication and specify
+the version of the package you used.
+
+# Publications Using PhotoGEA
+
+2. Salesse-Smith, C. E. et _al_. "Greater mesophyll conductance and leaf
+   photosynthesis in the field through modified cell wall porosity and thickness
+   via AtCGR3 expression in tobacco." _Plant Biotechnology Journal_ **22**,
+   2504–2517 (2024).
+
+   > - [DOI:10.1111/pbi.14364](https://doi.org/10.1111/pbi.14364)
+   >
+   > - PhotoGEA version: `v0.10.0`
+   >
+   > - Analysis scripts: https://github.com/ripeproject/CGR3-tobacco-2024
+
+3. Pelech, E. A., Stutz, S. S., Wang, Y., Lochocki, E. B. & Long, S. P. "Have We
+   Selected for Higher Mesophyll Conductance in Domesticating Soybean?"
+   _Plant, Cell & Environment_ **48**, 1594–1607 (2025).
+
+   > - [DOI:10.1111/pce.15206](https://doi.org/10.1111/pce.15206)
+   >
+   > - PhotoGEA version: `v1.0.0`
+   >
+   > - Analysis scripts: https://doi.org/10.13012/B2IDB-7809185_V2
+
+4. Salesse-Smith, C. E. et al. "Adapting C~4~ photosynthesis to atmospheric
+   change and increasing productivity by elevating Rubisco content in sorghum
+   and sugarcane." _Proceedings of the National Academy of Sciences_ **122**,
+   e2419943122 (2025).
+
+   > - [DOI:10.1073/pnas.2419943122](https://doi.org/10.1073/pnas.2419943122)
+   >
+   > - PhotoGEA version: `v0.11.0`
+   >
+   > - Analysis scripts: https://github.com/cabbi-bio/sorghum-sugarcane-RBCS-RAF1-2024
