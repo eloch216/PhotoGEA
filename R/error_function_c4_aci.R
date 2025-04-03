@@ -48,6 +48,7 @@ error_function_c4_aci <- function(
     required_variables[[kc_column_name]]             <- 'microbar'
     required_variables[[ko_column_name]]             <- 'mbar'
     required_variables[[kp_column_name]]             <- 'microbar'
+    required_variables[[oxygen_column_name]]         <- 'percent'
     required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
     required_variables[[total_pressure_column_name]] <- 'bar'
     required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'

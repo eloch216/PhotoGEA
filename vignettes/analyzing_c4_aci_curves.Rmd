@@ -1193,6 +1193,8 @@ vignette.
 
 <<plot_aci_fit_light>>
 
+<<calculate_jmax>>
+
 ##
 ## Semi-empirical fits
 ##
