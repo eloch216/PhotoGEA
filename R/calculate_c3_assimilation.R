@@ -219,7 +219,11 @@ calculate_c3_assimilation <- function(
             Ap[PCc < Gamma_star_agt] <- Inf
         }
 
+        # Get the minimum assimilation rate (micromol / m^2 / s)
         An <- pmin(Ac, Aj, Ap, na.rm = TRUE)
+
+        # Recalculate the carboxylation rate (micromol / m^2 / s)
+        Vc <- (An + RL_tl) / photo_resp_factor
     }
 
     if (return_table) {
