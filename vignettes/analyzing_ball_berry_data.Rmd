@@ -212,7 +212,8 @@ in each curve (`7`), the name of a "driving" column that should follow the same
 sequence in each curve (`Qin`), and tolerance for the values of the driving
 column (`1.0 mol / m^2 / s`). If the data passes the checks, this function will
 have no output and will not produce any messages. (For more information, see the
-built-in help menu entry by typing `?check_response_curve_data`.)
+built-in help menu entry by typing `?check_response_curve_data`, or visit the
+[Frequently Asked Questions](frequent_questions.html).)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements

@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 # How Do I Install An Old Version of PhotoGEA?
 
-All PhotoGEA releases are tagged on GitHub, and the tag names are formatted as
+All `PhotoGEA` releases are tagged on GitHub, and the tag names are formatted as
 `vX.Y.Z`, where `X.Y.Z` is the version number. Because of this,
 `remotes::install_github` can be used to install old versions from within R,
 supplying the appropriate tag name as the `ref` input argument. For example,
@@ -38,10 +38,10 @@ from within R by typing `install.packages('remotes')`.
 
 # How Do I Install The Development Version of PhotoGEA?
 
-The development version of PhotoGEA contains the latest changes, although it may
-be a "work in progress" and subject to suddent changes without any warning. It
-can always be found on the `unreleased` branch on GitHub, and the package can be
-installed from this branch as follows:
+The development version of `PhotoGEA` contains the latest changes, although it
+may be a "work in progress" and subject to suddent changes without any warning.
+It can always be found on the `unreleased` branch on GitHub, and the package can
+be installed from this branch as follows:
 
 ```{r, eval = FALSE}
 remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
@@ -49,6 +49,39 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
 
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
+
+# What Should I Do When check_response_curve_data Fails?
+
+When beginning to work with a new data set, it is fairly common to encounter
+problems that cause `check_response_curve_data` to fail. The most common issues
+are:
+
+- The manual log button was accidentally pressed while measuring, causing a
+  response curve to have an extra point.
+
+- One or more "User Constant" was not updated before starting a to measure a new
+  curve, causing two curves to have the same identifying metadata.
+
+- A curve was started, but needed to be ended early, resulting in a curve with
+  fewer points than expected.
+
+These are exactly the kinds of issues that `check_response_curve_data` is
+designed to detect. It may feel irritating to encounter these errors, but it's
+better to know about issues with extra log points or user constants early in
+your analysis, before they cause additional downstream issues.
+
+In each of these cases, it is often simplest to fix the issues by manually
+editing the log files in Excel. This is an easy way to delete extra rows or
+alter the values of user constants. When altering log files, it is always a good
+idea to keep an "original" version in case any of the changes need to be
+reverted.
+
+Sometimes `check_response_curve_data` fails for a different reason -- for
+example, perhaps different setpoint sequences were intentionally used while
+measuring the curves, or perhaps you have already cleaned up your data in Excel.
+In these cases, please see the "What If My Response Curves Have Different
+Numbers of Points?" and "What If I Clean My Data In Excel?" sections of this
+article.
 
 # What If My Response Curves Have Different Numbers of Points?
 
@@ -238,4 +271,125 @@ licor_data <- organize_response_curve_data(
     'Ci',
     columns_to_average = c('TleafCnd', 'Qin')
 )
+```
+
+# What If I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
+
+At the moment, `PhotoGEA` can read plaintext and Excel files created by Licor
+LI-6800 gas exchange measurement systems, but does not have functions for
+reading log files from other instruments.
+
+Fortunately, there are other R packages that do, such as
+[GasanalyzeR](https://doi.org/10.1093/aobpla/plae035). Using a function from
+another package is a little complicated, because generally they do not use the
+same data structures or variable names as `PhotoGEA`. So, after reading a file
+with another package, there is typically some extra "conversion" that needs to
+take place.
+
+The following example shows how to create a wrapper for the `read_6400_xls`
+function from the `gasanalyzer` R package. It also provides a simple function
+that "detects" the file type, so a mix of Licor LI-6400 and LI-6800 log files
+could be used. The code in the example would replace the lines that use
+`read_gasex_file` to create `licor_exdf_list` in the user guides.
+
+As of the time this article was written (April 4, 2025), the `read_6400_xls`
+function is not available in the CRAN version of the `gasanalyzer` package.
+Instead, the package must be installed directly from its GitLab repository to
+get the latest version. This can be done by calling the following command from
+R:
+
+```{r, eval = FALSE}
+remotes::install_gitlab('plantphys/gasanalyzer')
+```
+
+This example only processes the columns that are absolutely essential for
+fitting A-Ci curves. Depending on your goals, you may need to modify this code
+to include other columns.
+
+```{r, eval = FALSE}
+# Helper function for reading 6400 Excel files. This is a wrapper for the
+# read_6400_xls function from the gasanalyzer package that converts the output
+# into a format usable by PhotoGEA.
+#
+# Debug option: If DEBUG_PRINT is set to TRUE below, the raw column names will
+# be printed immediately after the file is loaded. This may be helpful if there
+# are other columns (such as user constants) that also need to be renamed.
+read_6400_xls_wrapper <- function(fpath) {
+    # Read the contents of the file
+    rawdata <- gasanalyzer::read_6400_xls(fpath)
+
+    # Optional debug printing
+    DEBUG_PRINT <- FALSE
+    if (DEBUG_PRINT) {
+      print(colnames(rawdata))
+    }
+
+    # Rename a few columns so they meet PhotoGEA's expectations; the "new"
+    # PhotoGEA column name is on the left, and the "original" gasanalyzer
+    # column name is on the right.
+    new_column_names <- list(
+        A = 'GasEx.A',
+        Ca = 'GasEx.Ca',
+        Ci = 'GasEx.Ci',
+        DeltaPcham = 'Meas.DeltaPcham',
+        gsw = 'GasEx.gsw',
+        oxygen = 'Const.Oxygen',
+        Pa = 'Meas.Pa',
+        Qin = 'LeafQ.Qin',
+        TleafCnd = 'GasEx.TleafCnd'
+    )
+
+    for (i in seq_along(new_column_names)) {
+        gasanalyzer_name <- new_column_names[[i]]
+        photogea_name    <- names(new_column_names)[i]
+
+        colnames(rawdata)[colnames(rawdata) == gasanalyzer_name] <- photogea_name
+    }
+
+    # Drop units and convert to a regular data frame
+    rawdata_df <- as.data.frame(units::drop_units(rawdata))
+
+    # Convert to an exdf object
+    exdf_obj <- exdf(rawdata_df)
+
+    # Supply units for a few columns so they meet PhotoGEA's expectations, and
+    # return
+    document_variables(
+        exdf_obj,
+        c('read_6400_xls_wrapper', 'A',          'micromol m^(-2) s^(-1)'),
+        c('read_6400_xls_wrapper', 'Ca',         'micromol mol^(-1)'),
+        c('read_6400_xls_wrapper', 'Ci',         'micromol mol^(-1)'),
+        c('read_6400_xls_wrapper', 'DeltaPcham', 'kPa'),
+        c('read_6400_xls_wrapper', 'gsw',        'mol m^(-2) s^(-1)'),
+        c('read_6400_xls_wrapper', 'oxygen',     'percent'),
+        c('read_6400_xls_wrapper', 'Pa',         'kPa'),
+        c('read_6400_xls_wrapper', 'Qin',        'micromol m^(-2) s^(-1)'),
+        c('read_6400_xls_wrapper', 'TleafCnd',   'degrees C')
+    )
+}
+
+# Helper function that tries to read a file using PhotoGEA::read_gasex_file, but
+# then uses `read_6400_xls_wrapper` if there is an error.
+read_gasex_file_plus_6400 <- function(fpath) {
+  cat(paste0(
+    '\nAttempting to read `', fpath, '` using PhotoGEA::read_gasex_file\n'
+  ))
+
+  tryCatch(
+    read_gasex_file(fpath),
+    error = function(e) {
+      cat(paste0(
+        '\nAn error occurred. Attempting to read `', fpath,
+        '` using gasanalyzer::read_6400_xls\n'
+      ))
+
+      read_6400_xls_wrapper(fpath)
+    }
+  )
+}
+
+# Load each file, storing the result in a list
+licor_exdf_list <- lapply(file_paths, function(fpath) {
+  read_gasex_file_plus_6400(fpath)
+})
 ```
