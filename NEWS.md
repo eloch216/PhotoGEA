@@ -31,7 +31,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## Changes in PhotoGEA version 1.3.0 (2024-04-04)
 
 ### Minor user-facing changes
 
@@ -65,6 +65,8 @@ be directly added to this file to describe the related changes.
   results, so it doesn't make sense to allow it.
 - Renamed `atp_use` and `nadph_use` to `Wj_coef_C` and `Wj_coef_Gamma_star`
   because the old names and definitions for these parameters were not accurate.
+- Included references to the PhotoGEA paper in several places, such as
+  `DESCRIPTION` and `README.md`.
 
 ### Bug fixes
 
