@@ -137,8 +137,6 @@
           pitfalls." Plant, Cell & Environment 47, 3344–3364 (2024)
           [\doi{10.1111/pce.14815}].
   }
-
-
 }
 
 \value{
@@ -204,7 +202,6 @@ plot_laisk_fit(laisk_results, 'instrument', 'first', ppfd_column_name = 'species
 
 # Plot the linear fits of Laisk intercept vs. Laisk slope
 plot_laisk_fit(laisk_results, 'instrument', 'second', ppfd_column_name = 'species_plot')
-
 }
 
 \concept{exdf}
