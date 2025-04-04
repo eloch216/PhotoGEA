@@ -5,8 +5,8 @@
 \title{Check response curve data for common issues}
 
 \description{
-  Checks to make sure an \code{exdf} object representing response curve data
-  has the expected number of rows and does not contain infinite values.
+  Checks to make sure an \code{\link{exdf}} object representing multiple
+  response curves meets basic expectations.
 }
 
 \usage{
@@ -17,7 +17,8 @@
     driving_column = NULL,
     driving_column_tolerance = 1.0,
     col_to_ignore_for_inf = 'gmc',
-    error_on_failure = TRUE
+    error_on_failure = TRUE,
+    print_information = TRUE
   )
 }
 
@@ -64,16 +65,22 @@
     A logical value indicating whether to send an error message when an issue is
     detected. See details below.
   }
+
+  \item{print_information}{
+    A logical value indicating whether to print additional information to the R
+    terminal when an issue is detected. See details below.
+  }
 }
 
 \details{
   This function makes a few basic checks to ensure that the Licor data includes
   the expected information and does not include any mistakes. If no problems are
   detected, this function will be silent with no return value. If a problem is
-  detected and \code{error_on_failure} is \code{TRUE}, then it will print
-  information about the issue and throw an error; if a problem is detected and
-  \code{error_on_failure} is \code{FALSE}, then it will print information and
-  only throw a warning.
+  detected and \code{error_on_failure} is \code{TRUE}, then this function will
+  throw an error with a short message; if \code{error_on_failure} is
+  \code{FALSE}, then this function will throw a warning instead. If a problem is
+  detected and \code{print_information} is \code{TRUE}, additional information
+  about the problem will be printed to the R terminal.
 
   This function will perform the following checks, some of which are optional:
   \itemize{
@@ -97,6 +104,49 @@
                   \code{driving_column_tolerance} can be specified.
           }
   }
+
+  Using \code{check_response_curve_data} is not strictly necessary, but it can
+  be helpful both to you and to anyone else reading your analysis code. Here are
+  a few typical use cases:
+  \itemize{
+    \item \strong{Average response curves:} It is common to calculate and plot
+          average response curves, either manually or by using
+          \code{\link{xyplot_avg_rc}}. But, it only makes sense to do this if
+          each curve followed the same sequence of the driving variable. In this
+          case, \code{check_response_curve_data} can be used to confirm that
+          each curve used the same values of \code{CO2_r_sp} (for an A-Ci curve)
+          or \code{Qin} (for an A-Q curve).
+    \item \strong{Removing recovery points:} It is common to wish to remove one
+          or more recovery points from a set of curves. The safest way to do
+          this is to confirm that all the curves use the same sequence of
+          setpoints; then you can be sure that, for example, points 9 and 10 are
+          the recovery points in every curve.
+    \item \strong{Making a statement of expectations:} If you measured a set of
+          A-Ci curves where each curve has 16 points and used the same sequence
+          of \code{CO2_r} setpoints, you could record this somewhere in your
+          notes. But it would be even more meaningful to use
+          \code{check_response_curve_data} in your script with
+          \code{expected_npts} set to 16. If this check passes, then it means
+          not only that your claim is correct, but also that the identifier
+          columns are being interpreted properly.
+  }
+
+  Sometimes the response curves in a large data set were not all measured with
+  the same sequence of setpoints. If only a few different sequences were used,
+  it is possible to split them into groups and separately run
+  \code{check_response_curve_data} on each group. This scenario is discussed in
+  the Frequently Asked Questions vignette.
+
+  Even if none of the above situations are relevant to you, it may still be
+  helpful to run \code{run check_response_curve_data} but with
+  \code{expected_npts} set to 0 and \code{error_on_failure} set to \code{FALSE}.
+  With these settings, if there are curves with different numbers of points, the
+  function will print the number of points in each curve to the R terminal, but
+  won't stop the rest of the script from running. This can be useful for
+  detecting problems with the \code{curve_identifier} column. For example, if
+  the longest curves in the set are known to have 17 points, but
+  \code{check_response_curve_data} identifies a curve with 34 points, it is
+  clear that the same identifier was accidentally used for two different curves.
 }
 
 \examples{

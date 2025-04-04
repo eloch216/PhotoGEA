@@ -197,3 +197,45 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'date_ymd_npts'], funct
 # Use `rbind` to recombine all the data
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
+
+# What If I Clean My Data In Excel?
+
+In the user guides, the `organize_response_curve_data` and `remove_points`
+functions are used to remove recovery points and other points from sets of
+response curves. However, it is also possible to remove points in Excel before
+reading log files into R. In this case, it is necessary to make a few small
+alterations to the code used in the user guides.
+
+One consideration is that after cleaning the curves in Excel, it is likely that
+not all curves have the same number of points or follow the same sequence of
+setpoint values. Because of this, the checks in `check_response_curve_data` are
+likely to fail. In this case, we recommend setting `expected_npts` to 0 (the
+default value) and `error_on_failure` to `FALSE` when calling
+`check_response_curve_data`. This will provide potentially useful information
+about the number of points in each curve, but won't throw an error that would
+cause a script to stop running.
+
+Another consideration is that `organize_response_curve_data` is not needed to
+remove any points from the curves. Yet, its other features, such as reordering
+the points and calculating average values, are still useful. In this case, we
+recommend setting `measurement_numbers_to_remove` to `c()` and leaving the other
+arguments as-is.
+
+Putting this all together would produce something like the following code, which
+would replace the regular calls to `check_response_curve_data` and
+`organize_response_curve_data` from the user guides:
+
+```{r, eval = FALSE}
+# Print info about the number of points in each curve to make sure
+# `curve_identifier` is able to properly split the set into individual curves
+check_response_curve_data(licor_data, 'curve_identifier', error_on_failure = FALSE)
+
+# Reorder by `Ci` and calculate average values of leaf temperature and Qin
+licor_data <- organize_response_curve_data(
+    licor_data,
+    'curve_identifier',
+    c(),
+    'Ci',
+    columns_to_average = c('TleafCnd', 'Qin')
+)
+```

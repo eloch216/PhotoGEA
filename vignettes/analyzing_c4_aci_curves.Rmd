@@ -454,7 +454,8 @@ and reorder the data so it is arranged from low to high values of `Ci`. This can
 be done using the `organize_response_curve` function from `PhotoGEA`:
 
 ```{r reorganizing_curves}
-# Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+# Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and
+# calculate average values of leaf temperature and Qin
 licor_data <- organize_response_curve_data(
     licor_data,
     'curve_identifier',

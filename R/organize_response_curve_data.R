@@ -4,7 +4,8 @@ organize_response_curve_data <- function(
     measurement_numbers_to_remove,
     column_for_ordering,
     ordering_column_tolerance = Inf,
-    columns_to_average = c()
+    columns_to_average = c(),
+    print_information = TRUE
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -26,27 +27,29 @@ organize_response_curve_data <- function(
         return(x)
     }))
 
-    # Make a subset of the full result that only includes the desired
-    # measurement points
-    licor_exdf <-
-        licor_exdf[!licor_exdf[, 'seq_num'] %in% measurement_numbers_to_remove, , TRUE]
+    if (length(measurement_numbers_to_remove) > 0) {
+        # Make a subset of the full result that only includes the desired
+        # measurement points
+        licor_exdf <-
+            licor_exdf[!licor_exdf[, 'seq_num'] %in% measurement_numbers_to_remove, , TRUE]
 
-    # Check to make sure the identifier columns specify curves with the same
-    # number of points. Don't check for any infinite values since we don't know
-    # which columns should be ignored for this check.
-    check_response_curve_data(
-      licor_exdf,
-      identifier_columns,
-      driving_column = column_for_ordering,
-      driving_column_tolerance = ordering_column_tolerance,
-      col_to_ignore_for_inf = NULL
-    )
+        # Check to make sure the identifier columns specify curves with the same
+        # number of points. Don't check for any infinite values since we don't
+        # know which columns should be ignored for this check.
+        check_response_curve_data(
+          licor_exdf,
+          identifier_columns,
+          driving_column = column_for_ordering,
+          driving_column_tolerance = ordering_column_tolerance,
+          col_to_ignore_for_inf = NULL,
+          print_information = print_information
+        )
+    }
 
     # Make sure the data is ordered properly for plotting
     for (cn in c(column_for_ordering, identifier_columns)) {
         licor_exdf <- licor_exdf[order(licor_exdf[, cn]), , TRUE]
     }
-
 
     # Re-create factors from the identifier columns
     f_new <- lapply(identifier_columns, function(x) {licor_exdf[ , x]})

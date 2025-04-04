@@ -52,6 +52,14 @@ be directly added to this file to describe the related changes.
   temperature response parameter lists.
 - The `calculate_gamma_star` function now returns values of `Gamma_star_tl` to
   more clearly indicate that the values are specified at leaf temperature.
+- The `organize_response_curve_data` function now only calls
+  `check_response_curve_data` when points are being removed, making it more
+  flexible.
+- Added two new vignettes: one is for frequently asked questions
+  (`frequent_questions.Rmd`), and the other is a gallery of PhotoGEA
+  publications (`publications.Rmd`). Along with this change, the `pkgdown` web
+  site was reorganized to put the PhotoGEA publications in their own tab on the
+  main navigation bar.
 
 ## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 
