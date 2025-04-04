@@ -1,9 +1,10 @@
 Package: PhotoGEA
-Version: 1.2.0
-Date: 2025-03-12
+Version: 1.3.0
+Date: 2025-04-04
 Title: Photosynthetic Gas Exchange Analysis
 Description: A collection of tools for loading and analyzing photosynthetic gas
-    exchange data.
+    exchange data. Documentation is provided by several vignettes; also see
+    Lochocki, Salesse-Smith, & McGrath (2025) <doi:10.1111/pce.15501>.
 Authors@R: c(
     person("Edward B.", "Lochocki", role = c('cre', 'aut'),
            email = "eloch@illinois.edu",

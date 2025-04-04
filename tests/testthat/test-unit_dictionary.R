@@ -11,3 +11,10 @@ test_that('Units are returned properly', {
         'micromol mol^(-1)'
     )
 })
+
+test_that('Normalized units are formatted correctly', {
+    expect_equal(
+        PhotoGEA:::normalized_units('test_name'),
+        'normalized to test_name at 25 degrees C'
+    )
+})

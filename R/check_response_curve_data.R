@@ -7,7 +7,8 @@ check_response_curve_data <- function(
     driving_column = NULL,
     driving_column_tolerance = 1.0,
     col_to_ignore_for_inf = 'gmc',
-    error_on_failure = TRUE
+    error_on_failure = TRUE,
+    print_information = TRUE
 )
 {
     if (!is.exdf(licor_exdf)) {
@@ -77,7 +78,10 @@ check_response_curve_data <- function(
         colnames(npts_df) <- identifier_columns
         npts_df$npts <- as.numeric(curve_npts)
         row.names(npts_df) <- NULL
-        print(npts_df)
+
+        if (print_information) {
+            print(npts_df)
+        }
 
         msg <- 'One or more curves does not have the expected number of points.'
 
@@ -115,7 +119,9 @@ check_response_curve_data <- function(
         }
 
         if (length(msg) > 0) {
-            print(msg)
+            if (print_information) {
+                print(msg)
+            }
 
             new_msg <- 'The curves do not all follow the same sequence of the driving variable.'
 

@@ -5,14 +5,14 @@
 
 calculate_c3_limitations_grassi <- function(
     exdf_obj,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     cc_column_name = 'Cc',
-    gamma_star_column_name = 'Gamma_star',
+    gamma_star_column_name = 'Gamma_star_tl',
     gmc_column_name = 'gmc_tl',
     gsc_column_name = 'gsc',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_column_name = 'Kc_tl',
+    ko_column_name = 'Ko_tl',
     oxygen_column_name = 'oxygen',
     total_pressure_column_name = 'total_pressure',
     vcmax_column_name = 'Vcmax_tl',
@@ -29,18 +29,18 @@ calculate_c3_limitations_grassi <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[cc_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[gamma_star_column_name]]     <- 'micromol mol^(-1)'
-    required_variables[[gmc_column_name]]            <- 'mol m^(-2) s^(-1) bar^(-1)'
-    required_variables[[gsc_column_name]]            <- 'mol m^(-2) s^(-1)'
-    required_variables[[kc_column_name]]             <- 'micromol mol^(-1)'
-    required_variables[[ko_column_name]]             <- 'mmol mol^(-1)'
+    required_variables[[cc_column_name]]             <- unit_dictionary('Cc')
+    required_variables[[gamma_star_column_name]]     <- unit_dictionary('Gamma_star_at_25')
+    required_variables[[gmc_column_name]]            <- unit_dictionary('gmc_at_25')
+    required_variables[[gsc_column_name]]            <- unit_dictionary('gsc')
+    required_variables[[kc_column_name]]             <- unit_dictionary('Kc_at_25')
+    required_variables[[ko_column_name]]             <- unit_dictionary('Ko_at_25')
     required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
-    required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[vcmax_column_name]]          <- 'micromol m^(-2) s^(-1)'
+    required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
+    required_variables[[vcmax_column_name]]          <- unit_dictionary('Vcmax_at_25')
 
     if (use_j) {
-        required_variables[[j_column_name]] <- 'micromol m^(-2) s^(-1)'
+        required_variables[[j_column_name]] <- unit_dictionary('J_at_25')
     }
 
     # Don't throw an error if some columns are all NA
@@ -89,8 +89,8 @@ calculate_c3_limitations_grassi <- function(
     if (use_j) {
         # Partial derivative of A with respect to Cc, assuming
         # RuBP-regeneration-limited assimilation
-        dAdC_j <- J * Gamma_star * (atp_use + nadph_use) /
-            (atp_use * Cc + nadph_use * Gamma_star)^2 # mol / m^2 / s
+        dAdC_j <- J * Gamma_star * (Wj_coef_C + Wj_coef_Gamma_star) /
+            (Wj_coef_C * Cc + Wj_coef_Gamma_star * Gamma_star)^2 # mol / m^2 / s
 
         # Include partial derivative and limitations in the exdf object
         exdf_obj[, 'dAdC_j']      <- dAdC_j

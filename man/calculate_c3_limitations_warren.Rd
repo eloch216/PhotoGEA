@@ -16,16 +16,15 @@
 \usage{
   calculate_c3_limitations_warren(
     exdf_obj,
-    atp_use = 4.0,
-    nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -44,24 +43,18 @@
     \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{curvature_cj}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wc} and \code{Wj}. A value of 1 indicates no co-limitation.
-  }
-
-  \item{curvature_cjp}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
   \item{ca_column_name}{
@@ -80,6 +73,14 @@
     CO2 concentration in \code{micromol mol^(-1)}.
   }
 
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}). Typically these are the
+    leaf-temperature dependent values calculated using
+    \code{\link{calculate_temperature_response}}.
+  }
+
   \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
@@ -87,19 +88,17 @@
     \code{\link{calculate_temperature_response}}.
   }
 
-  \item{kc_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    \code{micromol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using
+  \item{kc_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Kc} values (with units of \code{normalized to Kc at 25 degrees C}).
+    Typically these are the leaf-temperature dependent values calculated using
     \code{\link{calculate_temperature_response}}.
   }
 
-  \item{ko_column_name}{
-    The name of the column in \code{exdf_obj} that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using
+  \item{ko_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Ko} values (with units of \code{normalized to Ko at 25 degrees C}).
+    Typically these are the leaf-temperature dependent values calculated using
     \code{\link{calculate_temperature_response}}.
   }
 

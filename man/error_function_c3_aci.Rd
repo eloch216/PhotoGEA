@@ -20,16 +20,15 @@
     replicate_exdf,
     fit_options = list(),
     sd_A = 1,
-    atp_use = 4.0,
-    nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     gmc_norm_column_name = 'gmc_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -70,24 +69,18 @@
     it exists.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{curvature_cj}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wc} and \code{Wj}. A value of 1 indicates no co-limitation.
-  }
-
-  \item{curvature_cjp}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
   \item{a_column_name}{
@@ -98,6 +91,12 @@
   \item{ci_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
   }
 
   \item{gmc_norm_column_name}{
@@ -111,16 +110,14 @@
     \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
-  \item{kc_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    \code{micromol mol^(-1)}.
+  \item{kc_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Kc} values (with units of \code{normalized to Kc at 25 degrees C}).
   }
 
-  \item{ko_column_name}{
-    The name of the column in \code{replicate_exdf} that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    \code{mmol mol^(-1)}.
+  \item{ko_norm_column_name}{
+    The name of the column in \code{replicate_exdf} that contains the normalized
+    \code{Ko} values (with units of \code{normalized to Ko at 25 degrees C}).
   }
 
   \item{oxygen_column_name}{
@@ -176,10 +173,11 @@
   When fitting A-Ci curves using a maximum likelihood approach, it is necessary
   to define a function that calculates the likelihood of a given set of
   \code{alpha_g}, \code{alpha_old}, \code{alpha_s}, \code{alpha_t},
-  \code{Gamma_star}, \code{gmc_at_25}, \code{J_at_25}, \code{RL_at_25},
-  \code{Tp_at_25}, and \code{Vcmax_at_25} values by comparing a model prediction
-  to a measured curve. This function will be passed to an optimization algorithm
-  which will determine the values that produce the largest likelihood.
+  \code{Gamma_star_at_25}, \code{gmc_at_25}, \code{J_at_25}, \code{Kc_at_25},
+  \code{Ko_at_25},  \code{RL_at_25}, \code{Tp_at_25}, and \code{Vcmax_at_25}
+  values by comparing a model prediction to a measured curve. This function will
+  be passed to an optimization algorithm which will determine the values that
+  produce the largest likelihood.
 
   The \code{error_function_c3_aci} returns such a function, which is based on a
   particular A-Ci curve and a set of fitting options. It is possible to just fit
@@ -204,9 +202,7 @@
   If the crossover from Rubisco-limited to RuBP-regeneration limited
   assimilation occurs outside these bounds (when they are supplied), a heavy
   penalty will be added to the error function, preventing the optimizer from
-  choosing those parameter values. See the _Analyzing C3 A-Ci Curves_ vignette
-  for an example of how these arguments can be used to improve the quality of a
-  fit.
+  choosing those parameter values.
 
   A penalty is also added for any parameter combination where \code{An} is not a
   number, or where \code{\link{calculate_c3_assimilation}} produces an error.

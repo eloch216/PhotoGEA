@@ -20,13 +20,14 @@
     alpha_g,
     alpha_s,
     alpha_t,
-    Gamma_star,
+    Gamma_star_at_25,
     RL_at_25,
     tau,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',
@@ -68,12 +69,14 @@
     values in the \code{alpha_t} column of \code{exdf_obj} if it exists.
   }
 
-  \item{Gamma_star}{
-    The CO2 compensation point in the absence of day respiration, expressed in
-    \code{micromol mol^(-1)}. If \code{Gamma_star} is not a number, then there
-    must be a column in \code{exdf_obj} called \code{Gamma_star} with
-    appropriate units. A numeric value supplied here will overwrite the values
-    in the \code{Gamma_star} column of \code{exdf_obj} if it exists.
+  \item{Gamma_star_at_25}{
+    The chloroplastic CO2 concentration at which CO2 gains from Rubisco
+    carboxylation are exactly balanced by CO2 losses from Rubisco oxygenation,
+    at 25 degrees C, expressed in \code{micromol mol^(-1)}. If
+    \code{Gamma_star_at_25} is not a number, then there must be a column in
+    \code{exdf_obj} called \code{Gamma_star_at_25} with appropriate units. A
+    numeric value supplied here will overwrite the values in the
+    \code{Gamma_star_at_25} column of \code{exdf_obj} if it exists.
   }
 
   \item{RL_at_25}{
@@ -92,12 +95,18 @@
     values in the \code{tau} column of \code{exdf_obj} if it exists.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
   \item{a_column_name}{
@@ -108,6 +117,12 @@
   \item{ci_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     intercellular CO2 concentration in \code{micromol mol^(-1)}.
+  }
+
+  \item{gamma_star_norm_column_name}{
+    The name of the column in \code{exdf_obj} that contains the normalized
+    \code{Gamma_star} values (with units of
+    \code{normalized to Gamma_star at 25 degrees C}).
   }
 
   \item{phips2_column_name}{
@@ -294,11 +309,12 @@ licor_file <- calculate_total_pressure(licor_file)
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
 # Calculate values of J_F, gmc, and Cc assuming alpha_g = alpha_s = alpha_t = 0,
-# tau = 0.2, and RL = 0.5
+# RL_at_25 = 1.5, and tau = 0.55.
 vj_res <- calculate_c3_variable_j(licor_file, 0, 0, 0, '', 1.5, 0.55)
 
 # Plot mesophyll conductance against Cc. Note: this information is not very
-# meaningful since the values of tau and RL used above are arbitrary.
+# meaningful since the values of Gamma_star, tau and RL used above are
+# arbitrary.
 lattice::xyplot(
   gmc ~ Cc | licor_file[, 'species_plot'],
   data = vj_res$main_data,

@@ -5,10 +5,10 @@
 \title{Calculate Gamma_star from Rubisco specificity}
 
 \description{
-  Calculates the CO2 compensation point in the absence of day respiration
-  (\code{Gamma_star}) from the Rubisco specificity (on a molarity basis), the
-  oxygen concentration (as a percentage), and the temperature-dependent
-  solubilities of CO2 and O2 in H2O.
+  Calculates the CO2 compensation point in the absence of non-photorespiratory
+  CO2 release (\code{Gamma_star}) from the Rubisco specificity (on a molarity
+  basis), the oxygen concentration (as a percentage), and the
+  temperature-dependent solubilities of CO2 and O2 in H2O.
 }
 
 \usage{
@@ -16,7 +16,7 @@
     exdf_obj,
     alpha_pr = 0.5,
     oxygen_column_name = 'oxygen',
-    specificity_at_tleaf_column_name = 'specificity_at_tleaf',
+    rubisco_specificity_column_name = 'rubisco_specificity_tl',
     tleaf_column_name = 'TleafCnd'
   )
 }
@@ -35,7 +35,7 @@
     the units must be \code{percent}.
   }
 
-  \item{specificity_at_tleaf_column_name}{
+  \item{rubisco_specificity_column_name}{
     The name of the column in \code{exdf_obj} that contains the Rubisco
     specificity \code{S_aq} at the leaf temperature; the units must be
     \code{M / M}, where the molarity \code{M} is moles of solute per mole of
@@ -49,12 +49,12 @@
 }
 
 \details{
-  The CO2 compensation point in the absence of day respiration
+  The CO2 compensation point in the absence of non-photorespiratory CO2 release
   (\code{Gamma_star}) is the partial pressure of CO2 in the chloroplast at which
-  photorespiration exactly balances CO2 assimilation; this quantity plays a key
-  role in many photosynthesis calculations. One way to calculate its value is to
-  use its definition, which can be found in many places, such as Equation 2.17
-  from von Caemmerer (2000):
+  CO2 gains from Rubisco carboxylation are exactly balanced by CO2 losses from
+  Rubisco oxygenation; this quantity plays a key role in many photosynthesis
+  calculations. One way to calculate its value is to use its definition, which
+  can be found in many places, such as Equation 2.17 from von Caemmerer (2000):
 
   \code{Gamma_star = alpha_pr * O / S},
 
@@ -130,12 +130,13 @@
 
 \value{
   An \code{exdf} object based on \code{exdf_obj} that includes the following
-  additional columns, calculated as described above: \code{Gamma_star},
-  \code{H_CO2}, \code{H_O2}, and \code{specificity_gas_basis}. There are many
-  choices for expressing Henry's constant values; here we express them as
-  molalities per unit of pressure: \code{(mol solute / kg H2O) / Pa}. The
-  category for each of these new columns is \code{calculate_gamma_star} to
-  indicate that they were created using this function.
+  additional columns, calculated as described above: \code{Gamma_star_tl} (the
+  value of \code{Gamma_star} at the leaf temperature), \code{H_CO2},
+  \code{H_O2}, and \code{specificity_gas_basis}. There are many choices for
+  expressing Henry's constant values; here we express them as molalities per
+  unit of pressure: \code{(mol solute / kg H2O) / Pa}. The category for each of
+  these new columns is \code{calculate_gamma_star} to indicate that they were
+  created using this function.
 }
 
 \examples{
@@ -148,14 +149,14 @@ licor_data <- get_oxygen_from_preamble(licor_data)
 
 licor_data <- set_variable(
     licor_data,
-    'specificity_at_tleaf',
+    'rubisco_specificity_tl',
     'M / M',
     value = 90
 )
 
 licor_data <- calculate_gamma_star(licor_data)
 
-licor_data[, c('specificity_gas_basis', 'oxygen', 'Gamma_star'), TRUE]
+licor_data[, c('specificity_gas_basis', 'oxygen', 'Gamma_star_tl'), TRUE]
 
 # Example 2: Calculate Gamma_star at 21% and 2% oxygen for a Rubisco whose
 # specificity was measured to be 100 M / M at 25 degrees C.
@@ -164,19 +165,19 @@ exdf_obj <- calculate_gamma_star(
   exdf(
     data.frame(
       oxygen = c(2, 21),
-      specificity_at_tleaf = c(100, 100),
+      rubisco_specificity_tl = c(100, 100),
       TleafCnd = c(25, 25)
     ),
     data.frame(
       oxygen = 'percent',
-      specificity_at_tleaf = 'M / M',
+      rubisco_specificity_tl = 'M / M',
       TleafCnd = 'degrees C',
       stringsAsFactors = FALSE
     )
   )
 )
 
-exdf_obj[, c('specificity_gas_basis', 'oxygen', 'Gamma_star'), TRUE]
+exdf_obj[, c('specificity_gas_basis', 'oxygen', 'Gamma_star_tl'), TRUE]
 
 # Example 3: Here we recreate Figure 1 from Long, S. P. "Modification of the
 # response of photosynthetic productivity to rising temperature by atmospheric
@@ -252,7 +253,7 @@ exdf_obj <- calculate_temperature_response_arrhenius(
 # Calculate temperature-dependent specificity values
 exdf_obj <- set_variable(
   exdf_obj,
-  'specificity_at_tleaf',
+  'rubisco_specificity_tl',
   units = 'M / M',
   value = exdf_obj[, 'Vc'] * exdf_obj[, 'Ko'] /
     (exdf_obj[, 'Vo'] * exdf_obj[, 'Kc'])
@@ -263,7 +264,7 @@ exdf_obj <- calculate_gamma_star(exdf_obj)
 
 # Make a plot similar to Figure 1 from Long (1991)
 lattice::xyplot(
-  specificity_at_tleaf + H_CO2 / H_O2 ~ TleafCnd,
+  rubisco_specificity_tl + H_CO2 / H_O2 ~ TleafCnd,
   data = exdf_obj$main_data,
   auto = TRUE,
   grid = TRUE,
@@ -276,7 +277,7 @@ lattice::xyplot(
 
 # We can also make a plot of Gamma_star across this range
 lattice::xyplot(
-  Gamma_star ~ TleafCnd,
+  Gamma_star_tl ~ TleafCnd,
   data = exdf_obj$main_data,
   auto = TRUE,
   grid = TRUE,
@@ -284,7 +285,7 @@ lattice::xyplot(
   xlim = c(0, 50),
   ylim = c(0, 120),
   xlab = "Temperature [ degrees C ]",
-  ylab = paste('Gamma_star [', exdf_obj$units$Gamma_star, ']')
+  ylab = paste('Gamma_star at leaf temperature [', exdf_obj$units$Gamma_star_tl, ']')
 )
 }
 

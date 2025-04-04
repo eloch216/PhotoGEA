@@ -4,16 +4,15 @@
 
 calculate_c3_limitations_warren <- function(
     exdf_obj,
-    atp_use = 4.0,
-    nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
+    gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_norm_column_name = 'Kc_norm',
+    ko_norm_column_name = 'Ko_norm',
     oxygen_column_name = 'oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -30,26 +29,29 @@ calculate_c3_limitations_warren <- function(
 
     # Make sure the required variables are defined and have the correct units.
     required_variables <- list()
-    required_variables[['alpha_g']]                  <- unit_dictionary('alpha_g')
-    required_variables[['alpha_old']]                <- unit_dictionary('alpha_old')
-    required_variables[['alpha_s']]                  <- unit_dictionary('alpha_s')
-    required_variables[['alpha_t']]                  <- unit_dictionary('alpha_t')
-    required_variables[['Gamma_star']]               <- unit_dictionary('Gamma_star')
-    required_variables[['J_at_25']]                  <- unit_dictionary('J_at_25')
-    required_variables[['RL_at_25']]                 <- unit_dictionary('RL_at_25')
-    required_variables[['Tp_at_25']]                 <- unit_dictionary('Tp_at_25')
-    required_variables[['Vcmax_at_25']]              <- unit_dictionary('Vcmax_at_25')
-    required_variables[[ca_column_name]]             <- unit_dictionary('Ca')
-    required_variables[[cc_column_name]]             <- unit_dictionary('Cc')
-    required_variables[[ci_column_name]]             <- unit_dictionary('Ci')
-    required_variables[[j_norm_column_name]]         <- unit_dictionary('J_norm')
-    required_variables[[kc_column_name]]             <- unit_dictionary('Kc')
-    required_variables[[ko_column_name]]             <- unit_dictionary('Ko')
-    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
-    required_variables[[rl_norm_column_name]]        <- unit_dictionary('RL_norm')
-    required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
-    required_variables[[tp_norm_column_name]]        <- unit_dictionary('Tp_norm')
-    required_variables[[vcmax_norm_column_name]]     <- unit_dictionary('Vcmax_norm')
+    required_variables[['alpha_g']]                   <- unit_dictionary('alpha_g')
+    required_variables[['alpha_old']]                 <- unit_dictionary('alpha_old')
+    required_variables[['alpha_s']]                   <- unit_dictionary('alpha_s')
+    required_variables[['alpha_t']]                   <- unit_dictionary('alpha_t')
+    required_variables[['Gamma_star_at_25']]          <- unit_dictionary('Gamma_star_at_25')
+    required_variables[['J_at_25']]                   <- unit_dictionary('J_at_25')
+    required_variables[['Kc_at_25']]                  <- unit_dictionary('Kc_at_25')
+    required_variables[['Ko_at_25']]                  <- unit_dictionary('Ko_at_25')
+    required_variables[['RL_at_25']]                  <- unit_dictionary('RL_at_25')
+    required_variables[['Tp_at_25']]                  <- unit_dictionary('Tp_at_25')
+    required_variables[['Vcmax_at_25']]               <- unit_dictionary('Vcmax_at_25')
+    required_variables[[ca_column_name]]              <- unit_dictionary('Ca')
+    required_variables[[cc_column_name]]              <- unit_dictionary('Cc')
+    required_variables[[ci_column_name]]              <- unit_dictionary('Ci')
+    required_variables[[gamma_star_norm_column_name]] <- unit_dictionary('Gamma_star_norm')
+    required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
+    required_variables[[kc_norm_column_name]]         <- unit_dictionary('Kc_norm')
+    required_variables[[ko_norm_column_name]]         <- unit_dictionary('Ko_norm')
+    required_variables[[oxygen_column_name]]          <- unit_dictionary('oxygen')
+    required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
+    required_variables[[total_pressure_column_name]]  <- unit_dictionary('total_pressure')
+    required_variables[[tp_norm_column_name]]         <- unit_dictionary('Tp_norm')
+    required_variables[[vcmax_norm_column_name]]      <- unit_dictionary('Vcmax_norm')
 
     # Don't throw an error if some columns are all NA
     check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
@@ -85,19 +87,20 @@ calculate_c3_limitations_warren <- function(
             '', # alpha_old
             '', # alpha_s
             '', # alpha_t
-            '', # Gamma_star
+            '', # Gamma_star_at_25
             '', # J_at_25
+            '', # Kc_at_25
+            '', # Ko_at_25
             '', # RL_at_25
             '', # Tp_at_25
             '', # Vcmax_at_25
-            atp_use = atp_use,
-            nadph_use = nadph_use,
-            curvature_cj = curvature_cj,
-            curvature_cjp = curvature_cjp,
+            Wj_coef_C = Wj_coef_C,
+            Wj_coef_Gamma_star = Wj_coef_Gamma_star,
             cc_column_name = cc_name,
+            gamma_star_norm_column_name = gamma_star_norm_column_name,
             j_norm_column_name = j_norm_column_name,
-            kc_column_name = kc_column_name,
-            ko_column_name = ko_column_name,
+            kc_norm_column_name = kc_norm_column_name,
+            ko_norm_column_name = ko_norm_column_name,
             oxygen_column_name = oxygen_column_name,
             rl_norm_column_name = rl_norm_column_name,
             total_pressure_column_name = total_pressure_column_name,

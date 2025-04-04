@@ -416,7 +416,8 @@ in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
 function will have no output and will not produce any messages. (For more
 information, see the built-in help menu entry by typing
-`?check_response_curve_data`.)
+`?check_response_curve_data`, or visit the
+[Frequently Asked Questions](frequent_questions.html).)
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
@@ -454,7 +455,8 @@ and reorder the data so it is arranged from low to high values of `Ci`. This can
 be done using the `organize_response_curve` function from `PhotoGEA`:
 
 ```{r reorganizing_curves}
-# Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+# Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and
+# calculate average values of leaf temperature and Qin
 licor_data <- organize_response_curve_data(
     licor_data,
     'curve_identifier',
@@ -816,14 +818,9 @@ c4_aci_results_light$parameters <- calculate_temperature_response(
 
 # Calculate Jmax
 c4_aci_results_light$parameters <- calculate_jmax(
-  c4_aci_results_light$parameters,
-  0.36125,
-  0.7
+  c4_aci_results_light$parameters
 )
 ```
-
-Here we used constant values of $\theta_J = 0.7$ and $\alpha_J = 0.85 \cdot
-(1 - 0.15) \cdot 0.5 = 0.36125$, as recommended in @von_caemmerer_updating_2021.
 
 With these commands, the `parameters` element of `c4_aci_results_light` now
 includes estimates of $J_{max}$.
@@ -1197,6 +1194,8 @@ vignette.
 <<fit_aci_light>>
 
 <<plot_aci_fit_light>>
+
+<<calculate_jmax>>
 
 ##
 ## Semi-empirical fits

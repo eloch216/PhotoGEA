@@ -1,0 +1,26 @@
+citHeader(
+    'When referencing the PhotoGEA R package in a scientific publication, ',
+    'please cite the journal article below. Additionally, cite the ',
+    'package itself or otherwise specify its version number.\n\n',
+    'Citation for this version of the PhotoGEA R package:'
+)
+
+c(
+    citation(auto = meta),
+    bibentry(
+        'Article',
+        header = 'Journal article describing the PhotoGEA R package:',
+        author = c(
+            person('Edward B.',  'Lochocki'),
+            person('Coralie E.', 'Salesse-Smith'),
+            person('Justin M.',  'McGrath')
+        ),
+        doi = '10.1111/pce.15501',
+        journal = 'Plant, Cell & Environment',
+        number = NA,
+        pages = NA,
+        title = 'PhotoGEA: An R Package for Closer Fitting of Photosynthetic Gas Exchange Data With Non-Gaussian Confidence Interval Estimation',
+        volume = NA,
+        year = 2025
+    )
+)

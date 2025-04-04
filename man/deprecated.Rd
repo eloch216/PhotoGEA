@@ -32,3 +32,5 @@
     Additional arguments; currently unused.
   }
 }
+
+\value{None of the deprecated functions return anything.}

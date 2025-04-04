@@ -68,6 +68,8 @@
   in software like Adobe Illustrator or Inkscape.
 }
 
+\value{The \code{pdf_print} function does not return anything.}
+
 \examples{
 SAVE_TO_PDF = FALSE # change this to TRUE to save to a PDF
 

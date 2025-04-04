@@ -51,6 +51,12 @@
   object is then created from this information.
 }
 
+\value{
+  The \code{write.csv.exdf} function does not return anything. The
+  \code{read.csv.exdf} function returns an \code{\link{exdf}} object
+  representing the contents of \code{file}.
+}
+
 \examples{
 # Read a CSV file included with the PhotoGEA package; this file was created
 # using `write.csv.exdf`.

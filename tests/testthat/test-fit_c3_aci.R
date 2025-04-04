@@ -66,14 +66,18 @@ test_that('Cc limits can be bypassed', {
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
 })
 
-test_that('Gamma_star can be passed via fit_options', {
-    one_curve_no_gstar <- one_curve
-    one_curve_no_gstar[, 'Gamma_star'] <- NULL
+test_that('Gamma_star can be passed as a column', {
+    one_curve_with_gstar <- set_variable(
+        one_curve,
+        'Gamma_star_at_25',
+        'micromol mol^(-1)',
+        value = 38.6
+    )
 
     expect_silent(
         fit_c3_aci(
-            one_curve_no_gstar,
-            fit_options = list(Gamma_star = 38.6),
+            one_curve_with_gstar,
+            fit_options = list(Gamma_star_at_25 = 'column'),
             optim_fun = optimizer_nmkb(1e-7),
             calculate_confidence_intervals = FALSE
         )
@@ -137,6 +141,12 @@ test_that('fit results have not changed (no alpha)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Jmax_at_25_upper')]),
         c(152.831071, 238.947894, 1.034651, Inf, 240.012420),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(294.70316, 294.70316, 37.51608, 37.85419),
         tolerance = TOLERANCE
     )
 
@@ -348,7 +358,6 @@ test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
     )
 })
 
-
 test_that('fit results have not changed (gmc with temperature dependence)', {
     # Redo the temperature calculations
     one_curve_t <- calculate_temperature_response(one_curve, c3_temperature_param_sharkey)
@@ -398,6 +407,120 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_tl_avg_lower', 'J_tl_avg_lower', 'RL_tl_avg_lower', 'Tp_tl_avg_lower', 'gmc_tl_avg_lower')]),
         c(199.507529, 310.836478, 2.024810, 21.909000, 2.266986),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 6, 7)
+    )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(9, 4, 0))
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
+    )
+})
+
+test_that('fit results have not changed (Kc)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c3_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        fit_options = list(Kc_at_25 = 'fit'),
+        optim_fun = optimizer_deoptim(100)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Kc_at_25', 'AIC')]),
+        c(68.0228361, 239.3879473, 0.6131452, NA, 133.3231031, 53.7896820),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Kc_at_25_upper')]),
+        c(69.468809, 245.162135, 1.130932, Inf, 139.323207),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(13, 6, 7)
+    )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve))
+
+    expect_equal(lim_info, c(11, 2, 0))
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c(2, 2, 0)
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
+    )
+})
+
+test_that('fit results have not changed (Ko)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    fit_res <- fit_c3_aci(
+        one_curve,
+        Ca_atmospheric = 420,
+        fit_options = list(Ko_at_25 = 'fit'),
+        optim_fun = optimizer_deoptim(100)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Ko_at_25', 'AIC')]),
+        c(116.0374754, 233.7308314, 0.5750712, NA, 970.4221562, 62.6153505),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Ko_at_25_upper')]),
+        c(121.296141, 239.470000, 1.167091, Inf, 1712.602637),
         tolerance = TOLERANCE
     )
 

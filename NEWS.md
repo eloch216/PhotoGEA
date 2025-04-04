@@ -31,6 +31,48 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## Changes in PhotoGEA version 1.3.0 (2024-04-04)
+
+### Minor user-facing changes
+
+- Separated the temperature response of `Gamma_star` from its value at 25
+  degrees C. With this change, several functions (including `fit_c3_aci` and
+  `fit_c3_variable_j`) now have separate inputs for `Gamma_star_at_25` and
+  `Gamma_star_norm`. The fitting functions can now fit `Gamma_star_at_25` rather
+  than `Gamma_star`, which previously represented the value at leaf temperature.
+  Since each set of temperature response parameters (such as
+  `c3_temperature_param_bernacchi`) tends to use a different value of
+  `Gamma_star_at_25`, the temperature response parameter lists now include both
+  `Gamma_star_at_25` and `Gamma_star_norm`.
+- Separated the temperature responses of `Kc` and `Ko` from their values at 25
+  degrees C, and enabled fits of `Kc_at_25` and `Ko_at_25`. As with
+  `Gamma_star`, the temperature response parameter lists include values at 25
+  degrees C and the normalized temperature responses.
+- Added values of `alpha_j_at_25` and `theta_j_at_25` to the Jmax-related
+  temperature response parameter lists.
+- The `calculate_gamma_star` function now returns values of `Gamma_star_tl` to
+  more clearly indicate that the values are specified at leaf temperature.
+- The `organize_response_curve_data` function now only calls
+  `check_response_curve_data` when points are being removed, making it more
+  flexible.
+- Added two new vignettes: one is for frequently asked questions
+  (`frequent_questions.Rmd`), and the other is a gallery of PhotoGEA
+  publications (`publications.Rmd`). Along with this change, the `pkgdown` web
+  site was reorganized to put the PhotoGEA publications in their own tab on the
+  main navigation bar.
+- Removed curvature parameters from `calculate_c3_assimilation`. Allowing
+  co-limitation is a complication for fitting, and tends to produce unreasonable
+  results, so it doesn't make sense to allow it.
+- Renamed `atp_use` and `nadph_use` to `Wj_coef_C` and `Wj_coef_Gamma_star`
+  because the old names and definitions for these parameters were not accurate.
+- Included references to the PhotoGEA paper in several places, such as
+  `DESCRIPTION` and `README.md`.
+
+### Bug fixes
+
+- The carboxylation rate (`Vc`) and net assimilation rate (`An`) are now
+  consistent when using the min-A variant of the FvCB model.
+
 ## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 
 ### Minor user-facing changes

@@ -65,6 +65,8 @@
   typing \code{PhotoGEA::apply_gm} in the R terminal.
 }
 
+\value{The \code{check_required_variables} function does not return anything.}
+
 \seealso{\code{\link{exdf}}}
 
 \examples{

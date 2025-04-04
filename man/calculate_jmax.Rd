@@ -17,8 +17,8 @@
 \usage{
   calculate_jmax(
     data_table,
-    alpha_j_at_25 = 0.293,
-    theta_j_at_25 = 0.979,
+    alpha_j_at_25 = 'column',
+    theta_j_at_25 = 'column',
     alpha_j_norm_column_name = 'alpha_j_norm',
     qin_column_name = 'Qin_avg',
     theta_j_norm_column_name = 'theta_j_norm',
@@ -91,6 +91,9 @@
   \code{J_tl_avg_upper}, or \code{J_tl_avg_lower}), the corresponding confidence
   intervals for \code{Jmax} will also be calculated.
 
+  By default, this function will take values of \code{alpha_j} and
+  \code{theta_j} from columns of \code{data_table} with the same names.
+
   If \code{data_table} is an \code{\link{exdf}} object, units will be checked
   for any columns used in the calculations.
 
@@ -131,10 +134,12 @@
   \code{J} is approximately equal to \code{Jmax}. For intermediate values of
   \code{Qin}, \code{J} smoothly transitions from \code{I2} to \code{Jmax}.
 
-  One key property of Equation 1 is that the largest possible value of \code{J}
-  at a given \code{Qin} is \code{I2}, which only occurs when \code{Jmax} is much
-  larger than \code{I2}. In other words, the range of the function in Equation 1
-  is \code{0 <= J <= I2}.
+  This equation is often solved for \code{Jmax}, and thus it is necessary to
+  consider the conditions for which the solution is appropriate. One key
+  property of Equation 1 is that the largest possible value of \code{J} at a
+  given \code{Qin} is \code{I2}, which only occurs when \code{Jmax} is much
+  larger than \code{I2}. In other words, when considered as a function of
+  \code{Jmax}, the range of the function in Equation 1 is \code{0 <= J <= I2}.
 
   Equation 1 can be solved for \code{Jmax}, enabling calculations of \code{Jmax}
   from estimates of \code{J}:
@@ -178,12 +183,19 @@
   light-adapted leaves at 25 degrees C, while \code{theta_j} at 25 degrees C is
   0.97875. Using this value of of \code{phi_psii,max} with typical values of
   absorptance and \code{beta_psii} results in an \code{alpha_j} estimate of
-  0.2930375. These values, rounded to three decimal places, are used as the
-  defaults when calculating \code{Jmax}.
+  0.2930375.
 
   It is not clear whether the temperture response defined in Bernacchi et al.
   (2003) is applicable to C4 leaves. For C4 leaves, it may be better to use the
   temperature-independent estimates from von Caemmerer (2000).
+
+  PhotoGEA provides two Jmax parameter lists that can be passed to
+  \code{\link{calculate_temperature_response}}:
+  \code{\link{jmax_temperature_param_bernacchi}} (implements the Bernacchi et
+  al. 2003 values) and \code{\link{jmax_temperature_param_flat}} (implements the
+  von Caemmerer 2000 values). Each of these parameter lists will calculate
+  values of \code{alpha_j_at_25}, \code{alpha_j_norm}, \code{theta_j_at_25}, and
+  \code{theta_j_norm}.
 
   \strong{Absorbed light basis:}
 
@@ -195,9 +207,13 @@
 
   where \code{alpha_j_abs} is given by \code{phi_psii,max * beta_psii}. When
   working in this basis, the default value of \code{alpha_j} at 25 degrees C
-  should be divided by the assumed absorptance (0.85), yielding an
-  \code{alpha_j_abs} value of 0.345. Along with this change, it would also be
-  necessary to change the name of the light column, likely to \code{Qabs_avg}.
+  should be divided by the assumed absorptance (0.85). For example, the default
+  value of \code{alpha_j_at_25} used with the Bernacchi et al. (2003) parameters
+  is 0.2930375, so dividing this by 0.95 would yielding an \code{alpha_j_abs}
+  value of about 0.345. This value could be passed directly to
+  \code{calculate_jmax} via the \code{alpha_j_at_25} input argument, overriding
+  the default value. Along with this change, it would also be necessary to
+  change the name of the light column, likely to \code{Qabs_avg}.
 
   \strong{Why PhotoGEA Uses a Separate Function for Jmax:}
 
@@ -420,7 +436,10 @@ jmax_df <- data.frame(
 
 # Calculate Jmax values, overriding the default behavior so that values of Jmax
 # are returned even when I2 < J.
-jmax_df <- calculate_jmax(jmax_df, ignore_restriction = TRUE)
+jmax_df <- calculate_jmax(
+  jmax_df, alpha_j_at_25 = 0.293, theta_j_at_25 = 0.979,
+  ignore_restriction = TRUE
+)
 
 # Plot the Jmax values, distinguishing between cases where J < I2 and where
 # J > I2. Here we can see that when J > I2, values of Jmax are smaller than J,

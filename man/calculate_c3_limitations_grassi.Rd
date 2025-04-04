@@ -16,14 +16,14 @@
 \usage{
   calculate_c3_limitations_grassi(
     exdf_obj,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     cc_column_name = 'Cc',
-    gamma_star_column_name = 'Gamma_star',
+    gamma_star_column_name = 'Gamma_star_tl',
     gmc_column_name = 'gmc_tl',
     gsc_column_name = 'gsc',
-    kc_column_name = 'Kc',
-    ko_column_name = 'Ko',
+    kc_column_name = 'Kc_tl',
+    ko_column_name = 'Ko_tl',
     oxygen_column_name = 'oxygen',
     total_pressure_column_name = 'total_pressure',
     vcmax_column_name = 'Vcmax_tl',
@@ -36,12 +36,18 @@
     An \code{exdf} object representing gas exchange data.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
   \item{cc_column_name}{
@@ -53,8 +59,8 @@
   \item{gamma_star_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     \code{Gamma_star} values in \code{micromol mol^(-1)}. Typically these are
-    the leaf-temperature dependent values calculated using
-    \code{\link{calculate_temperature_response}}.
+    the leaf-temperature dependent values that are automatically calculated by
+    \code{\link{fit_c3_aci}}.
   }
 
   \item{gmc_column_name}{
@@ -74,14 +80,14 @@
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     \code{micromol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_temperature_response}}.
+    values that are automatically calculated by \code{\link{fit_c3_aci}}.
   }
 
   \item{ko_column_name}{
     The name of the column in \code{exdf_obj} that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     \code{mmol mol^(-1)}. Typically these are the leaf-temperature dependent
-    values calculated using \code{\link{calculate_temperature_response}}.
+    values that are automatically calculated by \code{\link{fit_c3_aci}}.
   }
 
   \item{oxygen_column_name}{

@@ -39,3 +39,60 @@ test_that('C3 limiting processes are identified', {
         c('Ac', 'Ac', 'Aj', 'co-limited (Aj and Ap)', 'Ap')
     )
 })
+
+test_that('Assimilation rates and carboxylation rates are consistent', {
+    inputs <- exdf(data.frame(
+        Cc = c(1, 60),
+        oxygen = 21,
+        Tleaf = 30,
+        total_pressure = 1
+    ))
+
+    inputs <- document_variables(
+        inputs,
+        c('', 'Cc',             'micromol mol^(-1)'),
+        c('', 'oxygen',         'percent'),
+        c('', 'Tleaf',          'degrees C'),
+        c('', 'total_pressure', 'bar')
+    )
+
+    inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, 'Tleaf')
+
+    fvcb_res <- identify_c3_limiting_processes(
+        calculate_c3_assimilation(inputs, 0, 0, 0, 0, '', 150, '', '', 1, 12, 120),
+        a_column_name = 'An'
+    )
+
+    min_a_res <- identify_c3_limiting_processes(
+        calculate_c3_assimilation(inputs, 0, 0, 0, 0, '', 150, '', '', 1, 12, 120, use_min_A = TRUE),
+        a_column_name = 'An'
+    )
+
+    # In the FvCB result, the first point is Rubisco-limited, and so is the
+    # second point
+    expect_equal(fvcb_res[1, 'limiting_process'], 'Ac')
+    expect_equal(fvcb_res[1, 'An'], fvcb_res[1, 'Ac'])
+    expect_equal(fvcb_res[1, 'Vc'], fvcb_res[1, 'Wc'])
+    expect_true(fvcb_res[1, 'Ac'] != fvcb_res[1, 'Aj'])
+    expect_true(fvcb_res[1, 'Wc'] != fvcb_res[1, 'Wj'])
+
+    expect_equal(fvcb_res[2, 'limiting_process'], 'Ac')
+    expect_equal(fvcb_res[2, 'An'], fvcb_res[2, 'Ac'])
+    expect_equal(fvcb_res[2, 'Vc'], fvcb_res[2, 'Wc'])
+    expect_true(fvcb_res[2, 'Ac'] != fvcb_res[2, 'Aj'])
+    expect_true(fvcb_res[2, 'Wc'] != fvcb_res[2, 'Wj'])
+
+    # In the min-A result, the first point is RuBP-regeneration-limited, and the
+    # second point is Rubisco-limited
+    expect_equal(min_a_res[1, 'limiting_process'], 'Aj')
+    expect_equal(min_a_res[1, 'An'], min_a_res[1, 'Aj'])
+    expect_equal(min_a_res[1, 'Vc'], min_a_res[1, 'Wj'])
+    expect_true(min_a_res[1, 'Ac'] != min_a_res[1, 'Aj'])
+    expect_true(min_a_res[1, 'Wc'] != min_a_res[1, 'Wj'])
+
+    expect_equal(min_a_res[2, 'limiting_process'], 'Ac')
+    expect_equal(min_a_res[2, 'An'], min_a_res[2, 'Ac'])
+    expect_equal(min_a_res[2, 'Vc'], min_a_res[2, 'Wc'])
+    expect_true(min_a_res[2, 'Ac'] != min_a_res[2, 'Aj'])
+    expect_true(min_a_res[2, 'Wc'] != min_a_res[2, 'Wj'])
+})
