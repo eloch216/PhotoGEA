@@ -26,7 +26,9 @@ knitr::opts_chunk$set(
 
 **PhotoGEA** (short for **photo**synthetic **g**as **e**xchange **a**nalysis) is
 an R package that provides a suite of tools for loading, processing, and
-analyzing photosynthetic gas exchange data.
+analyzing photosynthetic gas exchange data. See
+[Lochocki, Salesse-Smith, & McGrath (2025)](https://doi.org/10.1111/pce.15501)
+for more information.
 
 ### Installation
 
@@ -51,12 +53,17 @@ general features and several important use cases.
 
 ### Example Scripts
 
-Several example scripts are provided in the `example_scripts` directory of the
-[source code repository](https://github.com/eloch216/PhotoGEA). To run one of
-these scripts, set the working directory to a folder that contains a local copy
-of the script and use the `source` command to execute the code in the script. No
-guarantees are made that these scripts will run on your machine or be
-compatible with your data, but they may be a useful source of ideas.
+The [PhotoGEA
+Publications](https://eloch216.github.io/PhotoGEA/articles/publications.html)
+page includes links to publicly-available analysis scripts that have been used
+for peer-reviewed publications. These may be a useful source of ideas.
+
+Several example scripts are also provided in the `example_scripts` directory of
+the [source code repository](https://github.com/eloch216/PhotoGEA). To run one
+of these scripts, set the working directory to a folder that contains a local
+copy of the script and use the `source` command to execute the code in the
+script. No guarantees are made that these scripts will run on your machine or be
+compatible with your data, but they may also be a useful source of ideas.
 
 ### License
 

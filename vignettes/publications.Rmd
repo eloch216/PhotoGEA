@@ -42,6 +42,10 @@ the version of the package you used.
 
    > - [DOI:10.1111/pbi.14364](https://doi.org/10.1111/pbi.14364)
    >
+   > - PhotoGEA used for: Calculating mesophyll conductance from tunable diode
+   >   laser absorption measurements (`calculate_gm_busch`), C3 A-Ci fitting
+   >   (`fit_c3_aci`), C3 A-Ci + CF Variable J fitting (`fit_c3_variable_j`)
+   >
    > - PhotoGEA version: `v0.10.0`
    >
    > - Analysis scripts: https://github.com/ripeproject/CGR3-tobacco-2024
@@ -51,6 +55,9 @@ the version of the package you used.
    _Plant, Cell & Environment_ **48**, 1594–1607 (2025).
 
    > - [DOI:10.1111/pce.15206](https://doi.org/10.1111/pce.15206)
+   >
+   > - PhotoGEA used for: Calculating limitations to C3 photosynthesis
+   >   (`calculate_c3_limitations_grassi` and `calculate_c3_limitations_warren`)
    >
    > - PhotoGEA version: `v1.0.0`
    >
@@ -62,6 +69,9 @@ the version of the package you used.
    e2419943122 (2025).
 
    > - [DOI:10.1073/pnas.2419943122](https://doi.org/10.1073/pnas.2419943122)
+   >
+   > - PhotoGEA used for: Fitting C4 A-Ci curves using the mechanistic model
+   >   (`fit_c4_aci`), reading and plotting induction curves (`read_gasex_file`)
    >
    > - PhotoGEA version: `v0.11.0`
    >
