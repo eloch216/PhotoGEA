@@ -16,8 +16,8 @@
 \usage{
   calculate_c3_limitations_warren(
     exdf_obj,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -43,12 +43,18 @@
     \code{J_at_25}, \code{RL_at_25}, \code{Tp}, and \code{Vcmax_at_25}.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
   \item{ca_column_name}{

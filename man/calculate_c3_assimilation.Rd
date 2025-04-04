@@ -26,8 +26,8 @@
     RL_at_25,
     Tp_at_25,
     Vcmax_at_25,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     cc_column_name = 'Cc',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
@@ -148,12 +148,16 @@
     values in the \code{Vcmax_at_25} column of \code{data_table} if it exists.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration.
   }
 
   \item{cc_column_name}{
@@ -329,13 +333,13 @@
 
   The RuBP-regeneration-limited carboxylation rate \code{Wj} is given by
 
-  \code{Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)},
+  \code{Wj = PCc * J / (Wj_coef_C * PCc + Wj_coef_Gamma_star * Gamma_star)},
 
-  Here we have allowed \code{atp_use} and \code{nadph_use} to be variables
-  rather than taking fixed values (as they do in many sources). This is
-  necessary because not all descriptions of the FvCB model use the same values,
-  where the different values are due to different assumptions about the energy
-  requirements of RuBP regeneration.
+  Here we have allowed \code{Wj_coef_C} and \code{Wj_coef_Gamma_star} to be
+  variables rather than taking fixed values (as they do in many sources). This
+  is necessary because not all descriptions of the FvCB model use the same
+  values, where the different values are due to different assumptions about the
+  NADPH and ATP requirements of RuBP regeneration.
 
   The TPU-limited carboxylation rate is given by
 

@@ -2,8 +2,8 @@ error_function_c3_aci <- function(
     replicate_exdf,
     fit_options = list(),
     sd_A = 1,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
@@ -146,8 +146,8 @@ error_function_c3_aci <- function(
                     X[10], # RL_at_25
                     X[11], # Tp_at_25
                     X[12], # Vcmax_at_25
-                    atp_use,
-                    nadph_use,
+                    Wj_coef_C,
+                    Wj_coef_Gamma_star,
                     cc_column_name,
                     gamma_star_norm_column_name,
                     j_norm_column_name,

@@ -20,8 +20,8 @@
     replicate_exdf,
     fit_options = list(),
     sd_A = 1,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
@@ -73,12 +73,18 @@
     it exists.
   }
 
-  \item{atp_use}{
-    The number of ATP molecules used per C3 cycle.
+  \item{Wj_coef_C}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
-  \item{nadph_use}{
-    The number of NADPH molecules used per C3 cycle.
+  \item{Wj_coef_Gamma_star}{
+    A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see \code{\link{calculate_c3_assimilation}} for more
+    information.
   }
 
   \item{a_column_name}{

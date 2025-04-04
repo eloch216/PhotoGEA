@@ -11,8 +11,8 @@ calculate_c3_assimilation <- function(
     RL_at_25,         # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Tp_at_25,         # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     Vcmax_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     cc_column_name = 'Cc',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
@@ -118,13 +118,13 @@ calculate_c3_assimilation <- function(
     mixed_alpha <- any(alpha_old > 0, na.rm = TRUE) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE) || any(alpha_t > 0, na.rm = TRUE))
 
-    mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
+    mixed_j_coeff <- (abs(Wj_coef_C - 4) > 1e-10 || abs(Wj_coef_Gamma_star - 8) > 1e-10) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE) || any(alpha_t > 0, na.rm = TRUE))
 
     if (any(oxygen < 0, na.rm = TRUE))   {msg <- append(msg, 'oxygen must be >= 0')}
     if (any(pressure < 0, na.rm = TRUE)) {msg <- append(msg, 'pressure must be >= 0')}
     if (mixed_alpha)                     {msg <- append(msg, 'Cannot specify nonzero alpha_old and nonzero alpha_g / alpha_s / alpha_t')}
-    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_g / alpha_s / alpha_t are nonzero')}
+    if (mixed_j_coeff)                   {msg <- append(msg, 'Wj_coef_C must be 4 and Wj_coef_Gamma_star must be 8 when alpha_g / alpha_s / alpha_t are nonzero')}
 
     # Optionally check whether Cc is reasonable
     if (hard_constraints >= 1) {
@@ -163,7 +163,7 @@ calculate_c3_assimilation <- function(
     Wc <- PCc * Vcmax_tl / (PCc + Kc_tl * (1.0 + POc / Ko_tl))
 
     # RuBP-regeneration-limited carboxylation (micromol / m^2 / s)
-    Wj <- PCc * J_tl / (PCc * atp_use + Gamma_star_agt * (nadph_use + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s))
+    Wj <- PCc * J_tl / (PCc * Wj_coef_C + Gamma_star_agt * (Wj_coef_Gamma_star + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s))
 
     # TPU-limited carboxylation (micromol / m^2 / s)
     Wp <- PCc * 3 * Tp_tl / (PCc - Gamma_star_agt * (1 + 3 * alpha_old + 3 * alpha_g + 6 * alpha_t + 4 * alpha_s))
@@ -259,8 +259,8 @@ calculate_c3_assimilation <- function(
             Wp = Wp,
             Wd = Wd,
             Vc = Vc,
-            atp_use = atp_use,
-            nadph_use = nadph_use,
+            Wj_coef_C = Wj_coef_C,
+            Wj_coef_Gamma_star = Wj_coef_Gamma_star,
             c3_assimilation_msg = msg,
             c3_optional_arguments = optional_arg_string,
             stringsAsFactors = FALSE
@@ -301,8 +301,8 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'Wp',                    'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Wd',                    'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'Vc',                    'micromol m^(-2) s^(-1)'),
-            c('calculate_c3_assimilation', 'atp_use',               'dimensionless'),
-            c('calculate_c3_assimilation', 'nadph_use',             'dimensionless'),
+            c('calculate_c3_assimilation', 'Wj_coef_C',             'dimensionless'),
+            c('calculate_c3_assimilation', 'Wj_coef_Gamma_star',    'dimensionless'),
             c('calculate_c3_assimilation', 'c3_optional_arguments', ''),
             c('calculate_c3_assimilation', 'c3_assimilation_msg',   '')
         )

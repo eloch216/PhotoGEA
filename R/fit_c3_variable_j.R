@@ -25,8 +25,8 @@ fit_c3_variable_j <- function(
     tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     optim_fun = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
@@ -57,8 +57,8 @@ fit_c3_variable_j <- function(
         replicate_exdf,
         fit_options,
         1, # sd_A
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         a_column_name,
         ci_column_name,
         gamma_star_norm_column_name,
@@ -119,8 +119,8 @@ fit_c3_variable_j <- function(
         kc_guess,
         ko_guess,
         100, # cc_threshold_rd
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         a_column_name,
         ci_column_name,
         etr_column_name,
@@ -162,8 +162,8 @@ fit_c3_variable_j <- function(
         best_X[5],  # Gamma_star_at_25
         best_X[9],  # RL_at_25
         best_X[10], # tau
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         a_column_name,
         ci_column_name,
         gamma_star_norm_column_name,
@@ -199,8 +199,8 @@ fit_c3_variable_j <- function(
         best_X[9],  # RL_at_25
         best_X[11], # Tp_at_25
         best_X[12], # Vcmax_at_25
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         cc_column_name = 'Cc',
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -255,8 +255,8 @@ fit_c3_variable_j <- function(
         best_X[9],  # RL_at_25
         best_X[11], # Tp_at_25
         best_X[12], # Vcmax_at_25
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         cc_column_name = 'Cc',
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -314,8 +314,8 @@ fit_c3_variable_j <- function(
         '', # Gamma_star_at_25
         '', # RL_at_25
         '', # tau
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         a_column_name,
         ci_column_name,
         gamma_star_norm_column_name,
@@ -352,8 +352,8 @@ fit_c3_variable_j <- function(
         '', # RL_at_25
         '', # Tp_at_25
         '', # Vcmax_at_25
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         cc_column_name = 'Cc',
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -494,8 +494,8 @@ fit_c3_variable_j <- function(
             replicate_exdf,
             fit_options,
             replicate_identifiers[, 'RMSE'], # sd_A
-            atp_use,
-            nadph_use,
+            Wj_coef_C,
+            Wj_coef_Gamma_star,
             a_column_name,
             ci_column_name,
             gamma_star_norm_column_name,
@@ -563,8 +563,8 @@ fit_c3_variable_j <- function(
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             relative_likelihood_threshold,
-            atp_use,
-            nadph_use,
+            Wj_coef_C,
+            Wj_coef_Gamma_star,
             a_column_name,
             ci_column_name,
             gamma_star_norm_column_name,

@@ -8,8 +8,8 @@ initial_guess_c3_aci <- function(
     Kc_at_25,         # micromol / mol
     Ko_at_25,         # mmol / mol
     cc_threshold_rd = 100,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
@@ -146,7 +146,7 @@ initial_guess_c3_aci <- function(
         # point in the response curve. Then we choose the largest value as the
         # best estimate.
         j_estimates <- Vc *
-            (atp_use * rc_exdf[, cc_column_name] + rc_exdf[, 'Gamma_star_agt'] * (nadph_use + 16 * rc_exdf[, 'alpha_g'] - 8 * rc_exdf[, 'alpha_t'] + 8 * rc_exdf[, 'alpha_s'])) /
+            (Wj_coef_C * rc_exdf[, cc_column_name] + rc_exdf[, 'Gamma_star_agt'] * (Wj_coef_Gamma_star + 16 * rc_exdf[, 'alpha_g'] - 8 * rc_exdf[, 'alpha_t'] + 8 * rc_exdf[, 'alpha_s'])) /
             rc_exdf[, cc_column_name]
 
         j_estimates <- j_estimates / rc_exdf[, j_norm_column_name]

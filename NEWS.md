@@ -63,6 +63,8 @@ be directly added to this file to describe the related changes.
 - Removed curvature parameters from `calculate_c3_assimilation`. Allowing
   co-limitation is a complication for fitting, and tends to produce unreasonable
   results, so it doesn't make sense to allow it.
+- Renamed `atp_use` and `nadph_use` to `Wj_coef_C` and `Wj_coef_Gamma_star`
+  because the old names and definitions for these parameters were not accurate.
 
 ## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 

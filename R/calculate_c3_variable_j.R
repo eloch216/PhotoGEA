@@ -6,8 +6,8 @@ calculate_c3_variable_j <- function(
     Gamma_star_at_25, # micromol / mol     (at 25 degrees C; this value is sometimes being fitted)
     RL_at_25,         # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     tau,              # dimensionless      (typically this value is being fitted)
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
@@ -76,13 +76,13 @@ calculate_c3_variable_j <- function(
 
     # Always check parameters that cannot be fit, and make sure we are not
     # mixing models
-    mixed_j_coeff <- (abs(atp_use - 4) > 1e-10 || abs(nadph_use - 8) > 1e-10) &&
+    mixed_j_coeff <- (abs(Wj_coef_C - 4) > 1e-10 || abs(Wj_coef_Gamma_star - 8) > 1e-10) &&
         (any(alpha_g > 0, na.rm = TRUE) || any(alpha_s > 0, na.rm = TRUE) || any(alpha_t > 0, na.rm = TRUE))
 
     if (any(PhiPS2 < 0, na.rm = TRUE))   {msg <- append(msg, 'PhiPS2 must be >= 0')}
     if (any(pressure < 0, na.rm = TRUE)) {msg <- append(msg, 'pressure must be >= 0')}
     if (any(Qin < 0, na.rm = TRUE))      {msg <- append(msg, 'Qin must be >= 0')}
-    if (mixed_j_coeff)                   {msg <- append(msg, 'atp_use must be 4 and nadph_use must be 8 when alpha_g / alpha_s / alpha_t are nonzero')}
+    if (mixed_j_coeff)                   {msg <- append(msg, 'Wj_coef_C must be 4 and Wj_coef_Gamma_star must be 8 when alpha_g / alpha_s / alpha_t are nonzero')}
 
     # Optionally check whether Ci is reasonable
     if (hard_constraints >= 1) {
@@ -120,9 +120,9 @@ calculate_c3_variable_j <- function(
     # et al. (1992)
     AnRd <- An + RL_tl # micromol / m^2 / s
 
-    gmc_top <- Gamma_star_agt * (J_F + (nadph_use + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s) * AnRd) # microbar * micromol / m^2 / s
+    gmc_top <- Gamma_star_agt * (J_F + (Wj_coef_Gamma_star + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s) * AnRd) # microbar * micromol / m^2 / s
 
-    gmc_bottom <- J_F - atp_use * AnRd # micromol / m^2 / s
+    gmc_bottom <- J_F - Wj_coef_C * AnRd # micromol / m^2 / s
 
     gmc <- An / (Ci - gmc_top / gmc_bottom) # mol / m^2 / s / bar
 
@@ -131,7 +131,7 @@ calculate_c3_variable_j <- function(
 
     # Calculate the partial derivative of Cc with respect to A using Equation 10
     # from Harley et al. (1992)
-    dCcdA <- (atp_use + nadph_use) * Gamma_star_agt * J_F / (J_F - atp_use * AnRd)^2 # bar m^2 s / mol
+    dCcdA <- (Wj_coef_C + Wj_coef_Gamma_star) * Gamma_star_agt * J_F / (J_F - Wj_coef_C * AnRd)^2 # bar m^2 s / mol
 
     # Indicate trust according to the slope criteria from Harley et al. (1992)
     harley_slope_trust <- dCcdA >= 10 & dCcdA <= 50
@@ -154,8 +154,8 @@ calculate_c3_variable_j <- function(
             Cc = Cc,
             dCcdA = dCcdA,
             harley_slope_trust = harley_slope_trust,
-            atp_use = atp_use,
-            nadph_use = nadph_use,
+            Wj_coef_C = Wj_coef_C,
+            Wj_coef_Gamma_star = Wj_coef_Gamma_star,
             c3_variable_j_msg = msg,
             stringsAsFactors = FALSE
         ))
@@ -176,8 +176,8 @@ calculate_c3_variable_j <- function(
             c('calculate_c3_variable_j', 'Cc',                 'micromol mol^(-1)'),
             c('calculate_c3_variable_j', 'dCcdA',              'bar m^(2) s mol^(-1)'),
             c('calculate_c3_variable_j', 'harley_slope_trust', ''),
-            c('calculate_c3_variable_j', 'atp_use',            'dimensionless'),
-            c('calculate_c3_variable_j', 'nadph_use',          'dimensionless'),
+            c('calculate_c3_variable_j', 'Wj_coef_C',          'dimensionless'),
+            c('calculate_c3_variable_j', 'Wj_coef_Gamma_star', 'dimensionless'),
             c('calculate_c3_variable_j', 'c3_variable_j_msg',  '')
         )
     } else {

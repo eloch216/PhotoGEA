@@ -83,25 +83,25 @@ test_that('alpha restrictions are enforced', {
         calculate_c3_assimilation(inputs, 0.5, 0.0, 0.5, 0.5, '', 150, '', '', 1, 12, 120)
     )
 
-    # alpha_g and alpha_s nonzero and atp_use not 4
+    # alpha_g and alpha_s nonzero and Wj_coef_C not 4
     expect_error(
-        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, 0.0, '', 150, '', '', 1, 12, 120, atp_use = 4.5),
-        'atp_use must be 4 and nadph_use must be 8 when alpha_g / alpha_s / alpha_t are nonzero',
+        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, 0.0, '', 150, '', '', 1, 12, 120, Wj_coef_C = 4.5),
+        'Wj_coef_C must be 4 and Wj_coef_Gamma_star must be 8 when alpha_g / alpha_s / alpha_t are nonzero',
         fixed = TRUE
     )
 
 
-    # alpha_g and alpha_s nonzero and nadph_use not 8
+    # alpha_g and alpha_s nonzero and Wj_coef_Gamma_star not 8
     expect_error(
-        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, 0.0, '', 150, '', '', 1, 12, 120, nadph_use = 10.5),
-        'atp_use must be 4 and nadph_use must be 8 when alpha_g / alpha_s / alpha_t are nonzero',
+        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, 0.0, '', 150, '', '', 1, 12, 120, Wj_coef_Gamma_star = 10.5),
+        'Wj_coef_C must be 4 and Wj_coef_Gamma_star must be 8 when alpha_g / alpha_s / alpha_t are nonzero',
         fixed = TRUE
     )
 
-    # alpha_g and alpha_s nonzero, atp_use not 4, and nadph_use not 8
+    # alpha_g and alpha_s nonzero, Wj_coef_C not 4, and Wj_coef_Gamma_star not 8
     expect_error(
-        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, 0.0, '', 150, '', '', 1, 12, 120, atp_use = 4.5, nadph_use = 10.5),
-        'atp_use must be 4 and nadph_use must be 8 when alpha_g / alpha_s / alpha_t are nonzero',
+        calculate_c3_assimilation(inputs, 0.5, 0.0, 0.1, 0.0, '', 150, '', '', 1, 12, 120, Wj_coef_C = 4.5, Wj_coef_Gamma_star = 10.5),
+        'Wj_coef_C must be 4 and Wj_coef_Gamma_star must be 8 when alpha_g / alpha_s / alpha_t are nonzero',
         fixed = TRUE
     )
 })
