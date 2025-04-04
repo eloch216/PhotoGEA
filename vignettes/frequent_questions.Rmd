@@ -393,3 +393,8 @@ licor_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file_plus_6400(fpath)
 })
 ```
+
+# What If My Files Don't Have User Constants or Other Metadata?
+
+Please see the
+[Guide to Licor LI-6800 User Constants](LI6800_user_constants.html).
