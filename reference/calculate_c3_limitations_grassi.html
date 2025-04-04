@@ -17,7 +17,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,18 +28,28 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -69,14 +79,14 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_c3_limitations_grassi</span><span class="op">(</span></span>
 <span>    <span class="va">exdf_obj</span>,</span>
-<span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
-<span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
+<span>    Wj_coef_C <span class="op">=</span> <span class="fl">4.0</span>,</span>
+<span>    Wj_coef_Gamma_star <span class="op">=</span> <span class="fl">8.0</span>,</span>
 <span>    cc_column_name <span class="op">=</span> <span class="st">'Cc'</span>,</span>
-<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'Gamma_star'</span>,</span>
+<span>    gamma_star_column_name <span class="op">=</span> <span class="st">'Gamma_star_tl'</span>,</span>
 <span>    gmc_column_name <span class="op">=</span> <span class="st">'gmc_tl'</span>,</span>
 <span>    gsc_column_name <span class="op">=</span> <span class="st">'gsc'</span>,</span>
-<span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
-<span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
+<span>    kc_column_name <span class="op">=</span> <span class="st">'Kc_tl'</span>,</span>
+<span>    ko_column_name <span class="op">=</span> <span class="st">'Ko_tl'</span>,</span>
 <span>    oxygen_column_name <span class="op">=</span> <span class="st">'oxygen'</span>,</span>
 <span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
 <span>    vcmax_column_name <span class="op">=</span> <span class="st">'Vcmax_tl'</span>,</span>
@@ -91,12 +101,18 @@
 <dd><p>An <code>exdf</code> object representing gas exchange data.</p></dd>
 
 
-  <dt id="arg-atp-use">atp_use<a class="anchor" aria-label="anchor" href="#arg-atp-use"></a></dt>
-<dd><p>The number of ATP molecules used per C3 cycle.</p></dd>
+  <dt id="arg-wj-coef-c">Wj_coef_C<a class="anchor" aria-label="anchor" href="#arg-wj-coef-c"></a></dt>
+<dd><p>A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see <code><a href="calculate_c3_assimilation.html">calculate_c3_assimilation</a></code> for more
+    information.</p></dd>
 
 
-  <dt id="arg-nadph-use">nadph_use<a class="anchor" aria-label="anchor" href="#arg-nadph-use"></a></dt>
-<dd><p>The number of NADPH molecules used per C3 cycle.</p></dd>
+  <dt id="arg-wj-coef-gamma-star">Wj_coef_Gamma_star<a class="anchor" aria-label="anchor" href="#arg-wj-coef-gamma-star"></a></dt>
+<dd><p>A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration; see <code><a href="calculate_c3_assimilation.html">calculate_c3_assimilation</a></code> for more
+    information.</p></dd>
 
 
   <dt id="arg-cc-column-name">cc_column_name<a class="anchor" aria-label="anchor" href="#arg-cc-column-name"></a></dt>
@@ -108,8 +124,8 @@
   <dt id="arg-gamma-star-column-name">gamma_star_column_name<a class="anchor" aria-label="anchor" href="#arg-gamma-star-column-name"></a></dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the
     <code>Gamma_star</code> values in <code>micromol mol^(-1)</code>. Typically these are
-    the leaf-temperature dependent values calculated using
-    <code><a href="calculate_temperature_response.html">calculate_temperature_response</a></code>.</p></dd>
+    the leaf-temperature dependent values that are automatically calculated by
+    <code><a href="fit_c3_aci.html">fit_c3_aci</a></code>.</p></dd>
 
 
   <dt id="arg-gmc-column-name">gmc_column_name<a class="anchor" aria-label="anchor" href="#arg-gmc-column-name"></a></dt>
@@ -129,14 +145,14 @@
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the
     Michaelis-Menten constant for rubisco carboxylation in
     <code>micromol mol^(-1)</code>. Typically these are the leaf-temperature dependent
-    values calculated using <code><a href="calculate_temperature_response.html">calculate_temperature_response</a></code>.</p></dd>
+    values that are automatically calculated by <code><a href="fit_c3_aci.html">fit_c3_aci</a></code>.</p></dd>
 
 
   <dt id="arg-ko-column-name">ko_column_name<a class="anchor" aria-label="anchor" href="#arg-ko-column-name"></a></dt>
 <dd><p>The name of the column in <code>exdf_obj</code> that contains the
     Michaelis-Menten constant for rubisco oxygenation in
     <code>mmol mol^(-1)</code>. Typically these are the leaf-temperature dependent
-    values calculated using <code><a href="calculate_temperature_response.html">calculate_temperature_response</a></code>.</p></dd>
+    values that are automatically calculated by <code><a href="fit_c3_aci.html">fit_c3_aci</a></code>.</p></dd>
 
 
   <dt id="arg-oxygen-column-name">oxygen_column_name<a class="anchor" aria-label="anchor" href="#arg-oxygen-column-name"></a></dt>
@@ -329,16 +345,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21                   tobacco                      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34                   tobacco                      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    ls_rubisco_grassi [calculate_c3_limitations_grassi] (dimensionless)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                            0.5087187</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                           0.3649090</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                            0.5089481</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                           0.3651309</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                  NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    lm_rubisco_grassi [calculate_c3_limitations_grassi] (dimensionless)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                            0.1426227</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                           0.1916560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                            0.1426870</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                           0.1917726</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                  NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    lb_rubisco_grassi [calculate_c3_limitations_grassi] (dimensionless)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                            0.3486586</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                           0.4434350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                            0.3483649</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                           0.4430964</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                  NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># One of these fits has NA for all the limiting factors, which causes problems</span></span></span>

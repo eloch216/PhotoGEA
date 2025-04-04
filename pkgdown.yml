@@ -10,10 +10,12 @@ articles:
   combining_with_other_packages: combining_with_other_packages.html
   creating_your_own_processing_tools: creating_your_own_processing_tools.html
   developing_a_data_analysis_pipeline: developing_a_data_analysis_pipeline.html
+  frequent_questions: frequent_questions.html
   LI6800_user_constants: LI6800_user_constants.html
   PhotoGEA: PhotoGEA.html
+  publications: publications.html
   working_with_extended_data_frames: working_with_extended_data_frames.html
-last_built: 2025-03-12T23:23Z
+last_built: 2025-04-04T23:35Z
 urls:
   reference: https://eloch216.github.io/PhotoGEA/reference
   article: https://eloch216.github.io/PhotoGEA/articles

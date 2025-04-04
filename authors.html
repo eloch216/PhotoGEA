@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,18 +18,28 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="articles/PhotoGEA.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json"></form></li>
@@ -67,18 +77,30 @@
 
     <div class="section level2">
       <h2 id="citation">Citation</h2>
-      <p><small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.2.0/DESCRIPTION" class="external-link"><code>DESCRIPTION</code></a></small></p>
+      <p><small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/inst/CITATION" class="external-link"><code>inst/CITATION</code></a></small></p>
 
       <p>Lochocki E, Salesse-Smith C, McGrath J (2025).
 <em>PhotoGEA: Photosynthetic Gas Exchange Analysis</em>.
-R package version 1.2.0, https://eloch216.github.io/PhotoGEA/, <a href="https://github.com/eloch216/PhotoGEA" class="external-link">https://github.com/eloch216/PhotoGEA</a>.
+R package version 1.3.0, https://eloch216.github.io/PhotoGEA/, <a href="https://github.com/eloch216/PhotoGEA" class="external-link">https://github.com/eloch216/PhotoGEA</a>.
 </p>
       <pre>@Manual{,
   title = {PhotoGEA: Photosynthetic Gas Exchange Analysis},
   author = {Edward B. Lochocki and Coralie E. Salesse-Smith and Justin M. McGrath},
   year = {2025},
-  note = {R package version 1.2.0, https://eloch216.github.io/PhotoGEA/},
+  note = {R package version 1.3.0, https://eloch216.github.io/PhotoGEA/},
   url = {https://github.com/eloch216/PhotoGEA},
+}</pre>
+      <p>Lochocki E, Salesse-Smith C, McGrath J (2025).
+“PhotoGEA: An R Package for Closer Fitting of Photosynthetic Gas Exchange Data With Non-Gaussian Confidence Interval Estimation.”
+<em>Plant, Cell &amp; Environment</em>.
+<a href="https://doi.org/10.1111/pce.15501" class="external-link">doi:10.1111/pce.15501</a>.
+</p>
+      <pre>@Article{,
+  author = {Edward B. Lochocki and Coralie E. Salesse-Smith and Justin M. McGrath},
+  doi = {10.1111/pce.15501},
+  journal = {Plant, Cell &amp; Environment},
+  title = {PhotoGEA: An R Package for Closer Fitting of Photosynthetic Gas Exchange Data With Non-Gaussian Confidence Interval Estimation},
+  year = {2025},
 }</pre>
     </div>
 

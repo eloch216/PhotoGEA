@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,20 +38,30 @@
 <li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides">
+<li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -74,7 +84,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Analyzing C3 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.2.0/vignettes/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c3_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/analyzing_c3_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c3_aci_curves.Rmd</code></div>
     </div>
 
@@ -193,9 +203,10 @@ predicted by the FvCB model.</p>
 response of a C<sub>3</sub> leaf according to the FvCB model with
 <code>alpha_old</code> = 0.2, <code>J</code> = 170 micromol m^(-2)
 s^(-1), <code>RL</code> = 1 micromol m^(-2) s^(-1), <code>Tp</code> =
-11.8 , <code>Vcmax</code> = 100 micromol m^(-2) s^(-1), and a leaf
-temperature of 30 degrees C. Temperature response parameters from <span class="citation">Thomas D. Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span> were used for these
-calculations.)</p>
+11.8 , and <code>Vcmax</code> = 100 micromol m^(-2) s^(-1). Temperature
+response parameters from <span class="citation">Thomas D. Sharkey et al.
+(<a href="#ref-sharkey_fitting_2007">2007</a>)</span> were used for
+these calculations.)</p>
 <p>Thus, one of the most common reasons to measure an
 <em>A-C<sub>i</sub></em> curve is to interpret it in the context of this
 model. In other words, by fitting the model’s equations to a measured
@@ -407,7 +418,7 @@ curve (<code>16</code>), the name of a “driving” column that should
 follow the same sequence in each curve (<code>CO2_r_sp</code>). If the
 data passes the checks, this function will have no output and will not
 produce any messages. (For more information, see the built-in help menu
-entry by typing <code><a href="../reference/check_response_curve_data.html">?check_response_curve_data</a></code>.)</p>
+entry by typing <code><a href="../reference/check_response_curve_data.html">?check_response_curve_data</a></code>, or visit the <a href="frequent_questions.html">Frequently Asked Questions</a>.)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make sure the data meets basic requirements</span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span></code></pre></div>
@@ -454,7 +465,8 @@ from low to high values of <code>Ci</code>. This can be done using the
 <code>organize_response_curve</code> function from
 <code>PhotoGEA</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
+<code class="sourceCode R"><span><span class="co"># Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and</span></span>
+<span><span class="co"># calculate average values of leaf temperature and Qin</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
 <span>    <span class="va">licor_data</span>,</span>
 <span>    <span class="st">'curve_identifier'</span>,</span>
@@ -699,10 +711,10 @@ built-in help system by typing <code><a href="../reference/calculate_total_press
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span></code></pre></div>
 <p>With this simple command, we have used the leaf temperature from the
 Licor file to calculate values of several key C<sub>3</sub>
-photosynthetic parameters (Kc, Ko, Gamma_star, Vcmax_norm, J_norm,
-RL_norm, gmc_norm, Tp_norm) according to the temperature response
-parameters specified in <span class="citation">Thomas D. Sharkey et al.
-(<a href="#ref-sharkey_fitting_2007">2007</a>)</span>.</p>
+photosynthetic parameters (Gamma_star_norm, J_norm, Kc_norm, Ko_norm,
+RL_norm, Vcmax_norm, gmc_norm, Tp_norm, Gamma_star_at_25, Kc_at_25,
+Ko_at_25) according to the temperature response parameters specified in
+<span class="citation">Thomas D. Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span>.</p>
 <p>Now we can use <code>calculate_total_pressure</code>:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
@@ -893,7 +905,7 @@ values from each curve as follows:</p>
 <span><span class="co">#&gt;       curve_identifier J_at_25_lower  J_at_25 J_at_25_upper</span></span>
 <span><span class="co">#&gt; 1 ripe1 - soybean - 5a      183.4704       NA           Inf</span></span>
 <span><span class="co">#&gt; 2  ripe1 - tobacco - 1      229.6193 236.1173      242.6154</span></span>
-<span><span class="co">#&gt; 3  ripe1 - tobacco - 2      201.4352 208.5934      215.7515</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2      201.4352 208.5933      215.7515</span></span>
 <span><span class="co">#&gt; 4  ripe2 - soybean - 1      160.3528       NA           Inf</span></span>
 <span><span class="co">#&gt; 5 ripe2 - soybean - 5b      152.3077 160.9145      169.5211</span></span>
 <span><span class="co">#&gt; 6  ripe2 - tobacco - 4      165.4966       NA           Inf</span></span></code></pre></div>
@@ -914,12 +926,12 @@ estimates, <code>Jmax_at_25</code> will also be <code>NA</code> whenever
 <code class="sourceCode R"><span><span class="co"># View values of Jmax from each fit</span></span>
 <span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'Jmax_at_25_lower'</span>, <span class="st">'Jmax_at_25'</span>, <span class="st">'Jmax_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       curve_identifier Jmax_at_25_lower Jmax_at_25 Jmax_at_25_upper</span></span>
-<span><span class="co">#&gt; 1 ripe1 - soybean - 5a         185.2265         NA               NA</span></span>
-<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         232.7262   239.4636         246.2153</span></span>
-<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         203.6509   211.0144         218.3917</span></span>
-<span><span class="co">#&gt; 4  ripe2 - soybean - 1         161.6214         NA               NA</span></span>
-<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         153.4309   162.1937         170.9702</span></span>
-<span><span class="co">#&gt; 6  ripe2 - tobacco - 4         166.8643         NA               NA</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 ripe1 - soybean - 5a         185.2471         NA               NA</span></span>
+<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         232.7625   239.5027         246.2574</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         203.6768   211.0427         218.4225</span></span>
+<span><span class="co">#&gt; 4  ripe2 - soybean - 1         161.6362         NA               NA</span></span>
+<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         153.4441   162.2087         170.9871</span></span>
+<span><span class="co">#&gt; 6  ripe2 - tobacco - 4         166.8804         NA               NA</span></span></code></pre></div>
 <p>In contrast, each curve has an associated value of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>c</mi><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{cmax}</annotation></semantics></math>
 with a finite confidence interval:</p>
@@ -927,12 +939,12 @@ with a finite confidence interval:</p>
 <code class="sourceCode R"><span><span class="co"># View values of Vcmax from each fit</span></span>
 <span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_identifier'</span>, <span class="st">'Vcmax_at_25_lower'</span>, <span class="st">'Vcmax_at_25'</span>, <span class="st">'Vcmax_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       curve_identifier Vcmax_at_25_lower Vcmax_at_25 Vcmax_at_25_upper</span></span>
-<span><span class="co">#&gt; 1 ripe1 - soybean - 5a          96.90012   103.76131         111.42322</span></span>
-<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         126.18028   133.10354         140.02682</span></span>
-<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         104.97285   113.58837         121.19943</span></span>
-<span><span class="co">#&gt; 4  ripe2 - soybean - 1         102.25499   109.06222         121.15484</span></span>
-<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         105.28776   122.01153         138.73577</span></span>
-<span><span class="co">#&gt; 6  ripe2 - tobacco - 4          84.24144    87.79942          91.35826</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 ripe1 - soybean - 5a          96.90014   103.76133         111.42324</span></span>
+<span><span class="co">#&gt; 2  ripe1 - tobacco - 1         126.18030   133.10357         140.02684</span></span>
+<span><span class="co">#&gt; 3  ripe1 - tobacco - 2         104.97289   113.58840         121.19946</span></span>
+<span><span class="co">#&gt; 4  ripe2 - soybean - 1         102.25501   109.06224         121.15487</span></span>
+<span><span class="co">#&gt; 5 ripe2 - soybean - 5b         105.28778   122.01155         138.73580</span></span>
+<span><span class="co">#&gt; 6  ripe2 - tobacco - 4          84.24146    87.79944          91.35828</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualizing-average-best-fit-parameters">Visualizing Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#visualizing-average-best-fit-parameters"></a>
@@ -987,11 +999,11 @@ function from <code>PhotoGEA</code>:</p>
 <span></span>
 <span><span class="va">c3_aci_averages</span><span class="op">[</span> , <span class="va">columns_to_view</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   species Vcmax_at_25_avg Vcmax_at_25_stderr J_at_25_avg J_at_25_stderr</span></span>
-<span><span class="co">#&gt; 1 soybean        111.6117           5.420408    160.9145             NA</span></span>
-<span><span class="co">#&gt; 2 tobacco        111.4971          13.119907    222.3553       13.76199</span></span>
+<span><span class="co">#&gt; 1 soybean        111.6117           5.420409    160.9145             NA</span></span>
+<span><span class="co">#&gt; 2 tobacco        111.4971          13.119908    222.3553         13.762</span></span>
 <span><span class="co">#&gt;   RL_at_25_avg RL_at_25_stderr Tp_at_25_avg Tp_at_25_stderr</span></span>
-<span><span class="co">#&gt; 1     1.938940       0.5729342     9.834033              NA</span></span>
-<span><span class="co">#&gt; 2     1.925908       0.1694589    11.178309              NA</span></span></code></pre></div>
+<span><span class="co">#&gt; 1     1.938940       0.5729344     9.834033              NA</span></span>
+<span><span class="co">#&gt; 2     1.925908       0.1694586    11.178309              NA</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="other-ideas-for-synthesizing-results">Other Ideas for Synthesizing Results<a class="anchor" aria-label="anchor" href="#other-ideas-for-synthesizing-results"></a>
@@ -1149,7 +1161,8 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co"># Make sure the data meets basic requirements</span></span>
 <span><span class="fu"><a href="../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
+<span><span class="co"># Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and</span></span>
+<span><span class="co"># calculate average values of leaf temperature and Qin</span></span>
 <span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
 <span>    <span class="va">licor_data</span>,</span>
 <span>    <span class="st">'curve_identifier'</span>,</span>

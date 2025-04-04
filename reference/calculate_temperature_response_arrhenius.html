@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,18 +24,28 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -158,18 +168,18 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">licor_file</span> <span class="op">&lt;-</span> <span class="fu">calculate_temperature_response_arrhenius</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">licor_file</span>,</span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Kc <span class="op">=</span> <span class="va">c3_temperature_param_sharkey</span><span class="op">$</span><span class="va">Kc</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Kc_norm <span class="op">=</span> <span class="va">c3_temperature_param_sharkey</span><span class="op">$</span><span class="va">Kc_norm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">licor_file</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Kc</span>      <span class="co"># View the units of the new `Kc` column</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "micromol mol^(-1)"</span>
-<span class="r-in"><span><span class="va">licor_file</span><span class="op">$</span><span class="va">categories</span><span class="op">$</span><span class="va">Kc</span> <span class="co"># View the category of the new `Kc` column</span></span></span>
+<span class="r-in"><span><span class="va">licor_file</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Kc_norm</span>      <span class="co"># View the units of the new `Kc_norm` column</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "normalized to Kc at 25 degrees C"</span>
+<span class="r-in"><span><span class="va">licor_file</span><span class="op">$</span><span class="va">categories</span><span class="op">$</span><span class="va">Kc_norm</span> <span class="co"># View the category of the new `Kc_norm` column</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "calculate_temperature_response_arrhenius"</span>
-<span class="r-in"><span><span class="va">licor_file</span><span class="op">[</span>,<span class="st">'Kc'</span><span class="op">]</span>        <span class="co"># View the values of the new `Kc` column</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 514.4424 476.5148 451.6481 443.3365 443.2988 438.5837 427.3056 603.5290</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 557.2026 557.8568 543.9679 557.8977 557.3369 559.3194 655.1498 617.2999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 595.9931 593.0777 591.0264 562.0319 583.4480 680.0888 631.4699 599.4342</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 585.5236 591.0018 561.7495 559.9348</span>
+<span class="r-in"><span><span class="va">licor_file</span><span class="op">[</span>,<span class="st">'Kc_norm'</span><span class="op">]</span>        <span class="co"># View the values of the new `Kc_norm` column</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1.910018 1.769200 1.676876 1.646016 1.645876 1.628370 1.586497 2.240778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 2.068778 2.071206 2.019640 2.071358 2.069276 2.076637 2.432435 2.291906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 2.212798 2.201974 2.194358 2.086708 2.166221 2.525028 2.344517 2.225575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 2.173927 2.194267 2.085659 2.078922</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

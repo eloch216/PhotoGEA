@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,18 +18,28 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -42,9 +52,28 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.2.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.3.0" id="changes-in-photogea-version-130-2024-04-04">Changes in PhotoGEA version 1.3.0 (2024-04-04)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-130-2024-04-04"></a></h2>
+<div class="section level3">
+<h3 id="minor-user-facing-changes-1-3-0">Minor user-facing changes<a class="anchor" aria-label="anchor" href="#minor-user-facing-changes-1-3-0"></a></h3>
+<ul><li>Separated the temperature response of <code>Gamma_star</code> from its value at 25 degrees C. With this change, several functions (including <code>fit_c3_aci</code> and <code>fit_c3_variable_j</code>) now have separate inputs for <code>Gamma_star_at_25</code> and <code>Gamma_star_norm</code>. The fitting functions can now fit <code>Gamma_star_at_25</code> rather than <code>Gamma_star</code>, which previously represented the value at leaf temperature. Since each set of temperature response parameters (such as <code>c3_temperature_param_bernacchi</code>) tends to use a different value of <code>Gamma_star_at_25</code>, the temperature response parameter lists now include both <code>Gamma_star_at_25</code> and <code>Gamma_star_norm</code>.</li>
+<li>Separated the temperature responses of <code>Kc</code> and <code>Ko</code> from their values at 25 degrees C, and enabled fits of <code>Kc_at_25</code> and <code>Ko_at_25</code>. As with <code>Gamma_star</code>, the temperature response parameter lists include values at 25 degrees C and the normalized temperature responses.</li>
+<li>Added values of <code>alpha_j_at_25</code> and <code>theta_j_at_25</code> to the Jmax-related temperature response parameter lists.</li>
+<li>The <code>calculate_gamma_star</code> function now returns values of <code>Gamma_star_tl</code> to more clearly indicate that the values are specified at leaf temperature.</li>
+<li>The <code>organize_response_curve_data</code> function now only calls <code>check_response_curve_data</code> when points are being removed, making it more flexible.</li>
+<li>Added two new vignettes: one is for frequently asked questions (<code>frequent_questions.Rmd</code>), and the other is a gallery of PhotoGEA publications (<code>publications.Rmd</code>). Along with this change, the <code>pkgdown</code> web site was reorganized to put the PhotoGEA publications in their own tab on the main navigation bar.</li>
+<li>Removed curvature parameters from <code>calculate_c3_assimilation</code>. Allowing co-limitation is a complication for fitting, and tends to produce unreasonable results, so it doesn’t make sense to allow it.</li>
+<li>Renamed <code>atp_use</code> and <code>nadph_use</code> to <code>Wj_coef_C</code> and <code>Wj_coef_Gamma_star</code> because the old names and definitions for these parameters were not accurate.</li>
+<li>Included references to the PhotoGEA paper in several places, such as <code>DESCRIPTION</code> and <code>README.md</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-3-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-3-0"></a></h3>
+<ul><li>The carboxylation rate (<code>Vc</code>) and net assimilation rate (<code>An</code>) are now consistent when using the min-A variant of the FvCB model.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="changes-in-photogea-version-120-2025-03-12">Changes in PhotoGEA version 1.2.0 (2025-03-12)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-120-2025-03-12"></a></h2>
 <div class="section level3">

@@ -11,7 +11,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,18 +22,28 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -63,43 +73,37 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>List with 9 named elements that each represent a variable whose
-  temperature-dependent value can be calculated using the Arrhenius equation:</p><ul><li><p><code>Kc</code>: The Michaelis-Menten constant for rubisco carboxylation.</p></li>
-<li><p><code>Ko</code>: The Michaelis-Menten constant for rubisco oxygenation.</p></li>
-<li><p><code>Gamma_star</code>: The value of CO2 partial pressure in the
-          chloroplast at which no assimilation occurs in the absence of
-          respiration.</p></li>
-<li><p><code>Vcmax_norm</code>: The maximum rate of rubisco carboxylation
-          (<code>Vcmax</code>) normalized to its value at 25 degrees C.</p></li>
+    <p>List with 11 named elements that each represent a variable whose
+  temperature-dependent value can be calculated using an Arrhenius equation or a
+  polynomial equation:</p><ul><li><p><code>Gamma_star_at_25</code>: The value of chloroplastic CO2 concentration
+          at which CO2 gains from Rubisco carboxylation are exactly balanced by
+          CO2 losses from Rubisco oxygenation (<code>Gamma_star</code>) at 25
+          degrees C.</p></li>
+<li><p><code>Gamma_star_norm</code>: <code>Gamma_star</code> normalized to its value at
+          25 degrees C.</p></li>
+<li><p><code>gmc_norm</code>: The mesophyll conductance to CO2 diffusion
+          (<code>gmc</code>) normalized to its value at 25 degrees C.</p></li>
 <li><p><code>J_norm</code>: The electron transport rate (<code>J</code>) normalized to
           its value at 25 degrees C.</p></li>
-<li><p><code>RL_norm</code>: The respiration rate (<code>RL</code>) normalized to its
-          value at 25 degrees C.</p></li>
-<li><p><code>gmc_norm</code>: The mesophyll conductance (<code>gmc</code>) normalized to
-          its value at 25 degrees C.</p></li>
+<li><p><code>Kc_at_25</code>: The Michaelis-Menten constant for rubisco
+          carboxylation (<code>Kc</code>) at 25 degrees C.</p></li>
+<li><p><code>Kc_norm</code>: <code>Kc</code> normalized to its value at 25 degrees C.</p></li>
+<li><p><code>Ko_at_25</code>: The Michaelis-Menten constant for rubisco oxygenation
+          (<code>Ko</code>) at 25 degrees C.</p></li>
+<li><p><code>Ko_norm</code>: <code>Ko</code> normalized to its value at 25 degrees C.</p></li>
+<li><p><code>RL_norm</code>: The rate of non-photorespiratory CO2 release in the
+          light (<code>RL</code>) normalized to its value at 25 degrees C.</p></li>
 <li><p><code>Tp_norm</code>: The maximum rate of triose phosphate utilization
           (<code>Tp</code>) normalized to its value at 25 degrees C.</p></li>
-</ul><p>The <code>gmc_norm</code> and <code>Tp_norm</code> parameters are calculated using
-  Johnson-Eyring-Williams functions, and hence their elements are lists with 4
-  named elements:</p><ul><li><p><code>type</code>: the type of temperature response (<code>'Johnson'</code>)</p></li>
-<li><p><code>c</code>: the (dimensionless) scaling factor.</p></li>
-<li><p><code>Ha</code>: the enthalpy of activation in <code>kJ / mol</code>.</p></li>
-<li><p><code>Hd</code>: the enthalpy of deactivation in <code>kJ / mol</code>.</p></li>
-<li><p><code>S</code>: the entropy in <code>kJ / K / mol</code>.</p></li>
-<li><p><code>units</code>: the units of the corresponding variable.</p></li>
-</ul><p>Each of the other parameters is calculated using an Arrhenius response, so
-  each remaining element is itself a list with 4 named elements:</p><ul><li><p><code>type</code>: the type of temperature response (<code>'Arrhenius'</code>)</p></li>
-<li><p><code>c</code>: the (dimensionless) Arrhenius scaling factor.</p></li>
-<li><p><code>Ea</code>: the activation energy in <code>kJ / mol</code>.</p></li>
+<li><p><code>Vcmax_norm</code>: The maximum rate of rubisco carboxylation
+          (<code>Vcmax</code>) normalized to its value at 25 degrees C.</p></li>
+</ul><p>In turn, each of these elements is a list with at least 2 named elements:</p><ul><li><p><code>type</code>: the type of temperature response</p></li>
 <li><p><code>units</code>: the units of the corresponding variable.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a></h2>
-    <p>Some of these parameters (<code>RL</code>, <code>Vcmax</code>, <code>J</code>, <code>Tp</code>, and
-  <code>gmc</code>) are normalized to their values at 25 degrees C. These variables
-  include <code>_norm</code> in their names to indicate this.</p>
-<p>The remaining parameters (<code>Gamma_star</code>, <code>Kc</code>, and <code>Ko</code>) are not
-  normalized because they are assumed to not vary significantly between species.</p>
+    <p>Many of these parameters are normalized to their values at 25 degrees C. These
+  variables include <code>_norm</code> in their names to indicate this.</p>
 <p>Response parameters were obtained from Sharkey et al. (2007). In this
   publication, gas concentrations are expressed as partial pressures (in
   <code>Pa</code> or <code>kPa</code>) rather than mole fractions (<code>micromol / mol</code> or

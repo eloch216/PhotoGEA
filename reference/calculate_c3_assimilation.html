@@ -15,7 +15,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,18 +26,28 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -70,19 +80,20 @@
 <span>    <span class="va">alpha_old</span>,</span>
 <span>    <span class="va">alpha_s</span>,</span>
 <span>    <span class="va">alpha_t</span>,</span>
-<span>    <span class="va">Gamma_star</span>,</span>
+<span>    <span class="va">Gamma_star_at_25</span>,</span>
 <span>    <span class="va">J_at_25</span>,</span>
+<span>    <span class="va">Kc_at_25</span>,</span>
+<span>    <span class="va">Ko_at_25</span>,</span>
 <span>    <span class="va">RL_at_25</span>,</span>
 <span>    <span class="va">Tp_at_25</span>,</span>
 <span>    <span class="va">Vcmax_at_25</span>,</span>
-<span>    atp_use <span class="op">=</span> <span class="fl">4.0</span>,</span>
-<span>    nadph_use <span class="op">=</span> <span class="fl">8.0</span>,</span>
-<span>    curvature_cj <span class="op">=</span> <span class="fl">1.0</span>,</span>
-<span>    curvature_cjp <span class="op">=</span> <span class="fl">1.0</span>,</span>
+<span>    Wj_coef_C <span class="op">=</span> <span class="fl">4.0</span>,</span>
+<span>    Wj_coef_Gamma_star <span class="op">=</span> <span class="fl">8.0</span>,</span>
 <span>    cc_column_name <span class="op">=</span> <span class="st">'Cc'</span>,</span>
+<span>    gamma_star_norm_column_name <span class="op">=</span> <span class="st">'Gamma_star_norm'</span>,</span>
 <span>    j_norm_column_name <span class="op">=</span> <span class="st">'J_norm'</span>,</span>
-<span>    kc_column_name <span class="op">=</span> <span class="st">'Kc'</span>,</span>
-<span>    ko_column_name <span class="op">=</span> <span class="st">'Ko'</span>,</span>
+<span>    kc_norm_column_name <span class="op">=</span> <span class="st">'Kc_norm'</span>,</span>
+<span>    ko_norm_column_name <span class="op">=</span> <span class="st">'Ko_norm'</span>,</span>
 <span>    oxygen_column_name <span class="op">=</span> <span class="st">'oxygen'</span>,</span>
 <span>    rl_norm_column_name <span class="op">=</span> <span class="st">'RL_norm'</span>,</span>
 <span>    total_pressure_column_name <span class="op">=</span> <span class="st">'total_pressure'</span>,</span>
@@ -140,12 +151,14 @@
     values in the <code>alpha_t</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
-  <dt id="arg-gamma-star">Gamma_star<a class="anchor" aria-label="anchor" href="#arg-gamma-star"></a></dt>
-<dd><p>The CO2 compensation point in the absence of day respiration, expressed in
-    <code>micromol mol^(-1)</code>. If <code>Gamma_star</code> is not a number, then there
-    must be a column in <code>data_table</code> called <code>Gamma_star</code> with
-    appropriate units. A numeric value supplied here will overwrite the values
-    in the <code>Gamma_star</code> column of <code>data_table</code> if it exists.</p></dd>
+  <dt id="arg-gamma-star-at-">Gamma_star_at_25<a class="anchor" aria-label="anchor" href="#arg-gamma-star-at-"></a></dt>
+<dd><p>The chloroplastic CO2 concentration at which CO2 gains from Rubisco
+    carboxylation are exactly balanced by CO2 losses from Rubisco oxygenation,
+    at 25 degrees C, expressed in <code>micromol mol^(-1)</code>. If
+    <code>Gamma_star_at_25</code> is not a number, then there must be a column in
+    <code>data_table</code> called <code>Gamma_star_at_25</code> with appropriate units. A
+    numeric value supplied here will overwrite the values in the
+    <code>Gamma_star_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-j-at-">J_at_25<a class="anchor" aria-label="anchor" href="#arg-j-at-"></a></dt>
@@ -156,6 +169,22 @@
     <code>data_table</code> called <code>J_at_25</code> with appropriate units. A numeric
     value supplied here will overwrite the values in the <code>J_at_25</code> column
     of <code>data_table</code> if it exists.</p></dd>
+
+
+  <dt id="arg-kc-at-">Kc_at_25<a class="anchor" aria-label="anchor" href="#arg-kc-at-"></a></dt>
+<dd><p>The Michaelis-Menten constant for Rubisco carboxylation at 25 degrees C,
+    expressed in <code>micromol mol^(-1)</code>. If <code>Kc_at_25</code> is not a number,
+    then there must be a column in <code>data_table</code> called <code>Kc_at_25</code> with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the <code>Kc_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
+
+
+  <dt id="arg-ko-at-">Ko_at_25<a class="anchor" aria-label="anchor" href="#arg-ko-at-"></a></dt>
+<dd><p>The Michaelis-Menten constant for Rubisco oxygenation at 25 degrees C,
+    expressed in <code>mmol mol^(-1)</code>. If <code>Ko_at_25</code> is not a number, then
+    there must be a column in <code>data_table</code> called <code>Ko_at_25</code> with
+    appropriate units. A numeric value supplied here will overwrite the values
+    in the <code>Ko_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
   <dt id="arg-rl-at-">RL_at_25<a class="anchor" aria-label="anchor" href="#arg-rl-at-"></a></dt>
@@ -182,24 +211,16 @@
     values in the <code>Vcmax_at_25</code> column of <code>data_table</code> if it exists.</p></dd>
 
 
-  <dt id="arg-atp-use">atp_use<a class="anchor" aria-label="anchor" href="#arg-atp-use"></a></dt>
-<dd><p>The number of ATP molecules used per C3 cycle.</p></dd>
+  <dt id="arg-wj-coef-c">Wj_coef_C<a class="anchor" aria-label="anchor" href="#arg-wj-coef-c"></a></dt>
+<dd><p>A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration.</p></dd>
 
 
-  <dt id="arg-nadph-use">nadph_use<a class="anchor" aria-label="anchor" href="#arg-nadph-use"></a></dt>
-<dd><p>The number of NADPH molecules used per C3 cycle.</p></dd>
-
-
-  <dt id="arg-curvature-cj">curvature_cj<a class="anchor" aria-label="anchor" href="#arg-curvature-cj"></a></dt>
-<dd><p>A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    <code>Wc</code> and <code>Wj</code>. A value of 1 indicates no co-limitation.</p></dd>
-
-
-  <dt id="arg-curvature-cjp">curvature_cjp<a class="anchor" aria-label="anchor" href="#arg-curvature-cjp"></a></dt>
-<dd><p>A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    <code>Wcj</code> and <code>Wp</code>. A value of 1 indicates no co-limitation.</p></dd>
+  <dt id="arg-wj-coef-gamma-star">Wj_coef_Gamma_star<a class="anchor" aria-label="anchor" href="#arg-wj-coef-gamma-star"></a></dt>
+<dd><p>A coefficient in the equation for RuBP-regeneration-limited carboxylation,
+    whose value depends on assumptions about the NADPH and ATP requirements of
+    RuBP regeneration.</p></dd>
 
 
   <dt id="arg-cc-column-name">cc_column_name<a class="anchor" aria-label="anchor" href="#arg-cc-column-name"></a></dt>
@@ -207,21 +228,25 @@
     chloroplastic CO2 concentration in <code>micromol mol^(-1)</code>.</p></dd>
 
 
+  <dt id="arg-gamma-star-norm-column-name">gamma_star_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-gamma-star-norm-column-name"></a></dt>
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
+    <code>Gamma_star</code> values (with units of
+    <code>normalized to Gamma_star at 25 degrees C</code>).</p></dd>
+
+
   <dt id="arg-j-norm-column-name">j_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-j-norm-column-name"></a></dt>
 <dd><p>The name of the column in <code>data_table</code> that contains the normalized
     <code>J</code> values (with units of <code>normalized to J at 25 degrees C</code>).</p></dd>
 
 
-  <dt id="arg-kc-column-name">kc_column_name<a class="anchor" aria-label="anchor" href="#arg-kc-column-name"></a></dt>
-<dd><p>The name of the column in <code>data_table</code> that contains the
-    Michaelis-Menten constant for rubisco carboxylation in
-    <code>micromol mol^(-1)</code>.</p></dd>
+  <dt id="arg-kc-norm-column-name">kc_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-kc-norm-column-name"></a></dt>
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
+    <code>Kc</code> values (with units of <code>normalized to Kc at 25 degrees C</code>).</p></dd>
 
 
-  <dt id="arg-ko-column-name">ko_column_name<a class="anchor" aria-label="anchor" href="#arg-ko-column-name"></a></dt>
-<dd><p>The name of the column in <code>data_table</code> that contains the
-    Michaelis-Menten constant for rubisco oxygenation in
-    <code>mmol mol^(-1)</code>.</p></dd>
+  <dt id="arg-ko-norm-column-name">ko_norm_column_name<a class="anchor" aria-label="anchor" href="#arg-ko-norm-column-name"></a></dt>
+<dd><p>The name of the column in <code>data_table</code> that contains the normalized
+    <code>Ko</code> values (with units of <code>normalized to Ko at 25 degrees C</code>).</p></dd>
 
 
   <dt id="arg-oxygen-column-name">oxygen_column_name<a class="anchor" aria-label="anchor" href="#arg-oxygen-column-name"></a></dt>
@@ -284,12 +309,12 @@
   described below. In this formulation, the steady-state net CO2 assimilation
   rate <code>An</code> is calculated according to</p>
 <p><code>An = (1 - Gamma_star_agt / PCc) * Vc - RL</code>,</p>
-<p>where <code>Gamma_star</code> is the CO2 compensation point in the absence of day
-  respiration, <code>Gamma_star_agt</code> is the effective value of <code>Gamma_star</code>
-  accounting for glycolate carbon remaining in the cytosol, <code>PCc</code> is the
-  partial pressure of CO2 in the chloroplast, <code>Vc</code> is the RuBP
-  carboxylation rate, and <code>RL</code> is the rate of respiration in the light.
-  <code>Gamma_star_agt</code> is given by</p>
+<p>where <code>Gamma_star</code> is the CO2 compensation point in the absence of
+  non-photorespiratory CO2 release, <code>Gamma_star_agt</code> is the effective value
+  of <code>Gamma_star</code> accounting for glycolate carbon remaining in the cytosol,
+  <code>PCc</code> is the partial pressure of CO2 in the chloroplast, <code>Vc</code> is the
+  RuBP carboxylation rate, and <code>RL</code> is the rate of non-photorespiratory CO2
+  release in the light. <code>Gamma_star_agt</code> is given by</p>
 <p><code>Gamma_star_agt = (1 - alpha_g + 2 * alpha_t) * Gamma_star</code>,</p>
 <p>where <code>alpha_g</code> and <code>alpha_t</code> are the fractions of glycolate carbon
   leaving the photorespiratory pathway as glycine and CH2-THF, respectively.</p>
@@ -304,8 +329,9 @@
   chloroplast.</p>
 <p>The RuBP-regeneration-limited carboxylation rate <code>Wj</code> is given by</p>
 <p><code>Wj = PCc * J / (4 * PCc + Gamma_star_agt * (8 + 16 * alpha_g - 8 * alpha_t + 8 * alpha_s))</code>,</p>
-<p>where <code>J</code> is the RuBP regeneration rate and <code>alpha_s</code> is the
-  fraction of glycolate carbon leaving the photorespiratory pathway as serine.</p>
+<p>where <code>J</code> is the potential electron transport rate at a given light
+  intensity and <code>alpha_s</code> is the fraction of glycolate carbon leaving the
+  photorespiratory pathway as serine.</p>
 <p>The TPU-limited carboxylation rate is given by</p>
 <p><code>Wp = PCc * 3 * Tp / (PCc - Gamma_star_agt * (1 + 3 * alpha_g + 6 * alpha_t + 4 * alpha_s))</code>,</p>
 <p>where <code>Tp</code> is the maximum rate of triose phosphate utilization. Note that
@@ -316,27 +342,11 @@
 <p>The actual carboxylation rate is typically chosen to be the smallest of the
   three potential rates:</p>
 <p><code>Vc = min{Wc, Wj, Wp}</code>.</p>
-<p>However, it is also possible to allow co-limitation between the processes by
-  using quadratic mixing equations. In other words, the carboxylation rate
-  co-limitated by Rubisco activity and RuBP regeneration <code>Wcj</code> is given by
-  the smaller root of the following quadratic equation:</p>
-<p><code>curvature_cj * Wcj^2 - Wcj * (Wc + Wj) + Wc * Wj = 0</code>,</p>
-<p>where <code>curvature_cj</code> described the "curvature" of the mixing; if
-  <code>curvature_cj</code> is 1, this is equivalent to <code>Wcj = min{Wc, Wj}</code>; if
-  <code>curvature_cj</code> is 0, then <code>Wcj</code> is the geometric mean of <code>Wc</code>
-  and <code>Wj</code>. Any value below 1 will produce a smooth curve rather than the
-  abrupt transitions that occur when choosing the simple minimum. Likewise, the
-  carboxylation rate co-limited by <code>Wcj</code> and <code>Wp</code> (called <code>Wcjp</code>;
-  in other words, the rate co-limited by all three processes) is given by the
-  smaller root of</p>
-<p><code>curvature_cjp * Wcjp^2 - Wcjp * (Wcj + Wp) + Wcj * Wp = 0</code>.</p>
-<p>Then, <code>Wcjp</code> is used in place of <code>Vc</code> when calculating the net CO2
-  assimilation rate. For more information about the quadratic mixing technique,
-  see Collatz et al. (1990) and Collatz et al. (1991).</p>
 <p>In the equations above, several of the variables depend on the leaf
   temperature. In particular, the leaf-temperature-adjusted values of
-  <code>Vcmax</code>, <code>J</code>, <code>Tp</code>, and <code>RL</code> are determined from their
-  base values at 25 degrees C and a temperature-dependent multiplicative factor.</p>
+  <code>Gamma_star</code>, <code>J</code>, <code>Kc</code>, <code>Ko</code>, <code>RL</code>, <code>Tp</code>, and
+  <code>Vcmax</code> are determined from their base values at 25 degrees C and a
+  temperature-dependent multiplicative factor.</p>
 <p>Also note that <code>PCc</code> is calculated from the chloroplastic CO2
   concentration <code>Cc</code> using the total pressure (ambient pressure + chamber
   overpressure).</p>
@@ -358,12 +368,12 @@
   disctinction between <code>Gamma_star_agt</code> and <code>Gamma_star</code>. Other
   differences are described below.</p>
 <p>The RuBP-regeneration-limited carboxylation rate <code>Wj</code> is given by</p>
-<p><code>Wj = PCc * J / (atp_use * PCc + nadph_use * Gamma_star)</code>,</p>
-<p>Here we have allowed <code>atp_use</code> and <code>nadph_use</code> to be variables
-  rather than taking fixed values (as they do in many sources). This is
-  necessary because not all descriptions of the FvCB model use the same values,
-  where the different values are due to different assumptions about the energy
-  requirements of RuBP regeneration.</p>
+<p><code>Wj = PCc * J / (Wj_coef_C * PCc + Wj_coef_Gamma_star * Gamma_star)</code>,</p>
+<p>Here we have allowed <code>Wj_coef_C</code> and <code>Wj_coef_Gamma_star</code> to be
+  variables rather than taking fixed values (as they do in many sources). This
+  is necessary because not all descriptions of the FvCB model use the same
+  values, where the different values are due to different assumptions about the
+  NADPH and ATP requirements of RuBP regeneration.</p>
 <p>The TPU-limited carboxylation rate is given by</p>
 <p><code>Wp = PCc * 3 * Tp / (PCc - Gamma_star * (1 + 3 * alpha_old))</code>,</p>
 <p>Note that this equation only applies when <code>PCc &gt; Gamma_star * (1 +
@@ -389,7 +399,7 @@
   cases, it is possible to selectively apply these hard constraints by
   specifying different values of the <code>hard_constraints</code> input argument:</p>
 <p></p><ul><li><p><code>hard_constraints = 0</code>: Constraints are only placed on inputs
-          that are user-supplied and cannot be fit, such as <code>Kc</code>.</p></li>
+          that are user-supplied and cannot be fit, such as <code>oxygen</code>.</p></li>
 <li><p><code>hard_constraints = 1</code>: Includes the same constraints as when
           <code>hard_constraints</code> is 0, with the additional constraint that
           all <code>Cc</code> values must be non-negative.</p></li>
@@ -416,7 +426,7 @@
           errors that may occur when using a fixed TPU threshold.</p></li>
 <li><p><strong>use_FRL</strong>: If an input argument called <code>use_FRL</code> is
           supplied and its value is <code>TRUE</code>, then <code>An</code> will always be
-          set to <code>Ac</code> for <code>Cc &lt; Gamma_star</code>. This "forced Rubisco
+          set to <code>Ac</code> for <code>Cc &lt; Gamma_star_agt</code>. This "forced Rubisco
           limitation" can only be used along with the "minimum assimilation"
           variant (<code>use_min_A = TRUE</code>).</p></li>
 <li><p><strong>consider_depletion</strong>: If an input argument called
@@ -439,17 +449,6 @@
 ].</p></li>
 <li><p>von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
           Publishing, 2000) [<a href="https://doi.org/10.1071/9780643103405" class="external-link">doi:10.1071/9780643103405</a>
-].</p></li>
-<li><p>Collatz, G. J., Ball, J. T., Grivet, C. &amp; Berry, J. A. "Physiological
-          and environmental regulation of stomatal conductance, photosynthesis
-          and transpiration: a model that includes a laminar boundary layer."
-          Agricultural and Forest Meteorology 54, 107–136 (1991)
-          [<a href="https://doi.org/10.1016/0168-1923%2891%2990002-8" class="external-link">doi:10.1016/0168-1923(91)90002-8</a>
-].</p></li>
-<li><p>Collatz, G. J., Berry, J. A., Farquhar, G. D. &amp; Pierce, J. "The
-          relationship between the Rubisco reaction mechanism and models of
-          photosynthesis." Plant, Cell &amp; Environment 13, 219–225 (1990)
-          [<a href="https://doi.org/10.1111/j.1365-3040.1990.tb01306.x" class="external-link">doi:10.1111/j.1365-3040.1990.tb01306.x</a>
 ].</p></li>
 <li><p>Lochocki &amp; McGrath "Widely Used Variants of the
           Farquhar-von-Caemmerer-Berry Model Can Cause Errors in Parameter
@@ -493,7 +492,7 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">inputs</span>, <span class="va">c3_temperature_param_sharkey</span>, <span class="st">'Tleaf'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">150</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">120</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">assim</span> <span class="op">&lt;-</span> <span class="fu">calculate_c3_assimilation</span><span class="op">(</span><span class="va">inputs</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="st">''</span>, <span class="fl">150</span>, <span class="st">''</span>, <span class="st">''</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">120</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">lattice</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">Ac</span> <span class="op">+</span> <span class="va">Aj</span> <span class="op">+</span> <span class="va">Ap</span> <span class="op">+</span> <span class="va">An</span> <span class="op">~</span> <span class="va">inputs</span><span class="op">[</span>, <span class="st">'Cc'</span><span class="op">]</span>,</span></span>

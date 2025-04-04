@@ -17,7 +17,7 @@ This function is typically used after fit_c3_aci,
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,18 +28,28 @@ This function is typically used after fit_c3_aci,
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/PhotoGEA.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
     <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
     <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
     <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
     <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -69,8 +79,8 @@ This function is typically used after fit_c3_aci,
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_jmax</span><span class="op">(</span></span>
 <span>    <span class="va">data_table</span>,</span>
-<span>    alpha_j_at_25 <span class="op">=</span> <span class="fl">0.293</span>,</span>
-<span>    theta_j_at_25 <span class="op">=</span> <span class="fl">0.979</span>,</span>
+<span>    alpha_j_at_25 <span class="op">=</span> <span class="st">'column'</span>,</span>
+<span>    theta_j_at_25 <span class="op">=</span> <span class="st">'column'</span>,</span>
 <span>    alpha_j_norm_column_name <span class="op">=</span> <span class="st">'alpha_j_norm'</span>,</span>
 <span>    qin_column_name <span class="op">=</span> <span class="st">'Qin_avg'</span>,</span>
 <span>    theta_j_norm_column_name <span class="op">=</span> <span class="st">'theta_j_norm'</span>,</span>
@@ -142,6 +152,8 @@ This function is typically used after fit_c3_aci,
   <code>data_table</code> (<code>J_at_25_upper</code>, <code>J_at_25_lower</code>,
   <code>J_tl_avg_upper</code>, or <code>J_tl_avg_lower</code>), the corresponding confidence
   intervals for <code>Jmax</code> will also be calculated.</p>
+<p>By default, this function will take values of <code>alpha_j</code> and
+  <code>theta_j</code> from columns of <code>data_table</code> with the same names.</p>
 <p>If <code>data_table</code> is an <code><a href="exdf.html">exdf</a></code> object, units will be checked
   for any columns used in the calculations.</p>
 <p><strong>Overview of Jmax Calculations:</strong></p>
@@ -172,10 +184,12 @@ This function is typically used after fit_c3_aci,
   <code>I2</code>; for very high light levels, <code>Jmax</code> is the smaller rate, and
   <code>J</code> is approximately equal to <code>Jmax</code>. For intermediate values of
   <code>Qin</code>, <code>J</code> smoothly transitions from <code>I2</code> to <code>Jmax</code>.</p>
-<p>One key property of Equation 1 is that the largest possible value of <code>J</code>
-  at a given <code>Qin</code> is <code>I2</code>, which only occurs when <code>Jmax</code> is much
-  larger than <code>I2</code>. In other words, the range of the function in Equation 1
-  is <code>0 &lt;= J &lt;= I2</code>.</p>
+<p>This equation is often solved for <code>Jmax</code>, and thus it is necessary to
+  consider the conditions for which the solution is appropriate. One key
+  property of Equation 1 is that the largest possible value of <code>J</code> at a
+  given <code>Qin</code> is <code>I2</code>, which only occurs when <code>Jmax</code> is much
+  larger than <code>I2</code>. In other words, when considered as a function of
+  <code>Jmax</code>, the range of the function in Equation 1 is <code>0 &lt;= J &lt;= I2</code>.</p>
 <p>Equation 1 can be solved for <code>Jmax</code>, enabling calculations of <code>Jmax</code>
   from estimates of <code>J</code>:</p>
 <p><code>Jmax = J * (I2 - theta_j * J) / (I2 - J)</code> (Eq. 2)</p>
@@ -211,11 +225,17 @@ This function is typically used after fit_c3_aci,
   light-adapted leaves at 25 degrees C, while <code>theta_j</code> at 25 degrees C is
   0.97875. Using this value of of <code>phi_psii,max</code> with typical values of
   absorptance and <code>beta_psii</code> results in an <code>alpha_j</code> estimate of
-  0.2930375. These values, rounded to three decimal places, are used as the
-  defaults when calculating <code>Jmax</code>.</p>
+  0.2930375.</p>
 <p>It is not clear whether the temperture response defined in Bernacchi et al.
   (2003) is applicable to C4 leaves. For C4 leaves, it may be better to use the
   temperature-independent estimates from von Caemmerer (2000).</p>
+<p>PhotoGEA provides two Jmax parameter lists that can be passed to
+  <code><a href="calculate_temperature_response.html">calculate_temperature_response</a></code>:
+  <code><a href="jmax_temperature_param_bernacchi.html">jmax_temperature_param_bernacchi</a></code> (implements the Bernacchi et
+  al. 2003 values) and <code><a href="jmax_temperature_param_flat.html">jmax_temperature_param_flat</a></code> (implements the
+  von Caemmerer 2000 values). Each of these parameter lists will calculate
+  values of <code>alpha_j_at_25</code>, <code>alpha_j_norm</code>, <code>theta_j_at_25</code>, and
+  <code>theta_j_norm</code>.</p>
 <p><strong>Absorbed light basis:</strong></p>
 <p>Values of <code>Jmax</code> can also be estimated from the absorbed
   photosynthetically active photon flux density (<code>Qabs</code>). In that case, we
@@ -223,9 +243,13 @@ This function is typically used after fit_c3_aci,
 <p><code>I2 = (Qin * absorptance) * (phi_psii,max * beta_psii) = Qabs * alpha_j_abs</code>,</p>
 <p>where <code>alpha_j_abs</code> is given by <code>phi_psii,max * beta_psii</code>. When
   working in this basis, the default value of <code>alpha_j</code> at 25 degrees C
-  should be divided by the assumed absorptance (0.85), yielding an
-  <code>alpha_j_abs</code> value of 0.345. Along with this change, it would also be
-  necessary to change the name of the light column, likely to <code>Qabs_avg</code>.</p>
+  should be divided by the assumed absorptance (0.85). For example, the default
+  value of <code>alpha_j_at_25</code> used with the Bernacchi et al. (2003) parameters
+  is 0.2930375, so dividing this by 0.95 would yielding an <code>alpha_j_abs</code>
+  value of about 0.345. This value could be passed directly to
+  <code>calculate_jmax</code> via the <code>alpha_j_at_25</code> input argument, overriding
+  the default value. Along with this change, it would also be necessary to
+  change the name of the light column, likely to <code>Qabs_avg</code>.</p>
 <p><strong>Why PhotoGEA Uses a Separate Function for Jmax:</strong></p>
 <p>In principle, values of <code>Jmax</code> could be estimated by the fitting
   functions that estimate <code>J</code>: <code><a href="fit_c3_aci.html">fit_c3_aci</a></code>,
@@ -396,21 +420,21 @@ This function is typically used after fit_c3_aci,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Converting an `exdf` object to a `data.frame` before printing</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   species_plot [NA] (NA) J_at_25 [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           soybean - 5a                                      190.8864</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           soybean - 5a                                      190.8859</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2            tobacco - 1                                      231.7749</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3            tobacco - 2                                      206.4820</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   J_tl_avg [fit_c3_aci] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       268.1504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       268.1496</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       319.2523</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       285.9199</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Jmax_at_25 [calculate_jmax] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                             192.8230</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                             234.9598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                             208.8411</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                             192.8451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                             234.9970</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                             208.8687</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Jmax_tl [calculate_jmax] (micromol m^(-2) s^(-1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          275.6992</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          331.3579</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          294.7020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          275.7499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                          331.4441</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                          294.7640</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Example 2: Illustrating the importance of requiring I2 &gt; J</span></span></span>
 <span class="r-in"><span></span></span>
@@ -429,7 +453,10 @@ This function is typically used after fit_c3_aci,
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate Jmax values, overriding the default behavior so that values of Jmax</span></span></span>
 <span class="r-in"><span><span class="co"># are returned even when I2 &lt; J.</span></span></span>
-<span class="r-in"><span><span class="va">jmax_df</span> <span class="op">&lt;-</span> <span class="fu">calculate_jmax</span><span class="op">(</span><span class="va">jmax_df</span>, ignore_restriction <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">jmax_df</span> <span class="op">&lt;-</span> <span class="fu">calculate_jmax</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">jmax_df</span>, alpha_j_at_25 <span class="op">=</span> <span class="fl">0.293</span>, theta_j_at_25 <span class="op">=</span> <span class="fl">0.979</span>,</span></span>
+<span class="r-in"><span>  ignore_restriction <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the Jmax values, distinguishing between cases where J &lt; I2 and where</span></span></span>
 <span class="r-in"><span><span class="co"># J &gt; I2. Here we can see that when J &gt; I2, values of Jmax are smaller than J,</span></span></span>
