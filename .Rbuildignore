@@ -29,3 +29,6 @@
 
 ^developer_documentation$
 # Developer documentation directories.
+
+^vignettes/web_only$
+# These vignettes are only for pkgdown.
