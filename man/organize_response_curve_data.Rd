@@ -5,8 +5,10 @@
 \title{Reorganize response curve data for analysis and plotting}
 
 \description{
-  Checks to make sure an \code{exdf} object representing response curve data
-  has the expected number of rows and does not contain infinite values.
+  Prepares a set of response curves for future processing and analysis by
+  numbering and reordering the points, (optionally) removing recovery points,
+  and (optionally) calculating average values of key variables across each
+  curve.
 }
 
 \usage{
@@ -16,7 +18,8 @@
     measurement_numbers_to_remove,
     column_for_ordering,
     ordering_column_tolerance = Inf,
-    columns_to_average = c()
+    columns_to_average = c(),
+    print_information = TRUE
   )
 }
 
@@ -37,6 +40,8 @@
     example, if each curve has 16 points and the 10^th^ and 11^th^ points along
     the sequence should not be included in subsequent analysis,
     \code{measurement_numbers_to_remove} could be specified as \code{c(10, 11)}.
+    If \code{measurement_numbers_to_remove} is set to \code{c()}, no points will
+    be removed.
   }
 
   \item{column_for_ordering}{
@@ -46,14 +51,16 @@
 
   \item{ordering_column_tolerance}{
     To be passed to \code{\link{check_response_curve_data}} as the
-    \code{driving_column_tolerance} input argument; the
-    \code{ordering_column_tolerance} can be set to \code{Inf} to disable this
-    check.
+    \code{driving_column_tolerance} input argument.
   }
 
   \item{columns_to_average}{
     A list of columns whose average values should be calculated; see below for
     details.
+  }
+
+  \item{print_information}{
+    To be passed to \code{\link{check_response_curve_data}}.
   }
 }
 
@@ -63,40 +70,45 @@
   performs the following actions:
   \itemize{
     \item Assigns a sequential number to each measurement in each curve,
-          beginning with 1; in other words, the first point in the curve is
+          beginning with 1. In other words, the first point in the curve is
           given number 1, the second is given number 2, etc. These numbers are
           stored as a new column called \code{seq_num}.
-    \item Extracts a subset of the data corresponding to the values of
-          \code{seq_num} not in \code{measurement_numbers_to_remove}; this is
-          often helpful for A-Ci curves, where the CO~2~ concentration begins at
-          the ambient value, is decreased to a low value, is reset to
-          atmospheric for several measurements to allow the plant to
-          reacclimate, and then is increased to higher values. In this case,
-          only the first measurement at ambient CO~2~ is used for plotting or
-          additional analysis.
+    \item (Optionally) extracts a subset of the data. If
+          \code{measurement_numbers_to_remove} is \code{c()}, then this step
+          will be skipped; otherwise, values of \code{seq_num} specified by
+          \code{measurement_numbers_to_remove} will be removed, and then
+          \code{check_response_curve_data} will be called to make sure the
+          remaining points all follow the same sequence of setpoint values
+          (within the tolerance set by \code{ordering_column_tolerance}),
+          treating the \code{column_for_ordering} as the \code{driving_column}.
     \item Reorders the data according to ascending values of the
-          \code{column_for_ordering}. For example, the points in an A-Ci curve
-          would not be ordered according to their Ci values in a curve measured
-          using a sequence as described above. This can cause issues when making
-          line plots, so it may be convenient to reorder them according to their
-          Ci values.
+          \code{column_for_ordering}.
+    \item (Optionally) calculates average values of important columns. If
+          \code{columns_to_average} is \code{c()}, then this step will be
+          skipped; otherwise, for each curve, the mean value of each column
+          specified in \code{columns_to_average} will be stored in a new column
+          whose name is based on the original column name, but with
+          \code{'_avg'} added at the end. For example, the average value of the
+          \code{Qin} column would be stored in \code{Qin_avg}.
   }
 
-  Before performing these operations, this function checks to make sure that the
-  \code{identifier_columns} specify response curves that (1) each have the same
-  number of points and where (2) the \code{column_for_ordering} follows the same
-  sequence of values in each curve (within the tolerance set by
-  \code{ordering_column_tolerance}). This check is accomplished via
-  \code{\link{check_response_curve_data}}, treating the
-  \code{column_for_ordering} as the \code{driving_column}.
+  Removing certain points is often helpful for A-Ci curves, where the CO~2~
+  concentration begins at the ambient value, is decreased to a low value, is
+  reset to atmospheric for several measurements to allow the plant to
+  reacclimate, and then is increased to higher values. In this case, only the
+  first measurement at ambient CO~2~ is used for plotting or additional
+  analysis, and the "recovery" points should be removed.
 
-  Sometimes it is useful to calculate average values of certain columns across
-  each curve in a data set, such as the leaf temperature or incident light. This
-  can be done by specifying the names of such columns as the
-  \code{columns_to_average} input argument. For each such column, its mean value
-  will be stored in a new column whose name is based on the original column
-  name, but with \code{'_avg'} added at the end. For example, the average value
-  of the \code{Qin} column would be stored in \code{Qin_avg}.
+  Reordering the points is often helpful for plotting. For example, the points
+  in an A-Ci curve would not be ordered according to their Ci values in a curve
+  measured using a sequence as described above. This can cause issues when
+  making line plots, so it may be convenient to reorder them according to their
+  Ci values.
+
+  Calculating average values of certain columns is especially useful for
+  estimating \code{Jmax} values using \code{\link{calculate_jmax}}, since this
+  operation requires average values of leaf temperature and incident photon flux
+  across each curve.
 }
 
 \value{

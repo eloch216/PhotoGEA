@@ -5,3 +5,45 @@ template:
   theme: arrow-light
   includes:
     before_body: "padding-top: 70px;"
+navbar:
+  structure:
+    left:  [intro, reference, user_guides, publications, news]
+    right: [search, github]
+  components:
+    user_guides:
+      text: User Guides
+      menu:
+      - text: ANALYSIS GUIDES
+      - text: ---
+      - text: Analyzing Ball-Berry Data
+        href: articles/analyzing_ball_berry_data.html
+      - text: Analyzing C3 A-Ci Curves
+        href: articles/analyzing_c3_aci_curves.html
+      - text: Analyzing C4 A-Ci Curves
+        href: articles/analyzing_c4_aci_curves.html
+      - text: Analyzing Mesophyll Conductance Data
+        href: articles/analyzing_gm_data.html
+      - text: Analyzing TDL Data
+        href: articles/analyzing_tdl_data.html
+      - text: ---
+      - text: GENERAL PHOTOGEA ADVICE
+      - text: ---
+      - text: Combining PhotoGEA With Other Packages
+        href: articles/combining_with_other_packages.html
+      - text: Creating Your Own Processing Tools
+        href: articles/creating_your_own_processing_tools.html
+      - text: Developing a Data Analysis Pipeline
+        href: articles/developing_a_data_analysis_pipeline.html
+      - text: Working With Extended Data Frames
+        href: articles/working_with_extended_data_frames.html
+      - text: Frequently Asked Questions
+        href: articles/frequent_questions.html
+      - text: ---
+      - text: GENERAL GAS EXCHANGE ADVICE
+      - text: ---
+      - text: Guide to Licor LI-6800 User Constants
+        href: articles/LI6800_user_constants.html
+
+    publications:
+      text: Publications
+      href: articles/publications.html
