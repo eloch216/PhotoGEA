@@ -60,6 +60,16 @@ be directly added to this file to describe the related changes.
   publications (`publications.Rmd`). Along with this change, the `pkgdown` web
   site was reorganized to put the PhotoGEA publications in their own tab on the
   main navigation bar.
+- Removed curvature parameters from `calculate_c3_assimilation`. Allowing
+  co-limitation is a complication for fitting, and tends to produce unreasonable
+  results, so it doesn't make sense to allow it.
+- Renamed `atp_use` and `nadph_use` to `Wj_coef_C` and `Wj_coef_Gamma_star`
+  because the old names and definitions for these parameters were not accurate.
+
+### Bug fixes
+
+- The carboxylation rate (`Vc`) and net assimilation rate (`An`) are now
+  consistent when using the min-A variant of the FvCB model.
 
 ## Changes in PhotoGEA version 1.2.0 (2025-03-12)
 

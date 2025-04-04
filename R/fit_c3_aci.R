@@ -23,10 +23,8 @@ fit_c3_aci <- function(
     tp_norm_column_name = 'Tp_norm',
     vcmax_norm_column_name = 'Vcmax_norm',
     sd_A = 'RMSE',
-    atp_use = 4.0,
-    nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     optim_fun = optimizer_deoptim(200),
     lower = list(),
     upper = list(),
@@ -54,10 +52,8 @@ fit_c3_aci <- function(
         replicate_exdf,
         fit_options,
         1, # sd_A
-        atp_use,
-        nadph_use,
-        curvature_cj,
-        curvature_cjp,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         a_column_name,
         ci_column_name,
         gamma_star_norm_column_name,
@@ -96,11 +92,6 @@ fit_c3_aci <- function(
     fit_options_vec <- luf$fit_options_vec
     param_to_fit    <- luf$param_to_fit
 
-    # Make sure `remove_unreliable_param` is being used properly
-    if (remove_unreliable_param && (curvature_cj < 1 || curvature_cjp < 1)) {
-        stop('Unreliable parameter estimates can only be removed when both curvature values are 1.0')
-    }
-
     # Get an initial guess for all the parameter values
     alpha_g_guess    <- if (fit_options$alpha_g == 'fit')          {0.5}                       else {fit_options$alpha_g}
     alpha_old_guess  <- if (fit_options$alpha_old == 'fit')        {0.5}                       else {fit_options$alpha_old}
@@ -121,8 +112,8 @@ fit_c3_aci <- function(
         kc_guess,
         ko_guess,
         100, # cc_threshold_rd
-        atp_use,
-        nadph_use,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         a_column_name,
         ci_column_name,
         gamma_star_norm_column_name,
@@ -183,10 +174,8 @@ fit_c3_aci <- function(
         best_X[10], # RL_at_25
         best_X[11], # Tp_at_25
         best_X[12], # Vcmax_at_25
-        atp_use,
-        nadph_use,
-        curvature_cj,
-        curvature_cjp,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         cc_column_name,
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -241,10 +230,8 @@ fit_c3_aci <- function(
         best_X[10], # RL_at_25
         best_X[11], # Tp_at_25
         best_X[12], # Vcmax_at_25
-        atp_use,
-        nadph_use,
-        curvature_cj,
-        curvature_cjp,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         cc_column_name,
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -304,10 +291,8 @@ fit_c3_aci <- function(
         '', # RL_at_25
         '', # Tp_at_25
         '', # Vcmax_at_25
-        atp_use,
-        nadph_use,
-        curvature_cj,
-        curvature_cjp,
+        Wj_coef_C,
+        Wj_coef_Gamma_star,
         cc_column_name,
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -432,10 +417,8 @@ fit_c3_aci <- function(
             replicate_exdf,
             fit_options,
             replicate_identifiers[, 'RMSE'], # sd_A
-            atp_use,
-            nadph_use,
-            curvature_cj,
-            curvature_cjp,
+            Wj_coef_C,
+            Wj_coef_Gamma_star,
             a_column_name,
             ci_column_name,
             gamma_star_norm_column_name,
@@ -499,10 +482,8 @@ fit_c3_aci <- function(
             fit_options,
             if (fit_failure) {0} else {replicate_identifiers[, 'RMSE']}, # sd_A
             relative_likelihood_threshold,
-            atp_use,
-            nadph_use,
-            curvature_cj,
-            curvature_cjp,
+            Wj_coef_C,
+            Wj_coef_Gamma_star,
             a_column_name,
             ci_column_name,
             gamma_star_norm_column_name,

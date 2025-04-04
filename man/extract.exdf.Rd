@@ -48,6 +48,13 @@
   \code{return_exdf = TRUE} can be used.
 }
 
+\value{
+  When \code{return_exdf} is \code{FALSE}, the access operator will return
+  either a vector or a data frame, depending on the dimension of \code{j}. When
+  \code{return_exdf} is \code{TRUE}, the access operator will return an
+  \code{\link{exdf}} object.
+}
+
 \seealso{\code{\link{exdf}}}
 
 \examples{

@@ -149,6 +149,8 @@
   clear that the same identifier was accidentally used for two different curves.
 }
 
+\value{The \code{check_response_curve_data} function does not return anything.}
+
 \examples{
 # Read an example Licor file included in the PhotoGEA package and check it.
 # This file includes several 7-point light-response curves that can be uniquely

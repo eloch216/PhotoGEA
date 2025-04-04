@@ -35,6 +35,11 @@
   typing \code{PhotoGEA::fit_ball_berry} in the R terminal.
 }
 
+\value{
+  The return value will be a subset of \code{x}, restricted to only include
+  columns whose values are constant. Only one row will be returned.
+}
+
 \seealso{\code{\link{exdf}}}
 
 \examples{

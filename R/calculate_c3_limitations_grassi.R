@@ -5,8 +5,8 @@
 
 calculate_c3_limitations_grassi <- function(
     exdf_obj,
-    atp_use = 4.0,
-    nadph_use = 8.0,
+    Wj_coef_C = 4.0,
+    Wj_coef_Gamma_star = 8.0,
     cc_column_name = 'Cc',
     gamma_star_column_name = 'Gamma_star_tl',
     gmc_column_name = 'gmc_tl',
@@ -89,8 +89,8 @@ calculate_c3_limitations_grassi <- function(
     if (use_j) {
         # Partial derivative of A with respect to Cc, assuming
         # RuBP-regeneration-limited assimilation
-        dAdC_j <- J * Gamma_star * (atp_use + nadph_use) /
-            (atp_use * Cc + nadph_use * Gamma_star)^2 # mol / m^2 / s
+        dAdC_j <- J * Gamma_star * (Wj_coef_C + Wj_coef_Gamma_star) /
+            (Wj_coef_C * Cc + Wj_coef_Gamma_star * Gamma_star)^2 # mol / m^2 / s
 
         # Include partial derivative and limitations in the exdf object
         exdf_obj[, 'dAdC_j']      <- dAdC_j

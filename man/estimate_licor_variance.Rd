@@ -98,11 +98,16 @@
 }
 
 \details{
-  TODO
+  Uses the error propogation formula to calculate the influence of the variance
+  in \code{CO2_r}, \code{CO2_s}, etc on the variance of \code{A}, as calculated
+  by a Licor LI-6800.
 }
 
 \value{
-  TODO
+  An \code{\link{exdf}} object based on \code{exdf_obj} that includes additional
+  columns representing the standard deviation of \code{A} measurements
+  (\code{sd_A}), and the individual terms comprising the total variance of
+  \code{A}, such as \code{var_CO2_r}, \code{var_CO2_s}, etc.
 }
 
 \examples{

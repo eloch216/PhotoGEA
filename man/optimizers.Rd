@@ -103,3 +103,11 @@
   See the documentation for those functions for more information about how the
   optimizers work.
 }
+
+\value{
+  Each of these functions returns an optimizer function \code{optim_fun}. The
+  returned \code{optim_fun} function has four input arguments: an initial guess
+  (\code{guess}), an error function (\code{fun}), lower bounds (\code{lower}),
+  and upper bounds (\code{upper}). It returns a list with four named elements:
+  \code{par}, \code{convergence}, \code{feval}, and \code{convergence_msg}.
+}
