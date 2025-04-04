@@ -18,8 +18,6 @@
     exdf_obj,
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -51,18 +49,6 @@
 
   \item{nadph_use}{
     The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{curvature_cj}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wc} and \code{Wj}. A value of 1 indicates no co-limitation.
-  }
-
-  \item{curvature_cjp}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
   }
 
   \item{ca_column_name}{

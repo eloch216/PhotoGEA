@@ -6,8 +6,6 @@ calculate_c3_limitations_warren <- function(
     exdf_obj,
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
     ca_column_name = 'Ca',
     cc_column_name = 'Cc',
     ci_column_name = 'Ci',
@@ -98,8 +96,6 @@ calculate_c3_limitations_warren <- function(
             '', # Vcmax_at_25
             atp_use = atp_use,
             nadph_use = nadph_use,
-            curvature_cj = curvature_cj,
-            curvature_cjp = curvature_cjp,
             cc_column_name = cc_name,
             gamma_star_norm_column_name = gamma_star_norm_column_name,
             j_norm_column_name = j_norm_column_name,

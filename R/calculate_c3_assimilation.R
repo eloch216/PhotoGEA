@@ -13,8 +13,6 @@ calculate_c3_assimilation <- function(
     Vcmax_at_25,      # micromol / m^2 / s (at 25 degrees C; typically this value is being fitted)
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
     cc_column_name = 'Cc',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
@@ -79,18 +77,6 @@ calculate_c3_assimilation <- function(
             require_flexible_param(required_variables, flexible_param)
 
         check_required_variables(data_table, required_variables)
-
-        # Make sure curvature parameters lie on [0,1]
-        check_zero_one <- list(
-            curvature_cj = curvature_cj,
-            curvature_cjp = curvature_cjp
-        )
-
-        sapply(seq_along(check_zero_one), function(i) {
-            if (any(check_zero_one[[i]] < 0 | check_zero_one[[i]] > 1)) {
-                stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
-            }
-        })
     }
 
     # Retrieve values of flexible parameters as necessary
@@ -197,38 +183,10 @@ calculate_c3_assimilation <- function(
     Wd[PCc > Gamma_star_agt] <- Inf
 
     # Overall carboxylation rate
-    Wcjp <- if (curvature_cj == 1 && curvature_cjp == 1) {
-        # Here we can just take the minimum
-        if (consider_depletion) {
-            pmin(Wc, Wj, Wp, Wd, na.rm = TRUE)
-        } else {
-            pmin(Wc, Wj, Wp, na.rm = TRUE)
-        }
+    Vc <- if (consider_depletion) {
+        pmin(Wc, Wj, Wp, Wd, na.rm = TRUE)
     } else {
-        # Co-limitation between Wc and Wj
-        a_cj <- curvature_cj
-        b_cj <- -(Wc + Wj)
-        c_cj <- Wc * Wj
-
-        Wcj <- sapply(seq_along(b_cj), function(i) {
-            quadratic_root_min(a_cj, b_cj[i], c_cj[i]) # micromol / m^2 / s
-        })
-
-        # Co-limitation between Wcj and Wp. If Wp is infinite, then we have
-        # Wp >> Wcj and Wp >> curvature_cjp, so the quadratic coefficients become
-        # a_cjp = 0, b_cjp = -Wp, and c_cjp = Wcj * Wp. In that case, we have
-        # 0 = -Wp * Wcjp + Wcj * Wp, whose solution is simply Wcjp = Wcj.
-        a_cjp <- curvature_cjp
-        b_cjp <- -(Wcj + Wp)
-        c_cjp <- Wcj * Wp
-
-        sapply(seq_along(b_cjp), function(i) {
-            if (is.infinite(Wp[i])) {
-                Wcj[i] # micromol / m^2 / s
-            } else {
-                quadratic_root_min(a_cjp, b_cjp[i], c_cjp[i]) # micromol / m^2 / s
-            }
-        })
+        pmin(Wc, Wj, Wp, na.rm = TRUE)
     }
 
     # Calculate corresponding net CO2 assimilations by accounting for
@@ -238,7 +196,7 @@ calculate_c3_assimilation <- function(
     Aj <- photo_resp_factor * Wj - RL_tl
     Ap <- photo_resp_factor * Wp - RL_tl
     Ad <- photo_resp_factor * Wd - RL_tl
-    An <- photo_resp_factor * Wcjp - RL_tl
+    An <- photo_resp_factor * Vc - RL_tl
 
     # Possibly use the pseudo-FvCB model or one of its variants
     if (use_min_A) {
@@ -300,11 +258,9 @@ calculate_c3_assimilation <- function(
             Wj = Wj,
             Wp = Wp,
             Wd = Wd,
-            Vc = Wcjp,
+            Vc = Vc,
             atp_use = atp_use,
             nadph_use = nadph_use,
-            curvature_cj = curvature_cj,
-            curvature_cjp = curvature_cjp,
             c3_assimilation_msg = msg,
             c3_optional_arguments = optional_arg_string,
             stringsAsFactors = FALSE
@@ -347,8 +303,6 @@ calculate_c3_assimilation <- function(
             c('calculate_c3_assimilation', 'Vc',                    'micromol m^(-2) s^(-1)'),
             c('calculate_c3_assimilation', 'atp_use',               'dimensionless'),
             c('calculate_c3_assimilation', 'nadph_use',             'dimensionless'),
-            c('calculate_c3_assimilation', 'curvature_cj',          'dimensionless'),
-            c('calculate_c3_assimilation', 'curvature_cjp',         'dimensionless'),
             c('calculate_c3_assimilation', 'c3_optional_arguments', ''),
             c('calculate_c3_assimilation', 'c3_assimilation_msg',   '')
         )

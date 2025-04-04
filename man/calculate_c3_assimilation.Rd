@@ -28,8 +28,6 @@
     Vcmax_at_25,
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
     cc_column_name = 'Cc',
     gamma_star_norm_column_name = 'Gamma_star_norm',
     j_norm_column_name = 'J_norm',
@@ -156,18 +154,6 @@
 
   \item{nadph_use}{
     The number of NADPH molecules used per C3 cycle.
-  }
-
-  \item{curvature_cj}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wc} and \code{Wj}. A value of 1 indicates no co-limitation.
-  }
-
-  \item{curvature_cjp}{
-    A dimensionless quadratic curvature parameter greater than or equal to 0 and
-    less than or equal to 1 that sets the degree of co-limitation between
-    \code{Wcj} and \code{Wp}. A value of 1 indicates no co-limitation.
   }
 
   \item{cc_column_name}{
@@ -306,28 +292,6 @@
 
   \code{Vc = min{Wc, Wj, Wp}}.
 
-  However, it is also possible to allow co-limitation between the processes by
-  using quadratic mixing equations. In other words, the carboxylation rate
-  co-limitated by Rubisco activity and RuBP regeneration \code{Wcj} is given by
-  the smaller root of the following quadratic equation:
-
-  \code{curvature_cj * Wcj^2 - Wcj * (Wc + Wj) + Wc * Wj = 0},
-
-  where \code{curvature_cj} described the "curvature" of the mixing; if
-  \code{curvature_cj} is 1, this is equivalent to \code{Wcj = min{Wc, Wj}}; if
-  \code{curvature_cj} is 0, then \code{Wcj} is the geometric mean of \code{Wc}
-  and \code{Wj}. Any value below 1 will produce a smooth curve rather than the
-  abrupt transitions that occur when choosing the simple minimum. Likewise, the
-  carboxylation rate co-limited by \code{Wcj} and \code{Wp} (called \code{Wcjp};
-  in other words, the rate co-limited by all three processes) is given by the
-  smaller root of
-
-  \code{curvature_cjp * Wcjp^2 - Wcjp * (Wcj + Wp) + Wcj * Wp = 0}.
-
-  Then, \code{Wcjp} is used in place of \code{Vc} when calculating the net CO2
-  assimilation rate. For more information about the quadratic mixing technique,
-  see Collatz et al. (1990) and Collatz et al. (1991).
-
   In the equations above, several of the variables depend on the leaf
   temperature. In particular, the leaf-temperature-adjusted values of
   \code{Gamma_star}, \code{J}, \code{Kc}, \code{Ko}, \code{RL}, \code{Tp}, and
@@ -465,15 +429,6 @@
           [\doi{10.1111/tpj.14674}].
     \item von Caemmerer, S. "Biochemical Models of Leaf Photosynthesis" (CSIRO
           Publishing, 2000) [\doi{10.1071/9780643103405}].
-    \item Collatz, G. J., Ball, J. T., Grivet, C. & Berry, J. A. "Physiological
-          and environmental regulation of stomatal conductance, photosynthesis
-          and transpiration: a model that includes a laminar boundary layer."
-          Agricultural and Forest Meteorology 54, 107–136 (1991)
-          [\doi{10.1016/0168-1923(91)90002-8}].
-    \item Collatz, G. J., Berry, J. A., Farquhar, G. D. & Pierce, J. "The
-          relationship between the Rubisco reaction mechanism and models of
-          photosynthesis." Plant, Cell & Environment 13, 219–225 (1990)
-          [\doi{10.1111/j.1365-3040.1990.tb01306.x}].
     \item Lochocki & McGrath "Widely Used Variants of the
           Farquhar-von-Caemmerer-Berry Model Can Cause Errors in Parameter
           Estimates and Simulations." submitted.

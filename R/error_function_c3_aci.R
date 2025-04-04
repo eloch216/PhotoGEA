@@ -4,8 +4,6 @@ error_function_c3_aci <- function(
     sd_A = 1,
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
     a_column_name = 'A',
     ci_column_name = 'Ci',
     gamma_star_norm_column_name = 'Gamma_star_norm',
@@ -67,18 +65,6 @@ error_function_c3_aci <- function(
         ),
         check_NA = FALSE
     )
-
-    # Make sure curvature parameters lie on [0,1]
-    check_zero_one <- list(
-        curvature_cj = curvature_cj,
-        curvature_cjp = curvature_cjp
-    )
-
-    sapply(seq_along(check_zero_one), function(i) {
-        if (any(check_zero_one[[i]] < 0 | check_zero_one[[i]] > 1)) {
-            stop(paste(names(check_zero_one)[i], 'must be >= 0 and <= 1'))
-        }
-    })
 
     # Retrieve values of flexible parameters as necessary
     if (!value_set(sd_A)) {sd_A <- replicate_exdf[, 'sd_A']}
@@ -162,8 +148,6 @@ error_function_c3_aci <- function(
                     X[12], # Vcmax_at_25
                     atp_use,
                     nadph_use,
-                    curvature_cj,
-                    curvature_cjp,
                     cc_column_name,
                     gamma_star_norm_column_name,
                     j_norm_column_name,

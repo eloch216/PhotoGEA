@@ -27,8 +27,6 @@ fit_c3_variable_j <- function(
     sd_A = 'RMSE',
     atp_use = 4.0,
     nadph_use = 8.0,
-    curvature_cj = 1.0,
-    curvature_cjp = 1.0,
     optim_fun = optimizer_deoptim(400),
     lower = list(),
     upper = list(),
@@ -61,8 +59,6 @@ fit_c3_variable_j <- function(
         1, # sd_A
         atp_use,
         nadph_use,
-        curvature_cj,
-        curvature_cjp,
         a_column_name,
         ci_column_name,
         gamma_star_norm_column_name,
@@ -104,11 +100,6 @@ fit_c3_variable_j <- function(
     fit_options     <- luf$fit_options
     fit_options_vec <- luf$fit_options_vec
     param_to_fit    <- luf$param_to_fit
-
-    # Make sure `remove_unreliable_param` is being used properly
-    if (remove_unreliable_param && (curvature_cj < 1 || curvature_cjp < 1)) {
-        stop('Unreliable parameter estimates can only be removed when both curvature values are 1.0')
-    }
 
     # Get an initial guess for all the parameter values
     alpha_g_guess    <- if (fit_options$alpha_g == 'fit')          {0.5}                       else {fit_options$alpha_g}
@@ -210,8 +201,6 @@ fit_c3_variable_j <- function(
         best_X[12], # Vcmax_at_25
         atp_use,
         nadph_use,
-        curvature_cj,
-        curvature_cjp,
         cc_column_name = 'Cc',
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -268,8 +257,6 @@ fit_c3_variable_j <- function(
         best_X[12], # Vcmax_at_25
         atp_use,
         nadph_use,
-        curvature_cj,
-        curvature_cjp,
         cc_column_name = 'Cc',
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -367,8 +354,6 @@ fit_c3_variable_j <- function(
         '', # Vcmax_at_25
         atp_use,
         nadph_use,
-        curvature_cj,
-        curvature_cjp,
         cc_column_name = 'Cc',
         gamma_star_norm_column_name,
         j_norm_column_name,
@@ -511,8 +496,6 @@ fit_c3_variable_j <- function(
             replicate_identifiers[, 'RMSE'], # sd_A
             atp_use,
             nadph_use,
-            curvature_cj,
-            curvature_cjp,
             a_column_name,
             ci_column_name,
             gamma_star_norm_column_name,
@@ -582,8 +565,6 @@ fit_c3_variable_j <- function(
             relative_likelihood_threshold,
             atp_use,
             nadph_use,
-            curvature_cj,
-            curvature_cjp,
             a_column_name,
             ci_column_name,
             gamma_star_norm_column_name,
