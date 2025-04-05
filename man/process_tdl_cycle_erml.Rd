@@ -146,6 +146,11 @@ tdl_file <- read_gasex_file(
   'TIMESTAMP'
 )
 
+# This is a large file; for this example, we will truncate to just the first
+# 200 rows so it runs faster
+tdl_file <- tdl_file[seq_len(200), , TRUE]
+
+# Identify TDL cycles
 tdl_file <- identify_tdl_cycles(
   tdl_file,
   valve_column_name = 'valve_number',
@@ -155,6 +160,7 @@ tdl_file <- identify_tdl_cycles(
   timestamp_colname = 'TIMESTAMP'
 )
 
+# Process TDL cycles
 processed_tdl <- consolidate(by(
   tdl_file,
   tdl_file[, 'cycle_num'],

@@ -31,6 +31,17 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+### Internal changes
+
+- Designated most vignettes as "web only" to make the package smaller; this is
+  important for complying with CRAN guidelines.
+- Set `maxiter` to 50 when using `stats::uniroot` to calculate confidence
+  intervals; this saves quite a bit of time compared to the default value (1000)
+  and prevents several examples from being flagged by `R CMD check` for taking
+  too long to run.
+
 ## Changes in PhotoGEA version 1.3.0 (2024-04-04)
 
 ### Minor user-facing changes
