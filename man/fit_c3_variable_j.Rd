@@ -477,13 +477,11 @@ licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_be
 optimizer <- optimizer_nmkb(1e-7)
 
 # Fit just one curve from the data set (it is rare to do this).
-\donttest{
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
   Ca_atmospheric = 420,
   optim_fun = optimizer
 )
-}
 
 # Fit all curves in the data set (it is more common to do this).
 aci_results <- consolidate(by(

@@ -103,7 +103,8 @@ confidence_interval_one_param <- function(
                 stats::uniroot(
                     erf_i,
                     c(lower_lim, best_fit_inputs[index]),
-                    extendInt = 'downX'
+                    extendInt = 'downX',
+                    maxiter = 40
                 )[['root']]
             },
             error = function(e) {-Inf}
@@ -124,7 +125,8 @@ confidence_interval_one_param <- function(
                 stats::uniroot(
                     erf_i,
                     c(best_fit_inputs[index], upper_lim),
-                    extendInt = 'upX'
+                    extendInt = 'upX',
+                    maxiter = 40
                 )[['root']]
             },
             error = function(e) {Inf}
@@ -152,18 +154,18 @@ confidence_intervals_leaf_temperature <- function(replicate_identifiers, paramet
         param_tl_avg       <- paste0(param, '_tl_avg')
         param_tl_avg_lower <- paste0(param, '_tl_avg_lower')
         param_tl_avg_upper <- paste0(param, '_tl_avg_upper')
-        
+
         param_tl_scale <- replicate_identifiers[, param_tl_avg] / replicate_identifiers[, param_at_25]
-        
+
         replicate_identifiers[, param_tl_avg_lower] <- replicate_identifiers[, param_at_25_lower] * param_tl_scale
         replicate_identifiers[, param_tl_avg_upper] <- replicate_identifiers[, param_at_25_upper] * param_tl_scale
-        
+
         replicate_identifiers <- document_variables(
             replicate_identifiers,
             c(fname, param_tl_avg_lower, replicate_identifiers$units[[param_at_25]]),
             c(fname, param_tl_avg_upper, replicate_identifiers$units[[param_at_25]])
         )
     }
-    
+
     replicate_identifiers
 }

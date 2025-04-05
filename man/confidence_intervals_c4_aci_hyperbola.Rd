@@ -135,7 +135,8 @@ licor_file <- organize_response_curve_data(
 
 # Fit just one curve from the data set
 one_result <- fit_c4_aci_hyperbola(
-  licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE]
+  licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
+  calculate_confidence_intervals = FALSE
 )
 
 # Calculate confidence limits for the fit parameters

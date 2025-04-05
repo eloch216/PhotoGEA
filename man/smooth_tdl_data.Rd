@@ -70,7 +70,7 @@
 }
 
 \examples{
-# Example 1: Smoothing the 12C signal from one TDL valve using a spline fit
+# Example: Smoothing the 12C signal from one TDL valve using a spline fit
 tdl_file <- read_gasex_file(
   PhotoGEA_example_file_path('tdl_sampling_1.dat'),
   'TIMESTAMP'
@@ -93,24 +93,6 @@ spline_smoothing_function <- function(Y, X) {
 spline_smoothed_tdl_file <- smooth_tdl_data(
   tdl_file, 'Conc12C_Avg', 'valve_number', 20, spline_smoothing_function
 )
-
-# Example 2: Smoothing the same data with a Butterworth filter (as an
-# alternative to the spline_smoothing_function above)
-
-\dontrun{
-
-butterworth_smoothing_function <- function(Y, X) {
-  # Create a low-pass Butterworth filter
-  lpf <- signal::butter(1, 0.25, type = "low")
-
-  # Apply it to the Y data
-  signal::filter(lpf, Y)
-}
-
-butterworth_smoothed_tdl_file <- smooth_tdl_data(
-  tdl_file, 'Conc12C_Avg', 'valve_number', 20, butterworth_smoothing_function
-)
-}
 }
 
 \concept{exdf}
