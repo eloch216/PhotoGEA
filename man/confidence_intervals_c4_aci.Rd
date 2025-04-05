@@ -224,7 +224,7 @@ licor_file <- calculate_total_pressure(licor_file)
 # Fit just one curve from the data set
 one_result <- fit_c4_aci(
   licor_file[licor_file[, 'species_plot'] == 'maize - 5', , TRUE],
-  Ca_atmospheric = 420
+  calculate_confidence_intervals = FALSE
 )
 
 # Calculate confidence limits for the fit parameters
