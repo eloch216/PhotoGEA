@@ -43,30 +43,24 @@
 \examples{
 # Interactively select a single file and get full file paths to all
 # other files in the same directory that have the same extension
-
-\dontrun{
-
-file_paths <- choose_input_files()
+if (interactive()){
+  file_paths <- choose_input_files()
 }
 
 
 # Interactively select one or more Licor Excel files and read each one to create
 # a list of exdf objects
-
-\dontrun{
-
-lapply(choose_input_licor_files(), function(fname) {
-  read_gasex_file(fname, 'time')
-})
+if (interactive()){
+  lapply(choose_input_licor_files(), function(fname) {
+    read_gasex_file(fname, 'time')
+  })
 }
 
 # Interactively select one or more TDL data files and read each one to create a
 # list of exdf objects
-
-\dontrun{
-
-lapply(choose_input_tdl_files(), function(fname) {
-  read_gasex_file(fname, 'TIMESTAMP')
-})
+if (interactive()){
+  lapply(choose_input_tdl_files(), function(fname) {
+    read_gasex_file(fname, 'TIMESTAMP')
+  })
 }
 }

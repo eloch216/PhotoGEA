@@ -223,31 +223,31 @@ being added all the time:
   describe or use `PhotoGEA`, along with links to their corresponding analysis
   scripts.
 - Analysis guides:
-  - [Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html) (This example is
-    more detailed than the analysis demonstrated here.)
-  - [Analyzing C4 A-Ci Curves](analyzing_c4_aci_curves.html)
-  - [Analyzing Ball-Berry Data](analyzing_ball_berry_data.html)
-  - [Analyzing TDL Data](analyzing_tdl_data.html)
-  - [Analyzing Mesophyll Conductance Data](analyzing_gm_data.html)
+  - [Analyzing C3 A-Ci Curves](web_only/analyzing_c3_aci_curves.html) (This
+    example is more detailed than the analysis demonstrated here.)
+  - [Analyzing C4 A-Ci Curves](web_only/analyzing_c4_aci_curves.html)
+  - [Analyzing Ball-Berry Data](web_only/analyzing_ball_berry_data.html)
+  - [Analyzing TDL Data](web_only/analyzing_tdl_data.html)
+  - [Analyzing Mesophyll Conductance Data](web_only/analyzing_gm_data.html)
 - General `PhotoGEA` advice:
-  - [Creating Your Own Processing Tools](creating_your_own_processing_tools.html):
+  - [Creating Your Own Processing Tools](web_only/creating_your_own_processing_tools.html):
     Discusses how to create functions compatible with `PhotoGEA` that apply new
     types of processing.
-  - [Combining PhotoGEA With Other Packages](combining_with_other_packages.html):
+  - [Combining PhotoGEA With Other Packages](web_only/combining_with_other_packages.html):
     Discusses how to create wrappers for functions from other packages to extend
     the processing capabilities of `PhotoGEA`.
-  - [Developing a Data Analysis Pipeline](developing_a_data_analysis_pipeline.html):
+  - [Developing a Data Analysis Pipeline](web_only/developing_a_data_analysis_pipeline.html):
     Discusses how `PhotoGEA` provides functionality for all parts of a data
     analysis pipeline, including loading and validating the data -- and how it
     can help save your time and improve the reproducibility of your data
     analysis!
-  - [Working With Extended Data Frames](working_with_extended_data_frames.html):
-    Discusses how to work with extended data frames, which are a critical part of
-    `PhotoGEA`.
-  - [Frequently Asked Questions](frequent_questions.html): Provides answers to
-    frequently asked questions about `PhotoGEA`.
+  - [Working With Extended Data Frames](web_only/working_with_extended_data_frames.html):
+    Discusses how to work with extended data frames, which are a critical part
+    of `PhotoGEA`.
+  - [Frequently Asked Questions](web_only/frequent_questions.html): Provides
+    answers to frequently asked questions about `PhotoGEA`.
 - General gas exchange advice:
-  - [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html):
+  - [Guide to Licor LI-6800 User Constants](web_only/LI6800_user_constants.html):
     Discusses how to include metadata in log files when using a Licor LI-6800
     gas exchange measurement system, and provides advice for dealing with data
     sets that do not contain user constants.
