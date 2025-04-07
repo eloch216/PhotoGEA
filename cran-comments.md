@@ -1,16 +1,5 @@
 ## R CMD check results
 
-There were no ERRORs or WARNINGs.
+0 errors | 0 warnings | 1 note
 
-There was 1 NOTE:
-
-- > checking CRAN incoming feasibility ... NOTE
-  > Maintainer: 'Edward B. Lochocki <eloch@illinois.edu>'
-  >
-  > New submission
-
-  PhotoGEA is a new submission.
-
-## Downstream dependencies
-
-There are currently no downstream dependencies for this package.
+* This is a new release.
