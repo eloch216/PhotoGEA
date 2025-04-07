@@ -53,8 +53,8 @@ basic example that just scratches the surface of what is possible with
 `PhotoGEA_example_file_path` as we have done in the code below. Instead, file
 paths can be directly written, or files can be chosen using an interactive
 window. See the
-[Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html#input-files) vignette
-for more information.)
+[Analyzing C3 A-Ci Curves](web_only/analyzing_c3_aci_curves.html#input-files)
+vignette for more information.)
 
 ## Fitting the Curves
 
@@ -216,9 +216,9 @@ barchart_with_errorbars(
 The `PhotoGEA` package includes extensive documentation, and more articles are
 being added all the time:
 
-- [Publication Gallery](publications.html): Includes a list of publications that
-  describe or use `PhotoGEA`, along with links to their corresponding analysis
-  scripts.
+- [Publication Gallery](web_only/publications.html): Includes a list of
+  publications that describe or use `PhotoGEA`, along with links to their
+  corresponding analysis scripts.
 - Analysis guides:
   - [Analyzing C3 A-Ci Curves](web_only/analyzing_c3_aci_curves.html) (This
     example is more detailed than the analysis demonstrated here.)
