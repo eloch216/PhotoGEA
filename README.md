@@ -16,7 +16,8 @@
 **a**nalysis) is an R package that provides a suite of tools for
 loading, processing, and analyzing photosynthetic gas exchange data. See
 [Lochocki, Salesse-Smith, & McGrath
-(2025)](https://doi.org/10.1111/pce.15501) for more information.
+(2025)](https://onlinelibrary.wiley.com/doi/10.1111/pce.15501) for more
+information.
 
 ### Installation
 
