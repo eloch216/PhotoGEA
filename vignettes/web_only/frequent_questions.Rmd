@@ -21,6 +21,26 @@ knitr::opts_chunk$set(
 )
 ```
 
+# How Do I Install The Latest Release of PhotoGEA?
+
+`PhotoGEA` is available on CRAN, so the easiest way to install the latest
+release is to type the following from within an R terminal:
+
+```{r, eval = FALSE}
+install.packages('PhotoGEA')
+```
+
+There may be a short period of time where a new version has been released but is
+not yet available on CRAN. In this case, the latest release can be installed
+directly from the main branch of the GitHub repository by typing the following:
+
+```{r, eval = FALSE}
+remotes::install_github('eloch216/PhotoGEA')
+```
+
+Note that this method requires the `remotes` package, which can be installed
+from within R by typing `install.packages('remotes')`.
+
 # How Do I Install An Old Version of PhotoGEA?
 
 All `PhotoGEA` releases are tagged on GitHub, and the tag names are formatted as

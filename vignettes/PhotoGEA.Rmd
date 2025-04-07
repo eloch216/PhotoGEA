@@ -34,15 +34,12 @@ https://eloch216.github.io/PhotoGEA/articles/PhotoGEA.html.
 
 # Installing PhotoGEA
 
-The easiest way to install `PhotoGEA` is to type the following from within the R
-terminal:
+`PhotoGEA` is available on CRAN, so the easiest way to install the latest
+release is to type the following from within an R terminal:
 
 ```{r, eval = FALSE}
-remotes::install_github('eloch216/PhotoGEA')
+install.packages('PhotoGEA')
 ```
-
-Note that this method requires the `remotes` package, which can be installed
-from within R by typing `install.packages('remotes')`.
 
 # An Example: C~3~ CO~2~ Response Curves
 

@@ -20,15 +20,12 @@ loading, processing, and analyzing photosynthetic gas exchange data. See
 
 ### Installation
 
-The easiest way to install `PhotoGEA` is to type the following from
-within the R terminal:
+`PhotoGEA` is available on CRAN, so the easiest way to install the
+latest release is to type the following from within an R terminal:
 
 ``` r
-remotes::install_github('eloch216/PhotoGEA')
+install.packages('PhotoGEA')
 ```
-
-Note that this method requires the `remotes` package, which can be
-installed from within R by typing `install.packages('remotes')`.
 
 ### Usage
 
