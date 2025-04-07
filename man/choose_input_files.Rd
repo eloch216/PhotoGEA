@@ -43,14 +43,14 @@
 \examples{
 # Interactively select a single file and get full file paths to all
 # other files in the same directory that have the same extension
-if (interactive()){
+if (interactive()) {
   file_paths <- choose_input_files()
 }
 
 
 # Interactively select one or more Licor Excel files and read each one to create
 # a list of exdf objects
-if (interactive()){
+if (interactive() && .Platform$OS.type == "windows") {
   lapply(choose_input_licor_files(), function(fname) {
     read_gasex_file(fname, 'time')
   })
@@ -58,7 +58,7 @@ if (interactive()){
 
 # Interactively select one or more TDL data files and read each one to create a
 # list of exdf objects
-if (interactive()){
+if (interactive() && .Platform$OS.type == "windows") {
   lapply(choose_input_tdl_files(), function(fname) {
     read_gasex_file(fname, 'TIMESTAMP')
   })

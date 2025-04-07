@@ -140,7 +140,7 @@
 
 \examples{
 # Example: reading a TDL file that is included with the PhotoGEA package,
-# identifying its measurement cycles, and then process them.
+# identifying its measurement cycles, and then processing them.
 tdl_file <- read_gasex_file(
   PhotoGEA_example_file_path('tdl_sampling_1.dat'),
   'TIMESTAMP'
@@ -177,6 +177,14 @@ processed_tdl <- consolidate(by(
   noaa_cylinder_isotope_ratio = -8.40,
   calibration_isotope_ratio = -11.505
 ))
+
+# The output is a list of five exdf objects; four of them are related to each
+# step in the calibration procedure for each TDL cycle
+names(processed_tdl)
+
+# The processed TDL data includes new columns for the calibrated CO2
+# concentrations
+colnames(processed_tdl$tdl_data)
 
 # Make a plot of the raw and calibrated 13C signals across all the TDL cycles.
 # Note that the calibrated signal from valve 20 is always exactly zero, since
