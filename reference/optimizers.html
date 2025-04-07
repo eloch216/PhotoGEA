@@ -17,7 +17,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,25 +31,25 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
-    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
-    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
-    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/frequent_questions.html">Frequently Asked Questions</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
-<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/web_only/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -167,6 +167,82 @@
   <code>par</code>, <code>convergence</code>, <code>feval</code>, and <code>convergence_msg</code>.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Here we just show examples of the optim_fun results. Other examples using the</span></span></span>
+<span class="r-in"><span><span class="co"># optimizers can be found throughout PhotoGEA, such as in the user guides and</span></span></span>
+<span class="r-in"><span><span class="co"># the documentation for fit_c3_aci, fit_c4_aci, etc.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">optimizer_deoptim</span><span class="op">(</span><span class="fl">200</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (guess, fun, lower, upper) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     NP &lt;- 10 * length(guess)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialpop &lt;- matrix(nrow = NP, ncol = length(guess))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialpop[1, ] &lt;- guess</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     varsize &lt;- 0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     for (i in seq(2, NP)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         tmp &lt;- guess * (1 + stats::runif(length(guess), -varsize, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             varsize))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         initialpop[i, ] &lt;- constrain_guess(tmp, lower, upper, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- DEoptim::DEoptim(fun, lower, upper, control = list(VTR = VTR, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         itermax = itermax, NP = NP, initialpop = initialpop, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         trace = FALSE))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     list(convergence = NA, convergence_msg = NA, feval = res[["optim"]][["nfeval"]], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         par = res[["optim"]][["bestmem"]], optimizer = "optimizer_deoptim")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5632ff08ea28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5632f7cfe590&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">optimizer_hjkb</span><span class="op">(</span><span class="fl">1e-7</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (guess, fun, lower, upper) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     guess &lt;- constrain_guess(guess, lower, upper, 0.01)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- dfoptim::hjkb(guess, fun, lower, upper, control = list(tol = tol, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         maxfeval = maxfeval, target = target))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     list(convergence = res[["convergence"]], convergence_msg = NA, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         feval = res[["feval"]], par = res[["par"]], optimizer = "optimizer_hjkb")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5632f7c836c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5632f7c84768&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">optimizer_nlminb</span><span class="op">(</span><span class="fl">1e-7</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (guess, fun, lower, upper) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     guess &lt;- constrain_guess(guess, lower, upper, 0.01)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- stats::nlminb(guess, fun, lower = lower, upper = upper, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         control = list(rel.tol = rel.tol, eval.max = eval.max, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             iter.max = iter.max, abs.tol = abs.tol))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     list(convergence = res[["convergence"]], convergence_msg = res[["message"]], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         feval = res[["evaluations"]][1], par = res[["par"]], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         optimizer = "optimizer_nlminb")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5632f7c28640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5632f7c25a00&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">optimizer_nmkb</span><span class="op">(</span><span class="fl">1e-7</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (guess, fun, lower, upper) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     guess &lt;- constrain_guess(guess, lower, upper, 0.01)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- dfoptim::nmkb(guess, fun, lower, upper, control = list(tol = tol, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         maxfeval = maxfeval, restarts.max = restarts.max))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     list(convergence = res[["convergence"]], convergence_msg = res[["message"]], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         feval = res[["feval"]], par = res[["par"]], optimizer = "optimizer_nmkb")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5632fb2e1430&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5632f782b330&gt;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">optimizer_null</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (guess, fun, lower, upper) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     list(convergence = NA, convergence_msg = NA, feval = 0, par = guess, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         optimizer = "optimizer_null")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x563300c6fdb8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5632f77dc4e8&gt;</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

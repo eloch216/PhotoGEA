@@ -19,7 +19,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,25 +33,25 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
-    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
-    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
-    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/frequent_questions.html">Frequently Asked Questions</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
-<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/web_only/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -200,12 +200,17 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: reading a TDL file that is included with the PhotoGEA package,</span></span></span>
-<span class="r-in"><span><span class="co"># identifying its measurement cycles, and then process them.</span></span></span>
+<span class="r-in"><span><span class="co"># identifying its measurement cycles, and then processing them.</span></span></span>
 <span class="r-in"><span><span class="va">tdl_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'tdl_sampling_1.dat'</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="st">'TIMESTAMP'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This is a large file; for this example, we will truncate to just the first</span></span></span>
+<span class="r-in"><span><span class="co"># 200 rows so it runs faster</span></span></span>
+<span class="r-in"><span><span class="va">tdl_file</span> <span class="op">&lt;-</span> <span class="va">tdl_file</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Identify TDL cycles</span></span></span>
 <span class="r-in"><span><span class="va">tdl_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="identify_tdl_cycles.html">identify_tdl_cycles</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">tdl_file</span>,</span></span>
 <span class="r-in"><span>  valve_column_name <span class="op">=</span> <span class="st">'valve_number'</span>,</span></span>
@@ -215,6 +220,7 @@
 <span class="r-in"><span>  timestamp_colname <span class="op">=</span> <span class="st">'TIMESTAMP'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Process TDL cycles</span></span></span>
 <span class="r-in"><span><span class="va">processed_tdl</span> <span class="op">&lt;-</span> <span class="fu"><a href="consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">tdl_file</span>,</span></span>
 <span class="r-in"><span>  <span class="va">tdl_file</span><span class="op">[</span>, <span class="st">'cycle_num'</span><span class="op">]</span>,</span></span>
@@ -231,6 +237,70 @@
 <span class="r-in"><span>  noaa_cylinder_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">8.40</span>,</span></span>
 <span class="r-in"><span>  calibration_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">11.505</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The output is a list of five exdf objects; four of them are related to each</span></span></span>
+<span class="r-in"><span><span class="co"># step in the calibration procedure for each TDL cycle</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">processed_tdl</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tdl_data"               "calibration_zero"       "calibration_12CO2"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "calibration_13CO2_data" "calibration_13CO2_fit" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The processed TDL data includes new columns for the calibrated CO2</span></span></span>
+<span class="r-in"><span><span class="co"># concentrations</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] "TIMESTAMP"               "RECORD"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3] "valve_number"            "diag_system_Avg"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5] "NumSamples"              "Conc12C_Avg"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [7] "Conc13C_Avg"             "TGAStatus_Avg"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [9] "TGAPressure_Avg"         "LaserTemp_Avg"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [11] "DCCurrentA_Avg"          "DCCurrentB_Avg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [13] "TGAAnalog1_Avg"          "TGATemp1_Avg"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [15] "TGATemp2_Avg"            "LaserCooler_Avg"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [17] "RefDetSigA_Avg"          "RefDetSigB_Avg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [19] "RefDetTransA_Avg"        "RefDetTransB_Avg"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [21] "RefDetTemp_Avg"          "RefDetCooler_Avg"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [23] "RefDetGainOffset_Avg"    "SmpDetSigA_Avg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [25] "SmpDetSigB_Avg"          "SmpDetTransA_Avg"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [27] "SmpDetTransB_Avg"        "SmpDetTemp_Avg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [29] "SmpDetCooler_Avg"        "SmpDetGainOffset_Avg"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [31] "TGATemp1DutyCycle_Avg"   "TGATemp2DutyCycle_Avg"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [33] "SampleFlow_Avg"          "ExcessFlow_Avg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [35] "SamplePress_Avg"         "BypassPress_Avg"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [37] "SampleP_control_Avg"     "BypassP_control_Avg"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [39] "TGAPress_control_Avg"    "panel_tmpr_Avg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [41] "batt_volt_Avg"           "buff_depth_Max"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] "Conc12C_Std"             "Conc13C_Std"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [45] "TGAStatus_Std"           "TGAPressure_Std"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [47] "LaserTemp_Std"           "DCCurrentA_Std"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] "DCCurrentB_Std"          "TGAAnalog1_Std"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] "TGATemp1_Std"            "TGATemp2_Std"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [53] "LaserCooler_Std"         "RefDetSigA_Std"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [55] "RefDetSigB_Std"          "RefDetTransA_Std"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] "RefDetTransB_Std"        "RefDetTemp_Std"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [59] "RefDetCooler_Std"        "RefDetGainOffset_Std"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [61] "SmpDetSigA_Std"          "SmpDetSigB_Std"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [63] "SmpDetTransA_Std"        "SmpDetTransB_Std"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [65] "SmpDetTemp_Std"          "SmpDetCooler_Std"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [67] "SmpDetGainOffset_Std"    "TGATemp1DutyCycle_Std"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [69] "TGATemp2DutyCycle_Std"   "SampleFlow_Std"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] "ExcessFlow_Std"          "SamplePress_Std"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [73] "BypassPress_Std"         "SampleP_control_Std"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [75] "BypassP_control_Std"     "TGAPress_control_Std"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [77] "panel_tmpr_Std"          "batt_volt_Std"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [79] "Li64Match_Avg(1)"        "Li64Match_Avg(2)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [81] "Li64Tmpr_Avg(1)"         "Li64Tmpr_Avg(2)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [83] "Li64Heat_Avg(1)"         "Li64Heat_Avg(2)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] "_Mix_diag_system_Avg"    "_Mix_ExcessZeroFlow_Avg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [87] "_Mix_ExcessMixFlow_Avg"  "_Mix_CO2Press_Avg"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [89] "_Mix_ZeroPress_Avg"      "_Mix_CO2P_control_Avg"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [91] "_Mix_ZeroP_control_Avg"  "_Mix_MixTmpr1_Avg"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [93] "_Mix_MixTmpr2_Avg"       "_Mix_MixHeat1_Avg"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [95] "_Mix_MixHeat2_Avg"       "_Mix_panel_tmpr_Avg"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [97] "_Mix_batt_volt_Avg"      "file_name"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] "cycle_num"               "elapsed_time"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [101] "zero_corrected_12c"      "zero_corrected_13c"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [103] "calibrated_12c"          "calibrated_13c"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [105] "total_CO2_raw"           "total_CO2"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [107] "delta_C13_raw"           "delta_C13"              </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Make a plot of the raw and calibrated 13C signals across all the TDL cycles.</span></span></span>
 <span class="r-in"><span><span class="co"># Note that the calibrated signal from valve 20 is always exactly zero, since</span></span></span>

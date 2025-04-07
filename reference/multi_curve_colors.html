@@ -21,7 +21,7 @@ multi_curve_line_colors returns the same vector, but with the
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,25 +35,25 @@ multi_curve_line_colors returns the same vector, but with the
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
-    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
-    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
-    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/frequent_questions.html">Frequently Asked Questions</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
-<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/web_only/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -106,6 +106,29 @@ multi_curve_line_colors returns the same vector, but with the
   specification.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">multi_curve_colors</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "#000000" "#66C2A5" "#FC8D62" "#8DA0CB" "#E78AC3" "#A6D854" "#FFD92F"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "#E5C494" "#B3B3B3" "#A6CEE3" "#1F78B4" "#B2DF8A" "#33A02C" "#FB9A99"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "#E31A1C" "#FDBF6F" "#FF7F00" "#CAB2D6" "#6A3D9A" "#B15928" "#1B9E77"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "#D95F02" "#7570B3" "#E7298A" "#66A61E" "#E6AB02" "#A6761D" "#666666"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">multi_curve_line_colors</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "#00000000" "#66C2A5"   "#FC8D62"   "#8DA0CB"   "#E78AC3"   "#A6D854"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "#FFD92F"   "#E5C494"   "#B3B3B3"   "#A6CEE3"   "#1F78B4"   "#B2DF8A"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "#33A02C"   "#FB9A99"   "#E31A1C"   "#FDBF6F"   "#FF7F00"   "#CAB2D6"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "#6A3D9A"   "#B15928"   "#1B9E77"   "#D95F02"   "#7570B3"   "#E7298A"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "#66A61E"   "#E6AB02"   "#A6761D"   "#666666"  </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">multi_curve_point_colors</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "#000000"   "#66C2A500" "#FC8D6200" "#8DA0CB00" "#E78AC300" "#A6D85400"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "#FFD92F00" "#E5C49400" "#B3B3B300" "#A6CEE300" "#1F78B400" "#B2DF8A00"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "#33A02C00" "#FB9A9900" "#E31A1C00" "#FDBF6F00" "#FF7F0000" "#CAB2D600"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "#6A3D9A00" "#B1592800" "#1B9E7700" "#D95F0200" "#7570B300" "#E7298A00"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "#66A61E00" "#E6AB0200" "#A6761D00" "#66666600"</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

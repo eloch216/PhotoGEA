@@ -15,7 +15,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,25 +29,25 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-user-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">User Guides</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides"><li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
-    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
-    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
-    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/frequent_questions.html">Frequently Asked Questions</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul></li>
-<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/web_only/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -181,6 +181,105 @@
   were created using this function.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## In this example we load gas exchange and TDL data files, calibrate the TDL</span></span></span>
+<span class="r-in"><span><span class="co">## data, pair the data tables together, and then calculate leakiness. The</span></span></span>
+<span class="r-in"><span><span class="co">## results from this example are not meaningful because these measurements</span></span></span>
+<span class="r-in"><span><span class="co">## were not collected from C4 plants.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Read the TDL data file, making sure to interpret the time zone as US Central</span></span></span>
+<span class="r-in"><span><span class="co"># time</span></span></span>
+<span class="r-in"><span><span class="va">tdl_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'tdl_for_gm.dat'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">'TIMESTAMP'</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'US/Central'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Identify cycles within the TDL data</span></span></span>
+<span class="r-in"><span><span class="va">tdl_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="identify_tdl_cycles.html">identify_tdl_cycles</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">tdl_data</span>,</span></span>
+<span class="r-in"><span>  valve_column_name <span class="op">=</span> <span class="st">'valve_number'</span>,</span></span>
+<span class="r-in"><span>  cycle_start_valve <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>  expected_cycle_length_minutes <span class="op">=</span> <span class="fl">2.7</span>,</span></span>
+<span class="r-in"><span>  expected_cycle_num_valves <span class="op">=</span> <span class="fl">9</span>,</span></span>
+<span class="r-in"><span>  timestamp_colname <span class="op">=</span> <span class="st">'TIMESTAMP'</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Use reference tanks to calibrate the TDL data</span></span></span>
+<span class="r-in"><span><span class="va">processed_tdl</span> <span class="op">&lt;-</span> <span class="fu"><a href="consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">tdl_data</span>,</span></span>
+<span class="r-in"><span>  <span class="va">tdl_data</span><span class="op">[</span>, <span class="st">'cycle_num'</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  <span class="va">process_tdl_cycle_erml</span>,</span></span>
+<span class="r-in"><span>  noaa_valve <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  calibration_0_valve <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>  calibration_1_valve <span class="op">=</span> <span class="fl">21</span>,</span></span>
+<span class="r-in"><span>  calibration_2_valve <span class="op">=</span> <span class="fl">23</span>,</span></span>
+<span class="r-in"><span>  calibration_3_valve <span class="op">=</span> <span class="fl">26</span>,</span></span>
+<span class="r-in"><span>  noaa_cylinder_co2_concentration <span class="op">=</span> <span class="fl">294.996</span>,</span></span>
+<span class="r-in"><span>  noaa_cylinder_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">8.40</span>,</span></span>
+<span class="r-in"><span>  calibration_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">11.505</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Read the gas exchange data, making sure to interpret the time stamp in the US</span></span></span>
+<span class="r-in"><span><span class="co"># Central time zone</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'licor_for_gm_site11.xlsx'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">'time'</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'US/Central'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get TDL valve information from Licor file name; for this TDL system, the</span></span></span>
+<span class="r-in"><span><span class="co"># reference valve is 12 when the sample valve is 11</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_sample_valve_from_filename.html">get_sample_valve_from_filename</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'11'</span> <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get oxygen info from the Licor file preamble (needed for calculate_gamma_star)</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_oxygen_from_preamble.html">get_oxygen_from_preamble</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Pair the Licor and TDL data by locating the TDL cycle corresponding to each</span></span></span>
+<span class="r-in"><span><span class="co"># Licor measurement</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate total pressure (needed for calculate_gas_properties)</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate Csurface (needed for calculate_ternary_correction)</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate ternary correction</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_ternary_correction.html">calculate_ternary_correction</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate isotope discrimination (needed for calculate_leakiness_ubierna)</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculate_isotope_discrimination.html">calculate_isotope_discrimination</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Set respiration (needed for calculate_leakiness_ubierna)</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="set_variable.html">set_variable</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">licor_data</span>,</span></span>
+<span class="r-in"><span>  <span class="st">'RL'</span>,</span></span>
+<span class="r-in"><span>  <span class="st">'micromol m^(-2) s^(-1)'</span>,</span></span>
+<span class="r-in"><span>  value <span class="op">=</span> <span class="fl">1.2</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate leakiness</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu">calculate_leakiness_ubierna</span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># View some of the results</span></span></span>
+<span class="r-in"><span><span class="va">licor_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'replicate'</span>, <span class="st">'CO2_s'</span>, <span class="st">'Delta_obs_tdl'</span>, <span class="st">'phi_i'</span>, <span class="st">'phi_sim'</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replicate   CO2_s Delta_obs_tdl     phi_i   phi_sim</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          1 417.363      8.039825 0.5647984 0.5652561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          1 420.552      8.137268 0.5787469 0.5791113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          1 418.796      7.893969 0.5548495 0.5550261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          1 419.493      8.029239 0.5625286 0.5627514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          1 420.102      8.964915 0.6097656 0.6098926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          1 421.133      8.673921 0.5935674 0.5936957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          1 262.873      6.434975 0.4796541 0.4793111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          1 262.720      6.747186 0.4966989 0.4966153</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          1 262.633      6.326945 0.4760775 0.4752982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         1 262.271      6.358834 0.4709619 0.4705850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         1 262.112      7.450206 0.5193723 0.5192365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12         1 262.176      6.843263 0.4874634 0.4875021</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

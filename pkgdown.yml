@@ -2,20 +2,20 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  analyzing_ball_berry_data: analyzing_ball_berry_data.html
-  analyzing_c3_aci_curves: analyzing_c3_aci_curves.html
-  analyzing_c4_aci_curves: analyzing_c4_aci_curves.html
-  analyzing_gm_data: analyzing_gm_data.html
-  analyzing_tdl_data: analyzing_tdl_data.html
-  combining_with_other_packages: combining_with_other_packages.html
-  creating_your_own_processing_tools: creating_your_own_processing_tools.html
-  developing_a_data_analysis_pipeline: developing_a_data_analysis_pipeline.html
-  frequent_questions: frequent_questions.html
-  LI6800_user_constants: LI6800_user_constants.html
+  web_only/analyzing_ball_berry_data: web_only/analyzing_ball_berry_data.html
+  web_only/analyzing_c3_aci_curves: web_only/analyzing_c3_aci_curves.html
+  web_only/analyzing_c4_aci_curves: web_only/analyzing_c4_aci_curves.html
+  web_only/analyzing_gm_data: web_only/analyzing_gm_data.html
+  web_only/analyzing_tdl_data: web_only/analyzing_tdl_data.html
+  web_only/combining_with_other_packages: web_only/combining_with_other_packages.html
+  web_only/creating_your_own_processing_tools: web_only/creating_your_own_processing_tools.html
+  web_only/developing_a_data_analysis_pipeline: web_only/developing_a_data_analysis_pipeline.html
+  web_only/frequent_questions: web_only/frequent_questions.html
+  web_only/LI6800_user_constants: web_only/LI6800_user_constants.html
   PhotoGEA: PhotoGEA.html
-  publications: publications.html
-  working_with_extended_data_frames: working_with_extended_data_frames.html
-last_built: 2025-04-04T23:42Z
+  web_only/publications: web_only/publications.html
+  web_only/working_with_extended_data_frames: web_only/working_with_extended_data_frames.html
+last_built: 2025-04-07T20:22Z
 urls:
   reference: https://eloch216.github.io/PhotoGEA/reference
   article: https://eloch216.github.io/PhotoGEA/articles

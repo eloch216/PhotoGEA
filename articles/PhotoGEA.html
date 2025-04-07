@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,26 +42,26 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-user-guides">
 <li><h6 class="dropdown-header" data-toc-skip>ANALYSIS GUIDES</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
-    <li><a class="dropdown-item" href="../articles/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_ball_berry_data.html">Analyzing Ball-Berry Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci Curves</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_gm_data.html">Analyzing Mesophyll Conductance Data</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/analyzing_tdl_data.html">Analyzing TDL Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL PHOTOGEA ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
-    <li><a class="dropdown-item" href="../articles/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
-    <li><a class="dropdown-item" href="../articles/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
-    <li><a class="dropdown-item" href="../articles/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
-    <li><a class="dropdown-item" href="../articles/frequent_questions.html">Frequently Asked Questions</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/combining_with_other_packages.html">Combining PhotoGEA With Other Packages</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/creating_your_own_processing_tools.html">Creating Your Own Processing Tools</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/developing_a_data_analysis_pipeline.html">Developing a Data Analysis Pipeline</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/working_with_extended_data_frames.html">Working With Extended Data Frames</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/frequent_questions.html">Frequently Asked Questions</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>GENERAL GAS EXCHANGE ADVICE</h6></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/LI6800_user_constants.html">Guide to Licor LI-6800 User Constants</a></li>
   </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="../articles/publications.html">Publications</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/web_only/publications.html">Publications</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -84,7 +84,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Getting Started With PhotoGEA</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.0/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/cran-compliance/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
       <div class="d-none name"><code>PhotoGEA.Rmd</code></div>
     </div>
 
@@ -106,13 +106,11 @@ not work properly in a local version. To see the online version, visit
 <div class="section level2">
 <h2 id="installing-photogea">Installing PhotoGEA<a class="anchor" aria-label="anchor" href="#installing-photogea"></a>
 </h2>
-<p>The easiest way to install <code>PhotoGEA</code> is to type the
-following from within the R terminal:</p>
+<p><code>PhotoGEA</code> is available on CRAN, so the easiest way to
+install the latest release is to type the following from within an R
+terminal:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'eloch216/PhotoGEA'</span><span class="op">)</span></span></code></pre></div>
-<p>Note that this method requires the <code>remotes</code> package,
-which can be installed from within R by typing
-<code>install.packages('remotes')</code>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'PhotoGEA'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="an-example-c3-co2-response-curves">An Example: C<sub>3</sub> CO<sub>2</sub> Response Curves<a class="anchor" aria-label="anchor" href="#an-example-c3-co2-response-curves"></a>
@@ -125,8 +123,8 @@ is possible with <code>PhotoGEA</code>.</p>
 <p>(<strong>Note:</strong> When loading your own files for analysis, it
 is not advisable to use <code>PhotoGEA_example_file_path</code> as we
 have done in the code below. Instead, file paths can be directly
-written, or files can be chosen using an interactive window. See the <a href="analyzing_c3_aci_curves.html#input-files">Analyzing C3 A-Ci
-Curves</a> vignette for more information.)</p>
+written, or files can be chosen using an interactive window. See the <a href="web_only/analyzing_c3_aci_curves.html#input-files">Analyzing C3
+A-Ci Curves</a> vignette for more information.)</p>
 <div class="section level3">
 <h3 id="fitting-the-curves">Fitting the Curves<a class="anchor" aria-label="anchor" href="#fitting-the-curves"></a>
 </h3>
@@ -192,7 +190,7 @@ curve:</p>
 <p>When this document was generated, evaluating this code required the
 following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;  19.596   0.046  19.644</span></span></code></pre>
+<span><span class="co">#&gt;  16.559   0.050  16.608</span></span></code></pre>
 <p>The timing results may vary depending on the particular machine used
 to run the code. Nevertheless, this is a small time investment for an
 advanced algorithm that uses derivative-free optimizers for robust
@@ -282,58 +280,62 @@ degrees C for each species.</p>
 and more articles are being added all the time:</p>
 <ul>
 <li>
-<a href="publications.html">Publication Gallery</a>: Includes a list
-of publications that describe or use <code>PhotoGEA</code>, along with
-links to their corresponding analysis scripts.</li>
+<a href="web_only/publications.html">Publication Gallery</a>:
+Includes a list of publications that describe or use
+<code>PhotoGEA</code>, along with links to their corresponding analysis
+scripts.</li>
 <li>Analysis guides:
 <ul>
 <li>
-<a href="analyzing_c3_aci_curves.html">Analyzing C3 A-Ci Curves</a>
-(This example is more detailed than the analysis demonstrated
+<a href="web_only/analyzing_c3_aci_curves.html">Analyzing C3 A-Ci
+Curves</a> (This example is more detailed than the analysis demonstrated
 here.)</li>
-<li><a href="analyzing_c4_aci_curves.html">Analyzing C4 A-Ci
+<li><a href="web_only/analyzing_c4_aci_curves.html">Analyzing C4 A-Ci
 Curves</a></li>
-<li><a href="analyzing_ball_berry_data.html">Analyzing Ball-Berry
+<li><a href="web_only/analyzing_ball_berry_data.html">Analyzing
+Ball-Berry Data</a></li>
+<li><a href="web_only/analyzing_tdl_data.html">Analyzing TDL
 Data</a></li>
-<li><a href="analyzing_tdl_data.html">Analyzing TDL Data</a></li>
-<li><a href="analyzing_gm_data.html">Analyzing Mesophyll Conductance
-Data</a></li>
+<li><a href="web_only/analyzing_gm_data.html">Analyzing Mesophyll
+Conductance Data</a></li>
 </ul>
 </li>
 <li>General <code>PhotoGEA</code> advice:
 <ul>
 <li>
-<a href="creating_your_own_processing_tools.html">Creating Your Own
-Processing Tools</a>: Discusses how to create functions compatible with
-<code>PhotoGEA</code> that apply new types of processing.</li>
+<a href="web_only/creating_your_own_processing_tools.html">Creating
+Your Own Processing Tools</a>: Discusses how to create functions
+compatible with <code>PhotoGEA</code> that apply new types of
+processing.</li>
 <li>
-<a href="combining_with_other_packages.html">Combining PhotoGEA With
-Other Packages</a>: Discusses how to create wrappers for functions from
-other packages to extend the processing capabilities of
+<a href="web_only/combining_with_other_packages.html">Combining
+PhotoGEA With Other Packages</a>: Discusses how to create wrappers for
+functions from other packages to extend the processing capabilities of
 <code>PhotoGEA</code>.</li>
 <li>
-<a href="developing_a_data_analysis_pipeline.html">Developing a Data
-Analysis Pipeline</a>: Discusses how <code>PhotoGEA</code> provides
+<a href="web_only/developing_a_data_analysis_pipeline.html">Developing a
+Data Analysis Pipeline</a>: Discusses how <code>PhotoGEA</code> provides
 functionality for all parts of a data analysis pipeline, including
 loading and validating the data – and how it can help save your time and
 improve the reproducibility of your data analysis!</li>
 <li>
-<a href="working_with_extended_data_frames.html">Working With
-Extended Data Frames</a>: Discusses how to work with extended data
+<a href="web_only/working_with_extended_data_frames.html">Working
+With Extended Data Frames</a>: Discusses how to work with extended data
 frames, which are a critical part of <code>PhotoGEA</code>.</li>
 <li>
-<a href="frequent_questions.html">Frequently Asked Questions</a>:
-Provides answers to frequently asked questions about
+<a href="web_only/frequent_questions.html">Frequently Asked
+Questions</a>: Provides answers to frequently asked questions about
 <code>PhotoGEA</code>.</li>
 </ul>
 </li>
 <li>General gas exchange advice:
 <ul>
 <li>
-<a href="LI6800_user_constants.html">Guide to Licor LI-6800 User
-Constants</a>: Discusses how to include metadata in log files when using
-a Licor LI-6800 gas exchange measurement system, and provides advice for
-dealing with data sets that do not contain user constants.</li>
+<a href="web_only/LI6800_user_constants.html">Guide to Licor LI-6800
+User Constants</a>: Discusses how to include metadata in log files when
+using a Licor LI-6800 gas exchange measurement system, and provides
+advice for dealing with data sets that do not contain user
+constants.</li>
 </ul>
 </li>
 </ul>
