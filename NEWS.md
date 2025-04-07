@@ -31,16 +31,26 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## Changes in PhotoGEA version 1.3.1 (2024-04-05)
+## Changes in PhotoGEA version 1.3.1 (2024-04-07)
+
+### Minor user-facing changes
+
+- Made sure all exported functions have `value` and `examples` sections in their
+  documentation.
 
 ### Internal changes
 
 - Designated most vignettes as "web only" to make the package smaller; this is
   important for complying with CRAN guidelines.
-- Set `maxiter` to 50 when using `stats::uniroot` to calculate confidence
+- Set `maxiter` to 40 when using `stats::uniroot` to calculate confidence
   intervals; this saves quite a bit of time compared to the default value (1000)
   and prevents several examples from being flagged by `R CMD check` for taking
   too long to run.
+
+### Bug fixes
+
+- Fixed an error that occurred when removing unreliable C4 parameter estimates
+  without first calculating confidence intervals
 
 ## Changes in PhotoGEA version 1.3.0 (2024-04-04)
 
