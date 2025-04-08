@@ -70,16 +70,17 @@ check_response_curve_data <- function(
     # If there is a problem with the curve counts, print them and notify the
     # user
     if (npt_problem) {
-        # Print
-        npts_df <- do.call(rbind, lapply(split_exdf, function(x) {
-            unique(x[ , as.character(identifier_columns)])
-        }))
-        npts_df <- as.data.frame(npts_df)
-        colnames(npts_df) <- identifier_columns
-        npts_df$npts <- as.numeric(curve_npts)
-        row.names(npts_df) <- NULL
-
+        # Print, if desired
         if (print_information) {
+            npts_df <- do.call(rbind, lapply(split_exdf, function(x) {
+                unique(x[ , as.character(identifier_columns)])
+            }))
+
+            npts_df            <- as.data.frame(npts_df)
+            colnames(npts_df)  <- identifier_columns
+            npts_df$npts       <- as.numeric(curve_npts)
+            row.names(npts_df) <- NULL
+
             print(npts_df)
         }
 
