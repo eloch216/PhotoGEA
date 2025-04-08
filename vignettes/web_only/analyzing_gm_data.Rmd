@@ -181,14 +181,16 @@ directly written, or files can be chosen using an interactive window. See
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Later, we will need to match
 the timestamps in the gas exchange and isotope discrimination data; to make sure
-the timestamps are interpreted correctly, we will also specify the time zone
-where the measurements were made (`US/Central`). Since there are multiple files
-to read, we will call this function once for each file using `lapply`:
+the timestamps are interpreted correctly, we will also set the time zone to the
+current system time zone. (The measurements were actually made in the US Central
+time zone, but `tz = 'US/Central'` is not recognized by some operating systems.)
+Since there are multiple files to read, we will call this function once for each
+file using `lapply`:
 
 ```{r loading_licor_data}
 # Load each Licor file, storing the result in a list
 licor_exdf_list <- lapply(licor_file_paths, function(fpath) {
-  read_gasex_file(fpath, 'time', posix_options = list(tz = 'US/Central'))
+  read_gasex_file(fpath, 'time', posix_options = list(tz = Sys.timezone()))
 })
 ```
 
@@ -278,15 +280,16 @@ directly written, or files can be chosen using an interactive window. See
 To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Later, we will need to match
 the timestamps in the gas exchange and isotope discrimination data; to make sure
-the timestamps are interpreted correctly, we will also specify the time zone
-where the measurements were made (`US/Central`). Since there are (potentially)
-multiple files to read, we will call this function once for each file using
-`lapply`:
+the timestamps are interpreted correctly, we will also set the time zone to the
+current system time zone. (The measurements were actually made in the US Central
+time zone, but `tz = 'US/Central'` is not recognized by some operating systems.)
+Since there are (potentially) multiple files to read, we will call this function
+once for each file using `lapply`:
 
 ```{r loading_tdl_data}
 # Load each TDL file, storing the result in a list
 tdl_exdf_list <- lapply(tdl_file_paths, function(fpath) {
-  read_gasex_file(fpath, 'TIMESTAMP', posix_options = list(tz = 'US/Central'))
+  read_gasex_file(fpath, 'TIMESTAMP', posix_options = list(tz = Sys.timezone()))
 })
 ```
 

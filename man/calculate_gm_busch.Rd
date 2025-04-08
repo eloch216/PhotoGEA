@@ -182,12 +182,14 @@
 ## In this example we load gas exchange and TDL data files, calibrate the TDL
 ## data, pair the data tables together, and then calculate mesophyll conductance
 
-# Read the TDL data file, making sure to interpret the time zone as US Central
-# time
+# Read the TDL data file, interpreting the times as if they were specified in
+# the local time zone. (The measurements were actually made in the US Central
+# time zone, but `tz = 'US/Central'` is not recognized by some operating
+# systems.)
 tdl_data <- read_gasex_file(
   PhotoGEA_example_file_path('tdl_for_gm.dat'),
   'TIMESTAMP',
-  list(tz = 'US/Central')
+  list(tz = Sys.timezone())
 )
 
 # Identify cycles within the TDL data
@@ -215,12 +217,14 @@ processed_tdl <- consolidate(by(
   calibration_isotope_ratio = -11.505
 ))
 
-# Read the gas exchange data, making sure to interpret the time stamp in the US
-# Central time zone
+# Read the gas exchange data file, interpreting the times as if they were
+# specified in the local time zone. (The measurements were actually made in the
+# US Central time zone, but `tz = 'US/Central'` is not recognized by some
+# operating systems.)
 licor_data <- read_gasex_file(
   PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
   'time',
-  list(tz = 'US/Central')
+  list(tz = Sys.timezone())
 )
 
 # Get TDL valve information from Licor file name; for this TDL system, the
