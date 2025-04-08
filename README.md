@@ -28,6 +28,10 @@ latest release is to type the following from within an R terminal:
 install.packages('PhotoGEA')
 ```
 
+See the [Frequently Asked
+Questions](https://eloch216.github.io/PhotoGEA/articles/web_only/frequent_questions.html)
+for alternative installation methods.
+
 ### Usage
 
 The best way to learn about using `PhotoGEA` is to visit the [PhotoGEA

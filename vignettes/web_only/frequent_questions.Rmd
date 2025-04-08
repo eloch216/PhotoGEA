@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# How Do I Install The Latest Release of PhotoGEA?
+# How Do I Install the Latest Release of PhotoGEA?
 
 `PhotoGEA` is available on CRAN, so the easiest way to install the latest
 release is to type the following from within an R terminal:
@@ -41,7 +41,7 @@ remotes::install_github('eloch216/PhotoGEA')
 Note that this method requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install An Old Version of PhotoGEA?
+# How Do I Install an Old Version of PhotoGEA?
 
 All `PhotoGEA` releases are tagged on GitHub, and the tag names are formatted as
 `vX.Y.Z`, where `X.Y.Z` is the version number. Because of this,
@@ -56,7 +56,7 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'v1.0.0')
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install The Development Version of PhotoGEA?
+# How Do I Install the Development Version of PhotoGEA?
 
 The development version of `PhotoGEA` contains the latest changes, although it
 may be a "work in progress" and subject to suddent changes without any warning.
@@ -69,6 +69,19 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
 
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
+
+# How Do I Install From a Local Copy of the Repository?
+
+The `PhotoGEA` package can be installed from a local copy of the repository by
+running the following command in an R session with the working directory set to
+the root directory of the `PhotoGEA` repository:
+
+```{r, eval = FALSE}
+install.packages('.', repos = NULL, type = 'SOURCE')
+```
+
+This can be helpful for developers who wish to locally test changes to the
+package code.
 
 # What Should I Do When check_response_curve_data Fails?
 
@@ -99,11 +112,11 @@ reverted.
 Sometimes `check_response_curve_data` fails for a different reason -- for
 example, perhaps different setpoint sequences were intentionally used while
 measuring the curves, or perhaps you have already cleaned up your data in Excel.
-In these cases, please see the "What If My Response Curves Have Different
-Numbers of Points?" and "What If I Clean My Data In Excel?" sections of this
+In these cases, please see the "What if My Response Curves Have Different
+Numbers of Points?" and "What if I Clean My Data in Excel?" sections of this
 article.
 
-# What If My Response Curves Have Different Numbers of Points?
+# What if My Response Curves Have Different Numbers of Points?
 
 The analysis guides use data sets where each response curve has the same number
 of points, making it easy to apply `check_response_curve_data` and
@@ -115,7 +128,7 @@ that are expected to use the same sequences, then separately check and organize
 each group, and finally recombine all the groups back together. The code
 snippets below show two examples of how this could be accomplished.
 
-## Splitting response curves according to the number of points in each curve
+## Splitting Response Curves According to the Number of Points in Each Curve
 
 The following code would replace the calls to `check_response_curve_data` and
 `organize_response_curve_data` in the user guides. This code was originally
@@ -175,7 +188,7 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'curve_npts'], function
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
 
-## Splitting the response curves according to the date they were measured and the number of points in each curve
+## Splitting Response Curves According to the Date They Were Measured and the Number of Points in Each Curve
 
 This code would replace the calls to `check_response_curve_data` and
 `organize_response_curve_data` in the user guides. This code was originally
@@ -251,7 +264,7 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'date_ymd_npts'], funct
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
 
-# What If I Clean My Data In Excel?
+# What if I Clean My Data in Excel?
 
 In the user guides, the `organize_response_curve_data` and `remove_points`
 functions are used to remove recovery points and other points from sets of
@@ -293,7 +306,7 @@ licor_data <- organize_response_curve_data(
 )
 ```
 
-# What If I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
+# What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
 
 At the moment, `PhotoGEA` can read plaintext and Excel files created by Licor
 LI-6800 gas exchange measurement systems, but does not have functions for
@@ -376,15 +389,15 @@ read_6400_xls_wrapper <- function(fpath) {
     # return
     document_variables(
         exdf_obj,
-        c('read_6400_xls_wrapper', 'A',          'micromol m^(-2) s^(-1)'),
-        c('read_6400_xls_wrapper', 'Ca',         'micromol mol^(-1)'),
-        c('read_6400_xls_wrapper', 'Ci',         'micromol mol^(-1)'),
-        c('read_6400_xls_wrapper', 'DeltaPcham', 'kPa'),
-        c('read_6400_xls_wrapper', 'gsw',        'mol m^(-2) s^(-1)'),
-        c('read_6400_xls_wrapper', 'oxygen',     'percent'),
-        c('read_6400_xls_wrapper', 'Pa',         'kPa'),
-        c('read_6400_xls_wrapper', 'Qin',        'micromol m^(-2) s^(-1)'),
-        c('read_6400_xls_wrapper', 'TleafCnd',   'degrees C')
+        c('GasEx', 'A',          'micromol m^(-2) s^(-1)'),
+        c('GasEx', 'Ca',         'micromol mol^(-1)'),
+        c('GasEx', 'Ci',         'micromol mol^(-1)'),
+        c('Meas',  'DeltaPcham', 'kPa'),
+        c('GasEx', 'gsw',        'mol m^(-2) s^(-1)'),
+        c('in',    'oxygen',     'percent'),
+        c('Meas',  'Pa',         'kPa'),
+        c('LeafQ', 'Qin',        'micromol m^(-2) s^(-1)'),
+        c('GasEx', 'TleafCnd',   'degrees C')
     )
 }
 
@@ -414,7 +427,7 @@ licor_exdf_list <- lapply(file_paths, function(fpath) {
 })
 ```
 
-# What If My Files Don't Have User Constants or Other Metadata?
+# What if My Files Don't Have User Constants or Other Metadata?
 
 Please see the
 [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html).
