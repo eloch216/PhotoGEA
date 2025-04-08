@@ -37,7 +37,7 @@ be directly added to this file to describe the related changes.
 
 - Made sure all exported functions have `value` and `examples` sections in their
   documentation.
-- Specify `tz = Sys.timezone()` when pairing TDL and gas exchange data, since
+- Specify `tz = 'America/Chicago'` when pairing TDL and gas exchange data, since
   setting `tz = 'US/Central')` does not seem to work on debian. CRAN checks the
   package examples on debian.
 

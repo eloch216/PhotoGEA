@@ -80,14 +80,12 @@
 ## In this example we load gas exchange and TDL data files, calibrate the TDL
 ## data, and pair the data tables together
 
-# Read the TDL data file, interpreting the times as if they were specified in
-# the local time zone. (The measurements were actually made in the US Central
-# time zone, but `tz = 'US/Central'` is not recognized by some operating
-# systems.)
+# Read the TDL data file, making sure to interpret the time zone as US Central
+# time
 tdl_data <- read_gasex_file(
   PhotoGEA_example_file_path('tdl_for_gm.dat'),
   'TIMESTAMP',
-  list(tz = Sys.timezone())
+  list(tz = 'America/Chicago')
 )
 
 # Identify cycles within the TDL data
@@ -115,14 +113,12 @@ processed_tdl <- consolidate(by(
   calibration_isotope_ratio = -11.505
 ))
 
-# Read the gas exchange data file, interpreting the times as if they were
-# specified in the local time zone. (The measurements were actually made in the
-# US Central time zone, but `tz = 'US/Central'` is not recognized by some
-# operating systems.)
+# Read the gas exchange data, making sure to interpret the time stamp in the US
+# Central time zone
 licor_data <- read_gasex_file(
   PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
   'time',
-  list(tz = Sys.timezone())
+  list(tz = 'America/Chicago')
 )
 # Get TDL valve information from Licor file name; for this TDL system, the
 # reference valve is 12 when the sample valve is 11
