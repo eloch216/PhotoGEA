@@ -1,7 +1,7 @@
 simple_exdf <- exdf(
-  data.frame(A = c(3, 2, 7, 9), B = c(4, 5, 1, 8)),
-  data.frame(A = 'm', B = 's'),
-  data.frame(A = 'Cat1', B = 'Cat2')
+  data.frame(A = c(3, 2, 7, 9), B = c(4, 5, 1, 8), stringsAsFactors = FALSE),
+  data.frame(A = 'm', B = 's', stringsAsFactors = FALSE),
+  data.frame(A = 'Cat1', B = 'Cat2', stringsAsFactors = FALSE)
 )
 
 test_that('column names must match', {
