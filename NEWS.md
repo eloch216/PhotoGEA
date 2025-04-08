@@ -40,6 +40,8 @@ be directly added to this file to describe the related changes.
 - Specify `tz = 'America/Chicago'` when pairing TDL and gas exchange data, since
   setting `tz = 'US/Central')` does not seem to work on debian. CRAN checks the
   package examples on debian.
+- Added `read_cr3000`, `read_licor_6800_Excel`, and `read_licor_6800_plaintext`
+  so they can be used in examples without needing `:::`.
 
 ### Internal changes
 
@@ -49,11 +51,13 @@ be directly added to this file to describe the related changes.
   intervals; this saves quite a bit of time compared to the default value (1000)
   and prevents several examples from being flagged by `R CMD check` for taking
   too long to run.
+- Use `message` to send messages to the user in `rbind.exdf` rather than `cat`
+  or `print`. This is necessary to comply with CRAN requirements.
 
 ### Bug fixes
 
 - Fixed an error that occurred when removing unreliable C4 parameter estimates
-  without first calculating confidence intervals
+  without first calculating confidence intervals.
 
 ## Changes in PhotoGEA version 1.3.0 (2024-04-04)
 
