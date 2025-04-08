@@ -320,13 +320,13 @@ we will use the <code>read_gasex_file</code> function from
 <code>PhotoGEA</code>. Later, we will need to match the timestamps in
 the gas exchange and isotope discrimination data; to make sure the
 timestamps are interpreted correctly, we will also specify the time zone
-where the measurements were made (<code>US/Central</code>). Since there
-are multiple files to read, we will call this function once for each
-file using <code>lapply</code>:</p>
+where the measurements were made (<code>America/Chicago</code>). Since
+there are (potentially) multiple files to read, we will call this
+function once for each file using <code>lapply</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load each Licor file, storing the result in a list</span></span>
 <span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'US/Central'</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'America/Chicago'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>The result from this command is an R list of “extended data frames”
 (abbreviated as <code>exdf</code> objects). The <code>exdf</code> class
@@ -410,13 +410,13 @@ we will use the <code>read_gasex_file</code> function from
 <code>PhotoGEA</code>. Later, we will need to match the timestamps in
 the gas exchange and isotope discrimination data; to make sure the
 timestamps are interpreted correctly, we will also specify the time zone
-where the measurements were made (<code>US/Central</code>). Since there
-are (potentially) multiple files to read, we will call this function
-once for each file using <code>lapply</code>:</p>
+where the measurements were made (<code>America/Chicago</code>). Since
+there are multiple files to read, we will call this function once for
+each file using <code>lapply</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load each TDL file, storing the result in a list</span></span>
 <span><span class="va">tdl_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">tdl_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'TIMESTAMP'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'US/Central'</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'TIMESTAMP'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'America/Chicago'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>As before, the result from this command is a list of
 <code>exdf</code> objects. (In this case, it is a list with one element.
@@ -1033,7 +1033,7 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># Load each Licor file, storing the result in a list</span></span>
 <span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'US/Central'</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'America/Chicago'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get TDL sample and reference valve numbers from the Licor filenames</span></span>
@@ -1071,7 +1071,7 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># Load each TDL file, storing the result in a list</span></span>
 <span><span class="va">tdl_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">tdl_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'TIMESTAMP'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'US/Central'</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'TIMESTAMP'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'America/Chicago'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get the names of all columns that are present in all of the TDL files</span></span>
