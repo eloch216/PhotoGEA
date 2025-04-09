@@ -49,9 +49,20 @@ test_that('genotype - replicate (WT) identifiers are factorized properly', {
 test_that('table columns are factorized', {
     ids <- c('4 - 4', 'wT - 2', 'a - 2', 'WT - 1', '4 - 8', 'wt - 9')
 
-    dat <- data.frame(replicate_id = ids, val = seq_along(ids))
+    dat <- data.frame(
+        replicate_id = ids,
+        val = seq_along(ids),
+        stringsAsFactors = FALSE
+    )
 
-    exdf_obj <- exdf(dat, units = data.frame(replicate_id = '', val = 'm / s'))
+    exdf_obj <- exdf(
+        dat,
+        units = data.frame(
+            replicate_id = '',
+            val = 'm / s',
+            stringsAsFactors = FALSE
+        )
+    )
 
     dat <- expect_silent(
         factorize_id_column(dat, 'replicate_id')

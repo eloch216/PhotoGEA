@@ -418,6 +418,15 @@ cbind.exdf <- function(..., deparse.level = 1) {
     ))
 }
 
+# Helping function for formatting units and categories to be used in error
+# messages
+format_uc <- function(x) {
+    paste(
+        paste(colnames(x), x[1, ], sep = ' = '),
+        collapse = ', '
+    )
+}
+
 # Combine exdf objects by the rows of their main_data
 rbind.exdf <- function(
     ...,
@@ -448,30 +457,39 @@ rbind.exdf <- function(
     for (i in seq_along(exdf_list)) {
         current_exdf <- exdf_list[[i]]
 
-        if (!identical(colnames(first_exdf$main_data), colnames(current_exdf$main_data))) {
-            cat('\ncolnames from first exdf object:\n')
-            print(colnames(first_exdf$main_data))
-            cat('\ncolnames from current exdf object:\n')
-            colnames(current_exdf$main_data)
-            cat('\n')
+        if (!identical(colnames(first_exdf), colnames(current_exdf))) {
+            msg <- paste0(
+                '\ncolnames from first exdf object:\n',
+                paste(colnames(first_exdf), collapse = ', '),
+                '\ncolnames from current exdf object:\n',
+                paste(colnames(current_exdf), collapse = ', '),
+                '\n'
+            )
+            message(msg)
             stop("exdf objects must all have the same column names when using rbind")
         }
 
         if (!identical(first_exdf$categories, current_exdf$categories)) {
-            cat('\ncategories from first exdf object:\n')
-            print(colnames(first_exdf$categories))
-            cat('\ncategories from current exdf object:\n')
-            colnames(current_exdf$categories)
-            cat('\n')
+            msg <- paste0(
+                '\ncategories from first exdf object:\n',
+                format_uc(first_exdf$categories),
+                '\ncategories from current exdf object:\n',
+                format_uc(current_exdf$categories),
+                '\n'
+            )
+            message(msg)
             stop("exdf objects must all have the same categories when using rbind")
         }
 
         if (!identical(first_exdf$units, current_exdf$units)) {
-            cat('\nunits from first exdf object:\n')
-            print(colnames(first_exdf$units))
-            cat('\nunits from current exdf object:\n')
-            colnames(current_exdf$units)
-            cat('\n')
+            msg <- paste0(
+                '\nunits from first exdf object:\n',
+                format_uc(first_exdf$units),
+                '\nunits from current exdf object:\n',
+                format_uc(current_exdf$units),
+                '\n'
+            )
+            message(msg)
             stop("exdf objects must all have the same units when using rbind")
         }
     }

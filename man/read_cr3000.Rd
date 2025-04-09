@@ -68,7 +68,7 @@
 
 \examples{
 # Example: reading a TDL file that is included with the PhotoGEA package.
-tdl_file <- PhotoGEA:::read_cr3000(
+tdl_file <- read_cr3000(
   PhotoGEA_example_file_path('tdl_sampling_1.dat')
 )
 

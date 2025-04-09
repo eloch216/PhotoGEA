@@ -135,7 +135,7 @@
 \examples{
 # Example 1: Reading a Licor Excel file that is included with the PhotoGEA
 # package and viewing some of the "extra" information associated with the file
-licor_file <- PhotoGEA:::read_licor_6800_Excel(
+licor_file <- read_licor_6800_Excel(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
 
@@ -146,7 +146,7 @@ print(licor_file$user_remarks)
 # Example 2: Reading a Licor Excel file that is included with the PhotoGEA
 # package; here we use a different column name to identify the data block within
 # the file's contents.
-licor_file <- PhotoGEA:::read_licor_6800_Excel(
+licor_file <- read_licor_6800_Excel(
   PhotoGEA_example_file_path('ball_berry_1.xlsx'),
   column_name = 'A'
 )

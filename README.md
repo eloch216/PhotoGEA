@@ -6,6 +6,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/PhotoGEA)](https://cran.r-project.org/package=PhotoGEA)
 [![R-CMD-check](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/eloch216/PhotoGEA/graph/badge.svg)](https://app.codecov.io/gh/eloch216/PhotoGEA?branch=main)
 <!-- badges: end -->
@@ -16,19 +18,23 @@
 **a**nalysis) is an R package that provides a suite of tools for
 loading, processing, and analyzing photosynthetic gas exchange data. See
 [Lochocki, Salesse-Smith, & McGrath
-(2025)](https://doi.org/10.1111/pce.15501) for more information.
+(2025)](https://onlinelibrary.wiley.com/doi/10.1111/pce.15501) for more
+information.
 
 ### Installation
 
-The easiest way to install `PhotoGEA` is to type the following from
-within the R terminal:
+`PhotoGEA` is available on
+[CRAN](https://cran.r-project.org/package=PhotoGEA), so the easiest way
+to install the latest release is to type the following from within an R
+terminal:
 
 ``` r
-remotes::install_github('eloch216/PhotoGEA')
+install.packages('PhotoGEA')
 ```
 
-Note that this method requires the `remotes` package, which can be
-installed from within R by typing `install.packages('remotes')`.
+See the [Frequently Asked
+Questions](https://eloch216.github.io/PhotoGEA/articles/web_only/frequent_questions.html)
+for alternative installation methods.
 
 ### Usage
 
@@ -43,7 +49,7 @@ that describe its general features and several important use cases.
 ### Example Scripts
 
 The [PhotoGEA
-Publications](https://eloch216.github.io/PhotoGEA/articles/publications.html)
+Publications](https://eloch216.github.io/PhotoGEA/articles/web_only/publications.html)
 page includes links to publicly-available analysis scripts that have
 been used for peer-reviewed publications. These may be a useful source
 of ideas.

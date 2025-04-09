@@ -34,3 +34,32 @@
 }
 
 \value{None of the deprecated functions return anything.}
+
+\examples{
+# These functions all throw errors, so we will wrap them in `tryCatch` here
+
+tryCatch(
+  read_tdl_file(),
+  error = function(e) {print(e)}
+)
+
+tryCatch(
+  read_licor_file(),
+  error = function(e) {print(e)}
+)
+
+tryCatch(
+  check_licor_data(),
+  error = function(e) {print(e)}
+)
+
+tryCatch(
+  calculate_arrhenius(),
+  error = function(e) {print(e)}
+)
+
+tryCatch(
+  calculate_peaked_gaussian(),
+  error = function(e) {print(e)}
+)
+}

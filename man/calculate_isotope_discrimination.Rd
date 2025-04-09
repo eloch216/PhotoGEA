@@ -156,7 +156,7 @@
 tdl_data <- read_gasex_file(
   PhotoGEA_example_file_path('tdl_for_gm.dat'),
   'TIMESTAMP',
-  list(tz = 'US/Central')
+  list(tz = 'America/Chicago')
 )
 
 # Identify cycles within the TDL data
@@ -189,7 +189,7 @@ processed_tdl <- consolidate(by(
 licor_data <- read_gasex_file(
   PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
   'time',
-  list(tz = 'US/Central')
+  list(tz = 'America/Chicago')
 )
 
 # Get TDL valve information from Licor file name; for this TDL system, the

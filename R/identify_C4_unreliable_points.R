@@ -71,7 +71,7 @@ identify_c4_unreliable_points <- function(
     r_remove          <- remove_estimate(r_trust, remove_unreliable_param)
 
     j_unreliable_npts <- parameters[, 'n_Aj_smallest'] < unreliable_n_threshold
-    j_unreliable_inf  <- 'J_at_25' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
+    j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
     j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
     j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
 

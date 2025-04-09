@@ -111,3 +111,19 @@
   and upper bounds (\code{upper}). It returns a list with four named elements:
   \code{par}, \code{convergence}, \code{feval}, and \code{convergence_msg}.
 }
+
+\examples{
+# Here we just show examples of the optim_fun results. Other examples using the
+# optimizers can be found throughout PhotoGEA, such as in the user guides and
+# the documentation for fit_c3_aci, fit_c4_aci, etc.
+
+optimizer_deoptim(200)
+
+optimizer_hjkb(1e-7)
+
+optimizer_nlminb(1e-7)
+
+optimizer_nmkb(1e-7)
+
+optimizer_null()
+}

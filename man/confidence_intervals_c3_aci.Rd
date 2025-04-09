@@ -239,7 +239,7 @@ licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_be
 # Fit just one curve from the data set
 one_result <- fit_c3_aci(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
-  Ca_atmospheric = 420
+  calculate_confidence_intervals = FALSE
 )
 
 # Calculate confidence limits for the fit parameters

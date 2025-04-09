@@ -31,6 +31,36 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## Changes in PhotoGEA version 1.3.2 (2024-04-08)
+
+This is the first version of PhotoGEA available on CRAN.
+
+### Minor user-facing changes
+
+- Made sure all exported functions have `value` and `examples` sections in their
+  documentation.
+- Specify `tz = 'America/Chicago'` when pairing TDL and gas exchange data, since
+  setting `tz = 'US/Central'` does not seem to work on debian. CRAN checks the
+  package examples on debian.
+- Added `read_cr3000`, `read_licor_6800_Excel`, and `read_licor_6800_plaintext`
+  so they can be used in examples without needing `:::`.
+
+### Internal changes
+
+- Designated most vignettes as "web only" to make the package smaller; this is
+  important for complying with CRAN guidelines.
+- Set `maxiter` to 40 when using `stats::uniroot` to calculate confidence
+  intervals; this saves quite a bit of time compared to the default value (1000)
+  and prevents several examples from being flagged by `R CMD check` for taking
+  too long to run.
+- Use `message` to send messages to the user in `rbind.exdf` rather than `cat`
+  or `print`. This is necessary to comply with CRAN requirements.
+
+### Bug fixes
+
+- Fixed an error that occurred when removing unreliable C4 parameter estimates
+  without first calculating confidence intervals.
+
 ## Changes in PhotoGEA version 1.3.0 (2024-04-04)
 
 ### Minor user-facing changes

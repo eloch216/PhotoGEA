@@ -120,4 +120,89 @@
   were created using this function.
 }
 
+\examples{
+## In this example we load gas exchange and TDL data files, calibrate the TDL
+## data, pair the data tables together, and then calculate leakiness. The
+## results from this example are not meaningful because these measurements
+## were not collected from C4 plants.
+
+# Read the TDL data file, making sure to interpret the time zone as US Central
+# time
+tdl_data <- read_gasex_file(
+  PhotoGEA_example_file_path('tdl_for_gm.dat'),
+  'TIMESTAMP',
+  list(tz = 'America/Chicago')
+)
+
+# Identify cycles within the TDL data
+tdl_data <- identify_tdl_cycles(
+  tdl_data,
+  valve_column_name = 'valve_number',
+  cycle_start_valve = 20,
+  expected_cycle_length_minutes = 2.7,
+  expected_cycle_num_valves = 9,
+  timestamp_colname = 'TIMESTAMP'
+)
+
+# Use reference tanks to calibrate the TDL data
+processed_tdl <- consolidate(by(
+  tdl_data,
+  tdl_data[, 'cycle_num'],
+  process_tdl_cycle_erml,
+  noaa_valve = 2,
+  calibration_0_valve = 20,
+  calibration_1_valve = 21,
+  calibration_2_valve = 23,
+  calibration_3_valve = 26,
+  noaa_cylinder_co2_concentration = 294.996,
+  noaa_cylinder_isotope_ratio = -8.40,
+  calibration_isotope_ratio = -11.505
+))
+
+# Read the gas exchange data, making sure to interpret the time stamp in the US
+# Central time zone
+licor_data <- read_gasex_file(
+  PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
+  'time',
+  list(tz = 'America/Chicago')
+)
+
+# Get TDL valve information from Licor file name; for this TDL system, the
+# reference valve is 12 when the sample valve is 11
+licor_data <- get_sample_valve_from_filename(licor_data, list('11' = 12))
+
+# Get oxygen info from the Licor file preamble (needed for calculate_gamma_star)
+licor_data <- get_oxygen_from_preamble(licor_data)
+
+# Pair the Licor and TDL data by locating the TDL cycle corresponding to each
+# Licor measurement
+licor_data <- pair_gasex_and_tdl(licor_data, processed_tdl$tdl_data)
+
+# Calculate total pressure (needed for calculate_gas_properties)
+licor_data <- calculate_total_pressure(licor_data)
+
+# Calculate Csurface (needed for calculate_ternary_correction)
+licor_data <- calculate_gas_properties(licor_data)
+
+# Calculate ternary correction
+licor_data <- calculate_ternary_correction(licor_data)
+
+# Calculate isotope discrimination (needed for calculate_leakiness_ubierna)
+licor_data <- calculate_isotope_discrimination(licor_data)
+
+# Set respiration (needed for calculate_leakiness_ubierna)
+licor_data <- set_variable(
+  licor_data,
+  'RL',
+  'micromol m^(-2) s^(-1)',
+  value = 1.2
+)
+
+# Calculate leakiness
+licor_data <- calculate_leakiness_ubierna(licor_data)
+
+# View some of the results
+licor_data[, c('replicate', 'CO2_s', 'Delta_obs_tdl', 'phi_i', 'phi_sim')]
+}
+
 \concept{exdf}

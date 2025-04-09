@@ -75,7 +75,32 @@
 }
 
 \examples{
-# See the help file for fit_c4_aci_hyperbola for an example using this function.
+# Read an example Licor file included in the PhotoGEA package
+licor_file <- read_gasex_file(
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
+)
+
+# Define a new column that uniquely identifies each curve
+licor_file[, 'species_plot'] <-
+  paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
+
+# Organize the data
+licor_file <- organize_response_curve_data(
+    licor_file,
+    'species_plot',
+    c(9, 10, 16),
+    'CO2_r_sp'
+)
+
+# Fit all curves in the data set
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c4_aci_hyperbola
+))
+
+# View the fits for each species / plot
+plot_c4_aci_hyperbola_fit(aci_results, 'species_plot', ylim = c(0, 100))
 }
 
 \concept{exdf}
