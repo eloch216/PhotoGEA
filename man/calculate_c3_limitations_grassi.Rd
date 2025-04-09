@@ -307,7 +307,6 @@ lattice::barchart(
   auto = TRUE,
   ylab = 'Factors limiting assimilation'
 )
-
 }
 
 \concept{exdf}

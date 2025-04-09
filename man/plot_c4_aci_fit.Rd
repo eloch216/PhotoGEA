@@ -93,7 +93,44 @@
 }
 
 \examples{
-# See the help file for fit_c4_aci for an example using this function.
+# Read an example Licor file included in the PhotoGEA package
+licor_file <- read_gasex_file(
+  PhotoGEA_example_file_path('c4_aci_1.xlsx')
+)
+
+# Define a new column that uniquely identifies each curve
+licor_file[, 'species_plot'] <-
+  paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
+
+# Organize the data
+licor_file <- organize_response_curve_data(
+    licor_file,
+    'species_plot',
+    c(9, 10, 16),
+    'CO2_r_sp'
+)
+
+# Calculate temperature-dependent values of C4 photosynthetic parameters
+licor_file <- calculate_temperature_response(licor_file, c4_temperature_param_vc)
+
+# Calculate the total pressure in the Licor chamber
+licor_file <- calculate_total_pressure(licor_file)
+
+# For these examples, we will use a faster (but sometimes less reliable)
+# optimizer so they run faster
+optimizer <- optimizer_nmkb(1e-7)
+
+# Fit all curves in the data set
+aci_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_c4_aci,
+  Ca_atmospheric = 420,
+  optim_fun = optimizer
+))
+
+# View the fits for each species / plot
+plot_c4_aci_fit(aci_results, 'species_plot', 'Ci', ylim = c(0, 100))
 }
 
 \concept{exdf}

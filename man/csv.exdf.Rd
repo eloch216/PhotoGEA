@@ -63,6 +63,12 @@
 licor_file <- read.csv.exdf(
   PhotoGEA_example_file_path('ball_berry_1.csv')
 )
+
+# Now rewrite this to a temporary CSV file
+tf <- tempfile(fileext = ".csv")
+tf
+
+write.csv.exdf(licor_file, tf)
 }
 
 \concept{exdf}

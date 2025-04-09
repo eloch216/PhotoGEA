@@ -97,7 +97,7 @@
 \examples{
 # Example: Reading a Licor plaintext file that is included with the PhotoGEA
 # package and viewing some of the "extra" information associated with the file
-licor_file <- PhotoGEA:::read_licor_6800_plaintext(
+licor_file <- read_licor_6800_plaintext(
   PhotoGEA_example_file_path('plaintext_licor_file')
 )
 

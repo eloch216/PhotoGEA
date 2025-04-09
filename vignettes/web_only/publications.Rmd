@@ -43,8 +43,9 @@ the version of the package you used.
    > - [DOI:10.1111/pbi.14364](https://doi.org/10.1111/pbi.14364)
    >
    > - PhotoGEA used for: Calculating mesophyll conductance from tunable diode
-   >   laser absorption measurements (`calculate_gm_busch`), C3 A-Ci fitting
-   >   (`fit_c3_aci`), C3 A-Ci + CF Variable J fitting (`fit_c3_variable_j`)
+   >   laser absorption measurements (`calculate_gm_busch`), C~3~ _A-C~i~_
+   >   fitting (`fit_c3_aci`), C~3~ _A-C~i~_ + CF Variable _J_ fitting
+   >   (`fit_c3_variable_j`)
    >
    > - PhotoGEA version: `v0.10.0`
    >
@@ -56,7 +57,7 @@ the version of the package you used.
 
    > - [DOI:10.1111/pce.15206](https://doi.org/10.1111/pce.15206)
    >
-   > - PhotoGEA used for: Calculating limitations to C3 photosynthesis
+   > - PhotoGEA used for: Calculating limitations to C~3~ photosynthesis
    >   (`calculate_c3_limitations_grassi` and `calculate_c3_limitations_warren`)
    >
    > - PhotoGEA version: `v1.0.0`
@@ -70,8 +71,9 @@ the version of the package you used.
 
    > - [DOI:10.1073/pnas.2419943122](https://doi.org/10.1073/pnas.2419943122)
    >
-   > - PhotoGEA used for: Fitting C4 A-Ci curves using the mechanistic model
-   >   (`fit_c4_aci`), reading and plotting induction curves (`read_gasex_file`)
+   > - PhotoGEA used for: Fitting C~4~ _A-C~i~_ curves using the mechanistic
+   >   model (`fit_c4_aci`), reading and plotting induction curves
+   >   (`read_gasex_file`)
    >
    > - PhotoGEA version: `v0.11.0`
    >

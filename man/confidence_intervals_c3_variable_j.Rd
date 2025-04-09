@@ -232,7 +232,6 @@
 }
 
 \examples{
-\donttest{
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('c3_aci_1.xlsx')
@@ -256,10 +255,12 @@ licor_file <- calculate_total_pressure(licor_file)
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 licor_file <- calculate_temperature_response(licor_file, c3_temperature_param_bernacchi)
 
-# Fit just one curve from the data set
+# Fit just one curve from the data set, using a less reliable optimizer so the
+# example runs faster
 one_result <- fit_c3_variable_j(
   licor_file[licor_file[, 'species_plot'] == 'tobacco - 1', , TRUE],
-  Ca_atmospheric = 420
+  optim_fun = optimizer_nmkb(1e-7),
+  calculate_confidence_intervals = FALSE
 )
 
 # Calculate confidence limits for the fit parameters
@@ -270,7 +271,6 @@ parameters_with_limits <- confidence_intervals_c3_variable_j(
 
 # View confidence limits and best estimate for Vcmax_at_25
 parameters_with_limits[, c('Vcmax_at_25_lower', 'Vcmax_at_25', 'Vcmax_at_25_upper')]
-}
 }
 
 \concept{exdf}

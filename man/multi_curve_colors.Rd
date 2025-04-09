@@ -41,3 +41,11 @@
   A character vector with 28 elements, each of which is a hexadecimal color
   specification.
 }
+
+\examples{
+multi_curve_colors()
+
+multi_curve_line_colors()
+
+multi_curve_point_colors()
+}

@@ -99,7 +99,36 @@
 }
 
 \examples{
-# See the help file for fit_laisk for an example using this function.
+# Read an example Licor file included in the PhotoGEA package
+licor_file <- read_gasex_file(
+  PhotoGEA_example_file_path('c3_aci_1.xlsx')
+)
+
+# Define a new column that uniquely identifies each curve
+licor_file[, 'species_plot'] <-
+  paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
+
+# Organize the data
+licor_file <- organize_response_curve_data(
+    licor_file,
+    'species_plot',
+    c(9, 10, 16),
+    'CO2_r_sp'
+)
+
+# Apply the Laisk method. Note: this is a bad example because these curves were
+# measured at the same light intensity, but from different species. Because of
+# this, the results are not meaningful.
+laisk_results <- fit_laisk(
+  licor_file, 20, 150,
+  ppfd_column_name = 'species_plot'
+)
+
+# Plot the linear fits of A vs. Ci
+plot_laisk_fit(laisk_results, 'instrument', 'first', ppfd_column_name = 'species_plot')
+
+# Plot the linear fits of Laisk intercept vs. Laisk slope
+plot_laisk_fit(laisk_results, 'instrument', 'second', ppfd_column_name = 'species_plot')
 }
 
 \concept{exdf}

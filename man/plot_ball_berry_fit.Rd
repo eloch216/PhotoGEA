@@ -74,7 +74,32 @@
 }
 
 \examples{
-# See the help file for fit_ball_berry for an example using this function.
+# Read an example Licor file included in the PhotoGEA package, calculate
+# additional gas properties, calculate the Ball-Berry index, define a new column
+# that uniquely identifies each curve, and then perform a fit to extract the
+# Ball-Berry parameters from each curve.
+licor_file <- read_gasex_file(
+  PhotoGEA_example_file_path('ball_berry_1.xlsx')
+)
+
+licor_file <- calculate_total_pressure(licor_file)
+
+licor_file <- calculate_gas_properties(licor_file)
+
+licor_file[,'species_plot'] <-
+  paste(licor_file[,'species'], '-', licor_file[,'plot'])
+
+licor_file <- calculate_ball_berry_index(licor_file)
+
+# Fit all curves in the data set
+bb_results <- consolidate(by(
+  licor_file,
+  licor_file[, 'species_plot'],
+  fit_ball_berry
+))
+
+# View the fits for each species / plot
+plot_ball_berry_fit(bb_results, 'species_plot')
 }
 
 \concept{exdf}

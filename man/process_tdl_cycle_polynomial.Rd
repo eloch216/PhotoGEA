@@ -99,12 +99,57 @@
 }
 
 \examples{
-# An example of a `reference_tank_time_points` list for a situation where there
-# are just two reference valves (1 and 3)
-reference_tank_time_points = list(
+# Example 1: An example of a `reference_tank_time_points` list for a situation
+# where there are just two reference valves (1 and 3)
+reference_tank_time_points <- list(
   list(valve = 1, start = 101, end = 300), # Take an average of time points 101 - 300 for valve 1
   list(valve = 3, start = 201, end = 300)  # Take an average of time points 201 - 300 for valve 3
 )
+
+# Example2 : reading a TDL file that is included with the PhotoGEA package,
+# identifying its measurement cycles, and then processing them.
+tdl_file <- read_gasex_file(
+  PhotoGEA_example_file_path('tdl_sampling_1.dat'),
+  'TIMESTAMP'
+)
+
+# This is a large file; for this example, we will truncate to just the first
+# 200 rows so it runs faster
+tdl_file <- tdl_file[seq_len(200), , TRUE]
+
+# Identify TDL cycles
+tdl_file <- identify_tdl_cycles(
+  tdl_file,
+  valve_column_name = 'valve_number',
+  cycle_start_valve = 20,
+  expected_cycle_length_minutes = 2.7,
+  expected_cycle_num_valves = 9,
+  timestamp_colname = 'TIMESTAMP'
+)
+
+# Process TDL cycles; note that the reference tank concentrations used in this
+# example are not accurate, so the results are not meaningful
+processed_tdl <- consolidate(by(
+  tdl_file,
+  tdl_file[, 'cycle_num'],
+  process_tdl_cycle_polynomial,
+  poly_order = 1,
+  reference_tanks = list(
+    list(valve = 23, conc_12C = 70.37507124, conc_13C = 0.754892652),
+    list(valve = 26, conc_12C = 491.1854149, conc_13C = 5.269599965)
+  )
+))
+
+# The output is a list of two exdf objects
+names(processed_tdl)
+
+# The calibration parameters include the coefficients of the polynomial fit for
+# each cycle
+colnames(processed_tdl$calibration_parameters)
+
+# The processed TDL data includes new columns for the calibrated CO2
+# concentrations
+colnames(processed_tdl$tdl_data)
 }
 
 \concept{exdf}
