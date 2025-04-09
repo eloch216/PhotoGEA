@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,25 +52,26 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/cran-compliance/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.3.1" id="changes-in-photogea-version-131-2024-04-07">Changes in PhotoGEA version 1.3.1 (2024-04-07)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-131-2024-04-07"></a></h2><p class="text-muted">CRAN release: 2025-04-08</p>
+<h2 class="pkg-version" data-toc-text="1.3.2" id="changes-in-photogea-version-132-2024-04-08">Changes in PhotoGEA version 1.3.2 (2024-04-08)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-132-2024-04-08"></a></h2><p class="text-muted">CRAN release: 2025-04-09</p>
+<p>This is the first version of PhotoGEA available on CRAN.</p>
 <div class="section level3">
-<h3 id="minor-user-facing-changes-1-3-1">Minor user-facing changes<a class="anchor" aria-label="anchor" href="#minor-user-facing-changes-1-3-1"></a></h3>
+<h3 id="minor-user-facing-changes-1-3-2">Minor user-facing changes<a class="anchor" aria-label="anchor" href="#minor-user-facing-changes-1-3-2"></a></h3>
 <ul><li>Made sure all exported functions have <code>value</code> and <code>examples</code> sections in their documentation.</li>
-<li>Specify <code>tz = 'America/Chicago'</code> when pairing TDL and gas exchange data, since setting <code>tz = 'US/Central')</code> does not seem to work on debian. CRAN checks the package examples on debian.</li>
+<li>Specify <code>tz = 'America/Chicago'</code> when pairing TDL and gas exchange data, since setting <code>tz = 'US/Central'</code> does not seem to work on debian. CRAN checks the package examples on debian.</li>
 <li>Added <code>read_cr3000</code>, <code>read_licor_6800_Excel</code>, and <code>read_licor_6800_plaintext</code> so they can be used in examples without needing <code>:::</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-changes-1-3-1">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-3-1"></a></h3>
+<h3 id="internal-changes-1-3-2">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-1-3-2"></a></h3>
 <ul><li>Designated most vignettes as “web only” to make the package smaller; this is important for complying with CRAN guidelines.</li>
 <li>Set <code>maxiter</code> to 40 when using <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">stats::uniroot</a></code> to calculate confidence intervals; this saves quite a bit of time compared to the default value (1000) and prevents several examples from being flagged by <code>R CMD check</code> for taking too long to run.</li>
 <li>Use <code>message</code> to send messages to the user in <code>rbind.exdf</code> rather than <code>cat</code> or <code>print</code>. This is necessary to comply with CRAN requirements.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-1-3-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-3-1"></a></h3>
+<h3 id="bug-fixes-1-3-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-3-2"></a></h3>
 <ul><li>Fixed an error that occurred when removing unreliable C4 parameter estimates without first calculating confidence intervals.</li>
 </ul></div>
 </div>
