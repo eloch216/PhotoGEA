@@ -6,6 +6,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/PhotoGEA)](https://cran.r-project.org/package=PhotoGEA)
 [![R-CMD-check](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/eloch216/PhotoGEA/graph/badge.svg)](https://app.codecov.io/gh/eloch216/PhotoGEA?branch=main)
 <!-- badges: end -->
@@ -21,8 +23,10 @@ information.
 
 ### Installation
 
-`PhotoGEA` is available on CRAN, so the easiest way to install the
-latest release is to type the following from within an R terminal:
+`PhotoGEA` is available on
+[CRAN](https://cran.r-project.org/package=PhotoGEA), so the easiest way
+to install the latest release is to type the following from within an R
+terminal:
 
 ``` r
 install.packages('PhotoGEA')

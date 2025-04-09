@@ -33,12 +33,14 @@ be directly added to this file to describe the related changes.
 
 ## Changes in PhotoGEA version 1.3.2 (2024-04-08)
 
+This is the first version of PhotoGEA available on CRAN.
+
 ### Minor user-facing changes
 
 - Made sure all exported functions have `value` and `examples` sections in their
   documentation.
 - Specify `tz = 'America/Chicago'` when pairing TDL and gas exchange data, since
-  setting `tz = 'US/Central')` does not seem to work on debian. CRAN checks the
+  setting `tz = 'US/Central'` does not seem to work on debian. CRAN checks the
   package examples on debian.
 - Added `read_cr3000`, `read_licor_6800_Excel`, and `read_licor_6800_plaintext`
   so they can be used in examples without needing `:::`.

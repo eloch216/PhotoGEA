@@ -33,3 +33,6 @@
 
 ^vignettes/web_only$
 # These vignettes are only for pkgdown.
+
+^CRAN-SUBMISSION$
+# Added when submitting to CRAN via devtools::submit_cran()
