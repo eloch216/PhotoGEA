@@ -66,7 +66,7 @@ REMOVE_STATISTICAL_OUTLIERS <- TRUE
 CALCULATE_STATS <- FALSE
 
 # Indicate whether a `plot` column is present
-HAS_PLOT_INFO <- TRUE
+HAS_PLOT_INFO <- FALSE
 
 # Decide whether to view data frames along with the plots (can be useful for
 # inspection to make sure the results look reasonable)
@@ -85,9 +85,9 @@ if (PERFORM_CALCULATIONS) {
 #
 # These numbers have been chosen for a sequence with 12 measurements. Here we
 # want to keep all of them.
-NUM_OBS_IN_SEQ <- 11
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,2,3,4,5,6)
-POINT_FOR_BOX_PLOTS <- 9
+NUM_OBS_IN_SEQ <- 12
+MEASUREMENT_NUMBERS_TO_REMOVE <- c()
+POINT_FOR_BOX_PLOTS <- 1
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -340,7 +340,7 @@ xl <- "Genotype"
 
 plot_param <- list(
   list(Y = all_samples_one_point_no_a_outliers[[A_COLUMN_NAME]], X = x_s_a, xlab = xl, ylab = "Net CO2 assimilation rate (micromol / m^2 / s)",          ylim = c(0,6),  main = boxplot_caption),
-  list(Y = all_samples_one_point[[IWUE_COLUMN_NAME]],            X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption)
+  list(Y = all_samples_one_point[['iWUE']],                      X = x_s,   xlab = xl, ylab = "Intrinsic water use efficiency (micromol CO2 / mol H2O)", ylim = c(0, 100), main = boxplot_caption)
 )
 
 if (INCLUDE_FLUORESCENCE) {
