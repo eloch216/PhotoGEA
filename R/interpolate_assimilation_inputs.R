@@ -35,7 +35,12 @@ interpolate_assimilation_inputs <- function(
         assim_input[, cn] <- if (all(is.na(exdf_obj[, cn]))) {
             NA
         } else {
-            stats::approx(exdf_obj[, c_column_name], exdf_obj[, cn], c_seq)[['y']]
+            stats::approx(
+                exdf_obj[, c_column_name],
+                exdf_obj[, cn],
+                c_seq,
+                ties = list('ordered', mean)
+            )[['y']]
         }
     }
 

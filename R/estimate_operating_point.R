@@ -60,8 +60,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, a_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -70,8 +71,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, ci_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -80,8 +82,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, cc_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -90,8 +93,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, pcm_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }

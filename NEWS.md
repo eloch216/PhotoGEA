@@ -33,9 +33,16 @@ be directly added to this file to describe the related changes.
 
 ## UNRELEASED
 
+### Minor user-facing changes
+
 - Add "debug mode" option to A-Ci fitting functions; in debug mode, detailed
   information about the fit is printed to the R terminal to help with
   troubleshooting.
+
+### Bug fixes
+
+- Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
+  when making initial guesses for `RL`.
 
 ## Changes in PhotoGEA version 1.3.2 (2024-04-08)
 

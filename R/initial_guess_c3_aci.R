@@ -101,6 +101,8 @@ initial_guess_c3_aci <- function(
         # across the measured points, so use its average value across points
         # where Cc is below the threshold. If there are not enough points to do
         # the fit, just estimate RL to be a typical value.
+        typical_RL <- 1.0
+
         RL_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rl, ] # a data frame
 
         RL_estimate <- if (nrow(RL_subset) > 1) {
@@ -126,7 +128,12 @@ initial_guess_c3_aci <- function(
                 )
             }
 
-            1.0
+            typical_RL
+        }
+
+        # If RL was estimated to be negative or NA, reset it to a typical value
+        if (is.na(RL_estimate) || RL_estimate <= 0) {
+            RL_estimate <- typical_RL
         }
 
         # Make sure RL_estimate has no names

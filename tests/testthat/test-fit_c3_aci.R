@@ -23,8 +23,8 @@ test_that('fit failures are handled properly', {
         )
     )
 
-    expect_equal(unique(fit_res_bad$fits[, 'c3_assimilation_msg']), 'Cc must be >= 0. RL_at_25 must be >= 0')
-    expect_equal(fit_res_bad$parameters[, 'c3_assimilation_msg'], 'Cc must be >= 0. RL_at_25 must be >= 0')
+    expect_equal(unique(fit_res_bad$fits[, 'c3_assimilation_msg']), 'Cc must be >= 0')
+    expect_equal(fit_res_bad$parameters[, 'c3_assimilation_msg'], 'Cc must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Ac', 'Aj', 'Ap')])))
     expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Ac', 'Aj', 'Ap')])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')])))
@@ -100,14 +100,27 @@ test_that('fit results have not changed (no alpha)', {
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c3_aci(
-        one_curve,
-        Ca_atmospheric = 420,
-        fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0, alpha_t = 0),
-        optim_fun = optimizer_nmkb(1e-7),
-        hard_constraints = 2,
-        calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+    # Here we will also check that errors in the linear fit used to estimate an
+    # initial guess for RL are properly handled
+    one_curve_weird <- one_curve
+
+    low_ci_rows <- which(one_curve_weird[, 'Ci'] <= 100)
+
+    for (i in low_ci_rows) {
+        one_curve_weird$main_data[i, ] <- one_curve$main_data[1, ]
+    }
+
+    fit_res <- expect_silent(
+        fit_c3_aci(
+            one_curve_weird,
+            Ca_atmospheric = 420,
+            fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0, alpha_t = 0),
+            optim_fun = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = 2,
+            debug_mode = FALSE
+        )
     )
 
     fit_res$parameters <- calculate_temperature_response(
@@ -134,19 +147,19 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC', 'TleafCnd_avg', 'Jmax_at_25')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101, 30.1448308, 233.8417400),
+        c(145.58687, 232.80336, 0.33440, NA, 60.81173, 30.14483, 233.80818),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Jmax_at_25_upper')]),
-        c(152.831071, 238.947894, 1.034651, Inf, 240.012420),
+        c(152.983, 239.931, 1.007, Inf, 241.005),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
-        c(294.70316, 294.70316, 37.51608, 37.85419),
+        c(294.70316, 294.70316, 37.51608, 37.94994),
         tolerance = TOLERANCE
     )
 
@@ -157,7 +170,7 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.character(fit_res$fits[, 'limiting_process']),
-        c('Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Aj', 'Aj', 'Aj', 'Aj')
+        c('Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Aj', 'Aj', 'Aj', 'Ap')
     )
 
     lim_info <-
@@ -165,11 +178,11 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(sum(lim_info), nrow(one_curve))
 
-    expect_equal(lim_info, c(9, 4, 0))
+    expect_equal(lim_info, c(9, 3, 1))
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        c(2, 2, 1)
     )
 
     expect_equal(
