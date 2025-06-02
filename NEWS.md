@@ -44,6 +44,8 @@ be directly added to this file to describe the related changes.
 - Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
   when making initial guesses for `RL`.
 
+- Fixed an error that prevented curve fits when all Ca values are `NA`.
+
 ## Changes in PhotoGEA version 1.3.2 (2024-04-08)
 
 This is the first version of PhotoGEA available on CRAN.

@@ -101,7 +101,8 @@ test_that('fit results have not changed (no alpha)', {
     set.seed(1234)
 
     # Here we will also check that errors in the linear fit used to estimate an
-    # initial guess for RL are properly handled
+    # initial guess for RL are properly handled, and that NA values of Ca do not
+    # cause fit failures
     one_curve_weird <- one_curve
 
     low_ci_rows <- which(one_curve_weird[, 'Ci'] <= 100)
@@ -109,6 +110,8 @@ test_that('fit results have not changed (no alpha)', {
     for (i in low_ci_rows) {
         one_curve_weird$main_data[i, ] <- one_curve$main_data[1, ]
     }
+
+    one_curve_weird[, 'Ca'] <- NA
 
     fit_res <- expect_silent(
         fit_c3_aci(
@@ -118,8 +121,7 @@ test_that('fit results have not changed (no alpha)', {
             optim_fun = optimizer_nmkb(1e-7),
             hard_constraints = 2,
             calculate_confidence_intervals = TRUE,
-            remove_unreliable_param = 2,
-            debug_mode = FALSE
+            remove_unreliable_param = 2
         )
     )
 
@@ -159,8 +161,13 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
-        c(294.70316, 294.70316, 37.51608, 37.94994),
+        as.numeric(c(NA, NA, NA, NA)),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        'All values of the atmospheric CO2 concentration column (Ca) are NA'
     )
 
     expect_equal(
@@ -226,6 +233,17 @@ test_that('fit results have not changed (alpha_old)', {
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper')]),
         c(152.8274, 238.9449, 1.0343, Inf),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(294.70316, 294.70316, 37.51608, 37.85295),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
     )
 
     expect_equal(

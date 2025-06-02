@@ -57,14 +57,21 @@ test_that('fit results have not changed (Vcmax)', {
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c4_aci(
-        one_curve,
-        Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000),
-        optim_fun = optimizer_nmkb(1e-7),
-        hard_constraints = 2,
-        calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+    # Here we will also check that NA values of Ca do not cause fit failures
+    one_curve_weird <- one_curve
+
+    one_curve_weird[, 'Ca'] <- NA
+
+    fit_res <- expect_silent(
+        fit_c4_aci(
+            one_curve_weird,
+            Ca_atmospheric = 420,
+            fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000),
+            optim_fun = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = 2
+        )
     )
 
     expect_equal(
@@ -91,8 +98,13 @@ test_that('fit results have not changed (Vcmax)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_PCm', 'operating_An', 'operating_An_model')]),
-        c(183.48393, 146.19627, 52.35755, 56.54244),
+        as.numeric(c(NA, NA, NA, NA)),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        'All values of the atmospheric CO2 concentration column (Ca) are NA'
     )
 
     expect_equal(
@@ -141,6 +153,17 @@ test_that('fit results have not changed (Vpr)', {
         as.numeric(fit_res$parameters[1, c('Vpr_upper', 'Vpmax_at_25_upper', 'RL_at_25_upper')]),
         c(62.43, 156.94, 2.76),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_PCm', 'operating_An', 'operating_An_model')]),
+        c(183.48393, 146.19627, 52.35755, 57.95061),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
     )
 
     expect_equal(

@@ -94,7 +94,7 @@ fit_c3_variable_j <- function(
     required_variables <- list()
     required_variables[[ca_column_name]] <- unit_dictionary('Ca')
 
-    check_required_variables(replicate_exdf, required_variables)
+    check_required_variables(replicate_exdf, required_variables, check_NA = FALSE)
 
     # Assemble lower, upper, and fit_options
     luf <- assemble_luf(
@@ -510,11 +510,12 @@ fit_c3_variable_j <- function(
     replicate_identifiers[, 'c3_assimilation_msg'] <- replicate_exdf[1, 'c3_assimilation_msg']
     replicate_identifiers[, 'c3_variable_j_msg']   <- replicate_exdf[1, 'c3_variable_j_msg']
 
-    # Store the results
-    replicate_identifiers[, 'operating_Ci']       <- operating_point_info$operating_Ci
-    replicate_identifiers[, 'operating_Cc']       <- operating_point_info$operating_Cc
-    replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
-    replicate_identifiers[, 'operating_An_model'] <- operating_An_model
+    # Also add operating point information
+    replicate_identifiers[, 'operating_Ci']        <- operating_point_info$operating_Ci
+    replicate_identifiers[, 'operating_Cc']        <- operating_point_info$operating_Cc
+    replicate_identifiers[, 'operating_An']        <- operating_point_info$operating_An
+    replicate_identifiers[, 'operating_An_model']  <- operating_An_model
+    replicate_identifiers[, 'operating_point_msg'] <- operating_point_info$operating_point_msg
 
     # Get an updated likelihood value using the RMSE
     replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
@@ -574,6 +575,7 @@ fit_c3_variable_j <- function(
         c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
         c('estimate_operating_point', 'operating_Cc',        replicate_exdf$units[['Cc']]),
         c('estimate_operating_point', 'operating_An',        replicate_exdf$units[[a_column_name]]),
+        c('estimate_operating_point', 'operating_point_msg', ''),
         c('fit_c3_variable_j',        'operating_An_model',  replicate_exdf$units[[a_column_name]]),
         c('fit_c3_variable_j',        'convergence',         ''),
         c('fit_c3_variable_j',        'convergence_msg',     ''),

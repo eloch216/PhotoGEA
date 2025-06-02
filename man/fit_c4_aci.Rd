@@ -85,7 +85,11 @@
 
   \item{ca_column_name}{
     The name of the column in \code{replicate_exdf} that contains the
-    ambient CO2 concentration in \code{micromol mol^(-1)}.
+    ambient CO2 concentration in \code{micromol mol^(-1)}. If values of
+    \code{Ca} are not available, they can be set to \code{NA}. In this case, it
+    will not be possible to estimate the operating point, and
+    \code{\link{apply_gm}} will not be able to calculate the CO2 drawdown across
+    the stomata.
   }
 
   \item{ci_column_name}{
