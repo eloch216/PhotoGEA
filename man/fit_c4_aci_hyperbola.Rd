@@ -34,7 +34,8 @@
     fit_options = list(),
     relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
-    calculate_confidence_intervals = TRUE
+    calculate_confidence_intervals = TRUE,
+    debug_mode = FALSE
   )
 }
 
@@ -109,6 +110,14 @@
     A logical value indicating whether or not to estimate confidence intervals
     for the fitting parameters using
     \code{\link{confidence_intervals_c4_aci_hyperbola}}.
+  }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about
+    \code{replicate_exdf}, the initial guess, each guess supplied from the
+    optimizer, and the final outcome is printed; this can be helpful when
+    troubleshooting issues with a particular curve.
   }
 }
 

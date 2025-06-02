@@ -35,6 +35,7 @@ fit_c3_aci <- function(
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
     remove_unreliable_param = 2,
+    debug_mode = FALSE,
     ...
 )
 {
@@ -44,6 +45,12 @@ fit_c3_aci <- function(
 
     if (sd_A != 'RMSE') {
         stop('At this time, the only supported option for sd_A is `RMSE`')
+    }
+
+    if (debug_mode) {
+        debug_msg('fit_c3_aci curve identifiers:')
+        cat('\n')
+        utils::str(identifier_columns(replicate_exdf)$main_data)
     }
 
     # Define the total error function; units will also be checked by this
@@ -69,6 +76,7 @@ fit_c3_aci <- function(
         cj_crossover_min,
         cj_crossover_max,
         hard_constraints,
+        debug_mode,
         ...
     )
 
@@ -111,7 +119,7 @@ fit_c3_aci <- function(
         gmc_guess,
         kc_guess,
         ko_guess,
-        100, # cc_threshold_rd
+        100, # cc_threshold_rl
         Wj_coef_C,
         Wj_coef_Gamma_star,
         a_column_name,
@@ -125,10 +133,18 @@ fit_c3_aci <- function(
         rl_norm_column_name,
         total_pressure_column_name,
         tp_norm_column_name,
-        vcmax_norm_column_name
+        vcmax_norm_column_name,
+        debug_mode
     )
 
     initial_guess <- initial_guess_fun(replicate_exdf)
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c3_aci initial_guess:',
+            paste(initial_guess, collapse = ', ')
+        )
+    }
 
     # Find the best values for the parameters that should be varied
     optim_result <- optim_fun(
@@ -143,6 +159,13 @@ fit_c3_aci <- function(
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c3_aci best_X:',
+            paste(best_X, collapse = ', ')
+        )
+    }
 
     # Get the corresponding values of Cc at the best guess
     replicate_exdf <- apply_gm(
@@ -335,6 +358,13 @@ fit_c3_aci <- function(
                 fits_interpolated[, cn] <- NA
             }
         }
+    }
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c3_aci outcome:',
+            if (fit_failure) {'failure'} else {'success'}
+        )
     }
 
     # Include the atmospheric CO2 concentration

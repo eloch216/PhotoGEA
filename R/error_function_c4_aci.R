@@ -17,7 +17,8 @@ error_function_c4_aci <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    hard_constraints = 0
+    hard_constraints = 0,
+    debug_mode = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -97,8 +98,23 @@ error_function_c4_aci <- function(
 
     # Create and return the error function
     function(guess) {
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c4_aci guess:',
+                paste(guess, collapse = ', '),
+                ending_newline = FALSE
+            )
+        }
+
         X <- fit_options_vec
         X[param_to_fit] <- guess
+
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c4_aci parameters:',
+                paste(X, collapse = ', ')
+            )
+        }
 
         # If we are fitting gmc, use a 1D diffusion equation to calculate PCm.
         if (fit_gmc) {

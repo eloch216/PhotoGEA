@@ -57,7 +57,8 @@
     relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = 2
+    remove_unreliable_param = 2,
+    debug_mode = FALSE
   )
 }
 
@@ -219,6 +220,14 @@
     unreliable parameter estimates. A value of 2 is the most conservative
     option. A value of 0 disables this feature, which is not typically
     recommended. See below for more details.
+  }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about
+    \code{replicate_exdf}, the initial guess, each guess supplied from the
+    optimizer, and the final outcome is printed; this can be helpful when
+    troubleshooting issues with a particular curve.
   }
 }
 

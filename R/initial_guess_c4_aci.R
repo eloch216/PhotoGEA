@@ -13,7 +13,8 @@ initial_guess_c4_aci <- function(
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    debug_mode = FALSE
 )
 {
     function(rc_exdf) {
@@ -84,8 +85,22 @@ initial_guess_c4_aci <- function(
             rm_fit <-
                 stats::lm(RLm_subset[, a_column_name] ~ RLm_subset[, pcm_column_name])
 
+            if (debug_mode) {
+                debug_msg('initial_guess_c4_aci Rm_fit info:')
+                cat('\n')
+                print(RLm_subset[, c(pcm_column_name, a_column_name)])
+                print(summary(rm_fit))
+            }
+
             -rm_fit$coefficients[1] / mean_rm_norm
         } else {
+            if (debug_mode) {
+                debug_msg(
+                    'initial_guess_c4_aci Rm_fit info:',
+                    'no fit was performed'
+                )
+            }
+
             0.5
         }
 

@@ -17,7 +17,8 @@ fit_c4_aci_hyperbola <- function(
     fit_options = list(),
     relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
-    calculate_confidence_intervals = TRUE
+    calculate_confidence_intervals = TRUE,
+    debug_mode = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -28,6 +29,12 @@ fit_c4_aci_hyperbola <- function(
         stop('At this time, the only supported option for sd_A is `RMSE`')
     }
 
+    if (debug_mode) {
+        debug_msg('fit_c4_aci_hyperbola curve identifiers:')
+        cat('\n')
+        utils::str(identifier_columns(replicate_exdf)$main_data)
+    }
+
     # Define the total error function; units will also be checked by this
     # function
     total_error_fcn <- error_function_c4_aci_hyperbola(
@@ -36,7 +43,8 @@ fit_c4_aci_hyperbola <- function(
         1, # sd_A
         a_column_name,
         ci_column_name,
-        hard_constraints
+        hard_constraints,
+        debug_mode
     )
 
     # Units have already been chcked by error_function_c4_aci_hyperbola so there
@@ -62,6 +70,13 @@ fit_c4_aci_hyperbola <- function(
 
     initial_guess <- initial_guess_fun(replicate_exdf)
 
+    if (debug_mode) {
+        debug_msg(
+            'fit_c4_aci_hyperbola initial_guess:',
+            paste(initial_guess, collapse = ', ')
+        )
+    }
+
     # Find the best values for the parameters that should be varied
     optim_result <- optim_fun(
         initial_guess[param_to_fit],
@@ -75,6 +90,13 @@ fit_c4_aci_hyperbola <- function(
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c4_aci_hyperbola best_X:',
+            paste(best_X, collapse = ', ')
+        )
+    }
 
     # Get the corresponding values of An at the best guess
     aci <- calculate_c4_assimilation_hyperbola(
@@ -151,6 +173,13 @@ fit_c4_aci_hyperbola <- function(
                 fits_interpolated[, cn] <- NA
             }
         }
+    }
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c4_aci_hyperbola outcome:',
+            if (fit_failure) {'failure'} else {'success'}
+        )
     }
 
     # Add a column for the residuals

@@ -37,6 +37,7 @@
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     hard_constraints = 0,
+    debug_mode = FALSE,
     \dots
   )
 }
@@ -162,6 +163,13 @@
   \item{hard_constraints}{
     To be passed to \code{\link{calculate_c3_assimilation}}; see that function
     for more details.
+  }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about the \code{guess} is
+    printed each time the error function is called; this can be helpful when
+    troubleshooting issues with an optimizer.
   }
 
   \item{\dots}{

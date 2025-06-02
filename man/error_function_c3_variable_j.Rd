@@ -41,6 +41,7 @@
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
     check_j = TRUE,
+    debug_mode = FALSE,
     \dots
   )
 }
@@ -187,6 +188,13 @@
   \item{check_j}{
     A logical (TRUE/FALSE) value indicating whether to check whether
     \code{J_F > J_tl}. See below for more details.
+  }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about the \code{guess} is
+    printed each time the error function is called; this can be helpful when
+    troubleshooting issues with an optimizer.
   }
 
   \item{\dots}{
