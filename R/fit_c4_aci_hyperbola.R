@@ -29,10 +29,13 @@ fit_c4_aci_hyperbola <- function(
         stop('At this time, the only supported option for sd_A is `RMSE`')
     }
 
+    # Get the replicate identifier columns
+    replicate_identifiers <- identifier_columns(replicate_exdf)
+
     if (debug_mode) {
         debug_msg('fit_c4_aci_hyperbola curve identifiers:')
         cat('\n')
-        utils::str(identifier_columns(replicate_exdf)$main_data)
+        utils::str(replicate_identifiers$main_data)
     }
 
     # Define the total error function; units will also be checked by this
@@ -185,9 +188,6 @@ fit_c4_aci_hyperbola <- function(
     # Add a column for the residuals
     replicate_exdf <- calculate_residuals(replicate_exdf, a_column_name)
 
-    # Get the replicate identifier columns
-    replicate_identifiers <- identifier_columns(replicate_exdf)
-
     # Attach identifiers to interpolated rates, making sure to avoid duplicating
     # any columns
     identifiers_to_keep <-
@@ -214,7 +214,7 @@ fit_c4_aci_hyperbola <- function(
     replicate_identifiers[, 'rL']             <- best_X[3]
     replicate_identifiers[, 'Vmax']           <- best_X[4]
 
-    # Also add fitting details
+    # Attach fitting details
     replicate_identifiers[, 'convergence']                   <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']               <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']                         <- optim_result[['feval']]

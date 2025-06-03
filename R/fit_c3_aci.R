@@ -47,10 +47,13 @@ fit_c3_aci <- function(
         stop('At this time, the only supported option for sd_A is `RMSE`')
     }
 
+    # Get the replicate identifier columns
+    replicate_identifiers <- identifier_columns(replicate_exdf)
+
     if (debug_mode) {
         debug_msg('fit_c3_aci curve identifiers:')
         cat('\n')
-        utils::str(identifier_columns(replicate_exdf)$main_data)
+        utils::str(replicate_identifiers$main_data)
     }
 
     # Define the total error function; units will also be checked by this
@@ -379,9 +382,6 @@ fit_c3_aci <- function(
     # Add a column for the residuals
     replicate_exdf <- calculate_residuals(replicate_exdf, a_column_name)
 
-    # Get the replicate identifier columns
-    replicate_identifiers <- identifier_columns(replicate_exdf)
-
     # Attach identifiers to interpolated rates, making sure to avoid duplicating
     # any columns
     identifiers_to_keep <-
@@ -426,14 +426,15 @@ fit_c3_aci <- function(
     replicate_identifiers[, 'Tp_tl_avg']         <- mean(replicate_exdf[, 'Tp_tl'])
     replicate_identifiers[, 'Vcmax_tl_avg']      <- mean(replicate_exdf[, 'Vcmax_tl'])
 
-    # Also add fitting details
-    replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
-    replicate_identifiers[, 'convergence_msg']     <- optim_result[['convergence_msg']]
-    replicate_identifiers[, 'feval']               <- optim_result[['feval']]
-    replicate_identifiers[, 'optimizer']           <- optim_result[['optimizer']]
-    replicate_identifiers[, 'c3_assimilation_msg'] <- replicate_exdf[1, 'c3_assimilation_msg']
+    # Attach fitting details
+    replicate_identifiers[, 'convergence']           <- optim_result[['convergence']]
+    replicate_identifiers[, 'convergence_msg']       <- optim_result[['convergence_msg']]
+    replicate_identifiers[, 'feval']                 <- optim_result[['feval']]
+    replicate_identifiers[, 'optimizer']             <- optim_result[['optimizer']]
+    replicate_identifiers[, 'c3_assimilation_msg']   <- replicate_exdf[1, 'c3_assimilation_msg']
+    replicate_identifiers[, 'c3_optional_arguments'] <- replicate_exdf[1, 'c3_optional_arguments']
 
-    # Also add operating point information
+    # Attach operating point information
     replicate_identifiers[, 'operating_Ci']        <- operating_point_info$operating_Ci
     replicate_identifiers[, 'operating_Cc']        <- operating_point_info$operating_Cc
     replicate_identifiers[, 'operating_An']        <- operating_point_info$operating_An
@@ -472,36 +473,37 @@ fit_c3_aci <- function(
     # Document the new columns that were added
     replicate_identifiers <- document_variables(
         replicate_identifiers,
-        c('fit_c3_aci',               'alpha_g',             'dimensionless'),
-        c('fit_c3_aci',               'alpha_old',           'dimensionless'),
-        c('fit_c3_aci',               'alpha_s',             'dimensionless'),
-        c('fit_c3_aci',               'alpha_t',             'dimensionless'),
-        c('fit_c3_aci',               'Gamma_star_at_25',    'micromol mol^(-1)'),
-        c('fit_c3_aci',               'Gamma_star_tl_avg',   'micromol mol^(-1)'),
-        c('fit_c3_aci',               'gmc_at_25',           'mol mol^(-2) s^(-1) bar^(-1)'),
-        c('fit_c3_aci',               'gmc_tl_avg',          'mol mol^(-2) s^(-1) bar^(-1)'),
-        c('fit_c3_aci',               'J_at_25',             'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'J_tl_avg',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'Kc_at_25',            'micromol mol^(-1)'),
-        c('fit_c3_aci',               'Kc_tl_avg',           'micromol mol^(-1)'),
-        c('fit_c3_aci',               'Ko_at_25',            'mmol mol^(-1)'),
-        c('fit_c3_aci',               'Ko_tl_avg',           'mmol mol^(-1)'),
-        c('fit_c3_aci',               'RL_at_25',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'RL_tl_avg',           'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'Tp_at_25',            'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'Tp_tl_avg',           'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'Vcmax_at_25',         'micromol m^(-2) s^(-1)'),
-        c('fit_c3_aci',               'Vcmax_tl_avg',        'micromol m^(-2) s^(-1)'),
-        c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
-        c('estimate_operating_point', 'operating_Cc',        replicate_exdf$units[[cc_column_name]]),
-        c('estimate_operating_point', 'operating_An',        replicate_exdf$units[[a_column_name]]),
-        c('estimate_operating_point', 'operating_point_msg', ''),
-        c('fit_c3_aci',               'operating_An_model',  replicate_exdf$units[[a_column_name]]),
-        c('fit_c3_aci',               'convergence',         ''),
-        c('fit_c3_aci',               'convergence_msg',     ''),
-        c('fit_c3_aci',               'feval',               ''),
-        c('fit_c3_aci',               'optimum_val',         ''),
-        c('fit_c3_aci',               'c3_assimilation_msg', '')
+        c('fit_c3_aci',               'alpha_g',               'dimensionless'),
+        c('fit_c3_aci',               'alpha_old',             'dimensionless'),
+        c('fit_c3_aci',               'alpha_s',               'dimensionless'),
+        c('fit_c3_aci',               'alpha_t',               'dimensionless'),
+        c('fit_c3_aci',               'Gamma_star_at_25',      'micromol mol^(-1)'),
+        c('fit_c3_aci',               'Gamma_star_tl_avg',     'micromol mol^(-1)'),
+        c('fit_c3_aci',               'gmc_at_25',             'mol mol^(-2) s^(-1) bar^(-1)'),
+        c('fit_c3_aci',               'gmc_tl_avg',            'mol mol^(-2) s^(-1) bar^(-1)'),
+        c('fit_c3_aci',               'J_at_25',               'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'J_tl_avg',              'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Kc_at_25',              'micromol mol^(-1)'),
+        c('fit_c3_aci',               'Kc_tl_avg',             'micromol mol^(-1)'),
+        c('fit_c3_aci',               'Ko_at_25',              'mmol mol^(-1)'),
+        c('fit_c3_aci',               'Ko_tl_avg',             'mmol mol^(-1)'),
+        c('fit_c3_aci',               'RL_at_25',              'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'RL_tl_avg',             'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Tp_at_25',              'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Tp_tl_avg',             'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Vcmax_at_25',           'micromol m^(-2) s^(-1)'),
+        c('fit_c3_aci',               'Vcmax_tl_avg',          'micromol m^(-2) s^(-1)'),
+        c('estimate_operating_point', 'operating_Ci',          replicate_exdf$units[[ci_column_name]]),
+        c('estimate_operating_point', 'operating_Cc',          replicate_exdf$units[[cc_column_name]]),
+        c('estimate_operating_point', 'operating_An',          replicate_exdf$units[[a_column_name]]),
+        c('estimate_operating_point', 'operating_point_msg',   ''),
+        c('fit_c3_aci',               'operating_An_model',    replicate_exdf$units[[a_column_name]]),
+        c('fit_c3_aci',               'convergence',           ''),
+        c('fit_c3_aci',               'convergence_msg',       ''),
+        c('fit_c3_aci',               'feval',                 ''),
+        c('fit_c3_aci',               'optimum_val',           ''),
+        c('fit_c3_aci',               'c3_assimilation_msg',   ''),
+        c('fit_c3_aci',               'c3_optional_arguments', '')
     )
 
     # Calculate confidence intervals, if necessary

@@ -156,13 +156,17 @@ test_that('fit results have not changed (no alpha)', {
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
-    expect_equal(sum(lim_info), nrow(one_curve))
+    expect_equal(sum(lim_info), nrow(one_curve_weird))
 
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
         c(2, 2, 0)
+    )
+
+    expect_false(
+        any(c('gmc_tl', 'Tp_tl') %in% colnames(fit_res$parameters))
     )
 })
 

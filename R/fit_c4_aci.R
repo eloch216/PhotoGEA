@@ -45,10 +45,13 @@ fit_c4_aci <- function(
         stop('At this time, the only supported option for sd_A is `RMSE`')
     }
 
+    # Get the replicate identifier columns
+    replicate_identifiers <- identifier_columns(replicate_exdf)
+
     if (debug_mode) {
         debug_msg('fit_c4_aci curve identifiers:')
         cat('\n')
-        utils::str(identifier_columns(replicate_exdf)$main_data)
+        utils::str(replicate_identifiers$main_data)
     }
 
     # Define the total error function; units will also be checked by this
@@ -356,9 +359,6 @@ fit_c4_aci <- function(
     # Add a column for the residuals
     replicate_exdf <- calculate_residuals(replicate_exdf, a_column_name)
 
-    # Get the replicate identifier columns
-    replicate_identifiers <- identifier_columns(replicate_exdf)
-
     # Attach identifiers to interpolated rates, making sure to avoid duplicating
     # any columns
     identifiers_to_keep <-
@@ -397,14 +397,14 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
 
-    # Also add fitting details
+    # Attach fitting details
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']     <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
     replicate_identifiers[, 'optimizer']           <- optim_result[['optimizer']]
     replicate_identifiers[, 'c4_assimilation_msg'] <- replicate_exdf[1, 'c4_assimilation_msg']
 
-    # Store the results
+    # Attach operating point information
     replicate_identifiers[, 'operating_Ci']        <- operating_point_info$operating_Ci
     replicate_identifiers[, 'operating_PCm']       <- operating_point_info$operating_PCm
     replicate_identifiers[, 'operating_An']        <- operating_point_info$operating_An
