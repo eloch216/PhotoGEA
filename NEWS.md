@@ -35,9 +35,12 @@ be directly added to this file to describe the related changes.
 
 ### Minor user-facing changes
 
-- Add "debug mode" option to A-Ci fitting functions; in debug mode, detailed
+- Added "debug mode" option to A-Ci fitting functions; in debug mode, detailed
   information about the fit is printed to the R terminal to help with
   troubleshooting.
+
+- Added new options to `check_response_curve_data`, so we can now check for
+  ranges of npts, and for columns that should be constant.
 
 ### Bug fixes
 

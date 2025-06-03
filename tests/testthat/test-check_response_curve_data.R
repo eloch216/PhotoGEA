@@ -18,7 +18,7 @@ test_that('check_response_curve_data produces messages only when expected', {
 
     expect_error(
         check_response_curve_data(licor_file, 'curve_identifier', 15, 'CO2_r_sp'),
-        'One or more curves does not have the expected number of points.'
+        'The following curves do not have 15 points: soybean - 5a, tobacco - 1, tobacco - 2'
     )
 
     expect_error(
@@ -27,12 +27,12 @@ test_that('check_response_curve_data produces messages only when expected', {
     )
 
     expect_warning(
-        check_response_curve_data(licor_file, 'curve_identifier', 15, 'CO2_r_sp', error_on_failure = FALSE),
-        'One or more curves does not have the expected number of points.'
+        check_response_curve_data(licor_file, 'curve_identifier', 15, 'CO2_r_sp', error_on_failure = FALSE, print_information = FALSE),
+        'The following curves do not have 15 points: soybean - 5a, tobacco - 1, tobacco - 2'
     )
 
     expect_warning(
-        check_response_curve_data(licor_file, 'curve_identifier', 16, 'Ci', error_on_failure = FALSE),
+        check_response_curve_data(licor_file, 'curve_identifier', 16, 'Ci', error_on_failure = FALSE, print_information = FALSE),
         'The curves do not all follow the same sequence of the driving variable.'
     )
 
