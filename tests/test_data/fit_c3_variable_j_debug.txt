@@ -1,0 +1,139 @@
+
+Time: 2025-06-04 12:00:43.226488    fit_c3_variable_j curve identifiers:
+
+'data.frame':	1 obs. of  80 variables:
+ $ averaging       : num 0
+ $ species         : chr "tobacco"
+ $ plot            : chr "1"
+ $ instrument      : chr "ripe1"
+ $ Leak            : num 0
+ $ LeakPct         : num 0
+ $ CorrFact        : num 1
+ $ CorrFactPct     : num 0
+ $ DarkAdaptedID   : chr "RECT-12243-20210724-05_20_30"
+ $ Qmax_d          : num 10239
+ $ Fo              : num 302
+ $ Fm              : num 4052
+ $ Fv/Fm           : num 0.925
+ $ A_dark          : num -0.323
+ $ PS2/1           : num 0.5
+ $ S               : num 6
+ $ K               : num 0.5
+ $ Geometry        : chr "0: Broadleaf"
+ $ Custom          : num 2
+ $ Tleaf2          : num 1000
+ $ Offset          : num 0
+ $ Offset2         : num 0
+ $ Qamb_in         : num 0
+ $ f_farred        : num 0
+ $ Q_modavg        : num 5
+ $ Q_farred        : num 0
+ $ state           : num 0
+ $ period          : num 15
+ $ h2o_at          : num 22
+ $ A:OK            : num 1
+ $ gsw:OK          : num 1
+ $ Stable          : num 2
+ $ Total           : num 2
+ $ State           : chr "2/2"
+ $ Tleaf2_mv       : num 0
+ $ Tleaf2_j        : num 1000
+ $ Pump            : num 1
+ $ diag_12v        : num 12
+ $ AccH2O_des      : num 9999
+ $ AccCO2_soda     : num 9999
+ $ AccH2O_hum      : num 9999
+ $ CO2_hrs         : num 1000
+ $ ADC_CH1         : num 1.87
+ $ ADC_CH4         : num 1.88
+ $ DAC_1           : num 5
+ $ DAC_2           : num 0
+ $ DAC_3           : num 0
+ $ DAC_4           : num 0
+ $ GPIO            : num 11111111
+ $ GPIO_dir        : chr "oooooooo"
+ $ excit_5v        : chr "off"
+ $ power_12v       : chr "off"
+ $ power_5v        : chr "off"
+ $ ch1_pullup      : chr "off"
+ $ AuxPower        : num 0
+ $ MatchValveR     : num 100
+ $ MatchValveS     : num 100
+ $ cf_co2_b        : num 0.00118
+ $ cf_co2_c        : num -6.26e-07
+ $ cf_co2_d        : num 2.42e-10
+ $ cf_h2o_b        : num 0
+ $ cf_h2o_c        : num 0
+ $ cf_h2o_d        : num 0
+ $ co2_fit_low     : num 2
+ $ co2_fit_high    : num 2154
+ $ h2o_fit_low     : num 1
+ $ h2o_fit_high    : num 23
+ $ DIAG            : num 18
+ $ Txchg_sp        : num 27
+ $ user_remark     : chr "another user remark"
+ $ oxygen          : num 21
+ $ file_name       : chr "C:/Users/eloch/Documents/RLib-4.4.2/PhotoGEA/extdata/c3_aci_1.xlsx"
+ $ species_plot    : chr "tobacco - 1"
+ $ Qin_avg         : num 2000
+ $ TleafCnd_avg    : num 30.1
+ $ gmc_norm        : num 1
+ $ Tp_norm         : num 1
+ $ Gamma_star_at_25: num 42.9
+ $ Kc_at_25        : num 407
+ $ Ko_at_25        : num 277
+
+Time: 2025-06-04 12:00:43.347542    initial_guess_c3_aci RL_fit info:
+
+         Cc          A
+14 38.20251 -4.6443941
+15 54.69933 -1.3927185
+16 69.50227  0.6914038
+17 81.01977  3.6012345
+
+Call:
+stats::lm(formula = RL_subset[, a_column_name] ~ RL_subset[, 
+    cc_column_name])
+
+Residuals:
+       1        2        3        4 
+ 0.01291  0.19061 -0.48361  0.28008 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                 -11.7759     0.8181  -14.39  0.00479 **
+RL_subset[, cc_column_name]   0.1863     0.0130   14.34  0.00483 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4176 on 2 degrees of freedom
+Multiple R-squared:  0.9904,	Adjusted R-squared:  0.9855 
+F-statistic: 205.5 on 1 and 2 DF,  p-value: 0.00483
+
+
+Time: 2025-06-04 12:00:43.351312    fit_c3_variable_j initial_guess: 0, 0.5, 0, 0, 42.93205, 247.435576808897, 406.8494, 277.1446, 0.816320850138214, 0.42029928580326, 21.3537635961866, 171.185940224844
+
+Time: 2025-06-04 12:00:43.351656    error_function_c3_variable_j guess: 0.5, 247.435576808897, 0.816320850138212, 0.42029928580326, 21.3537635961866, 171.185940224844
+Time: 2025-06-04 12:00:43.351806    error_function_c3_variable_j parameters: 0, 0.5, 0, 0, NA, 247.435576808897, NA, NA, 0.816320850138212, 0.42029928580326, 21.3537635961866, 171.185940224844
+
+Time: 2025-06-04 12:00:43.352769    error_function_c3_variable_j guess: 6.84611426722567, 441.532545196402, 11.4939998002124, 4.15602936867359, 41.7312274649893, 341.403669559236
+Time: 2025-06-04 12:00:43.352993    error_function_c3_variable_j parameters: 0, 6.84611426722567, 0, 0, NA, 441.532545196402, NA, NA, 11.4939998002124, 4.15602936867359, 41.7312274649893, 341.403669559236
+
+Time: 2025-06-04 12:00:43.353838    error_function_c3_variable_j guess: 1.04910301836213, 939.308124907245, 11.4939998002124, 4.15602936867359, 41.7312274649893, 341.403669559236
+Time: 2025-06-04 12:00:43.354005    error_function_c3_variable_j parameters: 0, 1.04910301836213, 0, 0, NA, 939.308124907245, NA, NA, 11.4939998002124, 4.15602936867359, 41.7312274649893, 341.403669559236
+
+Time: 2025-06-04 12:00:43.354818    error_function_c3_variable_j guess: 1.04910301836213, 441.532545196402, 79.9916574810732, 4.15602936867359, 41.7312274649893, 341.403669559236
+Time: 2025-06-04 12:00:43.354977    error_function_c3_variable_j parameters: 0, 1.04910301836213, 0, 0, NA, 441.532545196402, NA, NA, 79.9916574810732, 4.15602936867359, 41.7312274649893, 341.403669559236
+
+Time: 2025-06-04 12:00:43.355317    error_function_c3_variable_j guess: 1.04910301836213, 441.532545196402, 11.4939998002124, 9.56391050409269, 41.7312274649893, 341.403669559236
+Time: 2025-06-04 12:00:43.35546    error_function_c3_variable_j parameters: 0, 1.04910301836213, 0, 0, NA, 441.532545196402, NA, NA, 11.4939998002124, 9.56391050409269, 41.7312274649893, 341.403669559236
+
+Time: 2025-06-04 12:00:43.356243    error_function_c3_variable_j guess: 1.04910301836213, 441.532545196402, 11.4939998002124, 4.15602936867359, 93.693505360097, 341.403669559236
+Time: 2025-06-04 12:00:43.356393    error_function_c3_variable_j parameters: 0, 1.04910301836213, 0, 0, NA, 441.532545196402, NA, NA, 11.4939998002124, 4.15602936867359, 93.693505360097, 341.403669559236
+
+Time: 2025-06-04 12:00:43.357171    error_function_c3_variable_j guess: 1.04910301836213, 441.532545196402, 11.4939998002124, 4.15602936867359, 41.7312274649893, 912.547916536426
+Time: 2025-06-04 12:00:43.357322    error_function_c3_variable_j parameters: 0, 1.04910301836213, 0, 0, NA, 441.532545196402, NA, NA, 11.4939998002124, 4.15602936867359, 41.7312274649893, 912.547916536426
+
+Time: 2025-06-04 12:00:43.358304    fit_c3_variable_j best_X: 0, 0.5, 0, 0, NA, 247.435576808897, NA, NA, 0.816320850138212, 0.42029928580326, 21.3537635961866, 171.185940224844
+
+Time: 2025-06-04 12:00:43.488228    fit_c3_variable_j outcome: success

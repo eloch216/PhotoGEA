@@ -3,6 +3,7 @@ source('one_curve_c4_aci.R')
 
 # Load helping function
 source('get_duplicated_colnames.R')
+source('process_saved_debug.R')
 
 # Choose test tolerance
 TOLERANCE <- 1e-4
@@ -46,6 +47,42 @@ test_that('Ci limits can be bypassed', {
     expect_equal(unique(fit_res$fits[, 'c4_assimilation_hyperbola_msg']), '')
     expect_equal(fit_res$parameters[, 'c4_assimilation_hyperbola_msg'], '')
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
+})
+
+test_that('Debug mode works', {
+    # Set a seed before fitting since there is randomness involved with the
+    # optimizer
+    set.seed(1234)
+
+    # Run a quick fit in debug mode, saving the output to a temporary file
+    tfile <- tempfile()
+
+    sink(tfile)
+
+    fit_res <- fit_c4_aci_hyperbola(
+        one_curve,
+        optim_fun = optimizer_nmkb(1, maxfeval = 2),
+        debug_mode = TRUE
+    )
+
+    sink()
+
+    # Read the file containing the debug output
+    debug_output <- readLines(tfile)
+
+    # Read the saved version
+    saved_fpath <- file.path('..', 'test_data', 'fit_c4_aci_hyperbola_debug.txt')
+
+    # Run this command to update the saved output file:
+    #  writeLines(debug_output, saved_fpath)
+
+    saved_debug_output <- readLines(saved_fpath)
+
+    # Compare new and saved versions
+    expect_equal(
+        process_saved_debug(debug_output),
+        process_saved_debug(saved_debug_output)
+    )
 })
 
 test_that('fit results have not changed', {
