@@ -42,6 +42,10 @@ be directly added to this file to describe the related changes.
 - Added new options to `check_response_curve_data`, so we can now check for
   ranges of npts, and for columns that should be constant.
 
+- Parameter estimates from A-Ci fits are now set to `NA` when the fit is
+  overparameterized; in other words, when there are not enough degrees of
+  freedom.
+
 ### Bug fixes
 
 - Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
