@@ -29,6 +29,8 @@ The questions discussed here are grouped into sections by topic:
 
 - [Loading and Checking Data](#loading-and-checking-data)
 
+- [Converting and Exporting Results](#converting-and-exporting-results)
+
 - [Fitting C~3~ _A-C~i~_ Curves](#fitting-c3-a-ci-curves)
 
 # Installing PhotoGEA
@@ -546,6 +548,83 @@ for (i in seq_along(to_rename)) {
 
 Please see the
 [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html).
+
+# Converting and Exporting Results
+
+## How Can I Convert an exdf to a Regular Data Frame?
+
+Each `exdf` object is actually a list, where one of the elements (called
+`main_data`) includes its contents as a data frame. So, an `exdf` object can be
+converted to a data frame by extracting this element. For example, if `exdf_obj`
+is an extended data frame, then the following will "convert" it to a regular
+data frame:
+
+```{r, eval = FALSE}
+# Convert an exdf to a regular data frame
+dataf <- exdf_obj$main_data
+```
+
+This can be helpful for passing the results from PhotoGEA functions to other R
+functions, especially when performing statistical analysis.
+
+Note: Using `as.data.frame` is not recommended, since it will add a row for the
+units and a row for the categories when converting. This is useful in a few
+situations (for example, when printing the contents of an `exdf`), but it is a
+nuisance in most situations because it will cause all columns to become
+`character` (even if they were originally `numeric`) and to include non-data
+values. See `?as.data.frame.exdf` for more info.
+
+## How Can I Save an exdf to a CSV File?
+
+There are several options for doing this. One is to use `write.csv.exdf`, which
+will include the units and categories for each column. Another option is to
+convert the `exdf` to a regular data frame (see above) and use `write.csv`. For
+example:
+
+```{r, eval = FALSE}
+# Write an exdf to a CSV file, including units
+write.csv.exdf(exdf_obj, file = 'exdf_version.csv')
+
+# Write an exdf to a CSV file, not including units
+write.csv(exdf_obj$main_data, file = 'data_frame_version.csv', row.names = FALSE)
+```
+
+The file created by `write.csv.exdf` can be read using `read.csv.exdf`, which
+will create an exdf object from the file. The file created by `write.csv` can be
+read using `read.csv`, which will create a data frame from the file.
+
+Sometimes it can be helpful to only save a subset of the columns in an `exdf`.
+For example, the `parameters` table returned by `fit_c3_aci` contains many
+columns, some of which may not be important to all users. In this case, it is
+possible to specify the columns that should be saved as follows:
+
+```{r, eval = FALSE}
+# Specify a subset of columns to write to a CSV file
+col_to_save <- c(
+  'curve_identifier',
+  'Vcmax_at_25',
+  'Jmax_at_25',
+  'Tp_at_25',
+  'RL_at_25'
+)
+
+# Save fitting results to a CSV file, including units
+write.csv.exdf(
+  c3_aci_results$parameters[, col_to_save, TRUE],
+  file = 'parameters_subset.csv'
+)
+
+# Save fitting results to a CSV file, not including units
+write.csv(
+  c3_aci_results$parameters[, col_to_save],
+  file = 'parameters_subset.csv',
+  row.names = FALSE
+)
+```
+
+The example shows two options for creating the file, but typically only one of
+these would actually be used in practice. You may need to alter the particular
+columns that are saved.
 
 # Fitting C~3~ _A-C~i~_ Curves
 
