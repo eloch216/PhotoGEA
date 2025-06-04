@@ -17,10 +17,10 @@ c(
         ),
         doi = '10.1111/pce.15501',
         journal = 'Plant, Cell & Environment',
-        number = NA,
-        pages = NA,
+        number = 7,
+        pages = 5104--5119,
         title = 'PhotoGEA: An R Package for Closer Fitting of Photosynthetic Gas Exchange Data With Non-Gaussian Confidence Interval Estimation',
-        volume = NA,
+        volume = 48,
         year = 2025
     )
 )
