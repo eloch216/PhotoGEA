@@ -33,7 +33,8 @@ fit_c4_aci <- function(
     relative_likelihood_threshold = 0.147,
     hard_constraints = 0,
     calculate_confidence_intervals = TRUE,
-    remove_unreliable_param = 2
+    remove_unreliable_param = 2,
+    debug_mode = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -42,6 +43,15 @@ fit_c4_aci <- function(
 
     if (sd_A != 'RMSE') {
         stop('At this time, the only supported option for sd_A is `RMSE`')
+    }
+
+    # Get the replicate identifier columns
+    replicate_identifiers <- identifier_columns(replicate_exdf)
+
+    if (debug_mode) {
+        debug_msg('fit_c4_aci curve identifiers:')
+        cat('\n')
+        utils::str(replicate_identifiers$main_data)
     }
 
     # Define the total error function; units will also be checked by this
@@ -65,7 +75,8 @@ fit_c4_aci <- function(
         total_pressure_column_name,
         vcmax_norm_column_name,
         vpmax_norm_column_name,
-        hard_constraints
+        hard_constraints,
+        debug_mode
     )
 
     # Make sure the required variables are defined and have the correct units;
@@ -73,7 +84,7 @@ fit_c4_aci <- function(
     required_variables <- list()
     required_variables[[ca_column_name]] <- unit_dictionary('Ca')
 
-    check_required_variables(replicate_exdf, required_variables)
+    check_required_variables(replicate_exdf, required_variables, check_NA = FALSE)
 
     # Assemble lower, upper, and fit_options
     luf <- assemble_luf(
@@ -109,10 +120,18 @@ fit_c4_aci <- function(
         rl_norm_column_name,
         total_pressure_column_name,
         vcmax_norm_column_name,
-        vpmax_norm_column_name
+        vpmax_norm_column_name,
+        debug_mode
     )
 
     initial_guess <- initial_guess_fun(replicate_exdf)
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c4_aci initial_guess:',
+            paste(initial_guess, collapse = ', ')
+        )
+    }
 
     # Find the best values for the parameters that should be varied
     optim_result <- optim_fun(
@@ -127,6 +146,13 @@ fit_c4_aci <- function(
     # Get the values of all parameters following the optimization
     best_X <- fit_options_vec
     best_X[param_to_fit] <- optim_result[['par']]
+
+    if (debug_mode) {
+        debug_msg(
+            'fit_c4_aci best_X:',
+            paste(best_X, collapse = ', ')
+        )
+    }
 
     # Get the corresponding values of Cc at the best guess
     replicate_exdf <- apply_gm(
@@ -314,6 +340,13 @@ fit_c4_aci <- function(
         }
     }
 
+    if (debug_mode) {
+        debug_msg(
+            'fit_c4_aci outcome:',
+            if (fit_failure) {'failure'} else {'success'}
+        )
+    }
+
     # Include the atmospheric CO2 concentration
     replicate_exdf[, 'Ca_atmospheric'] <- Ca_atmospheric
 
@@ -325,9 +358,6 @@ fit_c4_aci <- function(
 
     # Add a column for the residuals
     replicate_exdf <- calculate_residuals(replicate_exdf, a_column_name)
-
-    # Get the replicate identifier columns
-    replicate_identifiers <- identifier_columns(replicate_exdf)
 
     # Attach identifiers to interpolated rates, making sure to avoid duplicating
     # any columns
@@ -367,18 +397,19 @@ fit_c4_aci <- function(
     replicate_identifiers[, 'Vcmax_tl_avg'] <- mean(replicate_exdf[, 'Vcmax_tl'])
     replicate_identifiers[, 'Vpmax_tl_avg'] <- mean(replicate_exdf[, 'Vpmax_tl'])
 
-    # Also add fitting details
+    # Attach fitting details
     replicate_identifiers[, 'convergence']         <- optim_result[['convergence']]
     replicate_identifiers[, 'convergence_msg']     <- optim_result[['convergence_msg']]
     replicate_identifiers[, 'feval']               <- optim_result[['feval']]
     replicate_identifiers[, 'optimizer']           <- optim_result[['optimizer']]
     replicate_identifiers[, 'c4_assimilation_msg'] <- replicate_exdf[1, 'c4_assimilation_msg']
 
-    # Store the results
-    replicate_identifiers[, 'operating_Ci']       <- operating_point_info$operating_Ci
-    replicate_identifiers[, 'operating_PCm']      <- operating_point_info$operating_PCm
-    replicate_identifiers[, 'operating_An']       <- operating_point_info$operating_An
-    replicate_identifiers[, 'operating_An_model'] <- operating_An_model
+    # Attach operating point information
+    replicate_identifiers[, 'operating_Ci']        <- operating_point_info$operating_Ci
+    replicate_identifiers[, 'operating_PCm']       <- operating_point_info$operating_PCm
+    replicate_identifiers[, 'operating_An']        <- operating_point_info$operating_An
+    replicate_identifiers[, 'operating_An_model']  <- operating_An_model
+    replicate_identifiers[, 'operating_point_msg'] <- operating_point_info$operating_point_msg
 
     # Get an updated likelihood value using the RMSE
     replicate_identifiers[, 'optimum_val'] <- if (fit_failure) {
@@ -427,6 +458,7 @@ fit_c4_aci <- function(
         c('estimate_operating_point', 'operating_Ci',        replicate_exdf$units[[ci_column_name]]),
         c('estimate_operating_point', 'operating_PCm',       replicate_exdf$units[[pcm_column_name]]),
         c('estimate_operating_point', 'operating_An',        replicate_exdf$units[[a_column_name]]),
+        c('estimate_operating_point', 'operating_point_msg', ''),
         c('fit_c4_aci',               'operating_An_model',  replicate_exdf$units[[a_column_name]]),
         c('fit_c4_aci',               'convergence',         ''),
         c('fit_c4_aci',               'convergence_msg',     ''),

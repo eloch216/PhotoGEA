@@ -31,6 +31,24 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+### Minor user-facing changes
+
+- Added "debug mode" option to A-Ci fitting functions; in debug mode, detailed
+  information about the fit is printed to the R terminal to help with
+  troubleshooting.
+
+- Added new options to `check_response_curve_data`, so we can now check for
+  ranges of npts, and for columns that should be constant.
+
+### Bug fixes
+
+- Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
+  when making initial guesses for `RL`.
+
+- Fixed an error that prevented curve fits when all Ca values are `NA`.
+
 ## Changes in PhotoGEA version 1.3.2 (2024-04-08)
 
 This is the first version of PhotoGEA available on CRAN.

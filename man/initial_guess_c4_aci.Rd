@@ -29,7 +29,8 @@
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    debug_mode = FALSE
   )
 }
 
@@ -124,6 +125,13 @@
     \code{Vpmax} values (with units of
     \code{normalized to Vpmax at 25 degrees C}).
   }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about the linear fit used
+    to estimate \code{RL} is printed; this can be helpful when troubleshooting
+    issues with a particular curve.
+  }
 }
 
 \details{
@@ -146,10 +154,17 @@
           assimilation \code{An} and \code{PCm}: \code{An =
           (gbs + Vpmax / kP) * PCm - RLm}. So, to estimate \code{RLm}, we make a
           linear fit of \code{An} vs. \code{PCm} in the low \code{PCm} range
-          where this equation is expected to be valid. Then \code{RLm} is given
-          by the negative of the intercept from the fit. In the C4 assimilation
-          model, we assume that \code{RLm = Rm_frac * RL}, so we can also
-          estimate \code{RL = RLm / Rm_frac} from this value.
+          (\code{PCm <= pcm_threshold_rlm}) where this equation is expected to
+          be valid. Then \code{RLm} is given by the negative of the intercept
+          from the fit. In the C4 assimilation model, we assume that
+          \code{RLm = Rm_frac * RL}, so we can also estimate
+          \code{RL = RLm / Rm_frac} from this value.
+
+          If there are fewer than two points with
+          \code{PCm <= pcm_threshold_rlm}, the fit cannot be made, and we use a
+          typical value instead (0.5 \code{micromol m^(-2) s^(-1)}). Likewise,
+          if the linear fit predicts a negative or \code{NA} value for
+          \code{RLm}, we use the same typical value instead.
     \item \strong{Estimating Vpmax}: An estimate for \code{Vpmax} can also be
           obtained from Equation 4.26. In this case, we simply solve the
           equation for \code{Vpmax} and use it to calculate a value of

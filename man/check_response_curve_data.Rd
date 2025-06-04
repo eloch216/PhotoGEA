@@ -11,34 +11,33 @@
 
 \usage{
   check_response_curve_data(
-    licor_exdf,
+    exdf_obj,
     identifier_columns,
     expected_npts = 0,
     driving_column = NULL,
     driving_column_tolerance = 1.0,
     col_to_ignore_for_inf = 'gmc',
+    constant_col = list(),
     error_on_failure = TRUE,
     print_information = TRUE
   )
 }
 
 \arguments{
-  \item{licor_exdf}{
-    An \code{exdf} object representing data from a Licor gas exchange
-    measurement system.
+  \item{exdf_obj}{
+    An \code{exdf} object representing multiple response curves.
   }
 
   \item{identifier_columns}{
     A vector or list of strings representing the names of columns in
-    \code{licor_exdf} that, taken together, uniquely identify each curve. This
+    \code{exdf_obj} that, taken together, uniquely identify each curve. This
     often includes names like \code{plot}, \code{event}, \code{replicate}, etc.
   }
 
   \item{expected_npts}{
-    The number of points that should be in each response curve. If
-    \code{expected_npts} is set to 0, then all response curves are expected to
-    have the same (unspecified) number of points. If \code{expected_npts} is set
-    to a negative number, then this check will be skipped.
+    A numeric vector of length 1 or 2 specifying conditions for the number of
+    points in each curve. If \code{expected_npts} is set to a negative number,
+    then this check will be skipped. See below for more details.
   }
 
   \item{driving_column}{
@@ -61,6 +60,14 @@
     \code{col_to_ignore_for_inf} to \code{NULL}.
   }
 
+  \item{constant_col}{
+    A list of named numeric elements, where the name indicates a column of
+    \code{exdf_obj} that should be constant, and the value indicates whether the
+    column's values must be identical or whether they must lie within a
+    specified numeric range. If \code{constant_col} is an empty list, then this
+    check will be skipped. See below for more details.
+  }
+
   \item{error_on_failure}{
     A logical value indicating whether to send an error message when an issue is
     detected. See details below.
@@ -73,37 +80,95 @@
 }
 
 \details{
-  This function makes a few basic checks to ensure that the Licor data includes
-  the expected information and does not include any mistakes. If no problems are
-  detected, this function will be silent with no return value. If a problem is
-  detected and \code{error_on_failure} is \code{TRUE}, then this function will
-  throw an error with a short message; if \code{error_on_failure} is
-  \code{FALSE}, then this function will throw a warning instead. If a problem is
-  detected and \code{print_information} is \code{TRUE}, additional information
-  about the problem will be printed to the R terminal.
 
-  This function will perform the following checks, some of which are optional:
+  \strong{Basic Behavior:}
+
+  This function makes a few basic checks to ensure that the response curve data
+  includes the expected information and does not include any mistakes. If no
+  problems are detected, this function will be silent with no return value. If a
+  problem is detected, then the user will be notified in one or more ways:
   \itemize{
-    \item If \code{col_to_ignore_for_inf} is not \code{NULL}, no numeric columns
-          in \code{licor_exdf} should have infinite values, with the exception
-          of columns designated in \code{col_to_ignore_for_inf}.
-    \item All elements of \code{identifier_columns} should be present as columns
-          in \code{licor_exdf}. If \code{driving_column} is not \code{NULL}, it
-          should also be present as a column in \code{licor_exdf}.
-    \item \code{licor_exdf} will be split into chunks according to the values of
-          its \code{identifier_columns}. If this \code{exdf} file represents
-          response curves, then each chunk should represent a single curve and a
-          few additional checks can be performed:
-          \itemize{
-            \item If \code{expected_npts >= 0}, then each chunk should have the
-                  same number of points. If \code{expected_npts > 0}, then each
-                  chunk should have \code{expected_npts} points.
-            \item If \code{driving_column} is not \code{NULL}, then each code
-                  chunk should have the same sequence of values in this column.
-                  To allow for small variations, a nonzero
-                  \code{driving_column_tolerance} can be specified.
-          }
+    \item If \code{error_on_failure} is \code{TRUE}, then this function will
+          throw an error with a short message. If \code{print_information} is
+          also \code{TRUE}, then additional information will be printed to the R
+          terminal.
+    \item If \code{error_on_failure} is \code{FALSE} and
+          \code{print_information} is also \code{FALSE}, then this function will
+          throw a warning with a short message.
+    \item If \code{error_on_failure} is \code{FALSE} and
+          \code{print_information} is true, information about the problem will
+          be printed to the R terminal.
   }
+
+  This function will (optionally) perform several checks:
+  \itemize{
+    \item Checking for infinite values: If \code{col_to_ignore_for_inf} is not
+          \code{NULL}, no numeric columns in \code{exdf_obj} should have
+          infinite values, with the exception of columns designated in
+          \code{col_to_ignore_for_inf}.
+    \item Checking required columns: All elements of \code{identifier_columns}
+          should be present as columns in \code{exdf_obj}. If
+          \code{driving_column} is not \code{NULL}, it should also be present as
+          a column in \code{exdf_obj}. If \code{constant_col} is not empty, then
+          these columns must also be present in \code{exdf_obj}.
+    \item Checking the number of points in each curve: The general idea is to
+          ensure that each curve has the expected number of points. Several
+          options can be specified via the value of \code{expected_npts}, as
+          discussed below.
+    \item Checking the driving column: If \code{driving_column} is not
+          \code{NULL}, then each curve should have the same sequence of values
+          in this column. To allow for small variations, a nonzero
+          \code{driving_column_tolerance} can be specified.
+    \item Checking the constant columns: If \code{constant_col} is not empty,
+          then each specified column should either be constant, or only vary by
+          a specified amount. See details below.
+  }
+
+  By default, most of these are not performed (except the simplest ones like
+  checking for infinite values or checking that key columns are present). This
+  enables an "opt-in" use style, where users can specify just the checks they
+  wish to make.
+
+  \strong{More Details:}
+
+  There are several options for checking the number of points in each curve:
+  \itemize{
+    \item If \code{expected_npts} is a single negative number, no check will be
+          performed.
+    \item If \code{expected_npts} is 0, then each curve is expected to have the
+          same number of points.
+    \item If \code{expected_npts} is a single positive number, then each curve
+          is expected to have that many points. For example, if
+          \code{expected_npts} is 7, then each curve must have 7 points.
+    \item If \code{expected_npts} is a pair of positive numbers, then each curve
+          is expected to have a number of points lying within the range defined
+          by \code{expected_npts}. For example, if \code{expected_npts} is
+          \code{c(6, 8)}, then each curve must have no fewer than 6 points and
+          no more than 8 points.
+    \item If \code{expected_npts} is a pair of numbers, one of which is zero and
+          one of which is positive, then the positive number specifies a range;
+          each curve must differ from the average number of points by less than
+          the range. For example, if \code{expected_npts} is \code{c(0, 3)},
+          then every curve must have a number of points within 3 of the average
+          number of points.
+  }
+
+  There are two options for checking columns that should be constant:
+  \itemize{
+    \item A value of \code{NA} indicates that all values of that column must be
+          exactly identical; this check applies for numeric and character
+          columns.
+    \item A numeric value indicates that the range of values of that column must
+          be smaller than the specified range; this range applies for numeric
+          columns only.
+  }
+
+  For example, setting \code{constant_col = list(species = NA, Qin = 10)} means
+  that each curve must have only a single value of the \code{species} column,
+  and that the value of the \code{Qin} column cannot vary by more than 10 across
+  each curve.
+
+  \strong{Use Cases:}
 
   Using \code{check_response_curve_data} is not strictly necessary, but it can
   be helpful both to you and to anyone else reading your analysis code. Here are
@@ -129,6 +194,16 @@
           \code{expected_npts} set to 16. If this check passes, then it means
           not only that your claim is correct, but also that the identifier
           columns are being interpreted properly.
+    \item \strong{Checking identifiers:} If the data set includes some
+          identifying metadata, such as a species or location, it may be helpful
+          to confirm that each curve has a single value of these "identifier"
+          columns. Otherwise, the data set may be difficult to interpret.
+    \item \strong{Checking measurement conditions:} If the response curves are
+          expected to be measured under constant temperature, humidity, light,
+          or other environmental variables, it may be helpful to confirm that
+          these variables do not vary too much across each individual curve.
+          Otherwise, parameter values estimated from the curves may not be
+          meaningful.
   }
 
   Sometimes the response curves in a large data set were not all measured with
@@ -165,12 +240,45 @@ licor_file <- read_gasex_file(
 check_response_curve_data(licor_file, c('species', 'plot'))
 
 # Make sure there are no inifinite values and that all curves have 7 points
-check_response_curve_data(licor_file, c('species', 'plot'), 7)
+check_response_curve_data(licor_file, c('species', 'plot'), expected_npts = 7)
 
 # Make sure there are no infinite values, that all curves have 7 points, and
 # that the values of the `Qin` column follow the same sequence in all curves
 # (to within 1.0 micromol / m^2 / s)
-check_response_curve_data(licor_file, c('species', 'plot'), 7, 'Qin', 1.0)
+check_response_curve_data(
+  licor_file,
+  c('species', 'plot'),
+  expected_npts = 7,
+  driving_column = 'Qin',
+  driving_column_tolerance = 1.0
+)
+
+# Make sure that there are no infinite values and that all curves have between
+# 8 and 10 points; this will intentionally fail
+check_response_curve_data(
+  licor_file,
+  c('species', 'plot'),
+  expected_npts = c(8, 10),
+  error_on_failure = FALSE
+)
+
+# Split the data set by `species` and make sure all curves have similar numbers
+# of points (within 3 of the mean value); this will intentionally fail
+check_response_curve_data(
+  licor_file,
+  'species',
+  expected_npts = c(0, 3),
+  error_on_failure = FALSE
+)
+
+# Split the data set by `species` and make sure all curves have a constant value
+# of `plot` and a limited range of `TLeafCnd`; this will intentionally fail
+check_response_curve_data(
+  licor_file,
+  'species',
+  constant_col = list(plot = NA, TleafCnd = 0.001),
+  error_on_failure = FALSE
+)
 }
 
 \concept{exdf}

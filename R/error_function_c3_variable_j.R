@@ -23,6 +23,7 @@ error_function_c3_variable_j <- function(
     require_positive_gmc = 'positive_a',
     gmc_max = Inf,
     check_j = TRUE,
+    debug_mode = FALSE,
     ...
 )
 {
@@ -108,8 +109,23 @@ error_function_c3_variable_j <- function(
 
     # Create and return the error function
     function(guess) {
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c3_variable_j guess:',
+                paste(guess, collapse = ', '),
+                ending_newline = FALSE
+            )
+        }
+
         X <- fit_options_vec
         X[param_to_fit] <- guess
+
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c3_variable_j parameters:',
+                paste(X, collapse = ', ')
+            )
+        }
 
         # Use the variable J equations to get gmc and Cc
         vj <- tryCatch(

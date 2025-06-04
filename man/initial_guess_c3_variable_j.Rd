@@ -24,7 +24,7 @@
     Gamma_star_at_25,
     Kc_at_25,
     Ko_at_25,
-    cc_threshold_rd = 100,
+    cc_threshold_rl = 100,
     Wj_coef_C = 4.0,
     Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
@@ -40,7 +40,8 @@
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    debug_mode = FALSE
   )
 }
 
@@ -109,7 +110,7 @@
     in the \code{Ko_at_25} column of \code{rc_exdf} if it exists.
   }
 
-  \item{cc_threshold_rd}{
+  \item{cc_threshold_rl}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{RL}.
   }
@@ -201,6 +202,10 @@
     The name of the column in \code{rc_exdf} that contains the normalized
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
+  }
+
+  \item{debug_mode}{
+    Passed to \code{\link{initial_guess_c3_aci}}.
   }
 }
 

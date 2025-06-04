@@ -7,7 +7,7 @@ initial_guess_c3_aci <- function(
     gmc_at_25,        # mol / m^2 / s / bar
     Kc_at_25,         # micromol / mol
     Ko_at_25,         # mmol / mol
-    cc_threshold_rd = 100,
+    cc_threshold_rl = 100,
     Wj_coef_C = 4.0,
     Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
@@ -21,7 +21,8 @@ initial_guess_c3_aci <- function(
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    debug_mode = FALSE
 )
 {
     function(rc_exdf) {
@@ -100,18 +101,39 @@ initial_guess_c3_aci <- function(
         # across the measured points, so use its average value across points
         # where Cc is below the threshold. If there are not enough points to do
         # the fit, just estimate RL to be a typical value.
-        RL_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rd, ] # a data frame
+        typical_RL <- 1.0
+
+        RL_subset <- rc_exdf[rc_exdf[, cc_column_name] <= cc_threshold_rl, ] # a data frame
 
         RL_estimate <- if (nrow(RL_subset) > 1) {
-            mean_gstar_rd <- mean(RL_subset[, 'Gamma_star_agt'])
+            mean_gstar_rl <- mean(RL_subset[, 'Gamma_star_agt'])
             mean_rl_norm <- mean(RL_subset[, rl_norm_column_name])
 
-            rd_fit <-
+            rl_fit <-
                 stats::lm(RL_subset[, a_column_name] ~ RL_subset[, cc_column_name])
 
-            -(rd_fit$coefficients[1] + rd_fit$coefficients[2] * mean_gstar_rd) / mean_rl_norm
+            if (debug_mode) {
+                debug_msg('initial_guess_c3_aci RL_fit info:')
+                cat('\n')
+                print(RL_subset[, c(cc_column_name, a_column_name)])
+                print(summary(rl_fit))
+            }
+
+            -(rl_fit$coefficients[1] + rl_fit$coefficients[2] * mean_gstar_rl) / mean_rl_norm
         } else {
-            1.0
+            if (debug_mode) {
+                debug_msg(
+                    'initial_guess_c3_aci RL_fit info:',
+                    'no fit was performed'
+                )
+            }
+
+            typical_RL
+        }
+
+        # If RL was estimated to be negative or NA, reset it to a typical value
+        if (is.na(RL_estimate) || RL_estimate <= 0) {
+            RL_estimate <- typical_RL
         }
 
         # Make sure RL_estimate has no names

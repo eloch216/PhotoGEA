@@ -52,19 +52,41 @@ test_that('PCm limits can be bypassed', {
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
 })
 
+test_that('Debug mode works', {
+# Use sink to hide output
+    sink(tempfile())
+
+    expect_output(
+        fit_c4_aci(
+            one_curve,
+            optim_fun = optimizer_nmkb(1, maxfeval = 2),
+            debug_mode = TRUE
+        )
+    )
+
+    sink()
+})
+
 test_that('fit results have not changed (Vcmax)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c4_aci(
-        one_curve,
-        Ca_atmospheric = 420,
-        fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000),
-        optim_fun = optimizer_nmkb(1e-7),
-        hard_constraints = 2,
-        calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+    # Here we will also check that NA values of Ca do not cause fit failures
+    one_curve_weird <- one_curve
+
+    one_curve_weird[, 'Ca'] <- NA
+
+    fit_res <- expect_silent(
+        fit_c4_aci(
+            one_curve_weird,
+            Ca_atmospheric = 420,
+            fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000),
+            optim_fun = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = 2
+        )
     )
 
     expect_equal(
@@ -78,8 +100,8 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'RL_at_25', 'AIC', 'TleafCnd_avg')]),
-        c(3.630116e+01, 1.804791e+02, 1.069116e-08, 8.226640e+01, 3.030823e+01),
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'Vpmax_at_25', 'J_at_25', 'RL_at_25', 'AIC', 'TleafCnd_avg')]),
+        c(3.630116e+01, 1.804791e+02, NA, 1.069116e-08, 8.226640e+01, 3.030823e+01),
         tolerance = TOLERANCE
     )
 
@@ -91,8 +113,13 @@ test_that('fit results have not changed (Vcmax)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_PCm', 'operating_An', 'operating_An_model')]),
-        c(183.48393, 146.19627, 52.35755, 56.54244),
+        as.numeric(c(NA, NA, NA, NA)),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        'All values of the atmospheric CO2 concentration column (Ca) are NA'
     )
 
     expect_equal(
@@ -101,8 +128,8 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 2, 0, 0)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)', 'unreliable (process never limiting)')
     )
 })
 
@@ -144,13 +171,24 @@ test_that('fit results have not changed (Vpr)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_PCm', 'operating_An', 'operating_An_model')]),
+        c(183.48393, 146.19627, 52.35755, 57.95061),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
         c(13, 3, 10)
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 1, 2, 0)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'unreliable (infinite upper limit)', 'reliable', 'unreliable (process never limiting)')
     )
 })
 
@@ -209,8 +247,8 @@ test_that('fit results have not changed (J)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 1, 0, 2)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'unreliable (infinite upper limit)', 'unreliable (process never limiting)', 'reliable')
     )
 })
 
@@ -269,8 +307,8 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 2, 0, 0)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)', 'unreliable (process never limiting)')
     )
 })
 

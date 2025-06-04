@@ -21,7 +21,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-# How Do I Install the Latest Release of PhotoGEA?
+# Overview
+
+The questions discussed here are grouped into sections by topic:
+
+- [Installing PhotoGEA](#installing-photogea)
+
+- [Loading and Checking Data](#loading-and-checking-data)
+
+- [Fitting C~3~ _A-C~i~_ Curves](#fitting-c3-a-ci-curves)
+
+# Installing PhotoGEA
+
+## How Do I Install the Latest Release of PhotoGEA?
 
 `PhotoGEA` is available on CRAN, so the easiest way to install the latest
 release is to type the following from within an R terminal:
@@ -41,7 +53,7 @@ remotes::install_github('eloch216/PhotoGEA')
 Note that this method requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install an Old Version of PhotoGEA?
+## How Do I Install an Old Version of PhotoGEA?
 
 All `PhotoGEA` releases are tagged on GitHub, and the tag names are formatted as
 `vX.Y.Z`, where `X.Y.Z` is the version number. Because of this,
@@ -56,7 +68,7 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'v1.0.0')
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install the Development Version of PhotoGEA?
+## How Do I Install the Development Version of PhotoGEA?
 
 The development version of `PhotoGEA` contains the latest changes, although it
 may be a "work in progress" and subject to suddent changes without any warning.
@@ -70,7 +82,7 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install From a Local Copy of the Repository?
+## How Do I Install From a Local Copy of the Repository?
 
 The `PhotoGEA` package can be installed from a local copy of the repository by
 running the following command in an R session with the working directory set to
@@ -83,7 +95,9 @@ install.packages('.', repos = NULL, type = 'SOURCE')
 This can be helpful for developers who wish to locally test changes to the
 package code.
 
-# What Should I Do When check_response_curve_data Fails?
+# Loading and Checking Data
+
+## What Should I Do When check_response_curve_data Fails?
 
 When beginning to work with a new data set, it is fairly common to encounter
 problems that cause `check_response_curve_data` to fail. The most common issues
@@ -116,7 +130,7 @@ In these cases, please see the "What if My Response Curves Have Different
 Numbers of Points?" and "What if I Clean My Data in Excel?" sections of this
 article.
 
-# What if My Response Curves Have Different Numbers of Points?
+## What if My Response Curves Have Different Numbers of Points?
 
 The analysis guides use data sets where each response curve has the same number
 of points, making it easy to apply `check_response_curve_data` and
@@ -128,7 +142,7 @@ that are expected to use the same sequences, then separately check and organize
 each group, and finally recombine all the groups back together. The code
 snippets below show two examples of how this could be accomplished.
 
-## Splitting Response Curves According to the Number of Points in Each Curve
+### Splitting Response Curves According to the Number of Points in Each Curve
 
 The following code would replace the calls to `check_response_curve_data` and
 `organize_response_curve_data` in the user guides. This code was originally
@@ -188,7 +202,7 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'curve_npts'], function
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
 
-## Splitting Response Curves According to the Date They Were Measured and the Number of Points in Each Curve
+### Splitting Response Curves According to the Date They Were Measured and the Number of Points in Each Curve
 
 This code would replace the calls to `check_response_curve_data` and
 `organize_response_curve_data` in the user guides. This code was originally
@@ -264,7 +278,7 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'date_ymd_npts'], funct
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
 
-# What if I Clean My Data in Excel?
+## What if I Clean My Data in Excel?
 
 In the user guides, the `organize_response_curve_data` and `remove_points`
 functions are used to remove recovery points and other points from sets of
@@ -306,7 +320,7 @@ licor_data <- organize_response_curve_data(
 )
 ```
 
-# What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
+## What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
 
 At the moment, `PhotoGEA` can read plaintext and Excel files created by Licor
 LI-6800 gas exchange measurement systems, but does not have functions for
@@ -427,7 +441,141 @@ licor_exdf_list <- lapply(file_paths, function(fpath) {
 })
 ```
 
-# What if My Files Don't Have User Constants or Other Metadata?
+## What if My Data Has Been Reformatted to CSV?
+
+Sometimes the contents of one or more instrument log files has been reformatted
+into a CSV file. This is especially common in older data sets that were compiled
+before the availability of tools like PhotoGEA's `read_gasex_file` function,
+since the log files could not be read directly from R. By manually converting to
+CSV, it became possible to read their contents using `read.csv`.
+
+Such data sets can still be analyzed in PhotoGEA, but slightly different steps
+must be taken. The main idea is to first read the CSV file with `read.csv`,
+creating a regular data frame. Then, by supplying units for key columns, the
+data frame can be converted to an `exdf` object and passed to other PhotoGEA
+functions.
+
+The following example shows how to do this for a single data file, which can be
+obtained from
+[a figshare repository](https://figshare.com/articles/dataset/ACi-TGlob_V1_0_A_Global_dataset_of_photosynthetic_CO2_response_curves_of_terrestrial_plants_/7283567).
+This code would replace the lines that use `read_gasex_file` to create
+`licor_data` in the user guides.
+
+```{r, eval = FALSE}
+# Read the original CSV
+original_df <- read.csv(
+  'ACi-TGlob_V1.0.csv',
+  fileEncoding = 'latin1',
+  stringsAsFactors = FALSE
+)
+
+# Convert to an exdf object and add units for key columns
+licor_data <- exdf(
+  original_df,
+  units = data.frame(
+    Ci    = 'micromol mol^(-1)',
+    CO2S  = 'micromol mol^(-1)',
+    Cond  = 'mol m^(-2) s^(-1)',
+    PARi  = 'micromol m^(-2) s^(-1)',
+    Photo = 'micromol m^(-2) s^(-1)',
+    Tleaf = 'degrees C'
+  )
+)
+```
+
+As shown here, it is not necessary to provide units for every column. In fact,
+it is not necessary to provide units for _any_ column when creating an `exdf`
+object. So, one way to proceed is to begin without any units:
+
+```{r, eval = FALSE}
+licor_data <- exdf(
+  original_df,
+  units = data.frame(
+  )
+)
+```
+
+Subsequent calls to other PhotoGEA functions (for example, `fit_c3_aci`) will
+produce error messages when required units are not available. Then you can fill
+them in.
+
+## What if My Columns Have Different Names Than Those in a Licor LI-6800 Log File?
+
+Each function in PhotoGEA allows the user to specify alternate names for the
+columns it needs, where the default names follow those used in Licor LI-6800
+log files. For example, the default name for the net CO~2~ assimilation rate
+column in most functions is `A`. However, some instrument log files use
+different names; for example, the net CO~2~ assimilation rate is called `Photo`
+in Licor LI-6400 log files. In this case, the default name can be changed to
+`Photo` when calling a PhotoGEA function that uses this column.
+
+This can be tedious though, since you may need to override the default column
+names many times. An alternate approach is to rename columns in the data table
+after loading it from a file. This only needs to be done once at the start of a
+script. The example below shows one way to do this; this code would follow the
+creation of the `exdf` table called `licor_data`, and shows how to rename a few
+Licor LI-6400 columns:
+
+```{r, eval = FALSE}
+# PhotoGEA has a mechanism for specifying the column names for key inputs, but
+# it is a bit clunky, so it's easier to rename them to their "standard" names;
+# here we accomplish this by using a helper function
+rename_col <- function(data_table, oldname, newname) {
+  colnames(data_table)[colnames(data_table) == oldname] <- newname
+  data_table
+}
+
+# Specify the old and new names via a list, where the old names are on the left
+# and the new ones are on the right
+to_rename <- list(
+  CO2S  = 'Ca',
+  Cond  = 'gsw',
+  PARi  = 'Qin',
+  Photo = 'A',
+  Tleaf = 'TleafCnd'
+)
+
+# Rename columns in `licor_data`
+for (i in seq_along(to_rename)) {
+  licor_data <-
+    rename_col(licor_data, names(to_rename)[i], to_rename[[i]])
+}
+```
+
+## What if My Files Don't Have User Constants or Other Metadata?
 
 Please see the
 [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html).
+
+# Fitting C~3~ _A-C~i~_ Curves
+
+## How Can I Exclude TPU From C~3~ _A-C~i~_ Fits?
+
+To exclude TPU from a C~3~ _A-C~i~_ curve fit, just fix the value of `Tp_at_25`
+to a very high number, such as 1000. If the maximum rate of triose phosphate
+utilization is 1000 micromol / m^2 / s, then TPU will never be the rate-limiting
+process for any reasonable A-Ci curve. Thus, TPU will effectively be disabled.
+When `Tp_at_25` is not being fit, there is also no reason to fit any of the
+associated `alpha` parameters that are also related to TPU (`alpha_old`,
+`alpha_g`, `alpha_s`, and `alpha_t`), so these should be fixed to 0.
+
+This can be accomplished through the `fit_options` argument when calling
+`fit_c3_aci`. In particular, the following code could be used in place of the
+regular command in the C~3~ _A-C~i~_ user guide:
+
+```{r, eval = FALSE}
+# Fit the C3 A-Ci curves, disabling TPU (so only RL, Vcmax, and J are fit)
+c3_aci_results <- consolidate(by(
+  licor_data,                       # The `exdf` object containing the curves
+  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
+  fit_c3_aci,                       # The function to apply to each chunk of `licor_data`
+  Ca_atmospheric = 420,             # Additional argument passed to `fit_c3_aci`
+  fit_options = list(
+    Tp_at_25 = 1000,
+    alpha_old = 0,
+    alpha_g = 0,
+    alpha_s = 0,
+    alpha_t = 0
+  )
+))
+```

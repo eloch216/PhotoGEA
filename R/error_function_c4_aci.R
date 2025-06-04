@@ -17,7 +17,8 @@ error_function_c4_aci <- function(
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    hard_constraints = 0
+    hard_constraints = 0,
+    debug_mode = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -40,19 +41,19 @@ error_function_c4_aci <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ao_column_name]]             <- 'dimensionless'
-    required_variables[[gamma_star_column_name]]     <- 'dimensionless'
+    required_variables[[a_column_name]]              <- unit_dictionary('A')
+    required_variables[[ao_column_name]]             <- unit_dictionary('ao')
+    required_variables[[gamma_star_column_name]]     <- unit_dictionary('gamma_star')
     required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
     required_variables[[j_norm_column_name]]         <- unit_dictionary('J_norm')
     required_variables[[kc_column_name]]             <- 'microbar'
     required_variables[[ko_column_name]]             <- 'mbar'
     required_variables[[kp_column_name]]             <- 'microbar'
-    required_variables[[oxygen_column_name]]         <- 'percent'
-    required_variables[[rl_norm_column_name]]        <- 'normalized to RL at 25 degrees C'
-    required_variables[[total_pressure_column_name]] <- 'bar'
-    required_variables[[vcmax_norm_column_name]]     <- 'normalized to Vcmax at 25 degrees C'
-    required_variables[[vpmax_norm_column_name]]     <- 'normalized to Vpmax at 25 degrees C'
+    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
+    required_variables[[rl_norm_column_name]]        <- unit_dictionary('RL_norm')
+    required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
+    required_variables[[vcmax_norm_column_name]]     <- unit_dictionary('Vcmax_norm')
+    required_variables[[vpmax_norm_column_name]]     <- unit_dictionary('Vpmax_norm')
 
     check_required_variables(replicate_exdf, required_variables)
 
@@ -97,8 +98,23 @@ error_function_c4_aci <- function(
 
     # Create and return the error function
     function(guess) {
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c4_aci guess:',
+                paste(guess, collapse = ', '),
+                ending_newline = FALSE
+            )
+        }
+
         X <- fit_options_vec
         X[param_to_fit] <- guess
+
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c4_aci parameters:',
+                paste(X, collapse = ', ')
+            )
+        }
 
         # If we are fitting gmc, use a 1D diffusion equation to calculate PCm.
         if (fit_gmc) {

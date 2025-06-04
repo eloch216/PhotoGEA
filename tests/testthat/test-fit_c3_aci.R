@@ -23,8 +23,8 @@ test_that('fit failures are handled properly', {
         )
     )
 
-    expect_equal(unique(fit_res_bad$fits[, 'c3_assimilation_msg']), 'Cc must be >= 0. RL_at_25 must be >= 0')
-    expect_equal(fit_res_bad$parameters[, 'c3_assimilation_msg'], 'Cc must be >= 0. RL_at_25 must be >= 0')
+    expect_equal(unique(fit_res_bad$fits[, 'c3_assimilation_msg']), 'Cc must be >= 0')
+    expect_equal(fit_res_bad$parameters[, 'c3_assimilation_msg'], 'Cc must be >= 0')
     expect_true(all(is.na(fit_res_bad$fits[, c('A_fit', 'Ac', 'Aj', 'Ap')])))
     expect_true(all(is.na(fit_res_bad$fits_interpolated[, c('An', 'Ac', 'Aj', 'Ap')])))
     expect_true(all(is.na(fit_res_bad$parameters[, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')])))
@@ -41,7 +41,8 @@ test_that('Parameter reliability settings are checked', {
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 10
         ),
-        '`remove_unreliable_param` must be 0, 1, or 2'
+        'If `remove_unreliable_param` is not 0, 1, or 2, its elements must each be one of the following: `reliable`, `unreliable (infinite upper limit)`, `unreliable (process never limiting)`, `unreliable (insufficient DOF)`',
+        fixed = TRUE
     )
 })
 
@@ -95,19 +96,49 @@ test_that('Bad optional arguments are caught', {
     )
 })
 
+test_that('Debug mode works', {
+    # Use sink to hide output
+    sink(tempfile())
+
+    expect_output(
+        fit_c3_aci(
+            one_curve,
+            optim_fun = optimizer_nmkb(1, maxfeval = 2),
+            debug_mode = TRUE
+        )
+    )
+
+    sink()
+})
+
 test_that('fit results have not changed (no alpha)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c3_aci(
-        one_curve,
-        Ca_atmospheric = 420,
-        fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0, alpha_t = 0),
-        optim_fun = optimizer_nmkb(1e-7),
-        hard_constraints = 2,
-        calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2
+    # Here we will also check that errors in the linear fit used to estimate an
+    # initial guess for RL are properly handled, and that NA values of Ca do not
+    # cause fit failures
+    one_curve_weird <- one_curve
+
+    low_ci_rows <- which(one_curve_weird[, 'Ci'] <= 100)
+
+    for (i in low_ci_rows) {
+        one_curve_weird$main_data[i, ] <- one_curve$main_data[1, ]
+    }
+
+    one_curve_weird[, 'Ca'] <- NA
+
+    fit_res <- expect_silent(
+        fit_c3_aci(
+            one_curve_weird,
+            Ca_atmospheric = 420,
+            fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0, alpha_t = 0),
+            optim_fun = optimizer_nmkb(1e-7),
+            hard_constraints = 2,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = 2
+        )
     )
 
     fit_res$parameters <- calculate_temperature_response(
@@ -134,20 +165,25 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC', 'TleafCnd_avg', 'Jmax_at_25')]),
-        c(145.3336224, 232.8361365, 0.3557059, NA, 61.1303101, 30.1448308, 233.8417400),
+        c(145.58687, 232.80336, 0.33440, NA, 60.81173, 30.14483, 233.80818),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Jmax_at_25_upper')]),
-        c(152.831071, 238.947894, 1.034651, Inf, 240.012420),
+        c(152.983, 239.931, 1.007, Inf, 241.005),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
-        c(294.70316, 294.70316, 37.51608, 37.85419),
+        as.numeric(c(NA, NA, NA, NA)),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        'All values of the atmospheric CO2 concentration column (Ca) are NA'
     )
 
     expect_equal(
@@ -157,24 +193,28 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.character(fit_res$fits[, 'limiting_process']),
-        c('Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Aj', 'Aj', 'Aj', 'Aj')
+        c('Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Ac', 'Aj', 'Aj', 'Aj', 'Ap')
     )
 
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
-    expect_equal(sum(lim_info), nrow(one_curve))
+    expect_equal(sum(lim_info), nrow(one_curve_weird))
 
-    expect_equal(lim_info, c(9, 4, 0))
+    expect_equal(lim_info, c(9, 3, 1))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (infinite upper limit)')
     )
 
     expect_equal(
         fit_res$parameters[1, 'c3_optional_arguments'],
         ''
+    )
+
+    expect_false(
+        any(c('gmc_tl', 'Tp_tl') %in% colnames(fit_res$parameters))
     )
 })
 
@@ -216,6 +256,17 @@ test_that('fit results have not changed (alpha_old)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(294.70316, 294.70316, 37.51608, 37.85295),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
         c(13, 5, 8)
     )
@@ -228,8 +279,8 @@ test_that('fit results have not changed (alpha_old)', {
     expect_equal(lim_info, c(9, 4, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 
     expect_equal(
@@ -288,8 +339,8 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     expect_equal(lim_info, c(8, 4, 1))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 1)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (infinite upper limit)')
     )
 
     expect_equal(
@@ -348,8 +399,8 @@ test_that('fit results have not changed (alpha_g, alpha_s, and alpha_t)', {
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 
     expect_equal(
@@ -423,8 +474,8 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     expect_equal(lim_info, c(9, 4, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 
     expect_equal(
@@ -480,8 +531,8 @@ test_that('fit results have not changed (Kc)', {
     expect_equal(lim_info, c(11, 2, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 
     expect_equal(
@@ -490,7 +541,7 @@ test_that('fit results have not changed (Kc)', {
     )
 })
 
-test_that('fit results have not changed (Ko)', {
+test_that('fit results have not changed (Ko but not J)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
     set.seed(1234)
@@ -498,7 +549,7 @@ test_that('fit results have not changed (Ko)', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Ko_at_25 = 'fit'),
+        fit_options = list(Ko_at_25 = 'fit', J_at_25 = 1000),
         optim_fun = optimizer_deoptim(100)
     )
 
@@ -514,19 +565,19 @@ test_that('fit results have not changed (Ko)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Ko_at_25', 'AIC')]),
-        c(116.0374754, 233.7308314, 0.5750712, NA, 970.4221562, 62.6153505),
+        c(106.95, NA, -0.01, 22.12, 992.16, 70.04),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Ko_at_25_upper')]),
-        c(121.296141, 239.470000, 1.167091, Inf, 1712.602637),
+        c(112.03, NA, 0.92, 22.99, 2203.66),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
-        c(13, 6, 7)
+        c(13, 5, 8)
     )
 
     lim_info <-
@@ -534,11 +585,11 @@ test_that('fit results have not changed (Ko)', {
 
     expect_equal(sum(lim_info), nrow(one_curve))
 
-    expect_equal(lim_info, c(9, 4, 0))
+    expect_equal(lim_info, c(10, 0, 3))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'unreliable (process never limiting)', 'reliable')
     )
 
     expect_equal(
@@ -597,6 +648,75 @@ test_that('fit results have not changed (pseudo-FvCB)', {
     expect_equal(
         fit_res$parameters[1, 'c3_optional_arguments'],
         'use_min_A = TRUE'
+    )
+})
+
+test_that('fit results have not changed (overparameterized)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    one_curve_short <- one_curve[c(1, 4, 7, 11, 13), , TRUE]
+
+    fit_res <- fit_c3_aci(
+        one_curve_short,
+        Ca_atmospheric = 420,
+        optim_fun = optimizer_deoptim(100)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
+        c(NA, NA, NA, NA, 14.8918203),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper')]),
+        c(164.4391257, 235.1208123, 0.9288618, Inf),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(304.31831, 304.31831, 33.26276, 42.75774),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(5, 5, 0)
+    )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve_short))
+
+    expect_equal(lim_info, c(3, 2, 0))
+
+    expect_equal(
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('unreliable (insufficient DOF)', 'unreliable (insufficient DOF)', 'unreliable (insufficient DOF)')
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
     )
 })
 
