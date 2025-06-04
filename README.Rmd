@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/PhotoGEA)](https://cran.r-project.org/package=PhotoGEA)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/PhotoGEA)](https://cran.r-project.org/package=PhotoGEA)
 [![R-CMD-check](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/eloch216/PhotoGEA/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/eloch216/PhotoGEA/graph/badge.svg)](https://app.codecov.io/gh/eloch216/PhotoGEA?branch=main)
 <!-- badges: end -->

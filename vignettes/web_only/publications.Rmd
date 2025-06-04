@@ -20,9 +20,10 @@ possible. If we are missing any publications, please let us know!
 
 The PhotoGEA R package was first described in:
 
-1. Lochocki, E. B., Salesse-Smith, C. E. & McGrath, J. M. "PhotoGEA: An R Package
-   for Closer Fitting of Photosynthetic Gas Exchange Data With Non-Gaussian
-   Confidence Interval Estimation." _Plant, Cell & Environment_ (2025).
+1. Lochocki, E. B., Salesse-Smith, C. E. & McGrath, J. M. "PhotoGEA: An R
+   Package for Closer Fitting of Photosynthetic Gas Exchange Data With
+   Non-Gaussian Confidence Interval Estimation." _Plant, Cell & Environment_
+   **48**, 5104–5119 (2025).
 
    > - [DOI:10.1111/pce.15501](https://doi.org/10.1111/pce.15501)
    >
