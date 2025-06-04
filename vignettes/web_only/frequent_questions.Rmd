@@ -21,7 +21,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-# How Do I Install the Latest Release of PhotoGEA?
+# Overview
+
+The questions discussed here are grouped into sections by topic:
+
+- [Installing PhotoGEA](#installing-photogea)
+
+- [Loading and Checking Data](#loading-and-checking-data)
+
+- [Fitting C~3~ _A-C~i~_ Curves](#fitting-c3-a-ci-curves)
+
+# Installing PhotoGEA
+
+## How Do I Install the Latest Release of PhotoGEA?
 
 `PhotoGEA` is available on CRAN, so the easiest way to install the latest
 release is to type the following from within an R terminal:
@@ -41,7 +53,7 @@ remotes::install_github('eloch216/PhotoGEA')
 Note that this method requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install an Old Version of PhotoGEA?
+## How Do I Install an Old Version of PhotoGEA?
 
 All `PhotoGEA` releases are tagged on GitHub, and the tag names are formatted as
 `vX.Y.Z`, where `X.Y.Z` is the version number. Because of this,
@@ -56,7 +68,7 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'v1.0.0')
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install the Development Version of PhotoGEA?
+## How Do I Install the Development Version of PhotoGEA?
 
 The development version of `PhotoGEA` contains the latest changes, although it
 may be a "work in progress" and subject to suddent changes without any warning.
@@ -70,7 +82,7 @@ remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
 Note that this command requires the `remotes` package, which can be installed
 from within R by typing `install.packages('remotes')`.
 
-# How Do I Install From a Local Copy of the Repository?
+## How Do I Install From a Local Copy of the Repository?
 
 The `PhotoGEA` package can be installed from a local copy of the repository by
 running the following command in an R session with the working directory set to
@@ -83,7 +95,9 @@ install.packages('.', repos = NULL, type = 'SOURCE')
 This can be helpful for developers who wish to locally test changes to the
 package code.
 
-# What Should I Do When check_response_curve_data Fails?
+# Loading and Checking Data
+
+## What Should I Do When check_response_curve_data Fails?
 
 When beginning to work with a new data set, it is fairly common to encounter
 problems that cause `check_response_curve_data` to fail. The most common issues
@@ -116,7 +130,7 @@ In these cases, please see the "What if My Response Curves Have Different
 Numbers of Points?" and "What if I Clean My Data in Excel?" sections of this
 article.
 
-# What if My Response Curves Have Different Numbers of Points?
+## What if My Response Curves Have Different Numbers of Points?
 
 The analysis guides use data sets where each response curve has the same number
 of points, making it easy to apply `check_response_curve_data` and
@@ -128,7 +142,7 @@ that are expected to use the same sequences, then separately check and organize
 each group, and finally recombine all the groups back together. The code
 snippets below show two examples of how this could be accomplished.
 
-## Splitting Response Curves According to the Number of Points in Each Curve
+### Splitting Response Curves According to the Number of Points in Each Curve
 
 The following code would replace the calls to `check_response_curve_data` and
 `organize_response_curve_data` in the user guides. This code was originally
@@ -188,7 +202,7 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'curve_npts'], function
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
 
-## Splitting Response Curves According to the Date They Were Measured and the Number of Points in Each Curve
+### Splitting Response Curves According to the Date They Were Measured and the Number of Points in Each Curve
 
 This code would replace the calls to `check_response_curve_data` and
 `organize_response_curve_data` in the user guides. This code was originally
@@ -264,7 +278,7 @@ licor_exdf_list_processed <- by(licor_data, licor_data[, 'date_ymd_npts'], funct
 licor_data <- do.call(rbind, licor_exdf_list_processed)
 ```
 
-# What if I Clean My Data in Excel?
+## What if I Clean My Data in Excel?
 
 In the user guides, the `organize_response_curve_data` and `remove_points`
 functions are used to remove recovery points and other points from sets of
@@ -306,7 +320,7 @@ licor_data <- organize_response_curve_data(
 )
 ```
 
-# What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
+## What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
 
 At the moment, `PhotoGEA` can read plaintext and Excel files created by Licor
 LI-6800 gas exchange measurement systems, but does not have functions for
@@ -427,7 +441,7 @@ licor_exdf_list <- lapply(file_paths, function(fpath) {
 })
 ```
 
-# What if My Data Has Been Reformatted to CSV?
+## What if My Data Has Been Reformatted to CSV?
 
 Sometimes the contents of one or more instrument log files has been reformatted
 into a CSV file. This is especially common in older data sets that were compiled
@@ -485,7 +499,7 @@ Subsequent calls to other PhotoGEA functions (for example, `fit_c3_aci`) will
 produce error messages when required units are not available. Then you can fill
 them in.
 
-# What if My Columns Have Different Names Than Those in a Licor LI-6800 Log File?
+## What if My Columns Have Different Names Than Those in a Licor LI-6800 Log File?
 
 Each function in PhotoGEA allows the user to specify alternate names for the
 columns it needs, where the default names follow those used in Licor LI-6800
@@ -528,12 +542,14 @@ for (i in seq_along(to_rename)) {
 }
 ```
 
-# What if My Files Don't Have User Constants or Other Metadata?
+## What if My Files Don't Have User Constants or Other Metadata?
 
 Please see the
 [Guide to Licor LI-6800 User Constants](LI6800_user_constants.html).
 
-# How Can I Exclude TPU From C~3~ _A-C~i~_ Fits?
+# Fitting C~3~ _A-C~i~_ Curves
+
+## How Can I Exclude TPU From C~3~ _A-C~i~_ Fits?
 
 To exclude TPU from a C~3~ _A-C~i~_ curve fit, just fix the value of `Tp_at_25`
 to a very high number, such as 1000. If the maximum rate of triose phosphate
