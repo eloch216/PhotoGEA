@@ -113,8 +113,8 @@ test_that('fit results have not changed (Vcmax)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 2, 0, 0)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)', 'unreliable (process never limiting)')
     )
 })
 
@@ -172,8 +172,8 @@ test_that('fit results have not changed (Vpr)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 1, 2, 0)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'unreliable (infinite upper limit)', 'reliable', 'unreliable (process never limiting)')
     )
 })
 
@@ -232,8 +232,8 @@ test_that('fit results have not changed (J)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 1, 0, 2)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'unreliable (infinite upper limit)', 'unreliable (process never limiting)', 'reliable')
     )
 })
 
@@ -292,8 +292,8 @@ test_that('fit results have not changed (gmc with temperature dependence)', {
     )
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
-        c(2, 2, 0, 0)
+        as.character(fit_res$parameters[1, c('Vpmax_trust', 'Vcmax_trust', 'Vpr_trust', 'J_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)', 'unreliable (process never limiting)')
     )
 })
 

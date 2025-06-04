@@ -161,8 +161,8 @@ test_that('fit results have not changed (no alpha)', {
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 
     expect_false(
@@ -233,8 +233,8 @@ test_that('fit results have not changed (alpha_old)', {
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 })
 
@@ -290,8 +290,8 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 })
 

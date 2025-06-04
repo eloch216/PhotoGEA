@@ -238,7 +238,9 @@
     An integer value indicating the rules to use when identifying and removing
     unreliable parameter estimates. A value of 2 is the most conservative
     option. A value of 0 disables this feature, which is not typically
-    recommended. See below for more details.
+    recommended. It is also possible to directly specify the trust values to
+    remove; for example, \code{'unreliable (process never limiting)'} is
+    equivalent to 1. See below for more details.
   }
 
   \item{debug_mode}{
@@ -341,22 +343,22 @@
   of the potential limiting carboxylation rates (\code{Wc}, \code{Wj}, or
   \code{Wp}) is never the smallest rate. In this case, the corresponding
   parameter estimates (\code{Vcmax}, \code{J}, or \code{alpha_old} & \code{Tp})
-  will be severely unreliable. This will be indicated by a value of \code{0} in
-  the corresponding trust column(for example, \code{Vcmax_trust}). If
-  \code{remove_unreliable_param} is \code{1} or larger, then such parameter
-  estimates (and the corresponding rates) will be replaced by \code{NA} in the
-  fitting results.
+  will be severely unreliable. This will be indicated by a value of
+  \code{'unreliable (process never limiting)'} in the corresponding trust column
+  (for example, \code{Vcmax_trust}). If \code{remove_unreliable_param} is
+  \code{1} or larger, then such parameter estimates (and the corresponding
+  rates) will be replaced by \code{NA} in the fitting results.
 
   It is also possible that the upper limit of the confidence interval for a
   parameter is infinity; this indicates a potentially unreliable parameter
-  estimate. This will be indicated by a value of \code{1} in the corresponding
-  trust column (for example, \code{Vcmax_trust}). If
-  \code{remove_unreliable_param} is \code{2} or larger, then such parameter
-  estimates (but not the corresponding rates) will be replaced by \code{NA} in
-  the fitting results.
+  estimate. This will be indicated by a value of
+  \code{'unreliable (infinite upper limit)'} in the corresponding trust column
+  (for example, \code{Vcmax_trust}). If \code{remove_unreliable_param} is
+  \code{2} or larger, then such parameter estimates (but not the corresponding
+  rates) will be replaced by \code{NA} in the fitting results.
 
-  The trust value for fully reliable parameter estimates is set to \code{2} and
-  they will never be replaced by \code{NA}.
+  The trust value for fully reliable parameter estimates is set to
+  \code{'reliable'} and they will never be replaced by \code{NA}.
 
   Once the best-fit parameters have been determined, this function also
   estimates the operating value of \code{Cc} from the atmospheric CO2
