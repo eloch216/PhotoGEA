@@ -526,7 +526,7 @@ test_that('fit results have not changed (Kc)', {
     )
 })
 
-test_that('fit results have not changed (Ko)', {
+test_that('fit results have not changed (Ko but not J)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
     set.seed(1234)
@@ -534,7 +534,7 @@ test_that('fit results have not changed (Ko)', {
     fit_res <- fit_c3_aci(
         one_curve,
         Ca_atmospheric = 420,
-        fit_options = list(Ko_at_25 = 'fit'),
+        fit_options = list(Ko_at_25 = 'fit', J_at_25 = 1000),
         optim_fun = optimizer_deoptim(100)
     )
 
@@ -550,19 +550,19 @@ test_that('fit results have not changed (Ko)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'Ko_at_25', 'AIC')]),
-        c(116.0374754, 233.7308314, 0.5750712, NA, 970.4221562, 62.6153505),
+        c(106.95, NA, -0.01, 22.12, 992.16, 70.04),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper', 'Ko_at_25_upper')]),
-        c(121.296141, 239.470000, 1.167091, Inf, 1712.602637),
+        c(112.03, NA, 0.92, 22.99, 2203.66),
         tolerance = TOLERANCE
     )
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
-        c(13, 6, 7)
+        c(13, 5, 8)
     )
 
     lim_info <-
@@ -570,11 +570,11 @@ test_that('fit results have not changed (Ko)', {
 
     expect_equal(sum(lim_info), nrow(one_curve))
 
-    expect_equal(lim_info, c(9, 4, 0))
+    expect_equal(lim_info, c(10, 0, 3))
 
     expect_equal(
         as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c('reliable', 'reliable', 'unreliable (process never limiting)')
+        c('reliable', 'unreliable (process never limiting)', 'reliable')
     )
 
     expect_equal(
