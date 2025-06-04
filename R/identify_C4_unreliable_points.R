@@ -38,6 +38,9 @@ identify_c4_unreliable_points <- function(
 {
     param_types_to_remove <- convert_param_setting(remove_unreliable_param)
 
+    # Determine the degrees of freedom
+    dof <- parameters[, 'dof']
+
     # Determine the number of points where each potential carboxylation rate is
     # the smallest potential carboxylation rate
     parameters[, 'n_Vpc_smallest'] <- n_C4_V_smallest(fits, 'Vpc')
@@ -56,22 +59,22 @@ identify_c4_unreliable_points <- function(
 
     pc_unreliable_npts <- parameters[, 'n_Vpc_smallest'] < unreliable_n_threshold || parameters[, 'n_Ac_smallest'] < unreliable_n_threshold
     pc_unreliable_inf  <- 'Vpmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vpmax_at_25_upper'])
-    pc_trust           <- trust_value(pc_unreliable_npts, pc_unreliable_inf)
+    pc_trust           <- trust_value(pc_unreliable_npts, pc_unreliable_inf, dof)
     pc_remove          <- remove_estimate(pc_trust, param_types_to_remove)
 
     pr_unreliable_npts <- parameters[, 'n_Vpr_smallest'] < unreliable_n_threshold || parameters[, 'n_Ac_smallest'] < unreliable_n_threshold
     pr_unreliable_inf  <- 'Vpr_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vpr_upper'])
-    pr_trust           <- trust_value(pr_unreliable_npts, pr_unreliable_inf)
+    pr_trust           <- trust_value(pr_unreliable_npts, pr_unreliable_inf, dof)
     pr_remove          <- remove_estimate(pr_trust, param_types_to_remove)
 
     r_unreliable_npts <- parameters[, 'n_Ac_smallest'] < unreliable_n_threshold
     r_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
-    r_trust           <- trust_value(r_unreliable_npts, r_unreliable_inf)
+    r_trust           <- trust_value(r_unreliable_npts, r_unreliable_inf, dof)
     r_remove          <- remove_estimate(r_trust, param_types_to_remove)
 
     j_unreliable_npts <- parameters[, 'n_Aj_smallest'] < unreliable_n_threshold
     j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
-    j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
+    j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf, dof)
     j_remove          <- remove_estimate(j_trust, param_types_to_remove)
 
     # If we are unsure about PEP carboxylase limitations, then the Vpmax

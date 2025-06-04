@@ -41,7 +41,7 @@ test_that('Parameter reliability settings are checked', {
             calculate_confidence_intervals = TRUE,
             remove_unreliable_param = 10
         ),
-        'If `remove_unreliable_param` is not 0, 1, or 2, its elements must each be one of the following: `unreliable (process never limiting)`, `unreliable (infinite upper limit)`, `reliable`',
+        'If `remove_unreliable_param` is not 0, 1, or 2, its elements must each be one of the following: `reliable`, `unreliable (infinite upper limit)`, `unreliable (process never limiting)`, `unreliable (insufficient DOF)`',
         fixed = TRUE
     )
 })
@@ -633,6 +633,75 @@ test_that('fit results have not changed (pseudo-FvCB)', {
     expect_equal(
         fit_res$parameters[1, 'c3_optional_arguments'],
         'use_min_A = TRUE'
+    )
+})
+
+test_that('fit results have not changed (overparameterized)', {
+    # Set a seed before fitting since there is randomness involved with the
+    # default optimizer
+    set.seed(1234)
+
+    one_curve_short <- one_curve[c(1, 4, 7, 11, 13), , TRUE]
+
+    fit_res <- fit_c3_aci(
+        one_curve_short,
+        Ca_atmospheric = 420,
+        optim_fun = optimizer_deoptim(100)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$fits),
+        character(0)
+    )
+
+    expect_equal(
+        get_duplicated_colnames(fit_res$parameters),
+        character(0)
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25', 'J_at_25', 'RL_at_25', 'Tp_at_25', 'AIC')]),
+        c(NA, NA, NA, NA, 14.8918203),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('Vcmax_at_25_upper', 'J_at_25_upper', 'RL_at_25_upper', 'Tp_at_25_upper')]),
+        c(164.4391257, 235.1208123, 0.9288618, Inf),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(304.31831, 304.31831, 33.26276, 42.75774),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
+    )
+
+    expect_equal(
+        as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
+        c(5, 5, 0)
+    )
+
+    lim_info <-
+        as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
+
+    expect_equal(sum(lim_info), nrow(one_curve_short))
+
+    expect_equal(lim_info, c(3, 2, 0))
+
+    expect_equal(
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('unreliable (insufficient DOF)', 'unreliable (insufficient DOF)', 'unreliable (insufficient DOF)')
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'c3_optional_arguments'],
+        ''
     )
 })
 
