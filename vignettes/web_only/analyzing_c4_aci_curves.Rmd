@@ -300,7 +300,12 @@ library(lattice)
 If the `lattice` package is not installed on your R setup, you can install it by
 typing `install.packages('lattice')`.
 
-# Loading Licor Data
+# Loading the Data
+
+In this example, we will read data from Licor LI-6800 log files. If you have log
+files from a different instrument, or if you are reading from CSV files that
+were reformatted from instrument log files, please see the
+["Loading Data" section of the FAQ](frequent_questions.html#loading-data).
 
 The `PhotoGEA` package includes two files representing _A-C~i~_ curves measured
 using two Li-6800 instruments. The data is stored in Microsoft Excel files, and
@@ -315,7 +320,7 @@ The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
 `PhotoGEA_example_file_path`:
 
-```{r licor_file_names}
+```{r gasex_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
@@ -333,9 +338,9 @@ To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
 to read, we will call this function once for each file using `lapply`:
 
-```{r loading_licor_data}
+```{r loading_gasex_data}
 # Load each file, storing the result in a list
-licor_exdf_list <- lapply(file_paths, function(fpath) {
+gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
 })
 ```
@@ -357,24 +362,24 @@ vertically. This action only makes sense if the tables have the same columns, so
 before we combine the `exdf` objects, we should make sure this is the case.
 
 The `PhotoGEA` package includes a function called `identify_common_columns` that
-can be used to get the names of all columns that are present in all of the Licor
+can be used to get the names of all columns that are present in all of the data
 files. Then, we can extract just those columns, and then combine the `exdf`
 objects into a single one.
 
-```{r combining_licor_data}
-# Get the names of all columns that are present in all of the Licor files
-columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+```{r combining_gasex_data}
+# Get the names of all columns that are present in all of the data files
+columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
 # Extract just these columns
-licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+gasex_exdf_list <- lapply(gasex_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
 
 # Use `rbind` to combine all the data
-licor_data <- do.call(rbind, licor_exdf_list)
+gasex_data <- do.call(rbind, gasex_exdf_list)
 ```
 
-Now we have a single R object called `licor_data` that includes all the data
+Now we have a single R object called `gasex_data` that includes all the data
 from several Licor Excel files. For more information about consolidating
 information from multiple files, see the _Common Patterns_ section of the
 [Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
@@ -397,9 +402,12 @@ a new column that combines the values from each of these:
 
 ```{r adding_id_column}
 # Create a new identifier column formatted like `instrument - species - plot`
-licor_data[ , 'curve_identifier'] <-
-  paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
+gasex_data[ , 'curve_identifier'] <-
+  paste(gasex_data[ , 'instrument'], '-', gasex_data[ , 'species'], '-', gasex_data[ , 'plot'])
 ```
+
+**Note:** The `read_gasex_file` function can also read plaintext Licor LI-6800
+log files; for more information, see its help page by typing `?read_gasex_file`.
 
 When measuring response curves (or any other type of gas exchange data), it is
 strongly recommended to record key pieces of metadata in the log files using
@@ -414,14 +422,13 @@ from `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`16`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
-function will have no output and will not produce any messages. (For more
+function will have no output and will not produce any messages. For more
 information, see the built-in help menu entry by typing
-`?check_response_curve_data`, or visit the
-[Frequently Asked Questions](frequent_questions.html).)
+`?check_response_curve_data`.
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(gasex_data, 'curve_identifier', 16, 'CO2_r_sp')
 ```
 
 However, if `check_response_curve_data` detects an issue, it will print a
@@ -429,10 +436,14 @@ helpful message to the R terminal. For example, if we had specified the wrong
 number of points or the wrong identifier column, we would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_response_curve_data(licor_data, 'curve_identifier', 15)
+check_response_curve_data(gasex_data, 'curve_identifier', 15)
 
-check_response_curve_data(licor_data, 'species', 16)
+check_response_curve_data(gasex_data, 'species', 16)
 ```
+
+If all curves in your data set do not have the same number of points, or if some
+other issue is causing `check_response_curve_data` to fail, please see the
+["Checking Data" section of the FAQ](frequent_questions.html#checking-data).
 
 ## Reorganizing the Data
 
@@ -442,7 +453,7 @@ ascending or descending concentration. In fact, the sequence of CO~2~ setpoints
 is as follows:
 
 ```{r}
-licor_data[licor_data[, 'curve_identifier'] == 'ripe2 - maize - 2', 'CO2_r_sp']
+gasex_data[gasex_data[, 'curve_identifier'] == 'ripe2 - maize - 2', 'CO2_r_sp']
 ```
 
 The extra recovery points should not be used when plotting or fitting the
@@ -457,8 +468,8 @@ be done using the `organize_response_curve` function from `PhotoGEA`:
 ```{r reorganizing_curves}
 # Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and
 # calculate average values of leaf temperature and Qin
-licor_data <- organize_response_curve_data(
-    licor_data,
+gasex_data <- organize_response_curve_data(
+    gasex_data,
     'curve_identifier',
     c(9, 10),
     'Ci',
@@ -481,13 +492,13 @@ curve as its own separate subplot of a figure. For example:
 # Plot all A-Ci curves in the data set
 xyplot(
   A ~ Ci | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
-  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
-  ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+  xlab = paste('Intercellular CO2 concentration [', gasex_data$units$Ci, ']'),
+  ylab = paste('Net CO2 assimilation rate [', gasex_data$units$A, ']')
 )
 ```
 
@@ -515,13 +526,13 @@ generate several different plots to check each curve for quality.
 # Make a plot to check humidity control
 xyplot(
   RHcham + `Humidifier_%` + `Desiccant_%` ~ Ci | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   ylim = c(0, 100),
-  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
+  xlab = paste('Intercellular CO2 concentration [', gasex_data$units$Ci, ']')
 )
 ```
 
@@ -543,14 +554,14 @@ humidity and leaf photosynthesis. In this plot, all the data looks good.
 # Make a plot to check temperature control
 xyplot(
   TleafCnd + Txchg ~ Ci | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   ylim = c(25, 40),
-  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
-  ylab = paste0('Temperature (', licor_data$units$TleafCnd, ')')
+  xlab = paste('Intercellular CO2 concentration [', gasex_data$units$Ci, ']'),
+  ylab = paste0('Temperature (', gasex_data$units$TleafCnd, ')')
 )
 ```
 
@@ -567,13 +578,13 @@ not vary in an erratic way. In this plot, all the data looks good.
 # Make a plot to check CO2 control
 xyplot(
   CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
-  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
-  ylab = paste0('CO2 concentration (', licor_data$units$CO2_r, ')')
+  xlab = paste('Intercellular CO2 concentration [', gasex_data$units$Ci, ']'),
+  ylab = paste0('CO2 concentration (', gasex_data$units$CO2_r, ')')
 )
 ```
 
@@ -593,12 +604,12 @@ CO~2~.) In this plot, all the data looks good.
 # Make a plot to check stability criteria
 xyplot(
   `A:OK` + `gsw:OK` + Stable ~ Ci | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
-  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
+  xlab = paste('Intercellular CO2 concentration [', gasex_data$units$Ci, ']')
 )
 ```
 
@@ -627,7 +638,7 @@ Comparing these plots with the ones in [Plotting the _A-C~i~_ Curves], it seems
 that none of the unstable points look particularly strange, so we will not
 remove them.
 
-## Cleaning the Licor Data
+## Cleaning the Data
 
 While checking over the plots in the previous sections, we noticed that some of
 the curves exhibit a sharp decrease in $A$ at high values of $C_i$.
@@ -639,24 +650,24 @@ highest CO~2~ setpoint value, so it is easy to specify them all at once.
 
 ```{r remove_points}
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
-licor_data <- remove_points(
-  licor_data,
+gasex_data <- remove_points(
+  gasex_data,
   list(instrument = 'ripe1', CO2_r_sp = 1800),
   method = 'exclude'
 )
 ```
 
-# Fitting Licor Data
+# Fitting the Response Curves
 
 Now that we have checked the data quality, we are ready to perform the fitting.
 In order to fit the curves, there are several required pieces of information
-that are not included in the Licor data files as produced by the instrument:
+that are not included in the log files as produced by the instrument:
 temperature-dependent values of important photosynthetic parameters such as
 $\gamma^*$, and values of the total pressure. However, the `PhotoGEA` package
 includes two functions to help with these calculations:
 `calculate_temperature_response` and `calculate_total_pressure`. Each of these
-requires an `exdf` object containing Licor data. The units for each required
-column will be checked in an attempt to avoid unit-related errors. More
+requires an `exdf` object containing gas exchange data. The units for each
+required column will be checked in an attempt to avoid unit-related errors. More
 information about these functions can be obtained from the built-in help system
 by typing `?calculate_temperature_response` or `?calculate_total_pressure`.
 
@@ -664,11 +675,11 @@ First, we can use `calculate_temperature_response`:
 
 ```{r calculate_t_response}
 # Calculate temperature-dependent values of C4 photosynthetic parameters
-licor_data <- calculate_temperature_response(licor_data, c4_temperature_param_vc)
+gasex_data <- calculate_temperature_response(gasex_data, c4_temperature_param_vc)
 ```
 
-With this simple command, we have used the leaf temperature from the Licor
-file to calculate values of several key C~4~ photosynthetic parameters
+With this simple command, we have used the leaf temperature from the log
+files to calculate values of several key C~4~ photosynthetic parameters
 (`r paste(names(c4_temperature_param_vc), collapse = ', ')`) according to the
 temperature response parameters specified in @von_caemmerer_updating_2021.
 Notice that this command calculated values of the mesophyll conductance to CO2
@@ -679,11 +690,11 @@ Nevertheless, we will use them here.
 Now we can use `calculate_total_pressure`:
 
 ```{r calculate_pressure}
-# Calculate the total pressure in the Licor chamber
-licor_data <- calculate_total_pressure(licor_data)
+# Calculate the total pressure in the leaf chamber
+gasex_data <- calculate_total_pressure(gasex_data)
 ```
 
-Together, these functions have added several new columns to `licor_data`,
+Together, these functions have added several new columns to `gasex_data`,
 including `gmc`, `PCm`, `gamma_star`, and others. With this information, we are
 now ready to fit the curves.
 
@@ -723,9 +734,9 @@ set.seed(1234)
 
 # Fit the C4 A-Ci curves with the mechanistic model, assuming Rubisco limitations
 c4_aci_results_rubisco <- consolidate(by(
-  licor_data,                       # The `exdf` object containing the curves
-  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
+  gasex_data,                       # The `exdf` object containing the curves
+  gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_c4_aci,                       # The function to apply to each chunk of `gasex_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
   fit_options = list(Vcmax_at_25 = 'fit', Vpr = 1000, J_at_25 = 1000)
 ))
@@ -763,9 +774,9 @@ set.seed(1234)
 
 # Fit the C4 A-Ci curves with the mechanistic model, assuming electron transport limitations
 c4_aci_results_light <- consolidate(by(
-  licor_data,                       # The `exdf` object containing the curves
-  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c4_aci,                       # The function to apply to each chunk of `licor_data`
+  gasex_data,                       # The `exdf` object containing the curves
+  gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_c4_aci,                       # The function to apply to each chunk of `gasex_data`
   Ca_atmospheric = 420,             # Used to estimate the operating point
   fit_options = list(Vcmax_at_25 = 1000, Vpr = 1000, J_at_25 = 'fit')
 ))
@@ -799,14 +810,15 @@ done for the fits in this section. For more information about this function, see
 the built-in help menu entry by typing `?calculate_jmax`.
 
 In order to do this, we need values of $Q_{in}$ and $T_{leaf}$ for each curve.
-This information is not typically included in a Licor file, but we calculated
-average values of $Q_{in}$ and $T_{leaf}$ in the [Reorganizing the Data] section
-when calling `organize_response_curve_data`, so this is taken care of.
+This information is not typically included in an instrument log file, but we
+calculated average values of $Q_{in}$ and $T_{leaf}$ in the
+[Reorganizing the Data] section when calling `organize_response_curve_data`, so
+this is taken care of.
 
 It is also necessary to have temperature-dependent values of $\alpha_J$ and
 $\theta_J$, two parameters related to $J$ and $J_{max}$. These can be obtained
 using the `calculate_temperature_response` function, which was also used in the
-[Fitting Licor Data] section above.
+[Fitting the Response Curves] section above.
 
 ```{r calculate_jmax}
 # Calculate temperature-dependent values of Jmax-related parameters
@@ -842,9 +854,9 @@ set.seed(1234)
 
 # Fit the C4 A-Ci curves with the empirical model
 c4_aci_results_hyperbola <- consolidate(by(
-  licor_data,                       # The `exdf` object containing the curves
-  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c4_aci_hyperbola              # The function to apply to each chunk of `licor_data`
+  gasex_data,                       # The `exdf` object containing the curves
+  gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_c4_aci_hyperbola              # The function to apply to each chunk of `gasex_data`
 ))
 ```
 
@@ -885,7 +897,7 @@ conductance, overriding the default value.
 
 ```{r fit_aci_vpmax}
 # Get a subset of the data where Ci is below the threshold value
-licor_data_low_ci <- licor_data[licor_data[, 'Ci'] <= 60, , TRUE]
+gasex_data_low_ci <- gasex_data[gasex_data[, 'Ci'] <= 60, , TRUE]
 
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
@@ -893,9 +905,9 @@ set.seed(1234)
 
 # Fit the C4 A-Ci curves with the mechanistic Vpmax equation
 c4_aci_results_vpmax <- consolidate(by(
-  licor_data_low_ci,                       # The `exdf` object containing the curves
-  licor_data_low_ci[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_c4_aci,                              # The function to apply to each chunk of `licor_data`
+  gasex_data_low_ci,                       # The `exdf` object containing the curves
+  gasex_data_low_ci[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_c4_aci,                              # The function to apply to each chunk of `gasex_data`
   fit_options = list(
     Vcmax_at_25 = 1000,
     Vpr = 1000,
@@ -1038,7 +1050,7 @@ specifically mentioned here.
 ## Input Files
 
 The file paths specified in `file_paths` will need to be modified so they point
-to your Licor files. One way to do this in your own script is to simply write
+to your data files. One way to do this in your own script is to simply write
 out relative or absolute paths to the files you wish to load. For example, you
 could replace the previous definition of `file_paths` with this one:
 
@@ -1052,9 +1064,9 @@ file_paths <- c(
 
 You may also want to consider using the `choose_input_licor_files` function from
 `PhotoGEA`; this function will create a pop-up browser window where you can
-interactively select a set of files. Sometimes this is more convenient than
-writing out file paths or names. For example, you could replace the previous
-definition of `file_paths` with this one:
+interactively select a set of Excel files. Sometimes this is more convenient
+than writing out file paths or names. For example, you could replace the
+previous definition of `file_paths` with this one:
 
 ```{r choose_licor_files, eval = FALSE}
 # Interactively define a vector of paths to the files we wish to load
@@ -1069,7 +1081,7 @@ vignette for more details.
 
 ## Curve Identifier
 
-Depending on which user constants are defined in your Licor Excel files, you may
+Depending on which user constants are defined in your data files, you may
 need to modify the definition of the `curve_identifier` column.
 
 ## Data Cleaning
@@ -1112,6 +1124,10 @@ write.csv.exdf(c4_aci_results_rubisco$parameters, file.choose())
 write.csv.exdf(c4_aci_averages_rubisco, file.choose())
 ```
 
+Also see the
+["Converting and Exporting Results" section of the FAQ](frequent_questions.html)
+for more information.
+
 # Commands From This Document
 
 The following code chunk includes all the central commands used throughout this
@@ -1138,11 +1154,11 @@ vignette.
 ## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
 ## names or use the `choose_input_licor_files` function.
 
-<<licor_file_names>>
+<<gasex_file_names>>
 
-<<loading_licor_data>>
+<<loading_gasex_data>>
 
-<<combining_licor_data>>
+<<combining_gasex_data>>
 
 ###
 ### VALIDATION:
@@ -1167,7 +1183,7 @@ vignette.
 
 ## IMPORTANT: When analyzing your own files, it is not advised to remove any
 ## points for the initial fits. Only remove unstable or unusual points if it is
-## necessary in order to get good fits. See the "Cleaning the Licor Data"
+## necessary in order to get good fits. See the "Cleaning the Data"
 ## section above for instructions.
 
 ###

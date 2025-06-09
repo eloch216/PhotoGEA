@@ -68,47 +68,47 @@ file_paths <- c(
 )
 
 # Load each file, storing the result in a list
-licor_exdf_list <- lapply(file_paths, function(fpath) {
+gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files
-columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
 # Extract just these columns
-licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+gasex_exdf_list <- lapply(gasex_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
 
 # Use `rbind` to combine all the data
-licor_data <- do.call(rbind, licor_exdf_list)
+gasex_data <- do.call(rbind, gasex_exdf_list)
 
 # Create a new identifier column formatted like `instrument - species - plot`
-licor_data[ , 'curve_identifier'] <-
-  paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
+gasex_data[ , 'curve_identifier'] <-
+  paste(gasex_data[ , 'instrument'], '-', gasex_data[ , 'species'], '-', gasex_data[ , 'plot'])
 
 # Make sure the data meets basic requirements
-check_response_curve_data(licor_data, 'curve_identifier', 16, 'CO2_r_sp')
+check_response_curve_data(gasex_data, 'curve_identifier', 16, 'CO2_r_sp')
 
 # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
-licor_data <- organize_response_curve_data(
-    licor_data,
+gasex_data <- organize_response_curve_data(
+    gasex_data,
     'curve_identifier',
     c(9, 10),
     'Ci'
 )
 
 # Only keep points where stability was achieved
-licor_data <- licor_data[licor_data[, 'Stable'] == 2, , TRUE]
+gasex_data <- gasex_data[gasex_data[, 'Stable'] == 2, , TRUE]
 
 # Remove any curves that have fewer than three remaining points
-npts <- by(licor_data, licor_data[, 'curve_identifier'], nrow)
+npts <- by(gasex_data, gasex_data[, 'curve_identifier'], nrow)
 ids_to_keep <- names(npts[npts > 2])
-licor_data <- licor_data[licor_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
+gasex_data <- gasex_data[gasex_data[, 'curve_identifier'] %in% ids_to_keep, , TRUE]
 
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
-licor_data <- remove_points(
-  licor_data,
+gasex_data <- remove_points(
+  gasex_data,
   list(instrument = 'ripe1', CO2_r_sp = 1800)
 )
 ```
@@ -365,9 +365,9 @@ nearly identical to ones from the
 ```{r make_and_examine_fit}
 # Fit each curve
 c3_aci_results <- consolidate(by(
-  licor_data,                       # The `exdf` object containing the curves
-  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_hyperbola                     # The function to apply to each chunk of `licor_data`
+  gasex_data,                       # The `exdf` object containing the curves
+  gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_hyperbola                     # The function to apply to each chunk of `gasex_data`
 ))
 
 # Plot each fit

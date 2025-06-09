@@ -73,38 +73,38 @@ file_paths <- c(
 )
 
 # Load the data from each file
-licor_exdf_list <- lapply(file_paths, function(fpath) {
+gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
 })
 
 # Get the names of all columns that are present in all of the Licor files
-columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
 # Extract just these columns
-licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+gasex_exdf_list <- lapply(gasex_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
 
 # Combine the data from all the files
-licor_data <- do.call(rbind, licor_exdf_list)
+gasex_data <- do.call(rbind, gasex_exdf_list)
 
 # Define a new column that uniquely identifies each curve
-licor_data[, 'curve_id'] <-
-  paste(licor_data[, 'species'], '-', licor_data[, 'plot'] )
+gasex_data[, 'curve_id'] <-
+  paste(gasex_data[, 'species'], '-', gasex_data[, 'plot'] )
 
 # Organize the data
-licor_data <- organize_response_curve_data(
-    licor_data,
+gasex_data <- organize_response_curve_data(
+    gasex_data,
     'curve_id',
     c(9, 10, 16),
     'CO2_r_sp'
 )
 
 # Calculate the total pressure
-licor_data <- calculate_total_pressure(licor_data)
+gasex_data <- calculate_total_pressure(gasex_data)
 
 # Calculate temperature-dependent values of C3 photosynthetic parameters
-licor_data <- calculate_temperature_response(licor_data, c3_temperature_param_bernacchi)
+gasex_data <- calculate_temperature_response(gasex_data, c3_temperature_param_bernacchi)
 
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
@@ -112,8 +112,8 @@ set.seed(1234)
 
 # Fit all curves in the data set
 aci_results <- consolidate(by(
-  licor_data,
-  licor_data[, 'curve_id'],
+  gasex_data,
+  gasex_data[, 'curve_id'],
   fit_c3_aci,
   Ca_atmospheric = 420
 ))

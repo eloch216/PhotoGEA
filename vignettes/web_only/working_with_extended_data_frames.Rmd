@@ -448,18 +448,18 @@ file_paths <- c(
 )
 
 # Load each file, storing the result in a list
-licor_exdf_list <- lapply(file_paths, function(fpath) {read_gasex_file(fpath)})
+gasex_exdf_list <- lapply(file_paths, function(fpath) {read_gasex_file(fpath)})
 
 # Get the names of all columns that are present in all of the Licor files
-columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
 # Extract just these columns
-licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+gasex_exdf_list <- lapply(gasex_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
 
 # Use `rbind` to combine all the data
-licor_data <- do.call(rbind, licor_exdf_list)
+gasex_data <- do.call(rbind, gasex_exdf_list)
 ```
 
 This pattern (where files are loaded, truncated to common columns, and then
@@ -472,13 +472,13 @@ total pressure, additional gas properties, and the Ball-Berry index:
 
 ```{r}
 # Calculate the total pressure in the Licor chamber
-licor_data <- calculate_total_pressure(licor_data)
+gasex_data <- calculate_total_pressure(gasex_data)
 
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
-licor_data <- calculate_gas_properties(licor_data)
+gasex_data <- calculate_gas_properties(gasex_data)
 
 # Calculate the Ball-Berry index
-licor_data <- calculate_ball_berry_index(licor_data)
+gasex_data <- calculate_ball_berry_index(gasex_data)
 ```
 
 In this example, the vector of files to load was defined manually by typing out
@@ -492,7 +492,7 @@ It is common for an `exdf` object to contain data that represents multiple
 "chunks," such as response curves, that can each be located using the value of
 one or more "identifier" columns like `event`, `replicate`, `species`, etc. In
 this scenario, it is often desirable to apply a function, such as a fitting
-function, to each chunk in the data set. As a concrete example, the `licor_data`
+function, to each chunk in the data set. As a concrete example, the `gasex_data`
 `exdf` created in [Combining Data From Several Files] contains several
 Ball-Berry curves, and the `fit_ball_berry` function applies a fitting procedure
 to one curve to determine values for the Ball-Berry parameters. How can we apply
@@ -511,12 +511,12 @@ the function to each one. Its return value will be a list, where each list
 element is the output from one function call, as applied to one chunk. For more
 information, access the built-in help system entry by typing `?by.exdf`. Here we
 show how `by` can be used to apply the Ball-Berry fitting procedure to each
-curve in `licor_data`:
+curve in `gasex_data`:
 
 ```{r}
 by_result <- by(
-  licor_data,                                          # exdf object
-  list(licor_data[, 'species'], licor_data[, 'plot']), # identifier columns
+  gasex_data,                                          # exdf object
+  list(gasex_data[, 'species'], gasex_data[, 'plot']), # identifier columns
   fit_ball_berry                                       # function to apply to chunks
 )
 ```
@@ -553,8 +553,8 @@ be separated to make additional analysis easier:
 
 ```{r}
 ball_berry_result <- consolidate(by(
-  licor_data,
-  list(licor_data[, 'species'], licor_data[, 'plot']),
+  gasex_data,
+  list(gasex_data[, 'species'], gasex_data[, 'plot']),
   fit_ball_berry,
   'gsw', 'bb_index'
 ))
@@ -591,7 +591,7 @@ identifier such as `event` or `species`. In this case, it is common to pass the
 xyplot(
   gsw ~ bb_index | species,
   group = plot,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto.key = list(space = 'right'),
@@ -605,7 +605,7 @@ function, which can create character strings from the values of variables. For
 example, we could create a string describing the `gsw` column as follows:
 
 ```{r}
-paste0('Stomatal conductance to H2O (', licor_data$units$gsw, ')')
+paste0('Stomatal conductance to H2O (', gasex_data$units$gsw, ')')
 ```
 
 These labels can then be included in the plot itself:
@@ -614,13 +614,13 @@ These labels can then be included in the plot itself:
 xyplot(
   gsw ~ bb_index | species,
   group = plot,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto.key = list(space = 'right'),
   grid = TRUE,
-  xlab = paste0('Ball-Berry index (', licor_data$units$bb_index, ')'),
-  ylab = paste0('Stomatal conductance to H2O (', licor_data$units$gsw, ')')
+  xlab = paste0('Ball-Berry index (', gasex_data$units$bb_index, ')'),
+  ylab = paste0('Stomatal conductance to H2O (', gasex_data$units$gsw, ')')
 )
 ```
 
