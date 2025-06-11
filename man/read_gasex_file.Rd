@@ -108,8 +108,8 @@
   \itemize{
     \item A \code{.xlsx} extension corresponds to \code{file_type = 'Excel'}.
     \item A \code{.dat} extension corresponds to \code{file_type = 'data'}.
-    \item A file with no extension corresponds to \code{file_type =
-          'plaintext'}.
+    \item A \code{.txt} extension or a file with no extension corresponds to
+          \code{file_type = 'plaintext'}.
   }
 
   When automatically determining the instrument type from the file type, the

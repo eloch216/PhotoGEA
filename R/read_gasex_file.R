@@ -33,7 +33,7 @@ read_gasex_file <- function(
     # Try to determine the file type from its name, if necessary
     file_type <- if (file_type == 'AUTO') {
         extension <- tools::file_ext(file_name)
-        if (extension == '') {
+        if (extension %in% c('', 'txt')) {
             'plaintext'
         } else if (extension == 'xlsx') {
             'Excel'

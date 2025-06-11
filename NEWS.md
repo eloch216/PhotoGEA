@@ -46,6 +46,9 @@ be directly added to this file to describe the related changes.
   overparameterized; in other words, when there are not enough degrees of
   freedom.
 
+- When using `read_gasex_file`, files with a `.txt` extension are now assumed to
+  be `plaintext` when `file_type` is set to `AUTO`.
+
 ### Bug fixes
 
 - Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
