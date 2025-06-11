@@ -46,8 +46,13 @@ be directly added to this file to describe the related changes.
   overparameterized; in other words, when there are not enough degrees of
   freedom.
 
-- When using `read_gasex_file`, files with a `.txt` extension are now assumed to
-  be `plaintext` when `file_type` is set to `AUTO`.
+- When using `read_gasex_file`:
+
+  - Files with a `.txt` extension are now assumed to be `plaintext` when
+    `file_type` is set to `AUTO`.
+
+  - Any rows whose values are all `NA` are removed; this can be bypassed via the
+    new `remove_NA_rows` argument.
 
 ### Bug fixes
 

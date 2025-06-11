@@ -81,6 +81,7 @@ read_licor_6800_plaintext <- function(
     file_name,
     get_oxygen = TRUE,
     include_user_remark_column = TRUE,
+    remove_NA_rows = TRUE,
     ...
 )
 {
@@ -225,8 +226,16 @@ read_licor_6800_plaintext <- function(
     exdf_obj    <- do.call(rbind, data_chunks)
     header_part <- do.call(rbind, header_chunks)
 
+    # Remove NA rows if necessary
+    if (remove_NA_rows) {
+        all_NA <- sapply(seq_len(nrow(exdf_obj)), function(i) {
+            all(is.na(as.list(exdf_obj[i, ])))
+        })
+        exdf_obj <- exdf_obj[!all_NA, , TRUE]
+    }
+
     # Store additional information in the data exdf
-    exdf_obj$preamble <- header_part
+    exdf_obj$preamble     <- header_part
     exdf_obj$user_remarks <- user_remarks
 
     # Add user remarks if necessary

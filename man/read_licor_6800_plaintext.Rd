@@ -14,6 +14,7 @@
     file_name,
     get_oxygen = TRUE,
     include_user_remark_column = TRUE,
+    remove_NA_rows = TRUE,
     \dots
   )
 }
@@ -31,6 +32,11 @@
   \item{include_user_remark_column}{
     A logical value indicating whether to include the user remarks as a column;
     see below for details.
+  }
+
+  \item{remove_NA_rows}{
+    A logical value indicating whether to remove any rows whose values are all
+    \code{NA}.
   }
 
   \item{\dots}{

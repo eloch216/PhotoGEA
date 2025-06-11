@@ -4,6 +4,7 @@ read_cr3000 <- function(
     variable_name_row = 2,
     variable_unit_row = 3,
     data_start_row = 5,
+    remove_NA_rows = TRUE,
     ...
 )
 {
@@ -27,8 +28,16 @@ read_cr3000 <- function(
         stringsAsFactors = FALSE
     )
 
+    # Remove NA rows if necessary
+    if (remove_NA_rows) {
+        all_NA <- sapply(seq_len(nrow(cr_data)), function(i) {
+            all(is.na(as.list(cr_data[i, ])))
+        })
+        cr_data <- cr_data[!all_NA, ]
+    }
+
     # Set the column names
-    colnames(cr_data) <- cr_variable_names
+    colnames(cr_data)           <- cr_variable_names
     colnames(cr_variable_units) <- cr_variable_names
 
     # Remove the row names that appeared after subsetting

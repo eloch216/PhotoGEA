@@ -16,6 +16,7 @@
     variable_name_row = 2,
     variable_unit_row = 3,
     data_start_row = 5,
+    remove_NA_rows = TRUE,
     \dots
   )
 }
@@ -43,6 +44,11 @@
 
   \item{data_start_row}{
     The first row number of the table containing the measured data.
+  }
+
+  \item{remove_NA_rows}{
+    A logical value indicating whether to remove any rows whose values are all
+    \code{NA}.
   }
 
   \item{\dots}{
