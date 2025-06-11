@@ -31,7 +31,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## Changes in PhotoGEA version 1.3.3 (2025-06-11)
 
 ### Minor user-facing changes
 
@@ -64,7 +64,7 @@ be directly added to this file to describe the related changes.
 - Fixed an error that occurred when including user remarks for plaintext files
   with an extra blank row at the end.
 
-## Changes in PhotoGEA version 1.3.2 (2024-04-08)
+## Changes in PhotoGEA version 1.3.2 (2025-04-08)
 
 This is the first version of PhotoGEA available on CRAN.
 
@@ -94,7 +94,7 @@ This is the first version of PhotoGEA available on CRAN.
 - Fixed an error that occurred when removing unreliable C4 parameter estimates
   without first calculating confidence intervals.
 
-## Changes in PhotoGEA version 1.3.0 (2024-04-04)
+## Changes in PhotoGEA version 1.3.0 (2025-04-04)
 
 ### Minor user-facing changes
 
