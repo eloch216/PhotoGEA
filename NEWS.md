@@ -61,6 +61,9 @@ be directly added to this file to describe the related changes.
 
 - Fixed an error that prevented curve fits when all Ca values are `NA`.
 
+- Fixed an error that occurred when including user remarks for plaintext files
+  with an extra blank row at the end.
+
 ## Changes in PhotoGEA version 1.3.2 (2024-04-08)
 
 This is the first version of PhotoGEA available on CRAN.

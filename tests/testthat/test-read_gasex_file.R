@@ -28,11 +28,11 @@ test_that('NA rows are removed (plaintext)', {
     fpath <- PhotoGEA_example_file_path('plaintext_licor_file_v2')
 
     licor_file_with_NA_row <- expect_silent(
-        read_gasex_file(fpath, remove_NA_rows = FALSE, include_user_remark_column = FALSE)
+        read_gasex_file(fpath, remove_NA_rows = FALSE)
     )
 
     licor_file_without_NA_row <- expect_silent(
-        read_gasex_file(fpath, remove_NA_rows = TRUE, include_user_remark_column = FALSE)
+        read_gasex_file(fpath, remove_NA_rows = TRUE)
     )
 
     expect_equal(

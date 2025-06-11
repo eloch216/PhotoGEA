@@ -28,7 +28,9 @@ add_latest_remark <- function(licor_file) {
     time_i   <- user_remarks[i, 'remark_time']
     remark_i <- user_remarks[i, 'remark_value']
 
-    licor_file[data_times > time_i, 'user_remark'] <- remark_i
+    times_to_fill <- !is.na(data_times) & data_times > time_i
+
+    licor_file[times_to_fill, 'user_remark'] <- remark_i
   }
 
   licor_file
