@@ -46,12 +46,23 @@ be directly added to this file to describe the related changes.
   overparameterized; in other words, when there are not enough degrees of
   freedom.
 
+- When using `read_gasex_file`:
+
+  - Files with a `.txt` extension are now assumed to be `plaintext` when
+    `file_type` is set to `AUTO`.
+
+  - Any rows whose values are all `NA` are removed; this can be bypassed via the
+    new `remove_NA_rows` argument.
+
 ### Bug fixes
 
 - Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
   when making initial guesses for `RL`.
 
 - Fixed an error that prevented curve fits when all Ca values are `NA`.
+
+- Fixed an error that occurred when including user remarks for plaintext files
+  with an extra blank row at the end.
 
 ## Changes in PhotoGEA version 1.3.2 (2024-04-08)
 

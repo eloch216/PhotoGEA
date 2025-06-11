@@ -82,7 +82,8 @@
     \item \code{plaintext_licor_file_v2}: A log file based on
           \code{plaintext_licor_file} that has two separate \code{[Data]} and
           \code{[Header]} sections, as if the log file had been closed and
-          reopened halfway through the measurement sequence.
+          reopened halfway through the measurement sequence. It also has an
+          extra blank line at the end.
     \item \code{licor_for_gm_site11.xlsx}, \code{licor_for_gm_site13.xslsx}, and
           \code{tdl_for_gm}: Two Licor Li-6800 log files and a CR3000 TDL log
           file, respectively. These files are used as an example of loading and

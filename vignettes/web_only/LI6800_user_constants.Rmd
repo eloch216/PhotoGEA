@@ -552,17 +552,17 @@ but it will always be tedious. Here's an example of how this could be done:
 ```{r echo = TRUE, results = 'markup'}
 # Say we have a data frame of spot measurements that also includes user remarks
 # with inconsistent formatting
-licor_data <- data.frame(
+gasex_data <- data.frame(
   A = c(1.1, 1.2, 1.3, 1.4, 1.5),
   Ci = c(291, 292, 293, 294, 295),
   user_remark = c('maize 2 3', 'maize-1 4', 'soybean3 1', 'maiz 5 6', '3 2 soybean')
 )
 
-print(licor_data)
+print(gasex_data)
 
 # Now we can manually parse the remarks using `set_variable`
-licor_data <- set_variable(
-  licor_data,
+gasex_data <- set_variable(
+  gasex_data,
   'species',
   id_column = 'user_remark',
   value_table = list(
@@ -574,8 +574,8 @@ licor_data <- set_variable(
   )
 )
 
-licor_data <- set_variable(
-  licor_data,
+gasex_data <- set_variable(
+  gasex_data,
   'plot',
   id_column = 'user_remark',
   value_table = list(
@@ -587,8 +587,8 @@ licor_data <- set_variable(
   )
 )
 
-licor_data <- set_variable(
-  licor_data,
+gasex_data <- set_variable(
+  gasex_data,
   'replicate',
   id_column = 'user_remark',
   value_table = list(
@@ -600,7 +600,7 @@ licor_data <- set_variable(
   )
 )
 
-print(licor_data)
+print(gasex_data)
 ```
 
 ## Manual Parsing Using Excel
@@ -635,9 +635,9 @@ sequential curve number:
 pts_in_curve <- 17
 
 # Create a new identifier column formatted like `file_name - curve_number`
-licor_data[, 'curve_identifier'] <- paste(
-  tools::file_path_sans_ext(basename(licor_data[, 'file_name'])),
-  ceiling(licor_data[, 'obs'] / pts_in_curve),
+gasex_data[, 'curve_identifier'] <- paste(
+  tools::file_path_sans_ext(basename(gasex_data[, 'file_name'])),
+  ceiling(gasex_data[, 'obs'] / pts_in_curve),
   sep = ' - '
 )
 ```

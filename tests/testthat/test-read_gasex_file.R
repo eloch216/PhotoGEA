@@ -23,3 +23,20 @@ test_that('standardizations are applied', {
     expect_equal(licor_file_standard$units$PhiPS2, 'dimensionless')
     expect_equal(licor_file$units$PhiPS2, 'NA')
 })
+
+test_that('NA rows are removed (plaintext)', {
+    fpath <- PhotoGEA_example_file_path('plaintext_licor_file_v2')
+
+    licor_file_with_NA_row <- expect_silent(
+        read_gasex_file(fpath, remove_NA_rows = FALSE)
+    )
+
+    licor_file_without_NA_row <- expect_silent(
+        read_gasex_file(fpath, remove_NA_rows = TRUE)
+    )
+
+    expect_equal(
+        nrow(licor_file_without_NA_row),
+        nrow(licor_file_with_NA_row) - 1
+    )
+})
