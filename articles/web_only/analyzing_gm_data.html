@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Analyzing Mesophyll Conductance Data • PhotoGEA</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../../favicon.ico">
+<link rel="manifest" href="../../site.webmanifest">
 <script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing Mesophyll Conductance Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.2/vignettes/web_only/analyzing_gm_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_gm_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_gm_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_gm_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_gm_data.Rmd</code></div>
     </div>
 
@@ -293,6 +292,11 @@ you can install it by typing
 <div class="section level2">
 <h2 id="loading-gas-exchange-data">Loading Gas Exchange Data<a class="anchor" aria-label="anchor" href="#loading-gas-exchange-data"></a>
 </h2>
+<p>In this example, we will read data from Licor LI-6800 log files. If
+you have log files from a different instrument, or if you are reading
+from CSV files that were reformatted from instrument log files, please
+see the <a href="frequent_questions.html#loading-data">“Loading Data”
+section of the FAQ</a>.</p>
 <p>The <code>PhotoGEA</code> package includes two files representing gas
 exchange data that was measured along with the TDL data discussed in the
 next section. The data was recorded by Licor Li-6800 instruments and is
@@ -307,7 +311,7 @@ with <code>PhotoGEA_example_file_path</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load; in this case, we are</span></span>
 <span><span class="co"># loading example files included with the PhotoGEA package</span></span>
-<span><span class="va">licor_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span><span class="va">gasex_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'licor_for_gm_site11.xlsx'</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'licor_for_gm_site13.xlsx'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -324,10 +328,13 @@ where the measurements were made (<code>America/Chicago</code>). Since
 there are (potentially) multiple files to read, we will call this
 function once for each file using <code>lapply</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load each Licor file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="co"># Load each gas exchange data file, storing the result in a list</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'America/Chicago'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Note:</strong> The <code>read_gasex_file</code> function can
+also read plaintext Licor LI-6800 log files; for more information, see
+its help page by typing <code><a href="../../reference/read_gasex_file.html">?read_gasex_file</a></code>.</p>
 <p>The result from this command is an R list of “extended data frames”
 (abbreviated as <code>exdf</code> objects). The <code>exdf</code> class
 is a special data structure defined by the <code>PhotoGEA</code>
@@ -347,7 +354,7 @@ in the Licor log file name. It can be extracted using the
 specifying the reference line valve number.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get TDL sample and reference valve numbers from the Licor filenames</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">exdf_obj</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">exdf_obj</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/get_sample_valve_from_filename.html">get_sample_valve_from_filename</a></span><span class="op">(</span><span class="va">exdf_obj</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">'13'</span> <span class="op">=</span> <span class="fl">12</span>, <span class="co"># The reference valve is 12 when the sample valve is 13</span></span>
 <span>    <span class="st">'11'</span> <span class="op">=</span> <span class="fl">10</span>  <span class="co"># The reference valve is 10 when the sample valve is 11</span></span>
@@ -363,21 +370,21 @@ same columns, so before we combine the <code>exdf</code> objects, we
 should make sure this is the case.</p>
 <p>The <code>PhotoGEA</code> package includes a function called
 <code>identify_common_columns</code> that can be used to get the names
-of all columns that are present in all of the Licor files. Then, we can
+of all columns that are present in all of the data files. Then, we can
 extract just those columns, and then combine the <code>exdf</code>
 objects into a single one.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">licor_columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Get the names of all columns that are present in all of the data files</span></span>
+<span><span class="va">gasex_columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span><span class="op">[</span> , <span class="va">licor_columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">x</span><span class="op">[</span> , <span class="va">gasex_columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span></code></pre></div>
-<p>Now we have a single R object called <code>licor_data</code> that
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span></code></pre></div>
+<p>Now we have a single R object called <code>gasex_data</code> that
 includes all the data from several Licor Excel files. For more
 information about consolidating information from multiple files, see the
 <em>Common Patterns</em> section of the <a href="working_with_extended_data_frames.html#combining-data-from-several-files">Working
@@ -386,6 +393,11 @@ With Extended Data Frames</a> vignette.</p>
 <div class="section level2">
 <h2 id="loading-tunable-diode-laser-data">Loading Tunable Diode Laser Data<a class="anchor" aria-label="anchor" href="#loading-tunable-diode-laser-data"></a>
 </h2>
+<p>In this example, we will read data from Campbell Scientific data
+logger files. If you have log files from a different instrument, or if
+you are reading from CSV files that were reformatted from instrument log
+files, please see the <a href="frequent_questions.html#loading-data">“Loading Data” section of
+the FAQ</a>.</p>
 <p>The <code>PhotoGEA</code> package includes one file representing TDL
 data that was recorded with a Campbell Scientific CR3000 data logger
 simultaneously with the gas exchange data discussed in the previous
@@ -455,8 +467,8 @@ sufficient to uniquely identify each set. We can solve this issue by
 creating a new column that combines the values from each of these:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a new identifier column formatted like `machine - replicate`</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'machine'</span><span class="op">]</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'replicate'</span><span class="op">]</span>, sep <span class="op">=</span> <span class="st">' - '</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'machine'</span><span class="op">]</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'replicate'</span><span class="op">]</span>, sep <span class="op">=</span> <span class="st">' - '</span><span class="op">)</span></span></code></pre></div>
 <p>When measuring response curves (or any other type of gas exchange
 data), it is strongly recommended to record key pieces of metadata in
 the log files using “user constants,” as was done in this example. For
@@ -472,34 +484,38 @@ should uniquely identify each response curve
 curve (<code>12</code>), the name of a “driving” column that should
 follow the same sequence in each curve (<code>CO2_r_sp</code>). If the
 data passes the checks, this function will have no output and will not
-produce any messages. (For more information, see the built-in help menu
-entry by typing <code><a href="../../reference/check_response_curve_data.html">?check_response_curve_data</a></code>, or visit the <a href="frequent_questions.html">Frequently Asked Questions</a>.)</p>
+produce any messages. For more information, see the built-in help menu
+entry by typing <code><a href="../../reference/check_response_curve_data.html">?check_response_curve_data</a></code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make sure the data meets basic requirements</span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">12</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">12</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span></code></pre></div>
 <p>However, if <code>check_response_curve_data</code> detects an issue,
 it will print a helpful message to the R terminal. For example, if we
 had specified the wrong number of points or the wrong identifier column,
 we would get error messages:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">13</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">13</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   curve_identifier npts</span></span>
 <span><span class="co">#&gt; 1       mickey - 1   12</span></span>
 <span><span class="co">#&gt; 2        pluto - 1   12</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 13): One or more curves does not have the expected number of points.</span></span>
+<span><span class="co">#&gt; Error: The following curves do not have 13 points: mickey - 1, pluto - 1</span></span>
 <span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'replicate'</span>, <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'replicate'</span>, <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   replicate npts</span></span>
 <span><span class="co">#&gt; 1         1   24</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "replicate", 12): One or more curves does not have the expected number of points.</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: The following curves do not have 12 points: 1</span></span></code></pre></div>
+<p>If all curves in your data set do not have the same number of points,
+or if some other issue is causing <code>check_response_curve_data</code>
+to fail, please see the <a href="frequent_questions.html#checking-data">“Checking Data” section of
+the FAQ</a>.</p>
 <p>Now that we have confirmed that our curve identifier properly
 identifies sets of data, we can also perform additional organization
 using the <code>organize_response_curve_data</code> function from
 <code>PhotoGEA</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Order by `Ci`.</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="st">'curve_identifier'</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># keep all the measured points</span></span>
 <span>  <span class="st">'Ci'</span></span>
@@ -624,15 +640,15 @@ parameters that were determined while processing the data.</p>
 <p>When analyzing combined gas exchange and isotope discrimination data,
 a key step is to combine TDL and gas exchange data that were measured at
 the same times. The function performs this operation by locating the TDL
-cycle whose timestamp is closest to each Licor file entry. Then, the
-<sup>12</sup>C, <sup>13</sup>C, total CO<sub>2</sub>, and
+cycle whose timestamp is closest to each gas exchange log file entry.
+Then, the <sup>12</sup>C, <sup>13</sup>C, total CO<sub>2</sub>, and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>δ</mi><mn>13</mn></msup><annotation encoding="application/x-tex">\delta^{13}</annotation></semantics></math>C
 values measured by the TDL from the Licor’s sample and reference lines
 during that cycle are added to the gas exchange data as new columns.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Pair the Licor and TDL data by locating the TDL cycle corresponding to each</span></span>
-<span><span class="co"># Licor measurement</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Pair the gas exchange and TDL data by locating the TDL cycle corresponding to</span></span>
+<span><span class="co"># each gas exchange measurement</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -660,14 +676,14 @@ constant during the measurements.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">26</span>, <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Leaf temperature'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Leaf temperature'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_gm_data_files/figure-html/plot_temperature-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>The temperature control is not perfect for the last point in each
@@ -680,14 +696,14 @@ the first six points and 450 ppm for the following points.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_r</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">400</span>, <span class="fl">800</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'CO2 concentration'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'CO2 concentration'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_gm_data_files/figure-html/plot_co2_r-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Here we can see that the CO<sub>2</sub> control was good for all the
@@ -729,14 +745,14 @@ elapsed time).</p>
 <p>At this point, if any issues had been identified, we could clean the
 data by removing any problematic points. In this example, this procedure
 is not required. For examples of how to clean a data set by removing
-points, please see the <a href="analyzing_c3_aci_curves.html#cleaning-the-licor-data">Analyzing C3
-A-Ci Curves</a> vignette, or one of the other vignettes.</p>
+points, please see the <a href="analyzing_c3_aci_curves.html#cleaning-the-data">Analyzing C3 A-Ci
+Curves</a> vignette, or one of the other vignettes.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="calculating-isotope-discrimination">Calculating Isotope Discrimination<a class="anchor" aria-label="anchor" href="#calculating-isotope-discrimination"></a>
 </h2>
-<p>Now, the <code>licor_data</code> <code>exdf</code> object includes
+<p>Now, the <code>gasex_data</code> <code>exdf</code> object includes
 the TDL measurements from the Licor sample and reference gas lines that
 correspond to each log point. This information can now be used to
 calculate
@@ -744,7 +760,7 @@ calculate
 the photosynthetic isotope discrimination:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate isotope discrimination</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_isotope_discrimination.html">calculate_isotope_discrimination</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_isotope_discrimination.html">calculate_isotope_discrimination</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span></code></pre></div>
 <p>We can also make a quick validity check here. Photosynthetic carbon
 isotope discrimination should be not vary too much at each
 CO<sub>2</sub> setpoint. We can check this with a plot.</p>
@@ -753,14 +769,14 @@ CO<sub>2</sub> setpoint. We can check this with a plot.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">Delta_obs_tdl</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">16</span>, <span class="fl">22</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Photosynthetic isotope discrimination'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Delta_obs_tdl</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Photosynthetic isotope discrimination'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Delta_obs_tdl</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_gm_data_files/figure-html/plot_isotope_discrimination-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Here there is a large amount of noise, but this is to be expected for
@@ -797,8 +813,8 @@ m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><m
 s<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">^{-1}</annotation></semantics></math>.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set day respiration rate</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="st">'RL'</span>,</span>
 <span>  <span class="st">'micromol m^(-2) s^(-1)'</span>,</span>
 <span>  value <span class="op">=</span> <span class="fl">1.2</span></span>
@@ -812,15 +828,15 @@ M<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><m
 for the specificity.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set Rubisco specificity</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
 <span>    <span class="st">'rubisco_specificity_tl'</span>,</span>
 <span>    <span class="st">'M / M'</span>,</span>
 <span>    value <span class="op">=</span> <span class="fl">92</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate Gamma_star</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gamma_star.html">calculate_gamma_star</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gamma_star.html">calculate_gamma_star</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span></code></pre></div>
 <p>The ternary correction factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
 can be calculated using the <code>calculate_ternary_correction</code>
@@ -830,13 +846,13 @@ requirements, which can be met by first calling
 <code>calculate_gas_properties</code>.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate total pressure</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate gbc, gsc, Csurface</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate t</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_ternary_correction.html">calculate_ternary_correction</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_ternary_correction.html">calculate_ternary_correction</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span></code></pre></div>
 <p>Like
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>d</mi></msub><annotation encoding="application/x-tex">R_d</annotation></semantics></math>,
 the observed photosynthetic isotope discrimination under growth
@@ -858,14 +874,14 @@ across the first six points as the value of
 for each replicate.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set Delta_obs_growth</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="st">'Delta_obs_growth'</span>,</span>
 <span>  <span class="st">'ppt'</span>,</span>
 <span>  id_column <span class="op">=</span> <span class="st">'curve_identifier'</span>,</span>
 <span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'Delta_obs_tdl'</span><span class="op">]</span>,</span>
-<span>    <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>    <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'Delta_obs_tdl'</span><span class="op">]</span>,</span>
+<span>    <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
 <span>    <span class="va">mean</span></span>
 <span>  <span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -873,7 +889,7 @@ for each replicate.</p>
 conductance!</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate mesophyll conductance</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gm_busch.html">calculate_gm_busch</a></span><span class="op">(</span><span class="va">licor_data</span>, f <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gm_busch.html">calculate_gm_busch</a></span><span class="op">(</span><span class="va">gasex_data</span>, f <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p>In this example, we have found that the mesophyll conductance values
 are more reasonable with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
@@ -891,13 +907,13 @@ of the mesophyll conductance.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gmc</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_gm_data_files/figure-html/plot_gm_1-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Another approach is to plot the average mesophyll conductance against
@@ -908,16 +924,16 @@ for each CO<sub>2</sub> setpoint.</p>
 <code class="sourceCode R"><span><span class="co"># Plot the average mesophyll conductance values against average Ci values,</span></span>
 <span><span class="co"># grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="../../reference/xyplot_avg_rc.html">xyplot_avg_rc</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'gmc'</span><span class="op">]</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Ci'</span><span class="op">]</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'gmc'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'Ci'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_gm_data_files/figure-html/plot_gm_2-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>As usual, the appropriate synthesis operations will depend on the
@@ -935,14 +951,14 @@ specifically mentioned here.</p>
 <div class="section level3">
 <h3 id="input-files">Input Files<a class="anchor" aria-label="anchor" href="#input-files"></a>
 </h3>
-<p>The file paths specified in <code>licor_file_paths</code> and
+<p>The file paths specified in <code>gasex_file_paths</code> and
 <code>tdl_file_paths</code> will need to be modified so they point to
 your own files. One way to do this in your own script is to simply write
 out relative or absolute paths to the files you wish to load. For
 example, you could replace the previous definitions with these ones:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a vector of paths to the files we wish to load</span></span>
-<span><span class="va">licor_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span><span class="va">gasex_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">'myfile1.xlsx'</span>,        <span class="co"># `myfile1.xlsx` must be in the current working directory</span></span>
 <span>  <span class="st">'C:/documents/myfile2'</span> <span class="co"># This is an absolute path to `myfile2`</span></span>
 <span><span class="op">)</span></span>
@@ -960,7 +976,7 @@ this is more convenient than writing out file paths or names. For
 example, you could replace the previous definitions with these ones:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
-<span><span class="va">licor_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">gasex_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tdl_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/choose_input_files.html">choose_input_tdl_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Unfortunately, <code>choose_input_licor_files</code> and
@@ -989,7 +1005,9 @@ will allow you to interactively choose an output filename for a
 along with the calculated values of isotope discrimination and mesophyll
 conductance:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>Also see the <a href="frequent_questions.html">“Converting and
+Exporting Results” section of the FAQ</a> for more information.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1026,34 +1044,34 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># Define a vector of paths to the files we wish to load; in this case, we are</span></span>
 <span><span class="co"># loading example files included with the PhotoGEA package</span></span>
-<span><span class="va">licor_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span><span class="va">gasex_file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'licor_for_gm_site11.xlsx'</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'licor_for_gm_site13.xlsx'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Load each Licor file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="co"># Load each gas exchange data file, storing the result in a list</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span>, posix_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tz <span class="op">=</span> <span class="st">'America/Chicago'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get TDL sample and reference valve numbers from the Licor filenames</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">exdf_obj</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">exdf_obj</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/get_sample_valve_from_filename.html">get_sample_valve_from_filename</a></span><span class="op">(</span><span class="va">exdf_obj</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">'13'</span> <span class="op">=</span> <span class="fl">12</span>, <span class="co"># The reference valve is 12 when the sample valve is 13</span></span>
 <span>    <span class="st">'11'</span> <span class="op">=</span> <span class="fl">10</span>  <span class="co"># The reference valve is 10 when the sample valve is 11</span></span>
 <span>  <span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">licor_columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="co"># Get the names of all columns that are present in all of the data files</span></span>
+<span><span class="va">gasex_columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span><span class="op">[</span> , <span class="va">licor_columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">x</span><span class="op">[</span> , <span class="va">gasex_columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">##</span></span>
 <span><span class="co">## Isotope discrimination log files</span></span>
@@ -1091,15 +1109,15 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Create a new identifier column formatted like `machine - replicate`</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'machine'</span><span class="op">]</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'replicate'</span><span class="op">]</span>, sep <span class="op">=</span> <span class="st">' - '</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'machine'</span><span class="op">]</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'replicate'</span><span class="op">]</span>, sep <span class="op">=</span> <span class="st">' - '</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make sure the data meets basic requirements</span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">12</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">12</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Order by `Ci`.</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="st">'curve_identifier'</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># keep all the measured points</span></span>
 <span>  <span class="st">'Ci'</span></span>
@@ -1138,9 +1156,9 @@ Analysis Pipeline</a> vignette.</p>
 <span>  calibration_isotope_ratio <span class="op">=</span> <span class="op">-</span><span class="fl">11.505</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Pair the Licor and TDL data by locating the TDL cycle corresponding to each</span></span>
-<span><span class="co"># Licor measurement</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span>
+<span><span class="co"># Pair the gas exchange and TDL data by locating the TDL cycle corresponding to</span></span>
+<span><span class="co"># each gas exchange measurement</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/pair_gasex_and_tdl.html">pair_gasex_and_tdl</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">##</span></span>
 <span><span class="co">## Qualitative validation</span></span>
@@ -1150,28 +1168,28 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">26</span>, <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Leaf temperature'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Leaf temperature'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot CO2_r, grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_r</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">400</span>, <span class="fl">800</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'CO2 concentration'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'CO2 concentration'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
@@ -1198,59 +1216,59 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Calculate isotope discrimination</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_isotope_discrimination.html">calculate_isotope_discrimination</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_isotope_discrimination.html">calculate_isotope_discrimination</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the photosynthetic isotope discrimination, grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">Delta_obs_tdl</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">16</span>, <span class="fl">22</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Photosynthetic isotope discrimination'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Delta_obs_tdl</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Photosynthetic isotope discrimination'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Delta_obs_tdl</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Set day respiration rate</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="st">'RL'</span>,</span>
 <span>  <span class="st">'micromol m^(-2) s^(-1)'</span>,</span>
 <span>  value <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Set Rubisco specificity</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
 <span>    <span class="st">'rubisco_specificity_tl'</span>,</span>
 <span>    <span class="st">'M / M'</span>,</span>
 <span>    value <span class="op">=</span> <span class="fl">92</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate Gamma_star</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gamma_star.html">calculate_gamma_star</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gamma_star.html">calculate_gamma_star</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate total pressure</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate gbc, gsc, Csurface</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_gas_properties.html">calculate_gas_properties</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate t</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_ternary_correction.html">calculate_ternary_correction</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_ternary_correction.html">calculate_ternary_correction</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Set Delta_obs_growth</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/set_variable.html">set_variable</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="st">'Delta_obs_growth'</span>,</span>
 <span>  <span class="st">'ppt'</span>,</span>
 <span>  id_column <span class="op">=</span> <span class="st">'curve_identifier'</span>,</span>
 <span>  value_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'Delta_obs_tdl'</span><span class="op">]</span>,</span>
-<span>    <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>    <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'Delta_obs_tdl'</span><span class="op">]</span>,</span>
+<span>    <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">715</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
 <span>    <span class="va">mean</span></span>
 <span>  <span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -1264,28 +1282,28 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">gmc</span> <span class="op">~</span> <span class="va">seq_num</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">CO2_r_sp</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'p'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto.key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>space <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the average mesophyll conductance values against average Ci values,</span></span>
 <span><span class="co"># grouped by CO2_r setpoint</span></span>
 <span><span class="fu"><a href="../../reference/xyplot_avg_rc.html">xyplot_avg_rc</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'gmc'</span><span class="op">]</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Ci'</span><span class="op">]</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'gmc'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'Ci'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-busch_revisiting_2020" class="csl-entry">
@@ -1337,7 +1355,7 @@ Covshoff, 155–96. Methods in <span>Molecular</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

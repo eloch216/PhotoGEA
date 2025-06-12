@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Frequently Asked Questions • PhotoGEA</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../../favicon.ico">
+<link rel="manifest" href="../../site.webmanifest">
 <script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,15 +83,31 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Frequently Asked Questions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.2/vignettes/web_only/frequent_questions.Rmd" class="external-link"><code>vignettes/web_only/frequent_questions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/frequent_questions.Rmd" class="external-link"><code>vignettes/web_only/frequent_questions.Rmd</code></a></small>
       <div class="d-none name"><code>frequent_questions.Rmd</code></div>
     </div>
 
     
     
 <div class="section level2">
-<h2 id="how-do-i-install-the-latest-release-of-photogea">How Do I Install the Latest Release of PhotoGEA?<a class="anchor" aria-label="anchor" href="#how-do-i-install-the-latest-release-of-photogea"></a>
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
+<p>The questions discussed here are grouped into sections by topic:</p>
+<ul>
+<li><p><a href="#installing-photogea">Installing PhotoGEA</a></p></li>
+<li><p><a href="#loading-and-checking-data">Loading and Checking
+Data</a></p></li>
+<li><p><a href="#converting-and-exporting-results">Converting and
+Exporting Results</a></p></li>
+<li><p><a href="#fitting-c3-a-ci-curves">Fitting C<sub>3</sub><em>A-C<sub>i</sub></em> Curves</a></p></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="installing-photogea">Installing PhotoGEA<a class="anchor" aria-label="anchor" href="#installing-photogea"></a>
+</h2>
+<div class="section level3">
+<h3 id="how-do-i-install-the-latest-release-of-photogea">How Do I Install the Latest Release of PhotoGEA?<a class="anchor" aria-label="anchor" href="#how-do-i-install-the-latest-release-of-photogea"></a>
+</h3>
 <p><code>PhotoGEA</code> is available on CRAN, so the easiest way to
 install the latest release is to type the following from within an R
 terminal:</p>
@@ -108,9 +123,9 @@ repository by typing the following:</p>
 which can be installed from within R by typing
 <code>install.packages('remotes')</code>.</p>
 </div>
-<div class="section level2">
-<h2 id="how-do-i-install-an-old-version-of-photogea">How Do I Install an Old Version of PhotoGEA?<a class="anchor" aria-label="anchor" href="#how-do-i-install-an-old-version-of-photogea"></a>
-</h2>
+<div class="section level3">
+<h3 id="how-do-i-install-an-old-version-of-photogea">How Do I Install an Old Version of PhotoGEA?<a class="anchor" aria-label="anchor" href="#how-do-i-install-an-old-version-of-photogea"></a>
+</h3>
 <p>All <code>PhotoGEA</code> releases are tagged on GitHub, and the tag
 names are formatted as <code>vX.Y.Z</code>, where <code>X.Y.Z</code> is
 the version number. Because of this,
@@ -124,9 +139,9 @@ can be installed as follows:</p>
 which can be installed from within R by typing
 <code>install.packages('remotes')</code>.</p>
 </div>
-<div class="section level2">
-<h2 id="how-do-i-install-the-development-version-of-photogea">How Do I Install the Development Version of PhotoGEA?<a class="anchor" aria-label="anchor" href="#how-do-i-install-the-development-version-of-photogea"></a>
-</h2>
+<div class="section level3">
+<h3 id="how-do-i-install-the-development-version-of-photogea">How Do I Install the Development Version of PhotoGEA?<a class="anchor" aria-label="anchor" href="#how-do-i-install-the-development-version-of-photogea"></a>
+</h3>
 <p>The development version of <code>PhotoGEA</code> contains the latest
 changes, although it may be a “work in progress” and subject to suddent
 changes without any warning. It can always be found on the
@@ -138,9 +153,9 @@ installed from this branch as follows:</p>
 which can be installed from within R by typing
 <code>install.packages('remotes')</code>.</p>
 </div>
-<div class="section level2">
-<h2 id="how-do-i-install-from-a-local-copy-of-the-repository">How Do I Install From a Local Copy of the Repository?<a class="anchor" aria-label="anchor" href="#how-do-i-install-from-a-local-copy-of-the-repository"></a>
-</h2>
+<div class="section level3">
+<h3 id="how-do-i-install-from-a-local-copy-of-the-repository">How Do I Install From a Local Copy of the Repository?<a class="anchor" aria-label="anchor" href="#how-do-i-install-from-a-local-copy-of-the-repository"></a>
+</h3>
 <p>The <code>PhotoGEA</code> package can be installed from a local copy
 of the repository by running the following command in an R session with
 the working directory set to the root directory of the
@@ -150,236 +165,14 @@ the working directory set to the root directory of the
 <p>This can be helpful for developers who wish to locally test changes
 to the package code.</p>
 </div>
-<div class="section level2">
-<h2 id="what-should-i-do-when-check_response_curve_data-fails">What Should I Do When check_response_curve_data Fails?<a class="anchor" aria-label="anchor" href="#what-should-i-do-when-check_response_curve_data-fails"></a>
-</h2>
-<p>When beginning to work with a new data set, it is fairly common to
-encounter problems that cause <code>check_response_curve_data</code> to
-fail. The most common issues are:</p>
-<ul>
-<li><p>The manual log button was accidentally pressed while measuring,
-causing a response curve to have an extra point.</p></li>
-<li><p>One or more “User Constant” was not updated before starting a to
-measure a new curve, causing two curves to have the same identifying
-metadata.</p></li>
-<li><p>A curve was started, but needed to be ended early, resulting in a
-curve with fewer points than expected.</p></li>
-</ul>
-<p>These are exactly the kinds of issues that
-<code>check_response_curve_data</code> is designed to detect. It may
-feel irritating to encounter these errors, but it’s better to know about
-issues with extra log points or user constants early in your analysis,
-before they cause additional downstream issues.</p>
-<p>In each of these cases, it is often simplest to fix the issues by
-manually editing the log files in Excel. This is an easy way to delete
-extra rows or alter the values of user constants. When altering log
-files, it is always a good idea to keep an “original” version in case
-any of the changes need to be reverted.</p>
-<p>Sometimes <code>check_response_curve_data</code> fails for a
-different reason – for example, perhaps different setpoint sequences
-were intentionally used while measuring the curves, or perhaps you have
-already cleaned up your data in Excel. In these cases, please see the
-“What if My Response Curves Have Different Numbers of Points?” and “What
-if I Clean My Data in Excel?” sections of this article.</p>
 </div>
 <div class="section level2">
-<h2 id="what-if-my-response-curves-have-different-numbers-of-points">What if My Response Curves Have Different Numbers of Points?<a class="anchor" aria-label="anchor" href="#what-if-my-response-curves-have-different-numbers-of-points"></a>
+<h2 id="loading-data">Loading Data<a class="anchor" aria-label="anchor" href="#loading-data"></a>
 </h2>
-<p>The analysis guides use data sets where each response curve has the
-same number of points, making it easy to apply
-<code>check_response_curve_data</code> and
-<code>organize_response_curve_data</code>. However, data sets may
-sometimes have curves measured using different sequences of
-setpoints.</p>
-<p>To deal with this situation, one strategy is to split the full set
-into groups that are expected to use the same sequences, then separately
-check and organize each group, and finally recombine all the groups back
-together. The code snippets below show two examples of how this could be
-accomplished.</p>
 <div class="section level3">
-<h3 id="splitting-response-curves-according-to-the-number-of-points-in-each-curve">Splitting Response Curves According to the Number of Points in Each
-Curve<a class="anchor" aria-label="anchor" href="#splitting-response-curves-according-to-the-number-of-points-in-each-curve"></a>
-</h3>
-<p>The following code would replace the calls to
-<code>check_response_curve_data</code> and
-<code>organize_response_curve_data</code> in the user guides. This code
-was originally written for a set of A-Ci curves that used different
-numbers of recovery points. The user wished to keep the final recovery
-point to use for subsequent analysis.</p>
-<p>The curves used the following sequences of <code>CO2_r</code>
-setpoint values:</p>
-<ul>
-<li><p>16 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 600,
-800, 1200, 1500, 1800, 400</p></li>
-<li><p>18 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400,
-400, 600, 800, 1200, 1500, 1800, 400</p></li>
-<li><p>19 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400,
-400, 400, 600, 800, 1200, 1500, 1800, 400</p></li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Add a new column called `curve_npts` that stores the number of points in each</span></span>
-<span><span class="co"># response curve</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span></span>
-<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Choose points to remove, depending on how many points are in the curve</span></span>
-<span><span class="va">pts_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">'16'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">9</span>,  <span class="fl">16</span><span class="op">)</span>,</span>
-<span>  <span class="st">'18'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">11</span>, <span class="fl">18</span><span class="op">)</span>,</span>
-<span>  <span class="st">'19'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">12</span>, <span class="fl">19</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Check and process each group of curves depending on how many points are in the</span></span>
-<span><span class="co"># curve</span></span>
-<span><span class="va">licor_exdf_list_processed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Get the number of points in these curves</span></span>
-<span>  <span class="va">npts</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>, <span class="st">'curve_npts'</span><span class="op">]</span></span>
-<span></span>
-<span>  <span class="co"># Make sure info is specified for this group of curves</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">npts</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pts_to_remove</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">'Points to remove were not specified for npts = `'</span>, <span class="va">npts</span>, <span class="st">'`'</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span></span>
-<span>  <span class="co"># Make sure the data meets basic requirements</span></span>
-<span>  <span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">'curve_identifier'</span>, <span class="va">npts</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
-<span>  <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">x</span>,</span>
-<span>    <span class="st">'curve_identifier'</span>,</span>
-<span>    <span class="va">pts_to_remove</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">npts</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>    <span class="st">'Ci'</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Use `rbind` to recombine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list_processed</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="splitting-response-curves-according-to-the-date-they-were-measured-and-the-number-of-points-in-each-curve">Splitting Response Curves According to the Date They Were Measured
-and the Number of Points in Each Curve<a class="anchor" aria-label="anchor" href="#splitting-response-curves-according-to-the-date-they-were-measured-and-the-number-of-points-in-each-curve"></a>
-</h3>
-<p>This code would replace the calls to
-<code>check_response_curve_data</code> and
-<code>organize_response_curve_data</code> in the user guides. This code
-was originally written for a set of A-Ci curves that used different
-sequences of <code>CO2_r</code> setpoints on different days.</p>
-<p>The curves used the following sequences of <code>CO2_r</code>
-setpoint values:</p>
-<ul>
-<li><p>2023-03-21: 18 points: 400, 300, 200, 150, 100, 75, 50, 40, 30,
-20, 10, 400, 400, 600, 800, 1000, 1200, 1500</p></li>
-<li><p>2023-03-23: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30,
-20, 10, 400, 400, 500, 600, 800, 1000, 1200, 1500</p></li>
-<li><p>2023-03-24: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30,
-20, 400, 400, 450, 500, 600, 800, 1000, 1200, 1500</p></li>
-</ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Add a new column called `curve_npts` that stores the number of points in each</span></span>
-<span><span class="co"># response curve</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span></span>
-<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Add a new column called `date_ymd` that stores the date formatted as</span></span>
-<span><span class="co"># YYYY-MM-DD</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date_ymd'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date'</span><span class="op">]</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date'</span><span class="op">]</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date'</span><span class="op">]</span>, <span class="fl">7</span>, <span class="fl">8</span><span class="op">)</span>,</span>
-<span>  sep <span class="op">=</span> <span class="st">'-'</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Add a new column called `date_ymd_npts` that combines the date and the number</span></span>
-<span><span class="co"># of points</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date_ymd_npts'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date_ymd'</span><span class="op">]</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span>, sep <span class="op">=</span> <span class="st">' - '</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Choose points to remove, depending on the date the curve was measured and the</span></span>
-<span><span class="co"># number of points it contains</span></span>
-<span><span class="va">pts_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">'2023-03-21 - 18'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">13</span><span class="op">)</span>,</span>
-<span>  <span class="st">'2023-03-23 - 19'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">13</span><span class="op">)</span>,</span>
-<span>  <span class="st">'2023-03-24 - 19'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">12</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Check and process each group of curves depending on the date and the number of</span></span>
-<span><span class="co"># points</span></span>
-<span><span class="va">licor_exdf_list_processed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'date_ymd_npts'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Get the date and number of points in these curves</span></span>
-<span>  <span class="va">date_ymd_npts</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>, <span class="st">'date_ymd_npts'</span><span class="op">]</span></span>
-<span>  <span class="va">npts</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>, <span class="st">'curve_npts'</span><span class="op">]</span></span>
-<span></span>
-<span>  <span class="co"># Make sure info is specified for this group of curves</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">date_ymd_npts</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pts_to_remove</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">'Points to remove were not specified for date_ymd_npts = `'</span>, <span class="va">date_ymd_npts</span>, <span class="st">'`'</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span></span>
-<span>  <span class="co"># Make sure the data meets basic requirements</span></span>
-<span>  <span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">'curve_identifier'</span>, <span class="va">npts</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
-<span>  <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">x</span>,</span>
-<span>    <span class="st">'curve_identifier'</span>,</span>
-<span>    <span class="va">pts_to_remove</span><span class="op">[[</span><span class="va">date_ymd_npts</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>    <span class="st">'Ci'</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Use `rbind` to recombine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list_processed</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="what-if-i-clean-my-data-in-excel">What if I Clean My Data in Excel?<a class="anchor" aria-label="anchor" href="#what-if-i-clean-my-data-in-excel"></a>
-</h2>
-<p>In the user guides, the <code>organize_response_curve_data</code> and
-<code>remove_points</code> functions are used to remove recovery points
-and other points from sets of response curves. However, it is also
-possible to remove points in Excel before reading log files into R. In
-this case, it is necessary to make a few small alterations to the code
-used in the user guides.</p>
-<p>One consideration is that after cleaning the curves in Excel, it is
-likely that not all curves have the same number of points or follow the
-same sequence of setpoint values. Because of this, the checks in
-<code>check_response_curve_data</code> are likely to fail. In this case,
-we recommend setting <code>expected_npts</code> to 0 (the default value)
-and <code>error_on_failure</code> to <code>FALSE</code> when calling
-<code>check_response_curve_data</code>. This will provide potentially
-useful information about the number of points in each curve, but won’t
-throw an error that would cause a script to stop running.</p>
-<p>Another consideration is that
-<code>organize_response_curve_data</code> is not needed to remove any
-points from the curves. Yet, its other features, such as reordering the
-points and calculating average values, are still useful. In this case,
-we recommend setting <code>measurement_numbers_to_remove</code> to
-<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> and leaving the other arguments as-is.</p>
-<p>Putting this all together would produce something like the following
-code, which would replace the regular calls to
-<code>check_response_curve_data</code> and
-<code>organize_response_curve_data</code> from the user guides:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print info about the number of points in each curve to make sure</span></span>
-<span><span class="co"># `curve_identifier` is able to properly split the set into individual curves</span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, error_on_failure <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Reorder by `Ci` and calculate average values of leaf temperature and Qin</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
-<span>    <span class="st">'curve_identifier'</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    <span class="st">'Ci'</span>,</span>
-<span>    columns_to_average <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'TleafCnd'</span>, <span class="st">'Qin'</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="what-if-i-have-log-files-from-a-licor-li-6400-pp-systems-ciras-or-other-gas-exchange-measurement-system">What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or
+<h3 id="what-if-i-have-log-files-from-a-licor-li-6400-pp-systems-ciras-or-other-gas-exchange-measurement-system">What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or
 Other Gas Exchange Measurement System?<a class="anchor" aria-label="anchor" href="#what-if-i-have-log-files-from-a-licor-li-6400-pp-systems-ciras-or-other-gas-exchange-measurement-system"></a>
-</h2>
+</h3>
 <p>At the moment, <code>PhotoGEA</code> can read plaintext and Excel
 files created by Licor LI-6800 gas exchange measurement systems, but
 does not have functions for reading log files from other
@@ -394,19 +187,19 @@ there is typically some extra “conversion” that needs to take place.</p>
 package. It also provides a simple function that “detects” the file
 type, so a mix of Licor LI-6400 and LI-6800 log files could be used. The
 code in the example would replace the lines that use
-<code>read_gasex_file</code> to create <code>licor_exdf_list</code> in
+<code>read_gasex_file</code> to create <code>gasex_exdf_list</code> in
 the user guides.</p>
 <p>As of the time this article was written (April 4, 2025), the
 <code>read_6400_xls</code> function is not available in the CRAN version
 of the <code>gasanalyzer</code> package. Instead, the package must be
 installed directly from its GitLab repository to get the latest version.
 This can be done by calling the following command from R:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_gitlab</span><span class="op">(</span><span class="st">'plantphys/gasanalyzer'</span><span class="op">)</span></span></code></pre></div>
 <p>This example only processes the columns that are absolutely essential
 for fitting A-Ci curves. Depending on your goals, you may need to modify
 this code to include other columns.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Helper function for reading 6400 Excel files. This is a wrapper for the</span></span>
 <span><span class="co"># read_6400_xls function from the gasanalyzer package that converts the output</span></span>
 <span><span class="co"># into a format usable by PhotoGEA.</span></span>
@@ -489,15 +282,459 @@ this code to include other columns.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">read_gasex_file_plus_6400</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="what-if-my-data-has-been-reformatted-to-csv">What if My Data Has Been Reformatted to CSV?<a class="anchor" aria-label="anchor" href="#what-if-my-data-has-been-reformatted-to-csv"></a>
+</h3>
+<p>Sometimes the contents of one or more instrument log files has been
+reformatted into a CSV file. This is especially common in older data
+sets that were compiled before the availability of tools like PhotoGEA’s
+<code>read_gasex_file</code> function, since the log files could not be
+read directly from R. By manually converting to CSV, it became possible
+to read their contents using <code>read.csv</code>.</p>
+<p>Such data sets can still be analyzed in PhotoGEA, but slightly
+different steps must be taken. The main idea is to first read the CSV
+file with <code>read.csv</code>, creating a regular data frame. Then, by
+supplying units for key columns, the data frame can be converted to an
+<code>exdf</code> object and passed to other PhotoGEA functions.</p>
+<p>The following example shows how to do this for a single data file,
+which can be obtained from <a href="https://figshare.com/articles/dataset/ACi-TGlob_V1_0_A_Global_dataset_of_photosynthetic_CO2_response_curves_of_terrestrial_plants_/7283567" class="external-link">a
+figshare repository</a>. This code would replace the lines that use
+<code>read_gasex_file</code> to create <code>gasex_data</code> in the
+user guides.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Read the original CSV</span></span>
+<span><span class="va">original_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="st">'ACi-TGlob_V1.0.csv'</span>,</span>
+<span>  fileEncoding <span class="op">=</span> <span class="st">'latin1'</span>,</span>
+<span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert to an exdf object and add units for key columns</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/exdf.html">exdf</a></span><span class="op">(</span></span>
+<span>  <span class="va">original_df</span>,</span>
+<span>  units <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    Ci    <span class="op">=</span> <span class="st">'micromol mol^(-1)'</span>,</span>
+<span>    CO2S  <span class="op">=</span> <span class="st">'micromol mol^(-1)'</span>,</span>
+<span>    Cond  <span class="op">=</span> <span class="st">'mol m^(-2) s^(-1)'</span>,</span>
+<span>    PARi  <span class="op">=</span> <span class="st">'micromol m^(-2) s^(-1)'</span>,</span>
+<span>    Photo <span class="op">=</span> <span class="st">'micromol m^(-2) s^(-1)'</span>,</span>
+<span>    Tleaf <span class="op">=</span> <span class="st">'degrees C'</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>As shown here, it is not necessary to provide units for every column.
+In fact, it is not necessary to provide units for <em>any</em> column
+when creating an <code>exdf</code> object. So, one way to proceed is to
+begin without any units:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/exdf.html">exdf</a></span><span class="op">(</span></span>
+<span>  <span class="va">original_df</span>,</span>
+<span>  units <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Subsequent calls to other PhotoGEA functions (for example,
+<code>fit_c3_aci</code>) will produce error messages when required units
+are not available. Then you can fill them in.</p>
+</div>
+<div class="section level3">
+<h3 id="what-if-my-columns-have-different-names-than-those-in-a-licor-li-6800-log-file">What if My Columns Have Different Names Than Those in a Licor
+LI-6800 Log File?<a class="anchor" aria-label="anchor" href="#what-if-my-columns-have-different-names-than-those-in-a-licor-li-6800-log-file"></a>
+</h3>
+<p>Each function in PhotoGEA allows the user to specify alternate names
+for the columns it needs, where the default names follow those used in
+Licor LI-6800 log files. For example, the default name for the net
+CO<sub>2</sub> assimilation rate column in most functions is
+<code>A</code>. However, some instrument log files use different names;
+for example, the net CO<sub>2</sub> assimilation rate is called
+<code>Photo</code> in Licor LI-6400 log files. In this case, the default
+name can be changed to <code>Photo</code> when calling a PhotoGEA
+function that uses this column.</p>
+<p>This can be tedious though, since you may need to override the
+default column names many times. An alternate approach is to rename
+columns in the data table after loading it from a file. This only needs
+to be done once at the start of a script. The example below shows one
+way to do this; this code would follow the creation of the
+<code>exdf</code> table called <code>gasex_data</code>, and shows how to
+rename a few Licor LI-6400 columns:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># PhotoGEA has a mechanism for specifying the column names for key inputs, but</span></span>
+<span><span class="co"># it is a bit clunky, so it's easier to rename them to their "standard" names;</span></span>
+<span><span class="co"># here we accomplish this by using a helper function</span></span>
+<span><span class="va">rename_col</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data_table</span>, <span class="va">oldname</span>, <span class="va">newname</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_table</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_table</span><span class="op">)</span> <span class="op">==</span> <span class="va">oldname</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">newname</span></span>
+<span>  <span class="va">data_table</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Specify the old and new names via a list, where the old names are on the left</span></span>
+<span><span class="co"># and the new ones are on the right</span></span>
+<span><span class="va">to_rename</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  CO2S  <span class="op">=</span> <span class="st">'Ca'</span>,</span>
+<span>  Cond  <span class="op">=</span> <span class="st">'gsw'</span>,</span>
+<span>  PARi  <span class="op">=</span> <span class="st">'Qin'</span>,</span>
+<span>  Photo <span class="op">=</span> <span class="st">'A'</span>,</span>
+<span>  Tleaf <span class="op">=</span> <span class="st">'TleafCnd'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Rename columns in `gasex_data`</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">to_rename</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">gasex_data</span> <span class="op">&lt;-</span></span>
+<span>    <span class="fu">rename_col</span><span class="op">(</span><span class="va">gasex_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">to_rename</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="va">to_rename</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
 <div class="section level2">
-<h2 id="what-if-my-files-dont-have-user-constants-or-other-metadata">What if My Files Don’t Have User Constants or Other Metadata?<a class="anchor" aria-label="anchor" href="#what-if-my-files-dont-have-user-constants-or-other-metadata"></a>
+<h2 id="checking-data">Checking Data<a class="anchor" aria-label="anchor" href="#checking-data"></a>
 </h2>
+<div class="section level3">
+<h3 id="what-should-i-do-when-check_response_curve_data-fails">What Should I Do When check_response_curve_data Fails?<a class="anchor" aria-label="anchor" href="#what-should-i-do-when-check_response_curve_data-fails"></a>
+</h3>
+<p>When beginning to work with a new data set, it is fairly common to
+encounter problems that cause <code>check_response_curve_data</code> to
+fail. The most common issues are:</p>
+<ul>
+<li><p>The manual log button was accidentally pressed while measuring,
+causing a response curve to have an extra point.</p></li>
+<li><p>One or more “User Constant” was not updated before starting a to
+measure a new curve, causing two curves to have the same identifying
+metadata.</p></li>
+<li><p>A curve was started, but needed to be ended early, resulting in a
+curve with fewer points than expected.</p></li>
+</ul>
+<p>These are exactly the kinds of issues that
+<code>check_response_curve_data</code> is designed to detect. It may
+feel irritating to encounter these errors, but it’s better to know about
+issues with extra log points or user constants early in your analysis,
+before they cause additional downstream issues.</p>
+<p>In each of these cases, it is often simplest to fix the issues by
+manually editing the log files in Excel. This is an easy way to delete
+extra rows or alter the values of user constants. When altering log
+files, it is always a good idea to keep an “original” version in case
+any of the changes need to be reverted.</p>
+<p>Sometimes <code>check_response_curve_data</code> fails for a
+different reason – for example, perhaps different setpoint sequences
+were intentionally used while measuring the curves, or perhaps you have
+already cleaned up your data in Excel. In these cases, please see the
+“What if My Response Curves Have Different Numbers of Points?” and “What
+if I Clean My Data in Excel?” sections of this article.</p>
+</div>
+<div class="section level3">
+<h3 id="what-if-my-response-curves-have-different-numbers-of-points">What if My Response Curves Have Different Numbers of Points?<a class="anchor" aria-label="anchor" href="#what-if-my-response-curves-have-different-numbers-of-points"></a>
+</h3>
+<p>The analysis guides use data sets where each response curve has the
+same number of points, making it easy to apply
+<code>check_response_curve_data</code> and
+<code>organize_response_curve_data</code>. However, data sets may
+sometimes have curves measured using different sequences of
+setpoints.</p>
+<p>To deal with this situation, one strategy is to split the full set
+into groups that are expected to use the same sequences, then separately
+check and organize each group, and finally recombine all the groups back
+together. The code snippets below show two examples of how this could be
+accomplished.</p>
+<div class="section level4">
+<h4 id="splitting-response-curves-according-to-the-number-of-points-in-each-curve">Splitting Response Curves According to the Number of Points in Each
+Curve<a class="anchor" aria-label="anchor" href="#splitting-response-curves-according-to-the-number-of-points-in-each-curve"></a>
+</h4>
+<p>The following code would replace the calls to
+<code>check_response_curve_data</code> and
+<code>organize_response_curve_data</code> in the user guides. This code
+was originally written for a set of A-Ci curves that used different
+numbers of recovery points. The user wished to keep the final recovery
+point to use for subsequent analysis.</p>
+<p>The curves used the following sequences of <code>CO2_r</code>
+setpoint values:</p>
+<ul>
+<li><p>16 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 600,
+800, 1200, 1500, 1800, 400</p></li>
+<li><p>18 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400,
+400, 600, 800, 1200, 1500, 1800, 400</p></li>
+<li><p>19 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400,
+400, 400, 600, 800, 1200, 1500, 1800, 400</p></li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Add a new column called `curve_npts` that stores the number of points in each</span></span>
+<span><span class="co"># response curve</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">x</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">x</span></span>
+<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Choose points to remove, depending on how many points are in the curve</span></span>
+<span><span class="va">pts_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="st">'16'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">9</span>,  <span class="fl">16</span><span class="op">)</span>,</span>
+<span>  <span class="st">'18'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">11</span>, <span class="fl">18</span><span class="op">)</span>,</span>
+<span>  <span class="st">'19'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">12</span>, <span class="fl">19</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check and process each group of curves depending on how many points are in the</span></span>
+<span><span class="co"># curve</span></span>
+<span><span class="va">gasex_exdf_list_processed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Get the number of points in these curves</span></span>
+<span>  <span class="va">npts</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>, <span class="st">'curve_npts'</span><span class="op">]</span></span>
+<span></span>
+<span>  <span class="co"># Make sure info is specified for this group of curves</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">npts</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pts_to_remove</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">'Points to remove were not specified for npts = `'</span>, <span class="va">npts</span>, <span class="st">'`'</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># Make sure the data meets basic requirements</span></span>
+<span>  <span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">'curve_identifier'</span>, <span class="va">npts</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
+<span>  <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">x</span>,</span>
+<span>    <span class="st">'curve_identifier'</span>,</span>
+<span>    <span class="va">pts_to_remove</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">npts</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    <span class="st">'Ci'</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use `rbind` to recombine all the data</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list_processed</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="splitting-response-curves-according-to-the-date-they-were-measured-and-the-number-of-points-in-each-curve">Splitting Response Curves According to the Date They Were Measured
+and the Number of Points in Each Curve<a class="anchor" aria-label="anchor" href="#splitting-response-curves-according-to-the-date-they-were-measured-and-the-number-of-points-in-each-curve"></a>
+</h4>
+<p>This code would replace the calls to
+<code>check_response_curve_data</code> and
+<code>organize_response_curve_data</code> in the user guides. This code
+was originally written for a set of A-Ci curves that used different
+sequences of <code>CO2_r</code> setpoints on different days.</p>
+<p>The curves used the following sequences of <code>CO2_r</code>
+setpoint values:</p>
+<ul>
+<li><p>2023-03-21: 18 points: 400, 300, 200, 150, 100, 75, 50, 40, 30,
+20, 10, 400, 400, 600, 800, 1000, 1200, 1500</p></li>
+<li><p>2023-03-23: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30,
+20, 10, 400, 400, 500, 600, 800, 1000, 1200, 1500</p></li>
+<li><p>2023-03-24: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30,
+20, 400, 400, 450, 500, 600, 800, 1000, 1200, 1500</p></li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Add a new column called `curve_npts` that stores the number of points in each</span></span>
+<span><span class="co"># response curve</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">x</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">x</span></span>
+<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add a new column called `date_ymd` that stores the date formatted as</span></span>
+<span><span class="co"># YYYY-MM-DD</span></span>
+<span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date_ymd'</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date'</span><span class="op">]</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date'</span><span class="op">]</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substring</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date'</span><span class="op">]</span>, <span class="fl">7</span>, <span class="fl">8</span><span class="op">)</span>,</span>
+<span>  sep <span class="op">=</span> <span class="st">'-'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add a new column called `date_ymd_npts` that combines the date and the number</span></span>
+<span><span class="co"># of points</span></span>
+<span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date_ymd_npts'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date_ymd'</span><span class="op">]</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_npts'</span><span class="op">]</span>, sep <span class="op">=</span> <span class="st">' - '</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Choose points to remove, depending on the date the curve was measured and the</span></span>
+<span><span class="co"># number of points it contains</span></span>
+<span><span class="va">pts_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="st">'2023-03-21 - 18'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">13</span><span class="op">)</span>,</span>
+<span>  <span class="st">'2023-03-23 - 19'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">13</span><span class="op">)</span>,</span>
+<span>  <span class="st">'2023-03-24 - 19'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check and process each group of curves depending on the date and the number of</span></span>
+<span><span class="co"># points</span></span>
+<span><span class="va">gasex_exdf_list_processed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'date_ymd_npts'</span><span class="op">]</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Get the date and number of points in these curves</span></span>
+<span>  <span class="va">date_ymd_npts</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>, <span class="st">'date_ymd_npts'</span><span class="op">]</span></span>
+<span>  <span class="va">npts</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>, <span class="st">'curve_npts'</span><span class="op">]</span></span>
+<span></span>
+<span>  <span class="co"># Make sure info is specified for this group of curves</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">date_ymd_npts</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pts_to_remove</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">'Points to remove were not specified for date_ymd_npts = `'</span>, <span class="va">date_ymd_npts</span>, <span class="st">'`'</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="co"># Make sure the data meets basic requirements</span></span>
+<span>  <span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">'curve_identifier'</span>, <span class="va">npts</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
+<span>  <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">x</span>,</span>
+<span>    <span class="st">'curve_identifier'</span>,</span>
+<span>    <span class="va">pts_to_remove</span><span class="op">[[</span><span class="va">date_ymd_npts</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    <span class="st">'Ci'</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use `rbind` to recombine all the data</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list_processed</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="what-if-i-clean-my-data-in-excel">What if I Clean My Data in Excel?<a class="anchor" aria-label="anchor" href="#what-if-i-clean-my-data-in-excel"></a>
+</h3>
+<p>In the user guides, the <code>organize_response_curve_data</code> and
+<code>remove_points</code> functions are used to remove recovery points
+and other points from sets of response curves. However, it is also
+possible to remove points in Excel before reading log files into R. In
+this case, it is necessary to make a few small alterations to the code
+used in the user guides.</p>
+<p>One consideration is that after cleaning the curves in Excel, it is
+likely that not all curves have the same number of points or follow the
+same sequence of setpoint values. Because of this, the checks in
+<code>check_response_curve_data</code> are likely to fail. In this case,
+we recommend setting <code>expected_npts</code> to 0 (the default value)
+and <code>error_on_failure</code> to <code>FALSE</code> when calling
+<code>check_response_curve_data</code>. This will provide potentially
+useful information about the number of points in each curve, but won’t
+throw an error that would cause a script to stop running.</p>
+<p>Another consideration is that
+<code>organize_response_curve_data</code> is not needed to remove any
+points from the curves. Yet, its other features, such as reordering the
+points and calculating average values, are still useful. In this case,
+we recommend setting <code>measurement_numbers_to_remove</code> to
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> and leaving the other arguments as-is.</p>
+<p>Putting this all together would produce something like the following
+code, which would replace the regular calls to
+<code>check_response_curve_data</code> and
+<code>organize_response_curve_data</code> from the user guides:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Print info about the number of points in each curve to make sure</span></span>
+<span><span class="co"># `curve_identifier` is able to properly split the set into individual curves</span></span>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, error_on_failure <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Reorder by `Ci` and calculate average values of leaf temperature and Qin</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
+<span>    <span class="st">'curve_identifier'</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="st">'Ci'</span>,</span>
+<span>    columns_to_average <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'TleafCnd'</span>, <span class="st">'Qin'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="what-if-my-files-dont-have-user-constants-or-other-metadata">What if My Files Don’t Have User Constants or Other Metadata?<a class="anchor" aria-label="anchor" href="#what-if-my-files-dont-have-user-constants-or-other-metadata"></a>
+</h3>
 <p>Please see the <a href="LI6800_user_constants.html">Guide to Licor
 LI-6800 User Constants</a>.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="converting-and-exporting-results">Converting and Exporting Results<a class="anchor" aria-label="anchor" href="#converting-and-exporting-results"></a>
+</h2>
+<div class="section level3">
+<h3 id="how-can-i-convert-an-exdf-to-a-regular-data-frame">How Can I Convert an exdf to a Regular Data Frame?<a class="anchor" aria-label="anchor" href="#how-can-i-convert-an-exdf-to-a-regular-data-frame"></a>
+</h3>
+<p>Each <code>exdf</code> object is actually a list, where one of the
+elements (called <code>main_data</code>) includes its contents as a data
+frame. So, an <code>exdf</code> object can be converted to a data frame
+by extracting this element. For example, if <code>exdf_obj</code> is an
+extended data frame, then the following will “convert” it to a regular
+data frame:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert an exdf to a regular data frame</span></span>
+<span><span class="va">dataf</span> <span class="op">&lt;-</span> <span class="va">exdf_obj</span><span class="op">$</span><span class="va">main_data</span></span></code></pre></div>
+<p>This can be helpful for passing the results from PhotoGEA functions
+to other R functions, especially when performing statistical
+analysis.</p>
+<p>Note: Using <code>as.data.frame</code> is not recommended, since it
+will add a row for the units and a row for the categories when
+converting. This is useful in a few situations (for example, when
+printing the contents of an <code>exdf</code>), but it is a nuisance in
+most situations because it will cause all columns to become
+<code>character</code> (even if they were originally
+<code>numeric</code>) and to include non-data values. See
+<code><a href="../../reference/as.data.frame.exdf.html">?as.data.frame.exdf</a></code> for more info.</p>
+</div>
+<div class="section level3">
+<h3 id="how-can-i-save-an-exdf-to-a-csv-file">How Can I Save an exdf to a CSV File?<a class="anchor" aria-label="anchor" href="#how-can-i-save-an-exdf-to-a-csv-file"></a>
+</h3>
+<p>There are several options for doing this. One is to use
+<code>write.csv.exdf</code>, which will include the units and categories
+for each column. Another option is to convert the <code>exdf</code> to a
+regular data frame (see above) and use <code>write.csv</code>. For
+example:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Write an exdf to a CSV file, including units</span></span>
+<span><span class="fu"><a href="../../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">exdf_obj</span>, file <span class="op">=</span> <span class="st">'exdf_version.csv'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Write an exdf to a CSV file, not including units</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">exdf_obj</span><span class="op">$</span><span class="va">main_data</span>, file <span class="op">=</span> <span class="st">'data_frame_version.csv'</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>The file created by <code>write.csv.exdf</code> can be read using
+<code>read.csv.exdf</code>, which will create an exdf object from the
+file. The file created by <code>write.csv</code> can be read using
+<code>read.csv</code>, which will create a data frame from the file.</p>
+<p>Sometimes it can be helpful to only save a subset of the columns in
+an <code>exdf</code>. For example, the <code>parameters</code> table
+returned by <code>fit_c3_aci</code> contains many columns, some of which
+may not be important to all users. In this case, it is possible to
+specify the columns that should be saved as follows:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Specify a subset of columns to write to a CSV file</span></span>
+<span><span class="va">col_to_save</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">'curve_identifier'</span>,</span>
+<span>  <span class="st">'Vcmax_at_25'</span>,</span>
+<span>  <span class="st">'Jmax_at_25'</span>,</span>
+<span>  <span class="st">'Tp_at_25'</span>,</span>
+<span>  <span class="st">'RL_at_25'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Save fitting results to a CSV file, including units</span></span>
+<span><span class="fu"><a href="../../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span></span>
+<span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="va">col_to_save</span>, <span class="cn">TRUE</span><span class="op">]</span>,</span>
+<span>  file <span class="op">=</span> <span class="st">'parameters_subset.csv'</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Save fitting results to a CSV file, not including units</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span></span>
+<span>  <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="va">col_to_save</span><span class="op">]</span>,</span>
+<span>  file <span class="op">=</span> <span class="st">'parameters_subset.csv'</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The example shows two options for creating the file, but typically
+only one of these would actually be used in practice. You may need to
+alter the particular columns that are saved.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="fitting-c3-a-ci-curves">Fitting C<sub>3</sub><em>A-C<sub>i</sub></em> Curves<a class="anchor" aria-label="anchor" href="#fitting-c3-a-ci-curves"></a>
+</h2>
+<div class="section level3">
+<h3 id="how-can-i-exclude-tpu-from-c3-a-ci-fits">How Can I Exclude TPU From C<sub>3</sub><em>A-C<sub>i</sub></em>
+Fits?<a class="anchor" aria-label="anchor" href="#how-can-i-exclude-tpu-from-c3-a-ci-fits"></a>
+</h3>
+<p>To exclude TPU from a C<sub>3</sub><em>A-C<sub>i</sub></em> curve
+fit, just fix the value of <code>Tp_at_25</code> to a very high number,
+such as 1000. If the maximum rate of triose phosphate utilization is
+1000 micromol / m^2 / s, then TPU will never be the rate-limiting
+process for any reasonable A-Ci curve. Thus, TPU will effectively be
+disabled. When <code>Tp_at_25</code> is not being fit, there is also no
+reason to fit any of the associated <code>alpha</code> parameters that
+are also related to TPU (<code>alpha_old</code>, <code>alpha_g</code>,
+<code>alpha_s</code>, and <code>alpha_t</code>), so these should be
+fixed to 0.</p>
+<p>This can be accomplished through the <code>fit_options</code>
+argument when calling <code>fit_c3_aci</code>. In particular, the
+following code could be used in place of the regular command in the
+C<sub>3</sub><em>A-C<sub>i</sub></em> user guide:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Fit the C3 A-Ci curves, disabling TPU (so only RL, Vcmax, and J are fit)</span></span>
+<span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
+<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>,             <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
+<span>  fit_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    Tp_at_25 <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    alpha_old <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    alpha_g <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    alpha_s <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    alpha_t <span class="op">=</span> <span class="fl">0</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -510,7 +747,7 @@ LI-6800 User Constants</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

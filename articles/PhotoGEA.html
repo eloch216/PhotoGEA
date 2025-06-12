@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting Started With PhotoGEA • PhotoGEA</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +83,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Getting Started With PhotoGEA</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.2/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
       <div class="d-none name"><code>PhotoGEA.Rmd</code></div>
     </div>
 
@@ -143,38 +142,38 @@ curve:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load the data from each file</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span><span class="op">[</span> , <span class="va">columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Combine the data from all the files</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define a new column that uniquely identifies each curve</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'plot'</span><span class="op">]</span> <span class="op">)</span></span>
+<span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'plot'</span><span class="op">]</span> <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Organize the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
 <span>    <span class="st">'curve_id'</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">16</span><span class="op">)</span>,</span>
 <span>    <span class="st">'CO2_r_sp'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate the total pressure</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_bernacchi</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">c3_temperature_param_bernacchi</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
 <span><span class="co"># results from this fit are always identical</span></span>
@@ -182,15 +181,15 @@ curve:</p>
 <span></span>
 <span><span class="co"># Fit all curves in the data set</span></span>
 <span><span class="va">aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span>,</span>
+<span>  <span class="va">gasex_data</span>,</span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span>,</span>
 <span>  <span class="va">fit_c3_aci</span>,</span>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>When this document was generated, evaluating this code required the
 following amount of time:</p>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;  17.074   0.054  17.128</span></span></code></pre>
+<span><span class="co">#&gt;  16.769   0.042  16.813</span></span></code></pre>
 <p>The timing results may vary depending on the particular machine used
 to run the code. Nevertheless, this is a small time investment for an
 advanced algorithm that uses derivative-free optimizers for robust
@@ -351,7 +350,7 @@ constants.</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Combining PhotoGEA With Other Packages • PhotoGEA</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../../favicon.ico">
+<link rel="manifest" href="../../site.webmanifest">
 <script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Combining PhotoGEA With Other Packages</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.2/vignettes/web_only/combining_with_other_packages.Rmd" class="external-link"><code>vignettes/web_only/combining_with_other_packages.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/combining_with_other_packages.Rmd" class="external-link"><code>vignettes/web_only/combining_with_other_packages.Rmd</code></a></small>
       <div class="d-none name"><code>combining_with_other_packages.Rmd</code></div>
     </div>
 
@@ -167,9 +166,9 @@ to all the response curves in the data set and then consolidate the
 results from each curve into a convenient list of tables:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
 <span>  fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,        <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span>  cj_crossover_min <span class="op">=</span> <span class="fl">100</span>,           <span class="co"># Wj must be &gt; Wc when Cc &lt; 100 ppm</span></span>
 <span>  cj_crossover_max <span class="op">=</span> <span class="fl">550</span>            <span class="co"># Wj must be &lt; Wc when Cc &gt; 550 ppm</span></span>
@@ -269,9 +268,9 @@ vignette:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit each curve</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci_plantecophys</span>,          <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci_plantecophys</span>,          <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
 <span>  varnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>                  <span class="co"># Additional argument to `fit_c3_aci_plantecophys`</span></span>
 <span>    ALEAF <span class="op">=</span> <span class="st">'A'</span>,</span>
 <span>    Tleaf <span class="op">=</span> <span class="st">'TleafCnd'</span>,</span>
@@ -553,9 +552,9 @@ version:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit each curve</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci_plantecophys</span>           <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci_plantecophys</span>           <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot each fit</span></span>
@@ -656,47 +655,47 @@ copy/paste into a text file to initialize your own script.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span><span class="op">[</span> , <span class="va">columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create a new identifier column formatted like `instrument - species - plot`</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make sure the data meets basic requirements</span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove points with duplicated `CO2_r_sp` values and order by `Ci`</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
 <span>    <span class="st">'curve_identifier'</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>    <span class="st">'Ci'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Only keep points where stability was achieved</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
-<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
 <span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instrument <span class="op">=</span> <span class="st">'ripe1'</span>, CO2_r_sp <span class="op">=</span> <span class="fl">1800</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -884,9 +883,9 @@ copy/paste into a text file to initialize your own script.</p>
 <span></span>
 <span><span class="co"># Fit each curve</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci_plantecophys</span>           <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci_plantecophys</span>           <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot each fit</span></span>
@@ -937,7 +936,7 @@ copy/paste into a text file to initialize your own script.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

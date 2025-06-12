@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Analyzing C3 A-Ci Curves • PhotoGEA</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../../favicon.ico">
+<link rel="manifest" href="../../site.webmanifest">
 <script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing C3 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.2/vignettes/web_only/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/web_only/analyzing_c3_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/web_only/analyzing_c3_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c3_aci_curves.Rmd</code></div>
     </div>
 
@@ -307,8 +306,13 @@ you can install it by typing
 <code>install.packages('lattice')</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="loading-licor-data">Loading Licor Data<a class="anchor" aria-label="anchor" href="#loading-licor-data"></a>
+<h2 id="loading-the-data">Loading the Data<a class="anchor" aria-label="anchor" href="#loading-the-data"></a>
 </h2>
+<p>In this example, we will read data from Licor LI-6800 log files. If
+you have log files from a different instrument, or if you are reading
+from CSV files that were reformatted from instrument log files, please
+see the <a href="frequent_questions.html#loading-data">“Loading Data”
+section of the FAQ</a>.</p>
 <p>The <code>PhotoGEA</code> package includes two files representing
 <em>A-C<sub>i</sub></em> curves measured using two Li-6800 instruments.
 The data is stored in Microsoft Excel files, and includes curves
@@ -340,9 +344,12 @@ we will use the <code>read_gasex_file</code> function from
 call this function once for each file using <code>lapply</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load each file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Note:</strong> The <code>read_gasex_file</code> function can
+also read plaintext Licor LI-6800 log files; for more information, see
+its help page by typing <code><a href="../../reference/read_gasex_file.html">?read_gasex_file</a></code>.</p>
 <p>The result from this command is an R list of “extended data frames”
 (abbreviated as <code>exdf</code> objects). The <code>exdf</code> class
 is a special data structure defined by the <code>PhotoGEA</code>
@@ -362,21 +369,21 @@ same columns, so before we combine the <code>exdf</code> objects, we
 should make sure this is the case.</p>
 <p>The <code>PhotoGEA</code> package includes a function called
 <code>identify_common_columns</code> that can be used to get the names
-of all columns that are present in all of the Licor files. Then, we can
+of all columns that are present in all of the data files. Then, we can
 extract just those columns, and then combine the <code>exdf</code>
 objects into a single one.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Get the names of all columns that are present in all of the data files</span></span>
+<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span><span class="op">[</span> , <span class="va">columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span></code></pre></div>
-<p>Now we have a single R object called <code>licor_data</code> that
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span></code></pre></div>
+<p>Now we have a single R object called <code>gasex_data</code> that
 includes all the data from several Licor Excel files. For more
 information about consolidating information from multiple files, see the
 <em>Common Patterns</em> section of the <a href="working_with_extended_data_frames.html#combining-data-from-several-files">Working
@@ -400,8 +407,8 @@ sufficient to uniquely identify each curve. We can solve this issue by
 creating a new column that combines the values from each of these:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a new identifier column formatted like `instrument - species - plot`</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>When measuring response curves (or any other type of gas exchange
 data), it is strongly recommended to record key pieces of metadata in
 the log files using “user constants,” as was done in this example. For
@@ -417,17 +424,17 @@ should uniquely identify each response curve
 curve (<code>16</code>), the name of a “driving” column that should
 follow the same sequence in each curve (<code>CO2_r_sp</code>). If the
 data passes the checks, this function will have no output and will not
-produce any messages. (For more information, see the built-in help menu
-entry by typing <code><a href="../../reference/check_response_curve_data.html">?check_response_curve_data</a></code>, or visit the <a href="frequent_questions.html">Frequently Asked Questions</a>.)</p>
+produce any messages. For more information, see the built-in help menu
+entry by typing <code><a href="../../reference/check_response_curve_data.html">?check_response_curve_data</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make sure the data meets basic requirements</span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span></code></pre></div>
 <p>However, if <code>check_response_curve_data</code> detects an issue,
 it will print a helpful message to the R terminal. For example, if we
 had specified the wrong number of points or the wrong identifier column,
 we would get error messages:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">15</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       curve_identifier npts</span></span>
 <span><span class="co">#&gt; 1 ripe1 - soybean - 5a   16</span></span>
 <span><span class="co">#&gt; 2  ripe1 - tobacco - 1   16</span></span>
@@ -435,13 +442,17 @@ we would get error messages:</p>
 <span><span class="co">#&gt; 4  ripe2 - soybean - 1   16</span></span>
 <span><span class="co">#&gt; 5 ripe2 - soybean - 5b   16</span></span>
 <span><span class="co">#&gt; 6  ripe2 - tobacco - 4   16</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "curve_identifier", 15): One or more curves does not have the expected number of points.</span></span>
+<span><span class="co">#&gt; Error: The following curves do not have 15 points: ripe1 - soybean - 5a, ripe1 - tobacco - 1, ripe1 - tobacco - 2, ripe2 - soybean - 1, ripe2 - soybean - 5b, ripe2 - tobacco - 4</span></span>
 <span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'species'</span>, <span class="fl">16</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'species'</span>, <span class="fl">16</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1 soybean   48</span></span>
 <span><span class="co">#&gt; 2 tobacco   48</span></span>
-<span><span class="co">#&gt; Error in check_response_curve_data(licor_data, "species", 16): One or more curves does not have the expected number of points.</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: The following curves do not have 16 points: soybean, tobacco</span></span></code></pre></div>
+<p>If all curves in your data set do not have the same number of points,
+or if some other issue is causing <code>check_response_curve_data</code>
+to fail, please see the <a href="frequent_questions.html#checking-data">“Checking Data” section of
+the FAQ</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="reorganizing-the-data">Reorganizing the Data<a class="anchor" aria-label="anchor" href="#reorganizing-the-data"></a>
@@ -452,7 +463,7 @@ concentration, and the points are not logged in order of ascending or
 descending concentration. In fact, the sequence of CO<sub>2</sub>
 setpoints is as follows:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'ripe2 - soybean - 1'</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">==</span> <span class="st">'ripe2 - soybean - 1'</span>, <span class="st">'CO2_r_sp'</span><span class="op">]</span></span>
 <span><span class="co">#&gt;  [1]  400  300  200  150  100   75   50   20  400  400  600  800 1000 1200 1500</span></span>
 <span><span class="co">#&gt; [16] 1800</span></span></code></pre></div>
 <p>The extra recovery points should not be used when plotting or fitting
@@ -467,8 +478,8 @@ from low to high values of <code>Ci</code>. This can be done using the
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and</span></span>
 <span><span class="co"># calculate average values of leaf temperature and Qin</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
 <span>    <span class="st">'curve_identifier'</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>    <span class="st">'Ci'</span>,</span>
@@ -493,13 +504,13 @@ its own separate subplot of a figure. For example:</p>
 <code class="sourceCode R"><span><span class="co"># Plot all A-Ci curves in the data set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_aci-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Some of these curves look a bit strange, but this is related to the
@@ -526,13 +537,13 @@ plots to check each curve for quality.</p>
 <code class="sourceCode R"><span><span class="co"># Make a plot to check humidity control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">RHcham</span> <span class="op">+</span> <span class="va">`Humidifier_%`</span> <span class="op">+</span> <span class="va">`Desiccant_%`</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_humidity-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>Humidifier_%</code> and <code>Desiccant_%</code>
@@ -555,14 +566,14 @@ photosynthesis. In this plot, all the data looks good.</p>
 <code class="sourceCode R"><span><span class="co"># Make a plot to check temperature control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">+</span> <span class="va">Txchg</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">40</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_temperature-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>TleafCnd</code> is the leaf temperature measured using a
@@ -581,13 +592,13 @@ looks good.</p>
 <code class="sourceCode R"><span><span class="co"># Make a plot to check CO2 control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_s</span> <span class="op">+</span> <span class="va">CO2_r</span> <span class="op">+</span> <span class="va">CO2_r_sp</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_co2-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>CO2_s</code> is the CO<sub>2</sub> concentration in the
@@ -610,12 +621,12 @@ releases CO<sub>2</sub>.) In this plot, all the data looks good.</p>
 <code class="sourceCode R"><span><span class="co"># Make a plot to check stability criteria</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">`A:OK`</span> <span class="op">+</span> <span class="va">`gsw:OK`</span> <span class="op">+</span> <span class="va">Stable</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="analyzing_c3_aci_curves_files/figure-html/plot_stability-1.png" width="720" style="display: block; margin: auto;"></p>
 <p>When measuring response curves with a Licor, it is possible to
@@ -647,7 +658,7 @@ is probably a good idea to remove them before fitting the data.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="cleaning-the-licor-data">Cleaning the Licor Data<a class="anchor" aria-label="anchor" href="#cleaning-the-licor-data"></a>
+<h3 id="cleaning-the-data">Cleaning the Data<a class="anchor" aria-label="anchor" href="#cleaning-the-data"></a>
 </h3>
 <p>While checking over the plots in the previous sections, two issues
 were noticed: (1) some points were logged before stability was achieved
@@ -663,12 +674,12 @@ idea to automatically exclude any curve with fewer than three stable
 points.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only keep points where stability was achieved</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'Stable'</span><span class="op">]</span> <span class="op">==</span> <span class="fl">2</span>, , <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Remove any curves that have fewer than three remaining points</span></span>
-<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
+<span><span class="va">npts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="va">nrow</span><span class="op">)</span></span>
 <span><span class="va">ids_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npts</span><span class="op">[</span><span class="va">npts</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="va">licor_data</span><span class="op">[</span><span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="va">gasex_data</span><span class="op">[</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids_to_keep</span>, , <span class="cn">TRUE</span><span class="op">]</span></span></code></pre></div>
 <p>Next, we can use the <code>remove_points</code> function from
 <code>PhotoGEA</code> to exclude the points where there is a decrease in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
@@ -679,20 +690,20 @@ It just so happens that all of these points were measured by the
 setpoint value, so it is easy to specify them all at once:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/remove_points.html">remove_points</a></span><span class="op">(</span></span>
+<span>  <span class="va">gasex_data</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instrument <span class="op">=</span> <span class="st">'ripe1'</span>, CO2_r_sp <span class="op">=</span> <span class="fl">1800</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">'exclude'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
-<h2 id="fitting-licor-data">Fitting Licor Data<a class="anchor" aria-label="anchor" href="#fitting-licor-data"></a>
+<h2 id="fitting-the-response-curves">Fitting the Response Curves<a class="anchor" aria-label="anchor" href="#fitting-the-response-curves"></a>
 </h2>
 <p>Now that we have checked the data quality, we are ready to perform
 the fitting. In order to fit the curves, there are several required
-pieces of information that are not included in the Licor data files as
-produced by the instrument: values of the total pressure and
+pieces of information that are not included in the log files as produced
+by the instrument: values of the total pressure and
 temperature-dependent values of important photosynthetic parameters such
 as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>Γ</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\Gamma^*</annotation></semantics></math>.
@@ -700,27 +711,27 @@ However, the <code>PhotoGEA</code> package includes two functions to
 help with these calculations:
 <code>calculate_temperature_response</code> and
 <code>calculate_total_pressure</code>. Each of these requires an
-<code>exdf</code> object containing Licor data. The units for each
-required column will be checked in an attempt to avoid unit-related
+<code>exdf</code> object containing gas exchange data. The units for
+each required column will be checked in an attempt to avoid unit-related
 errors. More information about these functions can be obtained from the
 built-in help system by typing <code><a href="../../reference/calculate_total_pressure.html">?calculate_total_pressure</a></code> or
 <code><a href="../../reference/calculate_total_pressure.html">?calculate_total_pressure</a></code>.</p>
 <p>First, we can use <code>calculate_temperature_response</code>:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span></code></pre></div>
 <p>With this simple command, we have used the leaf temperature from the
-Licor file to calculate values of several key C<sub>3</sub>
+log files to calculate values of several key C<sub>3</sub>
 photosynthetic parameters (Gamma_star_norm, J_norm, Kc_norm, Ko_norm,
 RL_norm, Vcmax_norm, gmc_norm, Tp_norm, Gamma_star_at_25, Kc_at_25,
 Ko_at_25) according to the temperature response parameters specified in
 <span class="citation">Thomas D. Sharkey et al. (<a href="#ref-sharkey_fitting_2007">2007</a>)</span>.</p>
 <p>Now we can use <code>calculate_total_pressure</code>:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Calculate the total pressure in the leaf chamber</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span></code></pre></div>
 <p>Together, these functions add several new columns to
-<code>licor_data</code>, including <code>total_pressure</code>,
+<code>gasex_data</code>, including <code>total_pressure</code>,
 <code>Gamma_star</code>, and others. With this information, we are now
 ready to perform the fitting procedure.</p>
 <p>For this operation, we can use the <code>fit_c3_aci</code> function
@@ -745,9 +756,9 @@ and fits:</p>
 <span></span>
 <span><span class="co"># Fit the C3 A-Ci curves</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Note that in this command, we used the default fitting settings. In
@@ -843,8 +854,8 @@ the built-in help menu entry by typing <code><a href="../../reference/calculate_
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">Q_{in}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mrow><mi>l</mi><mi>e</mi><mi>a</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">T_{leaf}</annotation></semantics></math>
-for each curve. This information is not typically included in a Licor
-file, but we calculated average values of
+for each curve. This information is not typically included in an
+instrument log file, but we calculated average values of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">Q_{in}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mrow><mi>l</mi><mi>e</mi><mi>a</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">T_{leaf}</annotation></semantics></math>
@@ -861,8 +872,8 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">J_{max}</annotation></semantics></math>.
 These can be obtained using the
 <code>calculate_temperature_response</code> function, which was also
-used in the <a href="#fitting-licor-data">Fitting Licor Data</a> section
-above.</p>
+used in the <a href="#fitting-the-response-curves">Fitting the Response
+Curves</a> section above.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate temperature-dependent values of Jmax-related parameters</span></span>
 <span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span></span>
@@ -1028,7 +1039,7 @@ specifically mentioned here.</p>
 <h3 id="input-files">Input Files<a class="anchor" aria-label="anchor" href="#input-files"></a>
 </h3>
 <p>The file paths specified in <code>file_paths</code> will need to be
-modified so they point to your Licor files. One way to do this in your
+modified so they point to your data files. One way to do this in your
 own script is to simply write out relative or absolute paths to the
 files you wish to load. For example, you could replace the previous
 definition of <code>file_paths</code> with this one:</p>
@@ -1041,10 +1052,10 @@ definition of <code>file_paths</code> with this one:</p>
 <p>You may also want to consider using the
 <code>choose_input_licor_files</code> function from
 <code>PhotoGEA</code>; this function will create a pop-up browser window
-where you can interactively select a set of files. Sometimes this is
-more convenient than writing out file paths or names. For example, you
-could replace the previous definition of <code>file_paths</code> with
-this one:</p>
+where you can interactively select a set of Excel files. Sometimes this
+is more convenient than writing out file paths or names. For example,
+you could replace the previous definition of <code>file_paths</code>
+with this one:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interactively define a vector of paths to the files we wish to load</span></span>
 <span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/choose_input_files.html">choose_input_licor_files</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -1058,9 +1069,9 @@ Data Analysis Pipeline</a> vignette for more details.</p>
 <div class="section level3">
 <h3 id="curve-identifier">Curve Identifier<a class="anchor" aria-label="anchor" href="#curve-identifier"></a>
 </h3>
-<p>Depending on which user constants are defined in your Licor Excel
-files, you may need to modify the definition of the
-<code>curve_identifier</code> column.</p>
+<p>Depending on which user constants are defined in your data files, you
+may need to modify the definition of the <code>curve_identifier</code>
+column.</p>
 </div>
 <div class="section level3">
 <h3 id="data-cleaning">Data Cleaning<a class="anchor" aria-label="anchor" href="#data-cleaning"></a>
@@ -1096,6 +1107,8 @@ choose output filenames for the resulting CSV files:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../../reference/csv.exdf.html">write.csv.exdf</a></span><span class="op">(</span><span class="va">c3_aci_averages</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.choose.html" class="external-link">file.choose</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Also see the <a href="frequent_questions.html">“Converting and
+Exporting Results” section of the FAQ</a> for more information.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1134,20 +1147,20 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load each file, storing the result in a list</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="co"># Get the names of all columns that are present in all of the data files</span></span>
+<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">licor_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">licor_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span><span class="op">[</span> , <span class="va">columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use `rbind` to combine all the data</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">licor_exdf_list</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">###</span></span>
 <span><span class="co">### VALIDATION:</span></span>
@@ -1155,16 +1168,16 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Create a new identifier column formatted like `instrument - species - plot`</span></span>
-<span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">licor_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'curve_identifier'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'instrument'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span> , <span class="st">'plot'</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make sure the data meets basic requirements</span></span>
-<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">16</span>, <span class="st">'CO2_r_sp'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and</span></span>
 <span><span class="co"># calculate average values of leaf temperature and Qin</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">licor_data</span>,</span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
+<span>    <span class="va">gasex_data</span>,</span>
 <span>    <span class="st">'curve_identifier'</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>    <span class="st">'Ci'</span>,</span>
@@ -1174,66 +1187,66 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co"># Plot all A-Ci curves in the data set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">A</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make a plot to check humidity control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">RHcham</span> <span class="op">+</span> <span class="va">`Humidifier_%`</span> <span class="op">+</span> <span class="va">`Desiccant_%`</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make a plot to check temperature control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">TleafCnd</span> <span class="op">+</span> <span class="va">Txchg</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">40</span><span class="op">)</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make a plot to check CO2 control</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">CO2_s</span> <span class="op">+</span> <span class="va">CO2_r</span> <span class="op">+</span> <span class="va">CO2_r_sp</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make a plot to check stability criteria</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">`A:OK`</span> <span class="op">+</span> <span class="va">`gsw:OK`</span> <span class="op">+</span> <span class="va">Stable</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_identifier</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">licor_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">gasex_data</span><span class="op">$</span><span class="va">main_data</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">licor_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## IMPORTANT: When analyzing your own files, it is not advised to remove any</span></span>
 <span><span class="co">## points for the initial fits. Only remove unstable or unusual points if it is</span></span>
-<span><span class="co">## necessary in order to get good fits. See the "Cleaning the Licor Data"</span></span>
+<span><span class="co">## necessary in order to get good fits. See the "Cleaning the Data"</span></span>
 <span><span class="co">## section above for instructions.</span></span>
 <span></span>
 <span><span class="co">###</span></span>
@@ -1242,10 +1255,10 @@ Analysis Pipeline</a> vignette.</p>
 <span><span class="co">###</span></span>
 <span></span>
 <span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">c3_temperature_param_sharkey</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Calculate the total pressure in the Licor chamber</span></span>
-<span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span>
+<span><span class="co"># Calculate the total pressure in the leaf chamber</span></span>
+<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
 <span><span class="co"># results from this fit are always identical</span></span>
@@ -1253,9 +1266,9 @@ Analysis Pipeline</a> vignette.</p>
 <span></span>
 <span><span class="co"># Fit the C3 A-Ci curves</span></span>
 <span><span class="va">c3_aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">licor_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
-<span>  <span class="va">licor_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `licor_data` into chunks</span></span>
-<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `licor_data`</span></span>
+<span>  <span class="va">gasex_data</span>,                       <span class="co"># The `exdf` object containing the curves</span></span>
+<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_identifier'</span><span class="op">]</span>, <span class="co"># A factor used to split `gasex_data` into chunks</span></span>
+<span>  <span class="va">fit_c3_aci</span>,                       <span class="co"># The function to apply to each chunk of `gasex_data`</span></span>
 <span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span>              <span class="co"># Additional argument passed to `fit_c3_aci`</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1369,7 +1382,7 @@ Environment</em> 30 (9): 1035–40. <a href="https://doi.org/10.1111/j.1365-3040
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
