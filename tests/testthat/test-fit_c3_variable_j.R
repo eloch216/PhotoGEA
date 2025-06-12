@@ -74,21 +74,43 @@ test_that('Gamma_star can be passed as a column', {
     )
 })
 
+test_that('Debug mode works', {
+    # Use sink to hide output
+    sink(tempfile())
+
+    expect_output(
+        fit_c3_variable_j(
+            one_curve,
+            optim_fun = optimizer_nmkb(1, maxfeval = 2),
+            debug_mode = TRUE
+        )
+    )
+
+    sink()
+})
+
 test_that('fit results have not changed (no alpha)', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer
     set.seed(1234)
 
-    fit_res <- fit_c3_variable_j(
-        one_curve,
-        Ca_atmospheric = 420,
-        fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
-        optim_fun = optimizer_deoptim(200),
-        require_positive_gmc = 'all',
-        hard_constraints = 2,
-        calculate_confidence_intervals = TRUE,
-        remove_unreliable_param = 2,
-        check_j = FALSE
+    # Here we will also check that NA values of Ca do not cause fit failures
+    one_curve_weird <- one_curve
+
+    one_curve_weird[, 'Ca'] <- NA
+
+    fit_res <- expect_silent(
+        fit_c3_variable_j(
+            one_curve_weird,
+            Ca_atmospheric = 420,
+            fit_options = list(alpha_old = 0, alpha_g = 0, alpha_s = 0),
+            optim_fun = optimizer_deoptim(200),
+            require_positive_gmc = 'all',
+            hard_constraints = 2,
+            calculate_confidence_intervals = TRUE,
+            remove_unreliable_param = 2,
+            check_j = FALSE
+        )
     )
 
     fit_res$parameters <- calculate_temperature_response(
@@ -127,8 +149,13 @@ test_that('fit results have not changed (no alpha)', {
 
     expect_equal(
         as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
-        c(294.70316, 216.41088, 37.51608, 40.05385),
+        as.numeric(c(NA, NA, NA, NA)),
         tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        'All values of the atmospheric CO2 concentration column (Ca) are NA'
     )
 
     expect_equal(
@@ -144,13 +171,17 @@ test_that('fit results have not changed (no alpha)', {
     lim_info <-
         as.numeric(fit_res$parameters[1, c('n_Ac_limiting', 'n_Aj_limiting', 'n_Ap_limiting')])
 
-    expect_equal(sum(lim_info), nrow(one_curve))
+    expect_equal(sum(lim_info), nrow(one_curve_weird))
 
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
+    )
+
+    expect_false(
+        any(c('gmc_tl', 'Tp_tl') %in% colnames(fit_res$parameters))
     )
 })
 
@@ -194,6 +225,17 @@ test_that('fit results have not changed (alpha_old)', {
     )
 
     expect_equal(
+        as.numeric(fit_res$parameters[1, c('operating_Ci', 'operating_Cc', 'operating_An', 'operating_An_model')]),
+        c(294.70316, 213.83837, 37.51608, 40.03141),
+        tolerance = TOLERANCE
+    )
+
+    expect_equal(
+        fit_res$parameters[1, 'operating_point_msg'],
+        ''
+    )
+
+    expect_equal(
         as.numeric(fit_res$parameters[1, c('npts', 'nparam', 'dof')]),
         c(13, 6, 7)
     )
@@ -206,8 +248,8 @@ test_that('fit results have not changed (alpha_old)', {
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 })
 
@@ -263,8 +305,8 @@ test_that('fit results have not changed (alpha_g and alpha_s)', {
     expect_equal(lim_info, c(8, 5, 0))
 
     expect_equal(
-        as.numeric(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
-        c(2, 2, 0)
+        as.character(fit_res$parameters[1, c('Vcmax_trust', 'J_trust', 'Tp_trust')]),
+        c('reliable', 'reliable', 'unreliable (process never limiting)')
     )
 })
 

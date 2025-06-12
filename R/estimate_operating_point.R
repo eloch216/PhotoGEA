@@ -25,34 +25,50 @@ estimate_operating_point <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[a_column_name]]  <- 'micromol m^(-2) s^(-1)'
-    required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
-    required_variables[[ci_column_name]] <- 'micromol mol^(-1)'
+    required_variables[[a_column_name]]  <- unit_dictionary('A')
+    required_variables[[ci_column_name]] <- unit_dictionary('Ci')
 
     if (type == 'c3') {
-        required_variables[[cc_column_name]] <- 'micromol mol^(-1)'
+        required_variables[[cc_column_name]] <- unit_dictionary('Cc')
     } else {
-        required_variables[[pcm_column_name]] <- 'microbar'
+        required_variables[[pcm_column_name]] <- unit_dictionary('PCm')
     }
 
     check_required_variables(aci_exdf, required_variables)
+
+    # Allow Ca to be NA
+    required_variables <- list()
+    required_variables[[ca_column_name]] <- unit_dictionary('Ca')
+    check_required_variables(aci_exdf, required_variables, check_NA = FALSE)
 
     # Check to see if we should bypass the calculations
     bypass <- is.na(Ca_atmospheric)
 
     # Make sure the atmospheric Ca is included in the Ca range
-    min_ca <- min(aci_exdf[, ca_column_name])
-    max_ca <- max(aci_exdf[, ca_column_name])
+    ca_vals   <- aci_exdf[, ca_column_name]
+    all_ca_NA <- all(is.na(ca_vals))
 
-    unreliable <-
-        !bypass && (Ca_atmospheric < min_ca || Ca_atmospheric > max_ca)
+    min_ca <- if (all_ca_NA) {NA} else {min(ca_vals, na.rm = TRUE)}
+    max_ca <- if (all_ca_NA) {NA} else {max(ca_vals, na.rm = TRUE)}
 
-    if (unreliable) {
-        warning(
-            'The atmospheric CO2 concentration (', Ca_atmospheric,
-            ') is outside the measured range (', min_ca, ' - ', max_ca, ')',
-            call. = FALSE
-        )
+    unreliable <- !bypass &&
+        (all_ca_NA || Ca_atmospheric < min_ca || Ca_atmospheric > max_ca)
+
+    msg <- if (unreliable) {
+        if (all_ca_NA) {
+            paste('All values of', ca_column_name, 'are NA')
+            paste0(
+                'All values of the atmospheric CO2 concentration column (',
+                ca_column_name, ') are NA'
+            )
+        } else {
+            paste0(
+                'The atmospheric CO2 concentration (', Ca_atmospheric,
+                ') is outside the measured range (', min_ca, ' to ', max_ca, ')'
+            )
+        }
+    } else {
+        ''
     }
 
     # Use linear interpolation to estimate the operating point
@@ -60,8 +76,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, a_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -70,8 +87,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, ci_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -80,8 +98,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, cc_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -90,8 +109,9 @@ estimate_operating_point <- function(
         stats::approx(
             aci_exdf[, ca_column_name],
             aci_exdf[, pcm_column_name],
-            Ca_atmospheric
-        )$y
+            Ca_atmospheric,
+            ties = list('ordered', mean)
+        )[['y']]
     } else {
         NA
     }
@@ -118,7 +138,8 @@ estimate_operating_point <- function(
                 operating_An = operating_An,
                 operating_Cc = operating_Cc,
                 operating_Ci = operating_Ci,
-                operating_exdf = operating_exdf
+                operating_exdf = operating_exdf,
+                operating_point_msg = msg
             )
         } else {
             pcm_seq <- aci_exdf[, pcm_column_name]
@@ -139,7 +160,8 @@ estimate_operating_point <- function(
                 operating_An = operating_An,
                 operating_PCm = operating_PCm,
                 operating_Ci = operating_Ci,
-                operating_exdf = operating_exdf
+                operating_exdf = operating_exdf,
+                operating_point_msg = msg
             )
         }
     } else {
@@ -157,12 +179,15 @@ estimate_operating_point <- function(
             aci_identifiers[, 'operating_PCm'] <- operating_PCm
         }
 
+        aci_identifiers[, 'operating_point_msg'] <- msg
+
         # Document the new columns that were added and return the exdf
         aci_identifiers <- document_variables(
             aci_identifiers,
-            c('estimate_operating_point', 'Ca_atmospheric', 'micromol mol^(-1)'),
-            c('estimate_operating_point', 'operating_An',   aci_exdf$units[[a_column_name]]),
-            c('estimate_operating_point', 'operating_Ci',   aci_exdf$units[[ci_column_name]])
+            c('estimate_operating_point', 'Ca_atmospheric',      'micromol mol^(-1)'),
+            c('estimate_operating_point', 'operating_An',        aci_exdf$units[[a_column_name]]),
+            c('estimate_operating_point', 'operating_Ci',        aci_exdf$units[[ci_column_name]]),
+            c('estimate_operating_point', 'operating_point_msg', '')
         )
 
         if (type == 'c3') {

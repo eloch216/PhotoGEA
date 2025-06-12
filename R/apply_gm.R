@@ -19,14 +19,10 @@ apply_gm <- function(
 
         # Make sure the required variables are defined and have the correct units
         required_variables <- list()
-        required_variables[[a_column_name]]              <- 'micromol m^(-2) s^(-1)'
-        required_variables[[ci_column_name]]             <- 'micromol mol^(-1)'
-        required_variables[[gmc_norm_column_name]]       <- unit_dictionary(gmc_norm_column_name)
-        required_variables[[total_pressure_column_name]] <- 'bar'
-
-        if (calculate_drawdown) {
-            required_variables[[ca_column_name]] <- 'micromol mol^(-1)'
-        }
+        required_variables[[a_column_name]]              <- unit_dictionary('A')
+        required_variables[[ci_column_name]]             <- unit_dictionary('Ci')
+        required_variables[[gmc_norm_column_name]]       <- unit_dictionary('gmc_norm')
+        required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
 
         flexible_param <- list(
             gmc_at_25 = gmc_at_25
@@ -36,6 +32,14 @@ apply_gm <- function(
             require_flexible_param(required_variables, flexible_param)
 
         check_required_variables(exdf_obj, required_variables)
+
+        # Only check Ca if drawdown needs to be calculated; even in that case,
+        # Ca can be NA.
+        if (calculate_drawdown) {
+            required_variables <- list()
+            required_variables[[ca_column_name]] <- unit_dictionary('Ca')
+            check_required_variables(exdf_obj, required_variables, check_NA = FALSE)
+        }
     }
 
     # Retrieve values of flexible parameters as necessary

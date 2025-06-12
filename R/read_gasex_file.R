@@ -5,6 +5,7 @@ read_gasex_file <- function(
     file_type = 'AUTO',
     instrument_type = 'AUTO',
     standardize_columns = TRUE,
+    remove_NA_rows = TRUE,
     ...
 )
 {
@@ -33,7 +34,7 @@ read_gasex_file <- function(
     # Try to determine the file type from its name, if necessary
     file_type <- if (file_type == 'AUTO') {
         extension <- tools::file_ext(file_name)
-        if (extension == '') {
+        if (extension %in% c('', 'txt')) {
             'plaintext'
         } else if (extension == 'xlsx') {
             'Excel'
@@ -61,11 +62,11 @@ read_gasex_file <- function(
 
     # Try to load the file using the appropriate method
     gasex_exdf <- if (instrument_type == 'Licor LI-6800' && file_type == 'plaintext') {
-        read_licor_6800_plaintext(file_name, ...)
+        read_licor_6800_plaintext(file_name, remove_NA_rows = remove_NA_rows, ...)
     } else if (instrument_type == 'Licor LI-6800' && file_type == 'Excel') {
-        read_licor_6800_Excel(file_name, ...)
+        read_licor_6800_Excel(file_name, remove_NA_rows = remove_NA_rows, ...)
     } else if (instrument_type == 'CR3000' && file_type == 'data') {
-        read_cr3000(file_name, ...)
+        read_cr3000(file_name, remove_NA_rows = remove_NA_rows, ...)
     } else {
         stop(paste('Unsupported (instrument_type file_type) option:', instrument_type, file_type))
     }

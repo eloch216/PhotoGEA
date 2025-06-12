@@ -35,7 +35,8 @@
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
     vpmax_norm_column_name = 'Vpmax_norm',
-    hard_constraints = 0
+    hard_constraints = 0,
+    debug_mode = FALSE
   )
 }
 
@@ -151,6 +152,13 @@
   \item{hard_constraints}{
     To be passed to \code{\link{calculate_c4_assimilation}}; see that function
     for more details.
+  }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about the \code{guess} is
+    printed each time the error function is called; this can be helpful when
+    troubleshooting issues with an optimizer.
   }
 }
 

@@ -152,6 +152,11 @@ typing `install.packages('lattice')`.
 
 # Loading Gas Exchange Data
 
+In this example, we will read data from Licor LI-6800 log files. If you have log
+files from a different instrument, or if you are reading from CSV files that
+were reformatted from instrument log files, please see the
+["Loading Data" section of the FAQ](frequent_questions.html#loading-data).
+
 The `PhotoGEA` package includes two files representing gas exchange data that
 was measured along with the TDL data discussed in the next section. The data was
 recorded by Licor Li-6800 instruments and is stored in Microsoft Excel files.
@@ -164,10 +169,10 @@ The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
 `PhotoGEA_example_file_path`:
 
-```{r licor_file_names}
+```{r gasex_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
-licor_file_paths <- c(
+gasex_file_paths <- c(
   PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
   PhotoGEA_example_file_path('licor_for_gm_site13.xlsx')
 )
@@ -186,12 +191,15 @@ where the measurements were made (`America/Chicago`). Since there are
 (potentially) multiple files to read, we will call this function once for each
 file using `lapply`:
 
-```{r loading_licor_data}
-# Load each Licor file, storing the result in a list
-licor_exdf_list <- lapply(licor_file_paths, function(fpath) {
+```{r loading_gasex_data}
+# Load each gas exchange data file, storing the result in a list
+gasex_exdf_list <- lapply(gasex_file_paths, function(fpath) {
   read_gasex_file(fpath, 'time', posix_options = list(tz = 'America/Chicago'))
 })
 ```
+
+**Note:** The `read_gasex_file` function can also read plaintext Licor LI-6800
+log files; for more information, see its help page by typing `?read_gasex_file`.
 
 The result from this command is an R list of "extended data frames" (abbreviated
 as `exdf` objects). The `exdf` class is a special data structure defined by the
@@ -212,7 +220,7 @@ line valve number.
 
 ```{r site_number}
 # Get TDL sample and reference valve numbers from the Licor filenames
-licor_exdf_list <- lapply(licor_exdf_list, function(exdf_obj) {
+gasex_exdf_list <- lapply(gasex_exdf_list, function(exdf_obj) {
   get_sample_valve_from_filename(exdf_obj, list(
     '13' = 12, # The reference valve is 12 when the sample valve is 13
     '11' = 10  # The reference valve is 10 when the sample valve is 11
@@ -228,30 +236,35 @@ vertically. This action only makes sense if the tables have the same columns, so
 before we combine the `exdf` objects, we should make sure this is the case.
 
 The `PhotoGEA` package includes a function called `identify_common_columns` that
-can be used to get the names of all columns that are present in all of the Licor
+can be used to get the names of all columns that are present in all of the data
 files. Then, we can extract just those columns, and then combine the `exdf`
 objects into a single one.
 
-```{r combining_licor_data}
-# Get the names of all columns that are present in all of the Licor files
-licor_columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+```{r combining_gasex_data}
+# Get the names of all columns that are present in all of the data files
+gasex_columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
 # Extract just these columns
-licor_exdf_list <- lapply(licor_exdf_list, function(x) {
-  x[ , licor_columns_to_keep, TRUE]
+gasex_exdf_list <- lapply(gasex_exdf_list, function(x) {
+  x[ , gasex_columns_to_keep, TRUE]
 })
 
 # Use `rbind` to combine all the data
-licor_data <- do.call(rbind, licor_exdf_list)
+gasex_data <- do.call(rbind, gasex_exdf_list)
 ```
 
-Now we have a single R object called `licor_data` that includes all the data
+Now we have a single R object called `gasex_data` that includes all the data
 from several Licor Excel files. For more information about consolidating
 information from multiple files, see the _Common Patterns_ section of the
 [Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
 vignette.
 
 # Loading Tunable Diode Laser Data
+
+In this example, we will read data from Campbell Scientific data logger files.
+If you have log files from a different instrument, or if you are reading from
+CSV files that were reformatted from instrument log files, please see the
+["Loading Data" section of the FAQ](frequent_questions.html#loading-data).
 
 The `PhotoGEA` package includes one file representing TDL data that was
 recorded with a Campbell Scientific CR3000 data logger simultaneously with the
@@ -328,8 +341,8 @@ issue by creating a new column that combines the values from each of these:
 
 ```{r adding_id_column}
 # Create a new identifier column formatted like `machine - replicate`
-licor_data[ , 'curve_identifier'] <-
-  paste(licor_data[ , 'machine'], licor_data[ , 'replicate'], sep = ' - ')
+gasex_data[ , 'curve_identifier'] <-
+  paste(gasex_data[ , 'machine'], gasex_data[ , 'replicate'], sep = ' - ')
 ```
 
 When measuring response curves (or any other type of gas exchange data), it is
@@ -345,14 +358,13 @@ from `PhotoGEA`. Here we will supply the name of a column that should uniquely
 identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`12`), the name of a "driving" column that should follow the same
 sequence in each curve (`CO2_r_sp`). If the data passes the checks, this
-function will have no output and will not produce any messages. (For more
+function will have no output and will not produce any messages. For more
 information, see the built-in help menu entry by typing
-`?check_response_curve_data`, or visit the
-[Frequently Asked Questions](frequent_questions.html).)
+`?check_response_curve_data`.
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_response_curve_data(licor_data, 'curve_identifier', 12, 'CO2_r_sp')
+check_response_curve_data(gasex_data, 'curve_identifier', 12, 'CO2_r_sp')
 ```
 
 However, if `check_response_curve_data` detects an issue, it will print a
@@ -360,10 +372,14 @@ helpful message to the R terminal. For example, if we had specified the wrong
 number of points or the wrong identifier column, we would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_response_curve_data(licor_data, 'curve_identifier', 13)
+check_response_curve_data(gasex_data, 'curve_identifier', 13)
 
-check_response_curve_data(licor_data, 'replicate', 12)
+check_response_curve_data(gasex_data, 'replicate', 12)
 ```
+
+If all curves in your data set do not have the same number of points, or if some
+other issue is causing `check_response_curve_data` to fail, please see the
+["Checking Data" section of the FAQ](frequent_questions.html#checking-data).
 
 Now that we have confirmed that our curve identifier properly identifies sets
 of data, we can also perform additional organization using the
@@ -371,8 +387,8 @@ of data, we can also perform additional organization using the
 
 ```{r organize_data}
 # Order by `Ci`.
-licor_data <- organize_response_curve_data(
-  licor_data,
+gasex_data <- organize_response_curve_data(
+  gasex_data,
   'curve_identifier',
   c(), # keep all the measured points
   'Ci'
@@ -491,15 +507,15 @@ about the calibration parameters that were determined while processing the data.
 When analyzing combined gas exchange and isotope discrimination data, a key step
 is to combine TDL and gas exchange data that were measured at the same times.
 The \code{pair_gasex_and_tdl} function performs this operation by locating the
-TDL cycle whose timestamp is closest to each Licor file entry. Then, the ^12^C,
-^13^C, total CO~2~, and $\delta^{13}$C values measured by the TDL from the
-Licor's sample and reference lines during that cycle are added to the gas
-exchange data as new columns.
+TDL cycle whose timestamp is closest to each gas exchange log file entry. Then,
+the ^12^C, ^13^C, total CO~2~, and $\delta^{13}$C values measured by the TDL
+from the Licor's sample and reference lines during that cycle are added to the
+gas exchange data as new columns.
 
-```{r pairing_licor_and_tdl_data}
-# Pair the Licor and TDL data by locating the TDL cycle corresponding to each
-# Licor measurement
-licor_data <- pair_gasex_and_tdl(licor_data, processed_tdl$tdl_data)
+```{r pairing_gasex_and_tdl_data}
+# Pair the gas exchange and TDL data by locating the TDL cycle corresponding to
+# each gas exchange measurement
+gasex_data <- pair_gasex_and_tdl(gasex_data, processed_tdl$tdl_data)
 ```
 
 # Qualitative Validation
@@ -526,14 +542,14 @@ to confirm that the leaf temperature was constant during the measurements.
 xyplot(
   TleafCnd ~ seq_num | curve_identifier,
   group = CO2_r_sp,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'p',
   pch = 16,
   auto.key = list(space = 'right'),
   grid = TRUE,
   ylim = c(26, 30),
   xlab = 'Measurement number',
-  ylab = paste('Leaf temperature', '[', licor_data$units$TleafCnd, ']')
+  ylab = paste('Leaf temperature', '[', gasex_data$units$TleafCnd, ']')
 )
 ```
 
@@ -549,14 +565,14 @@ and 450 ppm for the following points.
 xyplot(
   CO2_r ~ seq_num | curve_identifier,
   group = CO2_r_sp,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'p',
   pch = 16,
   auto.key = list(space = 'right'),
   grid = TRUE,
   ylim = c(400, 800),
   xlab = 'Measurement number',
-  ylab = paste('CO2 concentration', '[', licor_data$units$CO2_r, ']')
+  ylab = paste('CO2 concentration', '[', gasex_data$units$CO2_r, ']')
 )
 ```
 
@@ -598,19 +614,19 @@ At this point, if any issues had been identified, we could clean the data by
 removing any problematic points. In this example, this procedure is not
 required. For examples of how to clean a data set by removing points, please see
 the
-[Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html#cleaning-the-licor-data)
+[Analyzing C3 A-Ci Curves](analyzing_c3_aci_curves.html#cleaning-the-data)
 vignette, or one of the other vignettes.
 
 # Calculating Isotope Discrimination
 
-Now, the `licor_data` `exdf` object includes the TDL measurements from the Licor
+Now, the `gasex_data` `exdf` object includes the TDL measurements from the Licor
 sample and reference gas lines that correspond to each log point. This
 information can now be used to calculate $\Delta^{13}C$, the photosynthetic
 isotope discrimination:
 
 ```{r isotope_discrimination}
 # Calculate isotope discrimination
-licor_data <- calculate_isotope_discrimination(licor_data)
+gasex_data <- calculate_isotope_discrimination(gasex_data)
 ```
 
 We can also make a quick validity check here. Photosynthetic carbon isotope
@@ -622,14 +638,14 @@ this with a plot.
 xyplot(
   Delta_obs_tdl ~ seq_num | curve_identifier,
   group = CO2_r_sp,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'p',
   pch = 16,
   auto.key = list(space = 'right'),
   grid = TRUE,
   ylim = c(16, 22),
   xlab = 'Measurement number',
-  ylab = paste('Photosynthetic isotope discrimination', '[', licor_data$units$Delta_obs_tdl, ']')
+  ylab = paste('Photosynthetic isotope discrimination', '[', gasex_data$units$Delta_obs_tdl, ']')
 )
 ```
 
@@ -657,8 +673,8 @@ rate. Here we will use 1.2 $\mu$mol m$^{-2}$ s$^{-1}$.
 
 ```{r set_rd}
 # Set day respiration rate
-licor_data <- set_variable(
-  licor_data,
+gasex_data <- set_variable(
+  gasex_data,
   'RL',
   'micromol m^(-2) s^(-1)',
   value = 1.2
@@ -672,15 +688,15 @@ specificity using the `calculate_gamma_star` function from `PhotoGEA`, using
 
 ```{r set_gamma_star}
 # Set Rubisco specificity
-licor_data <- set_variable(
-    licor_data,
+gasex_data <- set_variable(
+    gasex_data,
     'rubisco_specificity_tl',
     'M / M',
     value = 92
 )
 
 # Calculate Gamma_star
-licor_data <- calculate_gamma_star(licor_data)
+gasex_data <- calculate_gamma_star(gasex_data)
 ```
 
 The ternary correction factor $t$ can be calculated using the
@@ -690,13 +706,13 @@ of its own requirements, which can be met by first calling
 
 ```{r set_t}
 # Calculate total pressure
-licor_data <- calculate_total_pressure(licor_data)
+gasex_data <- calculate_total_pressure(gasex_data)
 
 # Calculate gbc, gsc, Csurface
-licor_data <- calculate_gas_properties(licor_data)
+gasex_data <- calculate_gas_properties(gasex_data)
 
 # Calculate t
-licor_data <- calculate_ternary_correction(licor_data)
+gasex_data <- calculate_ternary_correction(gasex_data)
 ```
 
 Like $R_d$, the observed photosynthetic isotope discrimination under growth
@@ -712,14 +728,14 @@ replicate.
 
 ```{r set_delta_obs_growth}
 # Set Delta_obs_growth
-licor_data <- set_variable(
-  licor_data,
+gasex_data <- set_variable(
+  gasex_data,
   'Delta_obs_growth',
   'ppt',
   id_column = 'curve_identifier',
   value_table = as.list(tapply(
-    licor_data[licor_data[, 'CO2_r_sp'] == 715, 'Delta_obs_tdl'],
-    licor_data[licor_data[, 'CO2_r_sp'] == 715, 'curve_identifier'],
+    gasex_data[gasex_data[, 'CO2_r_sp'] == 715, 'Delta_obs_tdl'],
+    gasex_data[gasex_data[, 'CO2_r_sp'] == 715, 'curve_identifier'],
     mean
   ))
 )
@@ -729,7 +745,7 @@ Now we are finally able to calculate values of mesophyll conductance!
 
 ```{r calculate_gm}
 # Calculate mesophyll conductance
-licor_data <- calculate_gm_busch(licor_data, f = 0)
+gasex_data <- calculate_gm_busch(gasex_data, f = 0)
 ```
 
 In this example, we have found that the mesophyll conductance values are more
@@ -746,13 +762,13 @@ mesophyll conductance.
 xyplot(
   gmc ~ seq_num | curve_identifier,
   group = CO2_r_sp,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'p',
   pch = 16,
   auto.key = list(space = 'right'),
   grid = TRUE,
   xlab = 'Measurement number',
-  ylab = paste('Mesophyll conductance to CO2', '[', licor_data$units$gmc, ']')
+  ylab = paste('Mesophyll conductance to CO2', '[', gasex_data$units$gmc, ']')
 )
 ```
 
@@ -763,16 +779,16 @@ average $C_i$ for each CO~2~ setpoint.
 # Plot the average mesophyll conductance values against average Ci values,
 # grouped by CO2_r setpoint
 xyplot_avg_rc(
-  licor_data[, 'gmc'],
-  licor_data[, 'Ci'],
-  licor_data[, 'CO2_r_sp'],
-  licor_data[, 'curve_identifier'],
+  gasex_data[, 'gmc'],
+  gasex_data[, 'Ci'],
+  gasex_data[, 'CO2_r_sp'],
+  gasex_data[, 'curve_identifier'],
   type = 'b',
   auto = TRUE,
   grid = TRUE,
   pch = 16,
-  ylab = paste('Mesophyll conductance to CO2', '[', licor_data$units$gmc, ']'),
-  xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']')
+  ylab = paste('Mesophyll conductance to CO2', '[', gasex_data$units$gmc, ']'),
+  xlab = paste('Intercellular CO2 concentration [', gasex_data$units$Ci, ']')
 )
 ```
 
@@ -789,7 +805,7 @@ specifically mentioned here.
 
 ## Input Files
 
-The file paths specified in `licor_file_paths` and `tdl_file_paths` will need to
+The file paths specified in `gasex_file_paths` and `tdl_file_paths` will need to
 be modified so they point to your own files. One way to do this in your own
 script is to simply write out relative or absolute paths to the files you wish
 to load. For example, you could replace the previous definitions with these
@@ -797,7 +813,7 @@ ones:
 
 ```{r write_file_paths, eval = FALSE}
 # Define a vector of paths to the files we wish to load
-licor_file_paths <- c(
+gasex_file_paths <- c(
   'myfile1.xlsx',        # `myfile1.xlsx` must be in the current working directory
   'C:/documents/myfile2' # This is an absolute path to `myfile2`
 )
@@ -816,7 +832,7 @@ example, you could replace the previous definitions with these ones:
 
 ```{r choose_files, eval = FALSE}
 # Interactively define a vector of paths to the files we wish to load
-licor_file_paths <- choose_input_licor_files()
+gasex_file_paths <- choose_input_licor_files()
 
 tdl_file_paths <- choose_input_tdl_files()
 ```
@@ -843,8 +859,12 @@ and TDL data, along with the calculated values of isotope discrimination and
 mesophyll conductance:
 
 ```{r saving_csv_files, eval = FALSE}
-write.csv(licor_data, file.choose(), row.names = FALSE)
+write.csv(gasex_data, file.choose(), row.names = FALSE)
 ```
+
+Also see the
+["Converting and Exporting Results" section of the FAQ](frequent_questions.html)
+for more information.
 
 # Commands From This Document
 
@@ -876,13 +896,13 @@ vignette.
 ## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
 ## names or use the `choose_input_licor_files` function.
 
-<<licor_file_names>>
+<<gasex_file_names>>
 
-<<loading_licor_data>>
+<<loading_gasex_data>>
 
 <<site_number>>
 
-<<combining_licor_data>>
+<<combining_gasex_data>>
 
 ##
 ## Isotope discrimination log files
@@ -917,7 +937,7 @@ vignette.
 
 <<calibrating_tdl>>
 
-<<pairing_licor_and_tdl_data>>
+<<pairing_gasex_and_tdl_data>>
 
 ##
 ## Qualitative validation

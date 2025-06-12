@@ -61,7 +61,8 @@ check_response_curve_data(
   licor_data,
   'curve_identifier',
   0,
-  'PPFD'
+  'PPFD',
+  error_on_failure = FALSE
 )
 
 # Remove the high CO2 points

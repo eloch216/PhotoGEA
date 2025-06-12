@@ -31,7 +31,40 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## Changes in PhotoGEA version 1.3.2 (2024-04-08)
+## Changes in PhotoGEA version 1.3.3 (2025-06-11)
+
+### Minor user-facing changes
+
+- Added "debug mode" option to A-Ci fitting functions; in debug mode, detailed
+  information about the fit is printed to the R terminal to help with
+  troubleshooting.
+
+- Added new options to `check_response_curve_data`, so we can now check for
+  ranges of npts, and for columns that should be constant.
+
+- Parameter estimates from A-Ci fits are now set to `NA` when the fit is
+  overparameterized; in other words, when there are not enough degrees of
+  freedom.
+
+- When using `read_gasex_file`:
+
+  - Files with a `.txt` extension are now assumed to be `plaintext` when
+    `file_type` is set to `AUTO`.
+
+  - Any rows whose values are all `NA` are removed; this can be bypassed via the
+    new `remove_NA_rows` argument.
+
+### Bug fixes
+
+- Fixed an error that prevented curve fits when `stats::lm` returns `NA` values
+  when making initial guesses for `RL`.
+
+- Fixed an error that prevented curve fits when all Ca values are `NA`.
+
+- Fixed an error that occurred when including user remarks for plaintext files
+  with an extra blank row at the end.
+
+## Changes in PhotoGEA version 1.3.2 (2025-04-08)
 
 This is the first version of PhotoGEA available on CRAN.
 
@@ -61,7 +94,7 @@ This is the first version of PhotoGEA available on CRAN.
 - Fixed an error that occurred when removing unreliable C4 parameter estimates
   without first calculating confidence intervals.
 
-## Changes in PhotoGEA version 1.3.0 (2024-04-04)
+## Changes in PhotoGEA version 1.3.0 (2025-04-04)
 
 ### Minor user-facing changes
 

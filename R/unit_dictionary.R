@@ -16,6 +16,7 @@ normalized_units <- function(qname) {
 # Specify units for some important parameters
 unit_dictionary_list <- list(
     A                   = micromol_flux,
+    ao                  = dimensionless,
     Ainitial            = micromol_flux,
     alpha_g             = dimensionless,
     alpha_j_at_25       = dimensionless,
@@ -36,6 +37,7 @@ unit_dictionary_list <- list(
     Csurface            = micromol_fraction,
     ETR                 = micromol_flux,
     Flow                = 'micromol s^(-1)',
+    gamma_star          = dimensionless,
     Gamma_star_at_25    = micromol_fraction,
     Gamma_star_norm     = normalized_units('Gamma_star'),
     gbs                 = conductance_bar,
@@ -64,6 +66,7 @@ unit_dictionary_list <- list(
     Ko_at_25            = millimol_fraction,
     Ko_norm             = normalized_units('Ko'),
     oxygen              = 'percent',
+    PCm                 = 'microbar',
     PhiPS2              = dimensionless,
     Qin                 = micromol_flux,
     rL                  = micromol_flux,
@@ -85,6 +88,7 @@ unit_dictionary_list <- list(
     Vmax                = micromol_flux,
     VPDleaf             = 'kPa',
     Vpmax_at_25         = micromol_flux,
+    Vpmax_norm          = normalized_units('Vpmax'),
     Vpr                 = micromol_flux
 )
 

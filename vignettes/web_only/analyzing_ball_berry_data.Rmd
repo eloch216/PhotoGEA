@@ -71,16 +71,16 @@ linear fit of the experimentally observed $g_{sw}$ as a function of the
 Ball-Berry index is performed to extract values for the Ball-Berry intercept and
 slope.
 
-Such photosynthetic gas exchange measurements are commonly performed using a
-Licor portable photosynthesis system such as the Li-6400 or Li-6800. These
-machines record values of $A_n$, $g_{sw}$, and many other important quantities.
-They produce two types of output files: plain-text and Microsoft Excel. It is
-often more convenient to work with the Excel files since the entries can be
-easily modified (for example, to remove an extraneous row or add a new column).
-On the other hand, it can be more difficult to access the file contents using
-other pieces of software such as R. However, the `PhotoGEA` package reduces this
-barrier by including tools for reading Licor Excel files in R, which will be
-demonstrated in the following section.
+Ball-Berry curves are commonly measured using a portable photosynthesis system
+such as the Licor Li-6800. These machines record values of $A_n$, $g_{sw}$,
+$C_i$, and many other important quantities. They produce two types of output
+files: plain-text and Microsoft Excel. It is often more convenient to work with
+the Excel files since the entries can be easily modified (for example, to remove
+an extraneous row or add a new column). On the other hand, it can be more
+difficult to access the file contents using other pieces of software such as R.
+However, the `PhotoGEA` package reduces this barrier by including tools for
+reading Licor Excel files in R, which will be demonstrated in the following
+section.
 
 # Loading Packages
 
@@ -96,7 +96,12 @@ library(lattice)
 If the `lattice` package is not installed on your R setup, you can install it by
 typing `install.packages('lattice')`.
 
-# Loading Licor Data
+# Loading the Data
+
+In this example, we will read data from Licor LI-6800 log files. If you have log
+files from a different instrument, or if you are reading from CSV files that
+were reformatted from instrument log files, please see the
+["Loading Data" section of the FAQ](frequent_questions.html#loading-data).
 
 The `PhotoGEA` package includes two files representing Ball-Berry data measured
 using two Li-6800 instruments. The data is stored in Microsoft Excel files, and
@@ -111,7 +116,7 @@ The files will be stored on your computer somewhere in your R package
 installation directory, and full paths to these files can be obtained with
 `PhotoGEA_example_file_path`:
 
-```{r licor_file_names}
+```{r gasex_file_names}
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
@@ -129,12 +134,15 @@ To actually read the data in the files and store them in R objects, we will use
 the `read_gasex_file` function from `PhotoGEA`. Since there are multiple files
 to read, we will call this function once for each file using `lapply`:
 
-```{r loading_licor_data}
+```{r loading_gasex_data}
 # Load each file, storing the result in a list
-licor_exdf_list <- lapply(file_paths, function(fpath) {
+gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
 })
 ```
+
+**Note:** The `read_gasex_file` function can also read plaintext Licor LI-6800
+log files; for more information, see its help page by typing `?read_gasex_file`.
 
 The result from this command is an R list of "extended data frames" (abbreviated
 as `exdf` objects). The `exdf` class is a special data structure defined by the
@@ -153,30 +161,30 @@ vertically. This action only makes sense if the tables have the same columns, so
 before we combine the `exdf` objects, we should make sure this is the case.
 
 The `PhotoGEA` package includes a function called `identify_common_columns` that
-can be used to get the names of all columns that are present in all of the Licor
+can be used to get the names of all columns that are present in all of the data
 files. Then, we can extract just those columns, and then combine the `exdf`
 objects into a single one.
 
-```{r combining_licor_data}
-# Get the names of all columns that are present in all of the Licor files
-columns_to_keep <- do.call(identify_common_columns, licor_exdf_list)
+```{r combining_gasex_data}
+# Get the names of all columns that are present in all of the data files
+columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
 # Extract just these columns
-licor_exdf_list <- lapply(licor_exdf_list, function(x) {
+gasex_exdf_list <- lapply(gasex_exdf_list, function(x) {
   x[ , columns_to_keep, TRUE]
 })
 
 # Use `rbind` to combine all the data
-licor_data <- do.call(rbind, licor_exdf_list)
+gasex_data <- do.call(rbind, gasex_exdf_list)
 ```
 
-Now we have a single R object called `licor_data` that includes all the data
+Now we have a single R object called `gasex_data` that includes all the data
 from several Licor Excel files. For more information about consolidating
 information from multiple files, see the _Common Patterns_ section of the
 [Working With Extended Data Frames](working_with_extended_data_frames.html#combining-data-from-several-files)
 vignette.
 
-# Checking Licor Data
+# Checking the Data
 
 Before extracting Ball-Berry parameters, it is a good idea to do some basic
 checks of the data to ensure it is organized properly and that it was measured
@@ -193,8 +201,8 @@ a new column that combines the values from each of these:
 
 ```{r adding_id_column}
 # Create a new identifier column formatted like `instrument - species - plot`
-licor_data[ , 'curve_identifier'] <-
-  paste(licor_data[ , 'instrument'], '-', licor_data[ , 'species'], '-', licor_data[ , 'plot'])
+gasex_data[ , 'curve_identifier'] <-
+  paste(gasex_data[ , 'instrument'], '-', gasex_data[ , 'species'], '-', gasex_data[ , 'plot'])
 ```
 
 When measuring response curves (or any other type of gas exchange data), it is
@@ -211,13 +219,12 @@ identify each response curve (`curve_identifier`), the expected number of points
 in each curve (`7`), the name of a "driving" column that should follow the same
 sequence in each curve (`Qin`), and tolerance for the values of the driving
 column (`1.0 mol / m^2 / s`). If the data passes the checks, this function will
-have no output and will not produce any messages. (For more information, see the
-built-in help menu entry by typing `?check_response_curve_data`, or visit the
-[Frequently Asked Questions](frequent_questions.html).)
+have no output and will not produce any messages. For more information, see the
+built-in help menu entry by typing `?check_response_curve_data`.
 
 ```{r check_response_curve}
 # Make sure the data meets basic requirements
-check_response_curve_data(licor_data, 'curve_identifier', 7, 'Qin', 1.0)
+check_response_curve_data(gasex_data, 'curve_identifier', 7, 'Qin', 1.0)
 ```
 
 However, if `check_response_curve_data` detects an issue, it will print a
@@ -226,12 +233,16 @@ number of points, the wrong identifier column, or an unrealistic tolerance, we
 would get error messages:
 
 ```{r check_response_curve_error, error = TRUE}
-check_response_curve_data(licor_data, 'curve_identifier', 8)
+check_response_curve_data(gasex_data, 'curve_identifier', 8)
 
-check_response_curve_data(licor_data, 'species', 7)
+check_response_curve_data(gasex_data, 'species', 7)
 
-check_response_curve_data(licor_data, 'curve_identifier', 7, 'Qin', 0.1)
+check_response_curve_data(gasex_data, 'curve_identifier', 7, 'Qin', 0.1)
 ```
+
+If all curves in your data set do not have the same number of points, or if some
+other issue is causing `check_response_curve_data` to fail, please see the
+["Checking Data" section of the FAQ](frequent_questions.html#checking-data).
 
 ## Qualitative Checks
 
@@ -251,14 +262,14 @@ for quality.
 # Make a plot to check humidity control
 xyplot(
   RHcham + `Humidifier_%` + `Desiccant_%` ~ Qin | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   ylim = c(0, 100),
   xlim = c(0, 2200),
-  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')')
+  xlab = paste0('Incident PPFD (', gasex_data$units$Qin, ')')
 )
 ```
 
@@ -280,15 +291,15 @@ photosynthesis. In this plot, all the data looks good.
 # Make a plot to check temperature control
 xyplot(
   TleafCnd + Txchg ~ Qin | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   ylim = c(25, 40),
   xlim = c(0, 2200),
-  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')'),
-  ylab = paste0('Temperature (', licor_data$units$TleafCnd, ')')
+  xlab = paste0('Incident PPFD (', gasex_data$units$Qin, ')'),
+  ylab = paste0('Temperature (', gasex_data$units$TleafCnd, ')')
 )
 ```
 
@@ -305,15 +316,15 @@ not vary in an erratic way. In this plot, all the data looks good.
 # Make a plot to check CO2 control
 xyplot(
   CO2_s + CO2_r ~ Qin | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   ylim = c(360, 480),
   xlim = c(0, 2200),
-  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')'),
-  ylab = paste0('CO2 concentration (', licor_data$units$CO2_r, ')')
+  xlab = paste0('Incident PPFD (', gasex_data$units$Qin, ')'),
+  ylab = paste0('CO2 concentration (', gasex_data$units$CO2_r, ')')
 )
 ```
 
@@ -334,13 +345,13 @@ plots.
 ```{r plot_stability}
 xyplot(
   `A:OK` + `gsw:OK` + Stable ~ Qin | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   xlim = c(0, 2200),
-  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')')
+  xlab = paste0('Incident PPFD (', gasex_data$units$Qin, ')')
 )
 ```
 
@@ -375,15 +386,15 @@ before proceeding with the Ball-Berry fitting.
 # Make a plot to check light-response curves
 xyplot(
   A ~ Qin | curve_identifier,
-  data = licor_data$main_data,
+  data = gasex_data$main_data,
   type = 'b',
   pch = 16,
   auto = TRUE,
   grid = TRUE,
   ylim = c(-5, 50),
   xlim = c(0, 2200),
-  xlab = paste0('Incident PPFD (', licor_data$units$Qin, ')'),
-  ylab = paste0('Net assimilation (', licor_data$units$A, ')')
+  xlab = paste0('Incident PPFD (', gasex_data$units$Qin, ')'),
+  ylab = paste0('Net assimilation (', gasex_data$units$A, ')')
 )
 ```
 
@@ -399,7 +410,7 @@ likely a byproduct of the noise that was intentionally added to the true
 measured data (see [The Data]). Nevertheless, it may be a good idea to remove
 them before proceeding with the Ball-Berry fitting.
 
-## Cleaning the Licor Data
+## Cleaning the Data
 
 While checking over the plots in [Qualitative Checks], two issues were noticed:
 (1) some points were logged before stability was achieved and (2) some of the
@@ -413,8 +424,8 @@ criteria were satisfied.
 
 ```{r remove_unstable_points}
 # Only keep points where stability was achieved
-licor_data <- remove_points(
-  licor_data,
+gasex_data <- remove_points(
+  gasex_data,
   list(Stable = c(0, 1)),
   method = 'exclude'
 )
@@ -435,40 +446,40 @@ curves_to_remove <- c(
 )
 
 # Remove them
-licor_data <- remove_points(
-  licor_data,
+gasex_data <- remove_points(
+  gasex_data,
   list(curve_identifier = curves_to_remove),
   method = 'remove'
 )
 ```
 
-# Fitting Licor Data
+# Fitting the Response Curves
 
 Now that we have checked the data quality, we are ready to perform the fitting.
-As they are produced by the instruments, Licor data files do not include values
+As they are produced by the instruments, log files do not include values
 of the Ball-Berry index; in fact, they do not even include values of $h_s$ and
 $C_s$ required to calculate the Ball-Berry index. However, the `PhotoGEA`
 package includes three functions to help with these calculations:
 `calculate_total_pressure`, `calculate_gas_properties`, and
 `calculate_ball_berry_index`. Each of these requires an `exdf` object containing
-Licor data. The units for each required column will be checked in an attempt to
-avoid unit-related errors. More information about these functions can be
-obtained from the built-in help system by typing `?calculate_total_pressure`,
+gas exchange data. The units for each required column will be checked in an
+attempt to avoid unit-related errors. More information about these functions can
+be obtained from the built-in help system by typing `?calculate_total_pressure`,
 `?calculate_gas_properties`, or `?calculate_ball_berry_index`. Here we will use
 them sequentially to calculate values of the Ball-Berry index:
 
 ```{r calculate_bb_index}
-# Calculate the total pressure in the Licor chamber
-licor_data <- calculate_total_pressure(licor_data)
+# Calculate the total pressure in the leaf chamber
+gasex_data <- calculate_total_pressure(gasex_data)
 
 # Calculate additional gas properties, including `RHleaf` and `Csurface`
-licor_data <- calculate_gas_properties(licor_data)
+gasex_data <- calculate_gas_properties(gasex_data)
 
 # Calculate the Ball-Berry index
-licor_data <- calculate_ball_berry_index(licor_data)
+gasex_data <- calculate_ball_berry_index(gasex_data)
 ```
 
-Together, these functions add several new columns to `licor_data`, including one
+Together, these functions add several new columns to `gasex_data`, including one
 called `bb_index`, which includes values of the Ball-Berry index. With this
 information, we are now ready to perform the fitting procedure. For this
 operation, we can use the `fit_ball_berry` function from the `PhotoGEA` package,
@@ -487,9 +498,9 @@ parameters and fits:
 ```{r fit_ball_berry}
 # Fit a linear model to the Ball-Berry data
 ball_berry_results <- consolidate(by(
-  licor_data,                       # The `exdf` object containing the curves
-  licor_data[, 'curve_identifier'], # A factor used to split `licor_data` into chunks
-  fit_ball_berry                    # The function to apply to each chunk of `licor_data`
+  gasex_data,                       # The `exdf` object containing the curves
+  gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_ball_berry                    # The function to apply to each chunk of `gasex_data`
 ))
 ```
 
@@ -558,7 +569,7 @@ not specifically mentioned here.
 ## Input Files
 
 The file paths specified in `file_paths` will need to be modified so they point
-to your Licor files. One way to do this in your own script is to simply write
+to your data files. One way to do this in your own script is to simply write
 out relative or absolute paths to the files you wish to load. For example, you
 could replace the previous definition of `file_paths` with this one:
 
@@ -572,9 +583,9 @@ file_paths <- c(
 
 You may also want to consider using the `choose_input_licor_files` function from
 `PhotoGEA`; this function will create a pop-up browser window where you can
-interactively select a set of files. Sometimes this is more convenient than
-writing out file paths or names. For example, you could replace the previous
-definition of `file_paths` with this one:
+interactively select a set of Excel files. Sometimes this is more convenient
+than writing out file paths or names. For example, you could replace the
+previous definition of `file_paths` with this one:
 
 ```{r choose_licor_files, eval = FALSE}
 # Interactively define a vector of paths to the files we wish to load
@@ -589,7 +600,7 @@ vignette for more details.
 
 ## Curve Identifier
 
-Depending on which user constants are defined in your Licor Excel files, you may
+Depending on which user constants are defined in your data files, you may
 need to modify the definition of the `curve_identifier` column.
 
 ## Excluded Curves
@@ -620,6 +631,10 @@ write.csv(ball_berry_results$parameters, file.choose(), row.names = FALSE)
 write.csv(ball_berry_averages, file.choose(), row.names = FALSE)
 ```
 
+Also see the
+["Converting and Exporting Results" section of the FAQ](frequent_questions.html)
+for more information.
+
 # Commands From This Document
 
 The following code chunk includes all the central commands used throughout this
@@ -646,11 +661,11 @@ vignette.
 ## `PhotoGEA_example_file_path` as in the code below. Instead, write out the
 ## names or use the `choose_input_licor_files` function.
 
-<<licor_file_names>>
+<<gasex_file_names>>
 
-<<loading_licor_data>>
+<<loading_gasex_data>>
 
-<<combining_licor_data>>
+<<combining_gasex_data>>
 
 ###
 ### VALIDATION:

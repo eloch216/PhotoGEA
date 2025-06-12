@@ -17,6 +17,7 @@
     file_type = 'AUTO',
     instrument_type = 'AUTO',
     standardize_columns = TRUE,
+    remove_NA_rows = TRUE,
     \dots
   )
 }
@@ -53,6 +54,12 @@
   \item{standardize_columns}{
     A logical value indicating whether to standardize columns; see details
     below.
+  }
+
+  \item{remove_NA_rows}{
+    A logical value indicating whether to remove any rows whose values are all
+    \code{NA}; this argument will be passed to the specialized reading
+    functions; see below for more details.
   }
 
   \item{\dots}{
@@ -108,8 +115,8 @@
   \itemize{
     \item A \code{.xlsx} extension corresponds to \code{file_type = 'Excel'}.
     \item A \code{.dat} extension corresponds to \code{file_type = 'data'}.
-    \item A file with no extension corresponds to \code{file_type =
-          'plaintext'}.
+    \item A \code{.txt} extension or a file with no extension corresponds to
+          \code{file_type = 'plaintext'}.
   }
 
   When automatically determining the instrument type from the file type, the
@@ -132,7 +139,7 @@
           'CR3000'} and \code{file_type = 'data'})
   }
   Any additional arguments specified via \code{\dots} will be passed to these
-  functions.
+  functions, along with the value of \code{remove_NA_rows}.
 
   \strong{IMPORTANT NOTE ABOUT LICOR EXCEL FILES}: by default, Licor Excel files
   do not "calculate" formula values. This causes a problem when reading them in

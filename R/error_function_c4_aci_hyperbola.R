@@ -4,7 +4,8 @@ error_function_c4_aci_hyperbola <- function(
     sd_A = 1,
     a_column_name = 'A',
     ci_column_name = 'Ci',
-    hard_constraints = 0
+    hard_constraints = 0,
+    debug_mode = FALSE
 )
 {
     if (!is.exdf(replicate_exdf)) {
@@ -46,8 +47,23 @@ error_function_c4_aci_hyperbola <- function(
 
     # Create and return the error function
     function(guess) {
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c4_aci_hyperbola guess:',
+                paste(guess, collapse = ', '),
+                ending_newline = FALSE
+            )
+        }
+
         X <- fit_options_vec
         X[param_to_fit] <- guess
+
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c4_aci_hyperbola parameters:',
+                paste(X, collapse = ', ')
+            )
+        }
 
         assim <- tryCatch(
             {

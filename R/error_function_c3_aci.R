@@ -19,6 +19,7 @@ error_function_c3_aci <- function(
     cj_crossover_min = NA,
     cj_crossover_max = NA,
     hard_constraints = 0,
+    debug_mode = FALSE,
     ...
 )
 {
@@ -98,8 +99,23 @@ error_function_c3_aci <- function(
 
     # Create and return the error function
     function(guess) {
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c3_aci guess:',
+                paste(guess, collapse = ', '),
+                ending_newline = FALSE
+            )
+        }
+
         X <- fit_options_vec
         X[param_to_fit] <- guess
+
+        if (debug_mode) {
+            debug_msg(
+                'error_function_c3_aci parameters:',
+                paste(X, collapse = ', ')
+            )
+        }
 
         # If we are fitting gmc, use a 1D diffusion equation to calculate Cc.
         if (fit_gmc) {

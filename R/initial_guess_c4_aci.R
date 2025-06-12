@@ -13,7 +13,8 @@ initial_guess_c4_aci <- function(
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
-    vpmax_norm_column_name = 'Vpmax_norm'
+    vpmax_norm_column_name = 'Vpmax_norm',
+    debug_mode = FALSE
 )
 {
     function(rc_exdf) {
@@ -76,22 +77,38 @@ initial_guess_c4_aci <- function(
         # enough points to do the fit, just estimate RLm to be a typical value.
         # Note: RL and RLm have the same temperature dependence because
         # RLm = RL * Rm_frac.
+        typical_RLm <- 0.5
+
         RLm_subset <- rc_exdf[rc_exdf[, pcm_column_name] <= pcm_threshold_rlm, ] # a data frame
 
         RLm_estimate <- if (nrow(RLm_subset) > 1) {
-            mean_rm_norm <- mean(RLm_subset[, rl_norm_column_name])
+            mean_rlm_norm <- mean(RLm_subset[, rl_norm_column_name])
 
-            rm_fit <-
+            rlm_fit <-
                 stats::lm(RLm_subset[, a_column_name] ~ RLm_subset[, pcm_column_name])
 
-            -rm_fit$coefficients[1] / mean_rm_norm
+            if (debug_mode) {
+                debug_msg('initial_guess_c4_aci RLm_fit info:')
+                cat('\n')
+                print(RLm_subset[, c(pcm_column_name, a_column_name)])
+                print(summary(rlm_fit))
+            }
+
+            -rlm_fit$coefficients[1] / mean_rlm_norm
         } else {
-            0.5
+            if (debug_mode) {
+                debug_msg(
+                    'initial_guess_c4_aci RLm_fit info:',
+                    'no fit was performed'
+                )
+            }
+
+            typical_RLm
         }
 
-        # If RLm was estimated to be negative, reset it to a typical value
-        if (RLm_estimate <= 0) {
-            RLm_estimate <- 0.5
+        # If RLm was estimated to be negative or NA, reset it to a typical value
+        if (is.na(RLm_estimate) || RLm_estimate <= 0) {
+            RLm_estimate <- typical_RLm
         }
 
         # RLm is determined by RLm = Rm_frac * RL, so RL = RLm / Rm_frac.

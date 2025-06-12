@@ -48,6 +48,21 @@ test_that('Ci limits can be bypassed', {
     expect_true(all(!is.na(fit_res$fits[, c('A_fit')])))
 })
 
+test_that('Debug mode works', {
+    # Use sink to hide output
+    sink(tempfile())
+
+    expect_output(
+        fit_c4_aci_hyperbola(
+            one_curve,
+            optim_fun = optimizer_nmkb(1, maxfeval = 2),
+            debug_mode = TRUE
+        )
+    )
+
+    sink()
+})
+
 test_that('fit results have not changed', {
     # Set a seed before fitting since there is randomness involved with the
     # default optimizer

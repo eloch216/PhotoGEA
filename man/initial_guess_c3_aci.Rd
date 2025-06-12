@@ -22,7 +22,7 @@
     gmc_at_25,
     Kc_at_25,
     Ko_at_25,
-    cc_threshold_rd = 100,
+    cc_threshold_rl = 100,
     Wj_coef_C = 4.0,
     Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
@@ -36,7 +36,8 @@
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    debug_mode = FALSE
   )
 }
 
@@ -115,7 +116,7 @@
     in the \code{Ko_at_25} column of \code{rc_exdf} if it exists.
   }
 
-  \item{cc_threshold_rd}{
+  \item{cc_threshold_rl}{
     An upper cutoff value for the chloroplast CO2 concentration in
     \code{micromol mol^(-1)} to be used when estimating \code{RL}.
   }
@@ -197,6 +198,13 @@
     \code{Vcmax} values (with units of
     \code{normalized to Vcmax at 25 degrees C}).
   }
+
+  \item{debug_mode}{
+    A logical (\code{TRUE} or \code{FALSE}) variable indicating whether to
+    operate in debug mode. In debug mode, information about the linear fit used
+    to estimate \code{RL} is printed; this can be helpful when troubleshooting
+    issues with a particular curve.
+  }
 }
 
 \details{
@@ -212,10 +220,14 @@
     \item \strong{Estimating RL}: Regardless of which process is limiting at low
           \code{Cc}, it is always true that \code{An = -RL} when
           \code{Cc = Gamma_star_agt}. Here we make a linear fit of the measured
-          \code{An} vs. \code{Cc} values, and evaluate it at at
-          \code{Cc = Gamma_star_agt} to estimate \code{RL}. If the linear fit
-          predicts a negative value for \code{RL}, we use a typical value
-          instead (0.5 \code{micromol m^(-2) s^(-1)}).
+          \code{An} vs. \code{Cc} values where \code{Cc} is below
+          \code{cc_threshold_rl}, and evaluate it at at
+          \code{Cc = Gamma_star_agt} to estimate \code{RL}. If there are fewer
+          than two points with \code{Cc <= cc_threshold_rl}, the fit cannot be
+          made, and we use a typical value instead
+          (1.0 \code{micromol m^(-2) s^(-1)}). Likewise, if the linear fit
+          predicts a negative or \code{NA} value for \code{RL}, we use the same
+          typical value instead.
     \item \strong{Estimating Vc}: Once an estimate for \code{RL} has been found,
           the RuBP carboxylation rate \code{Vc} can be estimated using
           \code{Vc = (An + RL) / (1 - Gamma_star_agt / Cc)}. This is useful for

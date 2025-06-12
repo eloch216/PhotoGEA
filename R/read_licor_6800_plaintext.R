@@ -28,7 +28,9 @@ add_latest_remark <- function(licor_file) {
     time_i   <- user_remarks[i, 'remark_time']
     remark_i <- user_remarks[i, 'remark_value']
 
-    licor_file[data_times > time_i, 'user_remark'] <- remark_i
+    times_to_fill <- !is.na(data_times) & data_times > time_i
+
+    licor_file[times_to_fill, 'user_remark'] <- remark_i
   }
 
   licor_file
@@ -81,6 +83,7 @@ read_licor_6800_plaintext <- function(
     file_name,
     get_oxygen = TRUE,
     include_user_remark_column = TRUE,
+    remove_NA_rows = TRUE,
     ...
 )
 {
@@ -225,8 +228,16 @@ read_licor_6800_plaintext <- function(
     exdf_obj    <- do.call(rbind, data_chunks)
     header_part <- do.call(rbind, header_chunks)
 
+    # Remove NA rows if necessary
+    if (remove_NA_rows) {
+        all_NA <- sapply(seq_len(nrow(exdf_obj)), function(i) {
+            all(is.na(as.list(exdf_obj[i, ])))
+        })
+        exdf_obj <- exdf_obj[!all_NA, , TRUE]
+    }
+
     # Store additional information in the data exdf
-    exdf_obj$preamble <- header_part
+    exdf_obj$preamble     <- header_part
     exdf_obj$user_remarks <- user_remarks
 
     # Add user remarks if necessary

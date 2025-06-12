@@ -4,12 +4,13 @@ read_licor_6800_Excel <- function(
     get_oxygen = TRUE,
     check_for_zero = c('A', 'gsw'),
     include_user_remark_column = TRUE,
+    remove_NA_rows = TRUE,
     ...
 )
 {
     # Get the names of sheets in the workbook
     sheet_names <- openxlsx::getSheetNames(file_name)
-    
+
     if (!'Measurements' %in% sheet_names) {
         stop(paste0(
             'A sheet named `Measurements` could not be found in Excel file `',
@@ -17,9 +18,9 @@ read_licor_6800_Excel <- function(
             '`'
         ))
     }
-    
+
     has_remarks <- 'Remarks' %in% sheet_names
-    
+
     # Read the entire first sheet of the workbook into a single data frame
     rawdata <- openxlsx::readWorkbook(
         file_name,
@@ -64,9 +65,17 @@ read_licor_6800_Excel <- function(
     )
 
     # Apply column names
-    colnames(licor_data) <- licor_variable_names
+    colnames(licor_data)                <- licor_variable_names
     colnames(licor_variable_categories) <- licor_variable_names
-    colnames(licor_variable_units) <- licor_variable_names
+    colnames(licor_variable_units)      <- licor_variable_names
+
+    # Remove NA rows if necessary
+    if (remove_NA_rows) {
+        all_NA <- sapply(seq_len(nrow(licor_data)), function(i) {
+            all(is.na(as.list(licor_data[i, ])))
+        })
+        licor_data <- licor_data[!all_NA, ]
+    }
 
     # Get the raw preamble data
     raw_preamble <- rawdata[seq_len(data_row - 2), ]
@@ -126,7 +135,7 @@ read_licor_6800_Excel <- function(
             remark_time = character(),
             remark_value = character()
         )
-        
+
         remarks <- data.frame(matrix(nrow = 1, ncol = 0))
     }
 

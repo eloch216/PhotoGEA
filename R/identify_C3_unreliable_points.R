@@ -15,8 +15,10 @@ identify_c3_unreliable_points <- function(
     a_column_name
 )
 {
-    remove_unreliable_param <- as.numeric(remove_unreliable_param)
-    check_param_setting(remove_unreliable_param)
+    param_types_to_remove <- convert_param_setting(remove_unreliable_param)
+
+    # Determine the degrees of freedom
+    dof <- parameters[, 'dof']
 
     # Determine the number of points where each potential carboxylation rate is
     # the smallest potential carboxylation rate
@@ -34,18 +36,18 @@ identify_c3_unreliable_points <- function(
 
     c_unreliable_npts <- parameters[, 'n_Ac_limiting'] < unreliable_n_threshold
     c_unreliable_inf  <- 'Vcmax_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Vcmax_at_25_upper'])
-    c_trust           <- trust_value(c_unreliable_npts, c_unreliable_inf)
-    c_remove          <- remove_estimate(c_trust, remove_unreliable_param)
+    c_trust           <- trust_value(c_unreliable_npts, c_unreliable_inf, dof)
+    c_remove          <- remove_estimate(c_trust, param_types_to_remove)
 
     j_unreliable_npts <- parameters[, 'n_Aj_limiting'] < unreliable_n_threshold
     j_unreliable_inf  <- 'J_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'J_at_25_upper'])
-    j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf)
-    j_remove          <- remove_estimate(j_trust, remove_unreliable_param)
+    j_trust           <- trust_value(j_unreliable_npts, j_unreliable_inf, dof)
+    j_remove          <- remove_estimate(j_trust, param_types_to_remove)
 
     p_unreliable_npts <- parameters[, 'n_Ap_limiting'] < unreliable_n_threshold
     p_unreliable_inf  <- 'Tp_at_25_upper' %in% colnames(parameters) && !is.finite(parameters[, 'Tp_at_25_upper'])
-    p_trust           <- trust_value(p_unreliable_npts, p_unreliable_inf)
-    p_remove          <- remove_estimate(p_trust, remove_unreliable_param)
+    p_trust           <- trust_value(p_unreliable_npts, p_unreliable_inf, dof)
+    p_remove          <- remove_estimate(p_trust, param_types_to_remove)
 
     # If we are unsure about Rubisco limitations, then the Vcmax, Kc, and Ko
     # estimates should be flagged as unreliable. If necessary, remove Vcmax, Kc,
@@ -145,8 +147,37 @@ identify_c3_unreliable_points <- function(
         }
     }
 
+    # Other parameters are only unreliable when the fit is overparameterized
+    if (dof < 1) {
+        parameters[, 'Gamma_star_at_25']         <- NA
+        parameters[, 'Gamma_star_tl_avg']        <- NA
+        parameters[, 'gmc_at_25']                <- NA
+        parameters[, 'gmc_tl_avg']               <- NA
+        parameters[, 'RL_at_25']                 <- NA
+        parameters[, 'RL_tl_avg']                <- NA
+        fits[, 'Gamma_star_at_25']               <- NA
+        fits[, 'Gamma_star_tl_avg']              <- NA
+        fits[, 'gmc_at_25']                      <- NA
+        fits[, 'gmc_tl_avg']                     <- NA
+        fits[, 'RL_at_25']                       <- NA
+        fits[, 'RL_tl_avg']                      <- NA
+        fits_interpolated[, 'Gamma_star_at_25']  <- NA
+        fits_interpolated[, 'Gamma_star_tl_avg'] <- NA
+        fits_interpolated[, 'gmc_at_25']         <- NA
+        fits_interpolated[, 'gmc_tl_avg']        <- NA
+        fits_interpolated[, 'RL_at_25']          <- NA
+        fits_interpolated[, 'RL_tl_avg']         <- NA
+
+        if ('tau' %in% colnames(parameters)) {
+            parameters[, 'tau']        <- NA
+            fits[, 'tau']              <- NA
+            fits_interpolated[, 'tau'] <- NA
+        }
+    }
+
     # Record the type of parameter identification that was performed
-    parameters[, 'remove_unreliable_param'] <- remove_unreliable_param
+    parameters[, 'remove_unreliable_param'] <-
+        paste(remove_unreliable_param, sep = ', ')
 
     # Document the columns that were added to the parameter object
     parameters <- document_variables(

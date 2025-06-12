@@ -19,17 +19,25 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(7, 8, 9, 10)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9, 10, 17)
+
+SEQ_NUM_TO_EXCLUDE_FROM_AVG_RC <- c() # set to c() to keep all points
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
 MAKE_ANALYSIS_PLOTS <- TRUE
 
+# Decide whether to save average response curves to PDF
+SAVE_TO_PDF <- FALSE
+
+# Decide whether to add a "construct" column
+ADD_CONSTRUCT <- FALSE
+
 # Decide whether to only keep points where stability conditions were met
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -104,6 +112,14 @@ gsw_lim <- c(0, 0.7)
 phi_lim <- c(0, 0.4)
 gmc_lim <- c(-0.1, 0.8)
 
+# Choose output directory, if necessary
+base_dir <- getwd()
+if (SAVE_CSV || (MAKE_ANALYSIS_PLOTS && SAVE_TO_PDF)) {
+  if (interactive() & .Platform$OS.type == "windows") {
+    base_dir <- choose.dir(caption="Select folder for output files")
+  }
+}
+
 ###
 ### TRANSLATION:
 ### Creating convenient R objects from raw data files
@@ -114,7 +130,7 @@ file_paths <- choose_input_licor_files()
 
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_gasex_file(fpath, 'time')
+  read_gasex_file(fpath, 'time', include_user_remark_column = FALSE)
 })
 
 # Get the names of all columns that are present in all of the Licor files
@@ -179,6 +195,17 @@ licor_data[, 'curve_identifier'] <-
 licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
+if ('construct' %in% colnames(licor_data)) {
+  licor_data <- factorize_id_column(licor_data, 'construct')
+}
+
+# Add a construct column if desired
+if (ADD_CONSTRUCT) {
+  licor_data[, 'construct'] <- as.character(licor_data[, EVENT_COLUMN_NAME])
+  licor_data[licor_data[, 'construct'] != 'WT', 'construct'] <- 'transgenic'
+  licor_data <- factorize_id_column(licor_data, 'construct')
+}
+
 # Check data
 check_response_curve_data(
   licor_data,
@@ -209,6 +236,8 @@ if (REMOVE_SPECIFIC_POINTS) {
   # Remove specific points
   licor_data <- remove_points(
     licor_data,
+    list(curve_identifier = c('WT 6', 'WT az7', '24 6', '36 7', '32 7', '36 8')), #when 8, 9, 10 and 17 removed
+    #list(curve_identifier = c('122 4', '10 8', '32 1')), 
     list(event = '32', replicate = 1, CO2_r_sp = 220),
     list(event = '17', replicate = 4, CO2_r_sp = 220),
     list(event = '122', replicate = 4, CO2_r_sp = 600),
@@ -347,12 +376,15 @@ c3_temperature_param <- if (USE_SOYBEAN_RUBISCO) {
     # These Arrhenius parameters are estimated from the supplemental data of
     # Orr et al. (2016)
     within(c3_temperature_param_sharkey, {
-        Gamma_star$c = 14.12718424
-        Gamma_star$Ea = 26.00388519
-        Kc$c = 42.3821705
-        Kc$Ea = 90.47626014
-        Ko$c = 12.78425777
-        Ko$Ea = 16.5650822
+      Gamma_star_at_25$coef = 37.99225
+      Gamma_star_norm$Ea    = 26.00388519
+      Gamma_star_norm$c     = 10.4898
+      Kc_at_25$coef         = 359.467
+      Kc_norm$Ea            = 90.47626014
+      Kc_norm$c             = 36.49755
+      Ko_at_25$coef         = 446.7544
+      Ko_norm$Ea            = 16.5650822
+      Ko_norm$c             = 6.682249
     })
 } else {
     c3_temperature_param_sharkey
@@ -381,16 +413,17 @@ c3_aci_results <- consolidate(by(
   fit_c3_variable_j,                            # The function to apply to each chunk of `licor_data`
   Ca_atmospheric = 420,                         # The atmospheric CO2 concentration
   optim_fun = solver,                           # The optimization algorithm to use
-  fit_options = FIT_OPTIONS,
+  #fit_options = FIT_OPTIONS,
   lower = list(RL_at_25 = 0),
-  upper = list(tau = 0.65, Vcmax_at_25 = 280),
+  #upper = list(tau = 0.65, Vcmax_at_25 = 280),
+  #upper = list(Vcmax_at_25 = 350, J_at_25 = 350),
   hard_constraints = 1, # 0 is default, 1 prevents negative Cc, 2 imposes strongest limitations (e.g. 0 < alpha < 1)
   gmc_max = MAX_GM
 ))
 
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance, mesophyll conductance, and biochemistry) using the Grassi model
-c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits)
+c3_aci_results$fits <- calculate_c3_limitations_grassi(c3_aci_results$fits, gmc_column_name = 'gmc')
 
 # Calculate the relative limitations to assimilation (due to stomatal
 # conductance and mesophyll conductance) using the Warren model
@@ -486,7 +519,7 @@ if (MAKE_ANALYSIS_PLOTS) {
     # Plot the C3 J_F-Cc fits
     dev.new()
     print(xyplot(
-      ETR + J_F ~ Cc | curve_identifier,
+      J_tl + J_F ~ Cc | curve_identifier,
       data = c3_aci_results$fits$main_data,
       type = 'b',
       pch = 16,
@@ -656,14 +689,17 @@ if (MAKE_ANALYSIS_PLOTS) {
       print(do.call(barchart_with_errorbars, x))
     }))
 
-    # Make average response curve plots
+    # Make average response curve plots. Here we will potentially exclude some
+    # points
+    
+    all_samples_for_avg_rc <- all_samples[!all_samples[, 'seq_num'] %in% SEQ_NUM_TO_EXCLUDE_FROM_AVG_RC, ]
 
     rc_caption <- "Average response curves for each event"
 
-    x_ci <- all_samples[, 'Ci']
-    x_cc <- all_samples[, 'Cc']
-    x_s <- all_samples[, 'seq_num']
-    x_e <- all_samples[, EVENT_COLUMN_NAME]
+    x_ci <- all_samples_for_avg_rc[, 'Ci']
+    x_cc <- all_samples_for_avg_rc[, 'Cc']
+    x_s <- all_samples_for_avg_rc[, 'seq_num']
+    x_e <- all_samples_for_avg_rc[, EVENT_COLUMN_NAME]
 
     ci_lab <- "Intercellular [CO2] (ppm)"
     cc_lab <- "Chloroplast [CO2] (ppm)"
@@ -673,23 +709,52 @@ if (MAKE_ANALYSIS_PLOTS) {
     gmc_lab <- 'Mesophyll conductance (mol / m^2 / s / bar)\n(error bars: standard error of the mean for same CO2 setpoint)'
 
     avg_plot_param <- list(
-        list(all_samples[, 'A'],                x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim),
-        list(all_samples[, 'A'],                x_cc, x_s, x_e, xlab = cc_lab, ylab = a_lab,   xlim = cc_lim, ylim = a_lim),
-        list(all_samples[, 'gsw'],              x_cc, x_s, x_e, xlab = cc_lab, ylab = gsw_lab, xlim = cc_lim, ylim = gsw_lim),
-        list(all_samples[, 'gmc'],              x_cc, x_s, x_e, xlab = cc_lab, ylab = gmc_lab, xlim = cc_lim, ylim = gmc_lim),
-        list(all_samples[, 'gmc'],              x_ci, x_s, x_e, xlab = ci_lab, ylab = gmc_lab, xlim = ci_lim, ylim = gmc_lim),
-        list(all_samples[, PHIPS2_COLUMN_NAME], x_cc, x_s, x_e, xlab = cc_lab, ylab = phi_lab, xlim = cc_lim, ylim = phi_lim)
+        list(all_samples_for_avg_rc[, 'A'],                x_ci, x_s, x_e, xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim),
+        list(all_samples_for_avg_rc[, 'A'],                x_cc, x_s, x_e, xlab = cc_lab, ylab = a_lab,   xlim = cc_lim, ylim = a_lim),
+        list(all_samples_for_avg_rc[, 'gsw'],              x_ci, x_s, x_e, xlab = ci_lab, ylab = gsw_lab, xlim = ci_lim, ylim = gsw_lim),
+        list(all_samples_for_avg_rc[, 'gsw'],              x_cc, x_s, x_e, xlab = cc_lab, ylab = gsw_lab, xlim = cc_lim, ylim = gsw_lim),
+        list(all_samples_for_avg_rc[, 'gmc'],              x_ci, x_s, x_e, xlab = ci_lab, ylab = gmc_lab, xlim = ci_lim, ylim = gmc_lim),
+        list(all_samples_for_avg_rc[, 'gmc'],              x_cc, x_s, x_e, xlab = cc_lab, ylab = gmc_lab, xlim = cc_lim, ylim = gmc_lim),
+        list(all_samples_for_avg_rc[, PHIPS2_COLUMN_NAME], x_ci, x_s, x_e, xlab = ci_lab, ylab = phi_lab, xlim = ci_lim, ylim = phi_lim),
+        list(all_samples_for_avg_rc[, PHIPS2_COLUMN_NAME], x_cc, x_s, x_e, xlab = cc_lab, ylab = phi_lab, xlim = cc_lim, ylim = phi_lim)
     )
+    
+    if ('construct' %in% colnames(all_samples_for_avg_rc)) {
+      x_con <- all_samples_for_avg_rc[, 'construct']
+      
+      avg_plot_param <- c(
+        avg_plot_param,
+        list(
+          list(all_samples_for_avg_rc[, 'A'],                x_ci, x_s, x_con, xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim),
+          list(all_samples_for_avg_rc[, 'A'],                x_cc, x_s, x_con, xlab = cc_lab, ylab = a_lab,   xlim = cc_lim, ylim = a_lim),
+          list(all_samples_for_avg_rc[, 'gsw'],              x_ci, x_s, x_con, xlab = ci_lab, ylab = gsw_lab, xlim = ci_lim, ylim = gsw_lim),
+          list(all_samples_for_avg_rc[, 'gsw'],              x_cc, x_s, x_con, xlab = cc_lab, ylab = gsw_lab, xlim = cc_lim, ylim = gsw_lim),
+          list(all_samples_for_avg_rc[, 'gmc'],              x_ci, x_s, x_con, xlab = ci_lab, ylab = gmc_lab, xlim = ci_lim, ylim = gmc_lim),
+          list(all_samples_for_avg_rc[, 'gmc'],              x_cc, x_s, x_con, xlab = cc_lab, ylab = gmc_lab, xlim = cc_lim, ylim = gmc_lim),
+          list(all_samples_for_avg_rc[, PHIPS2_COLUMN_NAME], x_ci, x_s, x_con, xlab = ci_lab, ylab = phi_lab, xlim = ci_lim, ylim = phi_lim),
+          list(all_samples_for_avg_rc[, PHIPS2_COLUMN_NAME], x_cc, x_s, x_con, xlab = cc_lab, ylab = phi_lab, xlim = cc_lim, ylim = phi_lim)
+        )
+      )
+    }
+    
+    i <- 0
 
     invisible(lapply(avg_plot_param, function(x) {
-        dev.new(width = 8, height = 6)
-        print(do.call(xyplot_avg_rc, c(x, list(
+        pdf_print(
+          do.call(xyplot_avg_rc, c(x, list(
             type = 'b',
             pch = 20,
             auto = TRUE,
             grid = TRUE,
             main = rc_caption
-        ))))
+          ))),
+          width = 8,
+          height = 6,
+          save_to_pdf = SAVE_TO_PDF,
+          file = file.path(base_dir, paste0('c3_variable_j_', i, '.pdf'))
+        )  
+      
+        i <<- i + 1
     }))
 }
 

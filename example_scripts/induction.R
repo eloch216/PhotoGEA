@@ -61,7 +61,7 @@ LICOR_FILES_TO_PROCESS <- c()
 
 # Decide whether to remove a few specific points from the data before subsequent
 # processing and plotting
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Specify the filenames depending on the value of PERFORM_CALCULATIONS
 if (PERFORM_CALCULATIONS) {
@@ -69,6 +69,9 @@ if (PERFORM_CALCULATIONS) {
 }
 
 GET_INFO_FROM_FILENAME <- FALSE
+
+# Decide whether to save average response curves to PDF
+SAVE_TO_PDF <- FALSE
 
 # Specify which measurement numbers to choose. Here, the numbers refer to
 # points along the time sequence of measurements.
@@ -87,17 +90,17 @@ TIME_RANGE_FOR_NORMALIZATION <- c(35,40)
 
 # Specify time range to use for plotting curves. Elapsed time will be shifted
 # so the plots always begin at 0. Units are minutes.
-A_TIME_LIM <- c(4, 40)
+A_TIME_LIM <- c(5, 40)
 
 # Specify fraction of assimilation rate to use for speed calculations (expressed
 # as a percentage)
-TARGET_PERCENTAGE <- 10
+TARGET_PERCENTAGE <- 60
 
 # Specify time interval for calculating average assimilation and lost carbon.
 # Units are minutes, and times should be specified relative to the start of
 # A_TIME_LIM. E.g. c(0, 5) is the first five minutes (300 seconds) after light
 # exposure.
-LOST_CARBON_INTERVAL <- c(5,6)
+LOST_CARBON_INTERVAL <- c(5,10)
 
 ###                                                                        ###
 ### COMPONENTS THAT ARE LESS LIKELY TO CHANGE EACH TIME THIS SCRIPT IS RUN ###
@@ -114,6 +117,14 @@ TIME_COLUMN_NAME <- "time"
 UNIQUE_ID_COLUMN_NAME <- "line_sample"
 
 A_NORM_COLUMN_NAME <- paste0(A_COLUMN_NAME, '_norm')
+
+# Decide where to save PDFs
+base_dir <- getwd()
+if (SAVE_TO_PDF) {
+  if (interactive() & .Platform$OS.type == "windows") {
+    base_dir <- choose.dir(caption="Select folder for output files")
+  }
+}
 
 # Define a function that plots fancy error ranges using ggplot2
 ggplot2_avg_rc <- function(
@@ -251,6 +262,10 @@ if (PERFORM_CALCULATIONS) {
     # Factorize ID columns
     combined_info <- factorize_id_column(combined_info, EVENT_COLUMN_NAME)
     combined_info <- factorize_id_column(combined_info, UNIQUE_ID_COLUMN_NAME)
+    
+    if ('construct' %in% colnames(combined_info)) {
+      combined_info <- factorize_id_column(combined_info, 'construct')
+    }
 
     # Extract just the induction curves, if necessary
     if ('type' %in% colnames(combined_info)) {
@@ -282,12 +297,23 @@ if (PERFORM_CALCULATIONS) {
       # Specify the points to remove
       combined_info <- remove_points(
         combined_info,
-        list(event = '9', replicate = '6', obs = 904:912),
-        list(event = '9', replicate = '5', obs = 183:198),
-        list(event = '3', replicate = '6', obs = 1264:1271),
-        list(event = '25', replicate = '6', obs = 544:552),
-        list(event = '25', replicate = '9', obs = 1623:1632),
-        list(event = '25', replicate = '10', obs = 1263:1268)
+        list(event = 'WT', plot_replicate = '6 1', obs = 68:78),
+        list(event = '97', plot_replicate = '6 1', obs = 307:312),
+        list(event = '196', plot_replicate = '4 1', obs = 1059:1061),
+        list(event = 'az', plot_replicate = '2 1', obs = 68:71),
+        list(event = '187', plot_replicate = '1 1', obs = 563:569),
+        list(event = '97', plot_replicate = '1 1', obs = 1062:1066),
+        list(event = '196', plot_replicate = '6 1', obs = 802:806),
+        list(event = '196', plot_replicate = '4 1', obs = 1043:1045), 
+        list(event = '187', plot_replicate = '1 1', obs = 581:586),
+        list(event = 'az', plot_replicate = '5 1', obs = 561:563),
+        list(event = '144', plot_replicate = '2 2', obs = 68:77)
+        #list(event = '9', replicate = '6', obs = 904:912),
+        #list(event = '9', replicate = '5', obs = 183:198),
+        #list(event = '3', replicate = '6', obs = 1264:1271),
+        #list(event = '25', replicate = '6', obs = 544:552),
+        #list(event = '25', replicate = '9', obs = 1623:1632),
+        #list(event = '25', replicate = '10', obs = 1263:1268)
         #list(event = 'hn1a', plot_replicate = '5 1', obs = 714:720)
       )
     }
@@ -312,12 +338,6 @@ if (PERFORM_CALCULATIONS) {
       })
     )
 
-    # Calculate basic stats for each event
-    all_stats <- basic_stats(
-        combined_info,
-        c('seq_num', EVENT_COLUMN_NAME)
-    )
-
     all_samples <- combined_info[['main_data']]
 }
 
@@ -331,6 +351,10 @@ curve_information <- do.call(rbind, by(
             c(UNIQUE_ID_COLUMN_NAME, REP_COLUMN_NAME, EVENT_COLUMN_NAME, 'replicate', 'plot')
         } else {
             c(UNIQUE_ID_COLUMN_NAME, EVENT_COLUMN_NAME, REP_COLUMN_NAME)
+        }
+        
+        if ('construct' %in% colnames(combined_info)) {
+          id_cols <- c(id_cols, 'construct')
         }
 
         res <- x[1, c(id_cols, 'A_norm_val'), TRUE]
@@ -371,7 +395,6 @@ curve_information <- do.call(rbind, by(
 # View the resulting data frames, if desired
 if (VIEW_DATA_FRAMES) {
     View(all_samples)
-    View(all_stats$main_data)
     View(curve_information$main_data)
 }
 
@@ -388,7 +411,7 @@ x_t <- all_samples_for_plots[['elapsed_time']]
 x_s <- all_samples_for_plots[['seq_num']]
 x_e <- all_samples_for_plots[[EVENT_COLUMN_NAME]]
 
-a_lim <- c(-3, 50)
+a_lim <- c(-3, 30)
 a_norm_lim <- c(-0.1, 1.1)
 gs_lim <- c(0, 0.5)
 
@@ -403,18 +426,37 @@ avg_plot_param <- list(
   list(all_samples_for_plots[['gsw']],              x_t, x_s, x_e, xlab = t_lab, ylab = gs_lab,     ylim = gs_lim,      xlim = A_TIME_LIM - min(A_TIME_LIM))
 )
 
+if ('construct' %in% colnames(all_samples_for_plots)) {
+  avg_plot_param <- c(
+    avg_plot_param,
+    list(
+      list(all_samples_for_plots[[A_COLUMN_NAME]],      x_t, x_s, all_samples_for_plots[['construct']], xlab = t_lab, ylab = a_lab,      ylim = a_lim,      xlim = A_TIME_LIM - min(A_TIME_LIM)),
+      list(all_samples_for_plots[[A_NORM_COLUMN_NAME]], x_t, x_s, all_samples_for_plots[['construct']], xlab = t_lab, ylab = a_norm_lab, ylim = a_norm_lim, xlim = A_TIME_LIM - min(A_TIME_LIM))
+    )
+  )
+}
+
+i <- 0
+
 invisible(lapply(avg_plot_param, function(x) {
-    plot_obj <- do.call(xyplot_avg_rc, c(x, y_error_bars = FALSE, list(
+    pdf_print(
+      do.call(xyplot_avg_rc, c(x, y_error_bars = FALSE, list(
         type = 'b',
         pch = 20,
         auto = TRUE,
         grid = TRUE,
         main = rc_caption
-    )))
-    x11(width = 8, height = 6)
-    print(plot_obj)
-
-    plot_obj <- ggplot2_avg_rc(
+      ))),
+      width = 8,
+      height = 6,
+      save_to_pdf = SAVE_TO_PDF,
+      file = file.path(base_dir, paste0('induction_', i, '.pdf'))
+    )
+    
+    i <<- i + 1
+    
+    pdf_print(
+      ggplot2_avg_rc(
         x[[1]],
         x[[2]],
         x[[3]],
@@ -423,9 +465,14 @@ invisible(lapply(avg_plot_param, function(x) {
         x[[7]],
         x[[5]],
         x[[6]]
+      ),
+      width = 8,
+      height = 6,
+      save_to_pdf = SAVE_TO_PDF,
+      file = file.path(base_dir, paste0('induction_', i, '.pdf'))
     )
-    x11(width = 8, height = 6)
-    print(plot_obj)
+    
+    i <<- i + 1
 }))
 
 ###                                      ###
@@ -471,7 +518,7 @@ plot_param <- list(
         X = curve_information[, EVENT_COLUMN_NAME],
         ylab = paste('Time to target percentage [', curve_information$units$time_to_target_percentage, ']'),
         xlab = 'Event',
-        ylim = c(0, 15),
+        ylim = c(0, 7),
         main = paste('Target percentage:', TARGET_PERCENTAGE)
     ),
     list(
@@ -491,6 +538,22 @@ plot_param <- list(
         main = interval_main
     )
 )
+
+if ('construct' %in% colnames(curve_information)) {
+  plot_param <- c(
+    plot_param,
+    list(
+      list(
+        Y = curve_information[, 'time_to_target_percentage'],
+        X = curve_information[, 'construct'],
+        ylab = paste('Time to target percentage [', curve_information$units$time_to_target_percentage, ']'),
+        xlab = 'Construct',
+        ylim = c(0, 18),
+        main = paste('Target percentage:', TARGET_PERCENTAGE)
+      )
+    )
+  )
+}
 
 invisible(lapply(plot_param, function(x) {
     dev.new()

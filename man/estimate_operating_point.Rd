@@ -116,10 +116,14 @@
   \code{An} from a photosynthesis model.
 
   If \code{Ca_atmospheric} is outside the range of \code{Ca} values in
-  \code{aci_exdf}, then the operating point cannot be reasonably estimated; in
-  this case, a warning occurs and all calculated return values are set to
-  \code{NA}. If \code{Ca_atmospheric} is \code{NA}, all calculated return values
-  are set to \code{NA} but no warning occurs.
+  \code{aci_exdf}, or if all provided values of \code{Ca} are \code{NA}, then
+  the operating point cannot be reasonably estimated; in this case, an
+  explanation is returned as the \code{operating_point_msg} column or list
+  element, and all other calculated return values are set to \code{NA}.
+  Otherwise, the \code{operating_point_msg} is an empty string.
+
+  If \code{Ca_atmospheric} is \code{NA}, all calculated return values are set to
+  \code{NA} without any additional explanation.
 }
 
 \examples{
@@ -158,6 +162,7 @@ one_result <- estimate_operating_point(
 one_result[, 'operating_Cc']
 one_result[, 'operating_Ci']
 one_result[, 'operating_An']
+one_result[, 'operating_point_msg']
 }
 
 \concept{exdf}

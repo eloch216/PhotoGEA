@@ -6,7 +6,7 @@ initial_guess_c3_variable_j <- function(
     Gamma_star_at_25,
     Kc_at_25,
     Ko_at_25,
-    cc_threshold_rd = 100,
+    cc_threshold_rl = 100,
     Wj_coef_C = 4.0,
     Wj_coef_Gamma_star = 8.0,
     a_column_name = 'A',
@@ -22,7 +22,8 @@ initial_guess_c3_variable_j <- function(
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
-    vcmax_norm_column_name = 'Vcmax_norm'
+    vcmax_norm_column_name = 'Vcmax_norm',
+    debug_mode = FALSE
 )
 {
     function(rc_exdf) {
@@ -74,7 +75,7 @@ initial_guess_c3_variable_j <- function(
             Inf, # gmc
             Kc_at_25,
             Ko_at_25,
-            cc_threshold_rd,
+            cc_threshold_rl,
             Wj_coef_C,
             Wj_coef_Gamma_star,
             a_column_name,
@@ -88,7 +89,8 @@ initial_guess_c3_variable_j <- function(
             rl_norm_column_name,
             total_pressure_column_name,
             tp_norm_column_name,
-            vcmax_norm_column_name
+            vcmax_norm_column_name,
+            debug_mode
         )
 
         # Apply that function

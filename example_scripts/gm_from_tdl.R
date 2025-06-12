@@ -39,7 +39,7 @@ PERFORM_CALCULATIONS <- TRUE
 
 PERFORM_STATS_TESTS <- TRUE
 
-SAVE_RESULTS <- FALSE
+SAVE_RESULTS <- TRUE
 MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
@@ -52,7 +52,7 @@ USE_BUSCH_GM <- TRUE
 E_STAR_EQUATION <- 20
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- 1.81
+DEFAULT_RESPIRATION <- 1
 
 # Specify respiration values for each event; these will override the default.
 # To use default for all events, set RESPIRATION_TABLE <- list()

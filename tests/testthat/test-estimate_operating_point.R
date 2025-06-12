@@ -55,9 +55,14 @@ test_that('list c4 operating point estimation works', {
 })
 
 test_that('extrapolation is not allowed', {
-    expect_warning(
+    expect_silent(
         bad_res <- estimate_operating_point(test_curve, 100)
     )
     expect_true(is.na(bad_res[, 'operating_Ci']))
     expect_true(is.na(bad_res[, 'operating_An']))
+
+    expect_equal(
+        bad_res[, 'operating_point_msg'],
+        'The atmospheric CO2 concentration (100) is outside the measured range (0 to 10)'
+    )
 })

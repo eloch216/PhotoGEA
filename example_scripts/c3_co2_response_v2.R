@@ -20,6 +20,10 @@ PREFIX_TO_REMOVE <- "36625-"
 NUM_OBS_IN_SEQ <- 17
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
 
+# Decide whether to add a "construct" column (set to TRUE if data does not
+# already have a construct column)
+ADD_CONSTRUCT <- FALSE
+
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
 MAKE_ANALYSIS_PLOTS <- TRUE
@@ -31,7 +35,7 @@ SAVE_TO_PDF <- FALSE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- TRUE
+REMOVE_SPECIFIC_POINTS <- FALSE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -81,7 +85,7 @@ CO2_s_seq <- c(420, 320, 220, 150, 100, 75, 50, 20, 420, 420, 500, 600, 800, 100
 AVERAGE_OVER_PLOTS <- FALSE
 
 # Decide whether to save CSV outputs
-SAVE_CSV <- TRUE
+SAVE_CSV <- FALSE
 
 ###
 ### TRANSLATION:
@@ -93,7 +97,8 @@ file_paths <- choose_input_licor_files()
 
 # Load each file, storing the result in a list
 licor_exdf_list <- lapply(file_paths, function(fpath) {
-  read_gasex_file(fpath, 'time')
+  print(fpath)
+  read_gasex_file(fpath, include_user_remark_column = FALSE)
 })
 
 # Get the names of all columns that are present in all of the Licor files
@@ -160,9 +165,26 @@ REP_COLUMN_NAME <- if (HAS_PLOT_INFO) {
 licor_data[, 'curve_identifier'] <-
     paste(licor_data[, EVENT_COLUMN_NAME], licor_data[, REP_COLUMN_NAME])
 
+# Add a construct column if desired
+if (ADD_CONSTRUCT) {
+  licor_data[, 'construct'] <- as.character(licor_data[, EVENT_COLUMN_NAME])
+  licor_data[licor_data[, 'construct'] != 'WT', 'construct'] <- 'transgenic'
+}
+
 # Factorize ID columns
 licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
+
+if ('construct' %in% colnames(licor_data)) {
+  licor_data <- factorize_id_column(licor_data, 'construct')
+  
+  # Temporary hack to get 'control' to be black: just reverse the order of the
+  # levels
+  licor_data[, 'construct'] <- factor(
+      licor_data[, 'construct'],
+      levels = rev(levels(licor_data[, 'construct']))
+  )
+}
 
 # If CO2_s was controlled, add the setpoint values
 if (CO2_CONTROL == 'CO2_s_sp') {
@@ -208,20 +230,31 @@ if (REMOVE_SPECIFIC_POINTS) {
   # Remove specific points
   licor_data <- remove_points(
     licor_data,
+    list(event = '187', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
+    list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
+    list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
+    list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
+    list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 800), #soy aug 19 aci,
+    list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800), #soy aug 19 aci,
+    list(event = '216', replicate = 1, plot = 4, CO2_r_sp = 1500) #soy aug 19 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1500), #soy july 18 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1200), #soy july 18 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 800),  #soy july 18 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 320)   #soy july 18 aci
     #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500),
     #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500),
     #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 800),
     #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
     #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
     #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
-    list(event = '32', replicate = 1, CO2_r_sp = 220),
-    list(event = '17', replicate = 4, CO2_r_sp = 220),
-    list(event = '122', replicate = 4, CO2_r_sp = 600),
-    list(event = '36', replicate = 6, CO2_r_sp = 320),
-    list(event = '17', replicate = 7, CO2_r_sp = 500),
-    list(event = '10', replicate = 8, CO2_r_sp = 420),
-    list(event = '10', replicate = 8, CO2_r_sp = 220),
-    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+    #list(event = '32', replicate = 1, CO2_r_sp = 220),
+    #list(event = '17', replicate = 4, CO2_r_sp = 220),
+    #list(event = '122', replicate = 4, CO2_r_sp = 600),
+    #list(event = '36', replicate = 6, CO2_r_sp = 320),
+    #list(event = '17', replicate = 7, CO2_r_sp = 500),
+    #list(event = '10', replicate = 8, CO2_r_sp = 420),
+    #list(event = '10', replicate = 8, CO2_r_sp = 220),
+    #list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
     #list(curve_identifier = '10 5 6', seq_num = c(2))
   )
 }
@@ -360,12 +393,15 @@ c3_temperature_param <- if (USE_SOYBEAN_RUBISCO) {
     # These Arrhenius parameters are estimated from the supplemental data of
     # Orr et al. (2016)
     within(c3_temperature_param_sharkey, {
-        Gamma_star$c = 14.12718424
-        Gamma_star$Ea = 26.00388519
-        Kc$c = 42.3821705
-        Kc$Ea = 90.47626014
-        Ko$c = 12.78425777
-        Ko$Ea = 16.5650822
+      Gamma_star_at_25$coef = 37.99225
+      Gamma_star_norm$Ea    = 26.00388519
+      Gamma_star_norm$c     = 10.4898
+      Kc_at_25$coef         = 359.467
+      Kc_norm$Ea            = 90.47626014
+      Kc_norm$c             = 36.49755
+      Ko_at_25$coef         = 446.7544
+      Ko_norm$Ea            = 16.5650822
+      Ko_norm$c             = 6.682249
     })
 } else {
     c3_temperature_param_sharkey
@@ -670,6 +706,15 @@ if (MAKE_ANALYSIS_PLOTS) {
         list(all_samples[, 'A'],   x_cc, x_s, x_e, xlab = cc_lab, ylab = a_lab,   xlim = cc_lim, ylim = a_lim),
         list(all_samples[, 'gsw'], x_ci, x_s, x_e, xlab = ci_lab, ylab = gsw_lab, xlim = ci_lim, ylim = gsw_lim)
     )
+    
+    if ('construct' %in% colnames(all_samples)) {
+      avg_plot_param <- c(
+        avg_plot_param,
+        list(
+          list(all_samples[, 'A'], x_ci, x_s, all_samples[, 'construct'], xlab = ci_lab, ylab = a_lab,   xlim = ci_lim, ylim = a_lim)
+        )
+      )
+    }
 
     if (INCLUDE_FLUORESCENCE) {
         avg_plot_param <- c(
