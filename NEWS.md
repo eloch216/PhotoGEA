@@ -31,6 +31,13 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+### Bug fixes
+
+- Fixed an error causing `basic_stats` to fail for `exdf` objects with column
+  names containing punctuation, such as `A:OK`
+
 ## Changes in PhotoGEA version 1.3.3 (2025-06-11)
 
 ### Minor user-facing changes
