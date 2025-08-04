@@ -19,7 +19,7 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(8, 9, 10, 17)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,2,7, 8, 9)
 
 SEQ_NUM_TO_EXCLUDE_FROM_AVG_RC <- c() # set to c() to keep all points
 
@@ -37,7 +37,7 @@ ADD_CONSTRUCT <- FALSE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -49,7 +49,7 @@ EXCLUDE_NEG_ASSIM <- FALSE
 MAX_GM <- Inf
 
 # Decide which point to use for box plots of A and other quantities
-POINT_FOR_BOX_PLOTS <- 1
+POINT_FOR_BOX_PLOTS <- 11
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
@@ -236,7 +236,7 @@ if (REMOVE_SPECIFIC_POINTS) {
   # Remove specific points
   licor_data <- remove_points(
     licor_data,
-    list(curve_identifier = c('WT 6', 'WT az7', '24 6', '36 7', '32 7', '36 8')), #when 8, 9, 10 and 17 removed
+    #list(curve_identifier = c('WT 6', 'WT az7', '24 6', '36 7', '32 7', '36 8')), #when 8, 9, 10 and 17 removed
     #list(curve_identifier = c('122 4', '10 8', '32 1')), 
     list(event = '32', replicate = 1, CO2_r_sp = 220),
     list(event = '17', replicate = 4, CO2_r_sp = 220),

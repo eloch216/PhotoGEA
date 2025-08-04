@@ -404,7 +404,7 @@ if (PERFORM_CALCULATIONS) {
     # Specify Rubisco specificity values
     licor_files <- set_variable(
         licor_files,
-        'specificity_at_tleaf',
+        'rubisco_specificity_tl',
         'M / M',
         'gm_from_tdl',
         RUBISCO_SPECIFICITY_AT_TLEAF

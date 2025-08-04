@@ -53,13 +53,13 @@ basic_stats_chunk <- function(exdf_chunk, na.rm) {
 
     # Create new exdf objects for the means and standard errors
     mean_exdf <- exdf(
-        as.data.frame(mean_list),
+        data.frame(mean_list, check.names = FALSE),
         stats::setNames(other_columns$units, names(mean_list)),
         stats::setNames(other_columns$categories, names(mean_list))
     )
 
     stderr_exdf <- exdf(
-        as.data.frame(stderr_list),
+        data.frame(stderr_list, check.names = FALSE),
         stats::setNames(other_columns$units, names(stderr_list)),
         stats::setNames(other_columns$categories, names(stderr_list))
     )

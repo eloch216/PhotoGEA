@@ -79,3 +79,28 @@ the version of the package you used.
    > - PhotoGEA version: `v0.11.0`
    >
    > - Analysis scripts: https://github.com/cabbi-bio/sorghum-sugarcane-RBCS-RAF1-2024
+
+5. Lochocki, E. B. & McGrath, J. M. "Widely Used Variants of the
+   Farquhar-von-Caemmerer-Berry Model Can Cause Errors in Parameter Estimation."
+   _bioRxiv_ preprint (2025).
+
+   > - [DOI:10.1101/2025.03.11.642611](https://doi.org/10.1101/2025.03.11.642611)
+   >
+   > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`) using
+   >   several variants of the FvCB model
+   >
+   > - PhotoGEA version: `v1.2.0`
+   >
+   > - Analysis scripts: https://github.com/ripeproject/FvCB-min-A
+
+6. Tamang, B. G., Bernard, G., Bernacchi, C. J., Diers, B. W. & Ainsworth, E. A.
+   "Bigger is not always better: Optimizing leaf area index with narrow leaf
+   shape in soybean." _bioRxiv_ preprint (2025).
+
+   > - [DOI:10.1101/2025.07.07.663573](https://doi.org/10.1101/2025.07.07.663573)
+   >
+   > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`)
+   >
+   > - PhotoGEA version: `v1.1.0`
+   >
+   > - Analysis scripts: Not yet available

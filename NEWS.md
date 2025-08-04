@@ -31,6 +31,21 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## Changes in PhotoGEA version 1.3.4 (2025-08-02)
+
+### Minor user-facing changes
+
+- Added new references to "Publications" vignette
+
+- Simplified the "Getting Started" vignette; it was confusing to have two
+  different vignettes that both fit C3 A-Ci curves, and this also made
+  maintenance more complicated
+
+### Bug fixes
+
+- Fixed an error causing `basic_stats` to fail for `exdf` objects with column
+  names containing punctuation, such as `A:OK`
+
 ## Changes in PhotoGEA version 1.3.3 (2025-06-11)
 
 ### Minor user-facing changes

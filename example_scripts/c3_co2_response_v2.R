@@ -10,15 +10,15 @@ library(onewaytests) # for bf.test, shapiro.test, A.aov
 library(DescTools)   # for DunnettTest
 
 # Specify the names of a few important columns
-EVENT_COLUMN_NAME <- 'event'
-REP_COLUMN_NAME <- 'replicate'
+EVENT_COLUMN_NAME <- 'Event'
+REP_COLUMN_NAME <- 'Block'
 
 # Specify prefix that should be removed from event names
 PREFIX_TO_REMOVE <- "36625-"
 
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(9,10)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 
 # Decide whether to add a "construct" column (set to TRUE if data does not
 # already have a construct column)
@@ -27,6 +27,8 @@ ADD_CONSTRUCT <- FALSE
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
 MAKE_ANALYSIS_PLOTS <- TRUE
+
+VIEW_PARAMETERS <- TRUE
 
 # Decide whether to save average response curves to PDF
 SAVE_TO_PDF <- FALSE
@@ -75,7 +77,7 @@ OVERRIDE_GAMMA_STAR <- FALSE
 GAMMA_STAR <- 50 # ppm
 
 # Specify which type of CO2 control was used
-CO2_CONTROL <- 'CO2_s_sp' # should be 'CO2_r_sp' or 'CO2_s_sp'
+CO2_CONTROL <- 'CO2_r_sp' # should be 'CO2_r_sp' or 'CO2_s_sp'
 
 # If CO2_s was controlled, we have to specify the setpoint values because the
 # Licor log file doesn't include them
@@ -230,13 +232,13 @@ if (REMOVE_SPECIFIC_POINTS) {
   # Remove specific points
   licor_data <- remove_points(
     licor_data,
-    list(event = '187', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
-    list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
-    list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
-    list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
-    list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 800), #soy aug 19 aci,
-    list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800), #soy aug 19 aci,
-    list(event = '216', replicate = 1, plot = 4, CO2_r_sp = 1500) #soy aug 19 aci
+    #list(event = '187', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
+    #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
+    #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
+    #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
+    #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 800), #soy aug 19 aci,
+    #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800), #soy aug 19 aci,
+    #list(event = '216', replicate = 1, plot = 4, CO2_r_sp = 1500) #soy aug 19 aci
     #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1500), #soy july 18 aci
     #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1200), #soy july 18 aci
     #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 800),  #soy july 18 aci
@@ -247,14 +249,14 @@ if (REMOVE_SPECIFIC_POINTS) {
     #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
     #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
     #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
-    #list(event = '32', replicate = 1, CO2_r_sp = 220),
-    #list(event = '17', replicate = 4, CO2_r_sp = 220),
-    #list(event = '122', replicate = 4, CO2_r_sp = 600),
-    #list(event = '36', replicate = 6, CO2_r_sp = 320),
-    #list(event = '17', replicate = 7, CO2_r_sp = 500),
-    #list(event = '10', replicate = 8, CO2_r_sp = 420),
-    #list(event = '10', replicate = 8, CO2_r_sp = 220),
-    #list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+    list(event = '32', replicate = 1, CO2_r_sp = 220),
+    list(event = '17', replicate = 4, CO2_r_sp = 220),
+    list(event = '122', replicate = 4, CO2_r_sp = 600),
+    list(event = '36', replicate = 6, CO2_r_sp = 320),
+    list(event = '17', replicate = 7, CO2_r_sp = 500),
+    list(event = '10', replicate = 8, CO2_r_sp = 420),
+    list(event = '10', replicate = 8, CO2_r_sp = 220),
+    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
     #list(curve_identifier = '10 5 6', seq_num = c(2))
   )
 }
@@ -276,7 +278,7 @@ if (MAKE_VALIDATION_PLOTS) {
     # Plot all A-Cu curves, grouped by event
     dev.new()
     print(xyplot(
-      A ~ Ci | event,
+      A ~ Ci | licor_data[, EVENT_COLUMN_NAME],
       group = curve_identifier,
       data = licor_data$main_data,
       type = 'b',
@@ -481,7 +483,7 @@ if (MAKE_ANALYSIS_PLOTS) {
         c3_aci_results,
         'curve_identifier',
         'Ci',
-        ylim = c(-10, 60)
+        ylim = c(-10, 80)
       )
     )
 
@@ -748,7 +750,7 @@ if (MAKE_ANALYSIS_PLOTS) {
 if (PERFORM_STATS_TESTS) {
     # Perform Brown-Forsythe test to check for equal variance
     # This test automatically prints its results to the R terminal
-    bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = aci_parameters)
+    bf_test_result <- bf.test(Vcmax_at_25 ~ Event, data = aci_parameters)
 
     # If p > 0.05 variances among populations is equal and proceed with anova
     # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
@@ -760,15 +762,23 @@ if (PERFORM_STATS_TESTS) {
     # If p > 0.05 data has normal distribution and proceed with anova
 
     # Perform one way analysis of variance
-    anova_result <- aov(Vcmax_at_25 ~ event, data = aci_parameters)
+    anova_result <- aov(Vcmax_at_25 ~ Event, data = aci_parameters)
     cat("    ANOVA result\n\n")
     print(summary(anova_result))
 
     # If p < 0.05 perform Dunnett's posthoc test
 
     # Perform Dunnett's Test
-    dunnett_test_result <- DunnettTest(x = aci_parameters$Vcmax_at_25, g = aci_parameters$event, control = "WT")
+    dunnett_test_result <- DunnettTest(x = aci_parameters$Vcmax_at_25, g = aci_parameters[[EVENT_COLUMN_NAME]], control = "WT")
     print(dunnett_test_result)
+}
+
+if (VIEW_PARAMETERS) {
+  param_to_view <- c(
+    EVENT_COLUMN_NAME, REP_COLUMN_NAME,
+    'Vcmax_at_25', 'J_at_25', 'Tp_at_25', 'alpha_old','RL_at_25'
+  )
+  View(aci_parameters[, param_to_view])
 }
 
 if (SAVE_CSV) {
