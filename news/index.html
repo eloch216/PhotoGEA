@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,11 +52,24 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.3/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.3.3" id="changes-in-photogea-version-133-2025-06-11">Changes in PhotoGEA version 1.3.3 (2025-06-11)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-133-2025-06-11"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.3.4" id="changes-in-photogea-version-134-2025-08-02">Changes in PhotoGEA version 1.3.4 (2025-08-02)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-134-2025-08-02"></a></h2>
+<div class="section level3">
+<h3 id="minor-user-facing-changes-1-3-4">Minor user-facing changes<a class="anchor" aria-label="anchor" href="#minor-user-facing-changes-1-3-4"></a></h3>
+<ul><li><p>Added new references to “Publications” vignette</p></li>
+<li><p>Simplified the “Getting Started” vignette; it was confusing to have two different vignettes that both fit C3 A-Ci curves, and this also made maintenance more complicated</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-3-4">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-3-4"></a></h3>
+<ul><li>Fixed an error causing <code>basic_stats</code> to fail for <code>exdf</code> objects with column names containing punctuation, such as <code>A:OK</code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.3.3" id="changes-in-photogea-version-133-2025-06-11">Changes in PhotoGEA version 1.3.3 (2025-06-11)<a class="anchor" aria-label="anchor" href="#changes-in-photogea-version-133-2025-06-11"></a></h2><p class="text-muted">CRAN release: 2025-06-12</p>
 <div class="section level3">
 <h3 id="minor-user-facing-changes-1-3-3">Minor user-facing changes<a class="anchor" aria-label="anchor" href="#minor-user-facing-changes-1-3-3"></a></h3>
 <ul><li><p>Added “debug mode” option to A-Ci fitting functions; in debug mode, detailed information about the fit is printed to the R terminal to help with troubleshooting.</p></li>

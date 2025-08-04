@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Getting Started With PhotoGEA</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.3/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/PhotoGEA.Rmd" class="external-link"><code>vignettes/PhotoGEA.Rmd</code></a></small>
       <div class="d-none name"><code>PhotoGEA.Rmd</code></div>
     </div>
 
@@ -98,9 +98,6 @@
 tools for loading, processing, and analyzing photosynthetic gas exchange
 data. See <a href="https://doi.org/10.1111/pce.15501" class="external-link">Lochocki,
 Salesse-Smith, &amp; McGrath (2025)</a> for more information.</p>
-<p>This vignette is designed to be viewed online; some of the links may
-not work properly in a local version. To see the online version, visit
-<a href="https://eloch216.github.io/PhotoGEA/articles/PhotoGEA.html" class="uri">https://eloch216.github.io/PhotoGEA/articles/PhotoGEA.html</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installing-photogea">Installing PhotoGEA<a class="anchor" aria-label="anchor" href="#installing-photogea"></a>
@@ -112,183 +109,15 @@ terminal:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'PhotoGEA'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="an-example-c3-co2-response-curves">An Example: C<sub>3</sub> CO<sub>2</sub> Response Curves<a class="anchor" aria-label="anchor" href="#an-example-c3-co2-response-curves"></a>
-</h2>
-<p>As an example, we will read data from two Licor Li-6800 log files
-that contain several A-Ci curves measured from tobacco and soybean
-plants, fit a model to each response curve, and then plot some of the
-results. This is a basic example that just scratches the surface of what
-is possible with <code>PhotoGEA</code>.</p>
-<p>(<strong>Note:</strong> When loading your own files for analysis, it
-is not advisable to use <code>PhotoGEA_example_file_path</code> as we
-have done in the code below. Instead, file paths can be directly
-written, or files can be chosen using an interactive window. See the <a href="https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_curves.html#input-files">Analyzing
-C3 A-Ci Curves</a> vignette for more information.)</p>
-<div class="section level3">
-<h3 id="fitting-the-curves">Fitting the Curves<a class="anchor" aria-label="anchor" href="#fitting-the-curves"></a>
-</h3>
-<p>The following code can be used to read the data and fit each
-curve:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load required packages</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eloch216/PhotoGEA" class="external-link">PhotoGEA</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Define a vector of paths to the files we wish to load; in this case, we are</span></span>
-<span><span class="co"># loading example files included with the PhotoGEA package</span></span>
-<span><span class="va">file_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'c3_aci_1.xlsx'</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="../reference/PhotoGEA_example_file_path.html">PhotoGEA_example_file_path</a></span><span class="op">(</span><span class="st">'c3_aci_2.xlsx'</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Load the data from each file</span></span>
-<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">file_paths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">fpath</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/read_gasex_file.html">read_gasex_file</a></span><span class="op">(</span><span class="va">fpath</span>, <span class="st">'time'</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Get the names of all columns that are present in all of the Licor files</span></span>
-<span><span class="va">columns_to_keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">identify_common_columns</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Extract just these columns</span></span>
-<span><span class="va">gasex_exdf_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">gasex_exdf_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span><span class="op">[</span> , <span class="va">columns_to_keep</span>, <span class="cn">TRUE</span><span class="op">]</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Combine the data from all the files</span></span>
-<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">gasex_exdf_list</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Define a new column that uniquely identifies each curve</span></span>
-<span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>, <span class="st">'-'</span>, <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'plot'</span><span class="op">]</span> <span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Organize the data</span></span>
-<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/organize_response_curve_data.html">organize_response_curve_data</a></span><span class="op">(</span></span>
-<span>    <span class="va">gasex_data</span>,</span>
-<span>    <span class="st">'curve_id'</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">16</span><span class="op">)</span>,</span>
-<span>    <span class="st">'CO2_r_sp'</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calculate the total pressure</span></span>
-<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_total_pressure.html">calculate_total_pressure</a></span><span class="op">(</span><span class="va">gasex_data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calculate temperature-dependent values of C3 photosynthetic parameters</span></span>
-<span><span class="va">gasex_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_temperature_response.html">calculate_temperature_response</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="va">c3_temperature_param_bernacchi</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># The default optimizer uses randomness, so we will set a seed to ensure the</span></span>
-<span><span class="co"># results from this fit are always identical</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Fit all curves in the data set</span></span>
-<span><span class="va">aci_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/consolidate.html">consolidate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/by.html" class="external-link">by</a></span><span class="op">(</span></span>
-<span>  <span class="va">gasex_data</span>,</span>
-<span>  <span class="va">gasex_data</span><span class="op">[</span>, <span class="st">'curve_id'</span><span class="op">]</span>,</span>
-<span>  <span class="va">fit_c3_aci</span>,</span>
-<span>  Ca_atmospheric <span class="op">=</span> <span class="fl">420</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>When this document was generated, evaluating this code required the
-following amount of time:</p>
-<pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;  16.860   0.042  16.905</span></span></code></pre>
-<p>The timing results may vary depending on the particular machine used
-to run the code. Nevertheless, this is a small time investment for an
-advanced algorithm that uses derivative-free optimizers for robust
-fitting and calculates nonparametric confidence intervals to determine
-which estimated parameter values are reliable.</p>
-<p>This example contains 13 commands, so it certainly isn’t short;
-however, a close look reveals that much of the commands are general and
-would apply to <em>any</em> set of C<sub>3</sub> response curves. In
-fact, only a few parts would need to be modified, such as the list of
-files to read, the curve identifier, and the value of mesophyll
-conductance. While using <code>PhotoGEA</code>, you are encouraged to
-copy this example and any others to use as the base of your own scripts;
-work smarter, not harder!</p>
-</div>
-<div class="section level3">
-<h3 id="viewing-the-results">Viewing the Results<a class="anchor" aria-label="anchor" href="#viewing-the-results"></a>
-</h3>
-<p>Having fit the response curves, it is also possible to view the fits,
-the parameter estimates, and their confidence intervals.
-<code>PhotoGEA</code> provides several tools for doing this, which
-enable users to check the fit quality and ensure that only reliable
-parameter estimates are used in subsequent analysis.</p>
-<p>We can plot the measured values of net assimilation (black circles),
-the fitted values of net assimilation (<code>An</code>), and each of the
-limiting assimilation rates calculated during the fitting procedure: the
-Rubisco limited rate (<code>Ac</code>), the RuBP regeneration limited
-rate (<code>Aj</code>), and the triose phosphate utilization (TPU)
-limited rate (<code>Ap</code>). This is a basic quality check where we
-can make sure that the fits make sense and look believable:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">aci_results</span>, <span class="st">'curve_id'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>In this figure, some curves are missing one or more of the potential
-limiting rates. When this occurs, it means that no points in the curve
-were found to be limited by that process.</p>
-<p>Another way to check the overall quality of the fits is to plot the
-residuals, which should be randomly distributed:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/xyplot.html" class="external-link">xyplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">A_residuals</span> <span class="op">~</span> <span class="va">Ci</span> <span class="op">|</span> <span class="va">curve_id</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">main_data</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">'b'</span>,</span>
-<span>  pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate residual (measured - fitted)\n('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>For individual parameters, we can take a look at the best-fit values
-and the associated confidence intervals. Here is an example showing
-values of <code>Tp_at_25</code>, the maximum rate of triose phosphate
-utilization.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'curve_id'</span>, <span class="st">'Tp_at_25_lower'</span>, <span class="st">'Tp_at_25'</span>, <span class="st">'Tp_at_25_upper'</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;       curve_id Tp_at_25_lower  Tp_at_25 Tp_at_25_upper</span></span>
-<span><span class="co">#&gt; 1  soybean - 1       7.664314  8.167682       8.609374</span></span>
-<span><span class="co">#&gt; 2 soybean - 5a           -Inf        NA            Inf</span></span>
-<span><span class="co">#&gt; 3 soybean - 5b           -Inf        NA            Inf</span></span>
-<span><span class="co">#&gt; 4  tobacco - 1       7.597912        NA            Inf</span></span>
-<span><span class="co">#&gt; 5  tobacco - 2      12.100282        NA            Inf</span></span>
-<span><span class="co">#&gt; 6  tobacco - 4       9.901601 10.282169      10.671615</span></span></code></pre></div>
-<p>Some of these estimates have an upper limit of <code>Inf</code> and a
-best estimate of <code>NA</code>. A comparison with the fits shown above
-indicates that for these curves, insufficiently many points were found
-to be TPU-limited, preventing a reliable estimate of
-<code>Tp_at_25</code>.</p>
-<p>It is also possible to plot the best-fit values of a parameter
-averaged across subsets of the data in a bar chart, where the error bars
-represent the standard error of the mean. Any values of <code>NA</code>
-will be excluded. Here we plot values of <code>Vcmax</code> at 25
-degrees C for each species.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/barchart_with_errorbars.html">barchart_with_errorbars</a></span><span class="op">(</span></span>
-<span>  <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'Vcmax_at_25'</span><span class="op">]</span>,</span>
-<span>  <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">[</span>, <span class="st">'species'</span><span class="op">]</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="PhotoGEA_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="learning-more">Learning More<a class="anchor" aria-label="anchor" href="#learning-more"></a>
+<h2 id="using-photogea">Using PhotoGEA<a class="anchor" aria-label="anchor" href="#using-photogea"></a>
 </h2>
 <p>The <code>PhotoGEA</code> package includes extensive documentation,
 and more articles are being added all the time:</p>
 <ul>
-<li>
-<a href="https://eloch216.github.io/PhotoGEA/articles/web_only/publications.html">Publication
-Gallery</a>: Includes a list of publications that describe or use
-<code>PhotoGEA</code>, along with links to their corresponding analysis
-scripts.</li>
 <li>Analysis guides:
 <ul>
-<li>
-<a href="https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_curves.html">Analyzing
-C3 A-Ci Curves</a> (This example is more detailed than the analysis
-demonstrated here.)</li>
+<li><a href="https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_curves.html">Analyzing
+C3 A-Ci Curves</a></li>
 <li><a href="https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c4_aci_curves.html">Analyzing
 C4 A-Ci Curves</a></li>
 <li><a href="https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_ball_berry_data.html">Analyzing
@@ -299,6 +128,15 @@ TDL Data</a></li>
 Mesophyll Conductance Data</a></li>
 </ul>
 </li>
+<li>
+<a href="https://eloch216.github.io/PhotoGEA/articles/web_only/frequent_questions.html">Frequently
+Asked Questions</a>: Provides answers to frequently asked questions
+about <code>PhotoGEA</code>.</li>
+<li>
+<a href="https://eloch216.github.io/PhotoGEA/articles/web_only/publications.html">Publication
+Gallery</a>: Includes a list of publications that describe or use
+<code>PhotoGEA</code>, along with links to their corresponding analysis
+scripts.</li>
 <li>General <code>PhotoGEA</code> advice:
 <ul>
 <li>
@@ -321,10 +159,6 @@ your time and improve the reproducibility of your data analysis!</li>
 <a href="https://eloch216.github.io/PhotoGEA/articles/web_only/working_with_extended_data_frames.html">Working
 With Extended Data Frames</a>: Discusses how to work with extended data
 frames, which are a critical part of <code>PhotoGEA</code>.</li>
-<li>
-<a href="https://eloch216.github.io/PhotoGEA/articles/web_only/frequent_questions.html">Frequently
-Asked Questions</a>: Provides answers to frequently asked questions
-about <code>PhotoGEA</code>.</li>
 </ul>
 </li>
 <li>General gas exchange advice:
