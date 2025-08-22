@@ -242,16 +242,22 @@ read_licor_6800_plaintext <- function(
           seq(header_indx + 1, length.out = nlines)
         )
 
-        licor_preamble <- stats::setNames(
-            as.data.frame(
-                t(preamble_raw[, seq(2, ncol(preamble_raw))]),
-                stringsAsFactors = FALSE
-            ),
-            preamble_raw[, 1]
+        # Get just the values (as numeric when possible), and add the names
+        licor_preamble <- as.data.frame(
+            t(preamble_raw[, seq(2, ncol(preamble_raw))]),
+            stringsAsFactors = FALSE
         )
 
+        licor_preamble <- as.data.frame(
+            lapply(licor_preamble, try_as_numeric),
+            stringsAsFactors = FALSE
+        )
+
+        colnames(licor_preamble) <- preamble_raw[, 1]
+
+        # Replace any unicode
         colnames(licor_preamble) <- replace_unicode(colnames(licor_preamble))
-        licor_preamble[1, ] <- replace_unicode(licor_preamble[1, ])
+        licor_preamble[1, ]      <- replace_unicode(licor_preamble[1, ])
 
         licor_preamble
     })

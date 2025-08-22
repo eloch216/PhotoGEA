@@ -1,7 +1,7 @@
 calculate_gamma_star <- function(
     exdf_obj,
     alpha_pr = 0.5,
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rubisco_specificity_column_name = 'rubisco_specificity_tl',
     tleaf_column_name = 'TleafCnd'
 )

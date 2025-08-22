@@ -24,7 +24,7 @@
     gsc_column_name = 'gsc',
     kc_column_name = 'Kc_tl',
     ko_column_name = 'Ko_tl',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     total_pressure_column_name = 'total_pressure',
     vcmax_column_name = 'Vcmax_tl',
     j_column_name = NULL

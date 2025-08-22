@@ -4,54 +4,28 @@ get_oxygen_from_preamble <- function(licor_exdf) {
         stop('licor_exdf must be an exdf object')
     }
 
-    # Make sure the preamble is included in the exdf object
-    if (!'preamble' %in% names(licor_exdf)) {
-        stop('exdf_obj$preamble must be defined; see read_gasex_file for more info')
-    }
+    # Try to get the oxygen values
+    oxygen_column_name <- 'Oxygen'
 
-    # Add a new column to the Licor file in preparation for adding the
-    # oxygen information
-    licor_exdf <- document_variables(
-        licor_exdf,
-        c('in', 'oxygen', 'percent')
-    )
-
-    # Try to get the oxygen information from the Licor file's preamble
-    preamble <- licor_exdf[['preamble']]
-
-    oxygen <- if ('Oxygen' %in% colnames(preamble)) {
-        try_as_numeric(preamble[['Oxygen']])
-    } else if ('SysConst:Oxygen' %in% colnames(preamble)) {
-        try_as_numeric(preamble[['SysConst:Oxygen']])
+    oxygen_values <- if (oxygen_column_name %in% colnames(licor_exdf)) {
+        licor_exdf[, oxygen_column_name]
     } else {
-        msg <- paste0(
-            "Could not automatically get oxygen information from file:\n'",
-            licor_exdf[['file_name']],
-            "'\nConsider adding oxygen values with the `set_variable` function ",
-            "rather than using `get_oxygen_from_preamble`"
-        )
-        warning(msg)
         NA
     }
 
-    # Remove any duplicated or NA values
-    oxygen <- unique(oxygen)
-    oxygen <- oxygen[!is.na(oxygen)]
-
-    # Check for issues with multiple values
-    if (length(unique(oxygen)) > 1) {
-        msg <- paste0(
-            "Found multiple oxygen values in file:\n'",
-            licor_exdf[['file_name']],
-            "'\nConsider adding oxygen values with the `set_variable` function ",
-            "rather than using `get_oxygen_from_preamble`"
-        )
-        warning(msg)
-        oxygen <- NA
+    # Try to get the oxygen category
+    oxygen_category <- if (oxygen_column_name %in% colnames(licor_exdf)) {
+        licor_exdf[['categories']][1, oxygen_column_name]
+    } else {
+        NULL
     }
 
-    # Store it in the Licor file and return the updated file
-    licor_exdf[, 'oxygen'] <- oxygen
-
-    return(licor_exdf)
+    # Set the units, retaining any previously defined values and category
+    set_variable(
+        licor_exdf,
+        oxygen_column_name,
+        'percent',
+        oxygen_category,
+        oxygen_values
+    )
 }

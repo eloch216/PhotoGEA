@@ -7,7 +7,7 @@ example_exdf <- exdf(
         J_tl           = 200,
         Kc_tl          = 270,
         Ko_tl          = 160,
-        oxygen         = 21,
+        Oxygen         = 21,
         total_pressure = 1,
         Vcmax_tl       = 150
 
@@ -20,7 +20,7 @@ example_exdf <- exdf(
         J_tl           = 'micromol m^(-2) s^(-1)',
         Kc_tl          = 'micromol mol^(-1)',
         Ko_tl          = 'mmol mol^(-1)',
-        oxygen         = 'percent',
+        Oxygen         = 'percent',
         total_pressure = 'bar',
         Vcmax_tl       = 'micromol m^(-2) s^(-1)',
         stringsAsFactors = FALSE

@@ -43,7 +43,7 @@ test_that('C3 limiting processes are identified', {
 test_that('Assimilation rates and carboxylation rates are consistent', {
     inputs <- exdf(data.frame(
         Cc = c(1, 60),
-        oxygen = 21,
+        Oxygen = 21,
         Tleaf = 30,
         total_pressure = 1
     ))
@@ -51,7 +51,7 @@ test_that('Assimilation rates and carboxylation rates are consistent', {
     inputs <- document_variables(
         inputs,
         c('', 'Cc',             'micromol mol^(-1)'),
-        c('', 'oxygen',         'percent'),
+        c('', 'Oxygen',         'percent'),
         c('', 'Tleaf',          'degrees C'),
         c('', 'total_pressure', 'bar')
     )

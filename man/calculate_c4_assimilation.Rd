@@ -30,7 +30,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     pcm_column_name = 'PCm',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',

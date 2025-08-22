@@ -13,6 +13,12 @@ extract_6800_excel_preamble_row <- function(preamble_df, start_indx) {
     # Remove any empty columns
     pr <- pr[!is.na(colnames(pr))]
 
+    # Convert the data to numeric values whenever possible
+    pr <- as.data.frame(
+        lapply(pr, try_as_numeric),
+        stringsAsFactors = FALSE
+    )
+
     # The first column indicates the category
     pr_category <- colnames(pr)[1]
     pr[, 1] <- NULL

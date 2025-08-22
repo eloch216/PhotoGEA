@@ -8,7 +8,7 @@ test_that('plaintext Licor files that have been reopened are read properly', {
     expect_equal(v2$units, v1$units)
     expect_equal(v2$categories, v1$categories)
     expect_equal(v2[, 'A'], v1[, 'A'])
-    expect_equal(v2[, 'oxygen'], v1[, 'oxygen'])
+    expect_equal(v2[, 'Oxygen'], v1[, 'Oxygen'])
 })
 
 test_that('plaintext Licor files with user remarks are read properly', {

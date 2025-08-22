@@ -18,7 +18,7 @@ calculate_c3_assimilation <- function(
     j_norm_column_name = 'J_norm',
     kc_norm_column_name = 'Kc_norm',
     ko_norm_column_name = 'Ko_norm',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
