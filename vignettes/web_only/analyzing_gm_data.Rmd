@@ -991,6 +991,8 @@ vignette.
 
 <<set_delta_obs_growth>>
 
+<<calculate_gm>>
+
 ###
 ### SYNTHESIS:
 ### Using plots and statistics to help draw conclusions from the data
