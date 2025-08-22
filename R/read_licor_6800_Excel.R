@@ -1,3 +1,30 @@
+# Helping function for extracting one row of the preamble data and returning it
+# as an exdf object
+extract_6800_excel_preamble_row <- function(preamble_df, start_indx) {
+    # Initialize a placeholder data frame
+    pr <- as.data.frame(matrix(nrow = 1, ncol = ncol(preamble_df)))
+
+    # Read the column values
+    pr[1, ] <- replace_unicode(preamble_df[start_indx + 1, ])
+
+    # Read the column names
+    colnames(pr) <- replace_unicode(preamble_df[start_indx, ])
+
+    # Remove any empty columns
+    pr <- pr[!is.na(colnames(pr))]
+
+    # The first column indicates the category
+    pr_category <- colnames(pr)[1]
+    pr[, 1] <- NULL
+
+    # Form a data frame with the categories
+    pr_category_df <- pr
+    pr_category_df[1, ] <- pr_category
+
+    # Create and return an exdf; the preamble rows do not specify units
+    exdf(pr, categories = pr_category_df)
+}
+
 read_licor_6800_Excel <- function(
     file_name,
     column_name = 'obs',
@@ -80,20 +107,14 @@ read_licor_6800_Excel <- function(
     # Get the raw preamble data
     raw_preamble <- rawdata[seq_len(data_row - 2), ]
 
-    # Define a helping function for extracting one row of the preamble data
-    extract_preamble_row <- function(start_indx) {
-        pr <- as.data.frame(matrix(nrow = 1, ncol = ncol(raw_preamble)))
-        pr[1, ] <- replace_unicode(raw_preamble[start_indx + 1, ])
-        colnames(pr) <- replace_unicode(raw_preamble[start_indx, ])
-        pr[!is.na(colnames(pr))]
-    }
-
-    # Get all the rows and combine them into one data frame
-    row_df_list <- lapply(
+    # Get all the preamble rows as exdf objects
+    row_exdf_list <- lapply(
         seq(1, nrow(raw_preamble), by = 2),
-        extract_preamble_row
+        function(i) {extract_6800_excel_preamble_row(raw_preamble, i)}
     )
-    licor_preamble <- do.call(cbind, row_df_list)
+
+    # Combine preamble rows into one exdf object
+    licor_preamble <- do.call(cbind, row_exdf_list)
 
     # Get the remarks, if possible
     if (has_remarks) {
@@ -141,10 +162,11 @@ read_licor_6800_Excel <- function(
 
     # Create the exdf object
     exdf_obj <- exdf(
-        licor_data,
-        licor_variable_units,
-        licor_variable_categories,
-        preamble = cbind(remarks, licor_preamble),
+        cbind(licor_data,                licor_preamble$main_data),
+        cbind(licor_variable_units,      licor_preamble$units),
+        cbind(licor_variable_categories, licor_preamble$categories),
+        preamble = licor_preamble$main_data,
+        remarks = remarks,
         data_row = data_row,
         user_remarks = user_remarks
     )

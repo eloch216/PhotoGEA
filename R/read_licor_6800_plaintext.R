@@ -78,6 +78,43 @@ licor_6800_lines_to_df <- function(file_lines, rows) {
   as.data.frame(chunk_res, stringsAsFactors = FALSE)
 }
 
+# Helping function for extracting the "preamble" and "remarks" from the header
+# info; the preamble is returned as an exdf, and the remarks as a data frame
+process_6800_plaintext_header <- function(header_df) {
+    # The "preamble" lines begin with "category:name"
+    preamble_indx <- grepl('^[[:alnum:]]+:', colnames(header_df))
+    preamble      <- header_df[1, preamble_indx]
+
+    # Extract the preamble names and categories
+    preamble_split <- strsplit(colnames(preamble), ':')
+    preamble_cat   <- sapply(preamble_split, function(x) {x[1]})
+    preamble_names <- sapply(preamble_split, function(x) {x[2]})
+
+    # Rename the preamble columns
+    colnames(preamble) <- preamble_names
+
+    # Assemble the preamble categories
+    preamble_categories      <- preamble
+    preamble_categories[1, ] <- preamble_cat
+
+    # Create the preamble exdf
+    preamble_exdf <- exdf(preamble, categories = preamble_categories)
+
+    # Remove any row names that may have been added
+    rownames(preamble_exdf$main_data)  <- NULL
+    rownames(preamble_exdf$units)      <- NULL
+    rownames(preamble_exdf$categories) <- NULL
+
+    # The remaining lines in the header are "remarks" lines
+    remarks <- header_df[1, !preamble_indx]
+
+    # Return both tables
+    list(
+      preamble_exdf = preamble_exdf,
+      remarks = remarks
+    )
+}
+
 # Main function for reading plaintext LI-6800 log files
 read_licor_6800_plaintext <- function(
     file_name,
@@ -166,6 +203,14 @@ read_licor_6800_plaintext <- function(
             stringsAsFactors = FALSE
         )
 
+        # Remove NA rows if necessary
+        if (remove_NA_rows) {
+            all_NA <- sapply(seq_len(nrow(licor_data)), function(i) {
+                all(is.na(as.list(licor_data[i, ])))
+            })
+            licor_data <- licor_data[!all_NA, ]
+        }
+
         # Get the column names as a vector
         licor_variable_names <-
             make.unique(as.character(licor_variable_names[1, ]))
@@ -228,16 +273,17 @@ read_licor_6800_plaintext <- function(
     exdf_obj    <- do.call(rbind, data_chunks)
     header_part <- do.call(rbind, header_chunks)
 
-    # Remove NA rows if necessary
-    if (remove_NA_rows) {
-        all_NA <- sapply(seq_len(nrow(exdf_obj)), function(i) {
-            all(is.na(as.list(exdf_obj[i, ])))
-        })
-        exdf_obj <- exdf_obj[!all_NA, , TRUE]
-    }
+    # Process the header
+    processed_header <- process_6800_plaintext_header(header_part)
+    preamble_exdf    <- processed_header$preamble_exdf
+    remarks          <- processed_header$remarks
+
+    # Incorporate preamble info into the main data table
+    exdf_obj <- cbind(exdf_obj, preamble_exdf)
 
     # Store additional information in the data exdf
-    exdf_obj$preamble     <- header_part
+    exdf_obj$preamble     <- preamble_exdf$main_data
+    exdf_obj$remarks      <- remarks
     exdf_obj$user_remarks <- user_remarks
 
     # Add user remarks if necessary
