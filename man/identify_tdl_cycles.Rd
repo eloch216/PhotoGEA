@@ -86,6 +86,12 @@
   In addition to identifying valid measurement cycles within the data,
   \code{identify_tdl_cycles} also calculates the elapsed time at the beginning
   of each cycle (in minutes).
+  
+  If no cycles are identified, the most likely explanation is that the values of
+  some of the key input arguments (such as \code{cycle_start_valve},
+  \code{expected_cycle_length_minutes}, or \code{expected_cycle_num_valves}) may
+  be incorrect for the data in \code{tdl_exdf}. In this case, an error message
+  will be sent.
 }
 
 \value{
