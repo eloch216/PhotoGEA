@@ -383,7 +383,7 @@
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{gmc_tl_avg}, \code{J_tl_avg},
-                  \code{Jmax_tl_avg}, \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
+                  \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
                   \code{Vpmax_tl_avg}.
             \item The average leaf temperature is also stored in the
                   \code{Tleaf_avg} column.
