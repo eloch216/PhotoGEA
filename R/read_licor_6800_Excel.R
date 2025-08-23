@@ -1,3 +1,64 @@
+# Helping function for processing user constants that were logged as rows
+process_user_constant_rows_6800_excel <- function(licor_file) {
+    # User constants are included as two sequential rows. The first row has a
+    # character value in its first column, and the second row has NA in its
+    # first column. This can be used to identify the first row in each pair.
+    uc_rows <- sapply(seq_len(nrow(licor_file) - 1), function(i) {
+        !is.na(licor_file[i, 1]) && is.character(licor_file[i, 1]) && is.na(licor_file[i + 1, 1])
+    })
+
+    # Get the indices of user constant rows
+    uc_row_indx <- which(uc_rows)
+
+    # Process the user constant rows if there are any
+    if (length(uc_row_indx) > 0) {
+        # Update the main table following each user constant row
+        for (i in uc_row_indx) {
+            # The first column of the first row contains the category
+            uc_category <- licor_file[i, 1]
+
+            # The second column of the first row contains the name
+            uc_name <- licor_file[i, 2]
+
+            # The second column of the second row contains the value
+            uc_val <- licor_file[i + 1, 2]
+
+            # If this column is present in the main data table, update its value
+            # in this row and all following rows
+            uc_exists <- uc_name %in% colnames(licor_file) &&
+                licor_file[['categories']][[uc_name]] == uc_category
+
+            if (uc_exists) {
+                new_vals                           <- licor_file[, uc_name]
+                new_vals[seq(i, nrow(licor_file))] <- uc_val
+                licor_file[, uc_name]              <- new_vals
+            }
+        }
+
+        # Remove the user constant rows from the data table
+        all_uc_rows <- rep_len(FALSE, nrow(licor_file))
+
+        all_uc_rows[uc_row_indx]     <- TRUE
+        all_uc_rows[uc_row_indx + 1] <- TRUE
+
+        licor_file <- licor_file[!all_uc_rows, , TRUE]
+
+        # Make sure there are no row names
+        rownames(licor_file$main_data) <- NULL
+
+        # The user-constant rows may have prevented some columns from being
+        # properly identified as having numeric values, so try to convert them
+        # again
+        for (i in seq_len(ncol(licor_file))) {
+            licor_file[['main_data']][, i] <-
+                try_as_numeric(licor_file[['main_data']][, i])
+        }
+    }
+
+    # Return the (potentially) modified version of the exdf object
+    licor_file
+}
+
 # Helping function for extracting one row of the preamble data and returning it
 # as an exdf object
 extract_6800_excel_preamble_row <- function(preamble_df, start_indx) {
@@ -176,6 +237,9 @@ read_licor_6800_Excel <- function(
         data_row = data_row,
         user_remarks = user_remarks
     )
+
+    # Process the user constant rows
+    exdf_obj <- process_user_constant_rows_6800_excel(exdf_obj)
 
     # Check for columns that are all zero
     all_zeros <- sapply(check_for_zero, function(cn) {

@@ -85,11 +85,18 @@
   as true user remarks. In general, it is better to record metadata about
   measurements via user constants rather than user remarks.
 
+  \strong{Changing Oxygen Concentration}: When operating a Licor LI-6800, it is
+  possible to change the oxygen concentration while a log file is open. In that
+  case, the new value is entered via two rows in the main data table. The
+  \code{read_licor_6800_plaintext} function is able to handle this, and the new
+  oxygen concentration will be included in the \code{Oxygen} column.
+
   \strong{User constants as rows:} When operating a Licor LI-6800, it is
   possible to include user constants as either rows or columns. In general, it
-  is better to include them as columns, and the \code{read_licor_6800_plaintext}
-  function may not be able to properly read files where they are included as
-  rows. Support for user constant rows may be added in the future.
+  is better to include them as columns. Although the
+  \code{read_licor_6800_plaintext} function is currently able to handle oxygen
+  concentrations logged as rows, it is not known whether user constants will be
+  properly read.
 }
 
 \value{

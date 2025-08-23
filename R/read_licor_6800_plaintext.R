@@ -1,3 +1,57 @@
+# Helping function for processing user constants that were logged as rows
+process_user_constant_rows_6800_plaintext <- function(licor_file) {
+    # In user constant rows, the first column has a text value formatted like
+    # "category:name". This can be used to identify the rows.
+    uc_rows <- sapply(seq_len(nrow(licor_file)), function(i) {
+        grepl('^[[:alnum:]]+:', licor_file[i, 1])
+    })
+
+    # Get the indices of user constant rows
+    uc_row_indx <- which(uc_rows)
+
+    # Process the user constant rows if there are any
+    if (length(uc_row_indx) > 0) {
+        # Update the main table following each user constant row
+        for (i in uc_row_indx) {
+            # The second column contains the user constant value
+            uc_val  <- licor_file[i, 2]
+
+            # Extract the name and category from the first column
+            uc_info     <- strsplit(licor_file[i, 1], ':')[[1]]
+            uc_name     <- uc_info[2]
+            uc_category <- uc_info[1]
+
+            # If this column is present in the main data table, update its value
+            # in this row and all following rows
+            uc_exists <- uc_name %in% colnames(licor_file) &&
+                licor_file[['categories']][[uc_name]] == uc_category
+
+            if (uc_exists) {
+                new_vals                           <- licor_file[, uc_name]
+                new_vals[seq(i, nrow(licor_file))] <- uc_val
+                licor_file[, uc_name]              <- new_vals
+            }
+        }
+
+        # Remove the user constant rows from the data table
+        licor_file <- licor_file[!uc_rows, , TRUE]
+
+        # Make sure there are no row names
+        rownames(licor_file$main_data) <- NULL
+
+        # The user-constant rows may have prevented some columns from being
+        # properly identified as having numeric values, so try to convert them
+        # again
+        for (i in seq_len(ncol(licor_file))) {
+            licor_file[['main_data']][, i] <-
+                try_as_numeric(licor_file[['main_data']][, i])
+        }
+    }
+
+    # Return the (potentially) modified version of the exdf object
+    licor_file
+}
+
 # Helping function for adding user remarks to the main data table (also used
 # for LI-6800 Excel files)
 add_latest_remark <- function(licor_file) {
@@ -291,6 +345,9 @@ read_licor_6800_plaintext <- function(
     exdf_obj$preamble     <- preamble_exdf$main_data
     exdf_obj$remarks      <- remarks
     exdf_obj$user_remarks <- user_remarks
+
+    # Process the user constant rows
+    exdf_obj <- process_user_constant_rows_6800_plaintext(exdf_obj)
 
     # Add user remarks if necessary
     if (include_user_remark_column) {
