@@ -28,3 +28,14 @@ test_that('Excel Licor files are not required to have a Remarks sheet', {
         all(is.na(licor_file[, 'user_remark']))
     )
 })
+
+test_that('Changes to oxygen percentage are properly read', {
+    licor_file <- expect_silent(read_gasex_file(PhotoGEA_example_file_path('c3_aci_2.xlsx')))
+
+    expect_true('Oxygen' %in% colnames(licor_file))
+
+    expect_equal(
+        licor_file[, 'Oxygen'],
+        c(rep_len(21, 10), rep_len(22, 38))
+    )
+})

@@ -1,7 +1,7 @@
 calculate_gamma_star <- function(
     exdf_obj,
     alpha_pr = 0.5,
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rubisco_specificity_column_name = 'rubisco_specificity_tl',
     tleaf_column_name = 'TleafCnd'
 )
@@ -13,7 +13,7 @@ calculate_gamma_star <- function(
 
     # Make sure the required variables are defined and have the correct units
     required_variables <- list()
-    required_variables[[oxygen_column_name]]              <- unit_dictionary('oxygen')
+    required_variables[[oxygen_column_name]]              <- unit_dictionary('Oxygen')
     required_variables[[rubisco_specificity_column_name]] <- unit_dictionary('rubisco_specificity')
     required_variables[[tleaf_column_name]]               <- unit_dictionary('TleafCnd')
 

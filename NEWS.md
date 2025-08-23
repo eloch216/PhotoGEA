@@ -31,7 +31,38 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
+## UNRELEASED
+
+### Minor user-facing changes
+
+- Added version checks to user guides, which will send a warning to the user if
+  the installed version of PhotoGEA is different from the expected version
+
+- `identify_tdl_cycles` now throws an error if no cycles are identified
+
+- When reading Excel or plaintext Licor LI-6800 log files:
+
+  - The contents of the preamble are now included as columns in the main data
+    table
+
+  - The column containing the oxygen concentration as a percentage is now called
+    `Oxygen` rather than `oxygen` (the only difference is a captial `O`)
+
+  - Files where the oxygen concentration was changed between log entries can now
+    be read
+
+- Related to the changes above, the default value of `oxygen_column_name` has
+  changed to `Oxygen` in all functions that have this input argument
+
+- Advice about altering instrument log files was added to the FAQ
+
+### Bug fixes
+
+- Several typos were fixed in vignettes and other documentation
+
 ## Changes in PhotoGEA version 1.3.4 (2025-08-02)
+
+Note: This version was never released on CRAN
 
 ### Minor user-facing changes
 

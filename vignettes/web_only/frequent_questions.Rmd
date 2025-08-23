@@ -27,7 +27,9 @@ The questions discussed here are grouped into sections by topic:
 
 - [Installing PhotoGEA](#installing-photogea)
 
-- [Loading and Checking Data](#loading-and-checking-data)
+- [Loading Data](#loading-data)
+
+- [Checking Data](#checking-data)
 
 - [Converting and Exporting Results](#converting-and-exporting-results)
 
@@ -159,7 +161,7 @@ read_6400_xls_wrapper <- function(fpath) {
         Ci = 'GasEx.Ci',
         DeltaPcham = 'Meas.DeltaPcham',
         gsw = 'GasEx.gsw',
-        oxygen = 'Const.Oxygen',
+        Oxygen = 'Const.Oxygen',
         Pa = 'Meas.Pa',
         Qin = 'LeafQ.Qin',
         TleafCnd = 'GasEx.TleafCnd'
@@ -187,7 +189,7 @@ read_6400_xls_wrapper <- function(fpath) {
         c('GasEx', 'Ci',         'micromol mol^(-1)'),
         c('Meas',  'DeltaPcham', 'kPa'),
         c('GasEx', 'gsw',        'mol m^(-2) s^(-1)'),
-        c('in',    'oxygen',     'percent'),
+        c('in',    'Oxygen',     'percent'),
         c('Meas',  'Pa',         'kPa'),
         c('LeafQ', 'Qin',        'micromol m^(-2) s^(-1)'),
         c('GasEx', 'TleafCnd',   'degrees C')
@@ -320,6 +322,63 @@ for (i in seq_along(to_rename)) {
     rename_col(gasex_data, names(to_rename)[i], to_rename[[i]])
 }
 ```
+
+## How Can I Safely Alter an Instrument Log File?
+
+An instrument log file may have a `.xlsx`, `.csv`, or `.dat` extension, but it
+is not just an Excel, CSV, or text file. Besides its general file type, it has
+a variety of instrument-specific characteristics. For example, the following are
+a few key characteristics of different types of instrument log files commonly
+encountered when working with gas exchange data:
+
+- In a Licor LI-6400 Excel file, cell `A1` contains `OPEN X.Y.Z`, where `X.Y.Z`
+  is the version of the Licor software, and cell `A2` contains the date.
+
+- In a Licor Li-6800 plaintext file, there are separate sections for header and
+  main data information, which are indicated by lines containing `[Header]` and
+  `[Data]`.
+
+- In a Campbell Scientific CR3000 file, the first row contains information about
+  the program running on the logger, the second row contains column names, and
+  the third row contains column units.
+
+The R functions that read these files expect them to always have these
+properties. If a file has been altered too much, it cannot be recognized as an
+instrument-specific log file, and it cannot be properly read by an
+instrument-specific file-reading function.
+
+The properties of these files are typically not explicitly described, nor are
+the expectations of each instrument-specific file-reading function. So, the
+safest approach is to alter them as little as possible. In general, alterations
+should ideally be limited to the following operations:
+
+1. Changing the value of a cell in a table. For example, fixing an incorrect
+   value of a user constant in a Licor log file. Avoid directly changing the
+   value of a cell that contains an equation.
+
+2. Deleting an entire row from a table. For example, if the log button on Licor
+   Li-6800 was accidentally pressed, there will be an extra row in the log file
+   that should be removed.
+
+3. Adding a new column. For example, to include additional metadata. In this
+   case, the new column should always be added on the far right end of the data
+   table to avoid unintentionally altering the header structure.
+
+Any alterations that change the header structure or the names of existing
+table columns should be avoided.
+
+Sometimes people want to alter instrument log files in order to "clean" them;
+this usually entails removing header information and possibly columns that are
+not useful to them. Rather than doing this manually, it is usually faster and
+easier to read them in R and re-save them as CSV files using `write.csv`. See
+the [Converting and Exporting Results](#converting-and-exporting-results)
+section of this article for some advice about doing this.
+
+## What if I Cannot Load My Instrument Log File?
+
+Sometimes this happens after a file has been altered. Double check the advice in
+the section above. If there is still an issue, feel free to contact the PhotoGEA
+package maintainer for help.
 
 # Checking Data
 

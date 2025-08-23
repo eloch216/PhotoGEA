@@ -12,7 +12,7 @@ error_function_c4_aci <- function(
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -49,7 +49,7 @@ error_function_c4_aci <- function(
     required_variables[[kc_column_name]]             <- 'microbar'
     required_variables[[ko_column_name]]             <- 'mbar'
     required_variables[[kp_column_name]]             <- 'microbar'
-    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
+    required_variables[[oxygen_column_name]]         <- unit_dictionary('Oxygen')
     required_variables[[rl_norm_column_name]]        <- unit_dictionary('RL_norm')
     required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
     required_variables[[vcmax_norm_column_name]]     <- unit_dictionary('Vcmax_norm')
