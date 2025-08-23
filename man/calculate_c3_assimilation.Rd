@@ -374,7 +374,7 @@
 
   \itemize{
     \item \code{hard_constraints = 0}: Constraints are only placed on inputs
-          that are user-supplied and cannot be fit, such as \code{oxygen}.
+          that are user-supplied and cannot be fit, such as \code{Oxygen}.
 
     \item \code{hard_constraints = 1}: Includes the same constraints as when
           \code{hard_constraints} is 0, with the additional constraint that
@@ -466,7 +466,7 @@ inputs <- exdf(data.frame(
   Cc = seq(1, 601, by = 6),
   Tleaf = 30,
   total_pressure = 1,
-  oxygen = 21
+  Oxygen = 21
 ))
 
 inputs <- document_variables(
@@ -474,7 +474,7 @@ inputs <- document_variables(
   c('', 'Cc',             'micromol mol^(-1)'),
   c('', 'Tleaf',          'degrees C'),
   c('', 'total_pressure', 'bar'),
-  c('', 'oxygen',         'percent')
+  c('', 'Oxygen',         'percent')
 )
 
 inputs <- calculate_temperature_response(inputs, c3_temperature_param_sharkey, 'Tleaf')

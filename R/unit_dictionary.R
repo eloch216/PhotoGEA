@@ -65,7 +65,7 @@ unit_dictionary_list <- list(
     Kc_norm             = normalized_units('Kc'),
     Ko_at_25            = millimol_fraction,
     Ko_norm             = normalized_units('Ko'),
-    oxygen              = 'percent',
+    Oxygen              = 'percent',
     PCm                 = 'microbar',
     PhiPS2              = dimensionless,
     Qin                 = micromol_flux,

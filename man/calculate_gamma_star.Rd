@@ -156,7 +156,7 @@ licor_data <- set_variable(
 
 licor_data <- calculate_gamma_star(licor_data)
 
-licor_data[, c('specificity_gas_basis', 'oxygen', 'Gamma_star_tl'), TRUE]
+licor_data[, c('specificity_gas_basis', 'Oxygen', 'Gamma_star_tl'), TRUE]
 
 # Example 2: Calculate Gamma_star at 21% and 2% oxygen for a Rubisco whose
 # specificity was measured to be 100 M / M at 25 degrees C.
@@ -164,12 +164,12 @@ licor_data[, c('specificity_gas_basis', 'oxygen', 'Gamma_star_tl'), TRUE]
 exdf_obj <- calculate_gamma_star(
   exdf(
     data.frame(
-      oxygen = c(2, 21),
+      Oxygen = c(2, 21),
       rubisco_specificity_tl = c(100, 100),
       TleafCnd = c(25, 25)
     ),
     data.frame(
-      oxygen = 'percent',
+      Oxygen = 'percent',
       rubisco_specificity_tl = 'M / M',
       TleafCnd = 'degrees C',
       stringsAsFactors = FALSE
@@ -177,7 +177,7 @@ exdf_obj <- calculate_gamma_star(
   )
 )
 
-exdf_obj[, c('specificity_gas_basis', 'oxygen', 'Gamma_star_tl'), TRUE]
+exdf_obj[, c('specificity_gas_basis', 'Oxygen', 'Gamma_star_tl'), TRUE]
 
 # Example 3: Here we recreate Figure 1 from Long, S. P. "Modification of the
 # response of photosynthetic productivity to rising temperature by atmospheric
@@ -192,11 +192,11 @@ leaf_temp <- seq(0, 50, by = 0.1)
 
 exdf_obj <- exdf(
   data.frame(
-    oxygen = rep_len(21, length(leaf_temp)),
+    Oxygen = rep_len(21, length(leaf_temp)),
     TleafCnd = leaf_temp
   ),
   data.frame(
-    oxygen = 'percent',
+    Oxygen = 'percent',
     TleafCnd = 'degrees C',
     stringsAsFactors = FALSE
   )

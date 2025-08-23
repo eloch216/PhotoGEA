@@ -171,9 +171,6 @@ licor_data <- read_gasex_file(
 # reference valve is 12 when the sample valve is 11
 licor_data <- get_sample_valve_from_filename(licor_data, list('11' = 12))
 
-# Get oxygen info from the Licor file preamble (needed for calculate_gamma_star)
-licor_data <- get_oxygen_from_preamble(licor_data)
-
 # Pair the Licor and TDL data by locating the TDL cycle corresponding to each
 # Licor measurement
 licor_data <- pair_gasex_and_tdl(licor_data, processed_tdl$tdl_data)

@@ -161,7 +161,7 @@ read_6400_xls_wrapper <- function(fpath) {
         Ci = 'GasEx.Ci',
         DeltaPcham = 'Meas.DeltaPcham',
         gsw = 'GasEx.gsw',
-        oxygen = 'Const.Oxygen',
+        Oxygen = 'Const.Oxygen',
         Pa = 'Meas.Pa',
         Qin = 'LeafQ.Qin',
         TleafCnd = 'GasEx.TleafCnd'
@@ -189,7 +189,7 @@ read_6400_xls_wrapper <- function(fpath) {
         c('GasEx', 'Ci',         'micromol mol^(-1)'),
         c('Meas',  'DeltaPcham', 'kPa'),
         c('GasEx', 'gsw',        'mol m^(-2) s^(-1)'),
-        c('in',    'oxygen',     'percent'),
+        c('in',    'Oxygen',     'percent'),
         c('Meas',  'Pa',         'kPa'),
         c('LeafQ', 'Qin',        'micromol m^(-2) s^(-1)'),
         c('GasEx', 'TleafCnd',   'degrees C')

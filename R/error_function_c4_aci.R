@@ -49,7 +49,7 @@ error_function_c4_aci <- function(
     required_variables[[kc_column_name]]             <- 'microbar'
     required_variables[[ko_column_name]]             <- 'mbar'
     required_variables[[kp_column_name]]             <- 'microbar'
-    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
+    required_variables[[oxygen_column_name]]         <- unit_dictionary('Oxygen')
     required_variables[[rl_norm_column_name]]        <- unit_dictionary('RL_norm')
     required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
     required_variables[[vcmax_norm_column_name]]     <- unit_dictionary('Vcmax_norm')

@@ -35,7 +35,7 @@ calculate_c3_limitations_grassi <- function(
     required_variables[[gsc_column_name]]            <- unit_dictionary('gsc')
     required_variables[[kc_column_name]]             <- unit_dictionary('Kc_at_25')
     required_variables[[ko_column_name]]             <- unit_dictionary('Ko_at_25')
-    required_variables[[oxygen_column_name]]         <- unit_dictionary('oxygen')
+    required_variables[[oxygen_column_name]]         <- unit_dictionary('Oxygen')
     required_variables[[total_pressure_column_name]] <- unit_dictionary('total_pressure')
     required_variables[[vcmax_column_name]]          <- unit_dictionary('Vcmax_at_25')
 
