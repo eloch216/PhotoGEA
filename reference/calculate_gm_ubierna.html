@@ -15,7 +15,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -257,9 +257,6 @@
 <span class="r-in"><span><span class="co"># Get TDL valve information from Licor file name; for this TDL system, the</span></span></span>
 <span class="r-in"><span><span class="co"># reference valve is 12 when the sample valve is 11</span></span></span>
 <span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_sample_valve_from_filename.html">get_sample_valve_from_filename</a></span><span class="op">(</span><span class="va">licor_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'11'</span> <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Get oxygen info from the Licor file preamble (needed for calculate_gamma_star)</span></span></span>
-<span class="r-in"><span><span class="va">licor_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_oxygen_from_preamble.html">get_oxygen_from_preamble</a></span><span class="op">(</span><span class="va">licor_data</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pair the Licor and TDL data by locating the TDL cycle corresponding to each</span></span></span>
 <span class="r-in"><span><span class="co"># Licor measurement</span></span></span>

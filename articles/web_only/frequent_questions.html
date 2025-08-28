@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Frequently Asked Questions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.4/vignettes/web_only/frequent_questions.Rmd" class="external-link"><code>vignettes/web_only/frequent_questions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/frequent_questions.Rmd" class="external-link"><code>vignettes/web_only/frequent_questions.Rmd</code></a></small>
       <div class="d-none name"><code>frequent_questions.Rmd</code></div>
     </div>
 
@@ -95,8 +95,8 @@
 <p>The questions discussed here are grouped into sections by topic:</p>
 <ul>
 <li><p><a href="#installing-photogea">Installing PhotoGEA</a></p></li>
-<li><p><a href="#loading-and-checking-data">Loading and Checking
-Data</a></p></li>
+<li><p><a href="#loading-data">Loading Data</a></p></li>
+<li><p><a href="#checking-data">Checking Data</a></p></li>
 <li><p><a href="#converting-and-exporting-results">Converting and
 Exporting Results</a></p></li>
 <li><p><a href="#fitting-c3-a-ci-curves">Fitting C<sub>3</sub><em>A-C<sub>i</sub></em> Curves</a></p></li>
@@ -226,7 +226,7 @@ this code to include other columns.</p>
 <span>        Ci <span class="op">=</span> <span class="st">'GasEx.Ci'</span>,</span>
 <span>        DeltaPcham <span class="op">=</span> <span class="st">'Meas.DeltaPcham'</span>,</span>
 <span>        gsw <span class="op">=</span> <span class="st">'GasEx.gsw'</span>,</span>
-<span>        oxygen <span class="op">=</span> <span class="st">'Const.Oxygen'</span>,</span>
+<span>        Oxygen <span class="op">=</span> <span class="st">'Const.Oxygen'</span>,</span>
 <span>        Pa <span class="op">=</span> <span class="st">'Meas.Pa'</span>,</span>
 <span>        Qin <span class="op">=</span> <span class="st">'LeafQ.Qin'</span>,</span>
 <span>        TleafCnd <span class="op">=</span> <span class="st">'GasEx.TleafCnd'</span></span>
@@ -254,7 +254,7 @@ this code to include other columns.</p>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'GasEx'</span>, <span class="st">'Ci'</span>,         <span class="st">'micromol mol^(-1)'</span><span class="op">)</span>,</span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Meas'</span>,  <span class="st">'DeltaPcham'</span>, <span class="st">'kPa'</span><span class="op">)</span>,</span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'GasEx'</span>, <span class="st">'gsw'</span>,        <span class="st">'mol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'in'</span>,    <span class="st">'oxygen'</span>,     <span class="st">'percent'</span><span class="op">)</span>,</span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'in'</span>,    <span class="st">'Oxygen'</span>,     <span class="st">'percent'</span><span class="op">)</span>,</span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Meas'</span>,  <span class="st">'Pa'</span>,         <span class="st">'kPa'</span><span class="op">)</span>,</span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'LeafQ'</span>, <span class="st">'Qin'</span>,        <span class="st">'micromol m^(-2) s^(-1)'</span><span class="op">)</span>,</span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'GasEx'</span>, <span class="st">'TleafCnd'</span>,   <span class="st">'degrees C'</span><span class="op">)</span></span>
@@ -383,6 +383,64 @@ rename a few Licor LI-6400 columns:</p>
 <span>  <span class="va">gasex_data</span> <span class="op">&lt;-</span></span>
 <span>    <span class="fu">rename_col</span><span class="op">(</span><span class="va">gasex_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">to_rename</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="va">to_rename</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="how-can-i-safely-alter-an-instrument-log-file">How Can I Safely Alter an Instrument Log File?<a class="anchor" aria-label="anchor" href="#how-can-i-safely-alter-an-instrument-log-file"></a>
+</h3>
+<p>An instrument log file may have a <code>.xlsx</code>,
+<code>.csv</code>, or <code>.dat</code> extension, but it is not just an
+Excel, CSV, or text file. Besides its general file type, it has a
+variety of instrument-specific characteristics. For example, the
+following are a few key characteristics of different types of instrument
+log files commonly encountered when working with gas exchange data:</p>
+<ul>
+<li><p>In a Licor LI-6400 Excel file, cell <code>A1</code> contains
+<code>OPEN X.Y.Z</code>, where <code>X.Y.Z</code> is the version of the
+Licor software, and cell <code>A2</code> contains the date.</p></li>
+<li><p>In a Licor Li-6800 plaintext file, there are separate sections
+for header and main data information, which are indicated by lines
+containing <code>[Header]</code> and <code>[Data]</code>.</p></li>
+<li><p>In a Campbell Scientific CR3000 file, the first row contains
+information about the program running on the logger, the second row
+contains column names, and the third row contains column units.</p></li>
+</ul>
+<p>The R functions that read these files expect them to always have
+these properties. If a file has been altered too much, it cannot be
+recognized as an instrument-specific log file, and it cannot be properly
+read by an instrument-specific file-reading function.</p>
+<p>The properties of these files are typically not explicitly described,
+nor are the expectations of each instrument-specific file-reading
+function. So, the safest approach is to alter them as little as
+possible. In general, alterations should ideally be limited to the
+following operations:</p>
+<ol style="list-style-type: decimal">
+<li><p>Changing the value of a cell in a table. For example, fixing an
+incorrect value of a user constant in a Licor log file. Avoid directly
+changing the value of a cell that contains an equation.</p></li>
+<li><p>Deleting an entire row from a table. For example, if the log
+button on Licor Li-6800 was accidentally pressed, there will be an extra
+row in the log file that should be removed.</p></li>
+<li><p>Adding a new column. For example, to include additional metadata.
+In this case, the new column should always be added on the far right end
+of the data table to avoid unintentionally altering the header
+structure.</p></li>
+</ol>
+<p>Any alterations that change the header structure or the names of
+existing table columns should be avoided.</p>
+<p>Sometimes people want to alter instrument log files in order to
+“clean” them; this usually entails removing header information and
+possibly columns that are not useful to them. Rather than doing this
+manually, it is usually faster and easier to read them in R and re-save
+them as CSV files using <code>write.csv</code>. See the <a href="#converting-and-exporting-results">Converting and Exporting
+Results</a> section of this article for some advice about doing
+this.</p>
+</div>
+<div class="section level3">
+<h3 id="what-if-i-cannot-load-my-instrument-log-file">What if I Cannot Load My Instrument Log File?<a class="anchor" aria-label="anchor" href="#what-if-i-cannot-load-my-instrument-log-file"></a>
+</h3>
+<p>Sometimes this happens after a file has been altered. Double check
+the advice in the section above. If there is still an issue, feel free
+to contact the PhotoGEA package maintainer for help.</p>
 </div>
 </div>
 <div class="section level2">

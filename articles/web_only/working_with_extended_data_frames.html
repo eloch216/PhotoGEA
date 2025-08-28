@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">PhotoGEA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Working With Extended Data Frames</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.3.4/vignettes/web_only/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/web_only/working_with_extended_data_frames.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/working_with_extended_data_frames.Rmd" class="external-link"><code>vignettes/web_only/working_with_extended_data_frames.Rmd</code></a></small>
       <div class="d-none name"><code>working_with_extended_data_frames.Rmd</code></div>
     </div>
 
@@ -328,9 +328,9 @@ elements can be retrieved using <code>names</code>:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">exdf_3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "main_data"         "units"             "categories"       </span></span>
-<span><span class="co">#&gt;  [4] "preamble"          "data_row"          "user_remarks"     </span></span>
-<span><span class="co">#&gt;  [7] "file_name"         "file_type"         "instrument_type"  </span></span>
-<span><span class="co">#&gt; [10] "timestamp_colname"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [4] "preamble"          "remarks"           "data_row"         </span></span>
+<span><span class="co">#&gt;  [7] "user_remarks"      "file_name"         "file_type"        </span></span>
+<span><span class="co">#&gt; [10] "instrument_type"   "timestamp_colname"</span></span></code></pre></div>
 <p>Here we see that both <code>exdf</code> objects have the three
 required elements: <code>main_data</code>, <code>units</code>, and
 <code>categories</code>. <code>exdf_3</code> has a few “extra” elements
@@ -651,74 +651,74 @@ words, a nested list. We can see this structure as follows:</p>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  81 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  124 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1a:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  80 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  123 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.1b:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  78 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  121 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.2 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  78 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  121 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  78 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  121 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ tobacco.5 :List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  80 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  123 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5a:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  82 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  125 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span>
 <span><span class="co">#&gt;  $ soybean.5c:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    1 obs. of  82 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    1 obs. of  125 variables:</span></span>
 <span><span class="co">#&gt;   ..$ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    7 obs. of  255 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt; 'data.frame':    7 obs. of  298 variables:</span></span></code></pre></div>
 <p>It would be much easier to work with this information if it were
 reorganized by separately combining all of the <code>fits</code> and
 <code>parameters</code> elements. Fortunately, this can be easily done
@@ -735,11 +735,11 @@ using <code>rbind</code>:</p>
 <span><span class="co">#&gt;  $ parameters:</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    8 obs. of  77 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    8 obs. of  120 variables:</span></span>
 <span><span class="co">#&gt;  $ fits      :</span></span>
 <span><span class="co">#&gt; Converting an `exdf` object to a `data.frame` before printing</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 'data.frame':    56 obs. of  255 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt; 'data.frame':    56 obs. of  298 variables:</span></span></code></pre></div>
 <p>It is common to apply the <code>consolidate</code> and
 <code>by</code> functions in the same line to make the code more
 concise. Afterwards, the elements from the resulting list can be
