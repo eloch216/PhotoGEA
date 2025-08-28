@@ -153,7 +153,7 @@ library(PhotoGEA)
 library(lattice)
 
 # Check the PhotoGEA version
-expected_version  <- '1.3.4-1'
+expected_version  <- '1.4.0'
 installed_version <- as.character(packageVersion('PhotoGEA'))
 
 if (compareVersion(expected_version, installed_version) != 0) {

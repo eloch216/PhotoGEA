@@ -31,7 +31,7 @@ In the case of a hotfix, a short section headed by the new release number should
 be directly added to this file to describe the related changes.
 -->
 
-## UNRELEASED
+## Changes in PhotoGEA version 1.4.0 (2025-08-25)
 
 ### Minor user-facing changes
 
