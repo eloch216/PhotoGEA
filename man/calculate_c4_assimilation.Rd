@@ -30,7 +30,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     pcm_column_name = 'PCm',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
@@ -129,8 +129,7 @@
 
   \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Jmax} values (with units of
-    \code{normalized to Jmax at 25 degrees C}).
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{
@@ -302,7 +301,7 @@
   \code{PCm}. Thus, from a fitting point of view, it is not usually possible to
   distinguish between these potential limiting states. For this reason, it is
   not advisable to fit more than one of \code{Vcmax}, \code{Vpr}, and
-  \code{Jmax} when estimating parameters from an experimentally measured curve.
+  \code{J} when estimating parameters from an experimentally measured curve.
 
   \strong{Limiting Cases of the Approximate Equation}
 
@@ -390,17 +389,16 @@
   \itemize{
     \item If \code{return_exdf} is \code{TRUE}, the return value is an
           \code{exdf} object with the following columns: \code{alpha_psii},
-          \code{gbs}, \code{J_at_25}, \code{Jmax_tl}, \code{J_tl},
-          \code{Rm_frac}, \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl},
-          \code{RLm_tl}, \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc},
-          \code{Apr}, \code{Ap}, \code{Ar}, \code{Ajm}, \code{Ajbs}, \code{Ac},
-          \code{Aj}, \code{An}, and \code{c4_assimilation_msg}. Most of these
-          are calculated as described above, while several are copies of the
-          input arguments with the same name. The \code{c4_assimilation_msg} is
-          usually blank but may contain information about any issues with the
-          inputs. The category for each of these new columns is
-          \code{calculate_c4_assimilation} to indicate that they were created
-          using this function.
+          \code{gbs}, \code{J_at_25}, \code{J_tl}, \code{Rm_frac},
+          \code{Vcmax_tl}, \code{Vpmax_tl}, \code{RL_tl}, \code{RLm_tl},
+          \code{Vpc}, \code{Vpr}, \code{Vp}, \code{Apc}, \code{Apr}, \code{Ap},
+          \code{Ar}, \code{Ajm}, \code{Ajbs}, \code{Ac}, \code{Aj}, \code{An},
+          and \code{c4_assimilation_msg}. Most of these are calculated as
+          described above, while several are copies of the input arguments with
+          the same name. The \code{c4_assimilation_msg} is usually blank but may
+          contain information about any issues with the inputs. The category for
+          each of these new columns is \code{calculate_c4_assimilation} to
+          indicate that they were created using this function.
     \item If \code{return_exdf} is \code{FALSE}, the return value is a numeric
           vector containing the calculated values of \code{An}.
   }
@@ -416,7 +414,7 @@ inputs <- exdf(data.frame(
   Tleaf = 25,
   Qin = 1800,
   total_pressure = 1,
-  oxygen = 21
+  Oxygen = 21
 ))
 
 inputs <- document_variables(
@@ -425,7 +423,7 @@ inputs <- document_variables(
   c('', 'Tleaf',          'degrees C'),
   c('', 'Qin',            'micromol m^(-2) s^(-1)'),
   c('', 'total_pressure', 'bar'),
-  c('', 'oxygen',         'percent')
+  c('', 'Oxygen',         'percent')
 )
 
 inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')

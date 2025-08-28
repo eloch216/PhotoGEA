@@ -117,7 +117,7 @@ inputs <- exdf(data.frame(
   Qin = 1800,
   Tleaf = Tleaf,
   total_pressure = 1,
-  oxygen = 21
+  Oxygen = 21
 ))
 
 inputs <- document_variables(
@@ -126,7 +126,7 @@ inputs <- document_variables(
   c('', 'Qin',            'micromol m^(-2) s^(-1)'),
   c('', 'Tleaf',          'degrees C'),
   c('', 'total_pressure', 'bar'),
-  c('', 'oxygen',         'percent')
+  c('', 'Oxygen',         'percent')
 )
 
 inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')
@@ -291,10 +291,35 @@ section.
 As always, the first step is to load the packages we will be using. In addition
 to `PhotoGEA`, we will also use the `lattice` package for generating plots.
 
-```{r setup, eval = FALSE}
+From time to time, functions in `PhotoGEA` may change their names or input
+arguments. Because of this, when writing a script, it is helpful to indicate
+which version of `PhotoGEA` was used. Here, after loading the `PhotoGEA`
+library, we check the installed version and give a warning if it is different
+from the expected version number.
+
+```{r setup}
 # Load required packages
 library(PhotoGEA)
 library(lattice)
+
+# Check the PhotoGEA version
+expected_version  <- '1.4.0'
+installed_version <- as.character(packageVersion('PhotoGEA'))
+
+if (compareVersion(expected_version, installed_version) != 0) {
+  warning(
+    'This script was written for PhotoGEA version ', expected_version,
+    ' but version ', installed_version,
+    ' is installed; this may cause unexpected errors to occur.'
+  )
+}
+
+## IMPORTANT: A version mismatch does not always cause a problem. But, if there
+## is a version mismatch and unexpected errors occur, it is recommended to
+## install the expected version of PhotoGEA. Complete installation instructions
+## can be found online in the "Frequently Asked Questions" article:
+##
+## https://eloch216.github.io/PhotoGEA/articles/web_only/frequent_questions.html#installing-photogea
 ```
 
 If the `lattice` package is not installed on your R setup, you can install it by

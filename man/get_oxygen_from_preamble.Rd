@@ -5,8 +5,8 @@
 \title{Extract oxygen information from a Licor file}
 
 \description{
-  Extracts oxygen information from a Licor file's preamble and adds it to the
-  main data as a new column so it is easier to access.
+  Ensures that the oxygen percentage (contained in the preamble of a Licor file)
+  is properly documented (including units).
 }
 
 \usage{
@@ -16,40 +16,57 @@
 \arguments{
   \item{licor_exdf}{
     An \code{exdf} object representing data from a photosynthetic gas exchange
-    measurement system. The \code{exdf_obj$preamble} field must be defined and
-    contain the preamble contents; this will automatically be the case if
-    \code{licor_exdf} was created by \code{\link{read_gasex_file}}.
+    measurement system. It should contain a column called \code{Oxygen}; this
+    should automatically be the case if \code{licor_exdf} was created by
+    \code{\link{read_gasex_file}}.
   }
 }
 
 \details{
   Licor LI-6800 log files include the oxygen concentration as an entry in the
-  preamble, but it is more helpful to include this information as a column in
-  the main data. The \code{get_oxygen_from_preamble} function attempts to move
-  the oxygen concentration (as a percentage) from the preamble into a column.
+  preamble, which is automatically converted to a column by
+  \code{\link{read_licor_6800_Excel}} and
+  \code{\link{read_licor_6800_plaintext}}. However, the Licor log files do not
+  specify units for this value; they should be \code{percent}.
+
+  This function adds the correct units to the \code{Oxygen} column, or creates
+  one (with values initialized to \code{NA}) if the \code{Oxygen} column is not
+  present.
+
+  Also note that this function is called automatically by
+  \code{\link{read_licor_6800_Excel}} and
+  \code{\link{read_licor_6800_plaintext}} whenever \code{get_oxygen} is
+  \code{TRUE}; this happens by default, so it is rare for a user to call this
+  function directly.
 }
 
 \value{
-  An \code{exdf} object based on \code{licor_exdf} that includes the oxygen
-  percentage as a new column called \code{oxygen}.
+  An \code{exdf} object based on \code{licor_exdf} that includes the
+  \code{Oxygen} column units.
 }
 
 \examples{
 # Example: Read data from a Licor log file and get the oxygen information from
 # the preamble
 
-# Read the file
+# Read the file without automatically specifying oxygen units
 licor_data <- read_gasex_file(
   PhotoGEA_example_file_path('licor_for_gm_site11.xlsx'),
+  get_oxygen = FALSE
 )
 
-# Here we can see the oxygen percentage in the preamble
-str(licor_data$preamble)
+# Here we can see that the oxygen column is included, but without units
+print(licor_data$categories$Oxygen)
+print(licor_data$units$Oxygen)
+print(licor_data[, 'Oxygen'])
 
-# Include the oxygen info as a column in the file
+# Include the oxygen units
 licor_data <- get_oxygen_from_preamble(licor_data)
 
-licor_data[, c('replicate', 'oxygen'), TRUE]
+# The units have changed, but the category and values have not
+print(licor_data$categories$Oxygen)
+print(licor_data$units$Oxygen)
+print(licor_data[, 'Oxygen'])
 }
 
 \concept{exdf}

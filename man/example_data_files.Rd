@@ -62,7 +62,8 @@
           \code{plot}, and \code{instrument}. These files are used in the
           "Analyzing C3 A-Ci Curves" vignette and in other examples. The
           \code{Remarks} sheet of \code{c3_aci_2.xlsx} was deleted from the
-          original version as a test for \code{\link{read_licor_6800_Excel}}.
+          original version, and an updated value of Oxygen was added after
+          observation 10, as a test for \code{\link{read_licor_6800_Excel}}.
     \item \code{c4_aci_1.xlsx} and \code{c4_aci_2.xlsx}: Two log files
           created by Licor Li-6800 portable gas exchange measurement systems.
           These log files each contain several C4 CO2 response (or A-Ci) curves.
@@ -78,12 +79,15 @@
           portable gas exchange measurement system. This file contains several
           CO2 response (or A-Ci) curves. Several user constants were defined in
           this log that can be used to identify individual curves or subsets of
-          curves: \code{species}, \code{plot}, and \code{instrument}.
+          curves: \code{species}, \code{plot}, and \code{instrument}. Several
+          updated values of Oxygen were added as a test of
+          \code{\link{read_licor_6800_plaintext}}.
     \item \code{plaintext_licor_file_v2}: A log file based on
           \code{plaintext_licor_file} that has two separate \code{[Data]} and
           \code{[Header]} sections, as if the log file had been closed and
           reopened halfway through the measurement sequence. It also has an
-          extra blank line at the end.
+          extra blank line at the end. Several updated values of Oxygen were
+          added as a test of \code{\link{read_licor_6800_plaintext}}.
     \item \code{licor_for_gm_site11.xlsx}, \code{licor_for_gm_site13.xslsx}, and
           \code{tdl_for_gm}: Two Licor Li-6800 log files and a CR3000 TDL log
           file, respectively. These files are used as an example of loading and

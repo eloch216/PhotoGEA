@@ -43,7 +43,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -383,7 +383,7 @@
             \item For parameters that depend on leaf temperature, the average
                   leaf-temperature-dependent values are stored in
                   \code{X_tl_avg} columns: \code{gmc_tl_avg}, \code{J_tl_avg},
-                  \code{Jmax_tl_avg}, \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
+                  \code{RL_tl_avg}, \code{Vcmax_tl_avg}, and
                   \code{Vpmax_tl_avg}.
             \item The average leaf temperature is also stored in the
                   \code{Tleaf_avg} column.

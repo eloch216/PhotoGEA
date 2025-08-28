@@ -2,10 +2,9 @@
 
 ### git-flow
 
-* In general, PhotoGEA development follows the
-  [git-flow](https://nvie.com/posts/a-successful-git-branching-model/) branching
-  model, where there are two permanent branches (`main` and `unreleased`) and
-  three types of temporary branches (hotfixes, features, and releases).
+* In general, PhotoGEA development follows the [git-flow][] branching model,
+  where there are two permanent branches (`main` and `unreleased`) and three
+  types of temporary branches (hotfixes, features, and releases).
 
 * For most contributors, it is only necessary to know that most changes should
   be accomplished through feature branches, which are branched off `unreleased`
@@ -16,9 +15,9 @@
 * Beyond the basic description of git-flow, we have a few additional rules
   and clarifications specific to PhotoGEA development:
 
-  - Any merge into `main` or `unreleased` must be done via a pull request. On
-    the `main` branch, this requirement is enforced with GitHub branch
-    protection rules and cannot be bypassed.
+  - Any merge into `main` or `unreleased` must be done via a pull request. This
+    requirement is enforced with GitHub branch protection rules and cannot be
+    bypassed.
 
   - All pull requests into `main` and `unreleased` require approval before
     merging. This requirement is not enforced using GitHub branch protection
@@ -48,6 +47,14 @@
     these changes, each feature branch should include a description of its own
     changes in an `UNRELEASED` section of `NEWS.md`. For more information about
     updating the changelog, please see the comment at the top of `NEWS.md`.
+
+  - To avoid confusion, the version numbers on `main` and `unreleased` should
+    never be identical. In general, if `main` is a stable release with version
+    number `X.Y.Z`, then the version number on `unreleased` should be `X.Y.Z-D`,
+    where `D` is a "development" component that begins at 0. This will indicate
+    that the version contains unreleased developments that have occurred since
+    the release of version `X.Y.Z`. The fourth component can be incremented as
+    necessary if a feature branch introduces an important change.
 
 * The following is a short description of PhotoGEA's implementation of the
   git-flow branching model:
@@ -80,9 +87,16 @@
     new version of the package, a release branch is used to move the changes
     from `unreleased` to `main`. Release branches should not include substantive
     changes; rather, a release branch is primarily used to increment the package
-    version and to ensure an up-to-date changelog in `NEWS.md`. A release branch
+    version and to ensure an up-to-date changelog in `NEWS.md`; see
+    `developer_documentation/new_release.md` for more details. A release branch
     should be branched off `unreleased`. When it's ready, it should first merged
-    into `main` via an approved pull request. Then, a second pull request should
-    be made to merge into `unreleased`. If there are no merge conflicts or test
+    into `unreleased` via an approved pull request. Then, a second pull request
+    should be made to merge into `main`. (If the first PR target is `main`, it
+    will be difficult to discern the minor changes in the release branch from
+    the other changes in `unreleased`.) If there are no merge conflicts or test
     failures, this second request can be merged without any additional approval.
     When both merges are complete, the release branch should be deleted.
+
+  - When the version number on `main` is changed, either through a release or
+    hotfix, then the version number on `unreleased` should also be changed
+    shortly afterward, as described above.

@@ -30,7 +30,7 @@
     kc_column_name = 'Kc',
     ko_column_name = 'Ko',
     kp_column_name = 'Kp',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     vcmax_norm_column_name = 'Vcmax_norm',
@@ -101,8 +101,7 @@
 
   \item{j_norm_column_name}{
     The name of the column in \code{exdf_obj} that contains the normalized
-    \code{Jmax} values (with units of
-    \code{normalized to Jmax at 25 degrees C}).
+    \code{J} values (with units of \code{normalized to J at 25 degrees C}).
   }
 
   \item{kc_column_name}{

@@ -18,7 +18,7 @@ calculate_c3_assimilation <- function(
     j_norm_column_name = 'J_norm',
     kc_norm_column_name = 'Kc_norm',
     ko_norm_column_name = 'Ko_norm',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     rl_norm_column_name = 'RL_norm',
     total_pressure_column_name = 'total_pressure',
     tp_norm_column_name = 'Tp_norm',
@@ -53,7 +53,7 @@ calculate_c3_assimilation <- function(
         required_variables[[j_norm_column_name]]          <- unit_dictionary('J_norm')
         required_variables[[kc_norm_column_name]]         <- unit_dictionary('Kc_norm')
         required_variables[[ko_norm_column_name]]         <- unit_dictionary('Ko_norm')
-        required_variables[[oxygen_column_name]]          <- unit_dictionary('oxygen')
+        required_variables[[oxygen_column_name]]          <- unit_dictionary('Oxygen')
         required_variables[[rl_norm_column_name]]         <- unit_dictionary('RL_norm')
         required_variables[[total_pressure_column_name]]  <- unit_dictionary('total_pressure')
         required_variables[[tp_norm_column_name]]         <- unit_dictionary('Tp_norm')

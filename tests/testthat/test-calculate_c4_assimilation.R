@@ -4,7 +4,7 @@ inputs <- exdf(data.frame(
   Qin = 1800,
   Tleaf = 30,
   total_pressure = 1,
-  oxygen = 21
+  Oxygen = 21
 ))
 
 inputs <- document_variables(
@@ -13,7 +13,7 @@ inputs <- document_variables(
   c('', 'Qin',            'micromol m^(-2) s^(-1)'),
   c('', 'Tleaf',          'degrees C'),
   c('', 'total_pressure', 'bar'),
-  c('', 'oxygen',         'percent')
+  c('', 'Oxygen',         'percent')
 )
 
 inputs <- calculate_temperature_response(inputs, c4_temperature_param_vc, 'Tleaf')

@@ -17,7 +17,7 @@ fit_c3_variable_j <- function(
     j_norm_column_name = 'J_norm',
     kc_norm_column_name = 'Kc_norm',
     ko_norm_column_name = 'Ko_norm',
-    oxygen_column_name = 'oxygen',
+    oxygen_column_name = 'Oxygen',
     phips2_column_name = 'PhiPS2',
     qin_column_name = 'Qin',
     rl_norm_column_name = 'RL_norm',

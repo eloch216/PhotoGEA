@@ -118,6 +118,14 @@ identify_tdl_cycles <- function(
         }
     }
 
+    if (n_cycles == 1) {
+        stop(
+            'No TDL cycles were found; the values of `cycle_start_valve`, ',
+            '`expected_cycle_length_minutes`, `expected_cycle_num_valves`, ',
+            'or other input arguments may be incorrect for this data set'
+        )
+    }
+
     new_main_data[['elapsed_time']] <- as.double(difftime(
         new_main_data[[timestamp_colname]],
         start_time,
