@@ -98,12 +98,15 @@ the version of the package you used.
 
 6. Tamang, B. G., Bernard, G., Bernacchi, C. J., Diers, B. W. & Ainsworth, E. A.
    "Bigger is not always better: Optimizing leaf area index with narrow leaf
-   shape in soybean." _bioRxiv_ preprint (2025).
+   shape in soybean." _Plant Physiology_ kiaf663 (2025).
 
-   > - [DOI:10.1101/2025.07.07.663573](https://doi.org/10.1101/2025.07.07.663573)
+   > - [DOI:10.1093/plphys/kiaf663](https://doi.org/10.1093/plphys/kiaf663)
    >
    > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`)
    >
    > - PhotoGEA version: `v1.1.0`
    >
    > - Analysis scripts: Not yet available
+   >
+   > - Preprint available from _bioRxiv_:
+   >   [DOI:10.1101/2025.07.07.663573](https://doi.org/10.1101/2025.07.07.663573)
