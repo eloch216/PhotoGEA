@@ -1,0 +1,725 @@
+# Frequently Asked Questions
+
+## Overview
+
+The questions discussed here are grouped into sections by topic:
+
+- [Installing PhotoGEA](#installing-photogea)
+
+- [Loading Data](#loading-data)
+
+- [Checking Data](#checking-data)
+
+- [Converting and Exporting Results](#converting-and-exporting-results)
+
+- [Fitting C₃*A-C_(i)* Curves](#fitting-c3-a-ci-curves)
+
+## Installing PhotoGEA
+
+### How Do I Install the Latest Release of PhotoGEA?
+
+`PhotoGEA` is available on CRAN, so the easiest way to install the
+latest release is to type the following from within an R terminal:
+
+``` r
+install.packages('PhotoGEA')
+```
+
+There may be a short period of time where a new version has been
+released but is not yet available on CRAN. In this case, the latest
+release can be installed directly from the main branch of the GitHub
+repository by typing the following:
+
+``` r
+remotes::install_github('eloch216/PhotoGEA')
+```
+
+Note that this method requires the `remotes` package, which can be
+installed from within R by typing `install.packages('remotes')`.
+
+### How Do I Install an Old Version of PhotoGEA?
+
+All `PhotoGEA` releases are tagged on GitHub, and the tag names are
+formatted as `vX.Y.Z`, where `X.Y.Z` is the version number. Because of
+this, `remotes::install_github` can be used to install old versions from
+within R, supplying the appropriate tag name as the `ref` input
+argument. For example, version `1.0.0` can be installed as follows:
+
+``` r
+remotes::install_github('eloch216/PhotoGEA', ref = 'v1.0.0')
+```
+
+Note that this command requires the `remotes` package, which can be
+installed from within R by typing `install.packages('remotes')`.
+
+### How Do I Install the Development Version of PhotoGEA?
+
+The development version of `PhotoGEA` contains the latest changes,
+although it may be a “work in progress” and subject to suddent changes
+without any warning. It can always be found on the `unreleased` branch
+on GitHub, and the package can be installed from this branch as follows:
+
+``` r
+remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
+```
+
+Note that this command requires the `remotes` package, which can be
+installed from within R by typing `install.packages('remotes')`.
+
+### How Do I Install From a Local Copy of the Repository?
+
+The `PhotoGEA` package can be installed from a local copy of the
+repository by running the following command in an R session with the
+working directory set to the root directory of the `PhotoGEA`
+repository:
+
+``` r
+install.packages('.', repos = NULL, type = 'SOURCE')
+```
+
+This can be helpful for developers who wish to locally test changes to
+the package code.
+
+## Loading Data
+
+### What if I Have Log Files From a Licor LI-6400, PP Systems CIRAS, or Other Gas Exchange Measurement System?
+
+At the moment, `PhotoGEA` can read plaintext and Excel files created by
+Licor LI-6800 gas exchange measurement systems, but does not have
+functions for reading log files from other instruments.
+
+Fortunately, there are other R packages that do, such as
+[GasanalyzeR](https://doi.org/10.1093/aobpla/plae035). Using a function
+from another package is a little complicated, because generally they do
+not use the same data structures or variable names as `PhotoGEA`. So,
+after reading a file with another package, there is typically some extra
+“conversion” that needs to take place.
+
+The following example shows how to create a wrapper for the
+`read_6400_xls` function from the `gasanalyzer` R package. It also
+provides a simple function that “detects” the file type, so a mix of
+Licor LI-6400 and LI-6800 log files could be used. The code in the
+example would replace the lines that use `read_gasex_file` to create
+`gasex_exdf_list` in the user guides.
+
+As of the time this article was written (April 4, 2025), the
+`read_6400_xls` function is not available in the CRAN version of the
+`gasanalyzer` package. Instead, the package must be installed directly
+from its GitLab repository to get the latest version. This can be done
+by calling the following command from R:
+
+``` r
+remotes::install_gitlab('plantphys/gasanalyzer')
+```
+
+This example only processes the columns that are absolutely essential
+for fitting A-Ci curves. Depending on your goals, you may need to modify
+this code to include other columns.
+
+``` r
+# Helper function for reading 6400 Excel files. This is a wrapper for the
+# read_6400_xls function from the gasanalyzer package that converts the output
+# into a format usable by PhotoGEA.
+#
+# Debug option: If DEBUG_PRINT is set to TRUE below, the raw column names will
+# be printed immediately after the file is loaded. This may be helpful if there
+# are other columns (such as user constants) that also need to be renamed.
+read_6400_xls_wrapper <- function(fpath) {
+    # Read the contents of the file
+    rawdata <- gasanalyzer::read_6400_xls(fpath)
+
+    # Optional debug printing
+    DEBUG_PRINT <- FALSE
+    if (DEBUG_PRINT) {
+      print(colnames(rawdata))
+    }
+
+    # Rename a few columns so they meet PhotoGEA's expectations; the "new"
+    # PhotoGEA column name is on the left, and the "original" gasanalyzer
+    # column name is on the right.
+    new_column_names <- list(
+        A = 'GasEx.A',
+        Ca = 'GasEx.Ca',
+        Ci = 'GasEx.Ci',
+        DeltaPcham = 'Meas.DeltaPcham',
+        gsw = 'GasEx.gsw',
+        Oxygen = 'Const.Oxygen',
+        Pa = 'Meas.Pa',
+        Qin = 'LeafQ.Qin',
+        TleafCnd = 'GasEx.TleafCnd'
+    )
+
+    for (i in seq_along(new_column_names)) {
+        gasanalyzer_name <- new_column_names[[i]]
+        photogea_name    <- names(new_column_names)[i]
+
+        colnames(rawdata)[colnames(rawdata) == gasanalyzer_name] <- photogea_name
+    }
+
+    # Drop units and convert to a regular data frame
+    rawdata_df <- as.data.frame(units::drop_units(rawdata))
+
+    # Convert to an exdf object
+    exdf_obj <- exdf(rawdata_df)
+
+    # Supply units for a few columns so they meet PhotoGEA's expectations, and
+    # return
+    document_variables(
+        exdf_obj,
+        c('GasEx', 'A',          'micromol m^(-2) s^(-1)'),
+        c('GasEx', 'Ca',         'micromol mol^(-1)'),
+        c('GasEx', 'Ci',         'micromol mol^(-1)'),
+        c('Meas',  'DeltaPcham', 'kPa'),
+        c('GasEx', 'gsw',        'mol m^(-2) s^(-1)'),
+        c('in',    'Oxygen',     'percent'),
+        c('Meas',  'Pa',         'kPa'),
+        c('LeafQ', 'Qin',        'micromol m^(-2) s^(-1)'),
+        c('GasEx', 'TleafCnd',   'degrees C')
+    )
+}
+
+# Helper function that tries to read a file using PhotoGEA::read_gasex_file, but
+# then uses `read_6400_xls_wrapper` if there is an error.
+read_gasex_file_plus_6400 <- function(fpath) {
+  cat(paste0(
+    '\nAttempting to read `', fpath, '` using PhotoGEA::read_gasex_file\n'
+  ))
+
+  tryCatch(
+    read_gasex_file(fpath),
+    error = function(e) {
+      cat(paste0(
+        '\nAn error occurred. Attempting to read `', fpath,
+        '` using gasanalyzer::read_6400_xls\n'
+      ))
+
+      read_6400_xls_wrapper(fpath)
+    }
+  )
+}
+
+# Load each file, storing the result in a list
+gasex_exdf_list <- lapply(file_paths, function(fpath) {
+  read_gasex_file_plus_6400(fpath)
+})
+```
+
+### What if My Data Has Been Reformatted to CSV?
+
+Sometimes the contents of one or more instrument log files has been
+reformatted into a CSV file. This is especially common in older data
+sets that were compiled before the availability of tools like PhotoGEA’s
+`read_gasex_file` function, since the log files could not be read
+directly from R. By manually converting to CSV, it became possible to
+read their contents using `read.csv`.
+
+Such data sets can still be analyzed in PhotoGEA, but slightly different
+steps must be taken. The main idea is to first read the CSV file with
+`read.csv`, creating a regular data frame. Then, by supplying units for
+key columns, the data frame can be converted to an `exdf` object and
+passed to other PhotoGEA functions.
+
+The following example shows how to do this for a single data file, which
+can be obtained from [a figshare
+repository](https://figshare.com/articles/dataset/ACi-TGlob_V1_0_A_Global_dataset_of_photosynthetic_CO2_response_curves_of_terrestrial_plants_/7283567).
+This code would replace the lines that use `read_gasex_file` to create
+`gasex_data` in the user guides.
+
+``` r
+# Read the original CSV
+original_df <- read.csv(
+  'ACi-TGlob_V1.0.csv',
+  fileEncoding = 'latin1',
+  stringsAsFactors = FALSE
+)
+
+# Convert to an exdf object and add units for key columns
+gasex_data <- exdf(
+  original_df,
+  units = data.frame(
+    Ci    = 'micromol mol^(-1)',
+    CO2S  = 'micromol mol^(-1)',
+    Cond  = 'mol m^(-2) s^(-1)',
+    PARi  = 'micromol m^(-2) s^(-1)',
+    Photo = 'micromol m^(-2) s^(-1)',
+    Tleaf = 'degrees C'
+  )
+)
+```
+
+As shown here, it is not necessary to provide units for every column. In
+fact, it is not necessary to provide units for *any* column when
+creating an `exdf` object. So, one way to proceed is to begin without
+any units:
+
+``` r
+gasex_data <- exdf(
+  original_df,
+  units = data.frame(
+  )
+)
+```
+
+Subsequent calls to other PhotoGEA functions (for example, `fit_c3_aci`)
+will produce error messages when required units are not available. Then
+you can fill them in.
+
+### What if My Columns Have Different Names Than Those in a Licor LI-6800 Log File?
+
+Each function in PhotoGEA allows the user to specify alternate names for
+the columns it needs, where the default names follow those used in Licor
+LI-6800 log files. For example, the default name for the net CO₂
+assimilation rate column in most functions is `A`. However, some
+instrument log files use different names; for example, the net CO₂
+assimilation rate is called `Photo` in Licor LI-6400 log files. In this
+case, the default name can be changed to `Photo` when calling a PhotoGEA
+function that uses this column.
+
+This can be tedious though, since you may need to override the default
+column names many times. An alternate approach is to rename columns in
+the data table after loading it from a file. This only needs to be done
+once at the start of a script. The example below shows one way to do
+this; this code would follow the creation of the `exdf` table called
+`gasex_data`, and shows how to rename a few Licor LI-6400 columns:
+
+``` r
+# PhotoGEA has a mechanism for specifying the column names for key inputs, but
+# it is a bit clunky, so it's easier to rename them to their "standard" names;
+# here we accomplish this by using a helper function
+rename_col <- function(data_table, oldname, newname) {
+  colnames(data_table)[colnames(data_table) == oldname] <- newname
+  data_table
+}
+
+# Specify the old and new names via a list, where the old names are on the left
+# and the new ones are on the right
+to_rename <- list(
+  CO2S  = 'Ca',
+  Cond  = 'gsw',
+  PARi  = 'Qin',
+  Photo = 'A',
+  Tleaf = 'TleafCnd'
+)
+
+# Rename columns in `gasex_data`
+for (i in seq_along(to_rename)) {
+  gasex_data <-
+    rename_col(gasex_data, names(to_rename)[i], to_rename[[i]])
+}
+```
+
+### How Can I Safely Alter an Instrument Log File?
+
+An instrument log file may have a `.xlsx`, `.csv`, or `.dat` extension,
+but it is not just an Excel, CSV, or text file. Besides its general file
+type, it has a variety of instrument-specific characteristics. For
+example, the following are a few key characteristics of different types
+of instrument log files commonly encountered when working with gas
+exchange data:
+
+- In a Licor LI-6400 Excel file, cell `A1` contains `OPEN X.Y.Z`, where
+  `X.Y.Z` is the version of the Licor software, and cell `A2` contains
+  the date.
+
+- In a Licor Li-6800 plaintext file, there are separate sections for
+  header and main data information, which are indicated by lines
+  containing `[Header]` and `[Data]`.
+
+- In a Campbell Scientific CR3000 file, the first row contains
+  information about the program running on the logger, the second row
+  contains column names, and the third row contains column units.
+
+The R functions that read these files expect them to always have these
+properties. If a file has been altered too much, it cannot be recognized
+as an instrument-specific log file, and it cannot be properly read by an
+instrument-specific file-reading function.
+
+The properties of these files are typically not explicitly described,
+nor are the expectations of each instrument-specific file-reading
+function. So, the safest approach is to alter them as little as
+possible. In general, alterations should ideally be limited to the
+following operations:
+
+1.  Changing the value of a cell in a table. For example, fixing an
+    incorrect value of a user constant in a Licor log file. Avoid
+    directly changing the value of a cell that contains an equation.
+
+2.  Deleting an entire row from a table. For example, if the log button
+    on Licor Li-6800 was accidentally pressed, there will be an extra
+    row in the log file that should be removed.
+
+3.  Adding a new column. For example, to include additional metadata. In
+    this case, the new column should always be added on the far right
+    end of the data table to avoid unintentionally altering the header
+    structure.
+
+Any alterations that change the header structure or the names of
+existing table columns should be avoided.
+
+Sometimes people want to alter instrument log files in order to “clean”
+them; this usually entails removing header information and possibly
+columns that are not useful to them. Rather than doing this manually, it
+is usually faster and easier to read them in R and re-save them as CSV
+files using `write.csv`. See the [Converting and Exporting
+Results](#converting-and-exporting-results) section of this article for
+some advice about doing this.
+
+### What if I Cannot Load My Instrument Log File?
+
+Sometimes this happens after a file has been altered. Double check the
+advice in the section above. If there is still an issue, feel free to
+contact the PhotoGEA package maintainer for help.
+
+## Checking Data
+
+### What Should I Do When check_response_curve_data Fails?
+
+When beginning to work with a new data set, it is fairly common to
+encounter problems that cause `check_response_curve_data` to fail. The
+most common issues are:
+
+- The manual log button was accidentally pressed while measuring,
+  causing a response curve to have an extra point.
+
+- One or more “User Constant” was not updated before starting a to
+  measure a new curve, causing two curves to have the same identifying
+  metadata.
+
+- A curve was started, but needed to be ended early, resulting in a
+  curve with fewer points than expected.
+
+These are exactly the kinds of issues that `check_response_curve_data`
+is designed to detect. It may feel irritating to encounter these errors,
+but it’s better to know about issues with extra log points or user
+constants early in your analysis, before they cause additional
+downstream issues.
+
+In each of these cases, it is often simplest to fix the issues by
+manually editing the log files in Excel. This is an easy way to delete
+extra rows or alter the values of user constants. When altering log
+files, it is always a good idea to keep an “original” version in case
+any of the changes need to be reverted.
+
+Sometimes `check_response_curve_data` fails for a different reason – for
+example, perhaps different setpoint sequences were intentionally used
+while measuring the curves, or perhaps you have already cleaned up your
+data in Excel. In these cases, please see the “What if My Response
+Curves Have Different Numbers of Points?” and “What if I Clean My Data
+in Excel?” sections of this article.
+
+### What if My Response Curves Have Different Numbers of Points?
+
+The analysis guides use data sets where each response curve has the same
+number of points, making it easy to apply `check_response_curve_data`
+and `organize_response_curve_data`. However, data sets may sometimes
+have curves measured using different sequences of setpoints.
+
+To deal with this situation, one strategy is to split the full set into
+groups that are expected to use the same sequences, then separately
+check and organize each group, and finally recombine all the groups back
+together. The code snippets below show two examples of how this could be
+accomplished.
+
+#### Splitting Response Curves According to the Number of Points in Each Curve
+
+The following code would replace the calls to
+`check_response_curve_data` and `organize_response_curve_data` in the
+user guides. This code was originally written for a set of A-Ci curves
+that used different numbers of recovery points. The user wished to keep
+the final recovery point to use for subsequent analysis.
+
+The curves used the following sequences of `CO2_r` setpoint values:
+
+- 16 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 600, 800,
+  1200, 1500, 1800, 400
+
+- 18 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400, 400,
+  600, 800, 1200, 1500, 1800, 400
+
+- 19 points: 400, 300, 200, 120, 70, 30, 10, 400, 400, 400, 400, 400,
+  400, 600, 800, 1200, 1500, 1800, 400
+
+``` r
+# Add a new column called `curve_npts` that stores the number of points in each
+# response curve
+gasex_data <- do.call(rbind, by(gasex_data, gasex_data[, 'curve_identifier'], function(x) {
+  x[, 'curve_npts'] <- nrow(x)
+  x
+}))
+
+# Choose points to remove, depending on how many points are in the curve
+pts_to_remove <- list(
+  '16' = c(1, 8:9,  16),
+  '18' = c(1, 8:11, 18),
+  '19' = c(1, 8:12, 19)
+)
+
+# Check and process each group of curves depending on how many points are in the
+# curve
+gasex_exdf_list_processed <- by(gasex_data, gasex_data[, 'curve_npts'], function(x) {
+  # Get the number of points in these curves
+  npts <- x[1, 'curve_npts']
+
+  # Make sure info is specified for this group of curves
+  if (!as.character(npts) %in% names(pts_to_remove)) {
+    stop('Points to remove were not specified for npts = `', npts, '`')
+  }
+
+  # Make sure the data meets basic requirements
+  check_response_curve_data(x, 'curve_identifier', npts, 'CO2_r_sp')
+
+  # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+  organize_response_curve_data(
+    x,
+    'curve_identifier',
+    pts_to_remove[[as.character(npts)]],
+    'Ci'
+  )
+})
+
+# Use `rbind` to recombine all the data
+gasex_data <- do.call(rbind, gasex_exdf_list_processed)
+```
+
+#### Splitting Response Curves According to the Date They Were Measured and the Number of Points in Each Curve
+
+This code would replace the calls to `check_response_curve_data` and
+`organize_response_curve_data` in the user guides. This code was
+originally written for a set of A-Ci curves that used different
+sequences of `CO2_r` setpoints on different days.
+
+The curves used the following sequences of `CO2_r` setpoint values:
+
+- 2023-03-21: 18 points: 400, 300, 200, 150, 100, 75, 50, 40, 30, 20,
+  10, 400, 400, 600, 800, 1000, 1200, 1500
+
+- 2023-03-23: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30, 20,
+  10, 400, 400, 500, 600, 800, 1000, 1200, 1500
+
+- 2023-03-24: 19 points: 400, 300, 200, 150, 100, 75, 50, 40, 30, 20,
+  400, 400, 450, 500, 600, 800, 1000, 1200, 1500
+
+``` r
+# Add a new column called `curve_npts` that stores the number of points in each
+# response curve
+gasex_data <- do.call(rbind, by(gasex_data, gasex_data[, 'curve_identifier'], function(x) {
+  x[, 'curve_npts'] <- nrow(x)
+  x
+}))
+
+# Add a new column called `date_ymd` that stores the date formatted as
+# YYYY-MM-DD
+gasex_data[, 'date_ymd'] <- paste(
+  substring(gasex_data[, 'date'], 1, 4),
+  substring(gasex_data[, 'date'], 5, 6),
+  substring(gasex_data[, 'date'], 7, 8),
+  sep = '-'
+)
+
+# Add a new column called `date_ymd_npts` that combines the date and the number
+# of points
+gasex_data[, 'date_ymd_npts'] <-
+  paste(gasex_data[, 'date_ymd'], gasex_data[, 'curve_npts'], sep = ' - ')
+
+# Choose points to remove, depending on the date the curve was measured and the
+# number of points it contains
+pts_to_remove <- list(
+  '2023-03-21 - 18' = c(12, 13),
+  '2023-03-23 - 19' = c(12, 13),
+  '2023-03-24 - 19' = c(11, 12)
+)
+
+# Check and process each group of curves depending on the date and the number of
+# points
+gasex_exdf_list_processed <- by(gasex_data, gasex_data[, 'date_ymd_npts'], function(x) {
+  # Get the date and number of points in these curves
+  date_ymd_npts <- x[1, 'date_ymd_npts']
+  npts <- x[1, 'curve_npts']
+
+  # Make sure info is specified for this group of curves
+  if (!date_ymd_npts %in% names(pts_to_remove)) {
+    stop('Points to remove were not specified for date_ymd_npts = `', date_ymd_npts, '`')
+  }
+
+  # Make sure the data meets basic requirements
+  check_response_curve_data(x, 'curve_identifier', npts, 'CO2_r_sp')
+
+  # Remove points with duplicated `CO2_r_sp` values and order by `Ci`
+  organize_response_curve_data(
+    x,
+    'curve_identifier',
+    pts_to_remove[[date_ymd_npts]],
+    'Ci'
+  )
+})
+
+# Use `rbind` to recombine all the data
+gasex_data <- do.call(rbind, gasex_exdf_list_processed)
+```
+
+### What if I Clean My Data in Excel?
+
+In the user guides, the `organize_response_curve_data` and
+`remove_points` functions are used to remove recovery points and other
+points from sets of response curves. However, it is also possible to
+remove points in Excel before reading log files into R. In this case, it
+is necessary to make a few small alterations to the code used in the
+user guides.
+
+One consideration is that after cleaning the curves in Excel, it is
+likely that not all curves have the same number of points or follow the
+same sequence of setpoint values. Because of this, the checks in
+`check_response_curve_data` are likely to fail. In this case, we
+recommend setting `expected_npts` to 0 (the default value) and
+`error_on_failure` to `FALSE` when calling `check_response_curve_data`.
+This will provide potentially useful information about the number of
+points in each curve, but won’t throw an error that would cause a script
+to stop running.
+
+Another consideration is that `organize_response_curve_data` is not
+needed to remove any points from the curves. Yet, its other features,
+such as reordering the points and calculating average values, are still
+useful. In this case, we recommend setting
+`measurement_numbers_to_remove` to
+[`c()`](https://rdrr.io/r/base/c.html) and leaving the other arguments
+as-is.
+
+Putting this all together would produce something like the following
+code, which would replace the regular calls to
+`check_response_curve_data` and `organize_response_curve_data` from the
+user guides:
+
+``` r
+# Print info about the number of points in each curve to make sure
+# `curve_identifier` is able to properly split the set into individual curves
+check_response_curve_data(gasex_data, 'curve_identifier', error_on_failure = FALSE)
+
+# Reorder by `Ci` and calculate average values of leaf temperature and Qin
+gasex_data <- organize_response_curve_data(
+    gasex_data,
+    'curve_identifier',
+    c(),
+    'Ci',
+    columns_to_average = c('TleafCnd', 'Qin')
+)
+```
+
+### What if My Files Don’t Have User Constants or Other Metadata?
+
+Please see the [Guide to Licor LI-6800 User
+Constants](https://eloch216.github.io/PhotoGEA/articles/web_only/LI6800_user_constants.md).
+
+## Converting and Exporting Results
+
+### How Can I Convert an exdf to a Regular Data Frame?
+
+Each `exdf` object is actually a list, where one of the elements (called
+`main_data`) includes its contents as a data frame. So, an `exdf` object
+can be converted to a data frame by extracting this element. For
+example, if `exdf_obj` is an extended data frame, then the following
+will “convert” it to a regular data frame:
+
+``` r
+# Convert an exdf to a regular data frame
+dataf <- exdf_obj$main_data
+```
+
+This can be helpful for passing the results from PhotoGEA functions to
+other R functions, especially when performing statistical analysis.
+
+Note: Using `as.data.frame` is not recommended, since it will add a row
+for the units and a row for the categories when converting. This is
+useful in a few situations (for example, when printing the contents of
+an `exdf`), but it is a nuisance in most situations because it will
+cause all columns to become `character` (even if they were originally
+`numeric`) and to include non-data values. See
+[`?as.data.frame.exdf`](https://eloch216.github.io/PhotoGEA/reference/as.data.frame.exdf.md)
+for more info.
+
+### How Can I Save an exdf to a CSV File?
+
+There are several options for doing this. One is to use
+`write.csv.exdf`, which will include the units and categories for each
+column. Another option is to convert the `exdf` to a regular data frame
+(see above) and use `write.csv`. For example:
+
+``` r
+# Write an exdf to a CSV file, including units
+write.csv.exdf(exdf_obj, file = 'exdf_version.csv')
+
+# Write an exdf to a CSV file, not including units
+write.csv(exdf_obj$main_data, file = 'data_frame_version.csv', row.names = FALSE)
+```
+
+The file created by `write.csv.exdf` can be read using `read.csv.exdf`,
+which will create an exdf object from the file. The file created by
+`write.csv` can be read using `read.csv`, which will create a data frame
+from the file.
+
+Sometimes it can be helpful to only save a subset of the columns in an
+`exdf`. For example, the `parameters` table returned by `fit_c3_aci`
+contains many columns, some of which may not be important to all users.
+In this case, it is possible to specify the columns that should be saved
+as follows:
+
+``` r
+# Specify a subset of columns to write to a CSV file
+col_to_save <- c(
+  'curve_identifier',
+  'Vcmax_at_25',
+  'Jmax_at_25',
+  'Tp_at_25',
+  'RL_at_25'
+)
+
+# Save fitting results to a CSV file, including units
+write.csv.exdf(
+  c3_aci_results$parameters[, col_to_save, TRUE],
+  file = 'parameters_subset.csv'
+)
+
+# Save fitting results to a CSV file, not including units
+write.csv(
+  c3_aci_results$parameters[, col_to_save],
+  file = 'parameters_subset.csv',
+  row.names = FALSE
+)
+```
+
+The example shows two options for creating the file, but typically only
+one of these would actually be used in practice. You may need to alter
+the particular columns that are saved.
+
+## Fitting C₃*A-C_(i)* Curves
+
+### How Can I Exclude TPU From C₃*A-C_(i)* Fits?
+
+To exclude TPU from a C₃*A-C_(i)* curve fit, just fix the value of
+`Tp_at_25` to a very high number, such as 1000. If the maximum rate of
+triose phosphate utilization is 1000 micromol / m^2 / s, then TPU will
+never be the rate-limiting process for any reasonable A-Ci curve. Thus,
+TPU will effectively be disabled. When `Tp_at_25` is not being fit,
+there is also no reason to fit any of the associated `alpha` parameters
+that are also related to TPU (`alpha_old`, `alpha_g`, `alpha_s`, and
+`alpha_t`), so these should be fixed to 0.
+
+This can be accomplished through the `fit_options` argument when calling
+`fit_c3_aci`. In particular, the following code could be used in place
+of the regular command in the C₃*A-C_(i)* user guide:
+
+``` r
+# Fit the C3 A-Ci curves, disabling TPU (so only RL, Vcmax, and J are fit)
+c3_aci_results <- consolidate(by(
+  gasex_data,                       # The `exdf` object containing the curves
+  gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
+  fit_c3_aci,                       # The function to apply to each chunk of `gasex_data`
+  Ca_atmospheric = 420,             # Additional argument passed to `fit_c3_aci`
+  fit_options = list(
+    Tp_at_25 = 1000,
+    alpha_old = 0,
+    alpha_g = 0,
+    alpha_s = 0,
+    alpha_t = 0
+  )
+))
+```

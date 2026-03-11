@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing C3 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/web_only/analyzing_c3_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.4.0/vignettes/web_only/analyzing_c3_aci_curves.Rmd" class="external-link"><code>vignettes/web_only/analyzing_c3_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c3_aci_curves.Rmd</code></div>
     </div>
 
@@ -195,7 +195,7 @@ and
 The plot below illustrates the three different assimilation ranges
 observed in a typical high-light <em>A-C<sub>i</sub></em> curve, as
 predicted by the FvCB model.</p>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-2-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>(Note: This figure was generated using the
 <code>calculate_c3_assimilation</code> function from the
 <code>PhotoGEA</code> package, and it represents the photosynethetic
@@ -467,13 +467,15 @@ we would get error messages:</p>
 <span><span class="co">#&gt; 4  ripe2 - soybean - 1   16</span></span>
 <span><span class="co">#&gt; 5 ripe2 - soybean - 5b   16</span></span>
 <span><span class="co">#&gt; 6  ripe2 - tobacco - 4   16</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 15 points: ripe1 - soybean - 5a, ripe1 - tobacco - 1, ripe1 - tobacco - 2, ripe2 - soybean - 1, ripe2 - soybean - 5b, ripe2 - tobacco - 4</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 15 points: ripe1 - soybean - 5a, ripe1 - tobacco - 1, ripe1 - tobacco - 2, ripe2 - soybean - 1, ripe2 - soybean - 5b, ripe2 - tobacco - 4</span></span>
 <span></span>
 <span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'species'</span>, <span class="fl">16</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1 soybean   48</span></span>
 <span><span class="co">#&gt; 2 tobacco   48</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 16 points: soybean, tobacco</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 16 points: soybean, tobacco</span></span></code></pre></div>
 <p>If all curves in your data set do not have the same number of points,
 or if some other issue is causing <code>check_response_curve_data</code>
 to fail, please see the <a href="frequent_questions.html#checking-data">“Checking Data” section of
@@ -537,7 +539,7 @@ its own separate subplot of a figure. For example:</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_aci-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_aci-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Some of these curves look a bit strange, but this is related to the
 noise that was intentionally added to the data. Three curves exhibit a
 sharp and likely unrealistic downturn in assimilation at their highest
@@ -570,7 +572,7 @@ plots to check each curve for quality.</p>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_humidity-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_humidity-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>Humidifier_%</code> and <code>Desiccant_%</code>
 represent the flow from the humidifier and desiccant columns, where a
 value of 0 indicates that the valve to the column is fully closed and a
@@ -600,7 +602,7 @@ photosynthesis. In this plot, all the data looks good.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_temperature-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_temperature-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>TleafCnd</code> is the leaf temperature measured using a
 thermocouple, and <code>Txchg</code> is the temperature of the heat
 exhanger that is used to control the air temperature in the measurement
@@ -625,7 +627,7 @@ looks good.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_co2-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_co2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>CO2_s</code> is the CO<sub>2</sub> concentration in the
 sample cell, <code>CO2_r</code> is the CO<sub>2</sub> concentration in
 the reference cell, and <code>CO2_r_sp</code> is the setpoint for
@@ -653,7 +655,7 @@ releases CO<sub>2</sub>.) In this plot, all the data looks good.</p>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_stability-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_stability-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>When measuring response curves with a Licor, it is possible to
 specify stability criteria for each point in addition to minimum and
 maximum wait times. In other words, once the set point for the driving
@@ -814,7 +816,7 @@ the potential limiting rates <code>Ac</code>, <code>Aj</code>, and
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the C3 A-Cc fits (including limiting rates)</span></span>
 <span><span class="fu"><a href="../../reference/plot_c3_aci_fit.html">plot_c3_aci_fit</a></span><span class="op">(</span><span class="va">c3_aci_results</span>, <span class="st">'curve_identifier'</span>, <span class="st">'Ci'</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_fits-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>In general, these fits look good. There are a few specific things to
 notice:</p>
 <ul>
@@ -857,7 +859,7 @@ plot them:</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Assimilation rate residual (measured - fitted)\n('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">fits</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_residuals-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/plot_residuals-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>A good fit should produce small and randomly-distributed residuals;
 here there is no clear pattern to the residuals, so this model is able
 to reproduce the measured values well.</p>
@@ -1000,7 +1002,7 @@ bars will show the standard error of the mean for each species.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/vcmax_barchart-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/vcmax_barchart-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Another option is to create box-whisper plots using the
 <code>bwplot</code> function from the <code>lattice</code> package:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -1012,7 +1014,7 @@ bars will show the standard error of the mean for each species.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c3_aci_results</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c3_aci_curves_files/figure-html/vcmax_bwplot-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c3_aci_curves_files/figure-html/vcmax_bwplot-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="calculating-average-best-fit-parameters">Calculating Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#calculating-average-best-fit-parameters"></a>
@@ -1426,7 +1428,7 @@ Environment</em> 30 (9): 1035–40. <a href="https://doi.org/10.1111/j.1365-3040
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

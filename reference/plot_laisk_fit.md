@@ -1,0 +1,140 @@
+# Plot the results of a C3 CO2 response curve fit
+
+Plots the output from
+[`fit_laisk`](https://eloch216.github.io/PhotoGEA/reference/fit_laisk.md).
+
+## Usage
+
+``` r
+plot_laisk_fit(
+    fit_results,
+    identifier_column_name,
+    plot_type,
+    cols = multi_curve_colors(),
+    a_column_name = 'A',
+    ci_column_name = 'Ci',
+    ppfd_column_name = 'PPFD',
+    ...
+  )
+```
+
+## Arguments
+
+- fit_results:
+
+  A list of four `exdf` objects named `first_fits`,
+  `first_fit_parameters`, `second_fits`, and `second_fit_parameters`, as
+  calculated by
+  [`fit_laisk`](https://eloch216.github.io/PhotoGEA/reference/fit_laisk.md).
+
+- identifier_column_name:
+
+  The name of a column in each element of `fit_results` whose value can
+  be used to identify each replicate within the data set; often, this is
+  `'curve_identifier'`.
+
+- plot_type:
+
+  Must be either `'first'` or `'second'` (case-insensitive); determines
+  which type of plot to create (see below for details).
+
+- cols:
+
+  A vector of color specifications to use for each light level when
+  plotting.
+
+- a_column_name:
+
+  The name of the columns in the elements of `fit_results` that contain
+  the net assimilation in `micromol m^(-2) s^(-1)`; should be the same
+  value that was passed to `fit_laisk`.
+
+- ci_column_name:
+
+  The name of the column in the elements of `fit_results` that contain
+  the intercellular CO2 concentration in `micromol mol^(-1)`; should be
+  the same value that was passed to `fit_laisk`.
+
+- ppfd_column_name:
+
+  The name of the column in the elements of `fit_results` that can be
+  used to split the data into individual response curves; should be the
+  same value that was passed to `fit_laisk`.
+
+- ...:
+
+  Additional arguments to be passed to
+  [`xyplot`](https://rdrr.io/pkg/lattice/man/xyplot.html).
+
+## Details
+
+This is a convenience function for plotting the results of a Laisk curve
+fit. It is typically used for displaying several fits at once, in which
+case `fit_results` is actually the output from calling
+[`consolidate`](https://eloch216.github.io/PhotoGEA/reference/consolidate.md)
+on a list created by calling
+[`by.exdf`](https://eloch216.github.io/PhotoGEA/reference/by.exdf.md)
+with `FUN = fit_laisk`.
+
+Because the Laisk fitting process involves two sets of linear fits,
+there are two possible graphs that can be created. When `plot_type` is
+`'first'`, this function will plot the individual A-Ci curves at each
+PPFD, along with the linear fits and the estimated intersection point.
+When `plot_type` is `'second'`, this function will plot the Laisk
+intercept vs. Laisk slope from the results of the first fits, along with
+a linear fit of Laisk intercept vs. Laisk slope. See
+[`fit_laisk`](https://eloch216.github.io/PhotoGEA/reference/fit_laisk.md)
+for more details.
+
+Internally, this function uses
+[`xyplot`](https://rdrr.io/pkg/lattice/man/xyplot.html) to perform the
+plotting. Optionally, additional arguments can be passed to `xyplot`.
+These should typically be limited to things like `xlim`, `ylim`, `main`,
+and `grid`, since many other `xyplot` arguments will be set internally
+(such as `xlab`, `ylab`, `auto`, and others).
+
+See the help file for
+[`fit_laisk`](https://eloch216.github.io/PhotoGEA/reference/fit_laisk.md)
+for an example using this function.
+
+## Value
+
+A `trellis` object created by
+[`lattice::xyplot`](https://rdrr.io/pkg/lattice/man/xyplot.html).
+
+## Examples
+
+``` r
+# Read an example Licor file included in the PhotoGEA package
+licor_file <- read_gasex_file(
+  PhotoGEA_example_file_path('c3_aci_1.xlsx')
+)
+
+# Define a new column that uniquely identifies each curve
+licor_file[, 'species_plot'] <-
+  paste(licor_file[, 'species'], '-', licor_file[, 'plot'] )
+
+# Organize the data
+licor_file <- organize_response_curve_data(
+    licor_file,
+    'species_plot',
+    c(9, 10, 16),
+    'CO2_r_sp'
+)
+
+# Apply the Laisk method. Note: this is a bad example because these curves were
+# measured at the same light intensity, but from different species. Because of
+# this, the results are not meaningful.
+laisk_results <- fit_laisk(
+  licor_file, 20, 150,
+  ppfd_column_name = 'species_plot'
+)
+
+# Plot the linear fits of A vs. Ci
+plot_laisk_fit(laisk_results, 'instrument', 'first', ppfd_column_name = 'species_plot')
+#> Error in plot_laisk_fit(laisk_results, "instrument", "first", ppfd_column_name = "species_plot"): object 'laisk_results' not found
+
+# Plot the linear fits of Laisk intercept vs. Laisk slope
+plot_laisk_fit(laisk_results, 'instrument', 'second', ppfd_column_name = 'species_plot')
+#> Error in plot_laisk_fit(laisk_results, "instrument", "second", ppfd_column_name = "species_plot"): object 'laisk_results' not found
+```

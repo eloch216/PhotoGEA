@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing Ball-Berry Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_ball_berry_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.4.0/vignettes/web_only/analyzing_ball_berry_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_ball_berry_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_ball_berry_data.Rmd</code></div>
     </div>
 
@@ -352,13 +352,15 @@ or an unrealistic tolerance, we would get error messages:</p>
 <span><span class="co">#&gt; 6 ripe5 - soybean - 5a    7</span></span>
 <span><span class="co">#&gt; 7 ripe5 - soybean - 5c    7</span></span>
 <span><span class="co">#&gt; 8  ripe5 - tobacco - 5    7</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 8 points: ripe4 - soybean - 1a, ripe4 - soybean - 1b, ripe4 - soybean - 5, ripe4 - tobacco - 2, ripe5 - soybean - 1, ripe5 - soybean - 5a, ripe5 - soybean - 5c, ripe5 - tobacco - 5</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 8 points: ripe4 - soybean - 1a, ripe4 - soybean - 1b, ripe4 - soybean - 5, ripe4 - tobacco - 2, ripe5 - soybean - 1, ripe5 - soybean - 5a, ripe5 - soybean - 5c, ripe5 - tobacco - 5</span></span>
 <span></span>
 <span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'species'</span>, <span class="fl">7</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1 soybean   42</span></span>
 <span><span class="co">#&gt; 2 tobacco   14</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 7 points: soybean, tobacco</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 7 points: soybean, tobacco</span></span>
 <span></span>
 <span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'curve_identifier'</span>, <span class="fl">7</span>, <span class="st">'Qin'</span>, <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "Point 1 from curve `ripe5 - soybean - 5a` has value `Qin = 2000.14`, but the average value for this point across all curves is `Qin = 2000`"      </span></span>
@@ -371,7 +373,8 @@ or an unrealistic tolerance, we would get error messages:</p>
 <span><span class="co">#&gt;  [8] "Point 5 from curve `ripe4 - soybean - 1a` has value `Qin = 500.135`, but the average value for this point across all curves is `Qin = 500.026875`"</span></span>
 <span><span class="co">#&gt;  [9] "Point 6 from curve `ripe5 - soybean - 1` has value `Qin = 350.145`, but the average value for this point across all curves is `Qin = 350.04`"     </span></span>
 <span><span class="co">#&gt; [10] "Point 7 from curve `ripe4 - tobacco - 2` has value `Qin = 200.236`, but the average value for this point across all curves is `Qin = 200.0565`"</span></span>
-<span><span class="co">#&gt; Error: The curves do not all follow the same sequence of the driving variable.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The curves do not all follow the same sequence of the driving variable.</span></span></code></pre></div>
 <p>If all curves in your data set do not have the same number of points,
 or if some other issue is causing <code>check_response_curve_data</code>
 to fail, please see the <a href="frequent_questions.html#checking-data">“Checking Data” section of
@@ -406,7 +409,7 @@ check each curve for quality.</p>
 <span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2200</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Incident PPFD ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Qin</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_ball_berry_data_files/figure-html/plot_humidity-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_humidity-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>Humidifier_%</code> and <code>Desiccant_%</code>
 represent the flow from the humidifier and desiccant columns, where a
 value of 0 indicates that the valve to the column is fully closed and a
@@ -438,7 +441,7 @@ photosynthesis. In this plot, all the data looks good.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Incident PPFD ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Qin</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_ball_berry_data_files/figure-html/plot_temperature-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_temperature-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>TleafCnd</code> is the leaf temperature measured using a
 thermocouple, and <code>Txchg</code> is the temperature of the heat
 exhanger that is used to control the air temperature in the measurement
@@ -465,7 +468,7 @@ looks good.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Incident PPFD ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Qin</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_ball_berry_data_files/figure-html/plot_co2-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_co2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>CO2_s</code> is the CO<sub>2</sub> concentration in the
 sample cell and <code>CO2_r</code> is the CO<sub>2</sub> concentration
 in the reference cell. When these curves were measured, a sample cell
@@ -495,7 +498,7 @@ CO<sub>2</sub> plots.</p>
 <span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2200</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Incident PPFD ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Qin</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_ball_berry_data_files/figure-html/plot_stability-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_stability-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>When measuring response curves with a Licor, it is possible to
 specify stability criteria for each point in addition to minimum and
 maximum wait times. In other words, once the set point for the driving
@@ -540,7 +543,7 @@ remove them before proceeding with the Ball-Berry fitting.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Incident PPFD ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Qin</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Net assimilation ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_ball_berry_data_files/figure-html/plot_assimilation-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_assimilation-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here we are simply looking for a reasonable light-response curve
 shape, where assimilation is low when light is low, assimilation has a
 roughly linear response to initial increases in light intensity, and
@@ -663,7 +666,7 @@ the data cleaning step:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the Ball-Berry fits</span></span>
 <span><span class="fu"><a href="../../reference/plot_ball_berry_fit.html">plot_ball_berry_fit</a></span><span class="op">(</span><span class="va">ball_berry_results</span>, <span class="st">'curve_identifier'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_ball_berry_data_files/figure-html/plot_fits-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_ball_berry_data_files/figure-html/plot_fits-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>All these fits look good!</p>
 </div>
 <div class="section level3">
@@ -1104,7 +1107,7 @@ Environment</em> 16 (4): 341–49. <a href="https://doi.org/10.1111/j.1365-3040.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

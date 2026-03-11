@@ -1,0 +1,67 @@
+# Getting Started With PhotoGEA
+
+## Overview
+
+**PhotoGEA** (short for **photo**synthetic **g**as **e**xchange
+**a**nalysis) is an R package that provides a suite of tools for
+loading, processing, and analyzing photosynthetic gas exchange data. See
+[Lochocki, Salesse-Smith, & McGrath
+(2025)](https://doi.org/10.1111/pce.15501) for more information.
+
+## Installing PhotoGEA
+
+`PhotoGEA` is available on CRAN, so the easiest way to install the
+latest release is to type the following from within an R terminal:
+
+``` r
+install.packages('PhotoGEA')
+```
+
+## Using PhotoGEA
+
+The `PhotoGEA` package includes extensive documentation, and more
+articles are being added all the time:
+
+- Analysis guides:
+  - [Analyzing C3 A-Ci
+    Curves](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_curves.html)
+  - [Analyzing C4 A-Ci
+    Curves](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c4_aci_curves.html)
+  - [Analyzing Ball-Berry
+    Data](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_ball_berry_data.html)
+  - [Analyzing TDL
+    Data](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_tdl_data.html)
+  - [Analyzing Mesophyll Conductance
+    Data](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_gm_data.html)
+- [Frequently Asked
+  Questions](https://eloch216.github.io/PhotoGEA/articles/web_only/frequent_questions.html):
+  Provides answers to frequently asked questions about `PhotoGEA`.
+- [Publication
+  Gallery](https://eloch216.github.io/PhotoGEA/articles/web_only/publications.html):
+  Includes a list of publications that describe or use `PhotoGEA`, along
+  with links to their corresponding analysis scripts.
+- General `PhotoGEA` advice:
+  - [Creating Your Own Processing
+    Tools](https://eloch216.github.io/PhotoGEA/articles/web_only/creating_your_own_processing_tools.html):
+    Discusses how to create functions compatible with `PhotoGEA` that
+    apply new types of processing.
+  - [Combining PhotoGEA With Other
+    Packages](https://eloch216.github.io/PhotoGEA/articles/web_only/combining_with_other_packages.html):
+    Discusses how to create wrappers for functions from other packages
+    to extend the processing capabilities of `PhotoGEA`.
+  - [Developing a Data Analysis
+    Pipeline](https://eloch216.github.io/PhotoGEA/articles/web_only/developing_a_data_analysis_pipeline.html):
+    Discusses how `PhotoGEA` provides functionality for all parts of a
+    data analysis pipeline, including loading and validating the data –
+    and how it can help save your time and improve the reproducibility
+    of your data analysis!
+  - [Working With Extended Data
+    Frames](https://eloch216.github.io/PhotoGEA/articles/web_only/working_with_extended_data_frames.html):
+    Discusses how to work with extended data frames, which are a
+    critical part of `PhotoGEA`.
+- General gas exchange advice:
+  - [Guide to Licor LI-6800 User
+    Constants](https://eloch216.github.io/PhotoGEA/articles/web_only/LI6800_user_constants.html):
+    Discusses how to include metadata in log files when using a Licor
+    LI-6800 gas exchange measurement system, and provides advice for
+    dealing with data sets that do not contain user constants.

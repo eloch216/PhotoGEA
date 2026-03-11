@@ -1,0 +1,261 @@
+# Package index
+
+## All functions
+
+- [`PhotoGEA`](https://eloch216.github.io/PhotoGEA/reference/PhotoGEA.md)
+  [`photogea`](https://eloch216.github.io/PhotoGEA/reference/PhotoGEA.md)
+  : The PhotoGEA R package
+- [`PhotoGEA_example_file_path()`](https://eloch216.github.io/PhotoGEA/reference/PhotoGEA_example_file_path.md)
+  : Locate a PhotoGEA example file on your computer
+- [`apply_gm()`](https://eloch216.github.io/PhotoGEA/reference/apply_gm.md)
+  : Calculate CO2 concentration in the chloroplast or mesophyll
+- [`as.data.frame(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/as.data.frame.exdf.md)
+  : Convert an exdf object to a data frame
+- [`barchart_with_errorbars()`](https://eloch216.github.io/PhotoGEA/reference/barchart_with_errorbars.md)
+  [`bwplot_wrapper()`](https://eloch216.github.io/PhotoGEA/reference/barchart_with_errorbars.md)
+  : Barcharts with error bars
+- [`basic_stats()`](https://eloch216.github.io/PhotoGEA/reference/basic_stats.md)
+  : Calculate basic stats (mean and standard error)
+- [`by(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/by.exdf.md)
+  : Apply a function to an exdf object split by one or more factors
+- [`c3_temperature_param_bernacchi`](https://eloch216.github.io/PhotoGEA/reference/c3_temperature_param_bernacchi.md)
+  : C3 temperature response parameters from Bernacchi et al.
+- [`c3_temperature_param_flat`](https://eloch216.github.io/PhotoGEA/reference/c3_temperature_param_flat.md)
+  : C3 temperature response parameters for a flat response
+- [`c3_temperature_param_sharkey`](https://eloch216.github.io/PhotoGEA/reference/c3_temperature_param_sharkey.md)
+  : C3 temperature response parameters from Sharkey et al.
+- [`c4_temperature_param_flat`](https://eloch216.github.io/PhotoGEA/reference/c4_temperature_param_flat.md)
+  : C4 temperature response parameters for a flat response
+- [`c4_temperature_param_vc`](https://eloch216.github.io/PhotoGEA/reference/c4_temperature_param_vc.md)
+  : C4 temperature response parameters from von Caemmerer
+- [`calculate_ball_berry_index()`](https://eloch216.github.io/PhotoGEA/reference/calculate_ball_berry_index.md)
+  : Calculate the Ball-Berry index
+- [`calculate_c3_assimilation()`](https://eloch216.github.io/PhotoGEA/reference/calculate_c3_assimilation.md)
+  : Calculate C3 assimilation rates
+- [`calculate_c3_limitations_grassi()`](https://eloch216.github.io/PhotoGEA/reference/calculate_c3_limitations_grassi.md)
+  : Estimate the relative limiting factors to C3 photosynthesis
+- [`calculate_c3_limitations_warren()`](https://eloch216.github.io/PhotoGEA/reference/calculate_c3_limitations_warren.md)
+  : Estimate the relative limiting factors to C3 photosynthesis
+- [`calculate_c3_variable_j()`](https://eloch216.github.io/PhotoGEA/reference/calculate_c3_variable_j.md)
+  : Calculate C3 variable J
+- [`calculate_c4_assimilation()`](https://eloch216.github.io/PhotoGEA/reference/calculate_c4_assimilation.md)
+  : Calculate C4 assimilation rates
+- [`calculate_c4_assimilation_hyperbola()`](https://eloch216.github.io/PhotoGEA/reference/calculate_c4_assimilation_hyperbola.md)
+  : Calculate C4 assimilation rates using a hyperbola
+- [`calculate_gamma_star()`](https://eloch216.github.io/PhotoGEA/reference/calculate_gamma_star.md)
+  : Calculate Gamma_star from Rubisco specificity
+- [`calculate_gas_properties()`](https://eloch216.github.io/PhotoGEA/reference/calculate_gas_properties.md)
+  : Calculate gas properties that are typically not included in Licor
+  files
+- [`calculate_gm_busch()`](https://eloch216.github.io/PhotoGEA/reference/calculate_gm_busch.md)
+  : Calculate mesophyll conductance to CO2 diffusion
+- [`calculate_gm_ubierna()`](https://eloch216.github.io/PhotoGEA/reference/calculate_gm_ubierna.md)
+  : Calculate mesophyll conductance to CO2 diffusion
+- [`calculate_isotope_discrimination()`](https://eloch216.github.io/PhotoGEA/reference/calculate_isotope_discrimination.md)
+  : Calculate photosynthetic isotope discrimination
+- [`calculate_jmax()`](https://eloch216.github.io/PhotoGEA/reference/calculate_jmax.md)
+  : Calculate maximum electron transport rate
+- [`calculate_leakiness_ubierna()`](https://eloch216.github.io/PhotoGEA/reference/calculate_leakiness_ubierna.md)
+  : Calculate leakiness
+- [`calculate_temperature_response()`](https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response.md)
+  : Calculate temperature-dependent parameter values
+- [`calculate_temperature_response_arrhenius()`](https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_arrhenius.md)
+  : Calculate temperature-dependent values using Arrhenius equations
+- [`calculate_temperature_response_gaussian()`](https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_gaussian.md)
+  : Calculate temperature-dependent values using Gaussian equations
+- [`calculate_temperature_response_johnson()`](https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_johnson.md)
+  : Calculate temperature-dependent values using Johnson-Eyring-Williams
+  equations
+- [`calculate_temperature_response_polynomial()`](https://eloch216.github.io/PhotoGEA/reference/calculate_temperature_response_polynomial.md)
+  : Calculate temperature-dependent values using polynomial equations
+- [`calculate_ternary_correction()`](https://eloch216.github.io/PhotoGEA/reference/calculate_ternary_correction.md)
+  : Calculate ternary correction factor
+- [`calculate_total_pressure()`](https://eloch216.github.io/PhotoGEA/reference/calculate_total_pressure.md)
+  : Calculate the total pressure in bar
+- [`calculate_wue()`](https://eloch216.github.io/PhotoGEA/reference/calculate_wue.md)
+  : Calculate intrinsic water use efficiency
+- [`cbind(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/cbind.exdf.md)
+  [`rbind(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/cbind.exdf.md)
+  : Combine exdf objects by columns or rows
+- [`check_required_variables()`](https://eloch216.github.io/PhotoGEA/reference/check_required_variables.md)
+  : Make sure required variables exist
+- [`check_response_curve_data()`](https://eloch216.github.io/PhotoGEA/reference/check_response_curve_data.md)
+  : Check response curve data for common issues
+- [`choose_input_files()`](https://eloch216.github.io/PhotoGEA/reference/choose_input_files.md)
+  [`choose_input_licor_files()`](https://eloch216.github.io/PhotoGEA/reference/choose_input_files.md)
+  [`choose_input_tdl_files()`](https://eloch216.github.io/PhotoGEA/reference/choose_input_files.md)
+  : Choosing input files
+- [`confidence_intervals_c3_aci()`](https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c3_aci.md)
+  : Calculate confidence intervals for C3 A-Ci fitting parameters
+- [`confidence_intervals_c3_variable_j()`](https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c3_variable_j.md)
+  : Calculate confidence intervals for C3 Variable J fitting parameters
+- [`confidence_intervals_c4_aci()`](https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c4_aci.md)
+  : Calculate confidence intervals for C4 A-Ci fitting parameters
+- [`confidence_intervals_c4_aci_hyperbola()`](https://eloch216.github.io/PhotoGEA/reference/confidence_intervals_c4_aci_hyperbola.md)
+  : Calculate confidence intervals for C4 A-Ci hyperbola fitting
+  parameters
+- [`consolidate()`](https://eloch216.github.io/PhotoGEA/reference/consolidate.md)
+  : Consolidate a list of lists
+- [`read.csv.exdf()`](https://eloch216.github.io/PhotoGEA/reference/csv.exdf.md)
+  [`write.csv.exdf()`](https://eloch216.github.io/PhotoGEA/reference/csv.exdf.md)
+  : Read and write CSV files representing an exdf object
+- [`read_tdl_file()`](https://eloch216.github.io/PhotoGEA/reference/deprecated.md)
+  [`read_licor_file()`](https://eloch216.github.io/PhotoGEA/reference/deprecated.md)
+  [`check_licor_data()`](https://eloch216.github.io/PhotoGEA/reference/deprecated.md)
+  [`calculate_arrhenius()`](https://eloch216.github.io/PhotoGEA/reference/deprecated.md)
+  [`calculate_peaked_gaussian()`](https://eloch216.github.io/PhotoGEA/reference/deprecated.md)
+  : Deprecated functions
+- [`dim(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/dim.exdf.md)
+  : Retrieve the dimension of an exdf object
+- [`dimnames(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/dimnames.exdf.md)
+  [`` `dimnames<-`( ``*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/dimnames.exdf.md)
+  : Retrieve or set the dimension names of an exdf object
+- [`document_variables()`](https://eloch216.github.io/PhotoGEA/reference/document_variables.md)
+  : Document exdf columns by specifying units and categories
+- [`error_function_c3_aci()`](https://eloch216.github.io/PhotoGEA/reference/error_function_c3_aci.md)
+  : Generate an error function for C3 A-Ci curve fitting
+- [`error_function_c3_variable_j()`](https://eloch216.github.io/PhotoGEA/reference/error_function_c3_variable_j.md)
+  : Generate an error function for C3 Variable J curve fitting
+- [`error_function_c4_aci()`](https://eloch216.github.io/PhotoGEA/reference/error_function_c4_aci.md)
+  : Generate an error function for C4 A-Ci curve fitting
+- [`error_function_c4_aci_hyperbola()`](https://eloch216.github.io/PhotoGEA/reference/error_function_c4_aci_hyperbola.md)
+  : Generate an error function for C4 A-Ci curve fitting with a
+  hyperbola
+- [`estimate_licor_variance()`](https://eloch216.github.io/PhotoGEA/reference/estimate_licor_variance.md)
+  : Estimate variance of measured Licor values
+- [`estimate_operating_point()`](https://eloch216.github.io/PhotoGEA/reference/estimate_operating_point.md)
+  : Estimate the operating point from an A-Ci curve
+- [`example_data_files`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`ball_berry_1`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`ball_berry_2`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c3_aci_1`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c3_aci_2`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c4_aci_1`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c4_aci_2`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`licor_for_gm_site11`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`licor_for_gm_site13`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`tdl_for_gm`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`tdl_sampling_1`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`tdl_sampling_2`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`plaintext_licor_file`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`plaintext_licor_file_v2`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`ball_berry_1.csv`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`ball_berry_1.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`ball_berry_2.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c3_aci_1.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c3_aci_2.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c4_aci_1.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`c4_aci_2.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`licor_for_gm_site11.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`licor_for_gm_site13.xlsx`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`tdl_for_gm.dat`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`tdl_sampling_1.dat`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  [`tdl_sampling_2.dat`](https://eloch216.github.io/PhotoGEA/reference/example_data_files.md)
+  : Example data files
+- [`exclude_outliers()`](https://eloch216.github.io/PhotoGEA/reference/exclude_outliers.md)
+  : Exclude outliers from a data set
+- [`exdf()`](https://eloch216.github.io/PhotoGEA/reference/exdf.md) :
+  Extended data frame
+- [`` `[`( ``*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/extract.exdf.md)
+  [`` `[<-`( ``*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/extract.exdf.md)
+  : Access or modify exdf elements
+- [`factorize_id_column()`](https://eloch216.github.io/PhotoGEA/reference/factorize_id_column.md)
+  : Convert ID column to a factor with a suitable ordering
+- [`fit_ball_berry()`](https://eloch216.github.io/PhotoGEA/reference/fit_ball_berry.md)
+  : Fits the Ball-Berry model to an experimental curve
+- [`fit_c3_aci()`](https://eloch216.github.io/PhotoGEA/reference/fit_c3_aci.md)
+  : Fits a C3 assimilation model to an A-Ci curve
+- [`fit_c3_variable_j()`](https://eloch216.github.io/PhotoGEA/reference/fit_c3_variable_j.md)
+  : Fits a C3 assimilation model to an A-Ci + CF curve
+- [`fit_c4_aci()`](https://eloch216.github.io/PhotoGEA/reference/fit_c4_aci.md)
+  : Fits a C4 assimilation model to an A-Ci curve
+- [`fit_c4_aci_hyperbola()`](https://eloch216.github.io/PhotoGEA/reference/fit_c4_aci_hyperbola.md)
+  : Fits a hyperbolic C4 assimilation model to an experimental curve
+- [`fit_laisk()`](https://eloch216.github.io/PhotoGEA/reference/fit_laisk.md)
+  : Calculate RL and Ci_star using the Laisk method
+- [`fit_medlyn()`](https://eloch216.github.io/PhotoGEA/reference/fit_medlyn.md)
+  : Fits the Medlyn model to an experimental curve
+- [`get_oxygen_from_preamble()`](https://eloch216.github.io/PhotoGEA/reference/get_oxygen_from_preamble.md)
+  : Extract oxygen information from a Licor file
+- [`get_sample_valve_from_filename()`](https://eloch216.github.io/PhotoGEA/reference/get_sample_valve_from_filename.md)
+  : Extract TDL valve information from file name
+- [`identifier_columns()`](https://eloch216.github.io/PhotoGEA/reference/identifier_columns.md)
+  : Find columns that have a single value across all rows
+- [`identify_c3_limiting_processes()`](https://eloch216.github.io/PhotoGEA/reference/identify_c3_limiting_processes.md)
+  : Identify C3 Limiting Processes
+- [`identify_common_columns()`](https://eloch216.github.io/PhotoGEA/reference/identify_common_columns.md)
+  : Identify columns that are common to multiple objects
+- [`identify_tdl_cycles()`](https://eloch216.github.io/PhotoGEA/reference/identify_tdl_cycles.md)
+  : Identifying cycles in TDL data
+- [`initial_guess_c3_aci()`](https://eloch216.github.io/PhotoGEA/reference/initial_guess_c3_aci.md)
+  : Make an initial guess of FvCB model parameter values for one curve
+- [`initial_guess_c3_variable_j()`](https://eloch216.github.io/PhotoGEA/reference/initial_guess_c3_variable_j.md)
+  : Make an initial guess of "Variable J" model parameter values for one
+  curve
+- [`initial_guess_c4_aci()`](https://eloch216.github.io/PhotoGEA/reference/initial_guess_c4_aci.md)
+  : Make an initial guess of C4 photosynthesis parameter values for one
+  curve
+- [`initial_guess_c4_aci_hyperbola()`](https://eloch216.github.io/PhotoGEA/reference/initial_guess_c4_aci_hyperbola.md)
+  : Make an initial guess of C4 hyperbola parameter values for one curve
+- [`is.exdf()`](https://eloch216.github.io/PhotoGEA/reference/is.exdf.md)
+  : Is an object an exdf?
+- [`jmax_temperature_param_bernacchi`](https://eloch216.github.io/PhotoGEA/reference/jmax_temperature_param_bernacchi.md)
+  : Jmax-related temperature response parameters from Bernacchi et al.
+- [`jmax_temperature_param_flat`](https://eloch216.github.io/PhotoGEA/reference/jmax_temperature_param_flat.md)
+  : Jmax-related temperature response parameters from Bernacchi et al.
+- [`length(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/length.exdf.md)
+  : Length of an exdf object
+- [`multi_curve_colors()`](https://eloch216.github.io/PhotoGEA/reference/multi_curve_colors.md)
+  [`multi_curve_line_colors()`](https://eloch216.github.io/PhotoGEA/reference/multi_curve_colors.md)
+  [`multi_curve_point_colors()`](https://eloch216.github.io/PhotoGEA/reference/multi_curve_colors.md)
+  : Set of colors for plotting multiple curves
+- [`optimizer_deoptim()`](https://eloch216.github.io/PhotoGEA/reference/optimizers.md)
+  [`optimizer_hjkb()`](https://eloch216.github.io/PhotoGEA/reference/optimizers.md)
+  [`optimizer_nlminb()`](https://eloch216.github.io/PhotoGEA/reference/optimizers.md)
+  [`optimizer_nmkb()`](https://eloch216.github.io/PhotoGEA/reference/optimizers.md)
+  [`optimizer_null()`](https://eloch216.github.io/PhotoGEA/reference/optimizers.md)
+  : Optimizers
+- [`organize_response_curve_data()`](https://eloch216.github.io/PhotoGEA/reference/organize_response_curve_data.md)
+  : Reorganize response curve data for analysis and plotting
+- [`pair_gasex_and_tdl()`](https://eloch216.github.io/PhotoGEA/reference/pair_gasex_and_tdl.md)
+  : Pair gas exchange and TDL data
+- [`pdf_print()`](https://eloch216.github.io/PhotoGEA/reference/pdf_print.md)
+  : Print a plot object or save it to a PDF
+- [`plot_ball_berry_fit()`](https://eloch216.github.io/PhotoGEA/reference/plot_ball_berry_fit.md)
+  : Plot the results of a C3 CO2 response curve fit
+- [`plot_c3_aci_fit()`](https://eloch216.github.io/PhotoGEA/reference/plot_c3_aci_fit.md)
+  : Plot the results of a C3 CO2 response curve fit
+- [`plot_c4_aci_fit()`](https://eloch216.github.io/PhotoGEA/reference/plot_c4_aci_fit.md)
+  : Plot the results of a C4 CO2 response curve fit
+- [`plot_c4_aci_hyperbola_fit()`](https://eloch216.github.io/PhotoGEA/reference/plot_c4_aci_hyperbola_fit.md)
+  : Plot the results of a hyperbolic C4 CO2 response curve fit
+- [`plot_laisk_fit()`](https://eloch216.github.io/PhotoGEA/reference/plot_laisk_fit.md)
+  : Plot the results of a C3 CO2 response curve fit
+- [`print(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/print.exdf.md)
+  : Print the contents of an exdf object
+- [`process_tdl_cycle_erml()`](https://eloch216.github.io/PhotoGEA/reference/process_tdl_cycle_erml.md)
+  : Process cycles from the ERML TDL
+- [`process_tdl_cycle_polynomial()`](https://eloch216.github.io/PhotoGEA/reference/process_tdl_cycle_polynomial.md)
+  : Process TDL cycles using a polynomial correction method
+- [`read_cr3000()`](https://eloch216.github.io/PhotoGEA/reference/read_cr3000.md)
+  : Reading a CR3000 data file
+- [`read_gasex_file()`](https://eloch216.github.io/PhotoGEA/reference/read_gasex_file.md)
+  : Reading a gas exchange log file
+- [`read_licor_6800_Excel()`](https://eloch216.github.io/PhotoGEA/reference/read_licor_6800_Excel.md)
+  : Reading a Licor LI-6800 Excel log file
+- [`read_licor_6800_plaintext()`](https://eloch216.github.io/PhotoGEA/reference/read_licor_6800_plaintext.md)
+  : Reading a Licor LI-6800 plaintext log file
+- [`remove_points()`](https://eloch216.github.io/PhotoGEA/reference/remove_points.md)
+  : Remove specific points from an exdf object
+- [`residual_stats()`](https://eloch216.github.io/PhotoGEA/reference/residual_stats.md)
+  : Calculate statistics that describe the residuals of a fit
+- [`set_variable()`](https://eloch216.github.io/PhotoGEA/reference/set_variable.md)
+  : Set values, units, and categories for a column in a table
+- [`smooth_tdl_data()`](https://eloch216.github.io/PhotoGEA/reference/smooth_tdl_data.md)
+  : Smoothing data from one TDL valve
+- [`split(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/split.exdf.md)
+  : Divide an exdf object into groups
+- [`str(`*`<exdf>`*`)`](https://eloch216.github.io/PhotoGEA/reference/str.exdf.md)
+  : Display the structure of an exdf object
+- [`xyplot_avg_rc()`](https://eloch216.github.io/PhotoGEA/reference/xyplot_avg_rc.md)
+  : Plot average response curves with error bars

@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing TDL Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_tdl_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_tdl_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.4.0/vignettes/web_only/analyzing_tdl_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_tdl_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_tdl_data.Rmd</code></div>
     </div>
 
@@ -376,7 +376,7 @@ that looks unusual in the data.</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'12C concentration ('</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Conc12C_Avg</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">'12C concentrations'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>In this figure, it is apparent that valves 23 and 26 have large
 spikes, which is surprising since these are calibration valves; the gas
 flowing to the TDL from these valves is expected to have a fairly
@@ -403,7 +403,7 @@ a time for more detailed analysis. Here we will take a look at the
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'12C concentration ('</span>, <span class="va">single_valve</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Conc12C_Avg</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'12C concentrations from valve'</span>, <span class="va">valve_to_plot</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>In this graph, we can see that the calibrated <sup>12</sup>C
 concentration has a large deviation from the raw values near the large
 spike, although the calibrated and raw values are generally very similar
@@ -411,7 +411,7 @@ in the rest of the data. In fact, we can see that in valve 12 (one of
 the valves whose composition we are trying to determine), there is also
 a large deviation between the raw and calibrated <sup>12</sup>C signals
 near the spike.</p>
-<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>Finally, we can also see traces of this anomaly in the calibration
 constants determined during the TDL cycle processing. In this plot, the
 <sup>12</sup>C gain factor is nearly constant at all times with the
@@ -428,7 +428,7 @@ exception of the cycles where there is also a spike in the
 <span>  xlab <span class="op">=</span> <span class="st">'TDL cycle'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'12C gain factor ('</span>, <span class="va">processed_tdl</span><span class="op">$</span><span class="va">calibration_12CO2</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gain_12CO2</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -568,7 +568,7 @@ reasonable outputs. Here we create a plot comparing the raw and smoothed
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Uncalibrated 12C concentration ('</span>, <span class="va">tdl_compare</span><span class="op">$</span><span class="va">tdl_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Conc12C_Avg</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">'Uncalibrated 12C concentrations'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/compare_smoothing-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/compare_smoothing-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>Although it is clear that we have successfully removed the spikes
 from valve 26, it may be helpful to display just that valve to take a
 closer look:</p>
@@ -593,7 +593,7 @@ closer look:</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Uncalibrated 12C concentration ('</span>, <span class="va">single_valve_compare</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Conc12C_Avg</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Uncalibrated 12C concentrations from valve'</span>, <span class="va">valve_to_compare</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/compare_single_valve-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/compare_single_valve-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>In this graph we can see that the spike was indeed removed and that
 the smoothed data does a good job of following the raw data for this
 valve. As another check, we can also see how the smoothed data is
@@ -620,7 +620,7 @@ Data</a>:</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'12C concentration ('</span>, <span class="va">single_valve_smooth</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Conc12C_Avg</span>, <span class="st">')'</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'12C concentrations from valve'</span>, <span class="va">valve_to_plot</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/plot_single_valve_smooth-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/plot_single_valve_smooth-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>Here we see that after cleaning and smoothing the data, the
 calibrated data from this “unknown” valve is only slightly different
 than its raw data across all the cycles. Finally, we can also plot the
@@ -637,7 +637,7 @@ Data</a>:</p>
 <span>  xlab <span class="op">=</span> <span class="st">'TDL cycle'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'12C gain factor ('</span>, <span class="va">processed_smooth_tdl</span><span class="op">$</span><span class="va">calibration_12CO2</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gain_12CO2</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_tdl_data_files/figure-html/plot_12c_gain-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_tdl_data_files/figure-html/plot_12c_gain-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p>Again, there are no sudden spikes remaining in the gain factor,
 indicating that we did a good job of cleaning and smoothing the
 data.</p>
@@ -984,7 +984,7 @@ Tobacco.”</span> <em>Plant, Cell &amp; Environment</em> 36 (4): 745–56.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

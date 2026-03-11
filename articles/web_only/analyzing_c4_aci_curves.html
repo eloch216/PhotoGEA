@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing C4 A-Ci Curves</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_c4_aci_curves.Rmd" class="external-link"><code>vignettes/web_only/analyzing_c4_aci_curves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.4.0/vignettes/web_only/analyzing_c4_aci_curves.Rmd" class="external-link"><code>vignettes/web_only/analyzing_c4_aci_curves.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_c4_aci_curves.Rmd</code></div>
     </div>
 
@@ -208,7 +208,7 @@ is different, and that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
 is generally not equal to the minimum of these five rates in the full
 model. The plot below shows an example of the full model output:</p>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/unnamed-chunk-2-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>(Note: this figure was generated using the
 <code>calculate_c4_assimilation</code> function from the
 <code>PhotoGEA</code> package, and it represents the photosynethetic
@@ -557,13 +557,15 @@ we would get error messages:</p>
 <span><span class="co">#&gt; 3 ripe1 - sorghum - 3   16</span></span>
 <span><span class="co">#&gt; 4   ripe2 - maize - 2   16</span></span>
 <span><span class="co">#&gt; 5 ripe2 - sorghum - 3   16</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 15 points: ripe1 - maize - 5, ripe1 - sorghum - 2, ripe1 - sorghum - 3, ripe2 - maize - 2, ripe2 - sorghum - 3</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 15 points: ripe1 - maize - 5, ripe1 - sorghum - 2, ripe1 - sorghum - 3, ripe2 - maize - 2, ripe2 - sorghum - 3</span></span>
 <span></span>
 <span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'species'</span>, <span class="fl">16</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   species npts</span></span>
 <span><span class="co">#&gt; 1   maize   32</span></span>
 <span><span class="co">#&gt; 2 sorghum   48</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 16 points: maize, sorghum</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 16 points: maize, sorghum</span></span></code></pre></div>
 <p>If all curves in your data set do not have the same number of points,
 or if some other issue is causing <code>check_response_curve_data</code>
 to fail, please see the <a href="frequent_questions.html#checking-data">“Checking Data” section of
@@ -627,7 +629,7 @@ its own separate subplot of a figure. For example:</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Net CO2 assimilation rate ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">A</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Some of these curves look a bit strange, but this is related to the
 noise that was intentionally added to the data. Nevertheless, there are
 a few points that we should probably exclude before attempting to fit
@@ -669,7 +671,7 @@ plots to check each curve for quality.</p>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_humidity-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_humidity-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>Humidifier_%</code> and <code>Desiccant_%</code>
 represent the flow from the humidifier and desiccant columns, where a
 value of 0 indicates that the valve to the column is fully closed and a
@@ -699,7 +701,7 @@ photosynthesis. In this plot, all the data looks good.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Temperature ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_temperature-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_temperature-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>TleafCnd</code> is the leaf temperature measured using a
 thermocouple, and <code>Txchg</code> is the temperature of the heat
 exhanger that is used to control the air temperature in the measurement
@@ -724,7 +726,7 @@ looks good.</p>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'CO2 concentration ('</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_co2-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_co2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here, <code>CO2_s</code> is the CO<sub>2</sub> concentration in the
 sample cell, <code>CO2_r</code> is the CO<sub>2</sub> concentration in
 the reference cell, and <code>CO2_r_sp</code> is the setpoint for
@@ -752,7 +754,7 @@ releases CO<sub>2</sub>.) In this plot, all the data looks good.</p>
 <span>  grid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_stability-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_stability-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>When measuring response curves with a Licor, it is possible to
 specify stability criteria for each point in addition to minimum and
 maximum wait times. In other words, once the set point for the driving
@@ -911,7 +913,7 @@ requiring Rubisco limitations.</p>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">'Mechanistic fits assuming Rubisco limitations'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_rubisco-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_rubisco-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Overall, these fits look good. Note that because Rubisco activity and
 PEP carboxylase activity co-limit the net assimilation rate,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>n</mi></msub><annotation encoding="application/x-tex">A_n</annotation></semantics></math>
@@ -959,7 +961,7 @@ to vary during the fit. This can be done using the
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">'Mechanistic fits assuming electron transport limitations'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_light-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_light-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Overall, these fits look good. Note that because electron transport
 and PEP carboxylase are independent in the model, there is a sharp
 transition from
@@ -1058,7 +1060,7 @@ a non-rectangular hyperbola instead of the mechanistic model.</p>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">'Empirical fits using a hyperbola'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_hyperbola-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_hyperbola-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>The hyperbola is used to estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">V_{max}</annotation></semantics></math>,
 which characterizes the maximum gross assimilation rate that occurs at
@@ -1121,7 +1123,7 @@ value of mesophyll conductance, overriding the default value.</p>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">60</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">'Mechanistic fits to the low Ci part of each curve'</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_vpmax-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_vpmax-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -1229,7 +1231,7 @@ estimates.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/vcmax_barchart-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/vcmax_barchart-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Another option is to create box-whisper plots using the
 <code>bwplot</code> function from the <code>lattice</code> package:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
@@ -1241,7 +1243,7 @@ estimates.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Species'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Vcmax at 25 degrees C ('</span>, <span class="va">c4_aci_results_rubisco</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Vcmax_at_25</span>, <span class="st">')'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_c4_aci_curves_files/figure-html/vcmax_bwplot-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_c4_aci_curves_files/figure-html/vcmax_bwplot-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="calculating-average-best-fit-parameters">Calculating Average Best-Fit Parameters<a class="anchor" aria-label="anchor" href="#calculating-average-best-fit-parameters"></a>
@@ -1750,7 +1752,7 @@ Experimental Botany</em> 70 (20): 5521–25. <a href="https://doi.org/10.1093/jx
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

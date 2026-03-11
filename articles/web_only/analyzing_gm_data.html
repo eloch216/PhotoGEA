@@ -83,7 +83,7 @@
       <img src="../../logo.svg" class="logo" alt=""><h1>Analyzing Mesophyll Conductance Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/main/vignettes/web_only/analyzing_gm_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_gm_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eloch216/PhotoGEA/blob/v1.4.0/vignettes/web_only/analyzing_gm_data.Rmd" class="external-link"><code>vignettes/web_only/analyzing_gm_data.Rmd</code></a></small>
       <div class="d-none name"><code>analyzing_gm_data.Rmd</code></div>
     </div>
 
@@ -523,12 +523,14 @@ we would get error messages:</p>
 <span><span class="co">#&gt;   curve_identifier npts</span></span>
 <span><span class="co">#&gt; 1       mickey - 1   12</span></span>
 <span><span class="co">#&gt; 2        pluto - 1   12</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 13 points: mickey - 1, pluto - 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 13 points: mickey - 1, pluto - 1</span></span>
 <span></span>
 <span><span class="fu"><a href="../../reference/check_response_curve_data.html">check_response_curve_data</a></span><span class="op">(</span><span class="va">gasex_data</span>, <span class="st">'replicate'</span>, <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   replicate npts</span></span>
 <span><span class="co">#&gt; 1         1   24</span></span>
-<span><span class="co">#&gt; Error: The following curves do not have 12 points: 1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following curves do not have 12 points: 1</span></span></code></pre></div>
 <p>If all curves in your data set do not have the same number of points,
 or if some other issue is causing <code>check_response_curve_data</code>
 to fail, please see the <a href="frequent_questions.html#checking-data">“Checking Data” section of
@@ -710,7 +712,7 @@ constant during the measurements.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Leaf temperature'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">TleafCnd</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_gm_data_files/figure-html/plot_temperature-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_gm_data_files/figure-html/plot_temperature-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>The temperature control is not perfect for the last point in each
 curve, but only deviates from the setpoint by 0.5 degrees C. This is an
 acceptable amount of variation and is not a reason for concern.</p>
@@ -730,7 +732,7 @@ the first six points and 450 ppm for the following points.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'CO2 concentration'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">CO2_r</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_gm_data_files/figure-html/plot_co2_r-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_gm_data_files/figure-html/plot_co2_r-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here we can see that the CO<sub>2</sub> control was good for all the
 measurement points.</p>
 </div>
@@ -758,7 +760,7 @@ We can check this by looking at the calibrated TDL readings.</p>
 <span>    superpose.symbol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="../../reference/multi_curve_colors.html">multi_curve_colors</a></span><span class="op">(</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_gm_data_files/figure-html/plot_tdl-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_gm_data_files/figure-html/plot_tdl-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here we can see that some of the valves are variable at the start of
 the TDL log file (such as valves 26 and 23). However, they are quite
 stable by the time the gas exchange logs begin (at around 25 minutes of
@@ -803,7 +805,7 @@ CO<sub>2</sub> setpoint. We can check this with a plot.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Photosynthetic isotope discrimination'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Delta_obs_tdl</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_gm_data_files/figure-html/plot_isotope_discrimination-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_gm_data_files/figure-html/plot_isotope_discrimination-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Here there is a large amount of noise, but this is to be expected for
 these measurements.</p>
 </div>
@@ -940,7 +942,7 @@ of the mesophyll conductance.</p>
 <span>  xlab <span class="op">=</span> <span class="st">'Measurement number'</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_gm_data_files/figure-html/plot_gm_1-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_gm_data_files/figure-html/plot_gm_1-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>Another approach is to plot the average mesophyll conductance against
 the average
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>i</mi></msub><annotation encoding="application/x-tex">C_i</annotation></semantics></math>
@@ -960,7 +962,7 @@ for each CO<sub>2</sub> setpoint.</p>
 <span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Mesophyll conductance to CO2'</span>, <span class="st">'['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">gmc</span>, <span class="st">']'</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'Intercellular CO2 concentration ['</span>, <span class="va">gasex_data</span><span class="op">$</span><span class="va">units</span><span class="op">$</span><span class="va">Ci</span>, <span class="st">']'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyzing_gm_data_files/figure-html/plot_gm_2-1.png" width="720" style="display: block; margin: auto;"></p>
+<p><img src="analyzing_gm_data_files/figure-html/plot_gm_2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <p>As usual, the appropriate synthesis operations will depend on the
 details of the project and how the data will be used.</p>
 </div>
@@ -1402,7 +1404,7 @@ Covshoff, 155–96. Methods in <span>Molecular</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
