@@ -39,7 +39,7 @@ PERFORM_CALCULATIONS <- TRUE
 
 PERFORM_STATS_TESTS <- TRUE
 
-SAVE_RESULTS <- TRUE
+SAVE_RESULTS <- FALSE
 MAKE_TDL_PLOTS <- FALSE
 
 MAKE_GM_PLOTS <- TRUE
@@ -52,27 +52,29 @@ USE_BUSCH_GM <- TRUE
 E_STAR_EQUATION <- 20
 
 # Specify a default respiration
-DEFAULT_RESPIRATION <- 1
+DEFAULT_RESPIRATION <- 2.2
 
 # Specify respiration values for each event; these will override the default.
 # To use default for all events, set RESPIRATION_TABLE <- list()
 RESPIRATION_TABLE <- list(
-  'not_real_event' = 100000
-  #'WT' = 1.225
-  #'8' = 2.02,
-  #'10' = 1.94,
-  #'14' = 2.08
+  '122' = 2.23,
+  'WT' = 2.32,
+  '17' = 2.38,
+  '26' = 2.19,
+  '32' = 2.14,
+  '36' = 2.23
 )
 
 #RUBISCO_SPECIFICITY_AT_TLEAF <- 77   # Jordan and Ogren (1981), tobbaco, in vitro, 25 C
 #RUBISCO_SPECIFICITY_AT_TLEAF <- 97.3 # Bernacchi et al. (2002), tobacco, in vivo,  25 C
-RUBISCO_SPECIFICITY_AT_TLEAF <- 99.6 # Orr et al. (2016), soybean, in vitro, 25 C
+#RUBISCO_SPECIFICITY_AT_TLEAF <- 99.6 # Orr et al. (2016), soybean, in vitro, 25 C
+RUBISCO_SPECIFICITY_AT_TLEAF <- 90.6 # Orr et al. (2016), soybean, in vitro, 30 C
 
 REMOVE_STATISTICAL_OUTLIERS <- TRUE
 REMOVE_STATISTICAL_OUTLIERS_EVENT <- FALSE
 REMOVE_STATISTICAL_OUTLIERS_INDEFINITELY <- FALSE
 MIN_GM <- 0
-MAX_GM <- 3
+MAX_GM <- 2
 MIN_CC <- 0.0
 
 # If IGB_TDL is TRUE, we assume this is data from the IGB TDL. If it is FALSE,
@@ -269,7 +271,8 @@ if (PERFORM_CALCULATIONS) {
             variable_name_row = 2,
             variable_unit_row = 3,
             data_start_row = 5,
-            timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME
+            timestamp_colname = TDL_TIMESTAMP_COLUMN_NAME,
+            posix_options = list(tz = 'America/Chicago')
         )
     })
 
@@ -354,7 +357,7 @@ if (PERFORM_CALCULATIONS) {
     # Get all the Licor information and process it
 
     licor_files <- lapply(choose_input_licor_files(), function(fname) {
-        read_gasex_file(fname, LICOR_TIMESTAMP_COLUMN_NAME)
+        read_gasex_file(fname, LICOR_TIMESTAMP_COLUMN_NAME, posix_options = list(tz = 'America/Chicago'))
     })
 
     common_columns <- do.call(identify_common_columns, licor_files)
@@ -535,6 +538,23 @@ if (PERFORM_CALCULATIONS) {
 
         cat(paste("Number of Licor measurements after removing statistical outliers from each rep:", nrow(licor_files_no_outliers), "\n"))
     }
+    
+    # Print out the number of points for each replicate
+    print('Number of remaining points for each replicate:')
+    str(
+      by(
+        licor_files_no_outliers,
+        licor_files_no_outliers[, 'event_replicate'],
+        nrow
+      )
+    )
+    
+    # Make sure each replicate has more than one value remaining
+    check_response_curve_data(
+        licor_files_no_outliers,
+        'event_replicate',
+        expected_npts = c(2, 1e6) # hopefully no real replicate has more than 1 million points!
+    )
 
     # Get stats for each rep by averaging over all corresponding observations
     rep_stats <- basic_stats(
@@ -574,10 +594,10 @@ if (PERFORM_CALCULATIONS) {
     }
 
     # Get stats for each event by averaging over all corresponding reps
-    event_stats <- basic_stats(
-      rep_stats_no_outliers,
-      'event'
-    )$main_data
+    #event_stats <- basic_stats(
+    #  rep_stats_no_outliers,
+    #  'event'
+    #)$main_data
 
     # Extract data frame from rep stats
     rep_stats_no_outliers <- rep_stats_no_outliers$main_data
@@ -647,7 +667,7 @@ if (SAVE_RESULTS) {
     write.csv(licor_files, file.path(base_dir, "gm_calculations_outliers_included.csv"), row.names=FALSE)
     write.csv(licor_files_no_outliers, file.path(base_dir, "gm_calculations_outliers_excluded.csv"), row.names=FALSE)
     write.csv(rep_stats$main_data, file.path(base_dir, "gm_stats_by_rep_outliers_excluded.csv"), row.names=FALSE)
-    write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
+    #write.csv(event_stats, file.path(base_dir, "gm_stats_by_event_outliers_excluded.csv"), row.names=FALSE)
 }
 
 ###                                   ###
@@ -909,7 +929,7 @@ if (MAKE_GM_PLOTS) {
     g_ratio_lab <- "Ratio of stomatal / mesophyll conductances to CO2 (gs / gm; dimensionless)"
     dtdl_lab <- "Delta13c (ppt)"
 
-    gmc_lim <- c(0, 1)
+    gmc_lim <- c(0, 1.5)
     cc_lim <- c(0, 275)
     drawdown_lim <- c(0, 100)
     a_lim <- c(0, 50)

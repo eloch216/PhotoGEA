@@ -10,8 +10,9 @@ library(onewaytests) # for bf.test, shapiro.test, A.aov
 library(DescTools)   # for DunnettTest
 
 # Specify the names of a few important columns
-EVENT_COLUMN_NAME <- 'Event'
-REP_COLUMN_NAME <- 'Block'
+EVENT_COLUMN_NAME <- 'event'
+REP_COLUMN_NAME <- 'replicate'
+MACHINE_COLUMN_NAME <- 'machine'
 
 # Specify prefix that should be removed from event names
 PREFIX_TO_REMOVE <- "36625-"
@@ -21,8 +22,21 @@ NUM_OBS_IN_SEQ <- 17
 MEASUREMENT_NUMBERS_TO_REMOVE <- c(9, 10)
 
 # Decide whether to add a "construct" column (set to TRUE if data does not
-# already have a construct column)
+# already have a construct column). It will be defined based on values of the
+# event column.
 ADD_CONSTRUCT <- FALSE
+
+CONSTRUCT_TABLE <- list(
+  'wt' = 'control',
+  'az' = 'control',
+  '97' = 'RBCS',
+  '99' = 'RBCS',
+  '196' = 'RBCS',
+  '109' = 'RBCS-RAF1',
+  '144' = 'RBCS-RAF1',
+  '187' = 'RBCS-RAF1',
+  '216' = 'RBCS-RAF1'
+)
 
 # Decide whether to make certain plots
 MAKE_VALIDATION_PLOTS <- TRUE
@@ -37,7 +51,7 @@ SAVE_TO_PDF <- FALSE
 REQUIRE_STABILITY <- FALSE
 
 # Decide whether to remove some specific points
-REMOVE_SPECIFIC_POINTS <- FALSE
+REMOVE_SPECIFIC_POINTS <- TRUE
 
 # Choose a maximum value of Ci to use when fitting (ppm). Set to Inf to disable.
 MAX_CI <- Inf
@@ -169,8 +183,11 @@ licor_data[, 'curve_identifier'] <-
 
 # Add a construct column if desired
 if (ADD_CONSTRUCT) {
-  licor_data[, 'construct'] <- as.character(licor_data[, EVENT_COLUMN_NAME])
-  licor_data[licor_data[, 'construct'] != 'WT', 'construct'] <- 'transgenic'
+  licor_data <- set_variable(
+      licor_data, 'construct',
+      id_column = EVENT_COLUMN_NAME,
+      value_table = CONSTRUCT_TABLE
+  )
 }
 
 # Factorize ID columns
@@ -178,7 +195,7 @@ licor_data <- factorize_id_column(licor_data, EVENT_COLUMN_NAME)
 licor_data <- factorize_id_column(licor_data, 'curve_identifier')
 
 if ('construct' %in% colnames(licor_data)) {
-  licor_data <- factorize_id_column(licor_data, 'construct')
+  licor_data <- factorize_id_column(licor_data, 'construct', control_group_name = 'control')
   
   # Temporary hack to get 'control' to be black: just reverse the order of the
   # levels
@@ -232,31 +249,37 @@ if (REMOVE_SPECIFIC_POINTS) {
   # Remove specific points
   licor_data <- remove_points(
     licor_data,
-    #list(event = '187', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
-    #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
-    #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 aci,
-    #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 aci,
-    #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 800), #soy aug 19 aci,
-    #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800), #soy aug 19 aci,
-    #list(event = '216', replicate = 1, plot = 4, CO2_r_sp = 1500) #soy aug 19 aci
-    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1500), #soy july 18 aci
-    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1200), #soy july 18 aci
-    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 800),  #soy july 18 aci
-    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 320)   #soy july 18 aci
+    #list(event = '97 RBCS x 49 VPZ', rep = 2, seq_num = 11)
+    #list(event = 'WT', block = 5, seq_num = c(16)),
+    #list(event = 'DC33_Azy', block = 4, seq_num = c(17)),
+    #list(event = 'DC33_3', block = 4, seq_num = c(15,16)),
+    #list(event = 'DC33_4', block = 22, seq_num = c(16))
+    #list(event = 'wt', block = 2, seq_num = c(16,17)) #xth18rbcs R5 aci
+    list(event = '187', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 2024 aci,
+    list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 2024 aci,
+    list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500), #soy aug 19 2024 aci,
+    list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500), #soy aug 19 2024 aci,
+    list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 800), #soy aug 19 2024 aci,
+    list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800), #soy aug 19 2024 aci,
+    list(event = '216', replicate = 1, plot = 4, CO2_r_sp = 1500) #soy aug 19 2024 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1500), #soy july 18 2024 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 1200), #soy july 18 2024 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 800),  #soy july 18 2024 aci
+    #list(event = 'az', replicate = 2, plot = 3, CO2_r_sp = 320)   #soy july 18 2024 aci
     #list(event = 'WT', replicate = 1, plot = 5, CO2_r_sp = 1500),
     #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 500),
     #list(event = 'WT', replicate = 1, plot = 4, CO2_r_sp = 800),
     #list(event = '109', replicate = 1, plot = 4, CO2_r_sp = 500),
     #list(event = '97', replicate = 1, plot = 2, CO2_r_sp = 1800),
     #list(event = '196', replicate = 1, plot = 5, CO2_r_sp = 1500)
-    list(event = '32', replicate = 1, CO2_r_sp = 220),
-    list(event = '17', replicate = 4, CO2_r_sp = 220),
-    list(event = '122', replicate = 4, CO2_r_sp = 600),
-    list(event = '36', replicate = 6, CO2_r_sp = 320),
-    list(event = '17', replicate = 7, CO2_r_sp = 500),
-    list(event = '10', replicate = 8, CO2_r_sp = 420),
-    list(event = '10', replicate = 8, CO2_r_sp = 220),
-    list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
+    #list(event = '32', replicate = 1, CO2_r_sp = 220),
+    #list(event = '17', replicate = 4, CO2_r_sp = 220),
+    #list(event = '122', replicate = 4, CO2_r_sp = 600),
+    #list(event = '36', replicate = 6, CO2_r_sp = 320),
+    #list(event = '17', replicate = 7, CO2_r_sp = 500),
+    #list(event = '10', replicate = 8, CO2_r_sp = 420),
+    #list(event = '10', replicate = 8, CO2_r_sp = 220),
+    #list(event = 'WT', replicate = 6, CO2_r_sp = 1500)
     #list(curve_identifier = '10 5 6', seq_num = c(2))
   )
 }
@@ -275,7 +298,7 @@ if (MAKE_VALIDATION_PLOTS) {
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
 
-    # Plot all A-Cu curves, grouped by event
+    # Plot all A-Ci curves, grouped by event
     dev.new()
     print(xyplot(
       A ~ Ci | licor_data[, EVENT_COLUMN_NAME],
@@ -288,6 +311,22 @@ if (MAKE_VALIDATION_PLOTS) {
       xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
       ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
     ))
+    
+    # Plot all A-Ci curves, grouped by machine
+    if (MACHINE_COLUMN_NAME %in% colnames(licor_data)) {
+      dev.new()
+      print(xyplot(
+        A ~ Ci | licor_data[, MACHINE_COLUMN_NAME],
+        group = curve_identifier,
+        data = licor_data$main_data,
+        type = 'b',
+        pch = 16,
+        auto.key = list(space = 'right'),
+        grid = TRUE,
+        xlab = paste('Intercellular CO2 concentration [', licor_data$units$Ci, ']'),
+        ylab = paste('Net CO2 assimilation rate [', licor_data$units$A, ']')
+      ))
+    }
 
     # Plot all gsw-Ci curves in the data set
     dev.new()
@@ -673,6 +712,16 @@ if (MAKE_ANALYSIS_PLOTS) {
             )
         )
     }
+    
+    if (MACHINE_COLUMN_NAME %in% colnames(aci_parameters)) {
+      plot_param <- c(
+        plot_param,
+        list(
+          list(Y = aci_parameters[, 'Vcmax_at_25'], X = factor(aci_parameters[, MACHINE_COLUMN_NAME]),        xlab = 'Licor ID', ylab = 'Vcmax at 25 degrees C (micromol / m^2 / s)',     ylim = c(0, 200), main = fitting_caption),
+          list(Y = all_samples_one_point[, 'A'],    X = factor(all_samples_one_point[, MACHINE_COLUMN_NAME]), xlab = 'Licor ID', ylab = "Net CO2 assimilation rate (micromol / m^2 / s)", ylim = c(0, 65),  main = boxplot_caption)
+        )
+      )
+    }
 
     invisible(lapply(plot_param, function(x) {
       dev.new()
@@ -750,7 +799,7 @@ if (MAKE_ANALYSIS_PLOTS) {
 if (PERFORM_STATS_TESTS) {
     # Perform Brown-Forsythe test to check for equal variance
     # This test automatically prints its results to the R terminal
-    bf_test_result <- bf.test(Vcmax_at_25 ~ Event, data = aci_parameters)
+    bf_test_result <- bf.test(Vcmax_at_25 ~ event, data = aci_parameters)
 
     # If p > 0.05 variances among populations is equal and proceed with anova
     # If p < 0.05 do largest calculated variance/smallest calculated variance, must be < 4 to proceed with ANOVA
@@ -762,7 +811,7 @@ if (PERFORM_STATS_TESTS) {
     # If p > 0.05 data has normal distribution and proceed with anova
 
     # Perform one way analysis of variance
-    anova_result <- aov(Vcmax_at_25 ~ Event, data = aci_parameters)
+    anova_result <- aov(Vcmax_at_25 ~ event, data = aci_parameters)
     cat("    ANOVA result\n\n")
     print(summary(anova_result))
 
@@ -779,6 +828,12 @@ if (VIEW_PARAMETERS) {
     'Vcmax_at_25', 'J_at_25', 'Tp_at_25', 'alpha_old','RL_at_25'
   )
   View(aci_parameters[, param_to_view])
+  
+  gasex_to_view <- c(
+    EVENT_COLUMN_NAME, REP_COLUMN_NAME,
+    'A', 'gsw', 'iWUE'
+  )
+  View(all_samples_one_point[, gasex_to_view])
 }
 
 if (SAVE_CSV) {

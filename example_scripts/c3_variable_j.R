@@ -19,7 +19,7 @@ PREFIX_TO_REMOVE <- "36625-"
 # Describe a few key features of the data
 NUM_OBS_IN_SEQ <- 17
 
-MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,2,7, 8, 9)
+MEASUREMENT_NUMBERS_TO_REMOVE <- c(1,8,9,10)
 
 SEQ_NUM_TO_EXCLUDE_FROM_AVG_RC <- c() # set to c() to keep all points
 
@@ -49,7 +49,7 @@ EXCLUDE_NEG_ASSIM <- FALSE
 MAX_GM <- Inf
 
 # Decide which point to use for box plots of A and other quantities
-POINT_FOR_BOX_PLOTS <- 11
+POINT_FOR_BOX_PLOTS <- 1
 
 # Decide whether to remove vcmax outliers before plotting and performing stats
 # tests
@@ -90,7 +90,7 @@ USE_SOYBEAN_RUBISCO <- TRUE
 # To fit RL: RL_VAL <- 'fit'
 
 TP_VAL <- 'fit'
-RL_VAL <- 1.5
+RL_VAL <- 2.2
 
 FIT_OPTIONS <- list(
     RL_at_25 = RL_VAL,
