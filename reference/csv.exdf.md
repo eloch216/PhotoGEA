@@ -68,7 +68,7 @@ licor_file <- read.csv.exdf(
 # Now rewrite this to a temporary CSV file
 tf <- tempfile(fileext = ".csv")
 tf
-#> [1] "/tmp/RtmppgnyYm/file190a2cd485ba.csv"
+#> [1] "/tmp/Rtmp4jrRU8/file1993724bcf28.csv"
 
 write.csv.exdf(licor_file, tf)
 ```

@@ -28,7 +28,7 @@ specify the version of the package you used.
 
 ## Publications Using PhotoGEA
 
-2.  Salesse-Smith, C. E. *et al*. “Greater mesophyll conductance and
+2.  Salesse-Smith, C. E. et *al*. “Greater mesophyll conductance and
     leaf photosynthesis in the field through modified cell wall porosity
     and thickness via AtCGR3 expression in tobacco.” *Plant
     Biotechnology Journal* **22**, 2504–2517 (2024).
@@ -59,7 +59,7 @@ specify the version of the package you used.
     >
     > - Analysis scripts: <https://doi.org/10.13012/B2IDB-7809185_V2>
 
-4.  Salesse-Smith, C. E. *et al*. “Adapting C₄ photosynthesis to
+4.  Salesse-Smith, C. E. et al. “Adapting C₄ photosynthesis to
     atmospheric change and increasing productivity by elevating Rubisco
     content in sorghum and sugarcane.” *Proceedings of the National
     Academy of Sciences* **122**, e2419943122 (2025).
@@ -93,96 +93,12 @@ specify the version of the package you used.
 
 6.  Tamang, B. G., Bernard, G., Bernacchi, C. J., Diers, B. W. &
     Ainsworth, E. A. “Bigger is not always better: Optimizing leaf area
-    index with narrow leaf shape in soybean.” *Plant Physiology* kiaf663
-    (2025).
+    index with narrow leaf shape in soybean.” *bioRxiv* preprint (2025).
 
-    > - [DOI:10.1093/plphys/kiaf663](https://doi.org/10.1093/plphys/kiaf663)
+    > - [DOI:10.1101/2025.07.07.663573](https://doi.org/10.1101/2025.07.07.663573)
     >
     > - PhotoGEA used for: Fitting C₃*A-C_(i)* curves (`fit_c3_aci`)
     >
     > - PhotoGEA version: `v1.1.0`
-    >
-    > - Analysis scripts: Not yet available
-    >
-    > - Preprint available from *bioRxiv*:
-    >   [DOI:10.1101/2025.07.07.663573](https://doi.org/10.1101/2025.07.07.663573)
-
-7.  Garen, J. C. & Crous, K. Y. “Choose Wisely: Parameter Choice is Key
-    for Ensuring Consistent Estimates of Photosynthetic Capacity From
-    A–Ci Response Curves.” *Plant, Cell & Environment* **49**, 3251–3253
-    (2026).
-
-    > - [DOI:10.1111/pce.70462](https://doi.org/10.1111/pce.70462)
-    >
-    > - PhotoGEA used for: Fitting C₃*A-C_(i)* curves (`fit_c3_aci`)
-    >
-    > - PhotoGEA version: `v1.3.2`
-    >
-    > - Analysis scripts: Not yet available
-
-8.  Mbaluto, C. M., Martínez-Goñi, X. S., Tripathi, A. & Singh, P.
-    “Cereal grafting in rice and pearl millet preserves photosynthetic
-    performance and stomatal dynamics, establishing a platform for
-    root-shoot communication studies.” *bioRxiv* preprint (2026).
-
-    > - [DOI:10.64898/2026.06.25.734459](https://doi.org/10.64898/2026.06.25.734459)
-    >
-    > - PhotoGEA used for: Fitting C₃ and C₄*A-C_(i)* curves
-    >   (`fit_c3_aci` and `fit_c4_aci`)
-    >
-    > - PhotoGEA version: Not specified
-    >
-    > - Analysis scripts: Not yet available
-
-9.  Jeong, J. *et al*. “Chloroplast expression of *Chlamydomonas*
-    glycolate dehydrogenase en route to an improved photorespiratory
-    bypass.” *bioRxiv* preprint (2026).
-
-    > - [DOI:10.64898/2026.07.23.739952](https://doi.org/10.64898/2026.07.23.739952)
-    >
-    > - PhotoGEA used for: Fitting C₃*A-C_(i)* curves (`fit_c3_aci`),
-    >   calculating mesophyll conductance from tunable diode laser
-    >   absorption measurements (`calculate_gm_busch`)
-    >
-    > - PhotoGEA version: `v1.3.2`
-    >
-    > - Analysis scripts: Not yet available
-
-10. Piao, X., Lochocki, E. B., McGrath, J. M. & Matthews, M. L.
-    “Integrating carbon utilization and transport processes into a crop
-    growth model enables the prediction of emergent soybean carbon
-    allocation behavior. *bioRxiv* preprint (2026).
-
-    > - [DOI:10.64898/2026.08.27.747615](https://doi.org/10.64898/2026.08.27.747615)
-    >
-    > - PhotoGEA used for: Fitting C₃*A-C_(i)* curves (`fit_c3_aci`)
-    >
-    > - PhotoGEA version: `v1.3.3`
-    >
-    > - Analysis scripts: Not yet available
-
-11. Kwafo, T. S., Yerkes, K. & McGrath, J. M. “Nutrient Concentration
-    Declines but Nutrient Yield Increases Under Elevated CO2
-    Concentration in Soybean: Disentangling the relative effects of
-    Dilution, Transpiration, and Uptake Activity.” *bioRxiv* preprint
-    (2026).
-
-    > - [DOI:10.64898/2026.08.28.747630](https://doi.org/10.64898/2026.08.28.747630)
-    >
-    > - PhotoGEA used for: Fitting Ball-Berry curves (`fit_ball_berry`)
-    >
-    > - PhotoGEA version: Not specified
-    >
-    > - Analysis scripts: Not yet available
-
-12. de Oliveira, L. P. *et al*. “A century of soybean breeding increased
-    photosynthetic capacity but not NPQ relaxation.” *Plant Physiology*
-    kiag811 (2026).
-
-    > - [DOI:10.1093/plphys/kiag811](https:doi.org/10.1093/plphys/kiag811)
-    >
-    > - PhotoGEA used for: Fitting C₃*A-C_(i)* curves (`fit_c3_aci`)
-    >
-    > - PhotoGEA version: Not specified
     >
     > - Analysis scripts: Not yet available

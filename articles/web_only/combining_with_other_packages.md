@@ -254,12 +254,12 @@ c3_aci_parameters <-
 
 print(c3_aci_parameters)
 #>   instrument species plot     Vcmax     Jmax        Rd Tp
-#> 1      ripe1 soybean   5a 126.61882 229.5225 0.8502722 NA
-#> 2      ripe1 tobacco    1 128.90039 272.3661 0.5237332 NA
+#> 1      ripe1 soybean   5a 126.61882 229.5225 0.8502720 NA
+#> 2      ripe1 tobacco    1 128.90039 272.3661 0.5237331 NA
 #> 3      ripe1 tobacco    2 109.78883 244.9742 0.6525278 NA
-#> 4      ripe2 soybean    1  99.85104 158.7873 0.3908922 NA
+#> 4      ripe2 soybean    1  99.85104 158.7873 0.3908937 NA
 #> 5      ripe2 soybean   5b 115.84216 189.9087 1.6311794 NA
-#> 6      ripe2 tobacco    4  83.51227 178.1061 0.3925866 NA
+#> 6      ripe2 tobacco    4  83.51227 178.1061 0.3925865 NA
 ```
 
 There are a few things to notice about these commands and the resulting
@@ -559,12 +559,12 @@ print(c3_aci_parameters)
 #> 5                                                189.9087
 #> 6                                                178.1061
 #>   Rd [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))
-#> 1                                             0.8502722
-#> 2                                             0.5237332
+#> 1                                             0.8502720
+#> 2                                             0.5237331
 #> 3                                             0.6525278
-#> 4                                             0.3908922
+#> 4                                             0.3908937
 #> 5                                             1.6311794
-#> 6                                             0.3925866
+#> 6                                             0.3925865
 #>   Tp [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))
 #> 1                                                    NA
 #> 2                                                    NA
