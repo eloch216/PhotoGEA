@@ -16,7 +16,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/eloch216/PhotoGEA/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/eloch216/PhotoGEA/blob/unreleased/inst/CITATION)
 
 Lochocki E, Salesse-Smith C, McGrath J (2025). *PhotoGEA: Photosynthetic
 Gas Exchange Analysis*. R package version 1.4.0,
