@@ -36,7 +36,7 @@ the version of the package you used.
 
 # Publications Using PhotoGEA
 
-2. Salesse-Smith, C. E. et _al_. "Greater mesophyll conductance and leaf
+2. Salesse-Smith, C. E. _et al_. "Greater mesophyll conductance and leaf
    photosynthesis in the field through modified cell wall porosity and thickness
    via AtCGR3 expression in tobacco." _Plant Biotechnology Journal_ **22**,
    2504–2517 (2024).
@@ -65,7 +65,7 @@ the version of the package you used.
    >
    > - Analysis scripts: https://doi.org/10.13012/B2IDB-7809185_V2
 
-4. Salesse-Smith, C. E. et al. "Adapting C~4~ photosynthesis to atmospheric
+4. Salesse-Smith, C. E. _et al_. "Adapting C~4~ photosynthesis to atmospheric
    change and increasing productivity by elevating Rubisco content in sorghum
    and sugarcane." _Proceedings of the National Academy of Sciences_ **122**,
    e2419943122 (2025).
@@ -110,3 +110,82 @@ the version of the package you used.
    >
    > - Preprint available from _bioRxiv_:
    >   [DOI:10.1101/2025.07.07.663573](https://doi.org/10.1101/2025.07.07.663573)
+
+7. Garen, J. C. & Crous, K. Y. "Choose Wisely: Parameter Choice is Key for
+   Ensuring Consistent Estimates of Photosynthetic Capacity From A–Ci Response
+   Curves." _Plant, Cell & Environment_ **49**, 3251–3253 (2026).
+
+   > - [DOI:10.1111/pce.70462](https://doi.org/10.1111/pce.70462)
+   >
+   > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`)
+   >
+   > - PhotoGEA version: `v1.3.2`
+   >
+   > - Analysis scripts: Not yet available
+
+8. Mbaluto, C. M., Martínez-Goñi, X. S., Tripathi, A. & Singh, P. "Cereal
+   grafting in rice and pearl millet preserves photosynthetic performance and
+   stomatal dynamics, establishing a platform for root-shoot communication
+   studies." _bioRxiv_ preprint (2026).
+
+   > - [DOI:10.64898/2026.06.25.734459](https://doi.org/10.64898/2026.06.25.734459)
+   >
+   > - PhotoGEA used for: Fitting C~3~ and C~4~ _A-C~i~_ curves (`fit_c3_aci` and
+   >   `fit_c4_aci`)
+   >
+   > - PhotoGEA version: Not specified
+   >
+   > - Analysis scripts: Not yet available
+
+9. Jeong, J. _et al_. "Chloroplast expression of _Chlamydomonas_ glycolate
+   dehydrogenase en route to an improved photorespiratory bypass." _bioRxiv_
+   preprint (2026).
+
+   > - [DOI:10.64898/2026.07.23.739952](https://doi.org/10.64898/2026.07.23.739952)
+   >
+   > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`),
+   >   calculating mesophyll conductance from tunable diode laser absorption
+   >   measurements (`calculate_gm_busch`)
+   >
+   > - PhotoGEA version: `v1.3.2`
+   >
+   > - Analysis scripts: Not yet available
+
+10. Piao, X., Lochocki, E. B., McGrath, J. M. & Matthews, M. L. "Integrating
+    carbon utilization and transport processes into a crop growth model enables
+    the prediction of emergent soybean carbon allocation behavior. _bioRxiv_
+    preprint (2026).
+
+    > - [DOI:10.64898/2026.08.27.747615](https://doi.org/10.64898/2026.08.27.747615)
+    >
+    > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`)
+    >
+    > - PhotoGEA version: `v1.3.3`
+    >
+    > - Analysis scripts: Not yet available
+
+11. Kwafo, T. S., Yerkes, K. & McGrath, J. M. "Nutrient Concentration Declines
+    but Nutrient Yield Increases Under Elevated CO2 Concentration in Soybean:
+    Disentangling the relative effects of Dilution, Transpiration, and Uptake
+    Activity." _bioRxiv_ preprint (2026).
+
+    > - [DOI:10.64898/2026.08.28.747630](https://doi.org/10.64898/2026.08.28.747630)
+    >
+    > - PhotoGEA used for: Fitting Ball-Berry curves (`fit_ball_berry`)
+    >
+    > - PhotoGEA version: Not specified
+    >
+    > - Analysis scripts: Not yet available
+
+11. de Oliveira, L. P. _et al_. "A century of soybean breeding increased
+    photosynthetic capacity but not NPQ relaxation." _Plant Physiology_ kiag811
+    (2026).
+
+    > - [DOI:10.1093/plphys/kiag811](https:doi.org/10.1093/plphys/kiag811)
+    >
+    > - PhotoGEA used for: Fitting C~3~ _A-C~i~_ curves (`fit_c3_aci`)
+    >
+    > - PhotoGEA version: Not specified
+    >
+    > - Analysis scripts: Not yet available
+
