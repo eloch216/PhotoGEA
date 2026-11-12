@@ -14,10 +14,10 @@ vignette can be used to initialize your own script, as described in
 An *A-C_(i) curve* (or *CO₂ response curve*) is a particular type of gas
 exchange measurement where a living leaf is exposed to varying
 concentrations of CO₂. For each CO₂ concentration in the sequence, the
-net assimilation rate ($A_{n}$), stomatal conductance to H₂O ($g_{sw}$),
-intercellular CO₂ concentration ($C_{i}$), and other important
-quantities are measured and recorded. Typically, other environmental
-variables such as temperature, humidity, and incident
+net assimilation rate ($`A_n`$), stomatal conductance to H₂O
+($`g_{sw}`$), intercellular CO₂ concentration ($`C_i`$), and other
+important quantities are measured and recorded. Typically, other
+environmental variables such as temperature, humidity, and incident
 photosynthetically-active photon flux density (PPFD) are held constant
 during the measurement sequence so that changes in assimilation rates
 can be attributed to CO₂ alone.
@@ -34,57 +34,56 @@ work with. These models tend to be based around PEP carboxylase and
 rubisco kinetics, describing how the net assimilation rate responds to
 the partial pressure of CO₂ in the mesophyll or bundle sheath cells. The
 most widely-used model is described in in *Biochemical Models of Leaf
-Photosynthesis* ([S. von Caemmerer
-2000](#ref-caemmerer_biochemical_2000)).
+Photosynthesis* ([Caemmerer 2000](#ref-caemmerer_biochemical_2000)).
 
-This model provides a framework for understanding the changes in $A_{n}$
+This model provides a framework for understanding the changes in $`A_n`$
 that occur as a C₄ leaf is exposed to successively higher concentrations
 of CO₂. Overall, the photosynthetic response to CO₂ under high light
 conditions can be understood as follows:
 
 - For low levels of CO₂, CO₂ assimilation is primarily limited by PEP
   carboxylase activity in the mesophyll cells; the maximum rate of PEP
-  carboxylase activity is denoted by $V_{p,max}$.
+  carboxylase activity is denoted by $`V_{p,max}`$.
 
 - For higher levels of CO₂, CO₂ assimilation can be limited by Rubisco
   activity in the bundle sheath cells, PEP regeneration in the mesophyll
   cells, or electron transport going to support RuBP and PEP
   regeneration. The maximum rate of Rubisco activity is denoted by
-  $V_{c,max}$, the maximum rate of PEP regeneration is denoted by
-  $V_{p,r}$, and the potential electron transport rate going to support
-  RuBP and PEP regeneration at a given incident PPFD is denoted by $J$.
-  (Note: $J$ is distinct from the maximum rate of electron transport
-  that could be achieved at *any* incident PPFD, which is denoted by
-  $J_{max}$.)
+  $`V_{c,max}`$, the maximum rate of PEP regeneration is denoted by
+  $`V_{p,r}`$, and the potential electron transport rate going to
+  support RuBP and PEP regeneration at a given incident PPFD is denoted
+  by $`J`$. (Note: $`J`$ is distinct from the maximum rate of electron
+  transport that could be achieved at *any* incident PPFD, which is
+  denoted by $`J_{max}`$.)
 
 More specifically, the model provides equations that calculate the net
-assimilation rate $A_{n}$ from the $V_{p,max}$, $V_{c,max}$, $V_{p,r}$,
-$J$, the total rate of non-photorespiratory CO₂ release across the
-mesophyll and bundle sheath cells in the light ($R_{L}$), the partial
-pressure of CO₂ in the mesophyll ($P_{cm}$), and several other
-parameters. The full equations are quite complicated. $A_{n}$ is given
-by the smaller of the enzyme-limited rate ($A_{c}$) and the
-electron-transport-limited rate ($A_{j}$). $A_{c}$ is co-limited by PEP
+assimilation rate $`A_n`$ from the $`V_{p,max}`$, $`V_{c,max}`$,
+$`V_{p,r}`$, $`J`$, the total rate of non-photorespiratory CO₂ release
+across the mesophyll and bundle sheath cells in the light ($`R_L`$), the
+partial pressure of CO₂ in the mesophyll ($`P_{cm}`$), and several other
+parameters. The full equations are quite complicated. $`A_n`$ is given
+by the smaller of the enzyme-limited rate ($`A_c`$) and the
+electron-transport-limited rate ($`A_j`$). $`A_c`$ is co-limited by PEP
 carboxylase activity, Rubisco activity, and PEP regeneration, while
-$A_{j}$ is co-limited by electron transport in the mesophyll and
+$`A_j`$ is co-limited by electron transport in the mesophyll and
 bundle-sheath cells. Under certain circumstances (when bundle sheath
 conductance is zero and all photosystem II activity occurs in the
 mesophyll), then the complicated equations reduce to a simpler situation
-where $A_{n}$ is given by the minimum of five separate rates:
+where $`A_n`$ is given by the minimum of five separate rates:
 
-- The PEP-carboxylase-limited rate ($A_{pc}$)
+- The PEP-carboxylase-limited rate ($`A_{pc}`$)
 
-- The Rubisco-limited rate ($A_{r}$)
+- The Rubisco-limited rate ($`A_r`$)
 
-- The PEP-regeneration-limited rate ($A_{pr}$)
+- The PEP-regeneration-limited rate ($`A_{pr}`$)
 
-- The electron-transport-limited rate in the mesophyll ($A_{jm}$)
+- The electron-transport-limited rate in the mesophyll ($`A_{jm}`$)
 
-- The electron-transport-limited rate in the bundle sheath ($A_{jbs}$)
+- The electron-transport-limited rate in the bundle sheath ($`A_{jbs}`$)
 
 The simplified version can be helpful for understanding the rough model
 behavior, but it is important to keep in mind that the real model is
-different, and that $A_{n}$ is generally not equal to the minimum of
+different, and that $`A_n`$ is generally not equal to the minimum of
 these five rates in the full model. The plot below shows an example of
 the full model output:
 
@@ -97,30 +96,31 @@ photosynethetic response of a C₄ leaf according to the model with
 s^(-1), `Vcmax_at_25` = 30 micromol m^(-2) s^(-1), `Vpmax_at_25` = 150
 micromol m^(-2) s^(-1), `Vpr` = 80 micromol m^(-2) s^(-1), and a leaf
 temperature of 30 degrees C. Temperature response parameters from
-Susanne von Caemmerer ([2021](#ref-von_caemmerer_updating_2021)) were
-used for these calculations.)
+Caemmerer ([2021](#ref-von_caemmerer_updating_2021)) were used for these
+calculations.)
 
 There are several important things to notice about this plot:
 
-- For these conditions, $A_{n}$ is always equal to $A_{c}$. Thus,
+- For these conditions, $`A_n`$ is always equal to $`A_c`$. Thus,
   assimilation is enzyme-limited across the entire range of CO₂ values.
 
-- The enzyme-limited rate $A_{c}$ is always smaller than either of the
-  three rates related to individual enzymes ($A_{pc}$, $A_{pr}$, and
-  $A_{r}$).
+- The enzyme-limited rate $`A_c`$ is always smaller than either of the
+  three rates related to individual enzymes ($`A_{pc}`$, $`A_{pr}`$, and
+  $`A_r`$).
 
-- The electron-transport-limited rate $A_{j}$ is always smaller than
+- The electron-transport-limited rate $`A_j`$ is always smaller than
   either of the two rates related to electron transport in individual
-  cell types ($A_{jm}$ and $A_{jb}$).
+  cell types ($`A_{jm}`$ and $`A_{jb}`$).
 
-- The dependence of $A_{r}$, $A_{j}$, and $A_{pr}$ on CO₂ concentration
-  is very similar, where all three are nearly independent of CO₂.
+- The dependence of $`A_r`$, $`A_j`$, and $`A_{pr}`$ on CO₂
+  concentration is very similar, where all three are nearly independent
+  of CO₂.
 
-- The PEP-carboxylase-limited rate ($A_{pc}$) is the only rate that
+- The PEP-carboxylase-limited rate ($`A_{pc}`$) is the only rate that
   approaches zero, which happens as the CO₂ concentration decreases.
 
 - Regardless of which process may be limiting assimilation,
-  $A_{n}$*never* decreases as CO₂ increases.
+  $`A_n`$*never* decreases as CO₂ increases.
 
 An important conclusion here is that PEP carboxylase always limits
 assimilation at low CO₂ concentrations, and that one or more of Rubisco
@@ -131,12 +131,12 @@ with a nearly flat response to CO₂.
 One of the most common reasons to measure an *A-C_(i)* curve is to
 interpret it in the context of this model. In other words, by fitting
 the model’s equations to a measured curve, it is possible to estimate
-values for $J$, $J_{max}$, $R_{L}$, $V_{cmax}$, $V_{pmax}$, and others.
-See the documentation for `calculate_c4_assimilation` for more
+values for $`J`$, $`J_{max}`$, $`R_L`$, $`V_{cmax}`$, $`V_{pmax}`$, and
+others. See the documentation for `calculate_c4_assimilation` for more
 information about these important quantities.
 
 From the discussion above, it is evident that determining the
-rate-limiting process at high $C_{i}$ in a C₄*A-C_(i)* curve is
+rate-limiting process at high $`C_i`$ in a C₄*A-C_(i)* curve is
 difficult or impossible because the three potentially limiting processes
 each exhibit nearly identical responses to CO₂. There are two main ways
 to deal with this issue:
@@ -145,16 +145,16 @@ to deal with this issue:
   information. For example, curves measured under high light conditions
   (where electron transport rates will be high), and at warm
   temperatures (where PEP regeneration rates will be high) are likely to
-  be Rubisco-limited at high $C_{i}$.
+  be Rubisco-limited at high $`C_i`$.
 
 - Another option is to use an empirical non-rectangular hyperbola to fit
-  the curve. This enables estimates of $V_{max}$, the maximum rate of
-  gross assimilation, which is related to the highest value of $A_{n}$
-  ($A_{n,max}$) by $A_{n,max} = V_{max} - R_{L}$. This quantity has no
+  the curve. This enables estimates of $`V_{max}`$, the maximum rate of
+  gross assimilation, which is related to the highest value of $`A_n`$
+  ($`A_{n,max}`$) by $`A_{n,max} = V_{max} - R_L`$. This quantity has no
   meaningful mechanistic interpretation but can be used to compare
   assimilation rates between groups of plants. When taking this
-  approach, values of $V_{pmax}$ can still be estimated from the low
-  $C_{i}$ part of the curve using the mechanistic model.
+  approach, values of $`V_{pmax}`$ can still be estimated from the low
+  $`C_i`$ part of the curve using the mechanistic model.
 
 These approaches will be demonstrated below in this vignette.
 
@@ -165,16 +165,17 @@ thinking about CO₂ response curves.
 
 One point is that C₄ net assimilation models generally predict the
 response of assimilation to the partial pressure of CO₂ in the mesophyll
-($P_{cm}$), but gas exchange measurements can only determine the CO₂
-concentration in the leaf’s intercellular spaces ($C_{i}$). Thus, an
+($`P_{cm}`$), but gas exchange measurements can only determine the CO₂
+concentration in the leaf’s intercellular spaces ($`C_i`$). Thus, an
 extra step is required when interpreting *A-C_(i)* curves. If the
-mesophyll conductance to CO₂ ($g_{mc}$) and the total pressure ($P$) are
-known, then it is possible to calculate values of $P_{cm}$ from $A_{n}$,
-$C_{i}$, $P$, and $g_{mc}$. Otherwise, it is also possible to assume an
-infinite mesophyll conductance; in this case, $C_{m} = C_{i}$, and the
-estimated values of $V_{cmax}$ and other parameters can be considered to
-be “effective values” describing the plant’s response to intercellular
-CO₂ rather than the true response to chloroplastic CO₂.
+mesophyll conductance to CO₂ ($`g_{mc}`$) and the total pressure ($`P`$)
+are known, then it is possible to calculate values of $`P_{cm}`$ from
+$`A_n`$, $`C_i`$, $`P`$, and $`g_{mc}`$. Otherwise, it is also possible
+to assume an infinite mesophyll conductance; in this case,
+$`C_m = C_i`$, and the estimated values of $`V_{cmax}`$ and other
+parameters can be considered to be “effective values” describing the
+plant’s response to intercellular CO₂ rather than the true response to
+chloroplastic CO₂.
 
 Another important point is that plants generally do not appreciate being
 starved of CO₂, so it is not usually possible to start a response curve
@@ -202,7 +203,7 @@ increasing the CO₂ concentration ([Sharkey 2019](#ref-sharkey_is_2019)).
 
 *A-C_(i)* curves are commonly measured using a portable photosynthesis
 system such as the Licor Li-6800. These machines record values of
-$A_{n}$, $g_{sw}$, $C_{i}$, and many other important quantities. They
+$`A_n`$, $`g_{sw}`$, $`C_i`$, and many other important quantities. They
 produce two types of output files: plain-text and Microsoft Excel. It is
 often more convenient to work with the Excel files since the entries can
 be easily modified (for example, to remove an extraneous row or add a
@@ -225,6 +226,7 @@ the `PhotoGEA` library, we check the installed version and give a
 warning if it is different from the expected version number.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -265,7 +267,7 @@ measured using two Li-6800 instruments. The data is stored in Microsoft
 Excel files, and includes curves measured from two different crop
 species (sorghum and maize) and several different plots of each. Each
 curve is a sixteen-point CO₂ response curve; in other words, the CO₂
-concentration in the air surrounding the leaf was varied, and $A_{n}$
+concentration in the air surrounding the leaf was varied, and $`A_n`$
 (among other variables) was measured at each CO₂ setpoint. Although
 these two files are based on real data, noise was added to it since it
 is unpublished.
@@ -275,6 +277,7 @@ installation directory, and full paths to these files can be obtained
 with `PhotoGEA_example_file_path`:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
@@ -295,6 +298,7 @@ multiple files to read, we will call this function once for each file
 using `lapply`:
 
 ``` r
+
 # Load each file, storing the result in a list
 gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
@@ -328,6 +332,7 @@ just those columns, and then combine the `exdf` objects into a single
 one.
 
 ``` r
+
 # Get the names of all columns that are present in all of the data files
 columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
@@ -364,6 +369,7 @@ curve. We can solve this issue by creating a new column that combines
 the values from each of these:
 
 ``` r
+
 # Create a new identifier column formatted like `instrument - species - plot`
 gasex_data[ , 'curve_identifier'] <-
   paste(gasex_data[ , 'instrument'], '-', gasex_data[ , 'species'], '-', gasex_data[ , 'plot'])
@@ -393,6 +399,7 @@ help menu entry by typing
 [`?check_response_curve_data`](https://eloch216.github.io/PhotoGEA/reference/check_response_curve_data.md).
 
 ``` r
+
 # Make sure the data meets basic requirements
 check_response_curve_data(gasex_data, 'curve_identifier', 16, 'CO2_r_sp')
 ```
@@ -403,6 +410,7 @@ the wrong number of points or the wrong identifier column, we would get
 error messages:
 
 ``` r
+
 check_response_curve_data(gasex_data, 'curve_identifier', 15)
 #>      curve_identifier npts
 #> 1   ripe1 - maize - 5   16
@@ -434,6 +442,7 @@ not logged in order of ascending or descending concentration. In fact,
 the sequence of CO₂ setpoints is as follows:
 
 ``` r
+
 gasex_data[gasex_data[, 'curve_identifier'] == 'ripe2 - maize - 2', 'CO2_r_sp']
 #>  [1]  400  300  200  150  100   75   50   20  400  400  600  800 1000 1200 1500
 #> [16] 1800
@@ -450,6 +459,7 @@ high values of `Ci`. This can be done using the
 `organize_response_curve` function from `PhotoGEA`:
 
 ``` r
+
 # Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and
 # calculate average values of leaf temperature and Qin
 gasex_data <- organize_response_curve_data(
@@ -465,7 +475,7 @@ In this command, we also used the optional `columns_to_average` input
 argument to calculate average values of leaf temperature and incident
 PPFD for each curve, which are attached as new columns called
 `TleafCnd_avg` and `Qin_avg`, respectively. These will be important
-later for calculating values of $J_{max}$.
+later for calculating values of $`J_{max}`$.
 
 ### Plotting the *A-C_(i)* Curves
 
@@ -475,6 +485,7 @@ simple to include each curve as its own separate subplot of a figure.
 For example:
 
 ``` r
+
 # Plot all A-Ci curves in the data set
 xyplot(
   A ~ Ci | curve_identifier,
@@ -494,12 +505,12 @@ Some of these curves look a bit strange, but this is related to the
 noise that was intentionally added to the data. Nevertheless, there are
 a few points that we should probably exclude before attempting to fit
 the curves. One issue is that the model *never* predicts a decrease in
-$A$ when $Ci$ increases. So, it is usually a good idea to exclude any
-points at high $Ci$ where $A$ is observed to decrease by a large amount.
-This dropoff in assimilation is due to one or more processes that are
-not captured by the model, and the fits will be unreliable. We will
-remove these points later, after we have made several other data quality
-checks.
+$`A`$ when $`Ci`$ increases. So, it is usually a good idea to exclude
+any points at high $`Ci`$ where $`A`$ is observed to decrease by a large
+amount. This dropoff in assimilation is due to one or more processes
+that are not captured by the model, and the fits will be unreliable. We
+will remove these points later, after we have made several other data
+quality checks.
 
 ### Additional Plots for Qualitative Validation
 
@@ -513,6 +524,7 @@ plots to check each curve for quality.
 #### Humidity Control
 
 ``` r
+
 # Make a plot to check humidity control
 xyplot(
   RHcham + `Humidifier_%` + `Desiccant_%` ~ Ci | curve_identifier,
@@ -545,6 +557,7 @@ photosynthesis. In this plot, all the data looks good.
 #### Temperature Control
 
 ``` r
+
 # Make a plot to check temperature control
 xyplot(
   TleafCnd + Txchg ~ Ci | curve_identifier,
@@ -572,6 +585,7 @@ way. In this plot, all the data looks good.
 #### CO₂ Control
 
 ``` r
+
 # Make a plot to check CO2 control
 xyplot(
   CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
@@ -601,6 +615,7 @@ plot, all the data looks good.
 #### Stability
 
 ``` r
+
 # Make a plot to check stability criteria
 xyplot(
   `A:OK` + `gsw:OK` + Stable ~ Ci | curve_identifier,
@@ -645,16 +660,17 @@ points look particularly strange, so we will not remove them.
 ### Cleaning the Data
 
 While checking over the plots in the previous sections, we noticed that
-some of the curves exhibit a sharp decrease in $A$ at high values of
-$C_{i}$.
+some of the curves exhibit a sharp decrease in $`A`$ at high values of
+$`C_i`$.
 
 We can use the `remove_points` function from `PhotoGEA` to exclude these
-points. It just so happens that all of these points where $A_{n}$
-suddenly decreases at high $C_{i}$ were measured by the `ripe1`
+points. It just so happens that all of these points where $`A_n`$
+suddenly decreases at high $`C_i`$ were measured by the `ripe1`
 instrument and occur at the highest CO₂ setpoint value, so it is easy to
 specify them all at once.
 
 ``` r
+
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
 gasex_data <- remove_points(
   gasex_data,
@@ -669,7 +685,7 @@ Now that we have checked the data quality, we are ready to perform the
 fitting. In order to fit the curves, there are several required pieces
 of information that are not included in the log files as produced by the
 instrument: temperature-dependent values of important photosynthetic
-parameters such as $\gamma^{*}$, and values of the total pressure.
+parameters such as $`\gamma^*`$, and values of the total pressure.
 However, the `PhotoGEA` package includes two functions to help with
 these calculations: `calculate_temperature_response` and
 `calculate_total_pressure`. Each of these requires an `exdf` object
@@ -684,6 +700,7 @@ or
 First, we can use `calculate_temperature_response`:
 
 ``` r
+
 # Calculate temperature-dependent values of C4 photosynthetic parameters
 gasex_data <- calculate_temperature_response(gasex_data, c4_temperature_param_vc)
 ```
@@ -692,15 +709,16 @@ With this simple command, we have used the leaf temperature from the log
 files to calculate values of several key C₄ photosynthetic parameters
 (Vcmax_norm, Vpmax_norm, RL_norm, Kc, Ko, Kp, gamma_star, ao, gmc_norm,
 J_norm) according to the temperature response parameters specified in
-Susanne von Caemmerer ([2021](#ref-von_caemmerer_updating_2021)). Notice
-that this command calculated values of the mesophyll conductance to CO2
-(`gmc`) in units of mol m$^{- 2}$ s$^{- 1}$ bar$^{- 1}$. These values
-were estmated for *Setaria viridis* and may not be appropriate for all
-C₄ plants. Nevertheless, we will use them here.
+Caemmerer ([2021](#ref-von_caemmerer_updating_2021)). Notice that this
+command calculated values of the mesophyll conductance to CO2 (`gmc`) in
+units of mol m$`^{-2}`$ s$`^{-1}`$ bar$`^{-1}`$. These values were
+estmated for *Setaria viridis* and may not be appropriate for all C₄
+plants. Nevertheless, we will use them here.
 
 Now we can use `calculate_total_pressure`:
 
 ``` r
+
 # Calculate the total pressure in the leaf chamber
 gasex_data <- calculate_total_pressure(gasex_data)
 ```
@@ -740,14 +758,15 @@ and `plot_c4_aci_hyperbola_fit` functions from `PhotoGEA`.
 ### Mechanistic Fit, Assuming Rubisco Limitations
 
 To ensure that the fitted assimilation rates are limited by Rubisco
-activity at high $C_{i}$, we can set $V_{pr}$ and $J$ to extremely high
-values, which will ensure that PEP regeneration and light availability
-are never limiting. At the same time, we will allow $V_{cmax}$ to vary
-during the fit. This is the default behavior of `fit_c4_aci`, but here
-we will use the `fit_options` input argument to make it clear that we
-are requiring Rubisco limitations.
+activity at high $`C_i`$, we can set $`V_{pr}`$ and $`J`$ to extremely
+high values, which will ensure that PEP regeneration and light
+availability are never limiting. At the same time, we will allow
+$`V_{cmax}`$ to vary during the fit. This is the default behavior of
+`fit_c4_aci`, but here we will use the `fit_options` input argument to
+make it clear that we are requiring Rubisco limitations.
 
 ``` r
+
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
 set.seed(1234)
@@ -765,6 +784,7 @@ c4_aci_results_rubisco <- consolidate(by(
 Having made the fits, we can view the results:
 
 ``` r
+
 # Plot the C4 A-Ci fits that were made assuming Rubisco limitations
 plot_c4_aci_fit(
   c4_aci_results_rubisco,
@@ -778,19 +798,20 @@ plot_c4_aci_fit(
 ![](analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_rubisco-1.png)
 
 Overall, these fits look good. Note that because Rubisco activity and
-PEP carboxylase activity co-limit the net assimilation rate, $A_{n}$ is
-always smaller than either $A_{r}$ or $A_{pc}$ in these results.
+PEP carboxylase activity co-limit the net assimilation rate, $`A_n`$ is
+always smaller than either $`A_r`$ or $`A_{pc}`$ in these results.
 
 ### Mechanistic Fit, Assuming Electron Transport Limitations
 
 To ensure that the fitted assimilation rates are limited by electron
-transport at high $C_{i}$, we can set $V_{pr}$ and $V_{cmax}$ to
+transport at high $`C_i`$, we can set $`V_{pr}`$ and $`V_{cmax}`$ to
 extremely high values, which will ensure that PEP regeneration and
-Rubisco activity are never limiting. At the same time, we will allow $J$
-to vary during the fit. This can be done using the `fit_options` input
-argument to `fit_c4_aci`.
+Rubisco activity are never limiting. At the same time, we will allow
+$`J`$ to vary during the fit. This can be done using the `fit_options`
+input argument to `fit_c4_aci`.
 
 ``` r
+
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
 set.seed(1234)
@@ -808,6 +829,7 @@ c4_aci_results_light <- consolidate(by(
 Having made the fits, we can view the results:
 
 ``` r
+
 # Plot the C4 A-Ci fits that were made assuming electron transport limitations
 plot_c4_aci_fit(
   c4_aci_results_light,
@@ -822,35 +844,37 @@ plot_c4_aci_fit(
 
 Overall, these fits look good. Note that because electron transport and
 PEP carboxylase are independent in the model, there is a sharp
-transition from $A_{n} = A_{pc}$ to $A_{n} = A_{j}$ in these fits, in
+transition from $`A_n = A_{pc}`$ to $`A_n = A_j`$ in these fits, in
 contrast to the Rubisco fits above, where there is a smooth transition
 between limiting states.
 
 #### Calculating Jmax
 
-The `fit_c4_aci` function estimates values of $J$, but not $J_{max}$.
-However, estimates of $J_{max}$ can be obtained after fitting by
-applying the `calculate_jmax` function to the results from `fit_c4_aci`.
-This is only possible when allowing or assuming electron transport
-limitations, as we have done for the fits in this section. For more
-information about this function, see the built-in help menu entry by
-typing
+The `fit_c4_aci` function estimates values of $`J`$, but not
+$`J_{max}`$. However, estimates of $`J_{max}`$ can be obtained after
+fitting by applying the `calculate_jmax` function to the results from
+`fit_c4_aci`. This is only possible when allowing or assuming electron
+transport limitations, as we have done for the fits in this section. For
+more information about this function, see the built-in help menu entry
+by typing
 [`?calculate_jmax`](https://eloch216.github.io/PhotoGEA/reference/calculate_jmax.md).
 
-In order to do this, we need values of $Q_{in}$ and $T_{leaf}$ for each
-curve. This information is not typically included in an instrument log
-file, but we calculated average values of $Q_{in}$ and $T_{leaf}$ in the
-[Reorganizing the Data](#reorganizing-the-data) section when calling
-`organize_response_curve_data`, so this is taken care of.
+In order to do this, we need values of $`Q_{in}`$ and $`T_{leaf}`$ for
+each curve. This information is not typically included in an instrument
+log file, but we calculated average values of $`Q_{in}`$ and
+$`T_{leaf}`$ in the [Reorganizing the Data](#reorganizing-the-data)
+section when calling `organize_response_curve_data`, so this is taken
+care of.
 
 It is also necessary to have temperature-dependent values of
-$\alpha_{J}$ and $\theta_{J}$, two parameters related to $J$ and
-$J_{max}$. These can be obtained using the
+$`\alpha_J`$ and $`\theta_J`$, two parameters related to $`J`$ and
+$`J_{max}`$. These can be obtained using the
 `calculate_temperature_response` function, which was also used in the
 [Fitting the Response Curves](#fitting-the-response-curves) section
 above.
 
 ``` r
+
 # Calculate temperature-dependent values of Jmax-related parameters
 c4_aci_results_light$parameters <- calculate_temperature_response(
     c4_aci_results_light$parameters,
@@ -865,12 +889,12 @@ c4_aci_results_light$parameters <- calculate_jmax(
 ```
 
 With these commands, the `parameters` element of `c4_aci_results_light`
-now includes estimates of $J_{max}$.
+now includes estimates of $`J_{max}`$.
 
-Be aware that estimates of $J_{max}$ are dependent on the assumed values
-of $\alpha_{J}$ and $\theta_{J}$ at 25 degrees C, especially for curves
-measured at low values of incident PPFD; see the documentation for
-`calculate_jmax` for more information.
+Be aware that estimates of $`J_{max}`$ are dependent on the assumed
+values of $`\alpha_J`$ and $`\theta_J`$ at 25 degrees C, especially for
+curves measured at low values of incident PPFD; see the documentation
+for `calculate_jmax` for more information.
 
 ### Semi-Empirical Fit
 
@@ -878,6 +902,7 @@ We can also take an empirical approach to curve fitting, where we use a
 non-rectangular hyperbola instead of the mechanistic model.
 
 ``` r
+
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
 set.seed(1234)
@@ -893,6 +918,7 @@ c4_aci_results_hyperbola <- consolidate(by(
 Having made the fits, we can view the results:
 
 ``` r
+
 # Plot the C4 A-Ci fits that were made using the empirical model
 plot_c4_aci_hyperbola_fit(
   c4_aci_results_hyperbola,
@@ -904,31 +930,33 @@ plot_c4_aci_hyperbola_fit(
 
 ![](analyzing_c4_aci_curves_files/figure-html/plot_aci_fit_hyperbola-1.png)
 
-The hyperbola is used to estimate $V_{max}$, which characterizes the
-maximum gross assimilation rate that occurs at high $C_{i}$, such that
-$A_{max} = V_{max} - R_{L}$ is the highest net assimilation rate. It is
-common to pair this with an estimate $V_{pmax}$ made by fitting a
-mechanistic equation to the low-$C_{i}$ part of the curve:
+The hyperbola is used to estimate $`V_{max}`$, which characterizes the
+maximum gross assimilation rate that occurs at high $`C_i`$, such that
+$`A_{max} =
+V_{max} - R_L`$ is the highest net assimilation rate. It is common to
+pair this with an estimate $`V_{pmax}`$ made by fitting a mechanistic
+equation to the low-$`C_i`$ part of the curve:
 
-$A_{n} = \frac{V_{pmax} \cdot C_{i}}{C_{i} + K_{p}} - R_{L}$
+$`A_n = \frac{V_{pmax} \cdot C_i}{C_i + K_p} - R_L`$
 
 The full mechanistic model reduces to this particular equation when the
 following conditions are met:
 
-- The bundle sheath conductance ($g_{bs}$) is zero.
+- The bundle sheath conductance ($`g_{bs}`$) is zero.
 
 - No photosystem II activity occurs in the bundle sheath
-  ($\alpha_{PSII} = 0$).
+  ($`\alpha_{PSII} = 0`$).
 
 - The CO₂ concentration in the mesophyll is identical to the
   intercellular CO₂ concentration. This is the case when mesophyll
   conductance is infinitely large.
 
-Here we will fit this equation to just the measured points where $C_{i}$
+Here we will fit this equation to just the measured points where $`C_i`$
 is below 60 ppm. To do this, we will also need to specify an infinite
 value of mesophyll conductance, overriding the default value.
 
 ``` r
+
 # Get a subset of the data where Ci is below the threshold value
 gasex_data_low_ci <- gasex_data[gasex_data[, 'Ci'] <= 60, , TRUE]
 
@@ -955,6 +983,7 @@ c4_aci_results_vpmax <- consolidate(by(
 Having made the fits, we can view the results:
 
 ``` r
+
 # Plot the C4 A-Ci fits that were made to the low Ci part of the curves
 plot_c4_aci_fit(
   c4_aci_results_vpmax,
@@ -974,10 +1003,11 @@ plot_c4_aci_fit(
 Each fit returns best-fit values and confidence limits for each
 parameter, which are stored in `parameters` element of the output list,
 another `exdf` object. These values can be viewed directly from R. For
-example, we can look at the estimated $V_{pmax}$ values from each
+example, we can look at the estimated $`V_{pmax}`$ values from each
 mechanistic fit as follows:
 
 ``` r
+
 # Specify columns to view
 vpmax_columns <- c(
   'curve_identifier',
@@ -1008,7 +1038,7 @@ c4_aci_results_light$parameters[, vpmax_columns]
 c4_aci_results_vpmax$parameters[, vpmax_columns]
 #>      curve_identifier Vpmax_at_25_lower Vpmax_at_25 Vpmax_at_25_upper
 #> 1   ripe1 - maize - 5          75.32530    82.31016          89.29503
-#> 2 ripe1 - sorghum - 2          65.23357    70.17602          75.11849
+#> 2 ripe1 - sorghum - 2          65.23356    70.17602          75.11848
 #> 3 ripe1 - sorghum - 3          70.41548    73.30350          76.19152
 #> 4   ripe2 - maize - 2          62.10453    64.47364          66.84276
 #> 5 ripe2 - sorghum - 3          55.37449    57.38421          59.39391
@@ -1016,15 +1046,16 @@ c4_aci_results_vpmax$parameters[, vpmax_columns]
 
 Here we can see that the estimates made from the mechanistic fit with
 Rubisco limitations are generally the largest, while those made from
-just the low-$C_{i}$ points are the lowest.
+just the low-$`C_i`$ points are the lowest.
 
-Estimates of other parameters, such as $J$, $J_{max}$, $R_{L}$,
-$V_{cmax}$, $V_{max}$, can be accessed with similar commands, although
-some may not be available from all fits. For example, $J$ and $J_{max}$
-are only available from fits made assuming electron transport
-limitations:
+Estimates of other parameters, such as $`J`$, $`J_{max}`$, $`R_L`$,
+$`V_{cmax}`$, $`V_{max}`$, can be accessed with similar commands,
+although some may not be available from all fits. For example, $`J`$ and
+$`J_{max}`$ are only available from fits made assuming electron
+transport limitations:
 
 ``` r
+
 # View J values from the mechanistic fit that assumed light limitations
 c4_aci_results_light$parameters[, c('curve_identifier', 'J_at_25_lower', 'J_at_25', 'J_at_25_upper')]
 #>      curve_identifier J_at_25_lower  J_at_25 J_at_25_upper
@@ -1052,9 +1083,10 @@ to create barcharts of the average values for each species. This
 function will ignore any `NA` values from curves where a parameter could
 not be reliably estimated, and the error bars will show the standard
 error of the mean for each species. Here we will take a look at the
-$V_{cmax}$ estimates.
+$`V_{cmax}`$ estimates.
 
 ``` r
+
 # Make a barchart showing average Vcmax values
 barchart_with_errorbars(
   c4_aci_results_rubisco$parameters[, 'Vcmax_at_25'],
@@ -1071,6 +1103,7 @@ Another option is to create box-whisper plots using the `bwplot`
 function from the `lattice` package:
 
 ``` r
+
 # Make a boxplot showing the distribution of Vcmax values
 bwplot(
   Vcmax_at_25 ~ species,
@@ -1090,6 +1123,7 @@ parameters for each species using the `basic_stats` function from
 `PhotoGEA`:
 
 ``` r
+
 # Compute the average and standard error of each parameter for each species
 # from one of the mechanistic fits
 c4_aci_averages_rubisco <- basic_stats(c4_aci_results_rubisco$parameters, 'species')
@@ -1137,6 +1171,7 @@ load. For example, you could replace the previous definition of
 `file_paths` with this one:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
   'myfile1.xlsx',        # `myfile1.xlsx` must be in the current working directory
@@ -1152,6 +1187,7 @@ For example, you could replace the previous definition of `file_paths`
 with this one:
 
 ``` r
+
 # Interactively define a vector of paths to the files we wish to load
 file_paths <- choose_input_licor_files()
 ```
@@ -1205,6 +1241,7 @@ the mechanistic fits, allowing you to interactively choose output
 filenames for the resulting CSV files:
 
 ``` r
+
 write.csv.exdf(c4_aci_results_rubisco$fits, file.choose())
 write.csv.exdf(c4_aci_results_rubisco$parameters, file.choose())
 write.csv.exdf(c4_aci_averages_rubisco, file.choose())
@@ -1225,6 +1262,7 @@ Pipeline](https://eloch216.github.io/PhotoGEA/articles/web_only/developing_a_dat
 vignette.
 
 ``` r
+
 ###
 ### PRELIMINARIES:
 ### Loading packages, defining constants, creating helping functions, etc.

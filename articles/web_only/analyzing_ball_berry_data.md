@@ -16,15 +16,17 @@ leaf’s stomata to its assimilation rate and local environmental
 conditions. Specifically, it predicts stomatal conductance to water
 vapor using the following equation:
 
-$$g_{sw} = b_{0} + b_{1}*A_{n}*h_{s}/C_{s}$$
+``` math
+ g_{sw} = b_0 + b_1 * A_n * h_s / C_s 
+```
 
-where $g_{sw}$ is the stomatal conductance, $A_{n}$ is the net
-assimilation rate, $h_{s}$ is the relative humidity at the leaf surface,
-and $C_{s}$ is the CO₂ concentration at the leaf surface. The term
-$A_{n}*h_{s}/C_{s}$ is commonly referred to as the Ball-Berry index, and
+where $`g_{sw}`$ is the stomatal conductance, $`A_n`$ is the net
+assimilation rate, $`h_s`$ is the relative humidity at the leaf surface,
+and $`C_s`$ is the CO₂ concentration at the leaf surface. The term
+$`A_n * h_s / C_s`$ is commonly referred to as the Ball-Berry index, and
 the model can be described as predicting a linear relationship between
-stomatal conductance and the Ball-Berry index. The intercept ($b_{0}$)
-and slope ($b_{1}$) of the linear relationship are referred to as the
+stomatal conductance and the Ball-Berry index. The intercept ($`b_0`$)
+and slope ($`b_1`$) of the linear relationship are referred to as the
 Ball-Berry parameters, and they describe the leaf’s stomatal response.
 
 Although this model is certainly an oversimplification, it does encode
@@ -35,7 +37,7 @@ depleted, the stomata of a real plant tend to open, increasing somatal
 conductance. For more information about this model and some possible
 alternatives, see the following papers:
 
-- Ball, Woodrow, and Berry ([1987](#ref-ball_model_1987))
+- Ball et al. ([1987](#ref-ball_model_1987))
 - Tardieu and Davies ([1993](#ref-tardieu_integration_1993))
 - Leuning ([1995](#ref-leuning_critical_1995))
 - Dewar ([2002](#ref-dewar_ballberryleuning_2002))
@@ -45,15 +47,15 @@ alternatives, see the following papers:
 Ball-Berry parameters are typically determined by measuring a Ball-Berry
 curve, where one or more of the environmental factors that influence the
 Ball-Berry index is systematically varied across a range of values. For
-each value, care is taken that $A_{n}$ and $g_{sw}$ have reached their
-steady-state values, and then $A_{n}$, $g_{sw}$, and other key pieces of
-information are recorded. Finally, a linear fit of the experimentally
-observed $g_{sw}$ as a function of the Ball-Berry index is performed to
-extract values for the Ball-Berry intercept and slope.
+each value, care is taken that $`A_n`$ and $`g_{sw}`$ have reached their
+steady-state values, and then $`A_n`$, $`g_{sw}`$, and other key pieces
+of information are recorded. Finally, a linear fit of the experimentally
+observed $`g_{sw}`$ as a function of the Ball-Berry index is performed
+to extract values for the Ball-Berry intercept and slope.
 
 Ball-Berry curves are commonly measured using a portable photosynthesis
 system such as the Licor Li-6800. These machines record values of
-$A_{n}$, $g_{sw}$, $C_{i}$, and many other important quantities. They
+$`A_n`$, $`g_{sw}`$, $`C_i`$, and many other important quantities. They
 produce two types of output files: plain-text and Microsoft Excel. It is
 often more convenient to work with the Excel files since the entries can
 be easily modified (for example, to remove an extraneous row or add a
@@ -76,6 +78,7 @@ the `PhotoGEA` library, we check the installed version and give a
 warning if it is different from the expected version number.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -116,7 +119,7 @@ measured using two Li-6800 instruments. The data is stored in Microsoft
 Excel files, and includes curves measured from two different crop
 species (tobacco and soybean) and several different plots of each. Each
 curve is a seven-point light response curve; in other words, the
-incident light intensity was varied to change $A_{n}$ and hence the
+incident light intensity was varied to change $`A_n`$ and hence the
 Ball-Berry index. Although these two files are based on real data, noise
 was added to it since it is unpublished, so these files should only be
 used as examples.
@@ -126,6 +129,7 @@ installation directory, and full paths to these files can be obtained
 with `PhotoGEA_example_file_path`:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
@@ -146,6 +150,7 @@ multiple files to read, we will call this function once for each file
 using `lapply`:
 
 ``` r
+
 # Load each file, storing the result in a list
 gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
@@ -183,6 +188,7 @@ just those columns, and then combine the `exdf` objects into a single
 one.
 
 ``` r
+
 # Get the names of all columns that are present in all of the data files
 columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
@@ -219,6 +225,7 @@ curve. We can solve this issue by creating a new column that combines
 the values from each of these:
 
 ``` r
+
 # Create a new identifier column formatted like `instrument - species - plot`
 gasex_data[ , 'curve_identifier'] <-
   paste(gasex_data[ , 'instrument'], '-', gasex_data[ , 'species'], '-', gasex_data[ , 'plot'])
@@ -245,6 +252,7 @@ menu entry by typing
 [`?check_response_curve_data`](https://eloch216.github.io/PhotoGEA/reference/check_response_curve_data.md).
 
 ``` r
+
 # Make sure the data meets basic requirements
 check_response_curve_data(gasex_data, 'curve_identifier', 7, 'Qin', 1.0)
 ```
@@ -255,6 +263,7 @@ the wrong number of points, the wrong identifier column, or an
 unrealistic tolerance, we would get error messages:
 
 ``` r
+
 check_response_curve_data(gasex_data, 'curve_identifier', 8)
 #>       curve_identifier npts
 #> 1 ripe4 - soybean - 1a    7
@@ -311,6 +320,7 @@ each curve for quality.
 #### Humidity Control
 
 ``` r
+
 # Make a plot to check humidity control
 xyplot(
   RHcham + `Humidifier_%` + `Desiccant_%` ~ Qin | curve_identifier,
@@ -343,6 +353,7 @@ humidity and leaf photosynthesis. In this plot, all the data looks good.
 #### Temperature Control
 
 ``` r
+
 # Make a plot to check temperature control
 xyplot(
   TleafCnd + Txchg ~ Qin | curve_identifier,
@@ -371,6 +382,7 @@ way. In this plot, all the data looks good.
 #### CO₂ Control
 
 ``` r
+
 # Make a plot to check CO2 control
 xyplot(
   CO2_s + CO2_r ~ Qin | curve_identifier,
@@ -404,6 +416,7 @@ plots.
 #### Stability
 
 ``` r
+
 xyplot(
   `A:OK` + `gsw:OK` + Stable ~ Qin | curve_identifier,
   data = gasex_data$main_data,
@@ -449,6 +462,7 @@ fitting.
 #### Light-Response Curves
 
 ``` r
+
 # Make a plot to check light-response curves
 xyplot(
   A ~ Qin | curve_identifier,
@@ -493,6 +507,7 @@ keeping only the points where `Stable` is 2; this condition means that
 all of the stability criteria were satisfied.
 
 ``` r
+
 # Only keep points where stability was achieved
 gasex_data <- remove_points(
   gasex_data,
@@ -509,6 +524,7 @@ The following command will remove all points from the curves that are
 not acceptable for Ball-Berry fitting:
 
 ``` r
+
 # Define a list of curves to remove from the data set
 curves_to_remove <- c(
   'ripe4 - soybean - 1a',
@@ -529,7 +545,7 @@ gasex_data <- remove_points(
 Now that we have checked the data quality, we are ready to perform the
 fitting. As they are produced by the instruments, log files do not
 include values of the Ball-Berry index; in fact, they do not even
-include values of $h_{s}$ and $C_{s}$ required to calculate the
+include values of $`h_s`$ and $`C_s`$ required to calculate the
 Ball-Berry index. However, the `PhotoGEA` package includes three
 functions to help with these calculations: `calculate_total_pressure`,
 `calculate_gas_properties`, and `calculate_ball_berry_index`. Each of
@@ -545,6 +561,7 @@ Here we will use them sequentially to calculate values of the Ball-Berry
 index:
 
 ``` r
+
 # Calculate the total pressure in the leaf chamber
 gasex_data <- calculate_total_pressure(gasex_data)
 
@@ -574,10 +591,11 @@ Data
 Frames](https://eloch216.github.io/PhotoGEA/articles/web_only/working_with_extended_data_frames.html#processing-multiple-pieces-of-an-extended-data-frame)
 vignette.) Together, these functions will split apart the main data
 using the curve identifier column we defined before ([Basic
-Checks](#basic-checks)), make a linear fit of $g_{sw}$ against the
+Checks](#basic-checks)), make a linear fit of $`g_{sw}`$ against the
 Ball-Berry index, and return the resulting parameters and fits:
 
 ``` r
+
 # Fit a linear model to the Ball-Berry data
 ball_berry_results <- consolidate(by(
   gasex_data,                       # The `exdf` object containing the curves
@@ -595,6 +613,7 @@ the points that were excluded from the fits during the data cleaning
 step:
 
 ``` r
+
 # Plot the Ball-Berry fits
 plot_ball_berry_fit(ball_berry_results, 'curve_identifier')
 ```
@@ -611,6 +630,7 @@ This object includes many columns but we only care about a few of them.
 We can view them as follows:
 
 ``` r
+
 # View the Ball-Berry parameters
 columns_for_viewing <-
   c('instrument', 'species', 'plot', 'bb_intercept', 'bb_slope', 'r_squared')
@@ -648,6 +668,7 @@ Finally, we can extract average values of the Ball-Berry parameters for
 each species using the `basic_stats` function from `PhotoGEA`:
 
 ``` r
+
 # Compute the average and standard error for the Ball-Berry slope and intercept
 # for each species
 ball_berry_averages <- basic_stats(
@@ -700,6 +721,7 @@ load. For example, you could replace the previous definition of
 `file_paths` with this one:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
   'myfile1.xlsx',        # `myfile1.xlsx` must be in the current working directory
@@ -715,6 +737,7 @@ For example, you could replace the previous definition of `file_paths`
 with this one:
 
 ``` r
+
 # Interactively define a vector of paths to the files we wish to load
 file_paths <- choose_input_licor_files()
 ```
@@ -756,6 +779,7 @@ you to interactively choose output filenames for the resulting `csv`
 files:
 
 ``` r
+
 write.csv(ball_berry_results$fits, file.choose(), row.names = FALSE)
 write.csv(ball_berry_results$parameters, file.choose(), row.names = FALSE)
 write.csv(ball_berry_averages, file.choose(), row.names = FALSE)
@@ -776,6 +800,7 @@ Pipeline](https://eloch216.github.io/PhotoGEA/articles/web_only/developing_a_dat
 vignette.
 
 ``` r
+
 ###
 ### PRELIMINARIES:
 ### Loading packages, defining constants, creating helping functions, etc.
@@ -1000,8 +1025,8 @@ Predicting Stomatal Conductance and Its Contribution to the Control of
 Photosynthesis Under Different Environmental Conditions.” In *Progress
 in Photosynthesis Research: Volume 4 Proceedings of the VIIth
 International Congress on Photosynthesis Providence, Rhode Island, USA,
-August 10–15, 1986*, edited by J. Biggins, 221–24. Dordrecht: Springer
-Netherlands. <https://doi.org/10.1007/978-94-017-0519-6_48>.
+August 10–15, 1986*, edited by J. Biggins. Springer Netherlands.
+<https://doi.org/10.1007/978-94-017-0519-6_48>.
 
 Dewar, R. C. 2002. “The Ball–Berry–Leuning and Tardieu–Davies Stomatal
 Models: Synthesis and Extension Within a Spatially Aggregated Picture of

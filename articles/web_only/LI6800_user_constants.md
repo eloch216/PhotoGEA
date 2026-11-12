@@ -3,12 +3,12 @@
 ## Overview
 
 When performing gas exchange experiments, measurements of variables like
-$A_{n}$, $C_{i}$, and $g_{sw}$ are not the only important pieces of data
-to record–it’s also crucial to include information about the particular
-plant that is being measured, such as its species or treatment group.
-Such descriptive data is a type of *metadata*, which [is defined
-as](https://www.merriam-webster.com/dictionary/metadata) “data that
-provides information about other data.”
+$`A_n`$, $`C_i`$, and $`g_{sw}`$ are not the only important pieces of
+data to record–it’s also crucial to include information about the
+particular plant that is being measured, such as its species or
+treatment group. Such descriptive data is a type of *metadata*, which
+[is defined as](https://www.merriam-webster.com/dictionary/metadata)
+“data that provides information about other data.”
 
 Through the “User Constant” interface, Licor LI-6800 instruments provide
 a way to include user-defined descriptive metadata in log files,
@@ -95,6 +95,7 @@ Several R examples in this vignette use the the `PhotoGEA` and `lattice`
 packages, so we will load them now:
 
 ``` r
+
 library(PhotoGEA)
 library(lattice)
 ```
@@ -301,8 +302,8 @@ constants.
 ### Applying an Operation to Every Curve in a Data Set
 
 We often want to apply an operation to every response curve in a data
-set. This could be something relatively simple, such as plotting $A_{n}$
-values against $C_{i}$ values, or something more complicated, such as
+set. This could be something relatively simple, such as plotting $`A_n`$
+values against $`C_i`$ values, or something more complicated, such as
 fitting the Farquhar-von-Caemmerer-Berry model to estimate the values of
 key photosynthetic parameters. In all such cases, a prerequisite is that
 we must be able to identify each curve in the set.
@@ -321,6 +322,7 @@ contains several Ball-Berry curves, which are a special type of light
 response curve intended to be fit using the Ball-Berry model:
 
 ``` r
+
 # Read an example Licor file included in the PhotoGEA package
 licor_file <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
@@ -345,6 +347,7 @@ xyplot(
 ![](LI6800_user_constants_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
+
 
 # Get the number of measured points in each curve
 by(
@@ -385,6 +388,7 @@ calculate the mean Ball-Berry intercept for each species or plot the
 mean Ball-Berry slope:
 
 ``` r
+
 # Get the Ball-Berry parameter estimates
 bb_parameters <- bb_results$parameters
 
@@ -461,6 +465,7 @@ combination of the `strsplit`, `grep`, and `gsub` functions.
 Here is an example using `strsplit`:
 
 ``` r
+
 # Set up a hypothetical user remark formatted like "species plot replicate"
 remark_message <- 'maize 2 3'
 
@@ -487,6 +492,7 @@ For example, suppose a typo was made when making the remark, and it was
 written as `maize2 3`. Let’s see what happens:
 
 ``` r
+
 # Set up a hypothetical user remark with a typo
 remark_message <- 'maize2 3'
 
@@ -527,6 +533,7 @@ example, continuing the example above, we could do something like the
 following:
 
 ``` r
+
 if (remark_message == 'maize2 3') {
   species   <- 'maize'
   plot      <- 2
@@ -546,6 +553,7 @@ function, but it will always be tedious. Here’s an example of how this
 could be done:
 
 ``` r
+
 # Say we have a data frame of spot measurements that also includes user remarks
 # with inconsistent formatting
 gasex_data <- data.frame(
@@ -638,6 +646,7 @@ case, the following code could be used to add a curve identifier column
 based on the file name and a sequential curve number:
 
 ``` r
+
 # Specify the number of points in each curve
 pts_in_curve <- 17
 

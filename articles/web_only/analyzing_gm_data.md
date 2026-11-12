@@ -18,12 +18,12 @@ in the fields of plant biology and climate science ([Evans and Caemmerer
 common approach is to hold a leaf or plant under controlled
 environmental conditions and measure isotope discrimination; models that
 predict discrimination can then be used to estimate key parameter values
-such as the mesophyll conductance to CO₂ ($g_{mc}$) in C₃ plants or the
-bundle-sheath leakiness to CO₂ ($\phi$) in C₄ plants.
+such as the mesophyll conductance to CO₂ ($`g_{mc}`$) in C₃ plants or
+the bundle-sheath leakiness to CO₂ ($`\phi`$) in C₄ plants.
 
 In general, this technique requires simultaneous measurements of the net
-CO₂ assimilation rate $A_{n}$, the intercellular CO₂ concentration
-$C_{i}$, the ¹²C and ¹³C concentrations in air before and after flowing
+CO₂ assimilation rate $`A_n`$, the intercellular CO₂ concentration
+$`C_i`$, the ¹²C and ¹³C concentrations in air before and after flowing
 over the leaf, and others. To make these measurements, a gas exchange
 measurement system (such as a Licor Li-6800) is combined with an isotope
 concentration measurement system, making this a challenging experimental
@@ -31,8 +31,7 @@ technique. Although several methods are available for measuring the
 relative concentrations of ¹²C and ¹³C gas mixtures, tunable diode laser
 (TDL) absorption spectroscopy has emerged as one of the most popular due
 to its high sensitivity and relatively short measurement times
-([Salesse-Smith, Driever, and Clarke
-2022](#ref-salesse-smith_modifying_2022)).
+([Salesse-Smith et al. 2022](#ref-salesse-smith_modifying_2022)).
 
 ### Isotope Discrimination Measurements
 
@@ -40,71 +39,84 @@ To understand isotope discrimination, it is helpful to first discuss
 *fractionation*. Fractionation is a process where the relative abundance
 of one isotope differs between the product and the reactant of a
 chemical reaction. The term *fractionation* also refers to a measurable
-quantity $\alpha$ defined by $$\alpha = \frac{R_{r}}{R_{p}},$$ where
-$R_{r}$ and $R_{p}$ are the ratios of isotope concentrations in the
-reactant and product, respectively. In the case of photosynthetic carbon
-isotope discrimination, $\alpha^{13}C$ is the fractionation of ¹³C
-relative to ¹²C, air is the reactant, plant carbon is the product, and
-the ratios are given by ¹³C / ¹²C. Because photosynthesis assimilates
-more ¹²C than ¹³C, $R_{p}$ is always smaller than $R_{r}$, and
-$\alpha^{13}C$ is always greater than 1.
+quantity $`\alpha`$ defined by
+``` math
+\alpha = \frac{R_r}{R_p},
+```
+where $`R_r`$ and $`R_p`$ are the ratios of isotope concentrations in
+the reactant and product, respectively. In the case of photosynthetic
+carbon isotope discrimination, $`\alpha^{13}C`$ is the fractionation of
+¹³C relative to ¹²C, air is the reactant, plant carbon is the product,
+and the ratios are given by ¹³C / ¹²C. Because photosynthesis
+assimilates more ¹²C than ¹³C, $`R_p`$ is always smaller than $`R_r`$,
+and $`\alpha^{13}C`$ is always greater than 1.
 
-The isotope discrimination $\Delta$ is related to the isotope
-fractionation $\alpha$ according to
-$$\Delta = \alpha - 1 = \frac{R_{r} - R_{p}}{R_{p}}.$$ So, in the case
-of photosynthetic carbon isotope discrimination, $\Delta^{13}C$ is
-always positive (because $\alpha$ is always greater than 1). The
-discrimination can also be expressed in terms of the isotopic
-composition $\delta$, which is related to the isotope ratio $R$ by
-$\delta = R - 1$:
-$$\Delta^{13}C = \frac{\delta^{13}C_{r} - \delta^{13}C_{p}}{1 + \delta^{13}C_{p}}.$$
+The isotope discrimination $`\Delta`$ is related to the isotope
+fractionation $`\alpha`$ according to
+``` math
+\Delta = \alpha - 1 = \frac{R_r - R_p}{R_p}.
+```
+So, in the case of photosynthetic carbon isotope discrimination,
+$`\Delta^{13}C`$ is always positive (because $`\alpha`$ is always
+greater than 1). The discrimination can also be expressed in terms of
+the isotopic composition $`\delta`$, which is related to the isotope
+ratio $`R`$ by $`\delta = R - 1`$:
+``` math
+\Delta^{13}C = \frac{\delta^{13}C_r - \delta^{13}C_p}{1 + \delta^{13}C_p}.
+```
 The isotopic compositions can be expressed relative to an international
 standard, making them the preferred way to express the relative
 abundance of different isotopes.
 
 During photosynthetic carbon isotope discrimination measurements, it is
-not typically possible to actually measure $\delta^{13}C_{p}$ for a
-variety of reasons. Instead, $\delta^{13}C$ can be measured in the
+not typically possible to actually measure $`\delta^{13}C_p`$ for a
+variety of reasons. Instead, $`\delta^{13}C`$ can be measured in the
 outgoing air from the leaf. Then, it is possible to relate the isotopic
 compositions of the incoming and outgoing air to and from the leaf
-($\delta^{13}C_{in}$ and $\delta^{13}C_{out}$, respectively) to
-$\delta^{13}C_{p}$. In this case, the full equation for $\Delta^{13}C$
+($`\delta^{13}C_{in}`$ and $`\delta^{13}C_{out}`$, respectively) to
+$`\delta^{13}C_p`$. In this case, the full equation for $`\Delta^{13}C`$
 becomes
-$$\Delta^{13}C = \frac{\xi\left( \delta^{13}C_{out} - \delta^{13}C_{in} \right)}{1 + \delta^{13}C_{out} - \xi\left( \delta^{13}C_{out} - \delta^{13}C_{in} \right)}.$$
-Here, $\xi$ is defined by $$\xi = \frac{C_{in}}{C_{in} - C_{out}},$$
-where $C_{in}$ and $C_{out}$ are the ¹²C concentrations in the incoming
-and outgoing air.
+``` math
+\Delta^{13}C =
+\frac{\xi (\delta^{13}C_{out} - \delta^{13}C_{in})}
+{1 + \delta^{13}C_{out} - \xi (\delta^{13}C_{out} - \delta^{13}C_{in})}.
+```
+Here, $`\xi`$ is defined by
+``` math
+\xi = \frac{C_{in}}{C_{in} - C_{out}},
+```
+where $`C_{in}`$ and $`C_{out}`$ are the ¹²C concentrations in the
+incoming and outgoing air.
 
 In summary, the photosynthetic carbon isotope discrimination
-$\Delta^{13}C$ is an experimentally accessible quantity that reflects
+$`\Delta^{13}C`$ is an experimentally accessible quantity that reflects
 the degree of preference for ¹²C during the process of photosynthesis.
 For more information about this discrimination and its measurement via
-TDL, see Ubierna, Holloway-Phillips, and Farquhar
-([2018](#ref-ubierna_using_2018)).
+TDL, see Ubierna et al. ([2018](#ref-ubierna_using_2018)).
 
 ### Isotope Discrimination Calculations
 
-Values of $\Delta^{13}C$ can be predicted from knowledge of the
-photosynthetic chemical pathway, as first done by Farquhar, O’Leary, and
-Berry ([1982](#ref-farquhar_relationship_1982)). This approach breaks
-down photosynthetic carbon assimilation into several steps including
+Values of $`\Delta^{13}C`$ can be predicted from knowledge of the
+photosynthetic chemical pathway, as first done by Farquhar et al.
+([1982](#ref-farquhar_relationship_1982)). This approach breaks down
+photosynthetic carbon assimilation into several steps including
 diffusion through air and liquid, and the binding of CO₂ to RuBP as
 catalyzed by Rubisco. Each step along the pathway has its own distinct
 fractionation. It is also necessary to include the release of carbon by
 photorespiration and day respiration, which also have their own
-associated fractionations. The entire equation relating $\Delta^{13}C$
-to $A_{n}$, $C_{i}$, and other variables is different for C₃ and C₄
+associated fractionations. The entire equation relating $`\Delta^{13}C`$
+to $`A_n`$, $`C_i`$, and other variables is different for C₃ and C₄
 plants. These equations can also each be written in several different
 ways depending on assumptions made while deriving them. Due to these
 complexities, we do not reproduce the equations here. However, they can
-be found in many places, such as Box A in Ubierna, Holloway-Phillips,
-and Farquhar ([2018](#ref-ubierna_using_2018)).
+be found in many places, such as Box A in Ubierna et al.
+([2018](#ref-ubierna_using_2018)).
 
 The most important aspect of these equations is that they can be solved
 for key parameters such as the mesophyll conductance to CO₂ (in C₃
 plants) or the bundle-sheath leakiness to CO₂ (in C₄ plants). Then,
-experimentally-measured values of $\Delta^{13}C$ can be used to
-calculate values of $g_{mc}$ or $\phi$. There are many subtelties to
+experimentally-measured values of $`\Delta^{13}C`$ can be used to
+calculate values of $`g_{mc}`$ or $`\phi`$. There are many subtelties to
 these calculations, such as uncertainties in the fractionation values
 due to photorespiration and day respiration. We will not attempt to
 discuss them all here, but more information can be found in Busch et al.
@@ -144,6 +156,7 @@ the `PhotoGEA` library, we check the installed version and give a
 warning if it is different from the expected version number.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -193,6 +206,7 @@ installation directory, and full paths to these files can be obtained
 with `PhotoGEA_example_file_path`:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 gasex_file_paths <- c(
@@ -217,6 +231,7 @@ files to read, we will call this function once for each file using
 `lapply`:
 
 ``` r
+
 # Load each gas exchange data file, storing the result in a list
 gasex_exdf_list <- lapply(gasex_file_paths, function(fpath) {
   read_gasex_file(fpath, 'time', posix_options = list(tz = 'America/Chicago'))
@@ -249,6 +264,7 @@ which also provides a method for specifying the reference line valve
 number.
 
 ``` r
+
 # Get TDL sample and reference valve numbers from the Licor filenames
 gasex_exdf_list <- lapply(gasex_exdf_list, function(exdf_obj) {
   get_sample_valve_from_filename(exdf_obj, list(
@@ -273,6 +289,7 @@ just those columns, and then combine the `exdf` objects into a single
 one.
 
 ``` r
+
 # Get the names of all columns that are present in all of the data files
 gasex_columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
@@ -311,6 +328,7 @@ installation directory, and a full path to the file can be obtained with
 `PhotoGEA_example_file_path`:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 tdl_file_paths <- c(
@@ -333,6 +351,7 @@ were made (`America/Chicago`). Since there are multiple files to read,
 we will call this function once for each file using `lapply`:
 
 ``` r
+
 # Load each TDL file, storing the result in a list
 tdl_exdf_list <- lapply(tdl_file_paths, function(fpath) {
   read_gasex_file(fpath, 'TIMESTAMP', posix_options = list(tz = 'America/Chicago'))
@@ -349,6 +368,7 @@ This process is the same as was used in the previous section for the
 Licor log files.
 
 ``` r
+
 # Get the names of all columns that are present in all of the TDL files
 tdl_columns_to_keep <- do.call(identify_common_columns, tdl_exdf_list)
 
@@ -379,6 +399,7 @@ identify each set. We can solve this issue by creating a new column that
 combines the values from each of these:
 
 ``` r
+
 # Create a new identifier column formatted like `machine - replicate`
 gasex_data[ , 'curve_identifier'] <-
   paste(gasex_data[ , 'machine'], gasex_data[ , 'replicate'], sep = ' - ')
@@ -404,6 +425,7 @@ help menu entry by typing
 [`?check_response_curve_data`](https://eloch216.github.io/PhotoGEA/reference/check_response_curve_data.md).
 
 ``` r
+
 # Make sure the data meets basic requirements
 check_response_curve_data(gasex_data, 'curve_identifier', 12, 'CO2_r_sp')
 ```
@@ -414,6 +436,7 @@ the wrong number of points or the wrong identifier column, we would get
 error messages:
 
 ``` r
+
 check_response_curve_data(gasex_data, 'curve_identifier', 13)
 #>   curve_identifier npts
 #> 1       mickey - 1   12
@@ -438,6 +461,7 @@ sets of data, we can also perform additional organization using the
 `organize_response_curve_data` function from `PhotoGEA`:
 
 ``` r
+
 # Order by `Ci`.
 gasex_data <- organize_response_curve_data(
   gasex_data,
@@ -485,6 +509,7 @@ already, it can often be determined by taking a look at the data via
 each measurement cycle:
 
 ``` r
+
 # Assign numbers to all full cycles in the TDL data set
 tdl_data <- identify_tdl_cycles(
   tdl_data,
@@ -539,6 +564,7 @@ as `noaa_cylinder_isotope_ratio`) must be obtained from whoever is
 managing the TDL system being used:
 
 ``` r
+
 # Use the data from the calibration valves to determine calibrated carbon
 # concentrations from all valves in each TDL cycle
 processed_tdl <- consolidate(by(
@@ -570,11 +596,12 @@ When analyzing combined gas exchange and isotope discrimination data, a
 key step is to combine TDL and gas exchange data that were measured at
 the same times. The function performs this operation by locating the TDL
 cycle whose timestamp is closest to each gas exchange log file entry.
-Then, the ¹²C, ¹³C, total CO₂, and $\delta^{13}$C values measured by the
-TDL from the Licor’s sample and reference lines during that cycle are
-added to the gas exchange data as new columns.
+Then, the ¹²C, ¹³C, total CO₂, and $`\delta^{13}`$C values measured by
+the TDL from the Licor’s sample and reference lines during that cycle
+are added to the gas exchange data as new columns.
 
 ``` r
+
 # Pair the gas exchange and TDL data by locating the TDL cycle corresponding to
 # each gas exchange measurement
 gasex_data <- pair_gasex_and_tdl(gasex_data, processed_tdl$tdl_data)
@@ -602,6 +629,7 @@ it is a good idea to confirm that the leaf temperature was constant
 during the measurements.
 
 ``` r
+
 # Plot the leaf temperature, grouped by CO2_r setpoint
 xyplot(
   TleafCnd ~ seq_num | curve_identifier,
@@ -627,6 +655,7 @@ We can also look at `CO2_r`, which should be 715 ppm for the first six
 points and 450 ppm for the following points.
 
 ``` r
+
 # Plot CO2_r, grouped by CO2_r setpoint
 xyplot(
   CO2_r ~ seq_num | curve_identifier,
@@ -654,6 +683,7 @@ TDL readings should be stable with time at each CO₂ setpoint. We can
 check this by looking at the calibrated TDL readings.
 
 ``` r
+
 xyplot(
   Conc13C_Avg ~ elapsed_time,
   group = valve_number,
@@ -693,10 +723,11 @@ vignette, or one of the other vignettes.
 
 Now, the `gasex_data` `exdf` object includes the TDL measurements from
 the Licor sample and reference gas lines that correspond to each log
-point. This information can now be used to calculate $\Delta^{13}C$, the
-photosynthetic isotope discrimination:
+point. This information can now be used to calculate $`\Delta^{13}C`$,
+the photosynthetic isotope discrimination:
 
 ``` r
+
 # Calculate isotope discrimination
 gasex_data <- calculate_isotope_discrimination(gasex_data)
 ```
@@ -706,6 +737,7 @@ isotope discrimination should be not vary too much at each CO₂ setpoint.
 We can check this with a plot.
 
 ``` r
+
 # Plot the photosynthetic isotope discrimination, grouped by CO2_r setpoint
 xyplot(
   Delta_obs_tdl ~ seq_num | curve_identifier,
@@ -734,20 +766,21 @@ calculated the isotope discrimination values. There are just a few more
 steps required to calculate mesophyll conductance values. In particular,
 the mesophyll conductance equations require the following inputs:
 
-- The rate of day respiration ($R_{d}$).
+- The rate of day respiration ($`R_d`$).
 - The CO₂ compensation point in the absence of day respiration
-  ($\Gamma^{*}$).
-- The ternary correction factor ($t$).
+  ($`\Gamma^*`$).
+- The ternary correction factor ($`t`$).
 - The observed photosynthetic carbon isotope discrimination under growth
-  conditions ($\Delta_{obs}^{growth}$).
+  conditions ($`\Delta_{obs}^{growth}`$).
 
-The value of day respiration $R_{d}$ must be known from other
+The value of day respiration $`R_d`$ must be known from other
 measurements; typically it is determined by placing a leaf into a gas
 exchange measurement chamber with the light off, and measuring the
-steady-state net assimilation rate. Here we will use 1.2 $\mu$mol
-m$^{- 2}$ s$^{- 1}$.
+steady-state net assimilation rate. Here we will use 1.2 $`\mu`$mol
+m$`^{-2}`$ s$`^{-1}`$.
 
 ``` r
+
 # Set day respiration rate
 gasex_data <- set_variable(
   gasex_data,
@@ -758,11 +791,12 @@ gasex_data <- set_variable(
 ```
 
 There are several possible approaches to choosing a value for
-$\Gamma^{*}$. Here we will calculate its value from the leaf temperature
+$`\Gamma^*`$. Here we will calculate its value from the leaf temperature
 and the Rubisco specificity using the `calculate_gamma_star` function
-from `PhotoGEA`, using 92 M M$^{- 1}$ for the specificity.
+from `PhotoGEA`, using 92 M M$`^{-1}`$ for the specificity.
 
 ``` r
+
 # Set Rubisco specificity
 gasex_data <- set_variable(
     gasex_data,
@@ -775,12 +809,13 @@ gasex_data <- set_variable(
 gasex_data <- calculate_gamma_star(gasex_data)
 ```
 
-The ternary correction factor $t$ can be calculated using the
+The ternary correction factor $`t`$ can be calculated using the
 `calculate_ternary_correction` function from `PhotoGEA`. This function
 has a few of its own requirements, which can be met by first calling
 `calculate_total_pressure` and `calculate_gas_properties`.
 
 ``` r
+
 # Calculate total pressure
 gasex_data <- calculate_total_pressure(gasex_data)
 
@@ -791,19 +826,20 @@ gasex_data <- calculate_gas_properties(gasex_data)
 gasex_data <- calculate_ternary_correction(gasex_data)
 ```
 
-Like $R_{d}$, the observed photosynthetic isotope discrimination under
-growth conditions ($\Delta_{obs}^{growth}$) must be measured from each
+Like $`R_d`$, the observed photosynthetic isotope discrimination under
+growth conditions ($`\Delta_{obs}^{growth}`$) must be measured from each
 leaf or plant species. Ideally, this would be determined by setting the
 ambient CO₂ concentration around the leaf to the ambient value and using
 the TDL to measure the photosynthetic isotope discrimination
-$\Delta_{obs}$. In this data set, the first six points in each file have
-`CO2_r` set to 715 ppm, which produces a value of $C_{a}$ close to 420
-ppm (the global atmospheric value at the time these measurements were
-made). Thus, we can use the average value of $\Delta_{obs}$ across the
-first six points as the value of $\Delta_{obs}^{growth}$ for each
-replicate.
+$`\Delta_{obs}`$. In this data set, the first six points in each file
+have `CO2_r` set to 715 ppm, which produces a value of $`C_a`$ close to
+420 ppm (the global atmospheric value at the time these measurements
+were made). Thus, we can use the average value of $`\Delta_{obs}`$
+across the first six points as the value of $`\Delta_{obs}^{growth}`$
+for each replicate.
 
 ``` r
+
 # Set Delta_obs_growth
 gasex_data <- set_variable(
   gasex_data,
@@ -821,14 +857,15 @@ gasex_data <- set_variable(
 Now we are finally able to calculate values of mesophyll conductance!
 
 ``` r
+
 # Calculate mesophyll conductance
 gasex_data <- calculate_gm_busch(gasex_data, f = 0)
 ```
 
 In this example, we have found that the mesophyll conductance values are
-more reasonable with $f$ (the assumed fractionation due to day
-respiration) set to 0. In general, $f$ is typically not zero, and can be
-varied during analysis.
+more reasonable with $`f`$ (the assumed fractionation due to day
+respiration) set to 0. In general, $`f`$ is typically not zero, and can
+be varied during analysis.
 
 ## Examining the Results
 
@@ -836,6 +873,7 @@ One way to view the results is to simply plot each calculated value of
 the mesophyll conductance.
 
 ``` r
+
 # Plot the mesophyll conductance values, grouped by CO2_r setpoint
 xyplot(
   gmc ~ seq_num | curve_identifier,
@@ -853,9 +891,10 @@ xyplot(
 ![](analyzing_gm_data_files/figure-html/plot_gm_1-1.png)
 
 Another approach is to plot the average mesophyll conductance against
-the average $C_{i}$ for each CO₂ setpoint.
+the average $`C_i`$ for each CO₂ setpoint.
 
 ``` r
+
 # Plot the average mesophyll conductance values against average Ci values,
 # grouped by CO2_r setpoint
 xyplot_avg_rc(
@@ -895,6 +934,7 @@ the files you wish to load. For example, you could replace the previous
 definitions with these ones:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load
 gasex_file_paths <- c(
   'myfile1.xlsx',        # `myfile1.xlsx` must be in the current working directory
@@ -915,6 +955,7 @@ or names. For example, you could replace the previous definitions with
 these ones:
 
 ``` r
+
 # Interactively define a vector of paths to the files we wish to load
 gasex_file_paths <- choose_input_licor_files()
 
@@ -931,9 +972,10 @@ vignette for more details.
 
 ### Mesophyll Conductance Calculations
 
-Sometimes it may not be possible to estimate $\Delta_{growth}^{obs}$. In
-this case, set `e_star_equation = 19` when calling `calculate_gm_busch`
-or use `calculate_gm_ubierna` instead of `calculate_gm_busch`.
+Sometimes it may not be possible to estimate $`\Delta^{obs}_{growth}`$.
+In this case, set `e_star_equation = 19` when calling
+`calculate_gm_busch` or use `calculate_gm_ubierna` instead of
+`calculate_gm_busch`.
 
 ### Saving Results
 
@@ -944,6 +986,7 @@ combined gas exchange and TDL data, along with the calculated values of
 isotope discrimination and mesophyll conductance:
 
 ``` r
+
 write.csv(gasex_data, file.choose(), row.names = FALSE)
 ```
 
@@ -962,6 +1005,7 @@ Pipeline](https://eloch216.github.io/PhotoGEA/articles/web_only/developing_a_dat
 vignette.
 
 ``` r
+
 ###
 ### PRELIMINARIES:
 ### Loading packages, defining constants, creating helping functions, etc.
@@ -1294,5 +1338,5 @@ Science Publishing Limited.
 Ubierna, Nerea, Meisha-Marika Holloway-Phillips, and Graham D. Farquhar.
 2018. “Using Stable Carbon Isotopes to Study C3 and C4 Photosynthesis:
 Models and Calculations.” In *Photosynthesis: Methods and Protocols*,
-edited by Sarah Covshoff, 155–96. Methods in Molecular Biology. New
-York, NY: Springer. <https://doi.org/10.1007/978-1-4939-7786-4_10>.
+edited by Sarah Covshoff. Methods in Molecular Biology. Springer.
+<https://doi.org/10.1007/978-1-4939-7786-4_10>.

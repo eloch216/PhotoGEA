@@ -22,6 +22,7 @@ The questions discussed here are grouped into sections by topic:
 latest release is to type the following from within an R terminal:
 
 ``` r
+
 install.packages('PhotoGEA')
 ```
 
@@ -31,6 +32,7 @@ release can be installed directly from the main branch of the GitHub
 repository by typing the following:
 
 ``` r
+
 remotes::install_github('eloch216/PhotoGEA')
 ```
 
@@ -46,6 +48,7 @@ within R, supplying the appropriate tag name as the `ref` input
 argument. For example, version `1.0.0` can be installed as follows:
 
 ``` r
+
 remotes::install_github('eloch216/PhotoGEA', ref = 'v1.0.0')
 ```
 
@@ -60,6 +63,7 @@ without any warning. It can always be found on the `unreleased` branch
 on GitHub, and the package can be installed from this branch as follows:
 
 ``` r
+
 remotes::install_github('eloch216/PhotoGEA', ref = 'unreleased')
 ```
 
@@ -74,6 +78,7 @@ working directory set to the root directory of the `PhotoGEA`
 repository:
 
 ``` r
+
 install.packages('.', repos = NULL, type = 'SOURCE')
 ```
 
@@ -109,6 +114,7 @@ from its GitLab repository to get the latest version. This can be done
 by calling the following command from R:
 
 ``` r
+
 remotes::install_gitlab('plantphys/gasanalyzer')
 ```
 
@@ -117,6 +123,7 @@ for fitting A-Ci curves. Depending on your goals, you may need to modify
 this code to include other columns.
 
 ``` r
+
 # Helper function for reading 6400 Excel files. This is a wrapper for the
 # read_6400_xls function from the gasanalyzer package that converts the output
 # into a format usable by PhotoGEA.
@@ -226,6 +233,7 @@ This code would replace the lines that use `read_gasex_file` to create
 `gasex_data` in the user guides.
 
 ``` r
+
 # Read the original CSV
 original_df <- read.csv(
   'ACi-TGlob_V1.0.csv',
@@ -253,6 +261,7 @@ creating an `exdf` object. So, one way to proceed is to begin without
 any units:
 
 ``` r
+
 gasex_data <- exdf(
   original_df,
   units = data.frame(
@@ -283,6 +292,7 @@ this; this code would follow the creation of the `exdf` table called
 `gasex_data`, and shows how to rename a few Licor LI-6400 columns:
 
 ``` r
+
 # PhotoGEA has a mechanism for specifying the column names for key inputs, but
 # it is a bit clunky, so it's easier to rename them to their "standard" names;
 # here we accomplish this by using a helper function
@@ -440,6 +450,7 @@ The curves used the following sequences of `CO2_r` setpoint values:
   400, 600, 800, 1200, 1500, 1800, 400
 
 ``` r
+
 # Add a new column called `curve_npts` that stores the number of points in each
 # response curve
 gasex_data <- do.call(rbind, by(gasex_data, gasex_data[, 'curve_identifier'], function(x) {
@@ -500,6 +511,7 @@ The curves used the following sequences of `CO2_r` setpoint values:
   400, 400, 450, 500, 600, 800, 1000, 1200, 1500
 
 ``` r
+
 # Add a new column called `curve_npts` that stores the number of points in each
 # response curve
 gasex_data <- do.call(rbind, by(gasex_data, gasex_data[, 'curve_identifier'], function(x) {
@@ -590,6 +602,7 @@ code, which would replace the regular calls to
 user guides:
 
 ``` r
+
 # Print info about the number of points in each curve to make sure
 # `curve_identifier` is able to properly split the set into individual curves
 check_response_curve_data(gasex_data, 'curve_identifier', error_on_failure = FALSE)
@@ -620,6 +633,7 @@ example, if `exdf_obj` is an extended data frame, then the following
 will “convert” it to a regular data frame:
 
 ``` r
+
 # Convert an exdf to a regular data frame
 dataf <- exdf_obj$main_data
 ```
@@ -644,6 +658,7 @@ column. Another option is to convert the `exdf` to a regular data frame
 (see above) and use `write.csv`. For example:
 
 ``` r
+
 # Write an exdf to a CSV file, including units
 write.csv.exdf(exdf_obj, file = 'exdf_version.csv')
 
@@ -663,6 +678,7 @@ In this case, it is possible to specify the columns that should be saved
 as follows:
 
 ``` r
+
 # Specify a subset of columns to write to a CSV file
 col_to_save <- c(
   'curve_identifier',
@@ -708,6 +724,7 @@ This can be accomplished through the `fit_options` argument when calling
 of the regular command in the C₃*A-C_(i)* user guide:
 
 ``` r
+
 # Fit the C3 A-Ci curves, disabling TPU (so only RL, Vcmax, and J are fit)
 c3_aci_results <- consolidate(by(
   gasex_data,                       # The `exdf` object containing the curves

@@ -146,8 +146,8 @@ optimizer_deoptim(200)
 #>     list(convergence = NA, convergence_msg = NA, feval = res[["optim"]][["nfeval"]], 
 #>         par = res[["optim"]][["bestmem"]], optimizer = "optimizer_deoptim")
 #> }
-#> <bytecode: 0x5561652676b8>
-#> <environment: 0x5561623d48b0>
+#> <bytecode: 0x62873420a6d8>
+#> <environment: 0x628733eadf78>
 
 optimizer_hjkb(1e-7)
 #> function (guess, fun, lower, upper) 
@@ -158,8 +158,8 @@ optimizer_hjkb(1e-7)
 #>     list(convergence = res[["convergence"]], convergence_msg = NA, 
 #>         feval = res[["feval"]], par = res[["par"]], optimizer = "optimizer_hjkb")
 #> }
-#> <bytecode: 0x5561689de020>
-#> <environment: 0x5561689dd140>
+#> <bytecode: 0x628733df3340>
+#> <environment: 0x628733df0dc8>
 
 optimizer_nlminb(1e-7)
 #> function (guess, fun, lower, upper) 
@@ -172,8 +172,8 @@ optimizer_nlminb(1e-7)
 #>         feval = res[["evaluations"]][1], par = res[["par"]], 
 #>         optimizer = "optimizer_nlminb")
 #> }
-#> <bytecode: 0x55616377aef8>
-#> <environment: 0x556164aa96c8>
+#> <bytecode: 0x6287348ac990>
+#> <environment: 0x6287348a83a8>
 
 optimizer_nmkb(1e-7)
 #> function (guess, fun, lower, upper) 
@@ -184,8 +184,8 @@ optimizer_nmkb(1e-7)
 #>     list(convergence = res[["convergence"]], convergence_msg = res[["message"]], 
 #>         feval = res[["feval"]], par = res[["par"]], optimizer = "optimizer_nmkb")
 #> }
-#> <bytecode: 0x55616493d700>
-#> <environment: 0x556167af58a0>
+#> <bytecode: 0x628732c9d840>
+#> <environment: 0x6287347e01b8>
 
 optimizer_null()
 #> function (guess, fun, lower, upper) 
@@ -193,6 +193,6 @@ optimizer_null()
 #>     list(convergence = NA, convergence_msg = NA, feval = 0, par = guess, 
 #>         optimizer = "optimizer_null")
 #> }
-#> <bytecode: 0x556163f25af0>
-#> <environment: 0x556166927e58>
+#> <bytecode: 0x6287348e6f50>
+#> <environment: 0x6287346bf810>
 ```

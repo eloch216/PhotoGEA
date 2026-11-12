@@ -110,6 +110,7 @@ As an example, we will try fitting a straight line to a set of curved
 data:
 
 ``` r
+
 # Generate some data using a cubic function
 X <- seq(from = 0, to = 10, length.out = 21)
 Y <- (X - 3) * (X - 5) * (X - 7)
@@ -438,27 +439,26 @@ research showing that papers with easily reproducible analysis
 (facilitated by the availability of data and scripts) is cited more
 often. For example, see the following:
 
-- Piwowar, Day, and Fridsma ([2007](#ref-piwowar_sharing_2007))
+- Piwowar et al. ([2007](#ref-piwowar_sharing_2007))
 - Bueno de Mesquita et al.
   ([2003](#ref-bueno_de_mesquita_symposium_2003))
-- Dorch, Drachen, and Ellegaard ([2015](#ref-dorch_data_2015))
+- Dorch et al. ([2015](#ref-dorch_data_2015))
 - Henneken and Accomazzi ([2011](#ref-henneken_linking_2011))
 - Popkin ([2019](#ref-popkin_data_2019))
 
 ## References
 
-Bueno de Mesquita, Bruce, Nils Petter Gleditsch, Patrick James, Gary
-King, Claire Metelits, James Lee Ray, Bruce Russett, Håvard Strand, and
-Brandon Valeriano. 2003. “Symposium on Replication in International
-Studies Research.” *International Studies Perspectives* 4 (1): 72–107.
+Bueno de Mesquita, Bruce, Nils Petter Gleditsch, Patrick James, et al.
+2003. “Symposium on Replication in International Studies Research.”
+*International Studies Perspectives* 4 (1): 72–107.
 <https://doi.org/10.1111/1528-3577.04105>.
 
-Dorch, S. B. F., T. M. Drachen, and O. Ellegaard. 2015. “The Data
-Sharing Advantage in Astrophysics.” arXiv.
+Dorch, S. B. F., T. M. Drachen, and O. Ellegaard. 2015. *The Data
+Sharing Advantage in Astrophysics*. arXiv.
 <https://arxiv.org/abs/1511.02512>.
 
-Henneken, Edwin A., and Alberto Accomazzi. 2011. “Linking to Data -
-Effect on Citation Rates in Astronomy.” arXiv.
+Henneken, Edwin A., and Alberto Accomazzi. 2011. *Linking to Data -
+Effect on Citation Rates in Astronomy*. arXiv.
 <https://arxiv.org/abs/1111.3618>.
 
 Piwowar, Heather A., Roger S. Day, and Douglas B. Fridsma. 2007.

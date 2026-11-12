@@ -24,6 +24,7 @@ As always, the first step is to load the packages we will be using. In
 addition to `PhotoGEA`, we will also use the `lattice` package.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -145,6 +146,7 @@ Here we write a function that fits a rectangular hyperbola to an A-Ci
 curve and follows the suggestions outlined above:
 
 ``` r
+
 # Define a custom fitting function
 fit_hyperbola <- function(
   replicate_exdf,
@@ -308,6 +310,7 @@ Curves](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_c
 vignette.
 
 ``` r
+
 # Fit each curve
 c3_aci_results <- consolidate(by(
   gasex_data,                       # The `exdf` object containing the curves
@@ -335,6 +338,7 @@ xyplot(
 
 ``` r
 
+
 # Plot the residuals
 xyplot(
   A_residuals ~ Ci | curve_identifier,
@@ -352,6 +356,7 @@ xyplot(
 ![](creating_your_own_processing_tools_files/figure-html/make_and_examine_fit-2.png)
 
 ``` r
+
 
 # View the parameter values
 columns_for_viewing <-
@@ -377,7 +382,7 @@ print(c3_aci_parameters)
 #> 3                                      108.00753
 #> 4                                       67.50371
 #> 5                                       82.51852
-#> 6                                       74.40790
+#> 6                                       74.40789
 #>   Ci_half [fit_hyperbola] (micromol mol^(-1))
 #> 1                                    560.2505
 #> 2                                    286.3507
@@ -427,6 +432,7 @@ throughout this document. They are compiled here to make them easy to
 copy/paste into a text file to initialize your own script.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)

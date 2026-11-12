@@ -52,6 +52,7 @@ addition to `PhotoGEA`, we will also use the `plantecophys` and
 `lattice` packages.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(plantecophys)
@@ -85,6 +86,7 @@ response curves in the data set and then consolidate the results from
 each curve into a convenient list of tables:
 
 ``` r
+
 c3_aci_results <- consolidate(by(
   gasex_data,                       # The `exdf` object containing the curves
   gasex_data[, 'curve_identifier'], # A factor used to split `gasex_data` into chunks
@@ -113,6 +115,7 @@ so it can be used in the same way.
 Here is one way to create such a wrapper:
 
 ``` r
+
 # Make a minimal wrapper for `plantecophys::fitaci`
 fit_c3_aci_plantecophys <- function(
   replicate_exdf, # an `exdf` object representing a single A-Ci curve
@@ -198,6 +201,7 @@ Curves](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_c
 vignette:
 
 ``` r
+
 # Fit each curve
 c3_aci_results <- consolidate(by(
   gasex_data,                       # The `exdf` object containing the curves
@@ -219,6 +223,7 @@ Curves](https://eloch216.github.io/PhotoGEA/articles/web_only/analyzing_c3_aci_c
 vignette:
 
 ``` r
+
 # Plot each fit
 xyplot(
   Ameas + (Ac - Rd) + (Aj - Rd) + (Ap - Rd) + Amodel ~ Ci_original | curve_identifier,
@@ -239,6 +244,7 @@ xyplot(
 
 ``` r
 
+
 # View the parameter values
 columns_for_viewing <-
   c('instrument', 'species', 'plot', 'Vcmax', 'Jmax', 'Rd', 'Tp')
@@ -248,12 +254,12 @@ c3_aci_parameters <-
 
 print(c3_aci_parameters)
 #>   instrument species plot     Vcmax     Jmax        Rd Tp
-#> 1      ripe1 soybean   5a 126.61884 229.5225 0.8502736 NA
-#> 2      ripe1 tobacco    1 128.90039 272.3661 0.5237317 NA
+#> 1      ripe1 soybean   5a 126.61882 229.5225 0.8502722 NA
+#> 2      ripe1 tobacco    1 128.90039 272.3661 0.5237332 NA
 #> 3      ripe1 tobacco    2 109.78883 244.9742 0.6525278 NA
-#> 4      ripe2 soybean    1  99.85103 158.7873 0.3908915 NA
-#> 5      ripe2 soybean   5b 115.84216 189.9087 1.6311796 NA
-#> 6      ripe2 tobacco    4  83.51227 178.1061 0.3925865 NA
+#> 4      ripe2 soybean    1  99.85104 158.7873 0.3908922 NA
+#> 5      ripe2 soybean   5b 115.84216 189.9087 1.6311794 NA
+#> 6      ripe2 tobacco    4  83.51227 178.1061 0.3925866 NA
 ```
 
 There are a few things to notice about these commands and the resulting
@@ -291,6 +297,7 @@ break the code into several sections devoted to checking inputs, calling
 `fitaci` with appropriate units, and collecting outputs:
 
 ``` r
+
 # Make a better wrapper for `plantecophys::fitaci`
 fit_c3_aci_plantecophys <- function(
   replicate_exdf, # an `exdf` object representing a single A-Ci curve
@@ -490,6 +497,7 @@ the results using the following code, which is simpler than the previous
 version:
 
 ``` r
+
 # Fit each curve
 c3_aci_results <- consolidate(by(
   gasex_data,                       # The `exdf` object containing the curves
@@ -517,6 +525,7 @@ xyplot(
 
 ``` r
 
+
 # View the parameter values
 columns_for_viewing <-
   c('instrument', 'species', 'plot', 'Vcmax', 'Jmax', 'Rd', 'Tp')
@@ -536,10 +545,10 @@ print(c3_aci_parameters)
 #> 5                        ripe2                   soybean                     5b
 #> 6                        ripe2                   tobacco                      4
 #>   Vcmax [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))
-#> 1                                                126.61884
+#> 1                                                126.61882
 #> 2                                                128.90039
 #> 3                                                109.78883
-#> 4                                                 99.85103
+#> 4                                                 99.85104
 #> 5                                                115.84216
 #> 6                                                 83.51227
 #>   Jmax [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))
@@ -550,12 +559,12 @@ print(c3_aci_parameters)
 #> 5                                                189.9087
 #> 6                                                178.1061
 #>   Rd [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))
-#> 1                                             0.8502736
-#> 2                                             0.5237317
+#> 1                                             0.8502722
+#> 2                                             0.5237332
 #> 3                                             0.6525278
-#> 4                                             0.3908915
-#> 5                                             1.6311796
-#> 6                                             0.3925865
+#> 4                                             0.3908922
+#> 5                                             1.6311794
+#> 6                                             0.3925866
 #>   Tp [fit_c3_aci_plantecophys] (micromol m^(-2) s^(-1))
 #> 1                                                    NA
 #> 2                                                    NA
@@ -568,6 +577,7 @@ print(c3_aci_parameters)
 It’s also easy to plot the residuals now:
 
 ``` r
+
 # Plot the residuals
 xyplot(
   A_residuals ~ Ci_original | curve_identifier,
@@ -591,6 +601,7 @@ throughout this document. They are compiled here to make them easy to
 copy/paste into a text file to initialize your own script.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(plantecophys)

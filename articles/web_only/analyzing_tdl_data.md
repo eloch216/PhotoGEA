@@ -63,6 +63,7 @@ the `PhotoGEA` library, we check the installed version and give a
 warning if it is different from the expected version number.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -103,6 +104,7 @@ installation directory, and full paths to these files can be obtained
 with `PhotoGEA_example_file_path`:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
@@ -123,6 +125,7 @@ multiple files to read, we will call this function once for each file
 using `lapply`:
 
 ``` r
+
 # Load each file, storing the result in a list
 tdl_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'TIMESTAMP')
@@ -156,6 +159,7 @@ just those columns, and then combine the `exdf` objects into a single
 one.
 
 ``` r
+
 # Get the names of all columns that are present in all of the TDL files
 columns_to_keep <- do.call(identify_common_columns, tdl_exdf_list)
 
@@ -197,6 +201,7 @@ already, it can often be determined by taking a look at the data via
 to automatically assign a number to each measurement cycle:
 
 ``` r
+
 # Assign numbers to all full cycles in the data set
 tdl_files <- identify_tdl_cycles(
   tdl_files,
@@ -252,6 +257,7 @@ as `noaa_cylinder_isotope_ratio`) must be obtained from whoever is
 managing the TDL system being used:
 
 ``` r
+
 # Use the data from the calibration valves to determine calibrated carbon
 # concentrations from all valves in each TDL cycle
 processed_tdl <- consolidate(by(
@@ -295,6 +301,7 @@ calibrated values as separate traces. Our goal is simply to keep an eye
 out for anythign that looks unusual in the data.
 
 ``` r
+
 # Plot the 12C concentration data from all the valves
 xyplot(
   Conc12C_Avg + calibrated_12c ~ cycle_num | factor(valve_number),
@@ -319,6 +326,7 @@ for more detailed analysis. Here we will take a look at the ¹²C
 concentration from valve 26, which exhibits a spike.
 
 ``` r
+
 # Specify a single valve to plot
 valve_to_plot <- 26
 
@@ -357,6 +365,7 @@ constants determined during the TDL cycle processing. In this plot, the
 the cycles where there is also a spike in the ¹²C signal in valve 26.
 
 ``` r
+
 # Plot the 12C gain factor determined during the calibration process
 xyplot(
   gain_12CO2 ~ cycle_num,
@@ -395,6 +404,7 @@ removing the unreliable TDL cycles; here, we actually remove two regions
 of the data that appear to be suspicious:
 
 ``` r
+
 # Define a vector of cycle numbers that should be removed
 tdl_cycles_to_remove <- c(
   145:150, # The big spike in valve 26
@@ -429,6 +439,7 @@ package can be used to smooth the ¹²C and ¹³C signals from the
 calibration valves:
 
 ``` r
+
 # Define a spline smoothing function
 spline_smoothing_function <- function(Y, X) {
     ss <- smooth.spline(X, Y)
@@ -464,6 +475,7 @@ Cycles](#processing-tdl-cycles); the only difference here is that we are
 operating on the smoothed data:
 
 ``` r
+
 # Use the data from the calibration valves to determine calibrated carbon
 # concentrations from all valves in each TDL cycle
 processed_smooth_tdl <- consolidate(by(
@@ -489,6 +501,7 @@ reasonable outputs. Here we create a plot comparing the raw and smoothed
 ¹²C signal from all valves:
 
 ``` r
+
 # Add columns indicating which which operations have been applied to each exdf
 tdl_files[ , 'data_type'] <- '01 raw data'
 tdl_files_clean[ , 'data_type'] <- '02 cleaned data'
@@ -523,6 +536,7 @@ valve 26, it may be helpful to display just that valve to take a closer
 look:
 
 ``` r
+
 # Specify a single valve to plot
 valve_to_compare <- 26
 
@@ -554,6 +568,7 @@ the calibration process. Here we will look at valve 12, as in [Checking
 the Calibrated Data](#checking-the-calibrated-data):
 
 ``` r
+
 # Specify a single valve to plot
 valve_to_plot <- 12
 
@@ -584,6 +599,7 @@ factor as in [Checking the Calibrated
 Data](#checking-the-calibrated-data):
 
 ``` r
+
 # Plot the 12C gain factor determined during the calibration process
 xyplot(
   gain_12CO2 ~ cycle_num,
@@ -628,6 +644,7 @@ load. For example, you could replace the previous definition of
 `file_paths` with this one:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
   'myfile1.dat',             # `myfile1.dat` must be in the current working directory
@@ -642,6 +659,7 @@ is more convenient than writing out file paths or names. For example,
 you could replace the previous definition of `file_paths` with this one:
 
 ``` r
+
 # Interactively define a vector of paths to the files we wish to load
 file_paths <- choose_input_tdl_files()
 ```
@@ -676,6 +694,7 @@ any TDL cycles; this can be accomplished by defining
 used above:
 
 ``` r
+
 tdl_cycles_to_remove <- c()
 ```
 
@@ -689,6 +708,7 @@ smoothing. This can be done by definining a “null” smoothing function;
 in other words, a function that does not actually perform any smoothing:
 
 ``` r
+
 # Define a null smoothing function
 null_smoothing_function <- function(Y, X) {return(Y)}
 ```
@@ -707,6 +727,7 @@ Pipeline](https://eloch216.github.io/PhotoGEA/articles/web_only/developing_a_dat
 vignette.
 
 ``` r
+
 ###
 ### PRELIMINARIES:
 ### Loading packages, defining constants, creating helping functions, etc.

@@ -14,10 +14,10 @@ vignette can be used to initialize your own script, as described in
 An *A-C_(i) curve* (or *CO₂ response curve*) is a particular type of gas
 exchange measurement where a living leaf is exposed to varying
 concentrations of CO₂. For each CO₂ concentration in the sequence, the
-net assimilation rate ($A_{n}$), stomatal conductance to H₂O ($g_{sw}$),
-intercellular CO₂ concentration ($C_{i}$), and other important
-quantities are measured and recorded. Typically, other environmental
-variables such as temperature, humidity, and incident
+net assimilation rate ($`A_n`$), stomatal conductance to H₂O
+($`g_{sw}`$), intercellular CO₂ concentration ($`C_i`$), and other
+important quantities are measured and recorded. Typically, other
+environmental variables such as temperature, humidity, and incident
 photosynthetically-active photon flux density (PPFD) are held constant
 during the measurement sequence so that changes in assimilation rates
 can be attributed to CO₂ alone.
@@ -41,46 +41,46 @@ in *Biochemical Models of Leaf Photosynthesis* ([Caemmerer
 considerations discussed in Lochocki and McGrath
 ([2025](#ref-lochocki_widely_2025)).
 
-This model provides a framework for understanding the changes in $A_{n}$
+This model provides a framework for understanding the changes in $`A_n`$
 that occur as a C₃ leaf is exposed to successively higher concentrations
 of CO₂. Overall, the response to CO₂ under high light conditions can be
 divided into three separate ranges:
 
 - At low levels of CO₂ in the chloroplast, CO₂ assimilation is primarily
   limited by Rubisco activity; the maximum rate of Rubisco activity is
-  denoted by $V_{cmax}$.
+  denoted by $`V_{cmax}`$.
 
 - At intermediate levels of CO₂ in the chloroplast, CO₂ assimilation is
   primarily limited by the rate of electron transport going to support
   RuBP regeneration; the potential rate of electron transport at a given
-  incident PPFD is denoted by $J$. (Note: $J$ is distinct from the
+  incident PPFD is denoted by $`J`$. (Note: $`J`$ is distinct from the
   maximum rate of electron transport that could be achieved at *any*
-  incident PPFD, which is denoted by $J_{max}$.)
+  incident PPFD, which is denoted by $`J_{max}`$.)
 
 - At high levels of CO₂ in the chloroplast, CO₂ assimilation is
   primarily limited by triose phosphate utilization (TPU); the maximum
-  rate of TPU is denoted by $T_{p}$.
+  rate of TPU is denoted by $`T_p`$.
 
 More specifically, the model provides equations for potential RuBP
 carboxylation rates (as catalyzed by Rubisco) that are each limited by
 one of three important processes:
 
-- The Rubisco-limited carboxylation rate ($W_{c}$).
+- The Rubisco-limited carboxylation rate ($`W_c`$).
 
-- The RuBP-regeneration-limited carboxylation rate ($W_{j}$).
+- The RuBP-regeneration-limited carboxylation rate ($`W_j`$).
 
-- The triose-phosphate-utilization-limited carboxylation rate ($W_{p}$).
+- The triose-phosphate-utilization-limited carboxylation rate ($`W_p`$).
 
 Each of these rates depend on the CO₂ concentration in the chloroplast
 and other factors such as the incident light intensity. The actual RuBP
-carboxylation rate ($V_{c}$) for a particular set of conditions is taken
+carboxylation rate ($`V_c`$) for a particular set of conditions is taken
 to be the smallest of the three potential rates. Then, the net CO₂
-assimilation rate $A_{n}$ can be calculated from $V_{c}$ by including
+assimilation rate $`A_n`$ can be calculated from $`V_c`$ by including
 carbon losses due to photorespiration and non-photorespiratory CO₂
 release; the rate of non-photorespiratory CO₂ release in the light is
-denoted by $R_{L}$. It is also possible to calculate the net
+denoted by $`R_L`$. It is also possible to calculate the net
 assimilation rates corresponding to each potential carboxylation rate:
-$A_{c}$, $A_{j}$, and $A_{p}$. The plot below illustrates the three
+$`A_c`$, $`A_j`$, and $`A_p`$. The plot below illustrates the three
 different assimilation ranges observed in a typical high-light *A-C_(i)*
 curve, as predicted by the FvCB model.
 
@@ -91,15 +91,15 @@ function from the `PhotoGEA` package, and it represents the
 photosynethetic response of a C₃ leaf according to the FvCB model with
 `alpha_old` = 0.2, `J` = 170 micromol m^(-2) s^(-1), `RL` = 1 micromol
 m^(-2) s^(-1), `Tp` = 11.8 , and `Vcmax` = 100 micromol m^(-2) s^(-1).
-Temperature response parameters from Thomas D. Sharkey et al.
+Temperature response parameters from Sharkey et al.
 ([2007](#ref-sharkey_fitting_2007)) were used for these calculations.)
 
 Thus, one of the most common reasons to measure an *A-C_(i)* curve is to
 interpret it in the context of this model. In other words, by fitting
 the model’s equations to a measured curve, it is possible to estimate
-values for $J$, $J_{max}$, $R_{L}$, $T_{p}$, and $V_{cmax}$. See the
-documentation for `calculate_c3_assimilation` for more information about
-these important quantities.
+values for $`J`$, $`J_{max}`$, $`R_L`$, $`T_p`$, and $`V_{cmax}`$. See
+the documentation for `calculate_c3_assimilation` for more information
+about these important quantities.
 
 ### Practicalities
 
@@ -107,14 +107,14 @@ There are a few important practicalities to keep in mind when thinking
 about CO₂ response curves.
 
 One point is that net assimilation models generally predict the response
-of assimilation to the CO₂ concentration in the chloroplast ($C_{c}$),
+of assimilation to the CO₂ concentration in the chloroplast ($`C_c`$),
 but gas exchange measurements can only determine the CO₂ concentration
-in the leaf’s intercellular spaces ($C_{i}$). Thus, an extra step is
+in the leaf’s intercellular spaces ($`C_i`$). Thus, an extra step is
 required when interpreting *A-C_(i)* curves. If the mesophyll
-conductance to CO₂ diffusion ($g_{mc}$) is known, then it is possible to
-calculate values of $C_{c}$ from $A_{n}$, $C_{i}$, and $g_{mc}$.
+conductance to CO₂ diffusion ($`g_{mc}`$) is known, then it is possible
+to calculate values of $`C_c`$ from $`A_n`$, $`C_i`$, and $`g_{mc}`$.
 Otherwise, it is typical to assume an infinite mesophyll conductance; in
-this case, $C_{c} = C_{i}$, and the estimated values of $V_{cmax}$ and
+this case, $`C_c = C_i`$, and the estimated values of $`V_{cmax}`$ and
 other parameters can be considered to be “effective values” describing
 the plant’s response to intercellular CO₂ rather than the true response
 to chloroplastic CO₂.
@@ -139,14 +139,13 @@ according to their CO₂ values before plotting or analyzing them.
 
 Note: while this approach is commonly used, some reasearchers advocate
 for starting either at high or low CO₂, and continuously decreasing or
-increasing the CO₂ concentration ([Thomas D. Sharkey
-2019](#ref-sharkey_is_2019)).
+increasing the CO₂ concentration ([Sharkey 2019](#ref-sharkey_is_2019)).
 
 ### The Data
 
 *A-C_(i)* curves are commonly measured using a portable photosynthesis
 system such as the Licor Li-6800. These machines record values of
-$A_{n}$, $g_{sw}$, $C_{i}$, and many other important quantities. They
+$`A_n`$, $`g_{sw}`$, $`C_i`$, and many other important quantities. They
 produce two types of output files: plain-text and Microsoft Excel. It is
 often more convenient to work with the Excel files since the entries can
 be easily modified (for example, to remove an extraneous row or add a
@@ -169,6 +168,7 @@ the `PhotoGEA` library, we check the installed version and give a
 warning if it is different from the expected version number.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -209,7 +209,7 @@ measured using two Li-6800 instruments. The data is stored in Microsoft
 Excel files, and includes curves measured from two different crop
 species (tobacco and soybean) and several different plots of each. Each
 curve is a sixteen-point CO₂ response curve; in other words, the CO₂
-concentration in the air surrounding the leaf was varied, and $A_{n}$
+concentration in the air surrounding the leaf was varied, and $`A_n`$
 (among other variables) was measured at each CO₂ setpoint. Although
 these two files are based on real data, noise was added to it since it
 is unpublished.
@@ -219,6 +219,7 @@ installation directory, and full paths to these files can be obtained
 with `PhotoGEA_example_file_path`:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load; in this case, we are
 # loading example files included with the PhotoGEA package
 file_paths <- c(
@@ -239,6 +240,7 @@ multiple files to read, we will call this function once for each file
 using `lapply`:
 
 ``` r
+
 # Load each file, storing the result in a list
 gasex_exdf_list <- lapply(file_paths, function(fpath) {
   read_gasex_file(fpath, 'time')
@@ -276,6 +278,7 @@ just those columns, and then combine the `exdf` objects into a single
 one.
 
 ``` r
+
 # Get the names of all columns that are present in all of the data files
 columns_to_keep <- do.call(identify_common_columns, gasex_exdf_list)
 
@@ -312,6 +315,7 @@ curve. We can solve this issue by creating a new column that combines
 the values from each of these:
 
 ``` r
+
 # Create a new identifier column formatted like `instrument - species - plot`
 gasex_data[ , 'curve_identifier'] <-
   paste(gasex_data[ , 'instrument'], '-', gasex_data[ , 'species'], '-', gasex_data[ , 'plot'])
@@ -337,6 +341,7 @@ help menu entry by typing
 [`?check_response_curve_data`](https://eloch216.github.io/PhotoGEA/reference/check_response_curve_data.md).
 
 ``` r
+
 # Make sure the data meets basic requirements
 check_response_curve_data(gasex_data, 'curve_identifier', 16, 'CO2_r_sp')
 ```
@@ -347,6 +352,7 @@ the wrong number of points or the wrong identifier column, we would get
 error messages:
 
 ``` r
+
 check_response_curve_data(gasex_data, 'curve_identifier', 15)
 #>       curve_identifier npts
 #> 1 ripe1 - soybean - 5a   16
@@ -379,6 +385,7 @@ not logged in order of ascending or descending concentration. In fact,
 the sequence of CO₂ setpoints is as follows:
 
 ``` r
+
 gasex_data[gasex_data[, 'curve_identifier'] == 'ripe2 - soybean - 1', 'CO2_r_sp']
 #>  [1]  400  300  200  150  100   75   50   20  400  400  600  800 1000 1200 1500
 #> [16] 1800
@@ -395,6 +402,7 @@ high values of `Ci`. This can be done using the
 `organize_response_curve` function from `PhotoGEA`:
 
 ``` r
+
 # Remove points with duplicated `CO2_r_sp` values, reorder by `Ci`, and
 # calculate average values of leaf temperature and Qin
 gasex_data <- organize_response_curve_data(
@@ -410,7 +418,7 @@ In this command, we also used the optional `columns_to_average` input
 argument to calculate average values of leaf temperature and incident
 PPFD for each curve, which are attached as new columns called
 `TleafCnd_avg` and `Qin_avg`, respectively. These will be important
-later for calculating values of $J_{max}$.
+later for calculating values of $`J_{max}`$.
 
 ### Plotting the *A-C_(i)* Curves
 
@@ -420,6 +428,7 @@ simple to include each curve as its own separate subplot of a figure.
 For example:
 
 ``` r
+
 # Plot all A-Ci curves in the data set
 xyplot(
   A ~ Ci | curve_identifier,
@@ -438,7 +447,7 @@ xyplot(
 Some of these curves look a bit strange, but this is related to the
 noise that was intentionally added to the data. Three curves exhibit a
 sharp and likely unrealistic downturn in assimilation at their highest
-values of $C_{i}$. These will pose a problem for fitting, and we will
+values of $`C_i`$. These will pose a problem for fitting, and we will
 remove them later after making some other quality checks.
 
 ### Additional Plots for Qualitative Validation
@@ -453,6 +462,7 @@ plots to check each curve for quality.
 #### Humidity Control
 
 ``` r
+
 # Make a plot to check humidity control
 xyplot(
   RHcham + `Humidifier_%` + `Desiccant_%` ~ Ci | curve_identifier,
@@ -485,6 +495,7 @@ photosynthesis. In this plot, all the data looks good.
 #### Temperature Control
 
 ``` r
+
 # Make a plot to check temperature control
 xyplot(
   TleafCnd + Txchg ~ Ci | curve_identifier,
@@ -512,6 +523,7 @@ way. In this plot, all the data looks good.
 #### CO₂ Control
 
 ``` r
+
 # Make a plot to check CO2 control
 xyplot(
   CO2_s + CO2_r + CO2_r_sp ~ Ci | curve_identifier,
@@ -541,6 +553,7 @@ plot, all the data looks good.
 #### Stability
 
 ``` r
+
 # Make a plot to check stability criteria
 xyplot(
   `A:OK` + `gsw:OK` + Stable ~ Ci | curve_identifier,
@@ -588,7 +601,7 @@ data.
 
 While checking over the plots in the previous sections, two issues were
 noticed: (1) some points were logged before stability was achieved and
-(2) some curves have strange points at high $C_{i}$. In this section, we
+(2) some curves have strange points at high $`C_i`$. In this section, we
 will demonstrate how to remove the unstable and unusual points.
 
 The following command will keep only the points where `Stable` is
@@ -598,6 +611,7 @@ few stable points remaining; it is usually a good idea to automatically
 exclude any curve with fewer than three stable points.
 
 ``` r
+
 # Only keep points where stability was achieved
 gasex_data <- gasex_data[gasex_data[, 'Stable'] == 2, , TRUE]
 
@@ -608,12 +622,13 @@ gasex_data <- gasex_data[gasex_data[, 'curve_identifier'] %in% ids_to_keep, , TR
 ```
 
 Next, we can use the `remove_points` function from `PhotoGEA` to exclude
-the points where there is a decrease in $A$ at high $C_{i}$. It just so
-happens that all of these points were measured by the `ripe1` instrument
-and occur at the highest CO₂ setpoint value, so it is easy to specify
-them all at once:
+the points where there is a decrease in $`A`$ at high $`C_i`$. It just
+so happens that all of these points were measured by the `ripe1`
+instrument and occur at the highest CO₂ setpoint value, so it is easy to
+specify them all at once:
 
 ``` r
+
 # Remove points where `instrument` is `ripe1` and `CO2_r_sp` is 1800
 gasex_data <- remove_points(
   gasex_data,
@@ -628,7 +643,7 @@ Now that we have checked the data quality, we are ready to perform the
 fitting. In order to fit the curves, there are several required pieces
 of information that are not included in the log files as produced by the
 instrument: values of the total pressure and temperature-dependent
-values of important photosynthetic parameters such as $\Gamma^{*}$.
+values of important photosynthetic parameters such as $`\Gamma^*`$.
 However, the `PhotoGEA` package includes two functions to help with
 these calculations: `calculate_temperature_response` and
 `calculate_total_pressure`. Each of these requires an `exdf` object
@@ -643,6 +658,7 @@ or
 First, we can use `calculate_temperature_response`:
 
 ``` r
+
 # Calculate temperature-dependent values of C3 photosynthetic parameters
 gasex_data <- calculate_temperature_response(gasex_data, c3_temperature_param_sharkey)
 ```
@@ -651,12 +667,13 @@ With this simple command, we have used the leaf temperature from the log
 files to calculate values of several key C₃ photosynthetic parameters
 (Gamma_star_norm, J_norm, Kc_norm, Ko_norm, RL_norm, Vcmax_norm,
 gmc_norm, Tp_norm, Gamma_star_at_25, Kc_at_25, Ko_at_25) according to
-the temperature response parameters specified in Thomas D. Sharkey et
-al. ([2007](#ref-sharkey_fitting_2007)).
+the temperature response parameters specified in Sharkey et al.
+([2007](#ref-sharkey_fitting_2007)).
 
 Now we can use `calculate_total_pressure`:
 
 ``` r
+
 # Calculate the total pressure in the leaf chamber
 gasex_data <- calculate_total_pressure(gasex_data)
 ```
@@ -687,6 +704,7 @@ Curves](#understanding-c3-a-ci-curves), and return the resulting
 parameters and fits:
 
 ``` r
+
 # The default optimizer uses randomness, so we will set a seed to ensure the
 # results from this fit are always identical
 set.seed(1234)
@@ -702,11 +720,11 @@ c3_aci_results <- consolidate(by(
 
 Note that in this command, we used the default fitting settings. In this
 case, we will vary all five key photosynthetic parameters:
-$\alpha_{old}$, $J$, $R_{L}$, $T_{p}$, and $V_{cmax}$. The mesophyll
-conductance ($g_{mc}$) is set to infinity by default, so these fits are
-made assuming $C_{c} = C_{i}$, and hence the estimates of $V_{cmax}$ and
-other parameters should be considered as “effective” values rather than
-chloroplastic values.
+$`\alpha_{old}`$, $`J`$, $`R_L`$, $`T_p`$, and $`V_{cmax}`$. The
+mesophyll conductance ($`g_{mc}`$) is set to infinity by default, so
+these fits are made assuming $`C_c = C_i`$, and hence the estimates of
+$`V_{cmax}`$ and other parameters should be considered as “effective”
+values rather than chloroplastic values.
 
 ### Viewing the Fitted Curves
 
@@ -718,6 +736,7 @@ limiting rates `Ac`, `Aj`, and `Ap`, as well as the estimated operating
 point.
 
 ``` r
+
 # Plot the C3 A-Cc fits (including limiting rates)
 plot_c3_aci_fit(c3_aci_results, 'curve_identifier', 'Ci', ylim = c(-10, 80))
 ```
@@ -758,6 +777,7 @@ fit. The output from `fit_c3_aci` includes the residuals (calculated as
 `A - A_fit`) in its output, so it is easy to plot them:
 
 ``` r
+
 # Plot the residuals
 xyplot(
   A_residuals ~ Ci | curve_identifier,
@@ -778,27 +798,29 @@ reproduce the measured values well.
 
 ### Calculating Jmax
 
-The `fit_c3_aci` function estimates values of $J$, but not $J_{max}$.
-However, estimates of $J_{max}$ can be obtained after fitting by
-applying the `calculate_jmax` function to the results from `fit_c3_aci`.
-For more information about this function, see the built-in help menu
-entry by typing
+The `fit_c3_aci` function estimates values of $`J`$, but not
+$`J_{max}`$. However, estimates of $`J_{max}`$ can be obtained after
+fitting by applying the `calculate_jmax` function to the results from
+`fit_c3_aci`. For more information about this function, see the built-in
+help menu entry by typing
 [`?calculate_jmax`](https://eloch216.github.io/PhotoGEA/reference/calculate_jmax.md).
 
-In order to do this, we need values of $Q_{in}$ and $T_{leaf}$ for each
-curve. This information is not typically included in an instrument log
-file, but we calculated average values of $Q_{in}$ and $T_{leaf}$ in the
-[Reorganizing the Data](#reorganizing-the-data) section when calling
-`organize_response_curve_data`, so this is taken care of.
+In order to do this, we need values of $`Q_{in}`$ and $`T_{leaf}`$ for
+each curve. This information is not typically included in an instrument
+log file, but we calculated average values of $`Q_{in}`$ and
+$`T_{leaf}`$ in the [Reorganizing the Data](#reorganizing-the-data)
+section when calling `organize_response_curve_data`, so this is taken
+care of.
 
 It is also necessary to have temperature-dependent values of
-$\alpha_{J}$ and $\theta_{J}$, two parameters related to $J$ and
-$J_{max}$. These can be obtained using the
+$`\alpha_J`$ and $`\theta_J`$, two parameters related to $`J`$ and
+$`J_{max}`$. These can be obtained using the
 `calculate_temperature_response` function, which was also used in the
 [Fitting the Response Curves](#fitting-the-response-curves) section
 above.
 
 ``` r
+
 # Calculate temperature-dependent values of Jmax-related parameters
 c3_aci_results$parameters <- calculate_temperature_response(
     c3_aci_results$parameters,
@@ -811,12 +833,12 @@ c3_aci_results$parameters <- calculate_jmax(c3_aci_results$parameters)
 ```
 
 With these commands, the `parameters` element of `c3_aci_results` now
-includes estimates of $J_{max}$.
+includes estimates of $`J_{max}`$.
 
-Be aware that estimates of $J_{max}$ are dependent on the assumed values
-of $\alpha_{J}$ and $\theta_{J}$ at 25 degrees C, especially for curves
-measured at low values of incident PPFD; see the documentation for
-`calculate_jmax` for more information.
+Be aware that estimates of $`J_{max}`$ are dependent on the assumed
+values of $`\alpha_J`$ and $`\theta_J`$ at 25 degrees C, especially for
+curves measured at low values of incident PPFD; see the documentation
+for `calculate_jmax` for more information.
 
 ## Examining the Results
 
@@ -824,10 +846,11 @@ measured at low values of incident PPFD; see the documentation for
 
 Each fit returns best-fit values and confidence limits for each
 parameter, which are stored in `c3_aci_results$parameters`, another
-`exdf` object. For example, we can look at the estimated $J$ values from
-each curve as follows:
+`exdf` object. For example, we can look at the estimated $`J`$ values
+from each curve as follows:
 
 ``` r
+
 # View values of J from each fit
 c3_aci_results$parameters[, c('curve_identifier', 'J_at_25_lower', 'J_at_25', 'J_at_25_upper')]
 #>       curve_identifier J_at_25_lower  J_at_25 J_at_25_upper
@@ -846,10 +869,11 @@ one or fewer points are limited by RuBP regeneration. For these curves,
 values of `J` cannot be reliably estimated, so `fit_c3_aci` returns a
 value of `NA` for `J_at_25`.
 
-Because the values of $J_{max}$ are calculated from the $J$ estimates,
-`Jmax_at_25` will also be `NA` whenever `J_at_25` is NA:
+Because the values of $`J_{max}`$ are calculated from the $`J`$
+estimates, `Jmax_at_25` will also be `NA` whenever `J_at_25` is NA:
 
 ``` r
+
 # View values of Jmax from each fit
 c3_aci_results$parameters[, c('curve_identifier', 'Jmax_at_25_lower', 'Jmax_at_25', 'Jmax_at_25_upper')]
 #>       curve_identifier Jmax_at_25_lower Jmax_at_25 Jmax_at_25_upper
@@ -861,10 +885,11 @@ c3_aci_results$parameters[, c('curve_identifier', 'Jmax_at_25_lower', 'Jmax_at_2
 #> 6  ripe2 - tobacco - 4         166.7443         NA               NA
 ```
 
-In contrast, each curve has an associated value of $V_{cmax}$ with a
+In contrast, each curve has an associated value of $`V_{cmax}`$ with a
 finite confidence interval:
 
 ``` r
+
 # View values of Vcmax from each fit
 c3_aci_results$parameters[, c('curve_identifier', 'Vcmax_at_25_lower', 'Vcmax_at_25', 'Vcmax_at_25_upper')]
 #>       curve_identifier Vcmax_at_25_lower Vcmax_at_25 Vcmax_at_25_upper
@@ -886,6 +911,7 @@ not be reliably estimated, and the error bars will show the standard
 error of the mean for each species.
 
 ``` r
+
 # Make a barchart showing average Vcmax values
 barchart_with_errorbars(
   c3_aci_results$parameters[, 'Vcmax_at_25'],
@@ -902,6 +928,7 @@ Another option is to create box-whisper plots using the `bwplot`
 function from the `lattice` package:
 
 ``` r
+
 # Make a boxplot showing the distribution of Vcmax values
 bwplot(
   Vcmax_at_25 ~ species,
@@ -921,6 +948,7 @@ parameters for each species using the `basic_stats` function from
 `PhotoGEA`:
 
 ``` r
+
 # Compute the average and standard error of each parameter for each species
 c3_aci_averages <- basic_stats(c3_aci_results$parameters, 'species')
 
@@ -968,6 +996,7 @@ load. For example, you could replace the previous definition of
 `file_paths` with this one:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
   'myfile1.xlsx',        # `myfile1.xlsx` must be in the current working directory
@@ -983,6 +1012,7 @@ For example, you could replace the previous definition of `file_paths`
 with this one:
 
 ``` r
+
 # Interactively define a vector of paths to the files we wish to load
 file_paths <- choose_input_licor_files()
 ```
@@ -1029,6 +1059,7 @@ For example, the following commands will allow you to interactively
 choose output filenames for the resulting CSV files:
 
 ``` r
+
 write.csv.exdf(c3_aci_results$fits, file.choose())
 write.csv.exdf(c3_aci_results$parameters, file.choose())
 write.csv.exdf(c3_aci_averages, file.choose())
@@ -1049,6 +1080,7 @@ Pipeline](https://eloch216.github.io/PhotoGEA/articles/web_only/developing_a_dat
 vignette.
 
 ``` r
+
 ###
 ### PRELIMINARIES:
 ### Loading packages, defining constants, creating helping functions, etc.

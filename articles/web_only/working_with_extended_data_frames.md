@@ -55,6 +55,7 @@ addition to `PhotoGEA`, we will also use the `lattice` package for
 generating plots.
 
 ``` r
+
 # Load required packages
 library(PhotoGEA)
 library(lattice)
@@ -117,6 +118,7 @@ will have units of `m` and `s` and categories of `Cat1` and `Cat2`,
 respectively.
 
 ``` r
+
 exdf_1 <- exdf(
   data.frame(A = c(3, 2, 7, 9), B = c(4, 5, 1, 8)),
   data.frame(A = 'm', B = 's'),
@@ -128,6 +130,7 @@ We can view a nicely-formatted version of the object using the `print`
 command:
 
 ``` r
+
 print(exdf_1)
 #> 
 #> Converting an `exdf` object to a `data.frame` before printing
@@ -149,12 +152,14 @@ frame called `exdf_2` with two columns named `A` and `B`, but we won’t
 specify their units or categories.
 
 ``` r
+
 exdf_2 <- exdf(data.frame(A = c(3, 2, 7, 9), B = c(4, 5, 1, 8)))
 ```
 
 As before, we can `print` the data frame:
 
 ``` r
+
 print(exdf_2)
 #> 
 #> Converting an `exdf` object to a `data.frame` before printing
@@ -171,12 +176,14 @@ The units and categories have been initialized to default values of
 `document_variables` function:
 
 ``` r
+
 exdf_2 <- document_variables(exdf_2, c('Cat1', 'A', 'm'), c('Cat2', 'B', 's'))
 ```
 
 Now `exdf_2` is identical to `exdf_1`:
 
 ``` r
+
 identical(exdf_1, exdf_2)
 #> [1] TRUE
 ```
@@ -189,6 +196,7 @@ As an example of the third method, we will create an extended data frame
 from a Microsoft Excel file containing Licor measurements.
 
 ``` r
+
 exdf_3 <- read_gasex_file(
   PhotoGEA_example_file_path('ball_berry_1.xlsx')
 )
@@ -199,6 +207,7 @@ However, we can confirm that it is indeed a properly-defined `exdf`
 object:
 
 ``` r
+
 is.exdf(exdf_3, TRUE)
 #> [1] TRUE
 ```
@@ -210,6 +219,7 @@ function. For example, the Licor log file discussed above can be saved
 to a CSV file as follows:
 
 ``` r
+
 write.csv.exdf(exdf_3, file = 'ball_berry_1.csv')
 ```
 
@@ -219,6 +229,7 @@ in the file. For example, the CSV file created with the last command can
 be read as follows:
 
 ``` r
+
 exdf_4 <- read.csv.exdf('ball_berry_1.csv')
 ```
 
@@ -249,6 +260,7 @@ Because an extended data frame is technically just a list, its
 example, all of the top-level elements can be retrieved using `names`:
 
 ``` r
+
 names(exdf_1)
 #> [1] "main_data"  "units"      "categories"
 
@@ -266,6 +278,7 @@ function. Any of these top-level elements be accessed by name using the
 `$` and `[[` operators:
 
 ``` r
+
 exdf_1$units
 #>   A B
 #> 1 m s
@@ -282,6 +295,7 @@ following commands are equivalent ways to access the column names of
 `exdf_1`:
 
 ``` r
+
 colnames(exdf_1)
 #> [1] "A" "B"
 
@@ -293,6 +307,7 @@ Likewise, the following commands are equivalent ways to extract the `A`
 column from `exdf_1` as a vector:
 
 ``` r
+
 exdf_1[, 'A']
 #> [1] 3 2 7 9
 
@@ -315,6 +330,7 @@ can be accomplished as follows, using a syntax that is nearly identical
 to the syntax of extracting a subset of a data frame:
 
 ``` r
+
 exdf_1[exdf_1[, 'A'] > 5, , return_exdf = TRUE]
 #> 
 #> Converting an `exdf` object to a `data.frame` before printing
@@ -330,6 +346,7 @@ element, as discussed in [Accessing The Main Data
 Frame](#accessing-the-main-data-frame):
 
 ``` r
+
 is.exdf(exdf_1[exdf_1[, 'A'] > 5, , TRUE])
 #> [1] TRUE
 
@@ -351,6 +368,7 @@ with any list. As an example, we will change the `file_name` element of
 `exdf_3` and add a new top-level element:
 
 ``` r
+
 exdf_3$file_name <- 'new_file_name.xlsx'
 
 exdf_3[['new_element']] <- 5
@@ -359,6 +377,7 @@ exdf_3[['new_element']] <- 5
 We can confirm the changes:
 
 ``` r
+
 exdf_3$file_name
 #> [1] "new_file_name.xlsx"
 
@@ -373,12 +392,14 @@ using the `[<-` operator. For example, we could add 1 to each value in
 the `A` column of `exdf_2`:
 
 ``` r
+
 exdf_2[, 'A'] <- exdf_2[, 'A'] + 1
 ```
 
 We could also add a new column called `C`:
 
 ``` r
+
 exdf_2[, 'C'] <- 7
 ```
 
@@ -386,6 +407,7 @@ In this case, the units and category of the new column will be
 initialized to `NA`:
 
 ``` r
+
 print(exdf_2)
 #> 
 #> Converting an `exdf` object to a `data.frame` before printing
@@ -407,6 +429,7 @@ Here we use this function to add a new column called `D` with units of
 `kg` and category `cat4` whose value is 20:
 
 ``` r
+
 exdf_2 <- set_variable(exdf_2, 'D', 'kg', 'cat4', 20)
 
 print(exdf_2)
@@ -430,6 +453,7 @@ frame; for more information, see its help menu entry by typing
 adding another new column called `E` using the following code:
 
 ``` r
+
 exdf_2$main_data$E <- 17
 ```
 
@@ -441,6 +465,7 @@ the `E` column. This is a subtle problem that can only be detected using
 `is.exdf` with `consistency_check` set to `TRUE`:
 
 ``` r
+
 print(exdf_2)
 #> Error in `.subset2()`:
 #> ! subscript out of bounds
@@ -503,6 +528,7 @@ before the tables are vertically stacked.
 The following is an example of code that accomplishes these steps:
 
 ``` r
+
 # Define a vector of paths to the files we wish to load
 file_paths <- c(
   PhotoGEA_example_file_path('ball_berry_1.xlsx'),
@@ -536,6 +562,7 @@ example, we can calculate total pressure, additional gas properties, and
 the Ball-Berry index:
 
 ``` r
+
 # Calculate the total pressure in the Licor chamber
 gasex_data <- calculate_total_pressure(gasex_data)
 
@@ -584,6 +611,7 @@ Here we show how `by` can be used to apply the Ball-Berry fitting
 procedure to each curve in `gasex_data`:
 
 ``` r
+
 by_result <- by(
   gasex_data,                                          # exdf object
   list(gasex_data[, 'species'], gasex_data[, 'plot']), # identifier columns
@@ -597,6 +625,7 @@ object: it is a list of lists of exdf objects; in other words, a nested
 list. We can see this structure as follows:
 
 ``` r
+
 str(by_result, max.level = 2)
 #> List of 8
 #>  $ soybean.1 :List of 2
@@ -680,6 +709,7 @@ function. This function will collect all of the second-level elements
 with the same names and combine them using `rbind`:
 
 ``` r
+
 consolidate_by_result <- consolidate(by_result)
 ```
 
@@ -687,6 +717,7 @@ We can now see that instead of a nested list, we have a list of two
 `exdf` objects:
 
 ``` r
+
 str(consolidate_by_result, max.level = 1)
 #> List of 2
 #>  $ parameters:
@@ -704,6 +735,7 @@ line to make the code more concise. Afterwards, the elements from the
 resulting list can be separated to make additional analysis easier:
 
 ``` r
+
 ball_berry_result <- consolidate(by(
   gasex_data,
   list(gasex_data[, 'species'], gasex_data[, 'plot']),
@@ -743,6 +775,7 @@ as the `data` argument of
 it only works with data frames:
 
 ``` r
+
 xyplot(
   gsw ~ bb_index | species,
   group = plot,
@@ -763,6 +796,7 @@ values of variables. For example, we could create a string describing
 the `gsw` column as follows:
 
 ``` r
+
 paste0('Stomatal conductance to H2O (', gasex_data$units$gsw, ')')
 #> [1] "Stomatal conductance to H2O (mol m^(-2) s^(-1))"
 ```
@@ -770,6 +804,7 @@ paste0('Stomatal conductance to H2O (', gasex_data$units$gsw, ')')
 These labels can then be included in the plot itself:
 
 ``` r
+
 xyplot(
   gsw ~ bb_index | species,
   group = plot,
@@ -799,6 +834,7 @@ All S3 methods defined for the `exdf` class can be viewed using the
 `methods` function:
 
 ``` r
+
 methods(class = 'exdf')
 #>  [1] [                        [<-                      as.data.frame           
 #>  [4] by                       cbind                    check_required_variables

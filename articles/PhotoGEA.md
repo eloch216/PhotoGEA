@@ -14,6 +14,7 @@ loading, processing, and analyzing photosynthetic gas exchange data. See
 latest release is to type the following from within an R terminal:
 
 ``` r
+
 install.packages('PhotoGEA')
 ```
 
